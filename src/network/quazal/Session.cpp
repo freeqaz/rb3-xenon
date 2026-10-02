@@ -448,7 +448,7 @@ namespace Quazal {
             }
         }
         ScopedCS lock(Scheduler::GetInstance()->unk38);
-        if (!pContext->BeginCall()) {
+        if (!pContext->InitiateCall()) {
             return false;
         }
         if (XboxNetwork::IsTerminating()) {

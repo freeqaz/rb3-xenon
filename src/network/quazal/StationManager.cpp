@@ -228,7 +228,7 @@ namespace Quazal {
             while (it != m_mapConnectionJobs.end()) {
                 if (it->second->GetCurrentJob()->GetType() == 1) {
                     DOHandle hStation = it->first;
-                    CallRegister::GetInstanceRef()->SignalRelevantFetchContextes(
+                    CallRegister::GetInstanceRef().SignalRelevantFetchContextes(
                         hStation, DOCallContext::CallCancelled
                     );
                 }
@@ -237,7 +237,7 @@ namespace Quazal {
             SelectionIteratorTemplate<Station> itStation(1);
             while (!itStation.EndReached()) {
                 if (itStation.GetDOPtr()->FlagIsSet(0x10)) {
-                    CallRegister::GetInstanceRef()->SignalRelevantFetchContextes(
+                    CallRegister::GetInstanceRef().SignalRelevantFetchContextes(
                         *itStation, DOCallContext::CallCancelled
                     );
                 }

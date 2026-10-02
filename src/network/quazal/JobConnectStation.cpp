@@ -596,7 +596,7 @@ namespace Quazal {
             SetStep(JCS_STEP(ConnectionFailed));
             return;
         }
-        DOCallContext *pContext = CallRegister::GetInstance()->FindCall(
+        DOCallContext *pContext = CallRegister::GetInstanceRef().GetFetchContext(
             m_refStation->GetHandle(), m_refStation->GetHandle()
         );
         if (pContext != NULL) {
@@ -627,7 +627,7 @@ namespace Quazal {
     }
 
     void JobConnectStation::ConnectionFailed() {
-        DOCallContext *pContext = CallRegister::GetInstance()->FindCall(
+        DOCallContext *pContext = CallRegister::GetInstanceRef().GetFetchContext(
             m_refStation.m_hReferencedDO, m_refStation.m_hReferencedDO
         );
         if (pContext != NULL) {
