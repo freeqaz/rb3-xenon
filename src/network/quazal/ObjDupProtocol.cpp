@@ -32,7 +32,8 @@ namespace Quazal {
         char *m_szContent;
     };
 
-    struct qResult {
+    class qResult {
+    public:
         int m_iCode;
         int m_iLine;
         const char *m_szFile;

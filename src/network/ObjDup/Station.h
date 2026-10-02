@@ -89,7 +89,7 @@ namespace Quazal {
         unsigned int GetProcessType() const;
         bool Send(Message *, unsigned int);
         qResult SendImpl(Message *, unsigned int);
-        qResult SendLocalMessage(Message *, unsigned int);
+        qResult SendLocalMessage(Message *);
         qResult SendRemoteMessage(Message *, unsigned int);
         void InitLocalStationInfo();
         unsigned int GetMachineUniqueID() const;

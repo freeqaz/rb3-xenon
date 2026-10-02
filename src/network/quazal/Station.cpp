@@ -13,6 +13,8 @@
 #include "ObjDup/Station.h"
 #include "ObjDup/DOClass.h"
 #include "Core/Scheduler.h"
+#include "Core/NetZ.h"
+#include "Core/SystemComponent.h"
 #include "Core/PseudoGlobalVariable.h"
 #include "Platform/ScopedCS.h"
 #include "Platform/SystemError.h"
@@ -104,8 +106,9 @@ namespace Quazal {
 
     class BundlingPolicy {
     public:
-        static bool IsEnabled();
-        static bool FlagIsSet(unsigned int);
+        static BundlingPolicy *GetInstance();
+        bool IsEnabled() const;
+        bool FlagIsSet(unsigned int) const;
     };
 
     class SystemErrorTrace {
@@ -272,11 +275,12 @@ namespace Quazal {
     void Station::SetState(_State eState) {
         m_oState.Set(eState);
         if (eState == 3) {
-            ((SystemComponent *)0)->Initialize();
+            NetZ::GetInstance()->GetComponent48()->Initialize();
         }
-        if (!IsADuplica()) {
-            UpdateImpl(&m_oState, Time::GetSessionTime());
+        if (IsADuplica()) {
+            return;
         }
+        bool bUpdated = UpdateImpl(&m_oState, Time::GetSessionTime());
     }
 
     void Station::SetAtEOS() { m_bAtEOS = true; }
@@ -462,15 +466,16 @@ namespace Quazal {
     qResult Station::SendImpl(Message *pMessage, unsigned int uiFlags) {
         if (IsDeleted()) {
             return qResult(0x80010001);
-        } else if (IsLocal()) {
-            return SendLocalMessage(pMessage, uiFlags);
+        }
+        if (IsLocal()) {
+            return SendLocalMessage(pMessage);
         } else {
             return SendRemoteMessage(pMessage, uiFlags);
         }
         return qResult(0x10001);
     }
 
-    qResult Station::SendLocalMessage(Message *pMessage, unsigned int) {
+    qResult Station::SendLocalMessage(Message *pMessage) {
         ObjDupProtocol::GetInstance()->QueueMessageFromLocalStation(pMessage);
         return qResult(0x10001);
     }
@@ -479,11 +484,11 @@ namespace Quazal {
         if (!IsConnected()) {
             return qResult(0x80010001);
         }
-        if (BundlingPolicy::IsEnabled()) {
+        if (BundlingPolicy::GetInstance()->IsEnabled()) {
             MessageBundle *pBundle = NULL;
             if (uiFlags & 1) {
                 pBundle = &m_oReliableBundle;
-            } else if (BundlingPolicy::FlagIsSet(1)) {
+            } else if (BundlingPolicy::GetInstance()->FlagIsSet(1)) {
                 pBundle = &m_oReliableBundle;
             } else {
                 pBundle = &m_oUnreliableBundle;
