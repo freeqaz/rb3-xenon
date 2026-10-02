@@ -48,20 +48,21 @@ void FreeCamera::Poll() {
         deltaMs = 0.0f;
     }
 
-    float rotSpeed = mRotateRate * deltaMs;
-
     // Apply left stick to rotation
     float lx = padData->mSticks[0][0];
     float ly = padData->mSticks[0][1];
-    mRot.z = LimitAng((-fabsf(lx) * (rotSpeed * lx)) + mRot.z);
-    mRot.x = LimitAng(mRot.x + fabsf(ly) * rotSpeed * ly);
+    float rotSpeed = mRotateRate * deltaMs;
+    float left0rate = -fabsf(lx) * rotSpeed * lx;
+    mRot.z = LimitAng(mRot.z + left0rate);
+    float left1rate = fabsf(ly) * rotSpeed * ly;
+    mRot.x = LimitAng(left1rate + mRot.x);
 
     // Rebuild rotation matrix
     MakeRotMatrix(mRot, mXfm.m, true);
 
     // Compute slew speed
     float slewSpeed = mSlewRate * deltaMs;
-    if (padData->mButtons & (1 << kPad_L2)) {
+    if (padData->IsButtonInMask(kPad_L2)) {
         slewSpeed *= 0.1f;
     }
 
@@ -71,46 +72,39 @@ void FreeCamera::Poll() {
     float slewY = -(fabsf(ry * ry) * ry * slewSpeed);
 
     // Move along X axis (strafe)
-    mXfm.v.y += mXfm.m.x.y * slewX;
-    mXfm.v.x += mXfm.m.x.x * slewX;
-    mXfm.v.z += mXfm.m.x.z * slewX;
+    ScaleAddEq(mXfm.v, mXfm.m.x, slewX);
 
     // Move along Y (forward) or Z (up) depending on LB
-    if (padData->mButtons & (1 << kPad_L1)) {
+    if (padData->IsButtonInMask(kPad_L1)) {
         // L1/LB pressed - move along Z axis (up/down)
-        mXfm.v.x += mXfm.m.z.x * slewY;
-        mXfm.v.y += mXfm.m.z.y * slewY;
-        mXfm.v.z += mXfm.m.z.z * slewY;
+        ScaleAddEq(mXfm.v, mXfm.m.z, slewY);
     } else {
         // Move along Y axis (forward/back)
-        mXfm.v.x += mXfm.m.y.x * slewY;
-        mXfm.v.y += mXfm.m.y.y * slewY;
-        mXfm.v.z += mXfm.m.y.z * slewY;
+        ScaleAddEq(mXfm.v, mXfm.m.y, slewY);
     }
 
     RndCam *cam = mWorld->Cam();
 
     // FOV adjustment with D-pad Up/Down
-    if (padData->mButtons & (1 << kPad_DUp)) {
+    if (padData->IsButtonInMask(kPad_DUp)) {
         mFov = mFov + 0.001f;
-    } else if (padData->mButtons & (1 << kPad_DDown)) {
+    } else if (padData->IsButtonInMask(kPad_DDown)) {
         mFov = mFov - 0.001f;
     }
 
-    unsigned int buttons = padData->mButtons;
-    if (buttons & (1 << kPad_X)) {
+    if (padData->IsButtonInMask(kPad_X)) {
         // A button - roll rotation
-        if (buttons & (1 << kPad_DLeft)) {
+        if (padData->IsButtonInMask(kPad_DLeft)) {
             mRot.y = deltaMs * 0.001f + mRot.y;
-        } else if (buttons & (1 << kPad_DRight)) {
+        } else if (padData->IsButtonInMask(kPad_DRight)) {
             mRot.y = -(deltaMs * 0.001f - mRot.y);
         }
     } else {
         // Focal plane adjustment
-        if (buttons & (1 << kPad_DLeft)) {
-            mFocalPlane = mFocalPlane / (float)pow(2.0, deltaMs * 0.001f);
-        } else if (buttons & (1 << kPad_DRight)) {
-            mFocalPlane = mFocalPlane * (float)pow(2.0, deltaMs * 0.001f);
+        if (padData->IsButtonInMask(kPad_DLeft)) {
+            mFocalPlane /= powf(2.0f, deltaMs * 0.001f);
+        } else if (padData->IsButtonInMask(kPad_DRight)) {
+            mFocalPlane *= powf(2.0f, deltaMs * 0.001f);
         }
     }
 
@@ -148,10 +142,9 @@ void FreeCamera::Poll() {
     cam->SetFrustum(cam->NearPlane(), cam->FarPlane(), mFov, 1.0f);
 
     // If camera has a parent transform, convert to local space
-    RndTransformable *camParent = cam->TransParent();
-    if (camParent) {
+    if (cam->TransParent()) {
         Transform invParent;
-        Invert(camParent->WorldXfm(), invParent);
+        Invert(cam->TransParent()->WorldXfm(), invParent);
         Multiply(resultXfm, invParent, resultXfm);
     }
 
