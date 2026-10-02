@@ -128,7 +128,7 @@ void DxMultiMesh::DrawBatchedNewGfx() {
             TheDxRnd.Device(), 1, mIndexBuffers[(unsigned int)mBufferCycleIndex % 3], 0, 4, 1
         );
         D3DDevice_SetVertexDeclaration(TheDxRnd.Device(), sMutableVertexDecl);
-        numFaces = owner->GetGeomOwner()->Faces().size();
+        numFaces = owner->Faces().size();
     } else {
         D3DDevice_SetStreamSource(TheDxRnd.Device(), 0, owner->unk1a4.buffer, 0, 0x24, 1);
         D3DDevice_SetStreamSource(
