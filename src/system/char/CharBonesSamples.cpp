@@ -606,15 +606,15 @@ void CharBonesSamples::Save(BinStream &bs) {
     bs << mFrames;
 
     auto isCached = bs.Cached();
-    int delta = 0;
     bool cached = isCached && (bs.GetPlatform() == kPlatformPS3 || bs.GetPlatform() == kPlatformXBox);
+    int delta = 0;
     if (cached) {
         int dataSize = mOffsets[TYPE_END] - mOffsets[TYPE_POS];
         delta = ((dataSize + 0xF) & ~0xF) - dataSize;
         MILO_ASSERT(delta >= 0 && delta < 16, 0x24c);
     }
 
-    for (unsigned int i = 0; i < (unsigned int)mNumSamples; i++) {
+    for (int i = 0; i < mNumSamples; i++) {
         mStart = mRawData + mTotalSize * i;
 
         if (mCompression >= kCompressVects) {
@@ -636,11 +636,7 @@ void CharBonesSamples::Save(BinStream &bs) {
         if (mCompression >= kCompressQuats) {
             char *rotXOffset = mStart + mOffsets[TYPE_ROTX];
             for (char *p = mStart + mOffsets[TYPE_QUAT]; p < rotXOffset; p += 4) {
-                char b;
-                b = p[0]; bs.Write(&b, 1);
-                b = p[1]; bs.Write(&b, 1);
-                b = p[2]; bs.Write(&b, 1);
-                b = p[3]; bs.Write(&b, 1);
+                bs << p[0] << p[1] << p[2] << p[3];
             }
         } else if (mCompression != kCompressNone) {
             short *rotXOffset = (short *)(mStart + mOffsets[TYPE_ROTX]);
@@ -655,20 +651,24 @@ void CharBonesSamples::Save(BinStream &bs) {
         }
 
         if (mCompression != kCompressNone) {
-            short *endOffset = (short *)(mStart + mOffsets[TYPE_END]);
-            for (short *p = (short *)(mStart + mOffsets[TYPE_ROTX]); p < endOffset; p++) {
+            // retail re-reads the end offset after every write
+            for (short *p = (short *)(mStart + mOffsets[TYPE_ROTX]);
+                 p < (short *)(mStart + mOffsets[TYPE_END]);
+                 p++) {
                 bs << *p;
             }
         } else {
-            float *endOffset = (float *)(mStart + mOffsets[TYPE_END]);
-            for (float *p = (float *)(mStart + mOffsets[TYPE_ROTX]); p < endOffset; p++) {
+            for (float *p = (float *)(mStart + mOffsets[TYPE_ROTX]);
+                 p < (float *)(mStart + mOffsets[TYPE_END]);
+                 p++) {
                 bs << *p;
             }
         }
 
         if (cached) {
-            long long pad = 0;
-            bs.Write(&pad, delta);
+            // retail zeroes a 16-byte pad (delta < 16) with two doubleword stores
+            long long pad[2] = {};
+            bs.Write(pad, delta);
         }
 
         if (bs.GetPlatform() == kPlatformWii && (i & 0x7F) == 0x7F) {
