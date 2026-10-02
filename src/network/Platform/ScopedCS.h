@@ -6,6 +6,12 @@
 namespace Quazal {
     class ScopedCS : public RootObject {
     public:
+        ScopedCS(CriticalSection *cs) : m_bInScope(true), critSec(cs) {
+            CriticalSection *c = critSec;
+            if (!MutexPrimitive::s_bNoOp)
+                c->EnterImpl();
+        }
+
         ScopedCS(CriticalSection &cs) : m_bInScope(true), critSec(&cs) {
             if (!MutexPrimitive::s_bNoOp)
                 cs.EnterImpl();

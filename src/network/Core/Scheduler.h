@@ -43,6 +43,8 @@ namespace Quazal {
                 return inst->m_pScheduler;
         }
 
+        static CriticalSection *GetSystemLock() { return &GetInstance()->unk38; }
+
         int unk4; // 0x4
         bool unk8; // 0x8
         SchedulerWorkerThread *m_pWorkerThreads; // 0xc

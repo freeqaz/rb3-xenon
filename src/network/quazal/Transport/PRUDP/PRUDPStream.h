@@ -5,6 +5,7 @@
 #include "Platform/Result.h"
 #include "Platform/WaterMark.h"
 #include "Platform/qStd.h"
+#include "Platform/Time.h"
 
 namespace Quazal {
 
@@ -46,19 +47,6 @@ namespace Quazal {
         void SetStreamID(unsigned char);
 
         char m_data[0x58];
-    };
-
-    class Time {
-    public:
-        Time() : m_ui64Value(0) {}
-        Time(long long t) : m_ui64Value(t) {}
-        Time &operator=(const Time &);
-        Time &operator=(unsigned int);
-        bool operator==(const Time &t) const { return m_ui64Value == t.m_ui64Value; }
-        long long operator-(const Time &) const;
-        static Time GetTime();
-
-        unsigned long long m_ui64Value;
     };
 
     class EndPointUniqueID {
@@ -245,7 +233,6 @@ namespace Quazal {
 
         PacketQueue m_oPacketQueue; // 0x14
         EndPointTable m_oEndPoints; // 0x74
-        int m_unk8c; // 0x8c
         qList<PRUDPEndPoint *> m_lstReleasedEndPoints; // 0x90
         Time m_tLastTimeoutCheck; // 0x98
         bool m_bTerminating; // 0xa0
