@@ -56,6 +56,10 @@ namespace Quazal {
         DOHandle() : m_uiValue(0) {}
         DOHandle(const DOHandle &o) : m_uiValue(o.m_uiValue) {}
         ~DOHandle() {}
+        DOHandle &operator=(const DOHandle &o) {
+            m_uiValue = o.m_uiValue;
+            return *this;
+        }
         bool operator==(const DOHandle &o) const { return m_uiValue == o.m_uiValue; }
 
         unsigned int m_uiValue;
@@ -178,7 +182,8 @@ namespace Quazal {
         typedef void (T1::*JobFunc)(T2);
 
         MethodCallJob(const String &strName, T1 *pTarget, JobFunc pMethod, T2 arg)
-            : T3(DebugString()), m_pTargetObject(pTarget) {
+            : T3(DebugString()) {
+            m_pTargetObject = pTarget;
             m_pMethod = pMethod;
             m_arg = arg;
         }
