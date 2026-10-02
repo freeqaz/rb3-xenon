@@ -100,6 +100,8 @@ namespace Quazal {
     template <class T>
     class qList : public std::list<T, MemAllocator<T> >, public RootObject {
     public:
+        qList() {}
+        ~qList() {}
     };
 
     class MutexPrimitive : public RootObject {
@@ -272,9 +274,11 @@ namespace Quazal {
         void Trace(unsigned int);
         _State GetState() const { return m_eState; }
 
-        unsigned int m_unk4[2];
+        // The vfptr is padded to 8 because of the Time member.
+        unsigned int m_unk8; // 0x8
         _State m_eState; // 0xc
-        char m_unk10[0x50 - 0x10];
+        char m_unk10[0x48 - 0x10];
+        Time m_tTimeout; // 0x48
     };
 
     class ProtocolCallContext : public CallContext {
@@ -334,12 +338,16 @@ namespace Quazal {
 
     class StreamSettings : public RootObject {
     public:
+        ConnectionManager *GetConnectionManager() const { return m_pConnectionManager; }
+
         char m_unk0[0x10];
         ConnectionManager *m_pConnectionManager; // 0x10
     };
 
     class Credentials : public RootObject {
     public:
+        StreamSettings *GetSettings() const { return m_pSettings; }
+
         char m_unk0[0x8];
         unsigned int m_uiPID; // 0x8
         char m_unkc[0x18 - 0xc];
@@ -368,6 +376,8 @@ namespace Quazal {
 
         void SetConnectionID(unsigned int);
         void SetPrincipalID(unsigned int);
+        unsigned int GetConnectionID() const { return m_uiConnectionID; }
+        SecureStream *GetStream() const { return m_pStream; }
 
         void *m_vtbl; // 0x0
         SecureStream *m_pStream; // 0x4
@@ -460,6 +470,7 @@ namespace Quazal {
         virtual void Execute();
         virtual void Trace(unsigned int);
 
+        int GetStep() const { return m_eStep; }
         void ExecuteStep();
         void ParseURL();
         static void RequestCompletionCallback(CallContext *, const UserContext *);
@@ -530,19 +541,7 @@ namespace Quazal {
         }
     }
 
-    void JobConnectSecureEndPoint::Execute() {
-        Trace(0x4000);
-        do {
-            ExecuteStep();
-            Trace(0x4000);
-        } while (GetState() == Running);
-        GetState();
-        if (GetState() == Complete && m_pfCallback != 0) {
-            m_pfCallback(m_pEndPoint, m_rResult, &m_oContext);
-        }
-    }
-
-    void JobConnectSecureEndPoint::ExecuteStep() {
+    inline void JobConnectSecureEndPoint::ExecuteStep() {
         switch (m_eStep) {
         case 0:
             ParseURL();
@@ -560,6 +559,19 @@ namespace Quazal {
         case 4:
             CompleteConnection();
             break;
+        }
+    }
+
+    void JobConnectSecureEndPoint::Execute() {
+        Trace(0x4000);
+        do {
+            ExecuteStep();
+            Trace(0x4000);
+        } while (GetState() == Running);
+        if (GetState() == Complete) {
+        }
+        if (GetState() == Complete && m_pfCallback != 0) {
+            m_pfCallback(m_pEndPoint, m_rResult, &m_oContext);
         }
     }
 
@@ -658,7 +670,42 @@ namespace Quazal {
         return true;
     }
 
-    void JobConnectSecureEndPoint::PrepareConnectionRequest() {
+    void JobConnectSecureEndPoint::PerformConnect() {
+        if (m_lstConnectionData.empty()) {
+            m_rResult = qResult(0x80050003);
+            m_eStep = 5;
+            SetToComplete();
+            return;
+        }
+        SecureStream *pStream = m_pEndPoint->GetStream();
+        Credentials *pCred = pStream->GetCredentials();
+        StreamSettings *pConnectionSettings = pCred->GetSettings();
+        ConnectionManager *pConnectionManager = pConnectionSettings->GetConnectionManager();
+        PrepareConnectionRequest();
+        if (m_pResponse != 0) {
+            delete m_pResponse;
+        }
+#line 311
+        m_pResponse = new (__FILE__, __LINE__) BitStream;
+        qList<StationURL> lstStationURLs;
+        GetConnectionURLs(lstStationURLs);
+        m_oConnectContext.RegisterCompletionCallback(
+            ConnectCompletionCallback, UserContext(this), false
+        );
+        if (!pConnectionManager->ConnectImpl(
+                &m_oConnectContext, m_pRequest->GetBuffer(), m_pResponse->GetBuffer(), lstStationURLs,
+                &m_pConnectedEndPoint, Time::ToMilliseconds(m_tTimeout)
+            )) {
+            m_rResult = qResult(0x8001000D);
+            m_eStep = 4;
+            SetToRunning();
+        } else {
+            m_eStep = 4;
+            SetToSuspended();
+        }
+    }
+
+    inline void JobConnectSecureEndPoint::PrepareConnectionRequest() {
         SecureStream *pStream = m_pEndPoint->m_pStream;
         if (m_pRequest != 0) {
             delete m_pRequest;
@@ -670,48 +717,13 @@ namespace Quazal {
         );
     }
 
-    void JobConnectSecureEndPoint::GetConnectionURLs(qList<StationURL> &lstURLs) {
+    inline void JobConnectSecureEndPoint::GetConnectionURLs(qList<StationURL> &lstURLs) {
         qList<ConnectionData>::iterator it = m_lstConnectionData.begin();
         while (it != m_lstConnectionData.end()) {
             StationURL url((*it).m_urlRegularProtocols);
             url.SetConnectionID((*it).m_uiConnectionID);
             lstURLs.push_back(url);
             it++;
-        }
-    }
-
-    void JobConnectSecureEndPoint::PerformConnect() {
-        if (m_lstConnectionData.empty()) {
-            m_rResult = qResult(0x80050003);
-            m_eStep = 5;
-            SetToComplete();
-            return;
-        }
-        SecureStream *pStream = m_pEndPoint->m_pStream;
-        Credentials *pCredentials = pStream->GetCredentials();
-        StreamSettings *pSettings = pCredentials->m_pSettings;
-        ConnectionManager *pManager = pSettings->m_pConnectionManager;
-        PrepareConnectionRequest();
-        if (m_pResponse != 0) {
-            delete m_pResponse;
-        }
-#line 311
-        m_pResponse = new (__FILE__, __LINE__) BitStream;
-        qList<StationURL> lstURLs;
-        GetConnectionURLs(lstURLs);
-        m_oConnectContext.RegisterCompletionCallback(
-            ConnectCompletionCallback, UserContext(this), false
-        );
-        if (!pManager->ConnectImpl(
-                &m_oConnectContext, m_pRequest->GetBuffer(), m_pResponse->GetBuffer(), lstURLs,
-                &m_pConnectedEndPoint, Time::ToMilliseconds(m_tTimeout)
-            )) {
-            m_rResult = qResult(0x8001000D);
-            m_eStep = 4;
-            SetToRunning();
-        } else {
-            m_eStep = 4;
-            SetToSuspended();
         }
     }
 
@@ -728,7 +740,7 @@ namespace Quazal {
             m_pEndPoint->SetAssociatedEndPoint(m_pConnectedEndPoint);
             m_pConnectedEndPoint->SetPrincipalID(m_uiPID);
             m_pEndPoint->SetPrincipalID(m_uiPID);
-            m_pEndPoint->SetConnectionID(m_pConnectedEndPoint->m_uiConnectionID);
+            m_pEndPoint->SetConnectionID(m_pConnectedEndPoint->GetConnectionID());
         } else {
             m_rResult = qResult(0x80050001);
         }
@@ -747,11 +759,11 @@ namespace Quazal {
     }
 
     void JobConnectSecureEndPoint::Trace(unsigned int uiFlags) {
-        switch (m_eStep) {
-        case 2:
+        if (GetStep() != 2) {
+            return;
+        } else {
             m_oTicketContext.Trace(uiFlags);
             m_oDataContext.Trace(uiFlags);
-            break;
         }
     }
 
