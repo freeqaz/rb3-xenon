@@ -35283,7 +35283,7 @@
  "0x82a94870": "?CreateGetParticipantsResponse@ObjDupProtocol@Quazal@@QAAPAVMessage@2@XZ",
  "0x82a95d28": "??1JobExecuteDelayedRMC@@UAA@XZ",
  "0x82a96e38": "?ListenOnWellKnown@ObjDupProtocol@Quazal@@QAA_NXZ",
- "0x82a94c28": "?ProcessJoinRequest@ObjDupProtocol@Quazal@@QAAXPAVEndPoint@2@PAVStationInfo@2@PAVJoinRequestData@2@@Z",
+ "0x82a94c28": "?ProcessJoinRequest@ObjDupProtocol@Quazal@@QAAXPAVEndPoint@2@PAVStationInfo@2@PAV_DS_StationIdentification@2@@Z",
  "0x82a95550": "?ParseActionMessage@ObjDupProtocol@Quazal@@QAA_NPAVMessage@2@_N1PAVString@2@@Z",
  "0x82a97648": "?ParseMessage@ObjDupProtocol@Quazal@@QAA_NPAVMessage@2@_NPAVString@2@@Z",
  "0x82a754b0": "?RemoveAllDuplicasOnLeavingStation@DuplicatedObject@Quazal@@SAXVDOHandle@2@@Z",

@@ -136,6 +136,7 @@ namespace Quazal {
     class DataSet : public RootObject {
     public:
         DataSet();
+        ~DataSet();
         bool Refresh(const Time &);
     };
 
@@ -160,8 +161,6 @@ namespace Quazal {
         virtual bool CallsBackOnDataSet() = 0;
         virtual bool CallsBackOnDataSet(unsigned char) = 0;
     };
-
-    class Variable;
 
     class _DS_ConnectionInfo : public DataSet {
     public:
@@ -220,6 +219,9 @@ namespace Quazal {
         unsigned int m_uiProductVersion; // 0xc
     };
 
+    // StationIdentification has no user class of its own: the DO holds the DDL
+    // dataset itself (its constructor is called, not expanded, in _DO_Station's),
+    // and the name only parameterizes its update protocol.
     class StationIdentification : public _DS_StationIdentification {};
 
     class _DS_StationInfo : public DataSet {
@@ -280,6 +282,8 @@ namespace Quazal {
     template <class T>
     class BasicUpdateProtocol : public UpdateProtocol {
     public:
+        // Retail tests a constant through an inline call (li 1; clrlwi; cmpwi)
+        // rather than returning 1 directly.
         static bool UsesReliableUpdates() { return true; }
         virtual unsigned int GetCommunicationFlags(DuplicatedObject *, void *, unsigned char) {
             if (UsesReliableUpdates())
@@ -825,6 +829,8 @@ namespace Quazal {
         return pContext->PerformCallAndWait();
     }
 
+    // The SignalAsFaulty RMC stub. Retail stores the operation's address to a
+    // local it never reads again.
     void _DO_Station::DispatchSignalAsFaulty(const CallMethodOperation &oOperation) {
         unsigned int uiStationID;
         const CallMethodOperation *pCallOperation = &oOperation;

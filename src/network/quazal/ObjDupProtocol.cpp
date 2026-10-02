@@ -284,7 +284,7 @@ namespace Quazal {
 
     class JobProcessJoinRequest : public Job {
     public:
-        JobProcessJoinRequest(EndPoint *, class StationInfo *, class JoinRequestData *);
+        JobProcessJoinRequest(EndPoint *, class StationInfo *, class _DS_StationIdentification *);
         virtual void Execute();
 
         char m_pad38[0x58];
@@ -510,14 +510,17 @@ namespace Quazal {
         char m_pad[0x1C];
     };
 
-    class JoinRequestData : public Data {
+    // The joining station's identification: the StationIdentification dataset,
+    // whose constructor and extractor StationDDL.cpp defines.
+    class _DS_StationIdentification : public Data {
     public:
-        JoinRequestData();
-        void Read(Message *);
+        _DS_StationIdentification();
+        void ExtractFrom(Message *);
 
-        String m_strA;
-        String m_strB;
-        char m_pad8[8];
+        String m_strIdentificationToken; // 0x0
+        String m_strProcessName; // 0x4
+        unsigned int m_uiProcessType; // 0x8
+        unsigned int m_uiProductVersion; // 0xc
     };
 
     class MessageSigner {
@@ -783,7 +786,7 @@ namespace Quazal {
         void ProcessGetParticipantsResponse(Message *);
         Message *CreateJoinRequest();
         bool ParseJoinRequestMessage(Message *, bool, bool, String *);
-        void ProcessJoinRequest(EndPoint *, StationInfo *, JoinRequestData *);
+        void ProcessJoinRequest(EndPoint *, StationInfo *, _DS_StationIdentification *);
         Message *CreateJoinResponse(unsigned char);
         bool ParseJoinResponseMessage(Message *, bool, bool, String *);
         void ProcessJoinResponse(Message *, unsigned char &);
@@ -1159,8 +1162,8 @@ namespace Quazal {
         String strTrace;
         StationInfo *pInfo = new (__FILE__, 0x1AA) StationInfo(GetStationInfoFactory(1));
         pInfo->Read(pMsg, bTrace, &strTrace);
-        JoinRequestData *pData = new (__FILE__, 0x1AD) JoinRequestData();
-        pData->Read(pMsg);
+        _DS_StationIdentification *pData = new (__FILE__, 0x1AD) _DS_StationIdentification();
+        pData->ExtractFrom(pMsg);
         if (bTrace) {
             pTrace->Format("JOIN_REQUEST message. %s", strTrace.CStr());
         }
@@ -1174,7 +1177,7 @@ namespace Quazal {
     }
 
     void ObjDupProtocol::ProcessJoinRequest(
-        EndPoint *pEndPoint, StationInfo *pInfo, JoinRequestData *pData
+        EndPoint *pEndPoint, StationInfo *pInfo, _DS_StationIdentification *pData
     ) {
         JobProcessJoinRequest *pJob =
             new (__FILE__, 0x1BD) JobProcessJoinRequest(pEndPoint, pInfo, pData);
