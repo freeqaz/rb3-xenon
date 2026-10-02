@@ -232,6 +232,9 @@ So none of those stale labels was forgiving a call site. **0 rows down.**
 - The five alias test files: **23/23 under pytest**, and each exits 0 when run as a script (now a real
   run).
 
+- `tools/native_build_gate.sh`, run last on the tip `551cfe20a` (only this doc line follows it):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
+
 No `src/` file changed. No commit carries a co-author line.
 
 ## 6. Found, deliberately not fixed
