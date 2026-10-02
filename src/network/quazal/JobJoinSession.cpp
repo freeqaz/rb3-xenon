@@ -226,8 +226,9 @@ namespace Quazal {
         DORef(DOHandle);
         ~DORef();
 
-        DOHandle m_hReferenced;
-        DuplicatedObject *m_pObject;
+        DuplicatedObject *m_poReferencedDO; // 0x0
+        DOHandle m_hReferencedDO; // 0x4
+        bool m_bLockRelevance; // 0x8
     };
 
     template <class T>
@@ -557,6 +558,7 @@ namespace Quazal {
         static StationTable *GetInstance();
         int GetStationState(DOHandle);
         void AddStation(DOHandle, EndPoint *);
+        DOHandle GetMasterHandle() const { return m_hMaster; }
 
         char m_data[0x50];
         DOHandle m_hMaster; // 0x50
@@ -948,7 +950,7 @@ namespace Quazal {
                 return;
             }
         }
-        if (StationTable::GetInstance()->GetStationState(StationTable::GetInstance()->m_hMaster) != 0) {
+        if (StationTable::GetInstance()->GetStationState(StationTable::GetInstance()->GetMasterHandle()) != 0) {
             SetToWaiting(0x32);
             SetStep(Step(
                 (JobStateFunc)&JobJoinSession::WaitForJoinTermination,
@@ -956,13 +958,14 @@ namespace Quazal {
             ));
             return;
         }
+        {
         DOClassesTable *pTable = DOClassesTable::GetInstance();
         unsigned int uiMax = pTable->GetMaxClassID();
         for (unsigned int i = 0; i <= uiMax; i++) {
             DOClass *pClass = pTable->m_ppClasses[i];
             if (pClass != 0) {
-                DOHandle hWK = pClass->GetWKHandle();
-                DORefTemplate<WKObject> refWK(hWK);
+                DOHandle hWellKnown = pClass->GetWKHandle();
+                DORefTemplate<WKObject> refWK(hWellKnown);
                 if (!refWK.IsValid()) {
                     SetToWaiting(0x32);
                     SetStep(Step(
@@ -972,6 +975,7 @@ namespace Quazal {
                     return;
                 }
             }
+        }
         }
         SetStep(Step((JobStateFunc)&JobJoinSession::JoinSuccess, "JobJoinSession::JoinSuccess"));
     }
