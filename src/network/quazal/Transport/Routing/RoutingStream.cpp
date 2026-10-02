@@ -69,10 +69,13 @@ namespace Quazal {
         unsigned int m_uiPosition; // 0x8
     };
 
+    // 0x50 bytes, 8-aligned (the bundling settings at 0x10 hold a Time).
     class StreamSettings {
     public:
         unsigned int GetMaxSilenceTime() const;
-        char m_data[0x50];
+        char m_pad00[0x10];
+        __int64 m_tBundlingDelay; // 0x10
+        char m_pad18[0x50 - 0x18];
     };
 
     class PseudoSingleton {
@@ -91,6 +94,7 @@ namespace Quazal {
                 return mValueInContextList[uiContext];
             }
         }
+        operator T &() { return GetValue(); }
 
         void *m_vtable; // 0x0
         void *mNext; // 0x4
@@ -112,7 +116,7 @@ namespace Quazal {
         virtual void DoWork() = 0;
 
         Type GetType() { return m_eType; }
-        StreamSettings *GetSettings() { return &s_oStreamSettings[m_eType].GetValue(); }
+        StreamSettings *GetSettings() { return &(StreamSettings &)s_oStreamSettings[m_eType]; }
 
         static PseudoGlobalVariable<StreamSettings> s_oStreamSettings[16];
 
@@ -178,6 +182,7 @@ namespace Quazal {
 
         char m_pad04[0x18 - 4];
         TransportPerfCounters m_oPerfCounters; // 0x18
+        TransportPerfCounters *GetPerfCounters() { return &m_oPerfCounters; }
     };
 
     class RoutingTable : public RootObject {
@@ -196,18 +201,19 @@ namespace Quazal {
     class RoutingStream : public Stream {
     public:
         RoutingStream();
-        virtual ~RoutingStream() {}
         virtual bool ReceiveIncomingPacket(unsigned short, unsigned char, Packet *);
         virtual void DoWork();
 
         static PacketOut *BuildRoutingPacket(Buffer *, unsigned char, const InetAddress &);
+        static unsigned short GetHeaderSize() { return 12; }
+        static bool IsValidRoutingPayload(Buffer *pBuffer) { return pBuffer != 0 && pBuffer->GetContentSize() > GetHeaderSize(); }
         static void ExtractRoutingHeader(Buffer *pPayload, InetAddress *pAddress, Buffer *pData) {
             ByteStream bs(pPayload);
-            unsigned int uiAddress;
+            unsigned int uiIP;
             unsigned short usPort;
-            bs.Extract((unsigned char *)&uiAddress, 4, 1);
+            bs.Extract((unsigned char *)&uiIP, 4, 1);
             bs.Extract((unsigned char *)&usPort, 2, 1);
-            pAddress->SetAddress(uiAddress);
+            pAddress->SetAddress(uiIP);
             pAddress->SetPortNumber(usPort);
             pData->Clear();
             pData->AppendData(
@@ -227,29 +233,29 @@ namespace Quazal {
     }
 
     PacketOut *RoutingStream::BuildRoutingPacket(Buffer *pBuffer, unsigned char byType, const InetAddress &oAddress) {
-        ByteStream bs;
+        ByteStream oStream;
         unsigned int uiAddress = oAddress.GetAddress();
-        bs.Append((unsigned char *)&uiAddress, 4, 1);
+        oStream.Append((unsigned char *)&uiAddress, 4, 1);
         unsigned short usPort = oAddress.GetPortNumber();
-        bs.Append((unsigned char *)&usPort, 2, 1);
-        bs << *pBuffer;
-        PacketOut *pPacket = new (__FILE__, 0x29) PacketOut(0, byType, 0, bs.GetBuffer());
-        return pPacket;
+        oStream.Append((unsigned char *)&usPort, 2, 1);
+        oStream << *pBuffer;
+        PacketOut *pOut = new (__FILE__, 0x29) PacketOut(0, byType, 0, oStream.GetBuffer());
+        return pOut;
     }
 
     bool RoutingStream::ReceiveIncomingPacket(unsigned short usPort, unsigned char, Packet *pPacket) {
         Router *pRouter = m_pTransport->GetRouter();
-        bool bResult = false;
+        bool bReturn = false;
         Buffer *pPayload = pPacket->GetPayload();
-        if (pPayload != 0 && pPayload->GetContentSize() > (unsigned short)12) {
+        if (IsValidRoutingPayload(pPayload)) {
             InetAddress oAddress;
-            Buffer oData(0x400);
-            ExtractRoutingHeader(pPayload, &oAddress, &oData);
+            Buffer oPayload(0x400);
+            ExtractRoutingHeader(pPayload, &oAddress, &oPayload);
             if (pPacket->GetType() == 2) {
                 InetAddress oSender(oAddress);
                 m_oRoutingTable.Add(oSender, pPacket->m_oAddress, false);
-                if (m_pTransport->Receive(usPort, &oData, &oSender)) {
-                    bResult = true;
+                if (m_pTransport->Receive(usPort, &oPayload, &oSender)) {
+                    bReturn = true;
                 } else {
                     m_oRoutingTable.Remove(oSender);
                 }
@@ -266,25 +272,25 @@ namespace Quazal {
                     oDestination = oAddress;
                     oSource = pPacket->m_oAddress;
                 }
-                bool bForward = true;
+                bool bAccept = true;
                 if (m_pfnRoutingCallback != 0) {
-                    bForward = m_pfnRoutingCallback(oSource, oDestination, pPacket);
+                    bAccept = m_pfnRoutingCallback(oSource, oDestination, pPacket);
                 }
-                if (bForward) {
-                    PacketOut *pOut = BuildRoutingPacket(&oData, 2, oSource);
-                    m_pTransport->m_oPerfCounters.Inc(11, (oData.GetContentSize() + 28) * 8);
+                if (bAccept) {
+                    PacketOut *pOut = BuildRoutingPacket(&oPayload, 2, oSource);
+                    m_pTransport->GetPerfCounters()->Inc(11, (oPayload.GetContentSize() + 28) * 8);
                     m_pTransport->m_oPerfCounters.Inc(10, 1);
                     pOut->m_oAddress = oDestination;
                     m_pTransport->Send(usPort, GetType(), 1, 1, pOut, false);
                     pOut->ReleaseRef();
-                    bResult = true;
+                    bReturn = true;
                 }
             }
         }
-        if (bResult) {
+        if (bReturn) {
             pPacket->ReleaseRef();
         }
-        return bResult;
+        return bReturn;
     }
 
     void RoutingStream::DoWork() {}

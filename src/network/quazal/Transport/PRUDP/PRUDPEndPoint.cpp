@@ -249,13 +249,21 @@ namespace Quazal {
 
     extern PseudoGlobalVariable<StreamSettings> s_oStreamSettings[];
 
-    class ConnectionOrientedStream {
+    // GetSettings is Stream's: its out-of-line copy is the COMDAT at
+    // 0x82B0AB88 in RoutingStream's TU, which the map names
+    // Stream::GetSettings.
+    class Stream {
     public:
         StreamSettings *GetSettings() { return &s_oStreamSettings[m_eType].GetValue(); }
-        void EndPointDisconnected(PRUDPEndPoint *);
 
         char unk0[0x4];
         unsigned int m_eType;              // 0x4
+    };
+
+    class ConnectionOrientedStream : public Stream {
+    public:
+        void EndPointDisconnected(PRUDPEndPoint *);
+
         char unk8[0xc - 0x8];
         TransportStats *m_pStats;          // 0xc
         char unk10[0x14 - 0x10];
