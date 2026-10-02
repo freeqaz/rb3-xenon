@@ -1655,9 +1655,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
             && DataVariable("batcher.batching").Int(0) != 0;
         Hmx::Object *milo = ObjectDir::Main()->FindObject("milo", false);
         if (milo && !batching) {
-            milo->Handle(
-                Message("record", DataNode(mesh), DataNode("Ambient Occlusion")), true
-            );
+            milo->Handle(Message("record", DataNode(mesh), "Ambient Occlusion"), true);
             milo->Handle(Message("update_objects", DataNode(1)), true);
         }
     }
