@@ -360,7 +360,7 @@ Two rows at 100 disappear under their old names and are at 100 under the correct
 | remove `~RootObject() {}` (E1) | +1 / +3,248 | removes a retail-evidenced destructor; 16 funclets lose their call (§3.3) |
 | `DOHandle` without `RootObject` base (E3) | 0 / 0 | no effect |
 | no explicit `~DOHandle` (E4) | 0 / 0 | no effect |
-| `GetInstanceFromVector` without `__declspec(noinline)` (E2) | −5 / +216 | +5 ObjDupProtocol rows, −4 PRUDPStream and −1 DuplicatedObject rows at 100 |
+| `GetInstanceFromVector` without `__declspec(noinline)` (E2) | −5 / +216 | 5 ObjDupProtocol rows reach 100; 3 named PRUDPStream rows (Open/CloseEndPoint), 2 PRUDPStream funclets and DuplicatedObject `DeleteDuplicaMainRef` leave it |
 
 ## 5. Native gate
 
