@@ -290,6 +290,10 @@ Symbol StoreOffer::VocalPartsSym() const {
     );
 }
 
+// Out of line in retail, `li r3,0; blr`: SongSortMgr::DoesOfferMatchFilter's
+// has-solo test calls 0x823591E8, the shared return-0 body, at this position.
+bool StoreOffer::HasSolo() const { return false; }
+
 DataNode StoreOffer::OnGetData(DataArray *d) {
     DataArray *array = d->Array(2);
     int x;
