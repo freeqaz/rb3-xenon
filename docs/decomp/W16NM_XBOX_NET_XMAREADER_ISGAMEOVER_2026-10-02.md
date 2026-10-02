@@ -180,7 +180,8 @@ by the split beyond the three carve hunks):
   (1 with the self-recursive CYCLE-ASSUMED sub-slot noted in §6); `--chasetest`: "selftest PASSED -- the
   instrument can both pass and fail".
 - `python3 scripts/verify_objs_patched.py --verify-manifest`: OK (1,261 decomp, 3,090 target objects).
-- `tools/native_build_gate.sh`: NATIVE_PLACEHOLDER
+- `tools/native_build_gate.sh` (run last on the final code; only this doc line follows it):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`.
 
 ## 10. Traps met
 
