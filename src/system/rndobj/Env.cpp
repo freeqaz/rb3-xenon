@@ -134,9 +134,7 @@ BEGIN_LOADS(RndEnviron)
         bs >> mLightsReal;
         bs >> mLightsApprox;
     }
-    bs >> mAmbientColor;
-    bs >> mFogStart;
-    bs >> mFogEnd;
+    bs >> mAmbientColor >> mFogStart >> mFogEnd;
     if (rev < 1) {
         int dummy;
         bs >> dummy;
@@ -152,9 +150,7 @@ BEGIN_LOADS(RndEnviron)
     if (rev > 3)
         bs >> mAnimateFromPreset;
     if (rev > 4) {
-        bs >> mFadeOut;
-        bs >> mFadeStart;
-        bs >> mFadeEnd;
+        bs >> mFadeOut >> mFadeStart >> mFadeEnd;
         if (rev > 5)
             bs >> mFadeMax;
     }
