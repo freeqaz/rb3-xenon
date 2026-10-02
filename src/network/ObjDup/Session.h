@@ -23,5 +23,9 @@ namespace Quazal {
         unsigned char GetSessionState();
         static WKHandle s_wkhSession;
         static bool IsActive();
+        static unsigned int GetClassID() { return s_uiDOClassID; }
+
+        static unsigned int s_uiDOClassID;
+        static DOHandle s_hSession;
     };
 }

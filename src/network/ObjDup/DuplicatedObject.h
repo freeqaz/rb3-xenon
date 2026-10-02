@@ -4,6 +4,7 @@
 #include "DOHandle.h"
 #include "ObjDup/MasterStationRef.h"
 #include "ObjDup/DOOperation.h"
+#include "ObjDup/DORefTemplate.h"
 #include "Platform/CriticalSection.h"
 #include "Platform/ScopedCS.h"
 #include "Selection.h"
@@ -154,6 +155,10 @@ namespace Quazal {
             }
         }
 
+        // The root DO class id (retail's DuplicatedObject check at 0x82A76568
+        // passes 1).
+        static unsigned int GetClassID() { return 1; }
+
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
         bool IsDeleted() const { return !FlagIsSet(1); }
 
@@ -205,4 +210,19 @@ namespace Quazal {
         Selection m_setCachedDuplicationSet; // 0x4c
     };
 
+
+    template <class T>
+    bool DORefTemplate<T>::IsValid() const {
+        if (GetDOPtr() == 0) {
+            SystemError::SignalError(0, 0, 0xA0030004, 0);
+            return false;
+        } else {
+            if (!DuplicatedObject::GetDOClass(GetDOPtr()->m_dohMyself.GetDOClassID())
+                     ->IsAKindOf(T::GetClassID())) {
+                SystemError::SignalError(0, 0, 0xE003000C, 0);
+                return false;
+            }
+            return true;
+        }
+    }
 }

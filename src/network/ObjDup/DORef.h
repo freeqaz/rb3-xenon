@@ -13,6 +13,8 @@ namespace Quazal {
         DORef(DuplicatedObject *);
         ~DORef();
 
+        DuplicatedObject *GetDOPtr() const { return m_poReferencedDO; }
+        DORef &operator=(const DOHandle &);
         void SetSoft();
         void Release();
         void Acquire();

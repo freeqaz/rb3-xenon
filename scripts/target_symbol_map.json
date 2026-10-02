@@ -35028,5 +35028,8 @@
  "0x82a75620": "?IsASettledMaster@DuplicatedObject@Quazal@@QBA_NXZ",
  "0x82a72a90": "?FaultRecoveryImpl@DuplicatedObject@Quazal@@QAA_NPAVDOOperation@2@@Z",
  "0x82a72718": "?ExecChangeDupSet@DuplicatedObject@Quazal@@QAAXABVChangeDupSetOperation@2@@Z",
- "0x82a72080": "?ExecChangeMasterStation@DuplicatedObject@Quazal@@QAAXABVChangeMasterStationOperation@2@@Z"
+ "0x82a72080": "?ExecChangeMasterStation@DuplicatedObject@Quazal@@QAAXABVChangeMasterStationOperation@2@@Z",
+ "0x82a73478": "?PrepareToLeave@DuplicatedObject@Quazal@@QAAXXZ",
+ "0x82a735f8": "?SelectNewLocation@DuplicatedObject@Quazal@@QAA?AVDOHandle@2@I@Z",
+ "0x82a73f30": "?ConnectOrphanDuplica@DuplicatedObject@Quazal@@QAA_NXZ"
 }

@@ -2,6 +2,7 @@
 #include "ObjDup/DOHandle.h"
 #include "ObjDup/Selection.h"
 #include "Platform/RootObject.h"
+#include "Platform/SystemError.h"
 
 namespace Quazal {
     // Retail copies the cursor handle out of line (an /O1 COMDAT), so its copy
@@ -27,9 +28,11 @@ namespace Quazal {
     class SelectionIterator : public RootObject {
     public:
         SelectionIterator(Selection *, bool);
+        SelectionIterator(bool, bool);
         ~SelectionIterator();
         void Next(bool);
         void GotoStart();
+        void InitFilter();
         bool EndReached() const { return m_oPosition.EndReached(); }
         DOHandle operator*() const { return DOHandle(m_oPosition.m_oCursor.m_uiValue); }
 
@@ -40,10 +43,13 @@ namespace Quazal {
         unsigned int unk20; // 0x20
     };
 
+    // The template's members are out of line in retail (instantiated at the
+    // end of the TU, 0x82A76800 / 0x82A76860).
     template <class T>
     class SelectionIteratorTemplate : public SelectionIterator {
     public:
         SelectionIteratorTemplate();
+        SelectionIteratorTemplate(int iMode);
         T *operator->();
     };
 }
