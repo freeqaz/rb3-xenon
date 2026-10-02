@@ -12176,7 +12176,7 @@ BandHighlight.cpp:
 	.text       start:0x823426F8 end:0x823438C8
 
 StringConversion.cpp:
-	.text       start:0x82AE5FA8 end:0x82AE5FE8
+	.text       start:0x82AE5FA8 end:0x82AE60C0
 
 Scheduler.cpp:
 	.pdata      start:0x82254110 end:0x822541B8

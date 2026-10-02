@@ -2220,7 +2220,12 @@
                     "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },
-            "network/Platform/StringConversion.cpp": "NonMatching",
+            "network/Platform/StringConversion.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od"
+                ]
+            },
             "network/Platform/MemoryManager.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
