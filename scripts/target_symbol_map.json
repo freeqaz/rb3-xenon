@@ -35378,5 +35378,13 @@
  "0x82a70460": "?SpecificUpdate@DuplicatedObject@Quazal@@QAA_NPAVDataSet@2@VTime@2@@Z",
  "0x82a72718": "?ExecChangeDupSet@DuplicatedObject@Quazal@@QAAXABVChangeDupSetOperation@2@@Z",
  "0x82a70528": "?CallApproveEmigration@DuplicatedObject@Quazal@@QAA_NI@Z",
- "0x82a71c48": "?ReleaseReference@DuplicatedObject@Quazal@@QAAX_N@Z"
+ "0x82a71c48": "?ReleaseReference@DuplicatedObject@Quazal@@QAAX_N@Z",
+ "0x82abdc98": "??0ChangeDupSetOperation@Quazal@@QAA@VDOHandle@1@PAVDuplicatedObject@1@0_NW4Context@01@@Z",
+ "0x82abdd80": "?GetType@ChangeDupSetOperation@Quazal@@UBAHXZ",
+ "0x82abdd90": "?GetClassNameString@ChangeDupSetOperation@Quazal@@UBAPBDXZ",
+ "0x82abdda0": "??_GChangeDupSetOperation@Quazal@@UAAPAXI@Z",
+ "0x82abdde8": "??1ChangeDupSetOperation@Quazal@@UAA@XZ",
+ "0x82abde30": "?AttachMigrationContext@ChangeDupSetOperation@Quazal@@QAAXG@Z",
+ "0x82abde48": "?GetImplicitStationConnection@ChangeDupSetOperation@Quazal@@UBA?AVDOHandle@2@XZ",
+ "0x82abde90": "?Clone@ChangeDupSetOperation@Quazal@@UBAPAVDOOperation@2@XZ"
 }

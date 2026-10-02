@@ -2265,8 +2265,24 @@
             "network/quazal/JobConnectStation.cpp": "NonMatching",
             "network/quazal/StationManager.cpp": "NonMatching",
             "network/quazal/CallRegister.cpp": "NonMatching",
-            "network/quazal/ChangeDupSetOperation.cpp": "NonMatching",
-            "network/quazal/DOCore.cpp": "NonMatching",
+            "network/quazal/ChangeDupSetOperation.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1"
+                ]
+            },
+            "network/quazal/DOCore.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1"
+                ]
+            },
             "network/quazal/SessionDiscovery/Interface/SessionDiscoveryTable.cpp": "NonMatching",
             "network/quazal/PromotionRefereeDDL.cpp": "NonMatching",
             "network/quazal/JobJoinSession.cpp": "NonMatching",
