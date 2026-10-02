@@ -31,7 +31,6 @@ public:
         kReportingPurchase = 6
     };
     TokenRedemptionPanel();
-    virtual ~TokenRedemptionPanel() {}
     virtual void Text(int, int, UIListLabel *, UILabel *) const;
     virtual int NumData() const;
     OBJ_CLASSNAME(TokenRedemptionPanel);

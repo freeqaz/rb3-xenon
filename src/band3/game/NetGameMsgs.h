@@ -103,7 +103,6 @@ class SetUserTrackTypeMsg : public NetMessage {
 public:
     SetUserTrackTypeMsg() {}
     SetUserTrackTypeMsg(User *, String);
-    virtual ~SetUserTrackTypeMsg() {}
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     virtual void Dispatch();
@@ -120,7 +119,6 @@ class SetUserDifficultyMsg : public NetMessage {
 public:
     SetUserDifficultyMsg() {}
     SetUserDifficultyMsg(User *, String);
-    virtual ~SetUserDifficultyMsg() {}
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     virtual void Dispatch();
@@ -203,7 +201,6 @@ class AccomplishmentEarnedMsg : public NetMessage {
 public:
     AccomplishmentEarnedMsg() {}
     AccomplishmentEarnedMsg(Symbol, const char *, Symbol);
-    virtual ~AccomplishmentEarnedMsg() {}
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     virtual void Dispatch();

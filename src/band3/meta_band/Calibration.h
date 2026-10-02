@@ -107,7 +107,6 @@ public:
 class CalibrationModesProvider : public UIListProvider, public Hmx::Object {
 public:
     CalibrationModesProvider();
-    virtual ~CalibrationModesProvider() {}
     virtual void Text(int, int, UIListLabel *, UILabel *) const;
     virtual RndMat *Mat(int, int, UIListMesh *) const;
     virtual int DataIndex(Symbol s) const;
@@ -132,7 +131,6 @@ public:
     OBJ_CLASSNAME(CalibrationWelcomePanel);
     OBJ_SET_TYPE(CalibrationWelcomePanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~CalibrationWelcomePanel() {}
     virtual void Enter();
     virtual void Exit();
 

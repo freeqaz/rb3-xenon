@@ -42,7 +42,6 @@ namespace {
     public:
         MainHubAdvanceMsg() {}
         MainHubAdvanceMsg(NetUIState state, const char *name) : unk4(state), unk8(name) {}
-        virtual ~MainHubAdvanceMsg() {}
         virtual void Save(BinStream &bs) const {
             bs << (unsigned char)unk4;
             bs << unk8;

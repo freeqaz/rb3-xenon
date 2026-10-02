@@ -69,7 +69,7 @@ Asset::~Asset() {}
 
 Symbol Asset::GetDescription() const { return MakeString("%s_desc", mName); }
 
-bool Asset::HasFinishes() { return mFinishes.size() != 0; }
+bool Asset::HasFinishes() { return !mFinishes.empty(); }
 
 void Asset::GetFinishes(std::vector<Symbol> &v) const {
     for (int i = 0; i < mFinishes.size(); i++) {
