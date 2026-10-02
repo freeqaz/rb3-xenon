@@ -887,7 +887,10 @@ namespace Quazal {
     }
 
     void JobConnectEndPoint::Trace(unsigned int) {
-        for (qList<StationURL>::iterator it = m_lstURLs.begin(); it != m_lstURLs.end(); ++it) {
+        // The per-URL trace is compiled out of this build; the walk remains.
+        qList<StationURL>::const_iterator it = m_lstURLs.begin();
+        while (it != m_lstURLs.end()) {
+            ++it;
         }
     }
 
