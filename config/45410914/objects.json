@@ -2427,7 +2427,16 @@
                     "/Ob1"
                 ]
             },
-            "network/quazal/SecureTransport/JobConnectSecureEndPoint.cpp": "NonMatching",
+            "network/quazal/SecureTransport/JobConnectSecureEndPoint.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/DupSpace/DefaultCellDDL.cpp": "NonMatching",
             "network/quazal/DupSpace/DuplicationSpaceTable.cpp": "NonMatching",
             "network/quazal/DupSpace/MatchOperation.cpp": {

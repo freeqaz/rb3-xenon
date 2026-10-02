@@ -35528,5 +35528,22 @@
  "0x82abc938": "?insert_unique@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGPAVDOCallContext@Quazal@@@2@U?$_Select1st@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@priv@2@V?$MemAllocator@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@Quazal@@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBGPAVDOCallContext@Quazal@@@2@@Z",
  "0x82abcfd0": "?_M_insert@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGPAVDOCallContext@Quazal@@@2@U?$_Select1st@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@priv@2@V?$MemAllocator@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@Quazal@@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBGPAVDOCallContext@Quazal@@@2@00@Z",
  "0x82abd160": "?insert_unique@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGPAVDOCallContext@Quazal@@@2@U?$_Select1st@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@priv@2@V?$MemAllocator@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@Quazal@@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBGPAVDOCallContext@Quazal@@@2@@Z",
- "0x82abd3c0": "?_M_create_node@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGPAVDOCallContext@Quazal@@@2@U?$_Select1st@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@priv@2@V?$MemAllocator@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@Quazal@@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBGPAVDOCallContext@Quazal@@@2@@Z"
+ "0x82abd3c0": "?_M_create_node@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGPAVDOCallContext@Quazal@@@2@U?$_Select1st@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@priv@2@V?$MemAllocator@U?$pair@$$CBGPAVDOCallContext@Quazal@@@stlpmtx_std@@@Quazal@@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBGPAVDOCallContext@Quazal@@@2@@Z",
+ "0x82b421c8": "??0JobConnectSecureEndPoint@Quazal@@QAA@PAVSecureEndPoint@1@PBVStationURL@1@PAVBuffer@1@2P6AXPAVEndPoint@1@VqResult@1@PBVUserContext@1@@ZABV71@I@Z",
+ "0x82b423a0": "??_GJobConnectSecureEndPoint@Quazal@@UAAPAXI@Z",
+ "0x82b423e8": "??1JobConnectSecureEndPoint@Quazal@@UAA@XZ",
+ "0x82b42640": "?Execute@JobConnectSecureEndPoint@Quazal@@UAAXXZ",
+ "0x82b42720": "?ExecuteStep@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b427c0": "?ParseURL@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b429c0": "?RequestCompletionCallback@JobConnectSecureEndPoint@Quazal@@SAXPAVCallContext@2@PBVUserContext@2@@Z",
+ "0x82b42ac0": "?CheckConnectionData@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b42b10": "?RequestConnectionData@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b42db8": "?IsConnectionDataAvailable@JobConnectSecureEndPoint@Quazal@@QAA_NXZ",
+ "0x82b42e30": "?PrepareConnectionRequest@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b42f38": "?GetConnectionURLs@JobConnectSecureEndPoint@Quazal@@QAAXAAV?$qList@VStationURL@Quazal@@@2@@Z",
+ "0x82b43020": "?PerformConnect@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b43298": "?ConnectCompletionCallback@JobConnectSecureEndPoint@Quazal@@SAXPAVCallContext@2@PBVUserContext@2@@Z",
+ "0x82b432d8": "?ProcessConnectionResult@JobConnectSecureEndPoint@Quazal@@QAAXPAVCallContext@2@@Z",
+ "0x82b43450": "?CompleteConnection@JobConnectSecureEndPoint@Quazal@@QAAXXZ",
+ "0x82b43500": "?Trace@JobConnectSecureEndPoint@Quazal@@UAAXI@Z"
 }
