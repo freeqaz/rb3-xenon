@@ -96,10 +96,14 @@ void NgDOFProc::Init() {
     }
 }
 
+// Empty in retail: NgRnd::Terminate calls a shared empty body (blr) at this
+// position. TheDOFProc is released by DOFProc::Terminate from Rnd::Terminate.
 void NgDOFProc::Terminate() {
+#ifdef HX_NATIVE
     RELEASE(TheDOFProc);
     static DataNode &n = DataVariable("the_dof_proc");
     n = NULL_OBJ;
+#endif
 }
 
 void SetVHBlurWeights(bool vertical, int width, int height) {
