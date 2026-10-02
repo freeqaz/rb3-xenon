@@ -2145,7 +2145,6 @@ Debug.cpp:
 	.text       start:0x82510AEC end:0x82510BB0
 	.text       start:0x82510E44 end:0x82510EBC
 	.text       start:0x825111D0 end:0x82511204
-	.text       start:0x82511428 end:0x8251142C
 	.text       start:0x827BF4F0 end:0x827BF54C
 	.text       start:0x827BF5B4 end:0x827BF5B8
 
@@ -3174,7 +3173,7 @@ Timer.cpp:
 	.pdata      start:0x82261710 end:0x82261718
 	.text       start:0x82270188 end:0x82270210
 	.text       start:0x82270210 end:0x82270294
-	.text       start:0x82511430 end:0x82511FF4
+	.text       start:0x82511428 end:0x82511FF4
 	.text       start:0x82511FF8 end:0x8251217C
 	.text       start:0x8251B880 end:0x8251B900
 	.text       start:0x82C40F28 end:0x82C40F7C

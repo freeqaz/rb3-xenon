@@ -558,5 +558,7 @@ void SystemPreInit(const char *cmdLine, const char *cfg) {
     SystemPreInit(cfg);
 }
 
-void Timer::Sleep(int ms) { ::Sleep(ms); }
+// Timer::Sleep (0x82511428) is NOT part of this reunified TU: Debug::Fail calls it
+// out of line, and a definition visible here is inlined into Fail. It is the first
+// function of Timer.cpp's block (TimerStats' ctor follows at 0x82511430).
 #endif
