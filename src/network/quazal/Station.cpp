@@ -146,6 +146,7 @@ namespace Quazal {
     class StationConnectionManager {
     public:
         static StationConnectionManager *GetInstance();
+        bool RoutingIsEnabled() { return m_bRoutingEnabled; }
         unsigned char m_pad[0xbd];
         bool m_bRoutingEnabled; // 0xbd
     };
@@ -177,6 +178,9 @@ namespace Quazal {
 
     class Session : public DuplicatedObject {
     public:
+        DOHandle GetMasterStation() const {
+            return DOHandle(m_refMasterStation.m_hReferencedDO.mValue);
+        }
         static Session *GetInstance();
         static bool IsCreated();
         static unsigned char GetRole();
@@ -201,14 +205,22 @@ namespace Quazal {
         JobProcessFault(DOHandle);
         virtual void Execute();
         bool FaultProcessingShouldStop();
-        void SetToWaiting(int);
-        unsigned char m_pad[0x54];
+        unsigned char m_pad[0x58 - sizeof(Job)];
     };
 
     StreamSettings *GetStreamSettingsForContext(int);
 
     namespace {
         void *GetInstanceType1Delegator();
+    }
+
+    inline Transport *GetTransport() {
+        NetZInstance *pNetZ = (NetZInstance *)GetInstanceType1Delegator();
+        if (pNetZ == 0) {
+            return 0;
+        } else {
+            return pNetZ->m_pTransport;
+        }
     }
 
     PseudoGlobalVariable<DOHandle> s_hLocalStation;
@@ -527,12 +539,13 @@ namespace Quazal {
             if (r) {
                 r = m_oReliableBundle.Send(GetEndPoint());
             }
-            if (bForce && GetStreamSettingsForContext(1)->mBundling.m_bEnabled) {
+            if (bForce && GetStreamSettingsForContext(1)->BundlingIsEnabled()) {
                 GetStreamSettingsForContext(1)->mBundling.Flush();
             }
             return r;
+        } else {
+            return qResult(0x80010001);
         }
-        return qResult(0x80010001);
     }
 
     void Station::FlushAllBundles() {
@@ -541,7 +554,7 @@ namespace Quazal {
             it->FlushBundle(false);
             it.Next(false);
         }
-        if (GetStreamSettingsForContext(1)->mBundling.m_bEnabled) {
+        if (GetStreamSettingsForContext(1)->BundlingIsEnabled()) {
             GetStreamSettingsForContext(1)->mBundling.Flush();
         }
     }
@@ -561,12 +574,10 @@ namespace Quazal {
     }
 
     void Station::InitiateFaultProcessingForStation(DOHandle hStation, unsigned int uiReason) {
-        if (StationConnectionManager::GetInstance()->m_bRoutingEnabled) {
+        if (StationConnectionManager::GetInstance()->RoutingIsEnabled()) {
             Session *pSession = Session::GetInstance();
-            if (pSession && pSession->m_refMasterStation.GetHandle() == hStation) {
-                NetZInstance *pNetZ = (NetZInstance *)GetInstanceType1Delegator();
-                Transport *pTransport = pNetZ ? pNetZ->m_pTransport : 0;
-                pTransport->GetRouter()->EnableRouting(false);
+            if (pSession && pSession->GetMasterStation() == hStation) {
+                GetTransport()->GetRouter()->EnableRouting(false);
             }
         }
         if (Session::IsCreated()) {
@@ -580,7 +591,7 @@ namespace Quazal {
                     _DOC_Station::CallSignalAsFaulty(ref.operator->(), &oContext, uiReason);
                 }
             }
-            if (Session::GetInstance()->m_refMasterStation.GetHandle() == hStation) {
+            if (Session::GetInstance()->GetMasterStation() == hStation) {
                 SelectionIteratorTemplate<Station> it;
                 while (!it.EndReached()) {
                     if (it->IsAPeer() && it->GetHandle() != hStation) {
