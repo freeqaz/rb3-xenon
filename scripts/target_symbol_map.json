@@ -32090,7 +32090,7 @@
  "0x82bbdea8": "_fputwc_nolock",
  "0x82bbe100": "_flswbuf",
  "0x82bbe460": "XMemSet",
- "0x82bbe600": "XeCryptShaInit",
+ "0x82bbe600": "?Reset@XeCryptSha@@QAAXXZ",
  "0x82bbe610": "?Final@XeCryptSha@@QAAXPAE@Z",
  "0x82bbe618": "xCompareStringA",
  "0x82bbe810": "?Initialize@CMemoryBlock@@QAAJPAXII@Z",
