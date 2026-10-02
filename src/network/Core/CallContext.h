@@ -30,6 +30,15 @@ namespace Quazal {
         // Retail 0x82A8C168 (the first function of the CallContext.cpp pin),
         // called with a timeout of -1 before a pending context is torn down.
         bool Wait(unsigned int);
+        // Retail 0x82A8B9E0: moves the context to CallPending; false if it
+        // cannot start a call. The service clients call it before queueing a job.
+        bool InitiateCall();
+        // The value the service clients pass as the first argument of the
+        // jobs they queue (TicketManager::Login/AcquireTicket).
+        unsigned int GetID() const { return unk30; }
+        // By value: retail copies the argument into its own temporary before
+        // the assignment (TicketManager::AcquireTicket).
+        void SetTimeout(Time tTimeout) { unk40 = tTimeout; }
 
         _State GetState() const { return unkc; }
 

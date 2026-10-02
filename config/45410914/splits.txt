@@ -14581,8 +14581,8 @@ network/quazal/Stack/Core/BerkeleySocketDriver.cpp:
 	.text       start:0x82B3DD00 end:0x82B3DD60
 
 network/quazal/Authentication/Client/TicketManager.cpp:
-	.pdata      start:0x82259880 end:0x82259890
-	.text       start:0x82B3F530 end:0x82B3F958
+	.pdata      start:0x82259870 end:0x822598B8
+	.text       start:0x82B3F4C8 end:0x82B3FBF0
 
 network/quazal/SecureTransport/JobConnectSecureEndPoint.cpp:
 	.pdata      start:0x822599A8 end:0x822599C0
@@ -14597,8 +14597,8 @@ network/quazal/DupSpace/DuplicationSpaceTable.cpp:
 	.text       start:0x82B46FA0 end:0x82B47BC4
 
 network/quazal/DupSpace/MatchOperation.cpp:
-	.pdata      start:0x82259D00 end:0x82259D08
-	.text       start:0x82B48768 end:0x82B48824
+	.pdata      start:0x82259CD0 end:0x82259D08
+	.text       start:0x82B481D0 end:0x82B48824
 
 network/quazal/Transport/Interface/HighLevelStream.cpp:
 	.pdata      start:0x8225A1B8 end:0x8225A1C8

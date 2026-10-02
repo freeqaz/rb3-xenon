@@ -8,6 +8,13 @@ namespace Quazal {
         DOHandle(unsigned int val = 0) : mValue(val) {}
         DOHandle(const DOHandle &h) : mValue(h.mValue) {}
         ~DOHandle() {}
+        // User-declared and inline: retail's assignments go through it with the
+        // inline's `this` homed in a temporary (DORef(DOHandle) at 0x82A80540,
+        // MatchOperation's ctor at 0x82B481D0).
+        DOHandle &operator=(const DOHandle &h) {
+            mValue = h.mValue;
+            return *this;
+        }
 
         unsigned int GetDOClassID() const { return (mValue & 0xFFC00000) >> 22; }
         unsigned int GetID() const {
