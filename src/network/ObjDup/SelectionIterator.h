@@ -15,11 +15,11 @@ namespace Quazal {
         unsigned int m_uiValue; // 0x0
     };
 
-    inline bool operator==(SelectionCursor a, SelectionCursor b) { return a.m_uiValue == b.m_uiValue; }
+    inline bool operator==(SelectionCursor a, unsigned int b) { return a.m_uiValue == b; }
 
     class SelectionPosition : public RootObject {
     public:
-        bool EndReached() const { return m_oCursor == SelectionCursor(0); }
+        bool EndReached() const { return m_oCursor == 0; }
 
         unsigned int unk0; // 0x0
         SelectionCursor m_oCursor; // 0x4

@@ -498,15 +498,15 @@ namespace Quazal {
     void DuplicatedObject::OperationBegin(DOOperation *) {}
     void DuplicatedObject::OperationEnd(DOOperation *) {}
     bool DuplicatedObject::Publish(unsigned int ui) {
-        unsigned int uiID = m_dohMyself.GetID();
+        unsigned int uiID = m_dohMyself.GetDOID();
         if (uiID == 0) {
-            if (!GetDOClass(m_dohMyself.GetDOClassID())->GenerateObjectID(&uiID, ui)) {
+            if (!GetDOClass()->GenerateObjectID(&uiID, ui)) {
                 SystemError::SignalError(0, 0, 0xE000000C, 0);
                 return false;
             }
         }
         ScopedCS cs(Scheduler::GetInstance()->unk38);
-        if (!FlagIsSet(1)) {
+        if (IsDeleted()) {
             SystemError::SignalError(0, 0, 0xE000000E, 0);
             return false;
         }
@@ -522,8 +522,8 @@ namespace Quazal {
             SystemError::SignalError(0, 0, 0xE0030008, 0);
             return false;
         }
-        if (m_dohMyself.GetID() == 0) {
-            m_dohMyself.SetDOID(DOID(uiID));
+        if (m_dohMyself.GetDOID() == 0) {
+            SetDOID(DOID(uiID));
             SetMasterStation(
                 MasterStationRef(Station::GetLocalStation(), LogicalClockTmpl<unsigned char>(2))
             );
@@ -571,40 +571,41 @@ namespace Quazal {
     DuplicatedObject *
     DuplicatedObject::CreateMasterImpl(DOHandle hMaster, unsigned int uiClassID, DOID oID) {
         ScopedCS cs(Scheduler::GetInstance()->unk38);
-        DOHandle h(0);
-        h.SetDOClassID(uiClassID);
-        h.SetDOID(oID);
-        if (DOSelections::GetInstance()->Contains(h)) {
+        DOHandle oHandle(0);
+        oHandle.SetDOClassID(uiClassID);
+        oHandle.SetDOID(oID);
+        if (DOSelections::GetInstance()->Contains(oHandle)) {
             return 0;
         }
-        DuplicatedObject *pDO = GetDOClass(uiClassID)->Create();
-        pDO->m_dohMyself.SetDOClassID(uiClassID);
-        pDO->SetFlag(4);
-        CreateMasterOperation op(pDO, hMaster, oID);
-        pDO->ExecuteOperation(op);
-        return pDO;
+        DuplicatedObject *pObject = GetDOClass(uiClassID)->Create();
+        pObject->m_dohMyself.SetDOClassID(uiClassID);
+        pObject->SetFlag(4);
+        CreateMasterOperation op(pObject, hMaster, oID);
+        pObject->ExecuteOperation(op);
+        return pObject;
     }
 
     DuplicatedObject *
     DuplicatedObject::CreateDuplica(DOHandle h, const MasterStationRef &refMaster) {
         DuplicatedObject *pDO = GetDOClass(h.GetDOClassID())->Create();
-        pDO->m_dohMyself.SetDOClassID(h.GetDOClassID());
+        pDO->SetDOClassID(h.GetDOClassID());
         pDO->SetFlag(4);
-        pDO->m_dohMyself.SetDOID(h.GetDOID());
+        pDO->SetDOID(h.GetDOID());
         pDO->SetMasterStation(refMaster);
         return pDO;
     }
 
     bool DuplicatedObject::ValidOperation(DOOperation *pOp) {
-        if (DOSelections::GetInstance()->IsAvailable()) {
+        if (DOSelections::GetCurrentInstance()->IsAvailable()) {
             switch (pOp->GetType()) {
             case 5:
             case 6:
                 SystemError::SignalError(0, 0, 0xE000000E, 0);
                 return false;
             case 0xd:
-                if (ChangeMasterStationOperation::DynamicCast(pOp)->m_refNewMaster.m_hReferencedDO
-                    == Station::GetLocalStation()) {
+                if (Station::IsLocal(
+                        ChangeMasterStationOperation::DynamicCast(pOp)->m_refNewMaster.m_hReferencedDO.mValue
+                    )) {
                     SystemError::SignalError(0, 0, 0xE000000E, 0);
                     return false;
                 }

@@ -1,6 +1,9 @@
 #pragma once
 #include "ObjDup/DOHandle.h"
 #include "Platform/RootObject.h"
+#include "Core/InstanceControl.h"
+#include "Core/InstanceTable.h"
+#include "Core/PseudoSingleton.h"
 
 namespace Quazal {
     class DuplicatedObject;
@@ -13,6 +16,10 @@ namespace Quazal {
         void RemoveFromAllSelections(DuplicatedObject *);
 
         static DOSelections *GetInstance();
+        static DOSelections *GetCurrentInstance() {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            return (DOSelections *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(4, uiContext);
+        }
         bool IsAvailable() const;
         bool Contains(DOHandle);
         // Lane-chosen name for the unnamed retail accessor at 0x82ABD720.
