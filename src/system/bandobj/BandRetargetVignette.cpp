@@ -127,7 +127,7 @@ void BandRetargetVignette::EnterDir() const {
     for (ObjDirItr<BandIKEffector> it(Dir(), true); it; ++it) {
         if (strncmp("player", it->Name(), 6) != 0) {
             String s(it->Name());
-            ncThis->mEffectors.insert(ncThis->mEffectors.end(), s);
+            ncThis->mEffectors.push_back(s);
         }
     }
 }
