@@ -1784,11 +1784,6 @@ void HamNavList::DrawShowing() {
 #endif
 }
 
-void WorldInstance::Load(BinStream &bs) {
-    PreLoad(bs);
-    PostLoad(bs);
-}
-
 // sw2 scatter-include (default/HamNavList <- bandobj/BandList.cpp)
 #define gRev gRev_BandList
 #define gAltRev gAltRev_BandList

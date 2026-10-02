@@ -1,11 +1,11 @@
-#include "hamobj/MiniLeaderboardDisplay.h"
-#include "MiniLeaderboardDisplay.h"
+#include "bandobj/MiniLeaderboardDisplay.h"
 #include "obj/Object.h"
 #include "os/Debug.h"
 #include "ui/LabelShrinkWrapper.h"
 #include "ui/UI.h"
 #include "ui/UIComponent.h"
 #include "ui/UIResource.h" // lane NCCC-0731-ab7e/f8/sonnet: for UIResource::Dir(); UIComponent.h only fwd-declares it
+#include "utl/Symbols2.h"
 
 // lane NCCC-0731-ab7e/f8/sonnet: mAllowSoloScores defaults true
 // (`MiniLeaderboardDisplay() : mAllowSoloScores(true) {}`).
@@ -115,4 +115,3 @@ void MiniLeaderboardDisplay::Init() {
     TheUI->InitResources("MiniLeaderboardDisplay");
 }
 
-void MiniLeaderboardDisplay::Update() {}

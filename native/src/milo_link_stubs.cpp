@@ -71,17 +71,8 @@
 
 #include "world/Instance.h"
 
-// WorldInstance::Load is DECLARED (world/Instance.h:27) and defined nowhere in
-// the tree -- Instance.cpp has PreLoad and PostLoad but no BEGIN_LOADS block,
-// so the vtable slot dangles. A genuine decomp gap, not a platform gap: Milo's
-// BEGIN_LOADS/END_LOADS macro expands to exactly this body and every sibling
-// class in rndobj/ and world/ has it. Reproducing the macro expansion is the
-// real implementation, not an approximation -- and it matters, because
-// WorldInstance is on the load path for venue milos.
-void WorldInstance::Load(BinStream &bs) {
-    PreLoad(bs);
-    PostLoad(bs);
-}
+// WorldInstance::Load used to be stubbed here; it is now defined in
+// world/Instance.cpp (retail 0x824EA220), so no stub is needed.
 
 // rndobj/Rnd.cpp:110 declares `extern int lbl_82F14008` — an unhomed retail
 // DATA label, not a function gap — and no TU defines it. It is the heap-overlay

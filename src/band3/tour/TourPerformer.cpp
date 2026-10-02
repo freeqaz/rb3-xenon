@@ -200,7 +200,10 @@ int TourPerformerImpl::GetQuestSuccessfulSongCount() const {
 bool TourPerformerImpl::IsQuestWon(Symbol s) const {
     TourProgress *pProgress = TheTour->GetTourProgress();
     MILO_ASSERT(pProgress, 0x1B2);
-    TourDesc *pTourDesc = TheTour->GetTourDesc(pProgress->GetTourDesc());
+    // Retail reloads the Symbol from its stack slot (0x82360DC8), i.e. a named
+    // local rather than the call's returned temporary.
+    Symbol tourDesc = pProgress->GetTourDesc();
+    TourDesc *pTourDesc = TheTour->GetTourDesc(tourDesc);
     MILO_ASSERT(pTourDesc, 0x1B6);
     int curgignum = pProgress->GetCurrentGigNum();
     int success = GetQuestSuccessfulSongCount();

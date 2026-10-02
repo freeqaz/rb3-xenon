@@ -87,13 +87,13 @@ void MicInputArrow::SetMicMgr(MicManagerInterface *m) { mMicManagerInterface = m
 
 void MicInputArrow::SetMicConnected(bool connected, int arrowNum) {
     MILO_ASSERT_RANGE(arrowNum, 0, mConnectedFlags.size(), 0x94);
-    if ((char)connected != mConnectedFlags[arrowNum]) {
-        mConnectedFlags[arrowNum] = connected;
-        if (connected)
-            mConnectedTrigs[arrowNum]->Trigger();
-        else
-            mDisconnectedTrigs[arrowNum]->Trigger();
-    }
+    // Retail stores the flag and fires the trigger unconditionally: there is
+    // no "already in this state" early-out (0x82317F80).
+    mConnectedFlags[arrowNum] = connected;
+    if (connected)
+        mConnectedTrigs[arrowNum]->Trigger();
+    else
+        mDisconnectedTrigs[arrowNum]->Trigger();
 }
 
 enum {
