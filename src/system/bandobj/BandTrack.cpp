@@ -646,7 +646,14 @@ void BandTrack::SyncInstrument() {
     } else if (mInstrument == real_keys) {
         mTrackInstrument = kInstRealKeys;
     } else {
+#ifdef HX_NATIVE
         MILO_NOTIFY_ONCE(MakeString("unexpected instrument symbol \"%s\"", mInstrument.Str()));
+#else
+        // Retail keeps the MakeString call (the notify itself is stripped):
+        // `lis/addi fmt; bl MakeString<const char*>` with the symbol's string
+        // already in r4.
+        MakeString("unexpected instrument symbol \"%s\"", mInstrument.Str());
+#endif
 
         mTrackInstrument = kInstNone;
     }
@@ -790,7 +797,9 @@ void BandTrack::ClearFinaleHelp() {
         if (mEndgameFeedback) {
         TIMER_GET_CYCLES(cycle);
         float delay = 0;
-        float elapsed = Timer::CyclesToMs(cycle - unk88);
+        // Retail scales the elapsed milliseconds by 0.001f (pool constant
+        // 0x820010EC) -- the delay is passed as kTaskSeconds.
+        float elapsed = Timer::CyclesToMs(cycle - unk88) * 0.001f;
         static float kMinFinaleHelpTime =
             SystemConfig("objects", ThisDir()->ClassName(), "min_finale_help_time")->Float(1);
         if (elapsed < kMinFinaleHelpTime)
