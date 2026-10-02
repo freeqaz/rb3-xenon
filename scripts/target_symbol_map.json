@@ -35851,7 +35851,7 @@
  "0x82ab85e0": "?ClearInitialEndPoint@StationManager@Quazal@@QAAXXZ",
  "0x82ab85f8": "?ProcessCompletedJob@StationManager@Quazal@@QAAXPAVJobChangeConnection@2@@Z",
  "0x82ab87a0": "?ActivateJob@StationManager@Quazal@@QAAXPAVJobChangeConnection@2@@Z",
- "0x82ab89b8": "?GetLatestConnectionJob@StationManager@Quazal@@QBAPAVJobChangeConnection@2@VDOHandle@2@@Z",
+ "0x82ab89b8": "?GetLatestConnectionJob@StationManager@Quazal@@QBAPAVJobConnectStation@2@VDOHandle@2@@Z",
  "0x82ab8a10": "?GetLatestJob@StationManager@Quazal@@QBAPAVJobChangeConnection@2@VDOHandle@2@@Z",
  "0x82ab8ae0": "?GetTargetConnectionState@StationManager@Quazal@@QAAHVDOHandle@2@@Z",
  "0x82ab8cd0": "?StateTransition@StationManager@Quazal@@UAAXW4_State@SystemComponent@2@@Z",

@@ -447,17 +447,18 @@ namespace Quazal {
         void AddPretendant(EndPoint *, Message *);
     };
 
-    class PendingStation {
+    class JobConnectStation {
     public:
         void Queue(Job *);
     };
 
-    class StationTable {
+    // .\StationManager.cpp (0x82AB7EF0..0x82ABAB58).
+    class StationManager {
     public:
-        static StationTable *GetInstance();
-        int GetStationState(DOHandle);
-        PendingStation *GetPendingStation(DOHandle);
-        void ExtractStations(Message *);
+        static StationManager *GetInstance();
+        bool ExtractBootstrapStationURLs(Message *);
+        JobConnectStation *GetLatestConnectionJob(DOHandle) const;
+        int ConnectStation(DOHandle);
     };
 
     class CallContext {
@@ -1083,9 +1084,9 @@ namespace Quazal {
         if (pMsg->GetSourceStation() != 0) {
             DOHandle hStation = pMsg->GetSourceStation();
             if (bCheck) {
-                if (StationTable::GetInstance()->GetStationState(hStation) == 2) {
-                    PendingStation *pStation =
-                        StationTable::GetInstance()->GetPendingStation(hStation);
+                if (StationManager::GetInstance()->ConnectStation(hStation) == 2) {
+                    JobConnectStation *pStation =
+                        StationManager::GetInstance()->GetLatestConnectionJob(hStation);
                     pMsg->Rewind();
                     pJob->Postpone();
                     pStation->Queue(pJob);
@@ -1239,7 +1240,7 @@ namespace Quazal {
             DOHandle hStation;
             *pMsg >> hMaster;
             *pMsg >> hStation;
-            StationTable::GetInstance()->ExtractStations(pMsg);
+            StationManager::GetInstance()->ExtractBootstrapStationURLs(pMsg);
             if ((m_uiFlags & 4) == 4) {
                 GetJoinResponseObserver()->OnJoinResponse(pMsg);
             }

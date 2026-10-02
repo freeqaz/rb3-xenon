@@ -430,7 +430,7 @@ namespace Quazal {
         void ClearInitialEndPoint();
         void ProcessCompletedJob(JobChangeConnection *);
         void ActivateJob(JobChangeConnection *);
-        JobChangeConnection *GetLatestConnectionJob(DOHandle) const;
+        JobConnectStation *GetLatestConnectionJob(DOHandle) const;
         JobChangeConnection *GetLatestJob(DOHandle) const;
         int GetTargetConnectionState(DOHandle);
         bool ConnectionIsPossible(DOHandle);
@@ -557,8 +557,8 @@ namespace Quazal {
         }
     }
 
-    JobChangeConnection *StationManager::GetLatestConnectionJob(DOHandle hStation) const {
-        JobChangeConnection *pJob = GetLatestJob(hStation);
+    JobConnectStation *StationManager::GetLatestConnectionJob(DOHandle hStation) const {
+        JobConnectStation *pJob = (JobConnectStation *)GetLatestJob(hStation);
         return pJob;
     }
 

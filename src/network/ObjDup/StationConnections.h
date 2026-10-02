@@ -11,11 +11,12 @@ namespace Quazal {
         void QueueOperation(DOOperation *);
     };
 
-    class StationConnections : public RootObject {
+    // .\StationManager.cpp (0x82AB7EF0..0x82ABAB58).
+    class StationManager : public RootObject {
     public:
-        static StationConnections *GetInstance();
-        int GetConnectionState(DOHandle);
-        JobConnectStation *GetConnectionJob(DOHandle);
+        static StationManager *GetInstance();
+        int ConnectStation(DOHandle);
+        JobConnectStation *GetLatestConnectionJob(DOHandle) const;
     };
 
     class OperationValidator : public RootObject {
