@@ -2172,8 +2172,8 @@ void VocalTrack::StartUpdateArrows() {
 void VocalTrack::UpdatePitchArrow(float ms, int singerIdx) {
     int phraseID =
         TheSongDB->GetCommonPhraseID(mTrackConfig.TrackNum(), MsToTickInt(ms));
-    VocalPlayer *player = mPlayer;
     bool spotlight = phraseID != -1;
+    VocalPlayer *player = mPlayer;
     // Retail tests the player pointer with a SIGNED `cmpwi cr6, r11, 0`; the plain
     // `player &&` form makes MSVC emit the unsigned `cmplwi`. The (int) cast is the
     // documented lever (docs/decomp/patterns/fixable-comparison.md, Signed/Unsigned

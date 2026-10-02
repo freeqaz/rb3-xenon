@@ -44,7 +44,8 @@ Symbol PlayerLeaderboard::OnSelectRow(int row, BandUser *user) {
         if (!localBandUser->IsSignedInOnline())
             return pad_error;
 
-        OnlineID oid = mLeaderboardRows[row].mLBOnlineID;
+        LeaderboardRow &lbRow = mLeaderboardRows[row];
+        OnlineID oid = lbRow.mLBOnlineID;
         ShowGamercardResult result = ThePlatformMgr.ShowGamercard(localBandUser, &oid);
         if (result == kShowGamercardResult_PrivilegeFailed)
             return privilege_error;
