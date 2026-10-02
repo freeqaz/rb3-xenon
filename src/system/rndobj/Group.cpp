@@ -1,10 +1,10 @@
-// Retail inlines this TU's owner-only ObjPtr ctor(s) with the vtable
-// materialization pinned AFTER the member stores -- the
-// RB3_OBJPTR_FORCEINLINE_CTOR signature (see obj/ObjPtr_p.h). The
-// extent census shows delta ~= -16 * (surplus bl) for this TU's ctor,
-// i.e. one un-inlined ObjPtr ctor per surplus call.
-#define RB3_OBJPTR_FORCEINLINE_CTOR
-
+// Retail's RndGroup ctor inlines the owner-only ObjPtr ctors (mDrawOnly, mLod)
+// in DEFER_OBJECT shape, but builds mEnv through the out-of-line two-arg ctor
+// (`li r5,0; bl ??0?$ObjPtr@VRndEnviron@@@@QAA@PAVObject@Hmx@@PAVRndEnviron@@@Z`).
+// The one-arg inline route leaves the two-arg overload out of line, so
+// mEnv(this, nullptr) is the per-site opt-out.
+#define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #include "rndobj/Group.h"
 #include "Rnd.h"
 #include "obj/Data.h"
@@ -29,7 +29,7 @@ bool SortInWorld(const GroupDrawDist &a, const GroupDrawDist &b) {
 bool gInReplace;
 
 RndGroup::RndGroup()
-    : mObjects(this, kObjListOwnerControl), mEnv(this), mDrawOnly(this), mLod(this),
+    : mObjects(this, kObjListOwnerControl), mEnv(this, nullptr), mDrawOnly(this), mLod(this),
       mLodScreenSize(0), mDrawLod(false), mSortInWorld(false) {}
 
 // Retail calls the base FIRST and UNCONDITIONALLY, then tests membership by
