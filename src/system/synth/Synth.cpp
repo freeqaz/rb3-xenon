@@ -376,10 +376,10 @@ void Synth::DrawMeter(float &y, float level, float peakHold, const char *name) {
 
     TheRnd.DrawString(name, Vector2((float)TheRnd.Width() * 0.1f, y), white, true);
 
-    float levelNorm = (level + sMeterLayout[1]) * 0.025f;
     float rndWidth = (float)TheRnd.Width();
     float barLeft = rndWidth * sMeterLayout[0];
     float barWidth = rndWidth * sMeterLayout[2];
+    float levelNorm = (level + sMeterLayout[1]) * 0.025f;
     if (levelNorm < 0.0f)
         levelNorm = 0.0f;
     else if (levelNorm > 1.0f)
