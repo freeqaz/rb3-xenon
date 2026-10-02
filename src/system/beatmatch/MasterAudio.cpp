@@ -975,9 +975,9 @@ void TrackData::FillChannelListWithInactiveSlots(std::list<int> &chans, float f,
         i5 &= ~i6;
         if (b4 == b) {
             for (int i = 0; i5 != 0; i++) {
-                i6 = 1 << i;
-                if (i6 & i5) {
-                    i5 -= i6;
+                int bit = 1 << i;
+                if (bit & i5) {
+                    i5 -= bit;
                     chans.push_back(i);
                 }
             }
