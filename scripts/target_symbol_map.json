@@ -4986,7 +4986,7 @@
  "0x822a0978": "?ApplyAO@OutfitConfig@@QAAXPAVSyncMeshCB@@@Z",
  "0x822a0a48": "?Handle@OutfitConfig@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x822a0ed8": "??$?6VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z",
- "0x822a0f38": "??$?6V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@1@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@@Z",
+ "0x822a0f38": "??$?6VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x822a0fa0": "??$?6VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VMeshAO@OutfitConfig@@V?$StlNodeAlloc@VMeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x822a1170": "??$PropSync@VRndMat@@@@YA_NAAV?$ObjPtr@VRndMat@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x822a16d8": "?SetSkinTextures@OutfitConfig@@SAXPAVObjectDir@@0PAVBandCharDesc@@@Z",
@@ -5027,7 +5027,7 @@
  "0x822a4258": "?_M_insert_overflow_aux@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVOverlay@OutfitConfig@@ABV34@ABU__false_type@2@I_N@Z",
  "0x822a43e8": "??0MatSwap@OutfitConfig@@QAA@ABV01@@Z",
  "0x822a45b8": "?_M_clear@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
- "0x822a46c8": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+ "0x822a46c8": "??$_Copy_Construct@VMatSwap@OutfitConfig@@@stlpmtx_std@@YAXPAVMatSwap@OutfitConfig@@ABV12@@Z",
  "0x822a4838": "??4MeshAO@OutfitConfig@@QAAAAV01@ABV01@@Z",
  "0x822a48a0": "??0OldMatOption@@QAA@ABV0@@Z",
  "0x822a4a20": "??1MeshPair@BandPatchMesh@@QAA@XZ",
@@ -8212,7 +8212,7 @@
  "0x8237dc70": "??$?6UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@UBone@CharBones@@V?$StlNodeAlloc@UBone@CharBones@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x8237dcd0": "??$__unguarded_insertion_sort_aux@PAVBeatEvent@CharClip@@V12@USortByFrame@@@stlpmtx_std@@YAXPAVBeatEvent@CharClip@@00USortByFrame@@@Z",
  "0x8237dd28": "??$__adjust_heap@PAVBeatEvent@CharClip@@HV12@USortByFrame@@@stlpmtx_std@@YAXPAVBeatEvent@CharClip@@HHV12@USortByFrame@@@Z",
- "0x8237de00": "??$__destroy_aux@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABU__false_type@0@@Z",
+ "0x8237de00": "??1Transitions@CharClip@@QAA@XZ",
  "0x8237de08": "?SharesGroups@CharClip@@QAA_NPAV1@@Z",
  "0x8237de98": "?FindNode@CharClip@@QBAPBUCharGraphNode@@PAV1@MHM@Z",
  "0x8237df58": "?LengthSeconds@CharClip@@QBAMXZ",
@@ -34731,5 +34731,9 @@
  "0x8242a920": "??$__uninitialized_fill_n@PAVDataArrayPtr@@IV1@@stlpmtx_std@@YAPAVDataArrayPtr@@PAV1@IABV1@ABU__false_type@0@@Z",
  "0x827038e0": "??$_Destroy_Range@PAUJumpInstance@@@stlpmtx_std@@YAXPAUJumpInstance@@0@Z",
  "0x82270b90": "?AppDebugModal@@YAXAA_NPAD_N@Z",
- "0x82270a58": "?Replace@?$ObjDirPtr@VObjectDir@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z"
+ "0x82270a58": "?Replace@?$ObjDirPtr@VObjectDir@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x822e8c50": "??$__uninitialized_copy@PAV?$ObjPtr@VRndPropAnim@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VRndPropAnim@@@@PAV1@00ABU__false_type@0@@Z",
+ "0x822e8cf8": "??$__uninitialized_copy@PAV?$ObjPtr@VEventTrigger@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VEventTrigger@@@@PAV1@00ABU__false_type@0@@Z",
+ "0x822ea9f8": "??$_M_allocate_and_copy@PBV?$ObjPtr@VRndPropAnim@@@@@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$ObjPtr@VRndPropAnim@@@@IPBV2@0@Z",
+ "0x822a90e8": "??$_Copy_Construct@VOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOption@@ABV1@@Z"
 }

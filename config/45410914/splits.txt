@@ -2510,7 +2510,6 @@ CharBoneDir.cpp:
 	.text       start:0x827D10E0 end:0x827D10E8
 
 CharClip.cpp:
-	.pdata      start:0x821F4680 end:0x821F4688
 	.pdata      start:0x822000D0 end:0x822000D8
 	.pdata      start:0x822000D8 end:0x822000E8
 	.pdata      start:0x822022F8 end:0x82202620
@@ -2525,7 +2524,6 @@ CharClip.cpp:
 	.pdata      start:0x82202820 end:0x82202890
 	.pdata      start:0x82202890 end:0x822028E8
 	.pdata      start:0x822028E8 end:0x822028F0
-	.text       start:0x822A0F38 end:0x822A0F9C
 	.text       start:0x8235C608 end:0x8235C670
 	.text       start:0x8235C94C end:0x8235C974
 	.text       start:0x8235C974 end:0x8235CA80
@@ -3354,8 +3352,6 @@ Spline.cpp:
 Character.cpp:
 	.pdata      start:0x821F4830 end:0x821F4840
 	.pdata      start:0x821F4878 end:0x821F4888
-	.pdata      start:0x821F4A30 end:0x821F4A40
-	.pdata      start:0x821F4A58 end:0x821F4A60
 	.pdata      start:0x821F4B38 end:0x821F4B40
 	.pdata      start:0x821F4B58 end:0x821F4B68
 	.pdata      start:0x82201500 end:0x82201520
@@ -3399,8 +3395,6 @@ Character.cpp:
 	.text       start:0x822A3008 end:0x822A30C0
 	.text       start:0x822A3174 end:0x822A3178
 	.text       start:0x822A3FA8 end:0x822A3FB0
-	.text       start:0x822A46C0 end:0x822A4738
-	.text       start:0x822A4808 end:0x822A4838
 	.text       start:0x822A4A18 end:0x822A4A20
 	.text       start:0x822A5028 end:0x822A5030
 	.text       start:0x822A51DC end:0x822A5258
@@ -10802,7 +10796,10 @@ GemTrackDir.cpp:
 	.pdata      start:0x821F8CE8 end:0x821F8CF8
 	.pdata      start:0x821F8CF8 end:0x821F8E18
 	.pdata      start:0x821F8E18 end:0x821F8E28
+	.pdata      start:0x821F8E28 end:0x821F8E40
+	.pdata      start:0x821F8E40 end:0x821F8E58
 	.pdata      start:0x821F8E58 end:0x821F9020
+	.pdata      start:0x821F9028 end:0x821F9038
 	.pdata      start:0x821F9038 end:0x821F9060
 	.pdata      start:0x821F9060 end:0x821F9068
 	.pdata      start:0x821F9068 end:0x821F9070
@@ -10846,7 +10843,10 @@ GemTrackDir.cpp:
 	.text       start:0x822E7620 end:0x822E771C
 	.text       start:0x822E771C end:0x822E89B8
 	.text       start:0x822E89B8 end:0x822E8A78
+	.text       start:0x822E8A78 end:0x822E8CB8
+	.text       start:0x822E8CB8 end:0x822E8D98
 	.text       start:0x822E8D98 end:0x822EA814
+	.text       start:0x822EA9F0 end:0x822EAA90
 	.text       start:0x822EAA90 end:0x822EAD2C
 	.text       start:0x822EAD30 end:0x822EAD6C
 	.text       start:0x822EAD70 end:0x822EADD8
@@ -11853,6 +11853,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F44D0 end:0x821F45D0
 	.pdata      start:0x821F45D0 end:0x821F4678
 	.pdata      start:0x821F4678 end:0x821F4680
+	.pdata      start:0x821F4680 end:0x821F4688
 	.pdata      start:0x821F4688 end:0x821F46A8
 	.pdata      start:0x821F46A8 end:0x821F4700
 	.pdata      start:0x821F4700 end:0x821F4710
@@ -11885,8 +11886,10 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F49C8 end:0x821F49D0
 	.pdata      start:0x821F49D8 end:0x821F4A18
 	.pdata      start:0x821F4A20 end:0x821F4A30
+	.pdata      start:0x821F4A30 end:0x821F4A40
 	.pdata      start:0x821F4A40 end:0x821F4A50
 	.pdata      start:0x821F4A50 end:0x821F4A58
+	.pdata      start:0x821F4A58 end:0x821F4A60
 	.pdata      start:0x821F4A60 end:0x821F4A68
 	.pdata      start:0x821F4A68 end:0x821F4A88
 	.pdata      start:0x821F4A88 end:0x821F4A98
@@ -11953,6 +11956,7 @@ OutfitConfig.cpp:
 	.text       start:0x8229E504 end:0x8229FF2C
 	.text       start:0x8229FF30 end:0x822A0ED4
 	.text       start:0x822A0ED8 end:0x822A0F38
+	.text       start:0x822A0F38 end:0x822A0F9C
 	.text       start:0x822A0FA0 end:0x822A1164
 	.text       start:0x822A1164 end:0x822A1630
 	.text       start:0x822A1630 end:0x822A16D8
@@ -11988,8 +11992,10 @@ OutfitConfig.cpp:
 	.text       start:0x822A4258 end:0x822A43A4
 	.text       start:0x822A43E8 end:0x822A45B8
 	.text       start:0x822A4628 end:0x822A46C0
+	.text       start:0x822A46C0 end:0x822A4738
 	.text       start:0x822A4738 end:0x822A47A0
 	.text       start:0x822A47A0 end:0x822A4808
+	.text       start:0x822A4808 end:0x822A4838
 	.text       start:0x822A4838 end:0x822A48A0
 	.text       start:0x822A48A0 end:0x822A4980
 	.text       start:0x822A4980 end:0x822A4A18
@@ -12671,15 +12677,11 @@ FlowNode.cpp:
 	.text       start:0x82308D5C end:0x82308D60
 
 Campaign.cpp:
-	.pdata      start:0x821F8E28 end:0x821F8E40
-	.pdata      start:0x821F8E40 end:0x821F8E58
-	.pdata      start:0x821F9020 end:0x821F9038
+	.pdata      start:0x821F9020 end:0x821F9028
 	.pdata      start:0x822072F8 end:0x82207300
 	.pdata      start:0x82221858 end:0x82221D38
 	.pdata      start:0x82221D38 end:0x82221D78
-	.text       start:0x822E8A78 end:0x822E8CB8
-	.text       start:0x822E8CB8 end:0x822E8D98
-	.text       start:0x822EA814 end:0x822EAA90
+	.text       start:0x822EA814 end:0x822EA9F0
 	.text       start:0x823D9628 end:0x823D9684
 	.text       start:0x825A4BC8 end:0x825A92D8
 	.text       start:0x825A92D8 end:0x825A95A0

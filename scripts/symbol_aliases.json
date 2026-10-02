@@ -67217,9 +67217,8 @@
   {
    "name": "$_Param_Construct",
    "address": "0x822a46c8",
-   "survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+   "survivor": "??$_Copy_Construct@VMatSwap@OutfitConfig@@@stlpmtx_std@@YAXPAVMatSwap@OutfitConfig@@ABV12@@Z",
    "folded": [
-    "??$_Copy_Construct@VMatSwap@OutfitConfig@@@stlpmtx_std@@YAXPAVMatSwap@OutfitConfig@@ABV12@@Z",
     "??$_Param_Construct@VMatSwap@OutfitConfig@@V12@@stlpmtx_std@@YAXPAVMatSwap@OutfitConfig@@ABV12@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
@@ -67234,6 +67233,13 @@
      "adjudicator_detail": "target names differ @0x24: ??0MatSwap@OutfitConfig@@QAA@ABV01@@Z vs ??0TransformArea@@QAA@ABV0@@Z | DIFFERENT METHOD called: ??0MatSwap@OutfitConfig@@QAA@ABV01@@Z vs ??0TransformArea@@QAA@ABV0@@Z",
      "callee_layer": "CALLEE_SIZE_DIFFERS",
      "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-NJ 2026-10-02",
+     "class": "MISNAMED_SURVIVOR",
+     "disposition": "map row renamed; spelling withdrawn",
+     "evidence": "retail body calls ??0MatSwap@OutfitConfig@@QAA@ABV01@@Z (0x822A43E8, OutfitConfig, 100) once; its retail callers are __uninitialized_fill_n<MatSwap*> (0x822A6F70), __uninitialized_copy<MatSwap*> (0x822A7008) and vector<MatSwap>::_M_insert_overflow_aux (0x822A84D8). An ObjPtrVec<RndGroup>::Node construct would call Node's copy ctor; no compiled obj defines or references the Node spelling."
     }
    ],
    "repair": {
@@ -67276,22 +67282,36 @@
       }
      ]
     }
-   ]
-  },
-  {
-   "name": "$_Param_Construct",
-   "address": null,
-   "survivor": "??$_Copy_Construct@VMatSwap@OutfitConfig@@@stlpmtx_std@@YAXPAVMatSwap@OutfitConfig@@ABV12@@Z",
-   "folded": [
-    "??$_Param_Construct@VMatSwap@OutfitConfig@@V12@@stlpmtx_std@@YAXPAVMatSwap@OutfitConfig@@ABV12@@Z"
    ],
-   "evidence": "Partitioned out of the closure at 0x822a46c8 by ALIAS-REPAIR 2026-08-19 (UNDER_PARTITIONED_ICF_CLOSURE). These spellings agree with each other on their RESOLVED operands -- resolved through the ICF congruence over our own build -- and disagree with the origin survivor '??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z', so the origin group claimed one fold where the evidence supports two. No retail address is known for this class, so it renders into no map bucket.",
-   "repair": {
-    "class": "UNDER_PARTITIONED_ICF_CLOSURE",
-    "lane": "ALIAS-REPAIR 2026-08-19",
-    "origin_survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
-    "origin_address": "0x822a46c8"
-   }
+   "survivor_renamed": {
+    "from": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+    "lane": "W16-NJ 2026-10-02"
+   },
+   "merged_in": [
+    {
+     "name": "$_Param_Construct",
+     "address": null,
+     "survivor": "??$_Copy_Construct@VMatSwap@OutfitConfig@@@stlpmtx_std@@YAXPAVMatSwap@OutfitConfig@@ABV12@@Z",
+     "folded": [
+      "??$_Param_Construct@VMatSwap@OutfitConfig@@V12@@stlpmtx_std@@YAXPAVMatSwap@OutfitConfig@@ABV12@@Z"
+     ],
+     "evidence": "Partitioned out of the closure at 0x822a46c8 by ALIAS-REPAIR 2026-08-19 (UNDER_PARTITIONED_ICF_CLOSURE). These spellings agree with each other on their RESOLVED operands -- resolved through the ICF congruence over our own build -- and disagree with the origin survivor '??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z', so the origin group claimed one fold where the evidence supports two. No retail address is known for this class, so it renders into no map bucket.",
+     "repair": {
+      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
+      "lane": "ALIAS-REPAIR 2026-08-19",
+      "origin_survivor": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndGroup@@VObjectDir@@@@ABU12@@Z",
+      "origin_address": "0x822a46c8"
+     },
+     "withdrawn_reason": "W16-NJ 2026-10-02: ALIAS-REPAIR's partition was right -- the MatSwap pair is its own class -- but it had no retail address; 0x822A46C8 is that class's address (its survivor was the misnamed ObjPtrVec<RndGroup>::Node spelling), so the partition is merged back here with the MatSwap spelling as survivor."
+    }
+   ],
+   "admitted": [
+    {
+     "spelling": "??$_Param_Construct@VMatSwap@OutfitConfig@@V12@@stlpmtx_std@@YAXPAVMatSwap@OutfitConfig@@ABV12@@Z",
+     "lane": "W16-NJ 2026-10-02",
+     "evidence": "re-chased against the corrected survivor _Copy_Construct<OutfitConfig::MatSwap>: tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 60 B retail / 60 B ours; retail body-twins 112. Retail call sites reaching 0x822A46C8 are all MatSwap vector helpers: 0x822A6FAC (__uninitialized_fill_n<MatSwap*>), 0x822A7044 (__uninitialized_copy<MatSwap*>), 0x822A8598 (vector<MatSwap>::_M_insert_overflow_aux)."
+    }
+   ]
   },
   {
    "name": "RGFretButtonDown",
@@ -78504,12 +78524,31 @@
   {
    "name": "$_Copy_Construct",
    "address": "0x822a90e8",
-   "survivor": "??$_Copy_Construct@UDistEntry@@@stlpmtx_std@@YAXPAUDistEntry@@ABU1@@Z",
+   "survivor": "??$_Copy_Construct@VOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOption@@ABV1@@Z",
    "folded": [
-    "??$_Copy_Construct@VOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOption@@ABV1@@Z",
     "??$_Param_Construct@VOldColorOption@@V1@@stlpmtx_std@@YAXPAVOldColorOption@@ABV1@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
+   "survivor_renamed": {
+    "from": "??$_Copy_Construct@UDistEntry@@@stlpmtx_std@@YAXPAUDistEntry@@ABU1@@Z",
+    "lane": "W16-NJ 2026-10-02"
+   },
+   "withdrawn": [
+    {
+     "spelling": "??$_Copy_Construct@UDistEntry@@@stlpmtx_std@@YAXPAUDistEntry@@ABU1@@Z",
+     "lane": "W16-NJ 2026-10-02",
+     "class": "MISNAMED_SURVIVOR",
+     "disposition": "survivor replaced by the spelling retail bytes support; this spelling withdrawn",
+     "evidence": "retail 0x822A90E8 calls ??0OldColorOption@@QAA@ABV0@@Z (0x822A8FD8) and its three retail callers are OldColorOption vector helpers (0x822A9C04 __uninitialized_fill_n, 0x822A9C9C __uninitialized_copy, 0x822AA634 _M_insert_overflow_aux). tools/icf_pair_adjudicate.py --chase against _Copy_Construct<OldColorOption>: FLAT T1 REFUTED and CHASED T1 REFUTED (masked bodies match but the copy-ctor target differs: ??0DistEntry@@QAA@ABU0@@Z vs ??0OldColorOption@@QAA@ABV0@@Z) -- a template twin, not a fold. The map row was anonymous, so the misnamed survivor never rendered."
+    }
+   ],
+   "admitted": [
+    {
+     "spelling": "??$_Param_Construct@VOldColorOption@@V1@@stlpmtx_std@@YAXPAVOldColorOption@@ABV1@@Z",
+     "lane": "W16-NJ 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase against the corrected survivor _Copy_Construct<OldColorOption>: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 60 B retail / 60 B ours; retail body-twins 112. Retail call sites: 0x822A9C04, 0x822A9C9C, 0x822AA634 (OldColorOption vector helpers)."
+    }
+   ]
   },
   {
    "name": "Name",
@@ -97815,10 +97854,8 @@
   {
    "name": "$?6V?$map",
    "address": "0x822a0f38",
-   "survivor": "??$?6V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@1@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@@Z",
-   "folded": [
-    "??$?6VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z"
-   ],
+   "survivor": "??$?6VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VMatSwap@OutfitConfig@@V?$StlNodeAlloc@VMatSwap@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -97827,7 +97864,20 @@
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 100 B retail / 100 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x822a271c."
     }
-   ]
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$?6V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@1@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@@Z",
+     "lane": "W16-NJ 2026-10-02",
+     "class": "MISNAMED_SURVIVOR",
+     "disposition": "map row renamed; spelling withdrawn",
+     "evidence": "retail body divides the byte span by 0x70 (li r10,0x70; divw) and calls operator<<(BinStream&, const OutfitConfig::MatSwap&) (0x822A0008) per 0x70-byte element; sizeof(OutfitConfig::MatSwap) == 0x70. Its one retail caller is OutfitConfig::Save (0x822A271C). No compiled obj references the vector<map<int,float>> spelling."
+    }
+   ],
+   "survivor_renamed": {
+    "from": "??$?6V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@1@@@YAAAVBinStream@@AAV0@ABV?$vector@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V?$StlNodeAlloc@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@2@@stlpmtx_std@@@Z",
+    "lane": "W16-NJ 2026-10-02"
+   }
   },
   {
    "name": "$?6VCtrlPoint",
@@ -101791,10 +101841,8 @@
   {
    "name": "__destroy_aux",
    "address": "0x8237de00",
-   "survivor": "??$__destroy_aux@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABU__false_type@0@@Z",
-   "folded": [
-    "??1Transitions@CharClip@@QAA@XZ"
-   ],
+   "survivor": "??1Transitions@CharClip@@QAA@XZ",
+   "folded": [],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
@@ -101802,7 +101850,20 @@
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 UNDECIDABLE); 4 B retail / 4 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. fn_82382638."
     }
-   ]
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_aux@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABU__false_type@0@@Z",
+     "lane": "W16-NJ 2026-10-02",
+     "class": "MISNAMED_SURVIVOR",
+     "disposition": "map row renamed; spelling withdrawn",
+     "evidence": "retail body is the 4-byte tail call `b 0x8237D1E8` (CharClip::Transitions::Clear) with r3 as the only argument; both retail callers (0x82380B98 in ~CharClip, 0x82382650 in CharClip's ctor) are EH unwind funclets passing this+0x28 = CharClip::mTransitions. __destroy_aux<map<int,float>> takes a [first,last) range and loops; it cannot be this body. No compiled obj references that spelling."
+    }
+   ],
+   "survivor_renamed": {
+    "from": "??$__destroy_aux@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABU__false_type@0@@Z",
+    "lane": "W16-NJ 2026-10-02"
+   }
   },
   {
    "name": "__destroy_range_aux",
@@ -104318,6 +104379,40 @@
      "spelling": "??$?6VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@@Z",
      "lane": "W16-NI 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail_size 132 == our_size 132, 7 relocs, reloc_tally {}; retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x827dd5dc (?Save@TrackDir@@UAAXAAVBinStream@@@Z). The survivor's other retail caller 0x826ea844 is ObjectDir's own Viewport write, which spells the survivor."
+    }
+   ]
+  },
+  {
+   "name": "$__uninitialized_copy",
+   "address": "0x822e8c50",
+   "survivor": "??$__uninitialized_copy@PAV?$ObjPtr@VRndPropAnim@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VRndPropAnim@@@@PAV1@00ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_copy@PBV?$ObjPtr@VRndPropAnim@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VRndPropAnim@@@@PBV1@0PAV1@ABU__false_type@0@@Z"
+   ],
+   "evidence": "Created by lane W16-NJ 2026-10-02: see per-member records in `admitted`.",
+   "lane": "W16-NJ 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "??$__uninitialized_copy@PBV?$ObjPtr@VRndPropAnim@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VRndPropAnim@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
+     "lane": "W16-NJ 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but the element-construct targets differ by name, _Copy_Construct vs _Param_Construct<ObjPtr<RndPropAnim>>, which chase as a proven fold (SLOT-FOLD-OK)); 96 B retail / 96 B ours; retail body-twins 22. All six retail callers of 0x822E8C50 are vector<ObjPtr<RndPropAnim>> members. Retail call site(s) reaching the survivor where our aligned caller spells this (const-source) spelling: 0x822eaa48 (vector<ObjPtr<RndPropAnim>>::_M_allocate_and_copy<const ObjPtr<RndPropAnim>*>), 0x822eb3d4 (vector<ObjPtr<RndPropAnim>>::operator=)."
+    }
+   ]
+  },
+  {
+   "name": "$__uninitialized_copy",
+   "address": "0x822e8cf8",
+   "survivor": "??$__uninitialized_copy@PAV?$ObjPtr@VEventTrigger@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VEventTrigger@@@@PAV1@00ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_copy@PBV?$ObjPtr@VEventTrigger@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VEventTrigger@@@@PBV1@0PAV1@ABU__false_type@0@@Z"
+   ],
+   "evidence": "Created by lane W16-NJ 2026-10-02: see per-member records in `admitted`.",
+   "lane": "W16-NJ 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "??$__uninitialized_copy@PBV?$ObjPtr@VEventTrigger@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VEventTrigger@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
+     "lane": "W16-NJ 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 96 B retail / 96 B ours; retail body-twins 22. All six retail callers of 0x822E8CF8 are vector<ObjPtr<EventTrigger>> members. Retail call site(s) reaching the survivor where our aligned caller spells this (const-source) spelling: 0x822eaae8 (vector<ObjPtr<EventTrigger>>::_M_allocate_and_copy<const ObjPtr<EventTrigger>*>), 0x822eb52c (vector<ObjPtr<EventTrigger>>::operator=)."
     }
    ]
   }
