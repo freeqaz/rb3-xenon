@@ -517,7 +517,7 @@ void Splash::UpdateThread() {
     MILO_ASSERT(!MainThread(), 0x21d);
     {
         CritSecTracker cst(&mStateLock);
-        MILO_ASSERT(mState == kResuming, 0x221);
+        MILO_ASSERT(*(volatile int *)&mState == kResuming, 0x221);
         mState = kResumed;
         mWorkerEvent.Set();
     }
@@ -540,7 +540,7 @@ void Splash::UpdateThread() {
 
     if (!SetImmutableState(kWaitingForTerminating)) {
         do {
-            MILO_ASSERT(mState == kSuspending, 0x246);
+            MILO_ASSERT(*(volatile int *)&mState == kSuspending, 0x246);
             CheckWorkerSuspend(false);
         } while (!SetImmutableState(kWaitingForTerminating));
     }
