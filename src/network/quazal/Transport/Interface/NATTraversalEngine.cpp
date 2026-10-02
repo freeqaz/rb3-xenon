@@ -135,31 +135,40 @@ namespace Quazal {
     template <class T>
     class qProtectedList : public RootObject {
     public:
+        qList<T> &GetList() { return mOList; }
         void PushBack(const T &t) {
             ScopedCS oCS(mCSList);
             mOList.push_back(t);
         }
-        void PopFront() {
+        void PopBack() {
             ScopedCS oCS(mCSList);
-            mOList.pop_front();
+            mOList.pop_back();
         }
         bool IsEmpty() const {
             ScopedCS oCS(mCSList);
-            bool bEmpty = mOList.empty();
-            return bEmpty;
+            return mOList.empty();
         }
 
         mutable CriticalSection mCSList;
         qList<T> mOList;
     };
 
+    class TimeInterval {
+    public:
+        operator int() const { return m_iValue; }
+        int m_iValue;
+    };
+
     class Time : public RootObject {
     public:
         Time() : m_ui64Value(0) {}
+        Time(unsigned long long ui64Value) : m_ui64Value(ui64Value) {}
         ~Time() {}
         Time &operator=(const Time &);
         Time operator+(int) const;
+        Time operator+(TimeInterval) const;
         bool operator>(const Time &t) const { return m_ui64Value > t.m_ui64Value; }
+        bool operator<(const Time &t) const { return m_ui64Value < t.m_ui64Value; }
         static Time GetTime();
 
         unsigned long long m_ui64Value;
@@ -177,6 +186,7 @@ namespace Quazal {
         unsigned int GetRVConnectionID() const;
         void SetRVConnectionID(unsigned int);
         unsigned int GetFlags() const;
+        bool IsPublic() const { return (GetFlags() & 2) == 2; }
 
         char m_data[0x60];
     };
@@ -217,6 +227,12 @@ namespace Quazal {
         URLProbe(const StationURL &, int, bool);
         virtual ~URLProbe() {}
         bool UpdateIsNeeded(Time);
+        void Refresh(int iLifetime) { m_tiExpiration = Time::GetTime() + iLifetime; }
+        const StationURL &GetURL() const { return m_oURL; }
+        bool IsProbeRequested() const { return m_bProbeRequested; }
+        void SetProbeRequested(bool b) { m_bProbeRequested = b; }
+        bool IsExpired(Time t) const { return m_tiExpiration < t; }
+        void IncNbProbes() { m_uiNbProbes++; }
 
         StationURL m_oURL; // 0x08
         Time m_tiExpiration; // 0x70
@@ -370,14 +386,21 @@ namespace Quazal {
         void DisableFlag(unsigned int);
     };
 
-    class PublicURLList : public RootObject {
-    public:
-        char m_data[0x14];
-        qList<StationURL> m_lstURLs; // 0x14
-    };
 
-    PublicURLList *GetPublicURLListOwner();
-    PublicURLList *GetPublicURLList(PublicURLList *);
+    class Network : public RootObject {
+    public:
+        static Network *GetInstance() {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            InstanceControl *pInstance =
+                (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(1, uiContext);
+            Network *pNetwork = 0;
+            if (pInstance != 0) {
+                pNetwork = (Network *)pInstance->m_pDelegatorInstance;
+            }
+            return pNetwork;
+        }
+        qProtectedList<StationURL> *GetStationURLs();
+    };
 
     class NATTraversalEngine : public RootObject {
     public:
@@ -417,8 +440,8 @@ namespace Quazal {
         bool UnregisterEcho();
         void Trace(unsigned int);
 
-        static int s_tiProbeLifetime;
-        static int s_tiFrequency;
+        static TimeInterval s_tiProbeLifetime;
+        static TimeInterval s_tiFrequency;
 
         unsigned int m_uiLocalCID; // 0x08
         NATTraversalStream *m_pStream; // 0x0c
@@ -441,7 +464,7 @@ namespace Quazal {
 
     NATTraversalEngine::~NATTraversalEngine() {
         while (!m_oProbes.IsEmpty()) {
-            m_oProbes.PopFront();
+            m_oProbes.PopBack();
         }
     }
 
@@ -486,8 +509,10 @@ namespace Quazal {
                 return false;
             }
         }
-        for (qList<StationURL>::const_iterator it = lstURLs.begin(); it != lstURLs.end(); ++it) {
+        qList<StationURL>::const_iterator it = lstURLs.begin();
+        while (it != lstURLs.end()) {
             PrepareNATTraversal(*it);
+            ++it;
         }
         return true;
     }
@@ -506,7 +531,7 @@ namespace Quazal {
             m_oProbes.PushBack(oProbe);
             return true;
         } else {
-            pProbe->m_tiExpiration = Time::GetTime() + s_tiProbeLifetime;
+            pProbe->Refresh(s_tiProbeLifetime);
             return false;
         }
     }
@@ -516,34 +541,33 @@ namespace Quazal {
         qList<StationURL> lstRelay;
         if (Time::GetTime() > m_tiNextExecute) {
             ScopedCS oCS(m_oProbes.mCSList);
-            m_tiNextExecute = Time::GetTime() + s_tiFrequency;
+            m_tiNextExecute = Time::GetTime() + (int)s_tiFrequency;
             int iType = 0;
-            std::list<URLProbe, MemAllocator<URLProbe> >::iterator it =
-                m_oProbes.mOList.begin();
-            if (it != m_oProbes.mOList.end()) {
-                iType = it->m_oURL.GetURLType();
+            qList<URLProbe>::iterator it = m_oProbes.GetList().begin();
+            if (it != m_oProbes.GetList().end()) {
+                iType = it->GetURL().GetURLType();
             }
-            while (it != m_oProbes.mOList.end()) {
-                if (it->m_bProbeRequested) {
-                    if (it->m_oURL.GetRVConnectionID() != 0) {
-                        switch (it->m_oURL.GetURLType()) {
+            while (it != m_oProbes.GetList().end()) {
+                if (it->IsProbeRequested()) {
+                    if (it->GetURL().GetRVConnectionID() != 0) {
+                        switch (it->GetURL().GetURLType()) {
                         case 3:
-                            lstRelayExt.push_back(it->m_oURL);
+                            lstRelayExt.push_back(it->GetURL());
                             break;
                         case 1:
-                            lstRelay.push_back(it->m_oURL);
+                            lstRelay.push_back(it->GetURL());
                             break;
                         }
                     }
-                    it->m_bProbeRequested = false;
+                    it->SetProbeRequested(false);
                     ++it;
-                } else if (it->m_tiExpiration.m_ui64Value < Time::GetTime().m_ui64Value) {
-                    it = m_oProbes.mOList.erase(it);
+                } else if (it->IsExpired(Time::GetTime())) {
+                    it = m_oProbes.GetList().erase(it);
                 } else {
                     if (it->UpdateIsNeeded(Time::GetTime())) {
                         if (m_uiLocalCID != 0) {
-                            SendProbe(ProbeRequest, it->m_oURL, Time::GetTime());
-                            it->m_uiNbProbes++;
+                            SendProbe(ProbeRequest, it->GetURL(), Time::GetTime());
+                            it->IncNbProbes();
                         }
                     }
                     ++it;
@@ -553,10 +577,8 @@ namespace Quazal {
                 if (!lstRelay.empty()) {
                     m_pRelay->RequestProbeInitiation(lstRelay);
                 }
-                if (m_pDirect != 0) {
-                    if (!lstRelayExt.empty()) {
-                        m_pRelay->RequestProbeInitiationExt(lstRelayExt, m_pDirect->m_oURL);
-                    }
+                if (m_pDirect != 0 && !lstRelayExt.empty()) {
+                    m_pRelay->RequestProbeInitiationExt(lstRelayExt, m_pDirect->m_oURL);
                 }
             }
         }
@@ -651,15 +673,14 @@ namespace Quazal {
             return false;
         }
         if (iType == 1) {
-            ScopedCS oCS(*(CriticalSection *)GetPublicURLList(GetPublicURLListOwner()));
-            for (qList<StationURL>::iterator it =
-                     GetPublicURLList(GetPublicURLListOwner())->m_lstURLs.begin();
-                 it != GetPublicURLList(GetPublicURLListOwner())->m_lstURLs.end();
-                 ++it) {
-                if ((it->GetFlags() & 2) == 2) {
-                    *pURL = *it;
+            ScopedCS oCS(Network::GetInstance()->GetStationURLs()->mCSList);
+            qList<StationURL>::iterator itURL = Network::GetInstance()->GetStationURLs()->GetList().begin();
+            while (itURL != Network::GetInstance()->GetStationURLs()->GetList().end()) {
+                if (itURL->IsPublic()) {
+                    *pURL = *itURL;
                     return true;
                 }
+                ++itURL;
             }
         }
         if (iType == 3 && m_pDirect != 0) {
@@ -702,7 +723,7 @@ namespace Quazal {
             oURL.SetRVConnectionID(uiCID);
             switch (msg) {
             case ProbeRequest:
-                m_oProbes.UpdateProbe(oURL, Time());
+                m_oProbes.UpdateProbe(oURL, 0);
                 if (m_uiLocalCID != 0) {
                     Buffer oBuffer(0x400);
                     SendProbe(ProbeReply, oURL, tiSent);
