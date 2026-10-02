@@ -237,7 +237,11 @@ Native gate: §5 (run last).
 
 ## 5. Native gate
 
-(filled in by the final commit)
+Run last, on the code at `ed7ae5795` (only this docs edit follows it):
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
 
 ## 6. Not done
 
