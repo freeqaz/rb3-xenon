@@ -86,6 +86,7 @@ namespace Quazal {
             DuplicatedObject *pDO = m_poReferencedDO;
             return pDO;
         }
+        bool IsAcquired() { return GetPtr() != NULL; }
 
         DuplicatedObject *m_poReferencedDO; // 0x0
         DOHandle m_hReferencedDO; // 0x4
@@ -455,9 +456,18 @@ namespace Quazal {
         virtual bool IsAKindOf(unsigned int) const;
     };
 
+    template <class T>
+    class LogicalClockTmpl : public RootObject {
+    public:
+        LogicalClockTmpl(unsigned int value = 0) : m_value(value) {}
+        LogicalClockTmpl(const LogicalClockTmpl &o) : m_value(o.m_value) {}
+
+        T m_value; // 0x0
+    };
+
     class MasterStationRef {
     public:
-        MasterStationRef(DOHandle, bool);
+        MasterStationRef(DOHandle, LogicalClockTmpl<unsigned char>);
         ~MasterStationRef();
 
         char m_pad[0x10];
@@ -1065,9 +1075,9 @@ namespace Quazal {
 
     void JobConnectStation::CompleteConnection() {
         m_bCompleting = true;
-        if (m_refStation.GetPtr() == NULL) {
+        if (!m_refStation.IsAcquired()) {
             Station *pStation = (Station *)DuplicatedObject::CreateDuplica(
-                m_refStation.m_hReferencedDO, MasterStationRef(m_refStation.m_hReferencedDO, true)
+                m_refStation.m_hReferencedDO, MasterStationRef(m_refStation.m_hReferencedDO, 1)
             );
             m_pEndPoint->SetStationHandle(m_refStation.GetReferencedHandle());
             pStation->SetConnection(m_pEndPoint);
