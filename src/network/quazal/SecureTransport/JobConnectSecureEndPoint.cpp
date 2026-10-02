@@ -7,9 +7,10 @@
 // The job that opens a secure (Kerberos-authenticated) PRUDP connection for a
 // SecureEndPoint. It runs as a small state machine over m_eStep:
 //   0 ParseURL, then 2
-//   1 RequestConnectionData: ask for a ticket and for the server's URLs
-//   2 wait until both have arrived, then 3 (else back to 1)
-//   3 PerformConnect: build the request and connect through ConnectionManager
+//   1 RequestConnectionData: ask TicketManager for a ticket and
+//     SecureConnectionClient for the server's ConnectionData
+//   2 CheckConnectionData: both arrived ? 3 : 1
+//   3 PerformConnect: Kerberos connection request, ConnectionManager::ConnectImpl
 //   4 CompleteConnection: validate the server's response
 // and reports through the endpoint's completion callback when the job is done.
 //
@@ -467,7 +468,16 @@ namespace Quazal {
         virtual void Execute();
         virtual void Trace(unsigned int);
 
-        int GetStep() const { return m_eStep; }
+        enum _Step {
+            ParsingURL = 0,
+            RequestingConnectionData = 1,
+            WaitingForConnectionData = 2,
+            Connecting = 3,
+            ValidatingConnection = 4,
+            Done = 5
+        };
+
+        _Step GetStep() const { return m_eStep; }
         void ExecuteStep();
         void ParseURL();
         static void RequestCompletionCallback(CallContext *, const UserContext *);
@@ -481,7 +491,7 @@ namespace Quazal {
         void ProcessConnectionResult(CallContext *);
         void CompleteConnection();
 
-        int m_eStep; // 0x38
+        _Step m_eStep; // 0x38
         ProtocolCallContext m_oTicketContext; // 0x40
         Ticket *m_pTicket; // 0xa8
         BitStream *m_pRequest; // 0xac
@@ -492,7 +502,7 @@ namespace Quazal {
         SecureEndPoint *m_pEndPoint; // 0x170
         EndPoint *m_pConnectedEndPoint; // 0x174
         qList<ConnectionData> m_lstConnectionData; // 0x178
-        StationURL m_urlUnused; // 0x180
+        StationURL m_urlUnused; // 0x180, constructed and destroyed only
         qResult m_rResult; // 0x1e4
         StationURL m_oURL; // 0x1f0
         Buffer *m_pBuffer; // 0x254
@@ -503,6 +513,9 @@ namespace Quazal {
         unsigned int m_uiCID; // 0x26c
     };
 
+    // Below 100: retail expands m_lstConnectionData's _List_base constructor
+    // but calls _M_empty_initialize (0x82B43568) out of line; here both expand.
+    // pConnectData is not read.
     JobConnectSecureEndPoint::JobConnectSecureEndPoint(
         SecureEndPoint *pEndPoint, const StationURL *pURL, Buffer *pConnectData,
         Buffer *pBuffer, EndPoint::pfCompletion pfCallback, const UserContext &oContext,
@@ -510,7 +523,7 @@ namespace Quazal {
     )
         : Job(DebugString()), m_pEndPoint(pEndPoint), m_oURL(*pURL), m_pBuffer(pBuffer),
           m_pfCallback(pfCallback), m_oContext(oContext) {
-        m_eStep = 0;
+        m_eStep = ParsingURL;
         m_tTimeout = Time::FromMilliseconds(uiTimeout);
         m_rResult = qResult(0x10001);
         m_pTicket = 0;
@@ -538,37 +551,39 @@ namespace Quazal {
         }
     }
 
-    inline void JobConnectSecureEndPoint::ExecuteStep() {
-        switch (m_eStep) {
-        case 0:
-            ParseURL();
-            m_eStep = 2;
-            break;
-        case 2:
-            CheckConnectionData();
-            break;
-        case 1:
-            RequestConnectionData();
-            break;
-        case 3:
-            PerformConnect();
-            break;
-        case 4:
-            CompleteConnection();
-            break;
-        }
-    }
-
     void JobConnectSecureEndPoint::Execute() {
         Trace(0x4000);
         do {
             ExecuteStep();
             Trace(0x4000);
         } while (GetState() == Running);
+        // Retail reads the state once more here and does nothing with it: a
+        // block whose body is compiled out of this build.
         if (GetState() == Complete) {
         }
         if (GetState() == Complete && m_pfCallback != 0) {
             m_pfCallback(m_pEndPoint, m_rResult, &m_oContext);
+        }
+    }
+
+    void JobConnectSecureEndPoint::ExecuteStep() {
+        switch (m_eStep) {
+        case ParsingURL:
+            ParseURL();
+            m_eStep = WaitingForConnectionData;
+            break;
+        case WaitingForConnectionData:
+            CheckConnectionData();
+            break;
+        case RequestingConnectionData:
+            RequestConnectionData();
+            break;
+        case Connecting:
+            PerformConnect();
+            break;
+        case ValidatingConnection:
+            CompleteConnection();
+            break;
         }
     }
 
@@ -587,7 +602,7 @@ namespace Quazal {
         }
         if (m_uiPID == 0 && m_uiCID == 0) {
             m_rResult = qResult(0x80050003);
-            m_eStep = 5;
+            m_eStep = Done;
             SetToComplete();
         }
     }
@@ -604,9 +619,9 @@ namespace Quazal {
 
     void JobConnectSecureEndPoint::CheckConnectionData() {
         if (IsConnectionDataAvailable()) {
-            m_eStep = 3;
+            m_eStep = Connecting;
         } else {
-            m_eStep = 1;
+            m_eStep = RequestingConnectionData;
         }
     }
 
@@ -622,7 +637,7 @@ namespace Quazal {
                     &m_oTicketContext, uiPID, m_uiPID, &m_pTicket
                 )) {
                 m_rResult = qResult(0x8001000D);
-                m_eStep = 5;
+                m_eStep = Done;
                 SetToComplete();
                 return;
             }
@@ -636,19 +651,19 @@ namespace Quazal {
                     &m_oDataContext, m_uiCID, m_uiPID, &m_lstConnectionData
                 )) {
                 m_rResult = qResult(0x8001000D);
-                m_eStep = 5;
+                m_eStep = Done;
                 SetToComplete();
                 return;
             }
         }
         if (m_oTicketContext.GetState() == CallContext::CallPending
             || m_oDataContext.GetState() == CallContext::CallPending) {
-            m_eStep = 2;
+            m_eStep = WaitingForConnectionData;
             SetToSuspended();
             return;
         } else {
             m_rResult = qResult(0x8001000D);
-            m_eStep = 5;
+            m_eStep = Done;
             SetToComplete();
         }
     }
@@ -666,10 +681,39 @@ namespace Quazal {
         return true;
     }
 
+    // Retail calls these two out of line, and PerformConnect then also calls
+    // its local list's constructor out of line; with them inline (declined by
+    // /Ob1) our PerformConnect does the same. See the note on PerformConnect.
+    inline void JobConnectSecureEndPoint::PrepareConnectionRequest() {
+        SecureStream *pStream = m_pEndPoint->m_pStream;
+        if (m_pRequest != 0) {
+            delete m_pRequest;
+        }
+#line 267
+        m_pRequest = new (__FILE__, __LINE__) BitStream;
+        KerberosAuthentication::PrepareConnectionRequest(
+            m_pRequest, pStream->GetAuthenticationClient(), m_pTicket, &m_uiSessionKey
+        );
+    }
+
+    inline void JobConnectSecureEndPoint::GetConnectionURLs(qList<StationURL> &lstURLs) {
+        qList<ConnectionData>::iterator it = m_lstConnectionData.begin();
+        while (it != m_lstConnectionData.end()) {
+            StationURL url((*it).m_urlRegularProtocols);
+            url.SetConnectionID((*it).m_uiConnectionID);
+            lstURLs.push_back(url);
+            it++;
+        }
+    }
+
+    // Below 100 (frame layout only): retail calls the local list's constructor
+    // out of line with no reserved space for the two helpers above; here the
+    // declined helpers reserve their frames. Retail also spills
+    // ToMilliseconds' result to a temporary before the call.
     void JobConnectSecureEndPoint::PerformConnect() {
         if (m_lstConnectionData.empty()) {
             m_rResult = qResult(0x80050003);
-            m_eStep = 5;
+            m_eStep = Done;
             SetToComplete();
             return;
         }
@@ -693,33 +737,11 @@ namespace Quazal {
                 &m_pConnectedEndPoint, Time::ToMilliseconds(m_tTimeout)
             )) {
             m_rResult = qResult(0x8001000D);
-            m_eStep = 4;
+            m_eStep = ValidatingConnection;
             SetToRunning();
         } else {
-            m_eStep = 4;
+            m_eStep = ValidatingConnection;
             SetToSuspended();
-        }
-    }
-
-    inline void JobConnectSecureEndPoint::PrepareConnectionRequest() {
-        SecureStream *pStream = m_pEndPoint->m_pStream;
-        if (m_pRequest != 0) {
-            delete m_pRequest;
-        }
-#line 267
-        m_pRequest = new (__FILE__, __LINE__) BitStream;
-        KerberosAuthentication::PrepareConnectionRequest(
-            m_pRequest, pStream->GetAuthenticationClient(), m_pTicket, &m_uiSessionKey
-        );
-    }
-
-    inline void JobConnectSecureEndPoint::GetConnectionURLs(qList<StationURL> &lstURLs) {
-        qList<ConnectionData>::iterator it = m_lstConnectionData.begin();
-        while (it != m_lstConnectionData.end()) {
-            StationURL url((*it).m_urlRegularProtocols);
-            url.SetConnectionID((*it).m_uiConnectionID);
-            lstURLs.push_back(url);
-            it++;
         }
     }
 
@@ -750,12 +772,12 @@ namespace Quazal {
                 m_rResult = qResult(0x8005000A);
             }
         }
-        m_eStep = 5;
+        m_eStep = Done;
         SetToComplete();
     }
 
     void JobConnectSecureEndPoint::Trace(unsigned int uiFlags) {
-        if (GetStep() != 2) {
+        if (GetStep() != WaitingForConnectionData) {
             return;
         } else {
             m_oTicketContext.Trace(uiFlags);
