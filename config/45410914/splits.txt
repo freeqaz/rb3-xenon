@@ -372,6 +372,8 @@ TrackPanelDir.cpp:
 	.pdata      start:0x821FAB30 end:0x821FAB40
 	.pdata      start:0x821FAB40 end:0x821FAF18
 	.pdata      start:0x821FAF18 end:0x821FAF20
+	.pdata      start:0x821FAF28 end:0x821FAF38
+	.pdata      start:0x821FAF38 end:0x821FAF48
 	.pdata      start:0x821FAF48 end:0x821FAF60
 	.pdata      start:0x821FAF60 end:0x821FAF70
 	.pdata      start:0x821FAFB0 end:0x821FAFB8
@@ -385,6 +387,8 @@ TrackPanelDir.cpp:
 	.text       start:0x823038B0 end:0x82303A68
 	.text       start:0x82303A68 end:0x82307630
 	.text       start:0x82307630 end:0x82307B74
+	.text       start:0x82307CF0 end:0x82307EA8
+	.text       start:0x82307EA8 end:0x82308060
 	.text       start:0x82308060 end:0x823082D0
 	.text       start:0x823082D0 end:0x8230846C
 	.text       start:0x8230869C end:0x82308710
@@ -10020,7 +10024,7 @@ BandMachine.cpp:
 	.text       start:0x825C1DE0 end:0x825C1E30
 
 BandSongMetadata.cpp:
-	.pdata      start:0x821FAF20 end:0x821FAF48
+	.pdata      start:0x821FAF20 end:0x821FAF28
 	.pdata      start:0x82200B00 end:0x82200B08
 	.pdata      start:0x82200B38 end:0x82200B40
 	.pdata      start:0x82212BC8 end:0x82212BD0
@@ -10037,7 +10041,7 @@ BandSongMetadata.cpp:
 	.pdata      start:0x82221778 end:0x82221780
 	.pdata      start:0x82221780 end:0x82221798
 	.pdata      start:0x82221798 end:0x822217B8
-	.text       start:0x82307B78 end:0x82308060
+	.text       start:0x82307B78 end:0x82307CF0
 	.text       start:0x82365510 end:0x82365560
 	.text       start:0x823658F8 end:0x82365974
 	.text       start:0x824B4390 end:0x824B43F8
@@ -11234,7 +11238,7 @@ band3/game/PerfectSectionTracker.cpp:
 	.text       start:0x826DBEE4 end:0x826DC128
 
 band3/game/MultiplayerAnalyzer.cpp:
-	.pdata      start:0x82230CA8 end:0x82230CC8
+	.pdata      start:0x82230CA8 end:0x82230CB8
 	.pdata      start:0x82234B90 end:0x82234C00
 	.pdata      start:0x82234C00 end:0x82234C10
 	.pdata      start:0x82234C10 end:0x82234C20
@@ -11250,7 +11254,7 @@ band3/game/MultiplayerAnalyzer.cpp:
 	.pdata      start:0x82234CD8 end:0x82234CE8
 	.pdata      start:0x82234CE8 end:0x82234CF0
 	.pdata      start:0x82234CF0 end:0x82234CF8
-	.text       start:0x82687F98 end:0x826881DC
+	.text       start:0x82687F98 end:0x82688048
 	.text       start:0x826CD8DC end:0x826CE268
 	.text       start:0x826CE268 end:0x826CE2D0
 	.text       start:0x826CE2D0 end:0x826CE4B8
@@ -12363,6 +12367,7 @@ SongDB.cpp:
 	.pdata      start:0x82230B88 end:0x82230C68
 	.pdata      start:0x82230C68 end:0x82230C78
 	.pdata      start:0x82230C78 end:0x82230CA8
+	.pdata      start:0x82230CB8 end:0x82230CC8
 	.pdata      start:0x82230CC8 end:0x82230CD0
 	.pdata      start:0x82230CD0 end:0x82230CE0
 	.pdata      start:0x82230CE0 end:0x82230CF0
@@ -12390,6 +12395,7 @@ SongDB.cpp:
 	.text       start:0x82687170 end:0x82687D48
 	.text       start:0x82687D48 end:0x82687DE0
 	.text       start:0x82687DE0 end:0x82687F98
+	.text       start:0x82688048 end:0x826881DC
 	.text       start:0x826881DC end:0x82688298
 	.text       start:0x82688298 end:0x8268830C
 	.text       start:0x82688310 end:0x826883F8

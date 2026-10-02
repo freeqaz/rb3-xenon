@@ -105851,6 +105851,26 @@
    "added": {
     "lane": "W16-NK 2026-10-02"
    }
+  },
+  {
+   "name": "_Copy_Construct",
+   "address": "0x8229ee08",
+   "survivor": "??$_Copy_Construct@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndTex@@@@ABV1@@Z",
+   "folded": [
+    "??$_Param_Construct@V?$ObjPtr@VRndTex@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndTex@@@@ABV1@@Z"
+   ],
+   "evidence": "W16-NK: a named caller row exposed this fold; the folded spelling is admitted by icf_pair_adjudicate.py --chase with a per-address retail call-site witness (admitted[]).",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "??$_Param_Construct@V?$ObjPtr@VRndTex@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndTex@@@@ABV1@@Z",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail carries 112 bodies of this shape. Retail call site(s) reaching the survivor where our aligned caller calls this spelling: 0x822A22C4 (??$__uninitialized_fill_n<ObjPtr<RndTex>> (Gem))."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
   }
  ]
 }
