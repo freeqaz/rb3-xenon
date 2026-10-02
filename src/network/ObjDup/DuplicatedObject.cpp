@@ -411,7 +411,7 @@ namespace Quazal {
                 m_refMasterStation.m_lcVersion, msgDataSets.GetBuffer(), &lstStations
             );
         }
-        refStation.Get<Station>()->SendMessage(pMessage, true);
+        refStation.Get<Station>()->Send(pMessage, true);
         delete pMessage;
         AddToDuplicationSet(refStation.Get<Station>());
     }
@@ -468,7 +468,7 @@ namespace Quazal {
         ClearFlag(1);
         ReleaseReference(false);
         if (m_dohMyself.IsA(_DO_Station::GetStaticClassID())) {
-            ((Station *)this)->ReleaseStationReference();
+            ((Station *)this)->ReleaseOwnReference();
         }
     }
 
@@ -488,7 +488,7 @@ namespace Quazal {
             InitDO();
         }
         if (GetHandle() == m_refMasterStation.GetHandle()) {
-            Station::DynamicCast(this)->AcquireStationReference();
+            Station::DynamicCast(this)->AcquireOwnReference();
         }
         if (op.IsADuplica()) {
             OperationErrorNotifier::GetInstance()->NotifyError(GetHandle(), 0x60001);
@@ -546,7 +546,7 @@ namespace Quazal {
             SystemError::SignalError(0, 0, 0xE003000D, 0);
             return 0;
         }
-        pDO = CreateMasterImpl(Station::GetStationHandle(1), wk.GetDOClassID(), DOID(wk.GetID()));
+        pDO = CreateMasterImpl(Station::ConvertIDToDOHandle(1), wk.GetDOClassID(), DOID(wk.GetID()));
         wk.m_bCreated = true;
         return pDO;
     }
@@ -1049,7 +1049,7 @@ namespace Quazal {
         } else {
             qMap<DOHandle, DuplicatedObject *>::const_iterator i = pSelection->begin();
             while (i != pSelection->end()) {
-                static_cast<Station *>(i->second)->SendMessage(pMessage, ui);
+                static_cast<Station *>(i->second)->Send(pMessage, ui);
                 ++i;
             }
         }
@@ -1123,16 +1123,16 @@ namespace Quazal {
         if (DOHandle(m_refMasterStation.m_hReferencedDO.mValue) == DOHandle()) {
             return false;
         }
-        if (Station::GetLocalStationHandle() == DOHandle()) {
+        if (Station::GetLocalStation() == DOHandle()) {
             return true;
         }
-        return DOHandle(m_refMasterStation.m_hReferencedDO.mValue) == Station::GetLocalStationHandle();
+        return DOHandle(m_refMasterStation.m_hReferencedDO.mValue) == Station::GetLocalStation();
     }
 
     bool DuplicatedObject::IsAWellKnownDO() const { return m_dohMyself.IsAWKHandle(); }
 
     unsigned int DuplicatedObject::GetMasterID() const {
-        return Station::GetStationIDFromHandle(m_refMasterStation.m_hReferencedDO.mValue);
+        return Station::ConvertDOHandleToID(m_refMasterStation.m_hReferencedDO.mValue);
     }
 
     void DuplicatedObject::ReleaseMainReference() {
@@ -1172,7 +1172,7 @@ namespace Quazal {
             ClearFlag(1);
             ReleaseReference(false);
             if (m_dohMyself.IsA(Station::GetClassID())) {
-                static_cast<Station *>(this)->OnStationDOReleased();
+                static_cast<Station *>(this)->ReleaseOwnReference();
             }
         }
         return true;
@@ -1181,7 +1181,7 @@ namespace Quazal {
     bool DuplicatedObject::ConnectOrphanDuplica() {
         {
             DORefTemplate<Station> refMaster(m_refMasterStation.m_hReferencedDO.mValue);
-            DORefTemplate<Station> refLocal(Station::GetLocalStationHandle());
+            DORefTemplate<Station> refLocal(Station::GetLocalStation());
             if (refMaster.IsValid() && refMaster->GetState() == 4) {
                 return false;
             }
