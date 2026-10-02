@@ -124,12 +124,12 @@ void CharCollide::Highlight() {
         if (n > 0) {
             CharCollideStruct *s = unkStructs;
             do {
-                s++;
                 Hmx::Color sphereColor(0, 0, 1, 1);
                 UtilDrawSphere(
                     mMesh->Verts(s->vertIdx).pos,
                     0.1f, sphereColor
                 );
+                s++;
                 n--;
             } while (n != 0);
         }
