@@ -140,7 +140,10 @@ namespace Quazal {
         char unkd9[0xe0 - 0xd9];
     };
 
-    class PacketIn : public Packet {};
+    class PacketIn : public Packet {
+    public:
+        Buffer *GetPayload() { return m_pPayload; }
+    };
 
     class StreamSettings {
     public:
@@ -154,6 +157,7 @@ namespace Quazal {
         float GetRetransmitTimeoutMultiplier();
         unsigned int GetInitialRTT();
         unsigned int GetMaxWindowMapSize();
+        unsigned int GetMaxRTTRetransmission();
         unsigned int GetPingTimeout();
         bool GetSendKeepAlive();
     };
@@ -226,6 +230,7 @@ namespace Quazal {
         StreamSettings *GetSettings() { return &s_oStreamSettings[m_eType].GetValue(); }
         void Send(unsigned short, unsigned char, PacketOut *);
         void EndPointDisconnected(PRUDPEndPoint *);
+        void EndPointFaulted(PRUDPEndPoint *);
 
         char unk0[0x4];
         unsigned int m_eType;              // 0x4
@@ -241,7 +246,7 @@ namespace Quazal {
     public:
         virtual void Unk0();
         virtual void OnDataReceived(class EndPoint *, Buffer *);
-        virtual void OnDisconnected(class EndPoint *, unsigned int);
+        virtual void OnFault(class EndPoint *, unsigned int);
     };
 
     class EndPointAddress {
@@ -327,8 +332,9 @@ namespace Quazal {
         PacketOut *GetNextToSend();
         bool Push(PacketOut *);
         bool IsFull();
-        PacketOut *Acknowledge(const LogicalClock &);
-        void AcknowledgeUpTo(const LogicalClock &);
+        PacketOut *Acknowledge(LogicalClock);
+        void AcknowledgeUpTo(LogicalClock);
+        bool HasRoom();
         void GetFirstPacketIterator(void *);
         PacketOut *GetPacket(void *);
         void Clear();
@@ -353,6 +359,10 @@ namespace Quazal {
         RTT(unsigned int);
         ~RTT();
         void Adjust(unsigned int);
+        unsigned int GetRTO() {
+            unsigned int uiAverage = m_uiSmoothedAvg >> 3;
+            return uiAverage + (m_uiSmoothedVar >> 2) * 4;
+        }
 
         unsigned int m_uiSmoothedAvg; // 0x0
         unsigned int m_uiSmoothedVar; // 0x4
@@ -451,6 +461,7 @@ namespace Quazal {
 
         unsigned int GetNbPacketsInWindow();
         bool IsWindowEmpty();
+        bool HasPendingData() { return !m_pSlidingWindow->HasRoom(); }
         void SendOnStream(unsigned char ucPort, PacketOut *pPacket) {
             GetStream()->Send(m_usConnectionID, ucPort, pPacket);
         }
@@ -462,6 +473,7 @@ namespace Quazal {
         void DispatchData(Buffer *);
         void ProcessData(PacketIn *, Time);
         void SignalFaultEvent(unsigned int);
+        static void *GetFaultContext();
         void ServiceIncomingPacket(PacketIn *);
         void PacketAcknowledged(PacketIn *);
         void ServiceTimeout(PacketOut *);
@@ -754,6 +766,128 @@ namespace Quazal {
         PacketOut *pPacket = m_pSlidingWindow->GetNextToSend();
         if (pPacket) {
             m_tLastSend = Time::GetTime();
+            SendPacket(pPacket);
+        }
+    }
+
+
+    void PRUDPEndPoint::SendPacket(PacketOut *pPacket) {
+        if (pPacket->GetType() == 3 && !HasPendingData()) {
+            GetStream()->m_oTimeoutManager.SchedulePacketTimeout(pPacket);
+            return;
+        }
+        StreamSettings *pSettings = GetStream()->GetSettings();
+        pPacket->m_usNbSends++;
+        Timeout *pTimeout = pPacket->m_pTimeout;
+        unsigned int uiTimeout = (unsigned int)(
+            m_oRTT.GetRTO() * pPacket->GetNbSends()
+            * (pPacket->GetNbSends() < pSettings->GetExtraRetransmitTimeoutTrigger()
+                   ? pSettings->GetRetransmitTimeoutMultiplier()
+                   : pSettings->GetExtraRetransmitTimeoutMultiplier())
+        );
+        if (pPacket->GetNbSends() > 1)
+            GetStream()->m_pStats->m_oCounters.Increment(7, 1);
+        pTimeout->SetRTO(uiTimeout);
+        GetStream()->m_oTimeoutManager.SchedulePacketTimeout(pPacket);
+        SendOnStream(m_oAddress.GetPortType(), pPacket);
+    }
+
+    bool PRUDPEndPoint::Defrag(PacketIn *pPacket) {
+        Buffer *pPayload = pPacket->m_pPayload;
+        if (m_pDefragBuffer == 0) {
+            m_pDefragBuffer = pPayload;
+            pPayload = 0;
+            m_pDefragBuffer->AcquireRef();
+        }
+        unsigned char ucFragmentID = pPacket->m_ucFragmentID;
+        bool bLastFragment = ucFragmentID == 0;
+        if (!bLastFragment && ucFragmentID != m_ucNextFragmentID) {
+            if (m_pDefragBuffer) {
+                m_pDefragBuffer->ReleaseRef();
+                m_pDefragBuffer = 0;
+            }
+            return bLastFragment;
+        }
+        if (pPayload)
+            m_pDefragBuffer->AppendData(pPayload);
+        if (!bLastFragment) {
+            m_ucNextFragmentID++;
+            if (m_ucNextFragmentID == 0)
+                m_ucNextFragmentID++;
+        }
+        return bLastFragment;
+    }
+
+    void PRUDPEndPoint::DispatchData(Buffer *pBuffer) {
+        EndPointEventHandler *pHandler = m_pHandler;
+        if (pHandler)
+            m_pHandler->OnDataReceived(this, pBuffer);
+    }
+
+    void PRUDPEndPoint::ProcessData(PacketIn *pPacket, Time tReception) {
+        if (!pPacket->HasFlag(0x10)) {
+            DispatchData(pPacket->GetPayload());
+        } else if (Defrag(pPacket)) {
+            DispatchData(m_pDefragBuffer);
+            m_ucNextFragmentID = 1;
+            m_pDefragBuffer->ReleaseRef();
+            m_pDefragBuffer = 0;
+        }
+    }
+
+    void PRUDPEndPoint::SignalFault(unsigned int uiReason, bool bImmediate) {
+        if (bImmediate)
+            SignalFaultEvent(uiReason);
+        else
+            m_uiFaultReason = uiReason;
+    }
+
+    void PRUDPEndPoint::SignalFaultEvent(unsigned int uiReason) {
+        if (IsConnected() || PeerIsConnected()) {
+            void *pContext = GetFaultContext();
+            SetConnectionState(Faulty);
+            StopKeepAlive();
+            EndPointEventHandler *pHandler = m_pHandler;
+            if (pHandler)
+                m_pHandler->OnFault(this, uiReason);
+            SetPeerDisconnected();
+            GetStream()->EndPointFaulted(this);
+        } else {
+            switch (m_eState) {
+            case Connecting:
+            case Disconnecting:
+                SetConnectionState(NotConnected);
+                break;
+            }
+        }
+    }
+
+    void PRUDPEndPoint::PacketAcknowledged(PacketIn *pPacket) {
+        PacketOut *pAcked = m_pSlidingWindow->Acknowledge(pPacket->GetSequenceID());
+        if (pAcked) {
+            if (pAcked->GetNbSends() < GetStream()->GetSettings()->GetMaxRTTRetransmission())
+                m_oRTT.Adjust((unsigned int)(pPacket->GetTimeStamp() - pAcked->GetTimeStamp()));
+            CancelTimeout(pAcked);
+            m_pSlidingWindow->AcknowledgeUpTo(pPacket->GetSequenceID());
+            SendNextPackets();
+        }
+    }
+
+    void PRUDPEndPoint::ServiceTimeout(PacketOut *pPacket) {
+        if (pPacket->GetType() == 4) {
+            TimeToPing();
+            return;
+        }
+        if (pPacket->GetNbSends() >= GetStream()->GetSettings()->GetMaxRetransmission()
+            || pPacket->GetTimeout()->IsExpired()) {
+            if (pPacket->GetType() == 3 && GetConnectionState() == Disconnecting)
+                SetConnectionState(NotConnected);
+            if ((pPacket->GetType() == 1 || pPacket->GetType() == 0)
+                && GetConnectionState() == Connecting)
+                SetConnectionState(NotConnected);
+            if (GetConnectionState() == Connected)
+                SignalFault(2, false);
+        } else {
             SendPacket(pPacket);
         }
     }
