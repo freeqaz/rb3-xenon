@@ -28,8 +28,8 @@ The total is the sum of two changes, each measured on its own (below): five Save
 
 ## 1. Five Save bodies
 
-All five were `SAVE_OBJ(...)` / `MILO_ASSERT(0, line)` stubs, matching the Wii-retail dialect. Xbox retail has real bodies. Neither
-oracle helps: rb3-Wii and DC3 both carry `SAVE_OBJ` for all five. Each body was read off
+All five were `SAVE_OBJ(...)` / `MILO_ASSERT(0, line)` stubs. Xbox retail has real bodies, and no
+other source tree carries one. Each body was read off
 retail (objdiff target listing) and turns out to mirror the unit's own `Load`/`PreLoad`:
 
 | row | size | retail body | before → after |
