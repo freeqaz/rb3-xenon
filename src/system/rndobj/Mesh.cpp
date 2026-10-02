@@ -862,7 +862,11 @@ RndDrawable *RndMesh::CollideShowing(const Segment &seg, float &f, Plane &pl) {
                 if (Intersect(sega0, tri, false, fintersect)) {
                     Interp(sega0.start, sega0.end, fintersect, sega0.end);
                     f *= fintersect;
-                    pl = Plane(tri.origin, tri.frame.z);
+                    pl.Set(
+                        tri.frame.z.x, tri.frame.z.y, tri.frame.z.z,
+                        -(tri.frame.z.x * tri.origin.x + tri.frame.z.y * tri.origin.y
+                          + tri.frame.z.z * tri.origin.z)
+                    );
                     b1 = true;
                     sLastCollide = (it - Faces().begin());
                 }
