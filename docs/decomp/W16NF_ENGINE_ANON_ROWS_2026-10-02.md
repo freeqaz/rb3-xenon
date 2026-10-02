@@ -1,8 +1,12 @@
 # W16-NF — anonymous rows in compiled src/system units: 98 named, 4 wrong names corrected, 42 fold groups chase-proven (2026-10-02)
 
 **Branch** `w16-nf`, rebased onto main `b8eada9db` (W16-NE, then W16-NG). Not merged. The A/B
-and the native gate ran on the `17eef09f3` base; W16-NG touches only `tools/ab_measure.py` and its
-doc, which neither the metric nor the native build reads, so both results carry over.
+was re-run on the `b8eada9db` base with W16-NG's `ab_measure` and **without**
+`RB3_ALLOW_UNRESOLVED_SPLITS` (the patch removes the drained `FlowWhile.cpp` heading): byte-identical
+patch, identical result on every key (run dir
+`~/tmp/wt-w16-nf-ab2/.ab_measure_runs/20261002-102409-ab_branch2-3364899/`). The native gate ran on
+the `17eef09f3` base; W16-NG touches only `tools/ab_measure.py` and its doc, which the native build
+does not read.
 **Ruler** `name_check` (graded; `report.json` `provenance.diff_config`).
 **Scope** anonymous `fn_` rows at fuzzy 0 in every compiled unit whose source is under
 `src/system/`, **excluding `hamobj/` and `gesture/`** (W16-NE's DC-only units). At main
