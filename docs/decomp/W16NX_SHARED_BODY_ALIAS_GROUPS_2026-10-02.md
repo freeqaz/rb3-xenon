@@ -1,6 +1,6 @@
 # W16-NX: shared-body names as alias groups, and a second `--chasetest` decoy (2026-10-02)
 
-**Branch** `w16-nx`, off main `1bbe30628` (main did not move during the lane). Ruler `name_check` (graded;
+**Branch** `w16-nx`, off main `1bbe30628`, rebased onto `c42c979f8` (W16-NW) before the final A/B. Ruler `name_check` (graded;
 `report.json` `provenance.diff_config`). Permuter not run. No compile flag, PCH or shared header touched.
 Scratch: `~/tmp/w16nx/`.
 
@@ -29,7 +29,20 @@ units at 100% [mpn]: 490 -> 490
 worktree (diffed row by row against main's `report.json`, which carried the identical leg-A measures).
 **Measured exactly.**
 
-**Row level** (archived legs): 2 rows cross to 100 (the CharBlendBone unwind funclets `fn_823C4394` /
+**Re-measured after main moved to `c42c979f8`** (W16-NW: StringConversion, Quazal `symbols.txt`
+re-carve, disjoint map rows). The rebase was clean. Same A/B worktree advanced to `c42c979f8`, run dir
+`~/tmp/wt-w16-nx-ab/.ab_measure_runs/20261002-194121-ab_final2-2485657/`:
+
+```
+leg A: matched=51582 masked=24645 honest=26937 code%=55.040930  (recompiles: 0, settled)
+leg B: matched=51590 masked=24645 honest=26945 code%=55.048150  (split fixed point both legs)
+Δmatched=+8  Δmasked_equal=+0  Δhonest=+8  Δcode_bytes=+740   rows: 2 up to 100, 1 down, 24 renamed keys
+```
+
+Prediction (an unchanged delta) **measured exactly**. On the rebased tree `--chasetest` (rc=0),
+`--self-break-slots` (rc=0) and `--validate` (PASS, 0 contradicted) were re-run.
+
+**Row level** (archived legs, identical on both runs): 2 rows cross to 100 (the CharBlendBone unwind funclets `fn_823C4394` /
 `fn_823C4680`), **1 row goes down** (§5), and 12 keys are renamed. Every renamed key is at fuzzy and mpn 100
 in leg B. Three keys at 100 vanish (`HasLesson@LessonMgr`, `_Destroy<ConstraintSystem>`,
 `splice<BandCamShot::Target>`). Each was a phantom pairing whose address now carries its true name, at 100.
