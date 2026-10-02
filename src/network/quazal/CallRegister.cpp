@@ -134,6 +134,10 @@ namespace Quazal {
         DOHandle GetTargetStation() const { return m_hTargetStation; }
         DOHandle GetTargetObject() const { return m_refTarget.GetHandle(); }
         void SignalResponse(UserContext);
+        void SignalFault() {
+            DOCallContext *pContext = this;
+            pContext->ProcessFault();
+        }
         bool InternalCancel(_State, _Outcome);
 
         unsigned short m_usID; // 0x50
@@ -144,7 +148,10 @@ namespace Quazal {
         char m_pad6c[0x3c];
     };
 
-    class FetchContext : public DOCallContext {};
+    class FetchContext : public DOCallContext {
+    public:
+        DOHandle GetObjectHandle() const { return m_refTarget.m_hObject; }
+    };
     class MigrationContext : public DOCallContext {};
 
     class Job : public RefCountedObject {
@@ -455,9 +462,8 @@ namespace Quazal {
     void CallRegister::CancelCallToStation(DOHandle hStation) {
         Iterator it(this);
         while (!it.EndReached()) {
-            DOCallContext *pContext = *it;
-            if (pContext->GetTargetStation() == hStation) {
-                (*it)->ProcessFault();
+            if ((*it)->GetTargetStation() == hStation) {
+                (*it)->SignalFault();
             }
             it.Next();
         }
@@ -474,8 +480,7 @@ namespace Quazal {
     void CallRegister::CancelPendingCalls() {
         Iterator it(this);
         while (!it.EndReached()) {
-            DOCallContext *pContext = *it;
-            pContext->InternalCancel(CallContext::CallError, (DOCallContext::_Outcome)0x80060003);
+            (*it)->InternalCancel(CallContext::CallError, (DOCallContext::_Outcome)0x80060003);
             it.Next();
         }
     }
@@ -505,7 +510,7 @@ namespace Quazal {
             DOCallContext *pContext = *it;
             if (pContext->GetType() == 1) {
                 FetchContext *pFetch = (FetchContext *)pContext;
-                if (pFetch->m_refTarget.m_hObject == hObject) {
+                if (pFetch->GetObjectHandle() == hObject) {
                     pContext->SignalResponse(UserContext(eOutcome));
                 }
             }
