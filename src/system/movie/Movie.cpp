@@ -1083,16 +1083,16 @@ bool Movie::Impl::Begin(
     mSoundDisabled = noSound;
     mTrack = track;
     mFillWidth = fillWidth;
+    mBinkHandle = kNoHandle;
     mAspect = 0.0f;
     mAsync = true;
-    mBinkHandle = kNoHandle;
     mPollTimer.Reset();
     if (preload) {
         static int sPhysicalHeap = MemFindHeap("physical");
         MemHeapTracker tracker(sPhysicalHeap);
         const char *name = mFilename.c_str();
         mLoader = new FileLoader(
-            FilePath(name),
+            name, // implicit FilePath: retail passes the stack temp's address
             name,
             kLoadFront,
             0,
@@ -1101,7 +1101,7 @@ bool Movie::Impl::Begin(
             stream && stream->Cached() ? stream : nullptr
         );
     } else {
-        mLoader2 = new MovieLoader(FilePath(mFilename.c_str()), kLoadStayBack, this);
+        mLoader2 = new MovieLoader(mFilename.c_str(), kLoadStayBack, this);
     }
     sActiveMovies.push_back(this);
     if (++sActivePending > 1 && !preload) {
