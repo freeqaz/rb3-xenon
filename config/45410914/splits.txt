@@ -14307,8 +14307,8 @@ network/quazal/DOCallContext.cpp:
 	.text       start:0x82AA0E48 end:0x82AA15E8
 
 network/quazal/Transport/Interface/StationURL.cpp:
-	.pdata      start:0x82252840 end:0x82252A78
-	.text       start:0x82AA1658 end:0x82AA35F8
+	.pdata      start:0x82252840 end:0x82252C08
+	.text       start:0x82AA1658 end:0x82AA6270
 
 network/quazal/SystemComponent.cpp:
 	.pdata      start:0x82252CE0 end:0x82252CE8
