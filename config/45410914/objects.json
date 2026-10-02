@@ -9,7 +9,8 @@
             "keygen_xbox.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/Od"
+                    "/Od",
+                    "/Os"
                 ]
             },
             "Memory_Xbox.cpp": "NonMatching"
