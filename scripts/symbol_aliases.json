@@ -10380,16 +10380,6 @@
    ]
   },
   {
-   "name": "$_Destroy_Range",
-   "address": "0x822a3f58",
-   "survivor": "??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@@0@Z",
-   "folded": [
-    "??$_Destroy_Range@PAVPiece@Piercing@OutfitConfig@@@stlpmtx_std@@YAXPAVPiece@Piercing@OutfitConfig@@0@Z",
-    "??$__destroy_range@PAVPiece@Piercing@OutfitConfig@@V123@@stlpmtx_std@@YAXPAVPiece@Piercing@OutfitConfig@@00@Z"
-   ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 2 census sites over 2 functions."
-  },
-  {
    "name": "OnMsg",
    "address": "0x825b5620",
    "survivor": "?OnMsg@OvershellPanel@@QAA?AVDataNode@@ABVUIComponentScrollMsg@@@Z",
@@ -79088,9 +79078,17 @@
    "address": "0x82371148",
    "survivor": "??$_Destroy_Range@PAUIKTarget@CharIKHand@@@stlpmtx_std@@YAXPAUIKTarget@CharIKHand@@0@Z",
    "folded": [
-    "??$__destroy_range@PAULod@Character@@U12@@stlpmtx_std@@YAXPAULod@Character@@00@Z"
+    "??$__destroy_range@PAULod@Character@@U12@@stlpmtx_std@@YAXPAULod@Character@@00@Z",
+    "??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@@0@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "admitted": [
+    {
+     "spelling": "??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@@0@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 80 B retail / 80 B ours; retail body-twins 4. Retail call site(s) reaching the survivor where we call this spelling: 0x823715c8, 0x82371c8c. Previously the survivor of the group at 0x822a3f58, whose retail body it does not match (re-homed)."
+    }
+   ]
   },
   {
    "name": "0?$list",
@@ -105277,6 +105275,20 @@
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call site(s) reaching the survivor where we call this spelling: 0x827acbb4. 16 B forwarder (lis; lwz r4,0x10(r3); lwz r3,TheUserMgr; b GetLocalUserFromPadNum), byte-identical to our Profile::GetLocalUser; the retail caller passes its result to PlatformMgr::HasUserSigninChanged. Half its words are relocated, so flat T1 calls it vacuous; admitted on the retail call-site witness."
     }
    ]
+  },
+  {
+   "name": "$_Destroy_Range",
+   "address": "0x822a3f58",
+   "survivor": "??$_Destroy_Range@PAVPiece@Piercing@OutfitConfig@@@stlpmtx_std@@YAXPAVPiece@Piercing@OutfitConfig@@0@Z",
+   "folded": [
+    "??$__destroy_range@PAVPiece@Piercing@OutfitConfig@@V123@@stlpmtx_std@@YAXPAVPiece@Piercing@OutfitConfig@@00@Z"
+   ],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 2 census sites over 2 functions.",
+   "survivor_renamed": {
+    "from": "??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@@0@Z",
+    "lane": "W16-NH-NAME 2026-10-02",
+    "evidence": "tools/icf_pair_adjudicate.py adjudicate(map name at 0x822a3f58, old survivor): REFUTED -- masked bodies DIFFER (retail did not keep the code our spelling compiles to); chase REFUTED. The old survivor is not the retail body at this address; it is now re-homed to the address retail actually calls for it (??$_Destroy_Range@PAUIKTarget@CharIKHand@@@stlpmtx_std@@YAXPAUIKTarget@CharIKHand@@0@Z, chase PROVEN, retail call site(s) 0x823715c8, 0x82371c8c)."
+   }
   }
  ]
 }
