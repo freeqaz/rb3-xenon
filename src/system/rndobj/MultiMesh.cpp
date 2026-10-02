@@ -215,8 +215,10 @@ void RndMultiMesh::Instance::LoadRev(BinStream &bs, int rev) {
     }
 }
 
+// Retail compiles the edit-mode arm out: callers in Crowd.cpp and Utl.cpp reach
+// an empty body (blr) here.
 void RndMultiMesh::InvalidateProxies() {
-    if (TheLoadMgr.EditMode()) {
+    if (LOADMGR_EDITMODE) {
         for (std::list<std::pair<RndMultiMeshProxy *, int> >::iterator it =
                  sProxyPool.begin();
              it != sProxyPool.end();
