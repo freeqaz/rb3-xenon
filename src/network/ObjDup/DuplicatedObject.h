@@ -77,8 +77,9 @@ namespace Quazal {
         static DOOperation *GetCurrentOperation();
         static OperationManager *GetOperationManager();
         bool ExecuteOperation(DOOperation &);
-        bool ExecRemoveFromStore(const RemoveFromStoreOperation &);
-        bool ExecAddToStore(const AddToStoreOperation &);
+        bool PerformOperation(DOOperation *);
+        void ExecRemoveFromStore(const RemoveFromStoreOperation &);
+        void ExecAddToStore(const AddToStoreOperation &);
         bool ExecChangeMasterStation(const ChangeMasterStationOperation &);
         bool ExecChangeDupSet(const ChangeDupSetOperation &);
         bool FaultRecoveryImpl(DOOperation *);
@@ -100,6 +101,7 @@ namespace Quazal {
         unsigned int GetMasterID() const;
         void ReleaseMainReference();
         void CompleteDecreaseRefCount();
+        bool Refresh();
         void SetFlag(unsigned short);
         void ClearFlag(unsigned short);
         bool DeleteMainRef();

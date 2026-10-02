@@ -15,6 +15,9 @@ namespace Quazal {
         virtual void TestInvariants();
 
         int GetStationID() const;
+        // Lane-chosen names: retail wrappers around Acquire/ReleaseReferenceToMaster.
+        void AcquireStationReference();
+        void ReleaseStationReference();
 
         static Station *GetLocalInstance();
         static DOHandle GetLocalStation();
@@ -25,5 +28,12 @@ namespace Quazal {
 
         static unsigned int s_uiDOClassID;
         static unsigned int GetClassID() { return s_uiDOClassID; }
+
+        static Station *DynamicCast(DuplicatedObject *pDO) {
+            if (pDO && pDO->IsAKindOf(_DO_Station::s_uiClassID))
+                return (Station *)pDO;
+            else
+                return NULL;
+        }
     };
 }

@@ -10,7 +10,10 @@ namespace Quazal {
         ~DOHandle() {}
 
         unsigned int GetDOClassID() const { return (mValue & 0xFFC00000) >> 22; }
-        unsigned int GetID() const { return mValue & 0x3FFFFF; }
+        unsigned int GetID() const {
+            unsigned int uiID = mValue & 0x3FFFFF;
+            return uiID;
+        }
         bool IsA(unsigned int id) const { return (mValue & 0xFFC00000) >> 22 == id; }
 
         bool operator<(const DOHandle &h) const { return mValue < h.mValue; }

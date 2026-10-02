@@ -11,7 +11,10 @@
 #include "Core/NetZ.h"
 #include "Core/OperationManager.h"
 #include "ObjDup/DORefTemplate.h"
-#include "Platform/Message.h"
+#include "ObjDup/StationConnections.h"
+#include "ObjDup/DOSelections.h"
+#include "ObjDup/Session.h"
+#include "Plugins/Message.h"
 #include "Platform/Time.h"
 #include "ObjDup/Station.h"
 #include "ObjDup/DOSelections.h"
@@ -206,7 +209,7 @@ namespace Quazal {
         if (refObject.Get()->IsADuplicationMaster()) {
             return;
         }
-        DOHandle hSource(pMessage->m_hSource.mValue);
+        DOHandle hSource(pMessage->unk24);
         UpdateDataSetOperation oOperation(hSource, refObject.Get(), ucDataSet, pMessage);
         refObject.Get()->ExecuteOperation(oOperation);
     }
@@ -220,6 +223,125 @@ namespace Quazal {
             return NetZ::GetInstance()->GetOperationManager();
         } else {
             return NULL;
+        }
+    }
+
+    bool DuplicatedObject::ExecuteOperation(DOOperation &op) {
+        bool bResult;
+        bool bValid;
+        TestInvariants();
+        bValid = true;
+        if (!OperationValidator::GetInstance()->Validate(&op)) {
+            SystemError::SignalError(0, 0, 0xE000001B, 0);
+            op.Trace(0x10u);
+            bValid = false;
+        }
+        if (!ValidOperation(&op)) {
+            bValid = false;
+        }
+        if (!bValid) {
+            if (op.GetType() == 6) {
+                OperationErrorNotifier::GetInstance()->NotifyError(GetHandle(), 0x80010006);
+            }
+            return false;
+        }
+        DOHandle hStation = op.GetImplicitStationConnection();
+        if (hStation != DOHandle()) {
+            int iState = StationConnections::GetInstance()->GetConnectionState(hStation);
+            if (iState == 2) {
+                JobConnectStation *pJob =
+                    StationConnections::GetInstance()->GetConnectionJob(hStation);
+                DOOperation *pClone = op.Clone();
+                pJob->QueueOperation(pClone);
+                return true;
+            }
+            if (iState == 1) {
+                return false;
+            }
+        }
+        GetOperationManager()->OperationBegins(&op);
+        GetOperationManager()->InvokeCallbacks(-0x400, -0x201, &op);
+        if (op.CallsBackOnDataSet()) {
+            CallOperationOnDatasets(&op, (Operation::_Event)0);
+        }
+        OperationBegin(&op);
+        op.Trace((Operation::_Event)0);
+        GetOperationManager()->InvokeCallbacks(-0x1ff, -1, &op);
+        bResult = PerformOperation(&op);
+        GetOperationManager()->InvokeCallbacks(1, 0x1ff, &op);
+        if (op.CallsBackOnDataSet()) {
+            CallOperationOnDatasets(&op, (Operation::_Event)1);
+        }
+        CallOperationEndOnAdapters(&op);
+        OperationEnd(&op);
+        op.Trace((Operation::_Event)1);
+        GetOperationManager()->InvokeCallbacks(0x201, 0x400, &op);
+        GetOperationManager()->PopOperation(&op);
+        TestInvariants();
+        return bResult;
+    }
+
+    bool DuplicatedObject::PerformOperation(DOOperation *pOp) {
+        bool bResult = true;
+        switch (pOp->GetType()) {
+        case 5:
+            DispatchEvent(*pOp);
+            bResult = FaultRecoveryImpl(pOp);
+            break;
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 13:
+        case 14:
+        case 18:
+            DispatchEvent(*pOp);
+            break;
+        }
+        return bResult;
+    }
+
+    bool DuplicatedObject::Refresh() { return RefreshImpl(NULL, Time::GetSessionTime()); }
+
+    void DuplicatedObject::ExecRemoveFromStore(const RemoveFromStoreOperation &op) {
+        if (op.IsADuplicaRemoval()) {
+            DORef refSession(Session::GetWKHandle());
+            if (refSession.IsA<Session>()) {
+                if (refSession.Get<Session>()->GetSessionState() != 3) {
+                    Message *pMsg = ObjDupProtocol::GetInstance()->CreateDeleteMessage(GetHandle());
+                    SendToAllDuplicas(pMsg, 1);
+                    delete pMsg;
+                }
+            }
+            m_setDuplicationSet.Clear();
+        }
+        ClearFlag(1);
+        ReleaseReference(false);
+        if (m_dohMyself.IsA(_DO_Station::GetStaticClassID())) {
+            ((Station *)this)->ReleaseStationReference();
+        }
+    }
+
+    void DuplicatedObject::ExecAddToStore(const AddToStoreOperation &op) {
+        if (op.GetMessage()) {
+            GetDOClass(m_dohMyself.GetDOClassID())
+                ->SpecificExtractDSFromDiscoveryMessage(this, op.GetMessage());
+        }
+        if (op.IsADuplica()) {
+            Refresh();
+        }
+        if (IsDeleted()) {
+            AcquireMainReference();
+            SetFlag(1);
+        } else {
+            DOSelections::GetDuplicatedObjects()->AddDO(this);
+            InitDO();
+        }
+        if (GetHandle() == DOHandle(m_refMasterStation.GetReferencedHandle())) {
+            Station::DynamicCast(this)->AcquireStationReference();
+        }
+        if (op.IsADuplica()) {
+            OperationErrorNotifier::GetInstance()->NotifyError(GetHandle(), 0x60001);
         }
     }
 

@@ -16,6 +16,10 @@ namespace Quazal {
         DOOperation(DOHandle, DuplicatedObject *);
         DOOperation(DOHandle, DOHandle);
         virtual ~DOOperation();
+        virtual DOHandle GetImplicitStationConnection() const;
+        virtual DOOperation *Clone() const;
+        virtual bool CallsBackOnDataSet() = 0;
+        virtual bool CallsBackOnDataSet(unsigned char) = 0;
 
         DORef m_refTargetObject; // 0x14
     };
@@ -28,6 +32,10 @@ namespace Quazal {
         virtual const char *GetClassNameString() const;
         virtual void ForceImplOperationCommonMethodsMacro();
         virtual void TraceImpl(_Event, unsigned int) const;
+        virtual bool CallsBackOnDataSet();
+        virtual bool CallsBackOnDataSet(unsigned char);
+
+        bool IsADuplicaRemoval() const { return m_bRemoveDuplicas; }
 
         bool m_bDeleteObject; // 0x20
         bool m_bRemoveDuplicas; // 0x21
@@ -41,6 +49,11 @@ namespace Quazal {
         virtual const char *GetClassNameString() const;
         virtual void ForceImplOperationCommonMethodsMacro();
         virtual void TraceImpl(_Event, unsigned int) const;
+        virtual bool CallsBackOnDataSet();
+        virtual bool CallsBackOnDataSet(unsigned char);
+
+        Message *GetMessage() const { return m_pMessage; }
+        bool IsADuplica() const { return !m_bIsAMaster; }
 
         bool m_bIsAMaster; // 0x20
         Message *m_pMessage; // 0x24
@@ -59,6 +72,8 @@ namespace Quazal {
         virtual const char *GetClassNameString() const;
         virtual void ForceImplOperationCommonMethodsMacro();
         virtual void TraceImpl(_Event, unsigned int) const;
+        virtual bool CallsBackOnDataSet();
+        virtual bool CallsBackOnDataSet(unsigned char);
 
         DORef m_refNewMasterStation; // 0x20
         MasterStationRef m_refMasterStation; // 0x2c
@@ -75,6 +90,8 @@ namespace Quazal {
         virtual const char *GetClassNameString() const;
         virtual void ForceImplOperationCommonMethodsMacro();
         virtual void TraceImpl(_Event, unsigned int) const;
+        virtual bool CallsBackOnDataSet();
+        virtual bool CallsBackOnDataSet(unsigned char);
 
         bool UpdatesAllDataSets() const { return m_bAllDataSets; }
         unsigned char GetDataSetID() const { return m_ucDataSetID; }
@@ -93,6 +110,8 @@ namespace Quazal {
         virtual const char *GetClassNameString() const;
         virtual void ForceImplOperationCommonMethodsMacro();
         virtual void TraceImpl(_Event, unsigned int) const;
+        virtual bool CallsBackOnDataSet();
+        virtual bool CallsBackOnDataSet(unsigned char);
 
         unsigned char unk20[0x10]; // 0x20
     };
