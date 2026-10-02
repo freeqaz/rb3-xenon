@@ -408,7 +408,7 @@ void InlineHelp::DrawShowing() {
             Multiply(rotXfm, labelXfm, labelXfm);
         }
         mTextLabels[i]->SetWorldXfm(labelXfm);
-        mTextLabels[i]->DrawShowing();
+        mTextLabels[i]->Draw();
     }
 }
 
