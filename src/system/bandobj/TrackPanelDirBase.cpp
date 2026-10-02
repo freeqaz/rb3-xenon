@@ -109,7 +109,7 @@ float TrackPanelDirBase::GetPulseAnimStartDelay(bool b) const {
         MsToBeat(TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f + 16.70000076293945f);
     if (b)
         beat = beat + mPulseOffset;
-    return std::floor(beat) + 1.0f - beat;
+    return floorf(beat) + 1.0f - beat;
 }
 
 void TrackPanelDirBase::PreLoad(BinStream &bs) {
