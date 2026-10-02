@@ -14577,12 +14577,12 @@ network/quazal/Stack/Core/IOCompletionNotifier.cpp:
 	.text       start:0x82B383E0 end:0x82B386B4
 
 network/quazal/Transport/UDP/QueuingSocket.cpp:
-	.pdata      start:0x822592E0 end:0x82259328
-	.text       start:0x82B39AB8 end:0x82B3A488
+	.pdata      start:0x82259230 end:0x82259478
+	.text       start:0x82B39328 end:0x82B3B918
 
 network/quazal/Stack/Core/BerkeleySocketDriver.cpp:
-	.pdata      start:0x82259670 end:0x82259678
-	.text       start:0x82B3DD00 end:0x82B3DD60
+	.pdata      start:0x82259600 end:0x82259698
+	.text       start:0x82B3CD20 end:0x82B3E1C0
 
 network/quazal/Authentication/Client/TicketManager.cpp:
 	.pdata      start:0x82259870 end:0x822598B8
