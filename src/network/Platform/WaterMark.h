@@ -6,6 +6,8 @@ namespace Quazal {
     public:
         WaterMark(const char *, bool, unsigned int);
         ~WaterMark();
+        void Increment(unsigned int);
+        void Decrement(unsigned int);
 
         int unk0;
         int unk4;
