@@ -299,10 +299,7 @@ namespace Quazal {
 
     class Network {
     public:
-        static Network *GetInstance() {
-            Network *pNetwork = NetZ::GetInstance()->GetNetwork();
-            return pNetwork;
-        }
+        static Network *GetInstance();
         bool IsShuttingDown();
         void RegisterEndPoint(EndPoint *);
         bool ConnectToURLs(
