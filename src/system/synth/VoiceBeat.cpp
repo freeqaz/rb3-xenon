@@ -284,11 +284,10 @@ void TalkyMatcher::Reset() { mVoiceBeat.Reset(); }
 
 void TalkyMatcher::Analyze(const short *samples, int numSamples, float ms) {
     if (numSamples > 0x3000) numSamples = 0x3000;
-    int n3 = numSamples / 3;
-    for (int i = 0; i < n3; i++) {
+    for (int i = 0; i < numSamples / 3; i++) {
         mBuffer[i] = (float)samples[i * 3] / 32767.0f;
     }
-    mVoiceBeat.Analyze(mBuffer, n3, false, true, ms + 6.0f);
+    mVoiceBeat.Analyze(mBuffer, numSamples / 3, false, true, ms + 6.0f);
     if (mRefEvents.mTimes.size() != 0) {
         updateScoring(ms);
     }
