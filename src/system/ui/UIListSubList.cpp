@@ -71,7 +71,8 @@ UIList *UIListSubList::SubList(int index) {
     if ((size_t)index >= mElements.size())
         return nullptr;
 #endif
-    UIListSubListElement *sle = dynamic_cast<UIListSubListElement *>(mElements[index]);
+    UIListSlotElement *elem = mElements[index];
+    UIListSubListElement *sle = dynamic_cast<UIListSubListElement *>(elem);
     MILO_ASSERT(sle, 0x62);
     return sle->List();
 }
