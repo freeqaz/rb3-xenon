@@ -80,8 +80,9 @@ namespace Quazal {
         bool PerformOperation(DOOperation *);
         void ExecRemoveFromStore(const RemoveFromStoreOperation &);
         void ExecAddToStore(const AddToStoreOperation &);
-        bool ExecChangeMasterStation(const ChangeMasterStationOperation &);
-        bool ExecChangeDupSet(const ChangeDupSetOperation &);
+        void ExecChangeMasterStation(const ChangeMasterStationOperation &);
+        void ExecChangeDupSet(const ChangeDupSetOperation &);
+        void ForgetDuplicaOn(DOHandle);
         bool FaultRecoveryImpl(DOOperation *);
         bool PerformFaultRecovery(DOHandle, LogicalClockTmpl<unsigned char>);
         void DispatchRMCCall(const CallMethodOperation &);

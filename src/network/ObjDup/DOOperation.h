@@ -5,13 +5,15 @@
 #include "ObjDup/DORef.h"
 #include "ObjDup/MasterStationRef.h"
 #include "Platform/LogicalClock.h"
+#include "Platform/qStd.h"
 
 namespace Quazal {
     class DuplicatedObject;
     class Message;
-    template <class T>
-    class qList;
+    class Station;
 
+    // Layout from the retail ctor 0x82AF2128: Operation's 0x14 bytes, then the
+    // target DORef.
     class DOOperation : public Operation {
     public:
         DOOperation(DOHandle, DuplicatedObject *);
@@ -60,6 +62,7 @@ namespace Quazal {
         Message *m_pMessage; // 0x24
     };
 
+    // Layout from the retail ctor 0x82AB4570.
     class ChangeMasterStationOperation : public DOOperation {
     public:
         enum Context {
@@ -81,13 +84,16 @@ namespace Quazal {
                 return 0;
             return static_cast<ChangeMasterStationOperation *>(pOp);
         }
+        int GetContext() const { return m_eContext; }
+        const qList<DOHandle> *GetStationList() const { return m_pStationList; }
 
-        DORef m_refNewMasterStation; // 0x20
-        MasterStationRef m_refMasterStation; // 0x2c
-        const qList<DOHandle> *m_plstDuplicaStations; // 0x3c
+        DORef m_refStation; // 0x20
+        MasterStationRef m_refNewMaster; // 0x2c
+        const qList<DOHandle> *m_pStationList; // 0x3c
         Context m_eContext; // 0x40
     };
 
+    // Layout from the retail ctor 0x82AB48D0.
     class UpdateDataSetOperation : public DOOperation {
     public:
         UpdateDataSetOperation(DOHandle, DuplicatedObject *, unsigned char, Message *);
@@ -120,7 +126,7 @@ namespace Quazal {
         virtual bool CallsBackOnDataSet();
         virtual bool CallsBackOnDataSet(unsigned char);
 
-        unsigned char unk20[0x10]; // 0x20
+        MasterStationRef m_refNewMaster; // 0x20
     };
 
     class CreateMasterOperation : public DOOperation {
@@ -147,9 +153,29 @@ namespace Quazal {
         virtual const char *GetClassNameString() const;
         virtual void ForceImplOperationCommonMethodsMacro();
         virtual void TraceImpl(_Event, unsigned int) const;
+        virtual DOHandle GetImplicitStationConnection() const;
+        virtual DOOperation *Clone() const;
         virtual bool CallsBackOnDataSet();
         virtual bool CallsBackOnDataSet(unsigned char);
 
-        unsigned char unk20[0x18];
+        bool IsARemoval() const { return !m_bAdd; }
+        unsigned short GetMigrationContext() const { return m_uiMigrationContext; }
+        Context GetContext() const { return m_eContext; }
+        unsigned char GetFlags() const { return m_ucFlags; }
+
+        DORef m_refStation; // 0x20
+        bool m_bAdd; // 0x2c
+        unsigned short m_uiMigrationContext; // 0x2e
+        Context m_eContext; // 0x30
+        unsigned char m_ucFlags; // 0x34
+    };
+
+    // Lane-chosen name: the retail scope object at 0x82ABEB78/0x82ABEBD8.
+    class OperationScope : public RootObject {
+    public:
+        OperationScope(int);
+        ~OperationScope();
+
+        int m_iType; // 0x0
     };
 }

@@ -13,13 +13,13 @@ namespace Quazal {
         DORef(DuplicatedObject *);
         ~DORef();
 
-        DOHandle GetHandle() const { return m_hReferencedDO; }
-
         void SetSoft();
         void Release();
         void Acquire();
 
         unsigned int GetReferencedHandle() const { return m_hReferencedDO.mValue; }
+        DOHandle GetHandle() const { return DOHandle(GetReferencedHandle()); }
+        DuplicatedObject *GetDO() const { return m_poReferencedDO; }
 
         // Lane-chosen names for the class-checked accessors retail instantiates
         // at the end of the TU.

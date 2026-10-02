@@ -5,17 +5,21 @@ namespace Quazal {
     template <class T>
     class LogicalClockTmpl : public RootObject {
     public:
-        LogicalClockTmpl(T t = 0) : m_tValue(t) {}
-        LogicalClockTmpl(const LogicalClockTmpl &o) : m_tValue(o.m_tValue) {}
+        LogicalClockTmpl(T value = 0) : m_value(value) {}
+        LogicalClockTmpl(const LogicalClockTmpl &o) : m_value(o.m_value) {}
 
+        // Out of line in retail (0x82A76A08 for T = unsigned char).
         int Compare(const LogicalClockTmpl &) const;
 
+        bool operator==(const LogicalClockTmpl &o) const { return m_value == o.m_value; }
+        bool operator!=(const LogicalClockTmpl &o) const { return !(*this == o); }
         bool operator>(const LogicalClockTmpl &o) const { return Compare(o) > 0; }
+        bool operator>=(const LogicalClockTmpl &o) const { return *this == o || *this > o; }
         LogicalClockTmpl &operator=(const LogicalClockTmpl &o) {
-            m_tValue = o.m_tValue;
+            m_value = o.m_value;
             return *this;
         }
 
-        T m_tValue; // 0x0
+        T m_value; // 0x0
     };
 }

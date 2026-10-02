@@ -29,6 +29,7 @@ namespace Quazal {
 
         static unsigned int s_uiDOClassID;
         static unsigned int GetClassID() { return s_uiDOClassID; }
+        void SendMessage(Message *, bool);
 
         static Station *DynamicCast(DuplicatedObject *pDO) {
             if (pDO && pDO->IsAKindOf(_DO_Station::s_uiClassID))
