@@ -178,9 +178,41 @@ BEGIN_HANDLERS(ScoreDisplay)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(ScoreDisplay)
-    SYNC_PROP_MODIFY_STATIC(score, mScore, UpdateDisplay())
-    SYNC_PROP_MODIFY_STATIC(rank, mRank, UpdateDisplay())
-    SYNC_PROP_MODIFY_STATIC(globally, mGlobally, UpdateDisplay())
+    {
+        // Retail tests a successful PropSync first and puts the `return false`
+        // block after the modify path.
+        _NEW_STATIC_SYMBOL(score)
+        if (sym == _s) {
+            if (PropSync(mScore, _val, _prop, _i + 1, _op)) {
+                if (!(_op & (kPropSize | kPropGet)))
+                    UpdateDisplay();
+                return true;
+            } else
+                return false;
+        }
+    }
+    {
+        _NEW_STATIC_SYMBOL(rank)
+        if (sym == _s) {
+            if (PropSync(mRank, _val, _prop, _i + 1, _op)) {
+                if (!(_op & (kPropSize | kPropGet)))
+                    UpdateDisplay();
+                return true;
+            } else
+                return false;
+        }
+    }
+    {
+        _NEW_STATIC_SYMBOL(globally)
+        if (sym == _s) {
+            if (PropSync(mGlobally, _val, _prop, _i + 1, _op)) {
+                if (!(_op & (kPropSize | kPropGet)))
+                    UpdateDisplay();
+                return true;
+            } else
+                return false;
+        }
+    }
     { _NEW_STATIC_SYMBOL(text_color)
       SYNC_PROP_MODIFY_ALT(_s, mTextColor, mCombinedLabel->SetColorOverride(mTextColor)) }
     SYNC_SUPERCLASS(UIComponent)

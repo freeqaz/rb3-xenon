@@ -153,6 +153,18 @@ BEGIN_HANDLERS(ReviewDisplay)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(ReviewDisplay)
-    SYNC_PROP_MODIFY(score, mScore, UpdateDisplay(true))
+    {
+        // Retail tests a successful PropSync first and puts the `return false`
+        // block after the modify path.
+        static Symbol _ps("score");
+        if (sym == _ps) {
+            if (PropSync(mScore, _val, _prop, _i + 1, _op)) {
+                if (!(_op & (kPropSize | kPropGet)))
+                    UpdateDisplay(true);
+                return true;
+            } else
+                return false;
+        }
+    }
     SYNC_SUPERCLASS(UIComponent)
 END_PROPSYNCS
