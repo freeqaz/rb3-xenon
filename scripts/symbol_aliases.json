@@ -103905,7 +103905,9 @@
     "?GetNetUIStateParam@BandMachine@@QBAHXZ",
     "?GetLocalHost@NetSession@@QBAPAVLocalUser@@XZ",
     "?GetOvershellFocus@BandUser@@QAAPBDXZ",
-    "?GetState@OvershellSlot@@QAAPAVOvershellSlotState@@XZ"
+    "?GetState@OvershellSlot@@QAAPAVOvershellSlotState@@XZ",
+    "?GetSampleRate@StandardStream@@UAAHXZ",
+    "?NumLights_Real@RndEnviron@@UBAHXZ"
    ],
    "evidence": "W16-NF: anonymous retail row fn_8278EC28 (8 B, unit system/beatmatch/GameGem) named by its caller binding; every folded spelling is one a retail caller of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
    "lane": "W16-NF",
@@ -103934,6 +103936,348 @@
      "spelling": "?GetState@OvershellSlot@@QAAPAVOvershellSlotState@@XZ",
      "lane": "W16-NF 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x825b29c4 (?AllSlotsReadyToPlay@OvershellPanel@@QBA_NXZ), 0x825b2a44 (?ShouldPause@OvershellPanel@@QBA_NXZ), 0x825b2a5c (?ShouldPause@OvershellPanel@@QBA_NXZ), 0x825b2b14 (?IsAnySlotAllowingInputToShell@OvershellPanel@@QAA_NXZ)."
+    },
+    {
+     "spelling": "?GetSampleRate@StandardStream@@UAAHXZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL); retail carries 1 body of this shape. Witness: retail vtable of StandardStream slot 55 points at this address."
+    },
+    {
+     "spelling": "?NumLights_Real@RndEnviron@@UBAHXZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL); retail carries 1 body of this shape. Witness: retail vtable of RndEnviron slot 23 points at this address."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
+  },
+  {
+   "name": "insert_unique",
+   "address": "0x827c68c0",
+   "survivor": "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBHVSymbol@@@2@@Z",
+   "folded": [
+    "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHH@2@U?$_Select1st@U?$pair@$$CBHH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHH@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBHH@2@@Z"
+   ],
+   "evidence": "W16-NF: anonymous retail row fn_827C68C0 (488 B) re-homed FlowSetProperty -> Song (the nearest unit whose obj defines the survivor, within 0x2000) and named by its caller binding; every folded spelling admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "?insert_unique@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHH@2@U?$_Select1st@U?$pair@$$CBHH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHH@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBHH@2@@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 6 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8233cb3c (??A?$map@HHU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpm)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
+  },
+  {
+   "name": "_S_merge",
+   "address": "0x827e4c68",
+   "survivor": "??$_S_merge@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@V?$WidgetInstanceCmp@UInstance@RndMultiMesh@@@@@stlpmtx_std@@YAXAAV?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@0@0V?$WidgetInstanceCmp@UInstance@RndMultiMesh@@@@@Z",
+   "folded": [
+    "??$_S_merge@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@V?$WidgetInstanceCmp@VMeshInstance@@@@@stlpmtx_std@@YAXAAV?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@0@0V?$WidgetInstanceCmp@VMeshInstance@@@@@Z",
+    "??$_S_merge@VTextInstance@@V?$StlNodeAlloc@VTextInstance@@@stlpmtx_std@@V?$WidgetInstanceCmp@VTextInstance@@@@@stlpmtx_std@@YAXAAV?$list@VTextInstance@@V?$StlNodeAlloc@VTextInstance@@@stlpmtx_std@@@0@0V?$WidgetInstanceCmp@VTextInstance@@@@@Z"
+   ],
+   "evidence": "W16-NF: anonymous retail row fn_827E4C68 (200 B) re-homed MidiParser -> TrackWidgetImp (the nearest unit whose obj defines the survivor, within 0x2000) and named by its caller binding; every folded spelling admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "??$_S_merge@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@V?$WidgetInstanceCmp@VMeshInstance@@@@@stlpmtx_std@@YAXAAV?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@0@0V?$WidgetInstanceCmp@VMeshInstance@@@@@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x827e3f00 (??$_S_sort@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@), 0x827e3f68 (??$_S_sort@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@)."
+    },
+    {
+     "spelling": "??$_S_merge@VTextInstance@@V?$StlNodeAlloc@VTextInstance@@@stlpmtx_std@@V?$WidgetInstanceCmp@VTextInstance@@@@@stlpmtx_std@@YAXAAV?$list@VTextInstance@@V?$StlNodeAlloc@VTextInstance@@@stlpmtx_std@@@0@0V?$WidgetInstanceCmp@VTextInstance@@@@@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x827e5e78 (??$_S_sort@VTextInstance@@V?$StlNodeAlloc@VTextInstance@@@stlpmtx_std@), 0x827e5ee0 (??$_S_sort@VTextInstance@@V?$StlNodeAlloc@VTextInstance@@@stlpmtx_std@)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
+  },
+  {
+   "name": "reserve",
+   "address": "0x827ed2f0",
+   "survivor": "?reserve@?$vector@UCompEv@DataEventList@@V?$StlNodeAlloc@UCompEv@DataEventList@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+   "folded": [
+    "?reserve@?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+    "?reserve@?$vector@VSection@TrackerSectionManager@@V?$StlNodeAlloc@VSection@TrackerSectionManager@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+    "?reserve@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+    "?reserve@?$vector@URndPointTest@NgRnd@@V?$StlNodeAlloc@URndPointTest@NgRnd@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z"
+   ],
+   "evidence": "W16-NF: anonymous retail row fn_827ED2F0 (188 B) re-homed PanelDir -> DataEventList (the nearest unit whose obj defines the survivor, within 0x2000) and named by its caller binding; every folded spelling admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "?reserve@?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82480e9c (?Load@RndParticleSysAnim@@UAAXAAVBinStream@@@Z)."
+    },
+    {
+     "spelling": "?reserve@?$vector@VSection@TrackerSectionManager@@V?$StlNodeAlloc@VSection@TrackerSectionManager@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x826f67e0 (?GatherSections@TrackerSectionManager@@QAAXXZ)."
+    },
+    {
+     "spelling": "?reserve@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x827eb404 (?ParseNote@MidiParser@@QAAXHHE@Z)."
+    },
+    {
+     "spelling": "?reserve@?$vector@URndPointTest@NgRnd@@V?$StlNodeAlloc@URndPointTest@NgRnd@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82b87d94 (?Init@NgRnd@@UAAXXZ)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
+  },
+  {
+   "name": "reserve",
+   "address": "0x82348a60",
+   "survivor": "?reserve@?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+   "folded": [
+    "?reserve@?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z"
+   ],
+   "evidence": "W16-NF: anonymous retail row fn_82348A60 (188 B) re-homed Watcher -> BandPatchMesh (the nearest unit whose obj defines the survivor, within 0x2000) and named by its caller binding; every folded spelling admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "?reserve@?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82b603f0 (??0MicXbox@@QAA@HM@Z), 0x82bb49d8 (?Poll@VorbisReader@@UAAXM@Z)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
+  },
+  {
+   "name": "_M_clear_after_move",
+   "address": "0x82774b40",
+   "survivor": "?_M_clear_after_move@?$vector@V?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
+   "folded": [
+    "?_M_clear_after_move@?$vector@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ"
+   ],
+   "evidence": "W16-NF: anonymous retail row fn_82774B40 (116 B) re-homed system/beatmatch/DrumMixDB -> SongData (the nearest unit whose obj defines the survivor, within 0x2000) and named by its caller binding; every folded spelling admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail carries 10 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x827767cc (?_M_insert_overflow_aux@?$vector@V?$vector@VVector3@@V?$StlNodeAlloc@V)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
+  },
+  {
+   "name": "_M_allocate_and_copy",
+   "address": "0x827877d0",
+   "survivor": "??$_M_allocate_and_copy@PBVVector3@@@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector3@@IPBV2@0@Z",
+   "folded": [
+    "??$_M_allocate_and_copy@PAVRect@Hmx@@@?$vector@VRect@Hmx@@V?$StlNodeAlloc@VRect@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVRect@Hmx@@IPAV23@0@Z"
+   ],
+   "evidence": "W16-NF: anonymous retail row fn_827877D0 (100 B) re-homed SongParser -> ClipDistMap (the nearest unit whose obj defines the survivor, within 0x2000) and named by its caller binding; every folded spelling admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "??$_M_allocate_and_copy@PAVRect@Hmx@@@?$vector@VRect@Hmx@@V?$StlNodeAlloc@VRect@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVRect@Hmx@@IPAV23@0@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 8 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x824e1cec (?reserve@?$vector@VRect@Hmx@@V?$StlNodeAlloc@VRect@Hmx@@@stlpmtx_std@@)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
+  },
+  {
+   "name": "__uninitialized_copy",
+   "address": "0x822a47a8",
+   "survivor": "??$__uninitialized_copy@PBVPiece@Piercing@OutfitConfig@@PAV123@@stlpmtx_std@@YAPAVPiece@Piercing@OutfitConfig@@PBV123@0PAV123@ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_copy@PAVPiece@Piercing@OutfitConfig@@PAV123@@stlpmtx_std@@YAPAVPiece@Piercing@OutfitConfig@@PAV123@00ABU__false_type@0@@Z"
+   ],
+   "evidence": "W16-NF: anonymous retail row fn_822A47A8 (96 B) re-homed Character -> OutfitConfig (the nearest unit whose obj defines the survivor, within 0x2000) and named by its caller binding; every folded spelling admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "??$__uninitialized_copy@PAVPiece@Piercing@OutfitConfig@@PAV123@@stlpmtx_std@@YAPAVPiece@Piercing@OutfitConfig@@PAV123@00ABU__false_type@0@@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail carries 6 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x822a50e8 (?_M_fill_insert_aux@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeA), 0x822a517c (?_M_fill_insert_aux@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeA), 0x822a5808 (?_M_insert_overflow_aux@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlN), 0x822a5880 (?_M_insert_overflow_aux@?$vector@VPiece@Piercing@OutfitConfig@@V?$StlN)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
+  },
+  {
+   "name": "__uninitialized_copy",
+   "address": "0x822a2138",
+   "survivor": "??$__uninitialized_copy@PBV?$ObjPtr@VRndTex@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VRndTex@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_copy@PAV?$ObjPtr@VRndTex@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VRndTex@@@@PAV1@00ABU__false_type@0@@Z"
+   ],
+   "evidence": "W16-NF: anonymous retail row fn_822A2138 (96 B) re-homed Spline -> OutfitConfig (the nearest unit whose obj defines the survivor, within 0x2000) and named by its caller binding; every folded spelling admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "??$__uninitialized_copy@PAV?$ObjPtr@VRndTex@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VRndTex@@@@PAV1@00ABU__false_type@0@@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail carries 22 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x822a2adc (?_M_fill_insert_aux@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$O), 0x822a2b70 (?_M_fill_insert_aux@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$O), 0x822a35bc (?_M_insert_overflow_aux@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@), 0x822a3634 (?_M_insert_overflow_aux@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
+  },
+  {
+   "name": "__uninitialized_copy",
+   "address": "0x826aafc8",
+   "survivor": "??$__uninitialized_copy@PAVGameGem@@PAV1@@stlpmtx_std@@YAPAVGameGem@@PAV1@00ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_copy@PBVGameGem@@PAV1@@stlpmtx_std@@YAPAVGameGem@@PBV1@0PAV1@ABU__false_type@0@@Z"
+   ],
+   "evidence": "W16-NF: anonymous retail row fn_826AAFC8 (84 B) re-homed Text -> system/beatmatch/GameGemList (the nearest unit whose obj defines the survivor, within 0x2000) and named by its caller binding; every folded spelling admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "??$__uninitialized_copy@PBVGameGem@@PAV1@@stlpmtx_std@@YAPAVGameGem@@PBV1@0PAV1@ABU__false_type@0@@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x826ab47c (??4?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx), 0x826b7b5c (??0?$vector@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx), 0x8278d80c (??$_M_range_insert_aux@PBVGameGem@@@?$vector@VGameGem@@V?$StlNodeAlloc), 0x8278d88c (??$_M_range_insert_aux@PBVGameGem@@@?$vector@VGameGem@@V?$StlNodeAlloc)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
+  },
+  {
+   "name": "GetServiceIP",
+   "address": "0x827d9640",
+   "survivor": "?GetServiceIP@XLSPConnection@@QAAIXZ",
+   "folded": [
+    "?WidgetDrawType@UIListWidget@@QBA?AW4UIListWidgetDrawType@@XZ",
+    "?GetPassiveMsgPriority@Accomplishment@@QBAHXZ",
+    "?GetNumBytes@SynthSample360@@QBAHXZ",
+    "?GetPortraitTex@TourChar@@UBAPAVRndTex@@XZ",
+    "?GetPostProcMat@RndShaderMgr@@UAAPAVRndMat@@XZ"
+   ],
+   "evidence": "W16-NF: anonymous retail row fn_827D9640 (8 B) re-homed Pool -> XLSPConnection (the nearest unit whose obj defines the survivor, within 0x2000) and named by its caller binding; every folded spelling admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "?WidgetDrawType@UIListWidget@@QBA?AW4UIListWidgetDrawType@@XZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8280dc54 (?DrawWidgets@UIListDir@@QAAXABVUIListState@@AAV?$vector@PAVUIListWidge), 0x8280dcf4 (?DrawWidgets@UIListDir@@QAAXABVUIListState@@AAV?$vector@PAVUIListWidge)."
+    },
+    {
+     "spelling": "?GetPassiveMsgPriority@Accomplishment@@QBAHXZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8258fc90 (?NotifyPlayerOfAccomplishment@AccomplishmentProgress@@QAAXVSymbol@@PBD)."
+    },
+    {
+     "spelling": "?GetNumBytes@SynthSample360@@QBAHXZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82b6e04c (??0SampleInst360@@QAA@PAVSynthSample360@@@Z)."
+    },
+    {
+     "spelling": "?GetPortraitTex@TourChar@@UBAPAVRndTex@@XZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL); retail carries 1 body of this shape. Witness: retail vtables of TourChar/TourCharLocal/TourCharRemote slot 2 points at this address."
+    },
+    {
+     "spelling": "?GetPostProcMat@RndShaderMgr@@UAAPAVRndMat@@XZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL); retail carries 1 body of this shape. Witness: retail vtables of RndShaderMgr/DxShaderMgr slot 5 points at this address."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
+  },
+  {
+   "name": "AsyncUnload",
+   "address": "0x827bea00",
+   "survivor": "?AsyncUnload@LoadMgr@@QBAHXZ",
+   "folded": [
+    "?GetSongStatusMgr@BandProfile@@QBAPAVSongStatusMgr@@XZ",
+    "?GetRequiredMinPlayers@Accomplishment@@QBAHXZ",
+    "?GetSetlistName@MetaPerformer@@QBAPBDXZ",
+    "?GetDataAddr@SynthSample360@@QBAIXZ",
+    "?DrawRectMat@RndShaderMgr@@UAAPAVRndMat@@XZ"
+   ],
+   "evidence": "W16-NF: anonymous retail row fn_827BEA00 (8 B) re-homed FilePath -> Loader (the nearest unit whose obj defines the survivor, within 0x2000) and named by its caller binding; every folded spelling admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "?GetSongStatusMgr@BandProfile@@QBAPAVSongStatusMgr@@XZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x8253f474 (?UpdateHeaderData@MusicLibrary@@QAAXXZ), 0x825572d0 (?UpdateSongStatusFlagsForUser@AccomplishmentManager@@QAAXVSymbol@@PAVL), 0x8257b7cc (?PopulateSoloPlayerScore@MetaPerformer@@QAAXABVPerformerStatsInfo@@PAV), 0x8257d43c (?IncrementSongPlayCount@MetaPerformer@@QAAXAAV?$vector@PAVBandUser@@V?)."
+    },
+    {
+     "spelling": "?GetRequiredMinPlayers@Accomplishment@@QBAHXZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x825fa5ac (?HasCorrectPlayerCount@AccomplishmentPanel@@QAA_NXZ)."
+    },
+    {
+     "spelling": "?GetSetlistName@MetaPerformer@@QBAPBDXZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82633388 (?Enter@SelectDifficultyPanel@@UAAXXZ)."
+    },
+    {
+     "spelling": "?GetDataAddr@SynthSample360@@QBAIXZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82b6e058 (??0SampleInst360@@QAA@PAVSynthSample360@@@Z)."
+    },
+    {
+     "spelling": "?DrawRectMat@RndShaderMgr@@UAAPAVRndMat@@XZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL); retail carries 1 body of this shape. Witness: retail vtables of RndShaderMgr/DxShaderMgr slot 21 points at this address."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
+  },
+  {
+   "name": "GetScreenList",
+   "address": "0x827b9da8",
+   "survivor": "?GetScreenList@MetaMusicScene@@QBAABV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+   "folded": [
+    "?GetSecretPrereqs@Accomplishment@@QBAABV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@XZ"
+   ],
+   "evidence": "W16-NF: anonymous retail row fn_827B9DA8 (8 B) re-homed ButtonHolder -> MetaMusicScene (the nearest unit whose obj defines the survivor, within 0x2000) and named by its caller binding; every folded spelling admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "?GetSecretPrereqs@Accomplishment@@QBAABV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x825f72ec (?IsAccomplishmentSecret@@YA_NPAVAccomplishment@@PBVBandProfile@@@Z)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
+  },
+  {
+   "name": "SetNumPlayers",
+   "address": "0x82782948",
+   "survivor": "?SetNumPlayers@SongParser@@QAAXH@Z",
+   "folded": [
+    "?SetAfterDeploy@Lyric@@QAAXH@Z"
+   ],
+   "evidence": "W16-NF: anonymous retail row fn_82782948 (8 B) re-homed VocalNoteList -> SongParser (the nearest unit whose obj defines the survivor, within 0x2000) and named by its caller binding; every folded spelling admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "?SetAfterDeploy@Lyric@@QAAXH@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (VACUOUS-BUT-IDENTICAL leaves discharged); retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x82b9fe80 (?CheckDeploySections@VocalTrack@@QAA_NPAVLyric@@MAAHABV?$vector@U?$pai)."
     }
    ],
    "added": {
