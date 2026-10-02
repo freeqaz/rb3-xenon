@@ -7657,11 +7657,9 @@ FlowQueueable.cpp:
 
 Shockwave.cpp:
 	.pdata      start:0x822142F8 end:0x82214300
-	.pdata      start:0x82214498 end:0x822144A8
 	.pdata      start:0x82214558 end:0x82214578
 	.pdata      start:0x822145A0 end:0x822145D0
 	.text       start:0x824CE130 end:0x824CE1A0
-	.text       start:0x824CFA78 end:0x824CFB18
 	.text       start:0x824D0338 end:0x824D0430
 	.text       start:0x824D05A4 end:0x824D0898
 
@@ -12831,6 +12829,7 @@ system/synth/FxSendDelay.cpp:
 
 system/world/Dir.cpp:
 	.pdata      start:0x822143D8 end:0x822143E0
+	.pdata      start:0x82214498 end:0x822144A8
 	.pdata      start:0x82214578 end:0x82214588
 	.pdata      start:0x82214588 end:0x82214590
 	.pdata      start:0x82214590 end:0x82214598
@@ -12840,6 +12839,7 @@ system/world/Dir.cpp:
 	.pdata      start:0x82214640 end:0x82214660
 	.pdata      start:0x82234308 end:0x82234310
 	.text       start:0x824CEDA0 end:0x824CEDD0
+	.text       start:0x824CFA78 end:0x824CFB18
 	.text       start:0x824D0430 end:0x824D049C
 	.text       start:0x824D049C end:0x824D04F4
 	.text       start:0x824D04F4 end:0x824D054C
