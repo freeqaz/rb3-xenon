@@ -226,6 +226,7 @@ namespace Quazal {
         DORef(DOHandle);
         ~DORef();
 
+        DOHandle m_hReferenced;
         DuplicatedObject *m_pObject;
     };
 
@@ -456,9 +457,6 @@ namespace Quazal {
         }
     }
 
-    inline SystemComponents *GetSystemComponents() {
-        return Core::GetInstance() == 0 ? 0 : Core::GetInstance()->GetSystemComponents();
-    }
 
     class NATTraversalEngine : public RootObject {
     public:
@@ -915,7 +913,8 @@ namespace Quazal {
             ));
             return;
         }
-        SystemComponent *pDupSpace = GetSystemComponents()->m_pDupSpace;
+        SystemComponent *pDupSpace =
+            (Core::GetInstance() == 0 ? 0 : Core::GetInstance()->GetSystemComponents())->m_pDupSpace;
         pDupSpace->Use();
         if (pDupSpace->IsFaulty()) {
             SetStep(Step((JobStateFunc)&JobJoinSession::JoinFailed, "JobJoinSession::JoinFailed"));
