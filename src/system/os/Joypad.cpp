@@ -769,7 +769,7 @@ void JoypadPollCommon() {
                 data.mLastActivityMs = SystemMs() + 0x7FFFFFFF;
             }
             if (padType == kJoypadNone) {
-                if (data.mConnected) {
+                if (data.mConnected == true) {
                     currButtons = 0;
                     justDisconnected = true;
                     data.mConnected = false;
