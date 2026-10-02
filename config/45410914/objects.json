@@ -2239,7 +2239,15 @@
                     "/Ob1"
                 ]
             },
-            "network/Core/Scheduler.cpp": "NonMatching",
+            "network/Core/Scheduler.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1"
+                ]
+            },
             "network/Plugins/ChecksumAlgorithm.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
