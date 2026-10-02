@@ -209,7 +209,7 @@ namespace Quazal {
 
         struct PollInfo {
             Socket *m_pSocket; // 0x0
-            unsigned int m_uiFlags; // 0x4
+            int m_iFlags; // 0x4
             unsigned int m_uiResult; // 0x8
         };
 
@@ -434,27 +434,29 @@ bool BerkeleySocketDriver::Poll(PollInfo *pInfo, unsigned int uiNbSockets, unsig
     unsigned int i;
     for (i = 0; i < uiNbSockets; i++) {
         pInfo[i].m_uiResult = 0;
-        if (pInfo[i].m_uiFlags & 1)
+        if (pInfo[i].m_iFlags & 1)
             FD_SET(((BerkeleySocket *)pInfo[i].m_pSocket)->GetHandle(), &oReadSet);
-        if (pInfo[i].m_uiFlags & 2)
+        if (pInfo[i].m_iFlags & 2)
             FD_SET(((BerkeleySocket *)pInfo[i].m_pSocket)->GetHandle(), &oWriteSet);
     }
     timeval oTimeout;
     oTimeout.tv_sec = 0;
     oTimeout.tv_usec = uiTimeout * 1000;
-    int iResult = select(0, &oReadSet, &oWriteSet, 0, &oTimeout);
-    if (iResult <= 0)
+    int iNbReady = select(0, &oReadSet, &oWriteSet, 0, &oTimeout);
+    if (iNbReady <= 0) {
         return false;
-    bool bSignaled = false;
-    for (i = 0; i < uiNbSockets; i++) {
-        if (FD_ISSET(((BerkeleySocket *)pInfo[i].m_pSocket)->GetHandle(), &oReadSet)) {
-            pInfo[i].m_uiResult = 1;
-            bSignaled = true;
+    } else {
+        bool bSignaled = false;
+        for (i = 0; i < uiNbSockets; i++) {
+            if (FD_ISSET(((BerkeleySocket *)pInfo[i].m_pSocket)->GetHandle(), &oReadSet)) {
+                pInfo[i].m_uiResult = 1;
+                bSignaled = true;
+            }
+            if (FD_ISSET(((BerkeleySocket *)pInfo[i].m_pSocket)->GetHandle(), &oWriteSet)) {
+                pInfo[i].m_uiResult = 2;
+                bSignaled = true;
+            }
         }
-        if (FD_ISSET(((BerkeleySocket *)pInfo[i].m_pSocket)->GetHandle(), &oWriteSet)) {
-            pInfo[i].m_uiResult = 2;
-            bSignaled = true;
-        }
+        return true;
     }
-    return true;
 }

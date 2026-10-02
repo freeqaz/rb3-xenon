@@ -2425,7 +2425,16 @@
                     "/GR-"
                 ]
             },
-            "network/quazal/Stack/Core/BerkeleySocketDriver.cpp": "NonMatching",
+            "network/quazal/Stack/Core/BerkeleySocketDriver.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-",
+                    "/EHs-c-"
+                ]
+            },
             "network/quazal/Authentication/Client/TicketManager.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
