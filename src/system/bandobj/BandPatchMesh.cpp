@@ -992,10 +992,11 @@ bool BandPatchMesh::WorkVerts::SetSameVerts(WorkVerts *other) {
             while (end < unk18.size() && unk18[end]->pos.z < hi)
                 end++;
             for (int k = start; k < end; k++) {
+                const Vector3 &p = mv->mVert->pos;
                 RndMesh::Vert *v = unk18[k];
-                float dx = mv->mVert->pos.x - v->pos.x;
-                float dy = mv->mVert->pos.y - v->pos.y;
-                float dz = mv->mVert->pos.z - v->pos.z;
+                float dx = p.x - v->pos.x;
+                float dy = p.y - v->pos.y;
+                float dz = p.z - v->pos.z;
                 if (dx * dx + dy * dy + dz * dz < 0.01f) {
                     mv->unk27 = 1;
                     if (mMeshVerts.empty()) {
