@@ -15,5 +15,6 @@ namespace Quazal {
         static bool JoinSessionImpl(CallContext *, const qList<Quazal::StationURL> &);
         static void RegisterWellKnownDOsFactory(void (*)(void));
         static Session *GetInstance();
+        static bool IsActive();
     };
 }

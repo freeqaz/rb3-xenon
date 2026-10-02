@@ -34975,5 +34975,16 @@
  "0x82a751f8": "?IsInCachedDuplicationSet@DuplicatedObject@Quazal@@QBA_NVDOHandle@2@@Z",
  "0x82a75338": "?RemoveFromCachedDuplicationSet@DuplicatedObject@Quazal@@QAA_NVDOHandle@2@@Z",
  "0x82a75390": "?IsInDuplicationSet@DuplicatedObject@Quazal@@QBA_NVDOHandle@2@@Z",
- "0x82a75420": "?AddToDuplicationSet@DuplicatedObject@Quazal@@QAAXPAV12@@Z"
+ "0x82a75420": "?AddToDuplicationSet@DuplicatedObject@Quazal@@QAAXPAV12@@Z",
+ "0x82a74220": "?Publish@DuplicatedObject@Quazal@@QAA_NI@Z",
+ "0x82a746a8": "?FillDuplicaStationsList@DuplicatedObject@Quazal@@QAAXPAV?$qList@VDOHandle@Quazal@@@2@@Z",
+ "0x82a74758": "?CreateWellKnown@DuplicatedObject@Quazal@@SAPAV12@AAVWKHandle@2@@Z",
+ "0x82a74928": "?Create@DuplicatedObject@Quazal@@SAPAV12@II@Z",
+ "0x82a74a40": "?Create@DuplicatedObject@Quazal@@SAPAV12@IVDOID@2@@Z",
+ "0x82a74ab0": "?CreateMasterImpl@DuplicatedObject@Quazal@@SAPAV12@VDOHandle@2@IVDOID@2@@Z",
+ "0x82a74ce8": "?CreateDuplica@DuplicatedObject@Quazal@@SAPAV12@VDOHandle@2@ABVMasterStationRef@2@@Z",
+ "0x82a74de0": "?ValidOperation@DuplicatedObject@Quazal@@UAA_NPAVDOOperation@2@@Z",
+ "0x82a74fe0": "?IsDuplicatedOn@DuplicatedObject@Quazal@@QAA_NVDOHandle@2@@Z",
+ "0x82a754b0": "?RemoveAllDuplicasOnLeavingStation@DuplicatedObject@Quazal@@SAXVDOHandle@2@@Z",
+ "0x82a75620": "?IsASettledMaster@DuplicatedObject@Quazal@@QBA_NXZ"
 }

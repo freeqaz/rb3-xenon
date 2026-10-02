@@ -97,11 +97,11 @@ namespace Quazal {
         bool ConnectOrphanDuplica();
         bool Publish(unsigned int);
         void FillDuplicaStationsList(qList<DOHandle> *);
-        bool CreateWellKnown(WKHandle &);
-        bool Create(unsigned int, unsigned int);
-        bool Create(unsigned int, DOID);
-        bool CreateMasterImpl(DOHandle, unsigned int, DOID);
-        bool CreateDuplica(DOHandle, const MasterStationRef &);
+        static DuplicatedObject *CreateWellKnown(WKHandle &);
+        static DuplicatedObject *Create(unsigned int, unsigned int);
+        static DuplicatedObject *Create(unsigned int, DOID);
+        static DuplicatedObject *CreateMasterImpl(DOHandle, unsigned int, DOID);
+        static DuplicatedObject *CreateDuplica(DOHandle, const MasterStationRef &);
         void SetStationSpecialRelevance();
         void ReleaseReferenceToMaster();
         void AcquireReferenceToMaster();
@@ -112,7 +112,9 @@ namespace Quazal {
         bool IsInDuplicationSet(DOHandle) const;
         void AddToDuplicationSet(DuplicatedObject *);
         bool RemoveFromDuplicationSet(DOHandle);
-        void RemoveAllDuplicasOnLeavingStation(DOHandle);
+        static void RemoveAllDuplicasOnLeavingStation(DOHandle);
+        bool IsASettledMaster() const;
+        void SetMasterStation(const MasterStationRef &);
 
         void SetInitialState(const QEvent &);
         StateFuncFactory ValidState(const QEvent &);
