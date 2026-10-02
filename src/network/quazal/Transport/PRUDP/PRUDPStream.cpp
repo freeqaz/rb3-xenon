@@ -230,7 +230,7 @@ namespace Quazal {
     void PRUDPStream::ReleaseEndPoint(PRUDPEndPoint *ep) {
         ScopedCS cs(Scheduler::GetSystemLock());
         if (!ep->IsReleased() && !ep->IsDisconnected()) {
-            ep->SetFlag(0x2000000);
+            ep->Trace(0x2000000);
             m_oEndPoints.Remove(ep->m_oURL.GetInetAddress(), StreamID(ep->m_oURL.GetStreamID()));
             ep->SetPID(0);
             ep->SetCID(0);

@@ -34983,5 +34983,7 @@
  "0x82afe9e0": "?Trace@PRUDPStream@Quazal@@UAAXI@Z",
  "0x82afeb10": "??_GPRUDPStream@Quazal@@UAAPAXI@Z",
  "0x82afeb88": "?Find@EndPointTable@Quazal@@QAAPAVPRUDPEndPoint@2@PBVInetAddress@2@VStreamID@2@@Z",
- "0x82afef10": "?Remove@EndPointTable@Quazal@@QAAXPBVInetAddress@2@VStreamID@2@@Z"
+ "0x82afef10": "?Remove@EndPointTable@Quazal@@QAAXPBVInetAddress@2@VStreamID@2@@Z",
+ "0x82aff300": "?Trace@EndPointTable@Quazal@@QAAXI@Z",
+ "0x82aff158": "?ServiceTimeouts@PRUDPStream@Quazal@@QAAXXZ"
 }

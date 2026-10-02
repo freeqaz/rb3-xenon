@@ -6,6 +6,7 @@
 #include "Platform/WaterMark.h"
 #include "Platform/qStd.h"
 #include "Platform/Time.h"
+#include "Platform/TraceLog.h"
 
 namespace Quazal {
 
@@ -80,7 +81,7 @@ namespace Quazal {
         virtual void Unk38();
         virtual void Disconnect(unsigned int);
         virtual void Unk40();
-        virtual void SetFlag(unsigned int);
+        virtual void Trace(unsigned int);
         virtual void Unk48();
         virtual void Unk4C();
         virtual void Unk50();
@@ -124,7 +125,15 @@ namespace Quazal {
             else
                 erase(it);
         }
-        void Trace(unsigned int);
+        void Trace(unsigned int flags) {
+            if (!TraceLog::GetInstance()->IsTraceEnabled(flags))
+                return;
+            iterator it = begin();
+            while (it != end()) {
+                it->second->Trace(flags);
+                ++it;
+            }
+        }
     };
 
     class Stream : public RootObject {
@@ -206,7 +215,14 @@ namespace Quazal {
         PRUDPEndPoint *ServiceConnectionRequest(InetAddress *, Buffer *, unsigned short, unsigned char);
         void ServiceDisconnection(InetAddress *, Buffer *);
         void DeleteReleasedEndPoints();
-        void ServiceTimeouts();
+        void ServiceTimeouts() {
+            if (m_tLastTimeoutCheck == Time(0)) {
+                m_tLastTimeoutCheck = Time::GetTime();
+            } else if (Time::GetTime() - m_tLastTimeoutCheck > 25) {
+                m_tLastTimeoutCheck = Time::GetTime();
+                m_oPacketQueue.CheckTimeouts();
+            }
+        }
 
         typedef std::multimap<
             unsigned int,
@@ -219,7 +235,7 @@ namespace Quazal {
         public:
             PacketQueue();
             ~PacketQueue();
-            void Flush();
+            void CheckTimeouts();
             char m_data[0x60];
         };
 
