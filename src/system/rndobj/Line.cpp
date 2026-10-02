@@ -320,7 +320,7 @@ void RndLine::SetNumPoints(int num) {
                 num = num + 2;
             }
         }
-        mMesh->Verts().resize(num * 2);
+        mMesh->Verts().resize(num << 1);
         for (int i = 0; i < mPoints.size(); i++) {
             VertsMap vmap;
             MapVerts(i, vmap);
