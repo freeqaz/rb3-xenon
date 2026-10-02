@@ -2151,7 +2151,8 @@
     "?clear@?$vector@VUpcomingFretRelease@GemPlayer@@V?$StlNodeAlloc@VUpcomingFretRelease@GemPlayer@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
     "?clear@?$vector@VWaitingMachine@WaitList@LockStepMgr@@V?$StlNodeAlloc@VWaitingMachine@WaitList@LockStepMgr@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
     "?clear@?$vector@VGemScore@MultiplayerAnalyzer@@V?$StlNodeAlloc@VGemScore@MultiplayerAnalyzer@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
-    "?clear@?$vector@UPlayerMappingData@MicClientMapper@@V?$StlNodeAlloc@UPlayerMappingData@MicClientMapper@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ"
+    "?clear@?$vector@UPlayerMappingData@MicClientMapper@@V?$StlNodeAlloc@UPlayerMappingData@MicClientMapper@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$vector@U?$pair@HPAVLocalUser@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HPAVLocalUser@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 26, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 25 folded spelling(s), 30 census sites over 5 functions.",
    "admitted": [
@@ -2164,6 +2165,11 @@
      "spelling": "?clear@?$vector@UPlayerMappingData@MicClientMapper@@V?$StlNodeAlloc@UPlayerMappingData@MicClientMapper@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
      "lane": "W16-NH 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 76 B retail / 76 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x8270fa48."
+    },
+    {
+     "spelling": "?clear@?$vector@U?$pair@HPAVLocalUser@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HPAVLocalUser@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call site(s) reaching the survivor where we call this spelling: 0x825bd668. vector<OverlappedIO> retyped as std::pair<int, LocalUser*>: retail push_back reaches __uninitialized_fill_n<pair<int,int>> (mtctr/bdnz copy loop), which our pair instantiation reproduces and a plain struct does not."
     }
    ]
   },
@@ -18841,7 +18847,8 @@
     "?push_back@?$vector@VMicClientID@@V?$StlNodeAlloc@VMicClientID@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVMicClientID@@@Z",
     "?push_back@?$vector@U?$pair@HPBD@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HPBD@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@HPBD@2@@Z",
     "?push_back@?$vector@U?$pair@HH@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@HH@2@@Z",
-    "?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z"
+    "?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z",
+    "?push_back@?$vector@U?$pair@HPAVLocalUser@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HPAVLocalUser@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@HPAVLocalUser@@@2@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "admitted": [
@@ -18859,6 +18866,11 @@
      "spelling": "?push_back@?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUShaderMacro@@@Z",
      "lane": "W16-LB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 120 B retail / 120 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?GenerateMacros@ShaderOptions@@QBAXW4ShaderType@@AAV?$vector@UShaderMacro@@V?$StlNodeAlloc@UShaderMacro@@@stlpmtx_std@@@stlpmtx_std@@@Z."
+    },
+    {
+     "spelling": "?push_back@?$vector@U?$pair@HPAVLocalUser@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HPAVLocalUser@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXABU?$pair@HPAVLocalUser@@@2@@Z",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call site(s) reaching the survivor where we call this spelling: 0x825bde68. vector<OverlappedIO> retyped as std::pair<int, LocalUser*>: retail push_back reaches __uninitialized_fill_n<pair<int,int>> (mtctr/bdnz copy loop), which our pair instantiation reproduces and a plain struct does not."
     }
    ]
   },
@@ -90651,7 +90663,8 @@
     "??1?$vector@VKernInfo@RndFont@@V?$StlNodeAlloc@VKernInfo@RndFont@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$_Vector_base@V?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@UCuePoint@?A0x81ddebd1@@V?$StlNodeAlloc@UCuePoint@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-    "??1?$vector@VTourStatusEntry@@V?$StlNodeAlloc@VTourStatusEntry@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+    "??1?$vector@VTourStatusEntry@@V?$StlNodeAlloc@VTourStatusEntry@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "??1?$vector@U?$pair@HPAVLocalUser@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HPAVLocalUser@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x826d0da0 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 121 against 89 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies.",
    "admitted": [
@@ -90679,6 +90692,11 @@
      "spelling": "??1?$vector@VTourStatusEntry@@V?$StlNodeAlloc@VTourStatusEntry@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 PROVEN); 36 B retail / 36 B ours. Retail calls the survivor where we call this spelling in 2 row(s), e.g. fn_8235F0DC, fn_8235FE90."
+    },
+    {
+     "spelling": "??1?$vector@U?$pair@HPAVLocalUser@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HPAVLocalUser@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call site(s) reaching the survivor where we call this spelling: fn_825BD5B8, fn_825BD738. vector<OverlappedIO> retyped as std::pair<int, LocalUser*>: retail push_back reaches __uninitialized_fill_n<pair<int,int>> (mtctr/bdnz copy loop), which our pair instantiation reproduces and a plain struct does not."
     }
    ]
   },
