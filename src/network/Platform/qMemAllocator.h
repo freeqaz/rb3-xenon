@@ -25,7 +25,7 @@ namespace Quazal {
         };
 
 #if defined(VERSION_SZBE69_B8) || defined(RB3_QUAZAL_MEMALLOCATOR_CTORS)
-        // Retail doesn't have constructor calls (Wii B8). X360 TUs built with
+        // VERSION_SZBE69_B8 has no constructor calls. X360 TUs built with
         // RB3_QUAZAL_MEMALLOCATOR_CTORS (PRUDPStream) convert through these
         // constructors: the retail /Od _Rb_tree constructor at 0x82AFF400 is a
         // leaf with no EH frame, so the converted temporaries need no destruction.

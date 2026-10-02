@@ -3,15 +3,15 @@
 // Retail TU: .text 0x82B03480..0x82B07280. Built /Od (see objects.json).
 //
 // The classes this TU touches are declared here with their retail X360
-// layouts rather than taken from the shared Quazal headers, whose layouts
-// come from the Wii build and differ on this platform:
+// layouts rather than taken from the shared Quazal headers, which do not
+// match them:
 // - RootObject has an empty, user-declared destructor: retail's EH unwind
 //   maps call it for every RootObject base (ScopedCS locals, the engine and
 //   URLProbe at +8).
 // - A class with a vfptr and an 8-byte-aligned member (Time) pads the vfptr
 //   to 8 bytes, so the first base/member of NATTraversalEngine and URLProbe
 //   sits at +8.
-// - StationURL is 0x68 bytes.
+// - StationURL is 0x64 bytes, word-aligned, with no vfptr.
 //
 // This TU is built /Od: its locals are laid out by a walk over the scope's
 // symbol hash table, so the local NAMES below determine the stack offsets.
