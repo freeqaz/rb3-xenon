@@ -65897,8 +65897,10 @@
   {
    "name": "insert_after",
    "address": "0x8259f7e0",
-   "survivor": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@M@2@@Z",
-   "folded": [],
+   "survivor": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@VString@@@2@@Z",
+   "folded": [
+    "?insert_after@?$slist@U?$pair@$$CBHVString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBHVString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBHVString@@@2@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 26 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -65923,11 +65925,6 @@
     },
     {
      "spelling": "?insert_after@?$slist@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBHPAVUIComponent@@@2@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert_after@?$slist@U?$pair@$$CBHVString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBHVString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBHVString@@@2@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     },
@@ -66027,12 +66024,42 @@
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     },
     {
-     "spelling": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@VString@@@2@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+     "spelling": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@M@2@@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "class": "FORMER_SURVIVOR_LABEL_NOT_A_FOLD",
+     "disposition": "label removed, group kept",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --survivor <this group's survivor> --ours this spelling: FLAT T1 REFUTED, CHASED T1 REFUTED (BYTES-DIFFER at callee ?_M_create_node@?$slist@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_s). No paired call site of ours reaches 0x8259f7e0 with this spelling. Its true address is 0x82365610."
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "relabelled": "W16-NZ 2026-10-02: survivor label moved from slist<pair<const Symbol,float>>::insert_after to slist<pair<const Symbol,String>>::insert_after, matching the corrected map row. Retail 0x8259f7e0 calls 0x8259f6e0, which allocates a 0x14-byte node (next + Symbol + 0xC-byte String) and copy-constructs it via _Copy_Construct<pair<void* const,String>> (0x82743a90); a <Symbol,float> node is 0xC bytes and copies 8 bytes. Its retail callers are 0x8259f838 / 0x8259ff30 (the <Symbol,String> hashtable, under hash_map<Symbol,String>::operator[] 0x825a04a0) and 0x8256a860 (the <int,String> one). The real <Symbol,float> insert_after is 0x82365610.",
+   "restored": [
+    {
+     "spelling": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@VString@@@2@@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION",
+     "verdict": "PROVEN -- this spelling is now the survivor, named by the map row on retail bytes",
+     "why_the_original_premise_failed": "ALIAS-CONSOLIDATION 2026-08-19 withdrew it because it sat in two groups (0x8259f7e0 and 0x824b9610) as a folded member of a closure. It is not a fold member here at all: it is the identity of 0x8259f7e0 (the create_node it calls copies a String). Its record at 0x824b9610 stays withdrawn.",
+     "withdrawal_record_superseded": {
+      "spelling": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@VString@@@2@@Z",
+      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+     }
+    },
+    {
+     "spelling": "?insert_after@?$slist@U?$pair@$$CBHVString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBHVString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBHVString@@@2@@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "class": "FABRICATED_CLOSURE_NOT_PARTITION",
+     "verdict": "PROVEN -- chased, unique among retail body twins, call-site witnessed",
+     "why_the_original_premise_failed": "The closure put it in two groups at once. A partition puts it in one: of the 7 retail masked-body twins of 0x8259f7e0 it chases PROVEN only against 0x8259f7e0 (0x824b9610 included, REFUTED), so the 0x824b9610 withdrawal stands and this one is reversed.",
+     "withdrawal_record_superseded": {
+      "spelling": "?insert_after@?$slist@U?$pair@$$CBHVString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBHVString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBHVString@@@2@@Z",
+      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+     },
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED -> CHASED T1 PROVEN (0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 88 == ours 88); of 7 retail masked-body twins this survivor is the only one the spelling chases PROVEN against. Retail call-site witness (decoded in band.exe as `bl 0x8259f7e0`): 0x8256a8ec. Every paired call site of this spelling in our build lands at 0x8259f7e0 (objdiff, graded ruler). Our <int,String> insert_after is AssetMgr's (hash_map<int,String> mIconPaths); the int- and Symbol-keyed bodies are signedness-blind and fold."
+    }
+   ]
   },
   {
    "name": "$__insertion_sort",
@@ -89435,9 +89462,17 @@
    "address": "0x82576168",
    "survivor": "?_M_create_node@?$slist@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@ABU?$pair@$$CBHPAVSongMetadata@@@2@@Z",
    "folded": [
-    "?_M_create_node@?$slist@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@ABU?$pair@$$CBVSymbol@@PAVDataArray@@@2@@Z"
+    "?_M_create_node@?$slist@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@ABU?$pair@$$CBVSymbol@@PAVDataArray@@@2@@Z",
+    "?_M_create_node@?$slist@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@2@ABU?$pair@$$CBVSymbol@@H@2@@Z"
    ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
+   "admitted": [
+    {
+     "spelling": "?_M_create_node@?$slist@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@stlpmtx_std@@AAAPAV?$_Slist_node@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@2@ABU?$pair@$$CBVSymbol@@H@2@@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED -> CHASED T1 PROVEN (0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 80 == ours 80); of 1 retail masked-body twins this survivor is the only one the spelling chases PROVEN against. Retail call-site witness (decoded in band.exe as `bl 0x82576168`): 0x82362b44. Every paired call site of this spelling in our build lands at 0x82576168 (objdiff, graded ruler). Our hashtable<pair<const Symbol,int>> (TourProgress) insert_after, now the name at 0x82362b20, calls this spelling; retail 0x82362b20 calls 0x82576168, the 0xC-node two-word-copy create_node."
+    }
+   ]
   },
   {
    "name": "_M_insert_overflow",
@@ -95695,7 +95730,7 @@
   {
    "name": "insert_after?$slist_pair",
    "address": "0x82362b20",
-   "survivor": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
+   "survivor": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@H@2@@Z",
    "folded": [
     "?insert_after@?$slist@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBHPAVSongStatus@@@2@@Z",
     "?insert_after@?$slist@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@PAVCampaignKey@@@2@@Z"
@@ -95706,6 +95741,28 @@
      "spelling": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@PAVCampaignKey@@@2@@Z",
      "lane": "W16-LD 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- template-twin, ); 88 B retail / 88 B ours. Leaves include VACUOUS-BUT-IDENTICAL (allocator thunks), discharged by the chase. The map places this spelling at no address of its own. Retail call site(s) reaching the survivor where we call this spelling (bl target read on retail bytes): 0x825a66ac (in insert_unique_noresize@?$hashtable). Re-admission: this spelling carries ALIAS-CONSOLIDATION 2026-08-19 FABRICATED_CLOSURE_NOT_PARTITION withdrawals, which refused group-closure membership without a per-pair proof. The per-pair chase above, with the retail call-site witness, is that proof for this group only. The withdrawal records are kept."
+    }
+   ],
+   "relabelled": "W16-NZ 2026-10-02: survivor label moved from slist<pair<const Symbol,vector<Symbol>>>::insert_after to slist<pair<const Symbol,int>>::insert_after, matching the corrected map row. Retail 0x82362b20 calls create_node 0x82576168, which allocates a 0xC-byte node and copies two words; a vector<Symbol> node copy-constructs a vector. The address sits inside TourProgress (hash_map<Symbol,int>) and its .text block was re-homed there from LicenseMgr. The vector<Symbol> insert_after is 0x8264ec88, a byte twin differing only in its create_node callee.",
+   "withdrawn": [
+    {
+     "spelling": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "class": "FORMER_SURVIVOR_LABEL_NOT_A_FOLD",
+     "disposition": "label removed, group kept",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --survivor <this group's survivor> --ours this spelling: FLAT T1 REFUTED, CHASED T1 REFUTED (BYTES-DIFFER at callee ?_M_create_node@?$slist@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_s). No paired call site of ours reaches 0x82362b20 with this spelling. Its true address is 0x8264ec88 (a byte twin of 0x82362b20 apart from its create_node callee), which this lane deliberately leaves unnamed: naming it would retire the --chasetest decoy recorded at 0x8264ece0."
+    }
+   ],
+   "rechecked": [
+    {
+     "spelling": "?insert_after@?$slist@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBHPAVSongStatus@@@2@@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED -> CHASED T1 PROVEN (0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 88 == ours 88); of 7 retail masked-body twins this survivor is the only one the spelling chases PROVEN against. Retail call-site witness (decoded in band.exe as `bl 0x82362b20`): 0x825d2920, 0x825d2d9c. Every paired call site of this spelling in our build lands at 0x82362b20 (objdiff, graded ruler). Re-adjudicated against the relabelled survivor; membership unchanged."
+    },
+    {
+     "spelling": "?insert_after@?$slist@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AV?$_Slist_iterator@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@@priv@2@V342@ABU?$pair@$$CBVSymbol@@PAVCampaignKey@@@2@@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED -> CHASED T1 PROVEN (0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 88 == ours 88); of 7 retail masked-body twins this survivor is the only one the spelling chases PROVEN against. Retail call-site witness (decoded in band.exe as `bl 0x82362b20`): 0x825a66ac. Every paired call site of this spelling in our build lands at 0x82362b20 (objdiff, graded ruler). Re-adjudicated against the relabelled survivor; membership unchanged."
     }
    ]
   },
@@ -99848,12 +99905,20 @@
   {
    "name": "_M_insert",
    "address": "0x8256ad80",
-   "survivor": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@PAVAsset@@@2@ABU32@@Z",
-   "folded": [
-    "?_M_insert@?$hashtable@U?$pair@$$CBHVString@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBHVString@@@2@ABU32@@Z"
-   ],
+   "survivor": "?_M_insert@?$hashtable@U?$pair@$$CBHVString@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBHVString@@@2@ABU32@@Z",
+   "folded": [],
    "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (masked bodies match but relocation TARGETS disagree -- template-twin, not a fold), CHASED T1 PROVEN, 0 CYCLE leaves; retail_bodytwins 9, discriminated by the chased callee chain. Charged call site(s) where retail branches to this survivor and our compiled code calls the spelling: ??A?$hash_map@HVString@@ (180 B, 99.889). Reachable only after the 0x82276828 _S_next_size map repair (the chain bottoms out in _M_initialize_buckets -> _S_next_size).",
-   "lane": "W16-KD 2026-10-01"
+   "lane": "W16-KD 2026-10-01",
+   "relabelled": "W16-NZ 2026-10-02: survivor label moved from hashtable<pair<const Symbol,Asset*>>::_M_insert to hashtable<pair<const int,String>>::_M_insert. Its only retail caller is hash_map<int,String>::operator[] (0x8256b158), and the insert_unique_noresize it calls (0x8256a860) compares keys with cmpw (signed int), not cmplw (Symbol pointer). This group's own chased evidence already proved the corrected spelling at this address; it is now the survivor rather than a folded member.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAsset@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@PAVAsset@@@2@ABU32@@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "class": "FORMER_SURVIVOR_LABEL_NOT_A_FOLD",
+     "disposition": "label removed, group kept",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --survivor <this group's survivor> --ours this spelling: FLAT T1 REFUTED, CHASED T1 REFUTED (BYTES-DIFFER at callee ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_st). No paired call site of ours reaches 0x8256ad80 with this spelling. "
+    }
+   ]
   },
   {
    "name": "0hash_map",
@@ -99955,22 +100020,38 @@
   {
    "name": "_M_insert",
    "address": "0x825a0440",
-   "survivor": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@M@2@ABU32@@Z",
-   "folded": [
-    "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@VString@@@2@ABU32@@Z"
-   ],
+   "survivor": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@VString@@@2@ABU32@@Z",
+   "folded": [],
    "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (masked bodies match but relocation TARGETS disagree -- template-twin, not a fold), CHASED T1 PROVEN, 0 CYCLE leaves; retail_bodytwins 9, discriminated by the chased callee chain. Charged call site(s) where retail branches to this survivor and our compiled code calls the spelling: ??A?$hash_map@VSymbol@@ (180 B, 99.889). Reachable only after the 0x82276828 _S_next_size map repair (the chain bottoms out in _M_initialize_buckets -> _S_next_size).",
-   "lane": "W16-KD 2026-10-01"
+   "lane": "W16-KD 2026-10-01",
+   "relabelled": "W16-NZ 2026-10-02: survivor label moved from hashtable<pair<const Symbol,float>>::_M_insert to hashtable<pair<const Symbol,String>>::_M_insert. Its only retail caller is hash_map<Symbol,String>::operator[] (0x825a04a0) and it calls 0x8259ff30, the <Symbol,String> insert_unique_noresize. The real <Symbol,float> _M_insert is 0x823658a0 (only caller: hash_map<Symbol,float>::operator[] 0x823658f8). This group's own chased evidence already proved the corrected spelling at this address; it is now the survivor rather than a folded member.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@M@2@ABU32@@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "class": "FORMER_SURVIVOR_LABEL_NOT_A_FOLD",
+     "disposition": "label removed, group kept",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --survivor <this group's survivor> --ours this spelling: FLAT T1 REFUTED, CHASED T1 REFUTED (BYTES-DIFFER at callee ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_st). No paired call site of ours reaches 0x825a0440 with this spelling. "
+    }
+   ]
   },
   {
    "name": "resize",
    "address": "0x825d2e10",
    "survivor": "?resize@?$hashtable@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXI@Z",
    "folded": [
-    "?resize@?$hashtable@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXI@Z"
+    "?resize@?$hashtable@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXI@Z",
+    "?resize@?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAAXI@Z"
    ],
    "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (masked bodies match but relocation TARGETS disagree -- template-twin, not a fold), CHASED T1 PROVEN, 0 CYCLE leaves; retail_bodytwins 5, discriminated by the chased callee chain. Charged call site(s) where retail branches to this survivor and our compiled code calls the spelling: ?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@ (88 B, 99.773). Reachable only after the 0x82276828 _S_next_size map repair (the chain bottoms out in _M_initialize_buckets -> _S_next_size).",
-   "lane": "W16-KD 2026-10-01"
+   "lane": "W16-KD 2026-10-01",
+   "admitted": [
+    {
+     "spelling": "?resize@?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAAXI@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED -> CHASED T1 PROVEN (0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 228 == ours 228); of 5 retail masked-body twins this survivor is the only one the spelling chases PROVEN against. Retail call-site witness (decoded in band.exe as `bl 0x825d2e10`): 0x823658c4. Every paired call site of this spelling in our build lands at 0x825d2e10 (objdiff, graded ruler). Our hashtable<pair<const Symbol,float>>::_M_insert, now named at 0x823658a0, calls this spelling; retail 0x823658a0 calls 0x825d2e10."
+    }
+   ]
   },
   {
    "name": "0hash_map",
@@ -107597,6 +107678,57 @@
      "class": "PLACEHOLDER_SLOT_MAPPED_VS_PLACEHOLDER",
      "disposition": "membership refused (never admitted); kept as a --chasetest decoy",
      "evidence": "Masked bodies are equal and the relocation shapes agree, so a body-twin enumerator proposes this pair, and tools/icf_pair_adjudicate.py --chase --lax-slots reads it PROVEN (the insert_after slot, retail fn_8264EC88 vs our slist<pair<Symbol,String>>::insert_after, is tolerated as a placeholder). The discharge rule refutes it on retail evidence: chasing that slot reaches retail fn_8264EC08 vs our slist<pair<Symbol,String>>::_M_create_node, which is map-resident at 0x8259f6e0 (MAPPED-VS-PLACEHOLDER), and our insert_after is located at a different retail address (SLOT-CONTRADICTED:CALLEE-LOCATED-ELSEWHERE). The vector<Symbol>-valued and String-valued hash tables are different code one level down. Found by a live-tree scan of 70,405 shape-equal (survivor, spelling) pairs; this was the only one whose discharge trace carries MAPPED-VS-PLACEHOLDER. It replaces group 0x822e5040's record as the working decoy once 0x822e4fd8 is named (that record is kept, and is tried first)."
+    }
+   ]
+  },
+  {
+   "name": "_M_insert_noresize",
+   "address": "0x8259f838",
+   "survivor": "?_M_insert_noresize@?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@IAA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@23@@priv@2@IABU?$pair@$$CBVSymbol@@VString@@@2@@Z",
+   "folded": [
+    "?_M_insert_noresize@?$hashtable@U?$pair@$$CBHVString@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@IAA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBHVString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@23@@priv@2@IABU?$pair@$$CBHVString@@@2@@Z"
+   ],
+   "evidence": "Created by lane W16-NZ: the survivor names the address on retail bytes (it was mislabelled <Symbol,float>); the folded spelling is chased PROVEN, unique, and call-site witnessed, see `admitted`.",
+   "lane": "W16-NZ 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "?_M_insert_noresize@?$hashtable@U?$pair@$$CBHVString@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@IAA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBHVString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@23@@priv@2@IABU?$pair@$$CBHVString@@@2@@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED -> CHASED T1 PROVEN (0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 164 == ours 164); of 7 retail masked-body twins this survivor is the only one the spelling chases PROVEN against. Retail call-site witness (decoded in band.exe as `bl 0x8259f838`): 0x8256a92c. Every paired call site of this spelling in our build lands at 0x8259f838 (objdiff, graded ruler). Retail 0x8256a860 (hashtable<pair<const int,String>>::insert_unique_noresize) calls this survivor; the bucket hash and node handling do not see the key's signedness."
+    }
+   ]
+  },
+  {
+   "name": "resize",
+   "address": "0x825a02d8",
+   "survivor": "?resize@?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXI@Z",
+   "folded": [
+    "?resize@?$hashtable@U?$pair@$$CBHVString@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXI@Z"
+   ],
+   "evidence": "Created by lane W16-NZ: the survivor names the address on retail bytes (it was mislabelled <Symbol,float>); the folded spelling is chased PROVEN, unique, and call-site witnessed, see `admitted`.",
+   "lane": "W16-NZ 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "?resize@?$hashtable@U?$pair@$$CBHVString@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXI@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED -> CHASED T1 PROVEN (0 CYCLE-ASSUMED); size gate ACCEPT (extents equal: retail 228 == ours 228); of 5 retail masked-body twins this survivor is the only one the spelling chases PROVEN against. Retail call-site witness (decoded in band.exe as `bl 0x825a02d8`): 0x8256ada4. Every paired call site of this spelling in our build lands at 0x825a02d8 (objdiff, graded ruler). Retail 0x8256ad80 (hashtable<pair<const int,String>>::_M_insert) calls this survivor; resize/_M_rehash for the int- and Symbol-keyed String tables are byte-identical down to _M_erase_after (itself folded at 0x8256a100)."
+    }
+   ]
+  },
+  {
+   "name": "_M_insert_noresize",
+   "address": "0x8264ece0",
+   "survivor": "?_M_insert_noresize@?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@IAA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@23@@priv@2@IABU?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@2@@Z",
+   "folded": [],
+   "evidence": "Created by lane W16-NZ to hold one REFUSED membership (no spelling is folded here). It replaces W16-NX's decoy at 0x8264ed88 as the live --chasetest decoy for PLACEHOLDER_SLOT_MAPPED_VS_PLACEHOLDER: naming 0x8259f7e0 slist<pair<const Symbol,String>>::insert_after (its true identity) made that decoy's top-level slot MAPPED-VS-PLACEHOLDER, which the lax rule also refuses. A scan of all 70,356 shape candidates on the named tree found no other decoy of this class; this one exists because 0x8264ec88 (insert_after) and 0x8264ec08 (_M_create_node) for pair<const Symbol,vector<Symbol>> are left unnamed.",
+   "lane": "W16-NZ 2026-10-02",
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert_noresize@?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@IAA?AU?$_Ht_iterator@V?$_Slist_iterator@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@U?$_NonLocalHashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@23@@priv@2@IABU?$pair@$$CBHPAVSongMetadata@@@2@@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "class": "PLACEHOLDER_SLOT_MAPPED_VS_PLACEHOLDER",
+     "disposition": "membership refused (never admitted); kept as a --chasetest decoy",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: masked bodies and relocation shape equal; under the pre-W16-JG lax slot rule it reads PROVEN (top-level slot: retail placeholder fn_8264EC88 vs our unmapped insert_after<pair<const int,SongMetadata*>>), under the shipped discharge rule REFUTED with trace ['SLOT-FOLD-OK', 'MAPPED-VS-PLACEHOLDER', 'SLOT-CONTRADICTED:CALLEE-LOCATED-ELSEWHERE']: discharging that slot meets retail placeholder fn_8264EC08 against our _M_create_node<pair<const int,SongMetadata*>>, map-resident at 0x82576168, i.e. the callee is located elsewhere. Positive contradicting evidence, not merely unproven. Retail 0x8264ece0 is the vector<Symbol> table's own _M_insert_noresize (caller 0x8264ed88)."
     }
    ]
   }
