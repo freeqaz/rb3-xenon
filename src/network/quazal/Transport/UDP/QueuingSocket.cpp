@@ -97,7 +97,7 @@ namespace Quazal {
 
     class Time {
     public:
-        Time() : m_t(0) {}
+        __declspec(noinline) Time() : m_t(0) {}
         ~Time() {}
         Time &operator=(const Time &);
         Time &operator=(unsigned __int64);
@@ -263,10 +263,7 @@ namespace Quazal {
         virtual void Queue(EmulationItem &oItem, Time tRelease) {
             std::list<TimedEmulationItem, MemAllocator<TimedEmulationItem> >::reverse_iterator it =
                 m_lstItems.rbegin();
-            while (true) {
-                bool bMoveOn = it != m_lstItems.rend() && (*it).GetReleaseTime() > tRelease;
-                if (!bMoveOn)
-                    break;
+            while (bool bMoveOn = it != m_lstItems.rend() && (*it).GetReleaseTime() > tRelease) {
                 ++it;
             }
             m_lstItems.insert(it.base(), TimedEmulationItem(oItem, tRelease));
