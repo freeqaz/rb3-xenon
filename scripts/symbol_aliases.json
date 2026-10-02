@@ -74300,7 +74300,7 @@
   {
    "name": "$?0U?$_List_iterator",
    "address": "0x824cf9d0",
-   "survivor": "??$?0U?$_List_iterator@UFlauntStatusData@@U?$_Const_traits@UFlauntStatusData@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UFlauntStatusData@@V?$StlNodeAlloc@UFlauntStatusData@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@UFlauntStatusData@@U?$_Const_traits@UFlauntStatusData@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@UFlauntStatusData@@@1@@Z",
+   "survivor": "??$?0U?$_List_iterator@UBitmapOverride@WorldDir@@U?$_Const_traits@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@UBitmapOverride@WorldDir@@U?$_Const_traits@UBitmapOverride@WorldDir@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@UBitmapOverride@WorldDir@@@1@@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 8 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -74343,9 +74343,17 @@
      "spelling": "??$?0U?$_List_iterator@VVector3@@U?$_Const_traits@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@VVector3@@U?$_Const_traits@VVector3@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@VVector3@@@1@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$?0U?$_List_iterator@UFlauntStatusData@@U?$_Const_traits@UFlauntStatusData@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UFlauntStatusData@@V?$StlNodeAlloc@UFlauntStatusData@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@UFlauntStatusData@@U?$_Const_traits@UFlauntStatusData@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@UFlauntStatusData@@@1@@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "class": "FORMER_SURVIVOR_LABEL_NOT_A_FOLD",
+     "disposition": "label removed, group kept",
+     "evidence": "No compiled object defines this spelling (scanned all 1,262 of our objs), so it can be neither chased nor charged; the retail body at 0x824cf9d0 calls list<BitmapOverride>::insert, which a list<FlauntStatusData> constructor cannot. The row it named read 0% unpaired."
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "relabelled": "W16-NZ 2026-10-02: survivor label moved from list<FlauntStatusData>'s range constructor to list<WorldDir::BitmapOverride>'s, matching the corrected map row. Retail 0x824cf9d0 calls list<BitmapOverride>::insert (0x824ce0c8) and its one caller is list<BitmapOverride>::_M_splice_insert_dispatch (0x824d06b8). tools/icf_pair_adjudicate.py --chase --size: the BitmapOverride spelling is FLAT T1 PROVEN here (byte-identical, relocation names equal; size 116 == 116)."
   },
   {
    "name": "E?$ObjDirItr",
@@ -98041,10 +98049,8 @@
   {
    "name": "$_M_splice_insert_dispatch",
    "address": "0x824ca6b8",
-   "survivor": "??$_M_splice_insert_dispatch@U?$_List_iterator@UBitmapOverride@WorldDir@@U?$_Const_traits@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UBitmapOverride@WorldDir@@U?$_Nonconst_traits@UBitmapOverride@WorldDir@@@stlpmtx_std@@@1@U?$_List_iterator@UBitmapOverride@WorldDir@@U?$_Const_traits@UBitmapOverride@WorldDir@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
-   "folded": [
-    "??$_M_splice_insert_dispatch@U?$_List_iterator@VKeyFrame@EventAnim@@U?$_Const_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@VKeyFrame@EventAnim@@U?$_Nonconst_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@1@U?$_List_iterator@VKeyFrame@EventAnim@@U?$_Const_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z"
-   ],
+   "survivor": "??$_M_splice_insert_dispatch@U?$_List_iterator@VKeyFrame@EventAnim@@U?$_Const_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@VKeyFrame@EventAnim@@U?$_Nonconst_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@1@U?$_List_iterator@VKeyFrame@EventAnim@@U?$_Const_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -98052,6 +98058,16 @@
      "spelling": "??$_M_splice_insert_dispatch@U?$_List_iterator@VKeyFrame@EventAnim@@U?$_Const_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@@?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@VKeyFrame@EventAnim@@U?$_Nonconst_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@1@U?$_List_iterator@VKeyFrame@EventAnim@@U?$_Const_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 156 B retail / 156 B ours; retail body-twins 19. Retail call site(s) reaching the survivor where we call this spelling: 0x824cab40."
+    }
+   ],
+   "relabelled": "W16-NZ 2026-10-02: survivor label moved from list<WorldDir::BitmapOverride>::_M_splice_insert_dispatch to list<EventAnim::KeyFrame>::_M_splice_insert_dispatch, matching the corrected map row. Retail 0x824ca6b8 has one caller, list<KeyFrame>::operator= (0x824caa90), and calls clear<KeyFrame> (0x824c9b28) and the list<KeyFrame> range ctor (0x824ca1f0). This group's own admitted evidence already proved the KeyFrame spelling here; it is now the survivor rather than a folded member. The .text block 0x824CA6B8-0x824CA754 held only this row, sat between two EventAnim.cpp blocks, and was re-homed there from PropSync.cpp. The BitmapOverride splice is 0x824d06b8.",
+   "withdrawn": [
+    {
+     "spelling": "??$_M_splice_insert_dispatch@U?$_List_iterator@UBitmapOverride@WorldDir@@U?$_Const_traits@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@UBitmapOverride@WorldDir@@U?$_Nonconst_traits@UBitmapOverride@WorldDir@@@stlpmtx_std@@@1@U?$_List_iterator@UBitmapOverride@WorldDir@@U?$_Const_traits@UBitmapOverride@WorldDir@@@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
+     "lane": "W16-NZ 2026-10-02",
+     "class": "FORMER_SURVIVOR_LABEL_NOT_A_FOLD",
+     "disposition": "label removed, group kept",
+     "evidence": "tools/icf_pair_adjudicate.py --chase --survivor <the KeyFrame splice> --ours this spelling: FLAT T1 REFUTED, CHASED T1 REFUTED (SLOT-REFUTED at the range-ctor slot: retail's KeyFrame range ctor calls placeholder fn_822B7D30 where ours calls list<BitmapOverride>::insert, map-resident at 0x824ce0c8 -- MAPPED-VS-PLACEHOLDER). Its true address is 0x824d06b8 (one caller, list<BitmapOverride>::operator= 0x824d0fb0)."
     }
    ]
   },
