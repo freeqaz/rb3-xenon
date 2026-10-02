@@ -801,23 +801,23 @@ namespace Quazal {
             pPayload = 0;
             m_pDefragBuffer->AcquireRef();
         }
-        unsigned char ucFragmentID = pPacket->m_ucFragmentID;
-        bool bLastFragment = ucFragmentID == 0;
-        if (!bLastFragment && ucFragmentID != m_ucNextFragmentID) {
+        unsigned char ucID = pPacket->m_ucFragmentID;
+        bool bLast = ucID == 0;
+        if (!bLast && ucID != m_ucNextFragmentID) {
             if (m_pDefragBuffer) {
                 m_pDefragBuffer->ReleaseRef();
                 m_pDefragBuffer = 0;
             }
-            return bLastFragment;
+            return bLast;
         }
         if (pPayload)
             m_pDefragBuffer->AppendData(pPayload);
-        if (!bLastFragment) {
+        if (!bLast) {
             m_ucNextFragmentID++;
             if (m_ucNextFragmentID == 0)
                 m_ucNextFragmentID++;
         }
-        return bLastFragment;
+        return bLast;
     }
 
     void PRUDPEndPoint::DispatchData(Buffer *pBuffer) {
