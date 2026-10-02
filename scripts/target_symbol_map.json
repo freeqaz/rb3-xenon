@@ -1,4 +1,9 @@
 {
+ "0x826414c0": "??1TokenRedemptionPanel@@UAA@XZ",
+ "0x823e2480": "?GetStreamSettingsForContext@?A0x055cc49d@@YAPAVStreamSettings@Quazal@@H@Z",
+ "0x82593da0": "??1UIEventMgr@@UAA@XZ",
+ "0x825746f8": "??1CalibrationWelcomePanel@@UAA@XZ",
+ "0x825ae9e8": "??1OpenWaitingGateMsg@?A0xb0de99ba@@UAA@XZ",
  "0x82277270": "??$_M_splice_insert_dispatch@U?$_List_iterator@HU?$_Const_traits@H@stlpmtx_std@@@stlpmtx_std@@@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@AAAXU?$_List_iterator@HU?$_Nonconst_traits@H@stlpmtx_std@@@1@U?$_List_iterator@HU?$_Const_traits@H@stlpmtx_std@@@1@1ABU__false_type@1@@Z",
  "0x8257d4c8": "??$_Copy_Construct@VPlayerScore@@@stlpmtx_std@@YAXPAVPlayerScore@@ABV1@@Z",
  "0x8257c310": "??_GMetaPerformerImpl@@UAAPAXI@Z",

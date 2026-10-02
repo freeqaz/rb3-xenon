@@ -54,7 +54,6 @@ namespace {
     class OpenWaitingGateMsg : public StartLockMsg {
     public:
         OpenWaitingGateMsg() {}
-        virtual ~OpenWaitingGateMsg() {}
         virtual void Save(BinStream &) const;
         virtual void Load(BinStream &);
         virtual LockData *GetLockData() { return &mData; }

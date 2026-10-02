@@ -105831,6 +105831,26 @@
    "added": {
     "lane": "W16-NK 2026-10-02"
    }
+  },
+  {
+   "name": "1AccomplishmentCategoryProvider",
+   "address": "0x825fc9b0",
+   "survivor": "??1AccomplishmentCategoryProvider@@UAA@XZ",
+   "folded": [
+    "??1CalibrationModesProvider@@UAA@XZ"
+   ],
+   "evidence": "W16-NK: both provider classes now have implicit dtors (retail's shape: no own-vptr stores), whose bodies are identical; retail keeps one body at 0x825fc9b0 and ??1CalibrationWelcomePanel calls it for its CalibrationModesProvider base.",
+   "lane": "W16-NK",
+   "admitted": [
+    {
+     "spelling": "??1CalibrationModesProvider@@UAA@XZ",
+     "lane": "W16-NK 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail carries 1 body of this shape. Retail call site reaching the survivor where our aligned caller calls this spelling: 0x8257471C (??1CalibrationWelcomePanel@@UAA@XZ)."
+    }
+   ],
+   "added": {
+    "lane": "W16-NK 2026-10-02"
+   }
   }
  ]
 }

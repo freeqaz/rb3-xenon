@@ -83,7 +83,6 @@ void UIEventMgr::Init() {
 
 void UIEventMgr::Terminate() { RELEASE(TheUIEventMgr); }
 
-UIEventMgr::~UIEventMgr() {}
 
 void UIEventMgr::Poll() {
     mTransitionEventQueue.Poll();

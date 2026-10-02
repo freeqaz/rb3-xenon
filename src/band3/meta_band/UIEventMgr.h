@@ -21,7 +21,6 @@ public:
 class UIEventMgr : public MsgSource {
 public:
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~UIEventMgr();
 
     void Poll();
     void DismissDialogEvent();
