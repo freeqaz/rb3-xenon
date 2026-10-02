@@ -337,7 +337,8 @@ void TrackDir::SetSlotXfm(int i, const Transform &tf) {
             while (i >= vec2.size())
                 vec2.push_back(t78);
         }
-        vec2[i] = mSlots[i];
+        const Transform &slot = mSlots[i];
+        vec2[i] = slot;
     }
     mSlots[i] = tf;
 }
