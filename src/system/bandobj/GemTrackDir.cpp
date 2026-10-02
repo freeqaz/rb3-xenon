@@ -406,7 +406,9 @@ void GemTrackDir::SetPitch(float pitch) {
         float precomp = -(pitch + 30.0f);
         RndGroup *grp = Find<RndGroup>("streak.grp", true);
         float sined = std::sin(precomp * DEG2RAD);
-        grp->DirtyLocalXfm().v.y = -mStreakMeterOffset / sined;
+        Vector3 pos(grp->LocalXfm().v);
+        pos.y = (-1.0f / sined) * mStreakMeterOffset;
+        grp->SetLocalPos(pos);
     }
 }
 
@@ -501,12 +503,8 @@ void GemTrackDir::TrackReset() {
 }
 
 void GemTrackDir::SetupSmasherPlate() {
-    if (mSmasherPlate)
-        MILO_FAIL("Trying to acquire a new smasher plate when we already have one!");
     GemTrackResourceManager *mgr = MyTrackPanelDir()->GetGemTrackResourceManager();
-    if (!mgr)
-        MILO_WARN("GemTrackResourceManager not available!");
-    else {
+    if (mgr) {
         mSmasherPlate = mgr->GetFreeSmasherPlate(mTrackInstrument);
         if (mSmasherPlate) {
             RndGroup *smashergrp = Find<RndGroup>("smashers.grp", true);
@@ -515,29 +513,25 @@ void GemTrackDir::SetupSmasherPlate() {
                 keygrp->AddObject(mSmasherPlate, 0);
             else
                 smashergrp->AddObject(mSmasherPlate, 0);
-            if (!LOADMGR_EDITMODE || IsProxy()) {
-                RndGroup *grptoadd = mTrackInstrument == kInstRealKeys
-                    ? Find<RndGroup>("key_shift_stationary_front.grp", true)
-                    : Find<RndGroup>("smasher_fx.grp", true);
-                RndGroup *after = mSmasherPlate->Find<RndGroup>("after_gems.grp", false);
-                if (after)
-                    after->AddObject(grptoadd, 0);
-                RndGroup *keysback =
-                    Find<RndGroup>("key_shift_stationary_back.grp", true);
-                RndGroup *keylanes =
-                    mSmasherPlate->Find<RndGroup>("key_lanes.grp", false);
-                if (keylanes)
-                    keysback->AddObject(keylanes, 0);
-                RndGroup *afterhide =
-                    mSmasherPlate->Find<RndGroup>("after_hide.grp", false);
-                if (afterhide)
-                    afterhide->SetShowing(false);
-            }
+            RndGroup *grptoadd = mTrackInstrument == kInstRealKeys
+                ? Find<RndGroup>("key_shift_stationary_front.grp", true)
+                : Find<RndGroup>("smasher_fx.grp", true);
+            RndGroup *after = mSmasherPlate->Find<RndGroup>("after_gems.grp", false);
+            if (after)
+                grptoadd->AddObject(after, 0);
+            RndGroup *keysback = Find<RndGroup>("key_shift_stationary_back.grp", true);
+            RndGroup *keylanes = mSmasherPlate->Find<RndGroup>("key_lanes.grp", false);
+            if (keylanes)
+                keysback->AddObject(keylanes, 0);
+            RndGroup *afterhide = mSmasherPlate->Find<RndGroup>("after_hide.grp", false);
+            if (afterhide)
+                afterhide->SetShowing(false);
             if (mTrackInstrument == kInstRealKeys) {
                 unk654 = mSmasherPlate->Find<RndAnimatable>("shift.anim", true);
                 unk680.clear();
                 unk688.clear();
                 unk690.clear();
+                static Symbol smasher_list("smasher_list");
                 DataArray *proparr = mSmasherPlate->Property(smasher_list, true)->Array();
                 for (int i = 0; i < proparr->Size(); i++) {
                     RndDir *curdir = proparr->Obj<RndDir>(i);
@@ -547,7 +541,8 @@ void GemTrackDir::SetupSmasherPlate() {
                 }
                 SetupKeyShifting(mSmasherPlate);
             }
-            mSmasherPlate->HandleType(reset_msg);
+            static Message reset("reset");
+            mSmasherPlate->HandleType(reset);
         }
     }
 }
@@ -1248,10 +1243,13 @@ bool GemTrackDir::PrepareChordMesh(unsigned int chord) {
         invMesh->Sync(0x3F);
         unk6cc[chord] = std::make_pair(1, invMesh);
 
+#ifdef HX_NATIVE
         if (TheLoadMgr.EditMode()) {
             chordMesh->SetName(MakeString("chord_%d", chord), this);
             invMesh->SetName(MakeString("chord_L_%d", chord), this);
-        } else {
+        } else
+#endif
+        {
             chordMesh->SetName("", this);
             invMesh->SetName("", this);
         }

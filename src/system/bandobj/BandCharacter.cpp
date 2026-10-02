@@ -2393,7 +2393,14 @@ RndTex *BandCharacter::GetBandLogo() {
 }
 
 void BandCharacter::Compress(RndTex *tex, bool b) {
-    tex->Compress((RndTex::AlphaCompress)b);
+    if (mFileMerger->AsyncLoad()) {
+        // Queue the compress; TextureCompressed retires the ID.
+        mCompressedTextureIDs.push_back(
+            TheRnd.CompressTexture(tex, (RndTex::AlphaCompress)b, this)
+        );
+    } else {
+        tex->Compress((RndTex::AlphaCompress)b);
+    }
 }
 
 // See the declaration in BandCharacter.h: the parameter is intptr_t under LP64
