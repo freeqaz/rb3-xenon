@@ -1,8 +1,8 @@
 // XMAReader (retail RTTI .?AVXMAReader@@, vtable 0x82197138).
 // Retail .text 0x82B6A384-0x82B6B4F0, right after FxSendSynapse360.
-// Written here: the ctor, dtor, Seek, Done and two helpers. Not yet written:
-// Poll (0x82B6AEB0), the 916-B body at 0x82B6AA98 and the read-completion body
-// at 0x82B6A3E8, which drive the XMA hardware decoder.
+// Written here: the ctor, dtor, Seek, Done, FinishSeek and the table sum. Not
+// yet written: Poll (0x82B6AEB0) and the 916-B body at 0x82B6AA98, which drive
+// the XMA hardware decoder.
 #include "synth_xbox/XMAReader.h"
 #include "../../Memory.h"
 #include "os/File.h"
@@ -57,4 +57,25 @@ int XMAReader::TableSum() const {
     for (unsigned int i = 0; i < unk24.size(); i++)
         sum += unk24[i];
     return sum;
+}
+
+// 0x82B6A3E8
+bool XMAReader::FinishSeek() {
+    int bytesRead;
+    if (mFile->ReadDone(bytesRead)) {
+        for (unsigned int i = 0; i < unk24.size(); i++)
+            XMAPlaybackFlushData(mPlayback, i);
+        for (int i = 0; i < 2; i++)
+            unk50[i] = 0;
+        unk58 = unk5c = mBlockOffset / mBlockSize;
+        mFile->Seek(unk10 + mBlockOffset, 0);
+        if (mBlockOffset == 0)
+            unk30 = 0;
+        else
+            unk30 = mSeekTable[mBlockOffset / mBlockSize - 1];
+        mDone = false;
+        mBlockOffset = -1;
+        return true;
+    }
+    return false;
 }

@@ -42,6 +42,9 @@ public:
 
     // 0x82B6A518: the sum of the 0x24 table.
     int TableSum() const;
+    // 0x82B6A3E8: once the outstanding read has landed, flush every stream and
+    // reposition the file on the block Seek chose. Name descriptive.
+    bool FinishSeek();
 
     File *mFile; // 0x4
     StandardStream *mStream; // 0x8
