@@ -40,8 +40,7 @@ namespace Quazal {
         static void Free(MemoryManager *, void *, _InstructionType);
 
         static void *Allocate(unsigned long size, _InstructionType inst) {
-            MemoryManager *memMgr = MemoryManager::GetDefaultMemoryManager();
-            return Allocate(memMgr, size, "Unknown", 0, inst);
+            return Allocate(MemoryManager::GetDefaultMemoryManager(), size, "Unknown", 0, inst);
         }
 
         static void *GenericMalloc(unsigned long size) {

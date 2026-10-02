@@ -229,7 +229,7 @@ namespace Quazal {
     PRUDPEndPoint *PRUDPStream::CreateEndPoint(const StationURL *url, unsigned short port, bool b) {
         PRUDPEndPoint *ep = NULL;
         ScopedCS cs(*Scheduler::GetSystemLock());
-        InetAddress addr;
+        InetAddress inet;
         if (url->IsValid()) {
             ep = m_oEndPoints.Find(url->GetInetAddress(), url->GetStreamID());
             if (ep == NULL) {
@@ -432,11 +432,11 @@ namespace Quazal {
 
     bool PRUDPStream::ReceiveIncomingPacket(unsigned short port, unsigned char id, Packet *packet) {
         if (packet != NULL) {
-            PRUDPEndPoint *ep = NULL;
-            InetAddress *source = &packet->m_oSource;
-            unsigned int session =
+            PRUDPEndPoint *pEndPoint = NULL;
+            InetAddress *pSource = &packet->m_oSource;
+            unsigned int uiSession =
                 m_oSessionIDs.Lookup(packet->m_oSource.GetAddress(), packet->m_oSource.GetPortNumber());
-            if (packet->GetSignature() != session && packet->GetType() != Packet::SYN
+            if (packet->GetSignature() != uiSession && packet->GetType() != Packet::SYN
                 && packet->GetType() != Packet::DISCONNECT)
                 return false;
             if (packet->GetPendingRequest() == NULL) {
@@ -444,13 +444,13 @@ namespace Quazal {
                 case Packet::SYN:
                     if (packet->HasFlag(Packet::FLAG_ACK)) {
                         Lock();
-                        ep = m_oEndPoints.Find(source, id);
+                        pEndPoint = m_oEndPoints.Find(pSource, id);
                         Unlock();
                     } else {
                         PacketOut *reply = new (__FILE__, 0x212) PacketOut(0, 0, 0, NULL);
                         reply->SetFlag(Packet::FLAG_ACK);
                         reply->SetSequenceID(packet->GetSequenceID());
-                        reply->m_uiSessionID = session;
+                        reply->m_uiSessionID = uiSession;
                         reply->m_oSource = packet->m_oSource;
                         Send(port, id, reply);
                         reply->ReleaseRef();
@@ -459,26 +459,26 @@ namespace Quazal {
                 case Packet::CONNECT:
                     Lock();
                     if (!packet->HasFlag(Packet::FLAG_ACK)) {
-                        if (packet->GetSignature() != session) {
+                        if (packet->GetSignature() != uiSession) {
                         } else {
                             Unlock();
-                            ep = ServiceConnectionRequest(source, packet->GetPayload(), port, id);
+                            pEndPoint = ServiceConnectionRequest(pSource, packet->GetPayload(), port, id);
                             Lock();
                         }
                     } else {
-                        ep = m_oEndPoints.Find(source, id);
+                        pEndPoint = m_oEndPoints.Find(pSource, id);
                     }
                     Unlock();
                     break;
                 case Packet::DISCONNECT:
-                    ServiceDisconnection(source, packet->GetPayload());
+                    ServiceDisconnection(pSource, packet->GetPayload());
                     break;
                 default:
-                    ep = m_oEndPoints.Find(source, id);
+                    pEndPoint = m_oEndPoints.Find(pSource, id);
                     break;
                 }
-                if (ep != NULL && !ep->IsClosed())
-                    ep->ProcessPacket(packet);
+                if (pEndPoint != NULL && !pEndPoint->IsClosed())
+                    pEndPoint->ProcessPacket(packet);
             }
             packet->ReleaseRef();
         }

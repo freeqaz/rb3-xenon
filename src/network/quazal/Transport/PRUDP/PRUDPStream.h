@@ -120,7 +120,7 @@ namespace Quazal {
     public:
         PRUDPEndPoint(PRUDPStream *, const StationURL *);
         void ProcessPacket(Packet *);
-        char m_pad82[0x138 - 0x82];
+        char m_pad84[0x138 - 0x84];
     };
 
     class EndPointMap : public qMap<EndPointUniqueID, PRUDPEndPoint *> {};
