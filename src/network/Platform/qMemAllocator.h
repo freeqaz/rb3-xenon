@@ -40,7 +40,8 @@ namespace Quazal {
         // PRUDPStream (the leaf _Rb_tree constructor above). Elsewhere it is
         // load-bearing: without it JobBackEndServicesLogin's ConnectStream
         // becomes inlinable and is no longer emitted out of line.
-#if !defined(RB3_QUAZAL_RETAIL_MEMALLOCATOR) && !defined(RB3_QUAZAL_MEMALLOCATOR_CTORS)
+#if (!defined(RB3_QUAZAL_RETAIL_MEMALLOCATOR) && !defined(RB3_QUAZAL_MEMALLOCATOR_CTORS)) \
+    || defined(RB3_QUAZAL_MEMALLOCATOR_DTOR)
         ~MemAllocator() {}
 #endif
 

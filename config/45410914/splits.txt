@@ -14321,8 +14321,8 @@ network/quazal/JobConnectStation.cpp:
 	.text       start:0x82AB6A58 end:0x82AB7718
 
 network/quazal/StationManager.cpp:
-	.pdata      start:0x82253908 end:0x82253948
-	.text       start:0x82AB87A0 end:0x82AB9504
+	.pdata      start:0x822538B0 end:0x822539D0
+	.text       start:0x82AB7EF0 end:0x82ABAB58
 
 network/quazal/CallRegister.cpp:
 	.pdata      start:0x822539D0 end:0x82253AF0

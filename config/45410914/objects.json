@@ -2305,7 +2305,17 @@
             "network/quazal/DOClassesTable.cpp": "NonMatching",
             "network/quazal/ChangeMasterStationOperation.cpp": "NonMatching",
             "network/quazal/JobConnectStation.cpp": "NonMatching",
-            "network/quazal/StationManager.cpp": "NonMatching",
+            "network/quazal/StationManager.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/EHs-c-",
+                    "/GR-",
+                    "/DRB3_QUAZAL_RETAIL_MEMALLOCATOR"
+                ]
+            },
             "network/quazal/CallRegister.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
