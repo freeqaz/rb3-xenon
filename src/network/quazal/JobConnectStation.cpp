@@ -79,6 +79,13 @@ namespace Quazal {
         unsigned int GetReferencedHandle() const { return m_hReferencedDO.mValue; }
         DOHandle GetHandle() const { return DOHandle(GetReferencedHandle()); }
         DuplicatedObject *GetDOPtr() const { return m_poReferencedDO; }
+        DuplicatedObject *GetPtr() {
+            if (m_poReferencedDO == NULL) {
+                Acquire();
+            }
+            DuplicatedObject *pDO = m_poReferencedDO;
+            return pDO;
+        }
 
         DuplicatedObject *m_poReferencedDO; // 0x0
         DOHandle m_hReferencedDO; // 0x4
@@ -736,13 +743,6 @@ namespace Quazal {
         EndPoint *m_pInitialEndPoint; // 0x54
     };
 
-    inline DuplicatedObject *AcquireDO(DORef &ref) {
-        if (ref.m_poReferencedDO == NULL) {
-            ref.Acquire();
-        }
-        return ref.m_poReferencedDO;
-    }
-
 #define JCS_FILE ".\\JobConnectStation.cpp"
 #define JCS_STEP(name) Step((JobStateFunc)&JobConnectStation::name, "JobConnectStation::" #name)
 
@@ -759,7 +759,7 @@ namespace Quazal {
         m_lstTechniques.push_back(JCS_STEP(TryConnectViaURLs));
         m_lstTechniques.push_back(JCS_STEP(TryWaitingForIncomingEndPoint));
         m_uiAttempts = 0;
-        if (StationManager::GetInstance()->StationIsDead(hStation)) {
+        if (StationManager::GetInstance()->StationIsDead(m_refStation.m_hReferencedDO)) {
             SetStep(JCS_STEP(ConnectionFailed));
         } else {
             SetStep(JCS_STEP(SelectConnectionTechnique));
@@ -831,7 +831,7 @@ namespace Quazal {
     }
 
     void JobConnectStation::TryConnectViaUndelete() {
-        AcquireDO(m_refStation);
+        m_refStation.GetPtr();
         if (m_refStation.IsValid() && !m_refStation->IsLocal()) {
             if (!m_refStation->IsDeleted()) {
                 m_refStation->Trace(1);
@@ -895,7 +895,7 @@ namespace Quazal {
             SetStep(JCS_STEP(ConnectionFailed));
             return;
         }
-        EndPoint *pEndPoint = FindIncomingEndPoint(m_refStation.GetHandle());
+        EndPoint *pEndPoint = FindIncomingEndPoint(m_refStation.m_hReferencedDO);
         if (pEndPoint == NULL) {
             if (m_uiAttempts > 0) {
                 SetStep(JCS_STEP(TryConnectViaIncomingEndPointImpl));
@@ -947,7 +947,7 @@ namespace Quazal {
     }
 
     void JobConnectStation::TryConnectViaURLs() {
-        if (StationManager::GetInstance()->RetrieveStationURLs(m_refStation.GetHandle(), &m_lstURLs)) {
+        if (StationManager::GetInstance()->RetrieveStationURLs(m_refStation.m_hReferencedDO, &m_lstURLs)) {
             SetStep(JCS_STEP(PrepareURLs));
         } else {
             SetStep(JCS_STEP(RetrieveURLs));
@@ -1066,9 +1066,9 @@ namespace Quazal {
 
     void JobConnectStation::CompleteConnection() {
         m_bCompleting = true;
-        if (AcquireDO(m_refStation) == NULL) {
+        if (m_refStation.GetPtr() == NULL) {
             Station *pStation = (Station *)DuplicatedObject::CreateDuplica(
-                m_refStation.GetHandle(), MasterStationRef(m_refStation.GetHandle(), true)
+                m_refStation.m_hReferencedDO, MasterStationRef(m_refStation.m_hReferencedDO, true)
             );
             m_pEndPoint->SetStationHandle(m_refStation.GetReferencedHandle());
             pStation->SetConnection(m_pEndPoint);
@@ -1080,7 +1080,7 @@ namespace Quazal {
                 return;
             }
             pStation->GetEndPoint()->RegisterProtocol(ObjDupProtocol::GetInstance());
-            AcquireDO(m_refStation);
+            m_refStation.GetPtr();
         } else if (m_refStation->IsDeleted()) {
             if (m_pEndPoint != NULL) {
                 m_pEndPoint->RegisterProtocol(ObjDupProtocol::GetInstance());
@@ -1118,7 +1118,7 @@ namespace Quazal {
 
     void JobConnectStation::ProcessConnectOrphanResult() {
         m_bConnectingOrphan = false;
-        AcquireDO(m_refStation);
+        m_refStation.GetPtr();
         if (m_refStation.IsValid() && !m_refStation->IsDeleted()) {
             SetStep(JCS_STEP(ConnectionSucceeded));
         } else {
@@ -1133,14 +1133,14 @@ namespace Quazal {
 
     void JobConnectStation::ConnectionFailed() {
         DOCallContext *pContext = CallRegister::GetInstance()->FindCall(
-            m_refStation.GetHandle(), m_refStation.GetHandle()
+            m_refStation.m_hReferencedDO, m_refStation.m_hReferencedDO
         );
         if (pContext != NULL) {
             pContext->Cancel(4);
         }
         CancelQueuedJobs();
         SetToComplete();
-        AcquireDO(m_refStation);
+        m_refStation.GetPtr();
         if (m_refStation.IsValid()) {
             StationManager::GetInstance()->DisconnectStation(m_refStation.operator->());
         }
