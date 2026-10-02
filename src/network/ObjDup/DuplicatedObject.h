@@ -7,6 +7,8 @@
 #include "Platform/CriticalSection.h"
 #include "Platform/ScopedCS.h"
 #include "Selection.h"
+#include "ObjDup/DOID.h"
+#include "Platform/SystemError.h"
 
 namespace Quazal {
     class DataSet;
@@ -15,7 +17,6 @@ namespace Quazal {
     class DOClass;
     class Station;
     class WKHandle;
-    class DOID;
     class OperationManager;
     class RemoveFromStoreOperation;
     class AddToStoreOperation;
@@ -128,6 +129,16 @@ namespace Quazal {
         StateFuncFactory OrphanDuplicaState(const QEvent &);
         StateFuncFactory ConnectedDuplicaState(const QEvent &);
         StateFuncFactory DeletedDuplicaState(const QEvent &);
+
+        DOHandle GetHandle() const {
+            DOID oID = m_dohMyself.GetID();
+            if (oID.m_uiValue == 0) {
+                SystemError::SignalError(0, 0, 0xE000000E, 0);
+                return DOHandle(0);
+            } else {
+                return m_dohMyself;
+            }
+        }
 
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
         bool IsDeleted() const { return !FlagIsSet(1); }
