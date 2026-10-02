@@ -310,7 +310,8 @@ def test_grain_split_is_silent_when_every_row_is_pinned(capsys):
 
 
 def test_an_address_on_both_lists_keeps_both_labels():
-    """Dead on today's map (the intersection is empty) and asserted anyway:
+    """LIVE on the real map since b34c2fc1c (0x826101b8 is on both lists; see
+    ADJUDICATED_OVERLAP below), and asserted on a synthetic map regardless:
     first-key-wins here would make the per-label counts stop summing to
     `claimed` the day retail folds a bijection row, which is the silent-drop
     shape this whole file exists to catch."""
@@ -320,14 +321,55 @@ def test_an_address_on_both_lists_keeps_both_labels():
     assert sum(classify_map_rows(raw)["claimed_by_grain"].values()) == 1
 
 
-def test_the_real_map_arbitrary_lists_do_not_overlap():
-    """The premise the branch above is dead under. If this ever goes red the
-    combined label starts appearing in summaries -- that is correct, not a
-    bug, but it should be noticed."""
+#: Addresses ADJUDICATED to sit on both `_icf_arbitrary` and
+#: `_bijection_arbitrary`.  Each needs a written reason; anything else on both
+#: lists is unadjudicated and fails the test below.
+ADJUDICATED_OVERLAP = {
+    # laneAK put it on _bijection_arbitrary (62098fc55, as a ~map<int,
+    # UIComponent*> pick within the single-`b` thunk byte class); W16-AJ renamed
+    # it to the hash_map<int,UIComponent*>::~hash_map thunk (7c80d49d) and W16-AE
+    # added it to _icf_arbitrary as the Group B fold survivor (b34c2fc1c), since
+    # which of the folded spellings sits on the VA is not established.  W16-EX
+    # (docs/decomp/W16EX_TWO_INSTRUMENTS_THAT_LIE_2026-09-16.md) adjudicated the
+    # double membership: both lists carry the same treat-as-UNRESOLVED doctrine,
+    # and removing either entry would corrupt a provenance record.
+    0x826101b8: "hash_map<int,UIComponent*> dtor thunk, Group B survivor",
+}
+
+
+def _arbitrary_overlap(raw):
+    icf = {int(a, 16) for a in raw["_icf_arbitrary"]}
+    bij = {int(a, 16) for a in raw["_bijection_arbitrary"]}
+    return icf & bij
+
+
+def test_the_real_map_arbitrary_lists_overlap_only_where_adjudicated():
+    """The premise the combined-label branch was written under.
+
+    Until 2026-09-14 the intersection was EMPTY and this test asserted exactly
+    that.  b34c2fc1c then put 0x826101b8 on both lists, deliberately, and the
+    test went red for a correct map (lane W16-OB found it red on main).  The
+    test's job was always to make an overlap NOTICED, not to forbid one, so it
+    now pins the adjudicated set EXACTLY: a new, unadjudicated overlap fails,
+    and so does the adjudicated one silently disappearing.  The live map also
+    has to exercise the combined label the branch exists for.
+    """
     raw = json.loads(MAP_PATH.read_text())
-    icf = {a.lower() for a in raw["_icf_arbitrary"]}
-    bij = {a.lower() for a in raw["_bijection_arbitrary"]}
-    assert not (icf & bij)
+    assert _arbitrary_overlap(raw) == set(ADJUDICATED_OVERLAP)
+    grain = name_grain_index(raw)
+    for addr in ADJUDICATED_OVERLAP:
+        assert grain[addr] == "bijection_arbitrary+icf_arbitrary"
+
+    # CONTROL, inside the test: the comparison must be able to fail.  Put one
+    # more real bijection address on the ICF list, and take the adjudicated one
+    # off; both must be seen.
+    extra = next(a for a in raw["_bijection_arbitrary"]
+                 if int(a, 16) not in ADJUDICATED_OVERLAP)
+    grown = dict(raw, _icf_arbitrary=raw["_icf_arbitrary"] + [extra])
+    assert _arbitrary_overlap(grown) != set(ADJUDICATED_OVERLAP)
+    shrunk = dict(raw, _icf_arbitrary=[
+        a for a in raw["_icf_arbitrary"] if int(a, 16) not in ADJUDICATED_OVERLAP])
+    assert _arbitrary_overlap(shrunk) != set(ADJUDICATED_OVERLAP)
 
 
 def test_junk_under_a_grain_key_is_ignored_not_crashed():

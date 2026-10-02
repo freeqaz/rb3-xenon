@@ -205,10 +205,12 @@ def name_grain_index(raw):
     worth materialising.
 
     An address on BOTH lists gets the '+'-joined label of both, sorted, rather
-    than first-key-wins. Measured on the checked-in map the intersection is
-    EMPTY, so this branch is dead today; it exists because first-key-wins would
-    make the per-label counts stop summing to `claimed` the day it isn't, and a
-    count that silently stops partitioning is this file's whole subject.
+    than first-key-wins, because first-key-wins would make the per-label
+    counts stop summing to `claimed`, and a count that silently stops
+    partitioning is this file's whole subject. The branch is LIVE: since
+    b34c2fc1c (2026-09-14) the checked-in map has exactly one address on both
+    lists, 0x826101b8, adjudicated by W16-EX and pinned by
+    test_comdat_retail_verify.py's ADJUDICATED_OVERLAP.
     """
     tags = {}
     for key in NAME_GRAIN_KEYS:

@@ -151,18 +151,51 @@ def run_integration():
              "PAVContent@@@stlpmtx_std@@@2@U32@ABQAVContent@@@Z")
 
     # The laundering fixture is a REAL pair the CF1/CF2/CF3 chain refuses because
-    # the map places the folded spelling on a different LIVE body (one of 60 such
-    # in the shipped worklist), resubmitted with the address dropped.  Its stage 1
-    # PASSES, so the pair really does reach stage 2 -- a fixture whose stage 1
-    # fails would test nothing here, which is how the first draft of this test
-    # passed for the wrong reason.
-    S_LDR = "??3BinStream@@SAXPAX@Z"           # survivor, 0x8240ddb0
-    F_LDR = "??3Loader@@SAXPAX@Z"              # map places it at 0x823f4698
+    # the map places the folded spelling on a different LIVE body, resubmitted
+    # with the address dropped.  Its stage 1 PASSES, so the pair really does
+    # reach stage 2 -- a fixture whose stage 1 fails would test nothing here,
+    # which is how the first draft of this test passed for the wrong reason.
+    #
+    # RE-PICKED 2026-10-02 (lane W16-OB).  The original fixture was
+    # ??3Loader@@SAXPAX@Z vs survivor ??3BinStream@@SAXPAX@Z (0x8240ddb0), with the
+    # map placing ??3Loader at 0x823f4698.  On 2026-10-01 b9e50c1a2/da675aa5c
+    # REFUTED that row on retail bytes (0x823f4698 is a `b` into the Quazal /Od
+    # block, not a free), nulled it, and aliased ??3Loader into the 0x8240ddb0
+    # MemFree survivor.  The spelling became genuinely map-silent and a proven
+    # fold, so CF5 correctly ADMITted it and this test went red on a CORRECT
+    # gate.  The replacement was found by resubmitting every pair in the shipped
+    # worklist with `base_addr: null` and keeping those refused with "DOES name"
+    # whose placed address differs from the survivor's AND whose honest
+    # submission the chain refuses as a different live body; two qualified, this
+    # is the `residual` one.  The HONEST leg is now submitted too (below), so the
+    # next time map work moves the fixture the test says "fixture stale" instead
+    # of accusing the gate.
+    S_LDR = ("?resize@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@"
+             "stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$"
+             "StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std"
+             "@@QAAXIABV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@"
+             "@stlpmtx_std@@@@@Z")                  # survivor, 0x82470738
+    F_LDR = ("?resize@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@"
+             "stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$"
+             "StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std"
+             "@@QAAXIABV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@"
+             "@stlpmtx_std@@@@@Z")                  # map places it at 0x826c83e8
+    SA_LDR, FA_LDR = "0x82470738", "0x826c83e8"
+    placed = sorted(k.lower() for k, v in smap.items()
+                    if k.lower().startswith("0x") and v == F_LDR)
+    check("fixture precondition: the map places the laundering spelling on a "
+          "DIFFERENT address from the survivor",
+          placed == [FA_LDR] and smap.get(SA_LDR) == S_LDR,
+          "placed=%s survivor-row=%s -- if this fails the FIXTURE is stale, "
+          "not the gate; re-pick it as described above" % (placed, smap.get(SA_LDR) == S_LDR))
 
     got = gate([pair(S_CN, "0x82520150", F_CN),
                 pair(S_INS, "0x823d14c0", F_CN),
-                pair(S_LDR, "0x8240ddb0", F_LDR)])
-    if got is None:
+                pair(S_LDR, SA_LDR, F_LDR)])
+    # Separate run: `gate()` keys rows on (survivor, folded), which the honest
+    # and the laundered submissions of one pair share.
+    got_honest = gate([pair(S_LDR, SA_LDR, F_LDR, base_addr=FA_LDR)])
+    if got is None or got_honest is None:
         check("gate ran", False, "non-zero exit")
         return
 
@@ -191,13 +224,26 @@ def run_integration():
           and "not the retail body" in (r.get("reason") or ""),
           "verdict=%s reason=%s" % (r.get("verdict"), (r.get("reason") or "")[:60]))
 
+    # The HONEST submission of the laundering pair (its real map address given).
+    # This is the fixture's own control: it shows stage 1 PASSES (the refusal is
+    # stage 2's "different live body", which is evaluated only after stage 1)
+    # and that the CF1/CF2/CF3 chain still refuses the fold.  Without it, a
+    # laundering REFUSE below could be stage 1 failing for an unrelated reason,
+    # and a laundering ADMIT could be a fixture whose fold became proven.
+    hon = got_honest.get((S_LDR, F_LDR), {})
+    check("fixture control: the HONEST submission passes stage 1 and the chain "
+          "REFUSES it as a different live body",
+          hon.get("verdict") == "REFUSE" and hon.get("tier") is None
+          and "DIFFERENT LIVE body" in (hon.get("reason") or ""),
+          "verdict=%s reason=%s" % (hon.get("verdict"), (hon.get("reason") or "")[:70]))
+
     # a MAP-RESIDENT spelling submitted with the address dropped
     r = got.get((S_LDR, F_LDR), {})
     check("map-RESIDENT spelling submitted as map-silent is REFUSED (laundering)",
           r.get("verdict") == "REFUSE" and "DOES name" in (r.get("reason") or ""),
           "verdict=%s reason=%s" % (r.get("verdict"), (r.get("reason") or "")[:70]))
     check("  ... and the refusal names the live address the map gives it",
-          "0x823f4698" in (r.get("reason") or ""))
+          FA_LDR in (r.get("reason") or ""))
 
 
 def main():
