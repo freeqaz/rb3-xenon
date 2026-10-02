@@ -515,7 +515,10 @@ void QueuingSocket::CreateContext(IOCompletionContext **ppContext) {
 
 void QueuingSocket::DeleteContext(IOCompletionContext *pContext) {
     if (pContext) {
-        m_pNotifier->WaitForIOCompletion(pContext, 1000);
+        if (!m_pNotifier->WaitForIOCompletion(pContext, 1000)) {
+            // Retail tests the result and does nothing with it (a trace that
+            // is compiled out): the test costs a register and no code.
+        }
         Buffer *pBuffer = (Buffer *)pContext->m_oUserContext.m_uContextStorage.m_pPointer;
         if (pBuffer)
             pBuffer->ReleaseRef();
