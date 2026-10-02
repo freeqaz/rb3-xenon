@@ -1427,7 +1427,9 @@ def slot_controls(tgt, ours, mapped, al):
 
     DECOYS (expect REFUTED): JE's pair, plus one membership per withdrawal class
     that W16-JG recorded in the ledger (`PLACEHOLDER_SLOT_*`), read back from
-    `withdrawn` records so they survive later map work.  A decoy is only USED if
+    `withdrawn` records so they survive later map work.  A later lane's record
+    of one of those classes is a fallback candidate (W16-NX), tried after
+    W16-JG's own.  A decoy is only USED if
     the old lax rule PROVES it -- a decoy the old rule already refuses does not
     probe the hole, and a control that cannot fail is worse than none.
     POSITIVES (expect PROVEN): a live membership whose proof DISCHARGES a vtable
@@ -1447,14 +1449,27 @@ def slot_controls(tgt, ours, mapped, al):
     out = []
     cands = [("W16-JE vtable pair", JE_SLOT_DECOY[0], JE_SLOT_DECOY[1])]
     seen = set()
+    later = []
     for g in al["groups"]:
         for w in g.get("withdrawn", []):
-            if not isinstance(w, dict) or not str(w.get("lane", "")).startswith("W16-JG"):
+            if not isinstance(w, dict):
                 continue
             c = w.get("class", "")
+            if not str(w.get("lane", "")).startswith("W16-JG"):
+                later.append((c, g["survivor"], w["spelling"]))
+                continue
             seen.add(c)
             if g["survivor"] in tgt and w["spelling"] in ours:
                 cands.append((c, g["survivor"], w["spelling"]))
+    # ★ W16-NX.  A class needs only ONE live decoy, and a class anchored by a
+    # single record breaks the moment ordinary map work names the retail callee
+    # that made it lax-PROVEN (measured: naming 0x822e4fd8 retired the only
+    # PLACEHOLDER_SLOT_MAPPED_VS_PLACEHOLDER decoy, group 0x822e5040).  So a
+    # later lane's record of a class W16-JG defined is a candidate too.  W16-JG's
+    # own records are tried FIRST, so the decoy chosen for every class that
+    # already had one does not change; the later records are fallbacks.  The
+    # class set itself (`seen`) still comes only from W16-JG's records.
+    cands += [x for x in later if x[0] in seen and x[1] in tgt and x[2] in ours]
     used = set()
     for c, s_, o_ in cands:
         if c in used or s_ not in tgt or o_ not in ours:
