@@ -4,9 +4,8 @@
 `report.json` `provenance.diff_config`). **Brief** (from `W16NK_GAME_ANON_ROWS_2026-10-02.md` §6/§8):
 the rest of XboxServer, `InviteAcceptedMsg` and XSessionData in the unidentified unit at
 `0x823ED458`; ContextChecker pins that held XSessionData and XMAReader code; `TrackPanel::IsGameOver`
-(`0x82B90770`) carved by dtk into two 12-B rows. No oracle in either sibling repo: `../dc3-decomp` has no
-XboxServer / XSessionSearcher / XboxSession / XSessionData / XMAReader (its map has none of those names),
-and rb3-Wii's `Server_Wii.cpp` is an 11-line ctor. Every body below is written from retail asm.
+(`0x82B90770`) carved by dtk into two 12-B rows. No other source tree carries XboxServer /
+XSessionSearcher / XboxSession / XSessionData / XMAReader, so every body below is written from retail asm.
 
 ## 1. Whole-binary A/B
 
