@@ -37,6 +37,7 @@ namespace Quazal {
         void SetURL(const char *);
         unsigned int GetSessionID() { return m_uiSessionID; }
         void SetSessionID(unsigned int ui) { m_uiSessionID = ui; }
+        void SetUpdateCallback(void (*pf)()) { m_pfUpdateCallback = pf; }
 
         unsigned char unk0[0x14];
         unsigned int m_uiProductID; // 0x14
@@ -245,7 +246,7 @@ namespace Quazal {
                 m_dsSharedSessionDescription.Clear();
             }
             InitSessionDescription(true);
-            GetLocalSessionDescription()->m_pfUpdateCallback = SessionDescriptionUpdateCallback;
+            GetLocalSessionDescription()->SetUpdateCallback(SessionDescriptionUpdateCallback);
             break;
         case 0xd:
             InitSessionDescription(true);

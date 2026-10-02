@@ -192,7 +192,7 @@ namespace Quazal {
             return DOHandle(m_refMasterStation.m_hReferencedDO.mValue);
         }
         static Session *GetInstance();
-        static bool IsCreated();
+        static bool SessionMasterSignalsFaultsToAll();
         static unsigned char GetRole();
     };
 
@@ -596,7 +596,7 @@ namespace Quazal {
                 GetTransport()->GetRouter()->EnableRouting(false);
             }
         }
-        if (Session::IsCreated()) {
+        if (Session::SessionMasterSignalsFaultsToAll()) {
             if (Session::GetRole() == 1) {
                 DORefTemplate<Station> ref(hStation);
                 if (ref.IsValid()) {
