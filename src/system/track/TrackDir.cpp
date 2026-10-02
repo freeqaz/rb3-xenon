@@ -331,14 +331,15 @@ void TrackDir::SetSlotXfm(int i, const Transform &tf) {
         while (i >= mSlots.size())
             mSlots.push_back(t48);
     } else {
-        if (i >= vec2.size()) {
+        std::vector<Transform> &prev = vec2;
+        if (i >= prev.size()) {
             Transform t78;
             t78.Reset();
-            while (i >= vec2.size())
-                vec2.push_back(t78);
+            while (i >= prev.size())
+                prev.push_back(t78);
         }
         const Transform &slot = mSlots[i];
-        vec2[i] = slot;
+        prev[i] = slot;
     }
     mSlots[i] = tf;
 }
