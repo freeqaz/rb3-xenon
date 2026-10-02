@@ -7,6 +7,7 @@
 #include "rndobj/Anim.h"
 #include "utl/BinStream.h"
 #include "utl/MemMgr.h"
+#include <list>
 #include "char/CharBonesSamples.h"
 
 struct CharGraphNode {
@@ -308,31 +309,30 @@ protected:
 // ---------------------------------------------------------------------------
 // SCAFFOLD -- NOT believed to be retail CharClip source. Read before removing.
 //
-// Retail's .text genuinely contains std::vector<std::map<int,float> > machinery
-// (_M_clear / _M_erase / resize / operator= / the _Rb_tree + node-allocator
-// helpers). Until this commit our tree obtained those bodies as a side effect of
-// CharClip::mBlendSamples, which implicitly instantiated them in every TU that
-// included this header. mBlendSamples is a DC3-era member that retail's CharClip
-// does not have (retail sizeof == 0x174; see CharClip::NewObject), so removing it
-// is correct -- but it also removed the tree's ONLY donor for those template
-// bodies, costing 20 real byte-identical matches across 6 units.
+// These explicit instantiations stand in for template donors our tree lost when
+// the DC3-era CharClip::mBlendSamples member was removed (retail
+// sizeof(CharClip) == 0x174, see CharClip::NewObject). Because this header is
+// included widely, they reproduce the include-graph distribution of COMDAT
+// bodies that the member used to provide. Delete them once the real donor TUs
+// are identified and ported.
 //
-// RB3's true donor TU is unidentified: `std::vector<std::map<int,float> >` occurs
-// nowhere else in this tree nor in any RB3 source (plain
-// std::map<int,float> does -- BandList, VocalTrackDir, SongData -- but not the
-// vector-of-map). This explicit instantiation parks the bodies here, reproducing
-// the include-graph distribution the member used to provide, so the correct
-// layout can land without a net loss. Delete it as soon as the real donor TU is
-// identified and ported.
-//
-// The two extra instantiations below close the part of that 20-match hole the
-// vector<map> line alone does not reach: the free serializer
-// operator<<(BinStream&, map<int,float>) (BinStream.h) and map insert_unique
-// were previously implicitly instantiated by mBlendSamples users (retail's
-// linker parked their COMDATs in Font and Rot); neither is touched by the
-// vector<map> machinery. Delete together with the line above once the real
-// donor TU is found.
+// 1. std::vector<std::list<int> >. This line used to instantiate
+//    std::vector<std::map<int,float> >, on the premise that retail .text holds
+//    vector<map<int,float> > machinery. It does not: the addresses behind that
+//    premise (0x82793830, 0x82793910, 0x82793B80, ...) are vector<list<int> >
+//    members -- power-of-two element stride, list copy-ctor/clear callees --
+//    called only from Submix/SlotChannelMapping, whose own source
+//    (Submix::mChannelsPerSlot) instantiates them and pairs at 100. What this
+//    line still donates is the vector growth path's throw machinery
+//    (length_error / logic_error copy ctors, bad_alloc / exception dtors,
+//    allocator<char>::allocate), which retail pins in Accomplishment; any
+//    vector instantiation provides it, so it now spells a type retail has.
+//    Deleting the line outright measured -17 fns / -672 B, six of them those
+//    real Accomplishment rows.
+// 2. The free serializer operator<<(BinStream&, map<int,float>) (BinStream.h)
+//    and the map<int,float> tree members (insert_unique, ...), whose retail
+//    COMDATs the linker parked in Font and Rot.
 // ---------------------------------------------------------------------------
-template class std::vector<std::map<int, float> >;
+template class std::vector<std::list<int> >;
 template class std::map<int, float>;
 template BinStream &operator<<(BinStream &, const std::map<int, float> &);
