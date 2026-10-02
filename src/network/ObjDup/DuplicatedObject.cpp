@@ -13,6 +13,7 @@
 #include "ObjDup/DOCallContext.h"
 #include "ObjDup/BundlingPolicy.h"
 #include "ObjDup/SelectionIterator.h"
+#include "ObjDup/Session.h"
 
 namespace Quazal {
 
@@ -242,6 +243,39 @@ namespace Quazal {
         return EmigrateTo(pContext, hNewMaster);
     }
 
+    void DuplicatedObject::PrepareToLeave() {
+        bool bOK = false;
+        DORefTemplate<Session> ref(Session::s_hSession);
+        if (ref.IsValid() && ref->GetSessionState() != 3) {
+            bOK = CallApproveEmigration(0);
+        } else {
+            bOK = false;
+        }
+        bool bMigrating = MigrationInProgress();
+        if (bOK && !bMigrating) {
+            DOHandle hNewLocation = SelectNewLocation(0);
+            if (hNewLocation != DOHandle()) {
+                bMigrating = AttemptEmigration(hNewLocation);
+            }
+        }
+        if (!bMigrating) {
+            DeleteMainRef();
+        }
+    }
+
+    DOHandle DuplicatedObject::SelectNewLocation(unsigned int) {
+        SelectionIteratorTemplate<Station> it(1);
+        while (!it.EndReached()) {
+            if (it->IsAPeer() && it->IsConnected() && it->GetState() == 3
+                && it->GetProcessType() != 4) {
+                return it->GetHandle();
+            }
+            it.GotoNext(false);
+        }
+        SystemError::SignalError(0, 0, 0xE0030006, 0);
+        return DOHandle();
+    }
+
     bool DuplicatedObject::IsADuplica() const {
         if (DOHandle(m_refMasterStation.m_hReferencedDO.mValue) == DOHandle()) {
             return false;
@@ -306,6 +340,31 @@ namespace Quazal {
             }
         }
         return true;
+    }
+
+    bool DuplicatedObject::ConnectOrphanDuplica() {
+        {
+            DORefTemplate<Station> refMaster(m_refMasterStation.m_hReferencedDO.mValue);
+            DORefTemplate<Station> refLocal(Station::GetLocalStationHandle());
+            if (refMaster.IsValid() && refMaster->GetState() == 4) {
+                return false;
+            }
+            if (refLocal.IsValid() && refLocal->GetState() == 4) {
+                return false;
+            }
+        }
+        FetchContext *pContext =
+            new (__FILE__, 0x517) FetchContext(m_refMasterStation.m_hReferencedDO.mValue, false);
+        pContext->unk40 = Time::FromMilliseconds(30000);
+        pContext->SetFlag(2);
+        if (!IsAWellKnownDO()) {
+            pContext->SetOrphanRecovery();
+        }
+        if (SendConnectOrphanRequest(pContext, GetHandle())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // ---- end 0x82A72D58..0x82A74220 ----

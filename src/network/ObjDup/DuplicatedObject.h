@@ -199,4 +199,19 @@ namespace Quazal {
         Selection m_setCachedDuplicationSet; // 0x4c
     };
 
+
+    template <class T>
+    inline bool DORefTemplate<T>::IsValid() const {
+        if (GetDOPtr() == 0) {
+            SystemError::SignalError(0, 0, 0xA0030004, 0);
+            return false;
+        } else {
+            if (!DuplicatedObject::GetDOClass(GetDOPtr()->m_dohMyself.GetDOClassID())
+                     ->IsAKindOf(T::GetClassID())) {
+                SystemError::SignalError(0, 0, 0xE003000C, 0);
+                return false;
+            }
+            return true;
+        }
+    }
 }

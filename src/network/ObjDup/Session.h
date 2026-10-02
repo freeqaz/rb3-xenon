@@ -15,5 +15,11 @@ namespace Quazal {
         static bool JoinSessionImpl(CallContext *, const qList<Quazal::StationURL> &);
         static void RegisterWellKnownDOsFactory(void (*)(void));
         static Session *GetInstance();
+
+        unsigned char GetSessionState();
+        static unsigned int GetClassID() { return s_uiDOClassID; }
+
+        static unsigned int s_uiDOClassID;
+        static DOHandle s_hSession;
     };
 }
