@@ -818,14 +818,13 @@ float BandIKEffector::ApplyPosConstraints(
             Multiply(src, tpose, local);
             float lensq = LengthSquared(local);
             Multiply(local, c.mTarget->WorldXfm(), local);
-            float clamped = Max(lensq, 0.001f);
-            float w = 144.0f * c.mWeight / clamped;
+            float w = (c.mWeight * 144.0f) / Max(0.001f, lensq);
             ScaleAdd(dst, local, w, dst);
             totalWeight += w;
         }
     }
     if (mMore) {
-        totalWeight += bool(mMore->ApplyPosConstraints(dst, src, root));
+        totalWeight += mMore->ApplyPosConstraints(dst, src, root);
     }
     return totalWeight;
 }
