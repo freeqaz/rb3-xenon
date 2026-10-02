@@ -104303,6 +104303,23 @@
    "added": {
     "lane": "W16-NF 2026-10-02"
    }
+  },
+  {
+   "name": "operator<<",
+   "address": "0x8274e650",
+   "survivor": "??$?6VViewport@ObjectDir@@V?$StlNodeAlloc@VViewport@ObjectDir@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VViewport@ObjectDir@@V?$StlNodeAlloc@VViewport@ObjectDir@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+   "folded": [
+    "??$?6VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@@Z"
+   ],
+   "evidence": "W16-NI: retail TrackDir::Save (0x827dd520, written from retail asm by this lane) writes mSlots (vector<Transform>) through a bl to 0x8274e650, which the map names operator<<(BinStream&, vector<ObjectDir::Viewport>). ObjectDir::Viewport is { Transform mXfm; }, so the two instantiations are the same 132-B body; admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-NI",
+   "admitted": [
+    {
+     "spelling": "??$?6VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+     "lane": "W16-NI 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail_size 132 == our_size 132, 7 relocs, reloc_tally {}; retail carries 1 body(ies) of this shape. Retail call sites reaching the survivor where our aligned caller calls this spelling: 0x827dd5dc (?Save@TrackDir@@UAAXAAVBinStream@@@Z). The survivor's other retail caller 0x826ea844 is ObjectDir's own Viewport write, which spells the survivor."
+    }
+   ]
   }
  ]
 }
