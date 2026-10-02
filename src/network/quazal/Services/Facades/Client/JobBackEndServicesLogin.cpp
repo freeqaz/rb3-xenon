@@ -121,6 +121,9 @@ namespace Quazal {
         CallContext();
         virtual ~CallContext();
         void Reset();
+        bool BeginCall();
+        void SetStateImpl(_State, qResult, bool);
+
         void SetStateToSuccess(qResult);
         void SetStateToError(qResult);
 
@@ -132,7 +135,8 @@ namespace Quazal {
         _State m_eState; // 0xc
         unsigned int m_unk10[6];
         qResult m_oOutcome; // 0x28
-        unsigned int m_unk34[5];
+        unsigned int m_uiCallID; // 0x34
+        unsigned int m_unk38[4];
         Time m_tTimeout; // 0x48
     };
 
@@ -149,12 +153,21 @@ namespace Quazal {
         CallContext *GetContext(unsigned int);
     };
 
+    class Job;
+
+    class Scheduler {
+    public:
+        void Queue(Job *, bool);
+    };
+
     class InstanceControl {
     public:
         static InstanceControl *GetInstance();
+        Scheduler *GetScheduler() const { return m_pScheduler; }
         CallContextRegister *GetCallContextRegister() const { return m_pRegister; }
 
-        unsigned int m_unk0[3];
+        unsigned int m_unk0[2];
+        Scheduler *m_pScheduler; // 0x8
         CallContextRegister *m_pRegister; // 0xc
     };
 
@@ -239,6 +252,8 @@ namespace Quazal {
 
         unsigned int m_unk0[0x1C];
         Credentials *m_pCredentials; // 0x70
+        unsigned int m_unk74[7];
+        Job *m_pLogoutJob; // 0x90
     };
 
     void ReleaseStreamCredentials(StreamCredentials *);
@@ -249,6 +264,15 @@ namespace Quazal {
 
     class Job : public RefCountedObject {
     public:
+        enum State {
+            Initial = 0,
+            Waiting = 1,
+            Suspended = 2,
+            Ready = 3,
+            Running = 4,
+            Complete = 5
+        };
+
         virtual ~Job();
         virtual void DecoratedExecute();
         virtual void Execute();
@@ -260,8 +284,11 @@ namespace Quazal {
 
         void SetToWaiting();
         void SetToComplete();
+        State GetState() const { return m_eState; }
 
-        unsigned int m_unk8[20];
+        unsigned int m_unk8[5];
+        State m_eState; // 0x1c
+        unsigned int m_unk20[14];
         unsigned int m_unk58; // 0x58
     };
 
@@ -358,9 +385,9 @@ namespace Quazal {
         Time m_tTimeout; // 0x2b0
     };
 
-    LoginURLs::LoginURLs() {}
+    inline LoginURLs::LoginURLs() {}
 
-    LoginURLs::~LoginURLs() {}
+    inline LoginURLs::~LoginURLs() {}
 
     JobBackEndServicesLogin::JobBackEndServicesLogin(
         unsigned int callID, BackEndServices *services, qResult *result,
@@ -430,7 +457,7 @@ namespace Quazal {
         }
     }
 
-    bool JobBackEndServicesLogin::ConnectStream(
+    inline bool JobBackEndServicesLogin::ConnectStream(
         StreamClient *client, CallContext *context, const StationURL &url,
         StreamCredentials **connection, unsigned int timeout
     ) {
