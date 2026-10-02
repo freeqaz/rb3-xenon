@@ -72,7 +72,10 @@ namespace Quazal {
 
         pointer address(reference value) const { return &value; }
         const_pointer address(const_reference value) const { return &value; }
-        size_type max_size() const { return size_type(-1) / sizeof(T); }
+        size_type max_size() const {
+            size_type n = size_type(-1) / sizeof(T);
+            return n > 0 ? n : 1;
+        }
 
         pointer allocate(const size_type count, const void *hint = 0) const {
             return (pointer)MemoryManager::Allocate(
