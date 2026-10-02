@@ -70,6 +70,8 @@ public:
     // matching at 100 non-volatile is proof retail's member is a plain int, so
     // WaitForState's reload is CSE/scheduling, not a type qualifier.
     // Do not re-try volatile here.
+    // Site-local volatile reads (Splash.cpp) close WaitForState, CheckWorkerSuspend,
+    // UpdateThread and Resume without touching SetImmutableState (W16-NH-SE).
     int mState; // 0x94
     CriticalSection mScreenLock;
     std::list<PreparedScreenParams> mPreparedScreens;

@@ -370,9 +370,11 @@ void Splash::WaitForState(Splash::SplashState state) {
         MILO_FAIL("Can\'t WaitForState");
     }
     // Wait for state change, allowing intermediate states for kResumed
+    // Retail reloads mState for the kResumed test (lwz 0x94 after the
+    // state == kResumed compare) instead of reusing the loop test's load.
     while (mState != state) {
         if (state == kResumed) {
-            if (mState > kResumed)
+            if (*(volatile int *)&mState > kResumed)
                 break;
         }
         MainThread() ? mWorkerEvent.Wait(-1) : mMainEvent.Wait(-1);
