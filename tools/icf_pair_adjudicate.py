@@ -1567,11 +1567,20 @@ def fixture_view(tgt, mapped, fid, fx):
     if fid in _VIEWS:
         return _VIEWS[fid]
     refs = _ref_index(tgt)
-    ren = {}
+    ren, unresolved = {}, []
     for ah, want in fx["names"].items():
         cur = _current_name(tgt, refs, int(ah, 16), want)
-        if cur is not None and cur != want:
+        if cur is None:
+            unresolved.append(ah)
+        elif cur != want:
             ren[cur] = want
+    if unresolved:
+        # The tree spells this address neither by its map name nor by a
+        # placeholder: it left the pinned spans, or the renamer did not run.
+        # Say so -- a view missing part of its neighbourhood is not the
+        # recorded state, and the caller falls back or refuses.
+        print("  ! fixture %s: %d recorded address(es) absent from the tree: %s"
+              % (fid, len(unresolved), ", ".join(unresolved[:4])))
     # A recorded name the live tree now uses for a DIFFERENT address (a map
     # correction moved it) must vacate: that address reverts to a placeholder.
     targets = set(ren.values())
@@ -1597,6 +1606,44 @@ def fixture_view(tgt, mapped, fid, fx):
         (M.add if v else M.discard)(n)
     _VIEWS[fid] = (T, M, ren)
     return _VIEWS[fid]
+
+
+def simulate_naming(tgt, mapped):
+    """--simulate-naming: name every placeholder in every recorded fixture
+    neighbourhood, in memory, exactly as obj_target_symbol_renamer would after a
+    map edit (key + every relocation naming it), add the name to `mapped`, and
+    make _addr_name() answer it.  Reads the fixture FILE even under
+    --no-fixtures, so the two modes simulate the same map work."""
+    if not FIXTURES_PATH.exists():
+        raise SystemExit("REFUSING: --simulate-naming needs %s" % FIXTURES_PATH)
+    fx_all = json.load(open(FIXTURES_PATH))["fixtures"]
+    refs = _ref_index(tgt)
+    ren = {}
+    for fx in fx_all.values():
+        for ah, n in fx["names"].items():
+            # only addresses the LIVE tree still spells as that placeholder; an
+            # address the map already names is already "map work done"
+            if placeholder(n) and _ph_addr(n) is not None and (
+                    dict.__contains__(tgt, n) or n in refs):
+                ren[n] = "?w16oa_simulated_%s@@YAXXZ" % ah[2:]
+    touched = set()
+    for cur in ren:
+        touched |= refs.get(cur, set())
+        if dict.__contains__(tgt, cur):
+            touched.add(cur)
+    recs = {k: tgt[k] for k in touched}
+    for k in touched:
+        del tgt[k]
+    for k, (mb, rl, sz) in recs.items():
+        tgt[ren.get(k, k)] = (mb, [(o, ren.get(n, n), t) for (o, n, t) in rl], sz)
+    _addr_name(0)
+    for cur, new in ren.items():
+        mapped.add(new)
+        _ADDR_NAME[_ph_addr(cur)] = new
+    _MAP_REV.clear()
+    _REF_IDX.clear()
+    print("simulate-naming: %d placeholder address(es) named in memory, %d bodies "
+          "rewritten" % (len(ren), len(touched)))
 
 
 def load_fixtures():
@@ -1803,6 +1850,12 @@ def main():
                          "no fixture yet to scripts/chasetest_fixtures.json (with "
                          "--rerecord, all of them). Record on a tree where "
                          "--chasetest PASSES; then confirm with --chasetest.")
+    ap.add_argument("--simulate-naming", action="store_true",
+                    help="W16-OA: before running, NAME in memory every placeholder in "
+                         "every fixture's neighbourhood (synthetic names, added to the "
+                         "map view), i.e. simulate the map work that used to retire "
+                         "controls. With fixtures every control must still PASS; with "
+                         "--no-fixtures the affected classes should REFUSE or fail.")
     ap.add_argument("--rerecord", action="store_true",
                     help="with --record-fixtures: replace existing fixtures too")
     a = ap.parse_args()
@@ -1831,6 +1884,8 @@ def main():
     mapped = load_mapped()
     tgt, ours = load_sides()
     fixtures = load_fixtures()
+    if a.simulate_naming:
+        simulate_naming(tgt, mapped)
 
     pairs = []
     if a.selftest:
