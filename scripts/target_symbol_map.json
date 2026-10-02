@@ -2412,7 +2412,7 @@
  "0x8271cbd8": "??4MoggClipMap@@QAAAAV0@ABV0@@Z",
  "0x82579f50": "?ContentDone@BandSongMgr@@UAAXXZ",
  "0x82745d08": "??_GMovieLoader@Impl@Movie@@UAAPAXI@Z",
- "0x827dc9e8": "??0HttpGet@@QAA@IGPBD0@Z",
+ "0x827dc9e8": "??0HttpGet@@QAA@IGPBD@Z",
  "0x825cac18": "??_GSetlistScoresProvider@@UAAPAXI@Z",
  "0x827cdca0": "?EnterUnloadState@NetCacheMgr@@AAAXXZ",
  "0x8281e628": "??_GUIListArrow@@UAAPAXI@Z",
