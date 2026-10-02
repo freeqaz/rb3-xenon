@@ -8,9 +8,15 @@
 namespace Quazal {
 
 
-    class InstanceDelegator {
+    class TransportDelegator {
     public:
-        static InstanceDelegator *GetInstance();
+        static TransportDelegator *GetInstance() {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            InstanceControl *inst =
+                (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(1, uiContext);
+            TransportDelegator *pDelegator = inst ? (TransportDelegator *)inst->m_pDelegatorInstance : nullptr;
+            return pDelegator;
+        }
         RootTransport *GetTransport() { return m_pTransport; }
         char m_pad[0x4c];
         RootTransport *m_pTransport; // 0x4c
@@ -47,25 +53,55 @@ namespace Quazal {
         unsigned int GetContentSize() const;
     };
 
+    class SequenceID {
+    public:
+        ~SequenceID() {}
+        SequenceID &operator=(const SequenceID &o) {
+            m_usValue = o.m_usValue;
+            return *this;
+        }
+        unsigned short m_usValue;
+    };
+
     class Packet : public RefCountedObject {
     public:
+        enum Type {
+            SYN = 0,
+            CONNECT = 1,
+            DISCONNECT = 5,
+        };
+        enum Flags {
+            FLAG_ACK = 8,
+        };
 
-        InetAddress *GetSourceAddress() { return &m_oSource; }
         void SetDestination(const InetAddress *addr) { m_oSource = *addr; }
+        unsigned char GetType() { return m_byTypeFlags & 7; }
+        bool HasFlag(unsigned char flag) { return (m_byTypeFlags & flag) != 0; }
+        void SetFlag(unsigned char flag) { m_byTypeFlags |= flag & 0xF8; }
+        unsigned int GetSignature() { return m_uiSignature; }
+        SequenceID GetSequenceID() { return m_oSequenceID; }
+        void SetSequenceID(const SequenceID &id) { m_oSequenceID = id; }
+        Buffer *GetPayload() { return m_pPayload; }
+        void *GetPendingRequest() { return m_pPendingRequest; }
+
         char m_pad08[0x12 - 8];
         unsigned char m_byTypeFlags; // 0x12
         char m_pad13[0x14 - 0x13];
-        unsigned int m_uiSessionID; // 0x14
-        unsigned short m_usSequenceID; // 0x18
-        char m_pad1a[0x24 - 0x1a];
+        unsigned int m_uiSignature; // 0x14
+        SequenceID m_oSequenceID; // 0x18
+        char m_pad1a[0x1c - 0x1a];
+        unsigned int m_uiSessionID; // 0x1c
+        char m_pad20[0x24 - 0x20];
         Buffer *m_pPayload; // 0x24
         InetAddress m_oSource; // 0x28
+        char m_padA8[0xb8 - 0xa8];
+        void *m_pPendingRequest; // 0xb8
     };
 
     class PacketOut : public Packet {
     public:
         PacketOut(unsigned char, unsigned char, unsigned int, Buffer *);
-        char m_padA8[0xe0 - 0xa8];
+        char m_padBC[0xe0 - 0xbc];
     };
 
     class InetAddressList : public qList<InetAddress> {
@@ -157,8 +193,8 @@ namespace Quazal {
             return m_usListeningPort;
     }
 
-    static RootTransport *GetDefaultTransport() {
-        InstanceDelegator *d = InstanceDelegator::GetInstance();
+    inline RootTransport *GetDefaultTransport() {
+        TransportDelegator *d = TransportDelegator::GetInstance();
         if (d == NULL)
             return NULL;
         else
@@ -195,12 +231,12 @@ namespace Quazal {
         ScopedCS cs(*Scheduler::GetSystemLock());
         InetAddress addr;
         if (url->IsValid()) {
-            ep = m_oEndPoints.Find(url->GetInetAddress(), StreamID(url->GetStreamID()));
+            ep = m_oEndPoints.Find(url->GetInetAddress(), url->GetStreamID());
             if (ep == NULL) {
                 ep = new (__FILE__, 0xae) PRUDPEndPoint(this, url);
                 m_oWaterMark.Increment(1);
                 ep->m_usPort = port;
-                m_oEndPoints.Add(ep, StreamID(url->GetStreamID()));
+                m_oEndPoints.Add(ep, url->GetStreamID());
             }
         }
         return ep;
@@ -237,9 +273,9 @@ namespace Quazal {
 
     void PRUDPStream::ReleaseEndPoint(PRUDPEndPoint *ep) {
         ScopedCS cs(*Scheduler::GetSystemLock());
-        if (!ep->IsReleased() && !ep->IsDisconnected()) {
+        if (ep->IsAlive() && !ep->IsDisconnected()) {
             ep->Trace(0x2000000);
-            m_oEndPoints.Remove(ep->GetAddress(), StreamID(ep->GetStreamID()));
+            m_oEndPoints.Remove(ep->GetAddress(), ep->GetStreamID());
             ep->SetPID(0);
             ep->SetCID(0);
             m_oWaterMark.Decrement(1);
@@ -395,20 +431,65 @@ namespace Quazal {
     }
 
     bool PRUDPStream::ReceiveIncomingPacket(unsigned short port, unsigned char id, Packet *packet) {
-        if (packet == NULL)
-            return true;
-        PRUDPEndPoint *ep = NULL;
-        InetAddress *source = packet->GetSourceAddress();
-        unsigned int session = m_oSessionIDs.Lookup(
-            &packet->m_oSource, packet->m_oSource.m_data[0]
-        );
+        if (packet != NULL) {
+            PRUDPEndPoint *ep = NULL;
+            InetAddress *source = &packet->m_oSource;
+            unsigned int session =
+                m_oSessionIDs.Lookup(packet->m_oSource.GetAddress(), packet->m_oSource.GetPortNumber());
+            if (packet->GetSignature() != session && packet->GetType() != Packet::SYN
+                && packet->GetType() != Packet::DISCONNECT)
+                return false;
+            if (packet->GetPendingRequest() == NULL) {
+                switch (packet->GetType()) {
+                case Packet::SYN:
+                    if (packet->HasFlag(Packet::FLAG_ACK)) {
+                        Lock();
+                        ep = m_oEndPoints.Find(source, id);
+                        Unlock();
+                    } else {
+                        PacketOut *reply = new (__FILE__, 0x212) PacketOut(0, 0, 0, NULL);
+                        reply->SetFlag(Packet::FLAG_ACK);
+                        reply->SetSequenceID(packet->GetSequenceID());
+                        reply->m_uiSessionID = session;
+                        reply->m_oSource = packet->m_oSource;
+                        Send(port, id, reply);
+                        reply->ReleaseRef();
+                    }
+                    break;
+                case Packet::CONNECT:
+                    Lock();
+                    if (!packet->HasFlag(Packet::FLAG_ACK)) {
+                        if (packet->GetSignature() != session) {
+                        } else {
+                            Unlock();
+                            ep = ServiceConnectionRequest(source, packet->GetPayload(), port, id);
+                            Lock();
+                        }
+                    } else {
+                        ep = m_oEndPoints.Find(source, id);
+                    }
+                    Unlock();
+                    break;
+                case Packet::DISCONNECT:
+                    ServiceDisconnection(source, packet->GetPayload());
+                    break;
+                default:
+                    ep = m_oEndPoints.Find(source, id);
+                    break;
+                }
+                if (ep != NULL && !ep->IsClosed())
+                    ep->ProcessPacket(packet);
+            }
+            packet->ReleaseRef();
+        }
         return true;
     }
 
     void PRUDPStream::DeleteReleasedEndPoints() {
         ScopedCS cs(*Scheduler::GetSystemLock());
         while (!m_lstReleasedEndPoints.empty()) {
-            delete m_lstReleasedEndPoints.front();
+            PRUDPEndPoint *ep = m_lstReleasedEndPoints.front();
+            delete ep;
             m_lstReleasedEndPoints.pop_front();
         }
     }

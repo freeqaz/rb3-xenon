@@ -23,6 +23,8 @@ namespace Quazal {
         InetAddress(const InetAddress &);
         ~InetAddress();
         InetAddress &operator=(const InetAddress &);
+        unsigned int GetAddress() const;
+        unsigned short GetPortNumber() const;
 
         char m_data[0x80];
     };
@@ -71,7 +73,7 @@ namespace Quazal {
         virtual void Unk00();
         virtual void Unk04();
         virtual void Unk08();
-        virtual void Unk0C();
+        virtual bool IsClosed();
         virtual void Unk10();
         virtual bool IsDisconnected();
         virtual void Unk18();
@@ -98,6 +100,7 @@ namespace Quazal {
         void SetPID(unsigned int);
         void SetCID(unsigned int);
         bool IsReleased() { return m_pReleaser != NULL; }
+        bool IsAlive() { return !IsReleased(); }
         InetAddress *GetAddress() { return m_oURL.GetInetAddress(); }
         unsigned char GetStreamID() { return m_oURL.GetStreamID(); }
 
@@ -111,6 +114,7 @@ namespace Quazal {
     class PRUDPEndPoint : public EndPoint {
     public:
         PRUDPEndPoint(PRUDPStream *, const StationURL *);
+        void ProcessPacket(Packet *);
         char m_pad82[0x138 - 0x82];
     };
 
@@ -127,8 +131,7 @@ namespace Quazal {
                 return it->second;
         }
         void Add(PRUDPEndPoint *ep, StreamID id) {
-            EndPointUniqueID key(*ep->GetAddress(), id);
-            insert(value_type(key, ep));
+            insert(value_type(EndPointUniqueID(*ep->GetAddress(), id), ep));
         }
         void Remove(const InetAddress *addr, StreamID id) {
             EndPointUniqueID key(*addr, id);
@@ -260,7 +263,7 @@ namespace Quazal {
         public:
             SessionIDTable();
             ~SessionIDTable();
-            unsigned int Lookup(const InetAddress *, unsigned short);
+            unsigned int Lookup(unsigned int, unsigned short);
             void *m_p;
         };
 

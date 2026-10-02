@@ -34986,5 +34986,6 @@
  "0x82afef10": "?Remove@EndPointTable@Quazal@@QAAXPBVInetAddress@2@VStreamID@2@@Z",
  "0x82aff300": "?Trace@EndPointTable@Quazal@@QAAXI@Z",
  "0x82aff158": "?ServiceTimeouts@PRUDPStream@Quazal@@QAAXXZ",
- "0x82afed50": "?Add@EndPointTable@Quazal@@QAAXPAVPRUDPEndPoint@2@VStreamID@2@@Z"
+ "0x82afed50": "?Add@EndPointTable@Quazal@@QAAXPAVPRUDPEndPoint@2@VStreamID@2@@Z",
+ "0x82aff118": "?GetSequenceID@Packet@Quazal@@QAA?AVSequenceID@2@XZ"
 }
