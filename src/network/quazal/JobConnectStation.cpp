@@ -162,8 +162,9 @@ namespace Quazal {
     };
 
     // A job that changes the connection state of one station; StationManager
-    // tracks it until it completes (Wii: StationManager::ProcessCompletedJob
-    // takes a JobChangeConnection). Its members are in StepSequenceJob.cpp.
+    // tracks it until it completes (its destructor hands the job to
+    // StationManager unless m_bCompleted is set). Its members are in the
+    // StepSequenceJob TU (constructor 0x82AF9538, destructor 0x82AF9638).
     class JobChangeConnection : public StepSequenceJob {
     public:
         JobChangeConnection(const String &, DOHandle);
