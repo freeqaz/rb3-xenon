@@ -30,7 +30,7 @@ CharHair::Strand *gStrand;
 CharHair::CharHair()
     : mStiffness(0.04f), mTorsion(0.1f), mInertia(0.7f), mGravity(1.0f), mWeight(0.5f),
       mFriction(0.3f), mMinSlack(0.0f), mMaxSlack(0.0f), mStrands(this), mReset(1),
-      mSimulate(1), mUsePostProc(1), mMe(this), mWind(this), mCollides(this),
+      mSimulate(1), mUsePostProc(1), mMe(ObjPtrInlineOwner(), this), mWind(this), mCollides(this),
       mManagedHookup(0) {}
 
 CharHair::~CharHair() {}
