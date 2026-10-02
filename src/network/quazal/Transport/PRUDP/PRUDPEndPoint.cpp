@@ -252,9 +252,7 @@ namespace Quazal {
     class ConnectionOrientedStream {
     public:
         StreamSettings *GetSettings() { return &s_oStreamSettings[m_eType].GetValue(); }
-        void Send(unsigned short, unsigned char, PacketOut *);
         void EndPointDisconnected(PRUDPEndPoint *);
-        void EndPointFaulted(PRUDPEndPoint *);
 
         char unk0[0x4];
         unsigned int m_eType;              // 0x4
@@ -264,6 +262,14 @@ namespace Quazal {
         TimeoutManager m_oTimeoutManager;  // 0x14
         char unk18[0xe0 - 0x18];
         SignatureGenerator m_oSignatureGenerator; // 0xe0
+    };
+
+    // The stream this TU's endpoints belong to; Send and ReleaseEndPoint are
+    // PRUDPStream's own methods (0x82AFDEC0, 0x82AFCBC0).
+    class PRUDPStream : public ConnectionOrientedStream {
+    public:
+        bool Send(unsigned short, unsigned char, PacketOut *);
+        void ReleaseEndPoint(PRUDPEndPoint *);
     };
 
     class StationURL;
@@ -328,7 +334,7 @@ namespace Quazal {
         virtual ~EndPoint();
         virtual void SignalFault(unsigned int, bool) = 0;
 
-        ConnectionOrientedStream *GetStream() { return m_pStream; }
+        PRUDPStream *GetStream() { return static_cast<PRUDPStream *>(m_pStream); }
 
         ConnectionOrientedStream *m_pStream; // 0x4
         StationURL m_oAddress;              // 0x8
@@ -894,7 +900,7 @@ namespace Quazal {
             if (pEventHandler)
                 FireFault(pTarget, uiReason);
             SetPeerDisconnected();
-            GetStream()->EndPointFaulted(this);
+            GetStream()->ReleaseEndPoint(this);
         } else {
             switch (m_eState) {
             case Connecting:
@@ -979,7 +985,7 @@ namespace Quazal {
                         FireDisconnection(pTarget);
                     }
                 }
-                GetStream()->EndPointFaulted(this);
+                GetStream()->ReleaseEndPoint(this);
             }
             break;
         case 0:

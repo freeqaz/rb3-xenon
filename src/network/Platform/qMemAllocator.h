@@ -24,25 +24,35 @@ namespace Quazal {
             typedef MemAllocator<T2> other;
         };
 
-#if defined(VERSION_SZBE69_B8) || !defined(VERSION_SZBE69)
-        // X360 retail: converting constructors, and no user-declared
-        // destructor. The retail /Od _Rb_tree constructor at 0x82AFF400 is a
-        // leaf with no EH frame, so the allocator temporaries it converts
-        // need no destruction.
+#if defined(VERSION_SZBE69_B8) || defined(RB3_QUAZAL_MEMALLOCATOR_CTORS)
+        // Retail doesn't have constructor calls (Wii B8). X360 TUs built with
+        // RB3_QUAZAL_MEMALLOCATOR_CTORS (PRUDPStream) convert through these
+        // constructors: the retail /Od _Rb_tree constructor at 0x82AFF400 is a
+        // leaf with no EH frame, so the converted temporaries need no destruction.
         MemAllocator() {}
         MemAllocator(MemAllocator<T> const &) {}
         template <class T2>
         MemAllocator(const MemAllocator<T2> &) {}
 #endif
 
-        // ...but still has the destructor on Wii. X360 retail has none: the
-        // StationURL TU shows no unwind action after clear() in its ~qMap, and
-        // the /Od _Rb_tree constructor at 0x82AFF400 is a leaf with no EH frame.
-#if defined(VERSION_SZBE69) || defined(VERSION_SZBE69_B8)
+        // ...but still has the destructor. Two X360 TUs show none in retail:
+        // StationURL (no unwind action after clear() in its ~qMap) and
+        // PRUDPStream (the leaf _Rb_tree constructor above). Elsewhere it is
+        // load-bearing: without it JobBackEndServicesLogin's ConnectStream
+        // becomes inlinable and is no longer emitted out of line.
+#if !defined(RB3_QUAZAL_RETAIL_MEMALLOCATOR) && !defined(RB3_QUAZAL_MEMALLOCATOR_CTORS)
         ~MemAllocator() {}
 #endif
 
-#if defined(VERSION_SZBE69)
+#if defined(VERSION_SZBE69) || (!defined(VERSION_SZBE69_B8) && !defined(RB3_QUAZAL_MEMALLOCATOR_CTORS))
+        // This is the only way to make allocator conversions
+        // work in retail without using constructors.
+        // rb3-xenon (X360 retail) defines neither VERSION_SZBE69 nor
+        // VERSION_SZBE69_B8, which previously left MemAllocator with NO rebind
+        // path -> STLport _List_base(const MemAllocator&) failed to convert
+        // MemAllocator<T> to MemAllocator<_List_node<T>>. The retail SKU used
+        // this conversion-operator path (the comment above), so enable it when
+        // the constructor path (VERSION_SZBE69_B8) is absent.
         template <class T2>
         operator MemAllocator<T2>() const {
             return MemAllocator<T2>();

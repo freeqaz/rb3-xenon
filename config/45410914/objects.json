@@ -2303,7 +2303,8 @@
                 "extra_cflags": [
                     "/Od",
                     "/Oi-",
-                    "/Ob1"
+                    "/Ob1",
+                    "/DRB3_QUAZAL_MEMALLOCATOR_CTORS"
                 ]
             },
             "network/quazal/WorkerThreads.cpp": "NonMatching",

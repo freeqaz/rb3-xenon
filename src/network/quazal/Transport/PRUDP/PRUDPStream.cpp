@@ -64,10 +64,10 @@ namespace Quazal {
         unsigned int GetContentSize() const;
     };
 
-    class SequenceID {
+    class LogicalClock {
     public:
-        ~SequenceID() {}
-        SequenceID &operator=(const SequenceID &o) {
+        ~LogicalClock() {}
+        LogicalClock &operator=(const LogicalClock &o) {
             m_usValue = o.m_usValue;
             return *this;
         }
@@ -90,8 +90,8 @@ namespace Quazal {
         bool HasFlag(unsigned char flag) { return (m_byTypeFlags & flag) != 0; }
         void SetFlag(unsigned char flag) { m_byTypeFlags |= flag & 0xF8; }
         unsigned int GetSignature() { return m_uiSignature; }
-        SequenceID GetSequenceID() { return m_oSequenceID; }
-        void SetSequenceID(const SequenceID &id) { m_oSequenceID = id; }
+        LogicalClock GetSequenceID() { return m_oSequenceID; }
+        void SetSequenceID(const LogicalClock &id) { m_oSequenceID = id; }
         Buffer *GetPayload() { return m_pPayload; }
         void *GetPendingRequest() { return m_pPendingRequest; }
 
@@ -99,7 +99,7 @@ namespace Quazal {
         unsigned char m_byTypeFlags; // 0x12
         char m_pad13[0x14 - 0x13];
         unsigned int m_uiSignature; // 0x14
-        SequenceID m_oSequenceID; // 0x18
+        LogicalClock m_oSequenceID; // 0x18
         char m_pad1a[0x1c - 0x1a];
         unsigned int m_uiSessionID; // 0x1c
         char m_pad20[0x24 - 0x20];
