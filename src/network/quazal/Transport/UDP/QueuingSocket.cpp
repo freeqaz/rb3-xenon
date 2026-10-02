@@ -16,6 +16,17 @@
 // This TU is built /Od: its locals are laid out by a walk over the scope's
 // symbol hash table, so the local NAMES below determine the stack offsets, and
 // every allocation passes __FILE__/__LINE__, so #line reproduces retail's lines.
+//
+// Other constructs the frames depend on (each measured against retail):
+// - IOCompletionContext::GetUserContext() returns a reference; the return
+//   temporary of such an accessor is allocated after every named temporary,
+//   which is where retail keeps the UserContext assignment target.
+// - TransportDelegator::GetInstance is an inline the compiler refuses at the
+//   second level, so its three locals reserve frame space in the callers.
+// - Time() is never expanded in this TU (retail calls the COMDAT copy at
+//   0x82B3AF20 from EmulationQueue::Queue), so it is declared noinline here.
+// - ~QueuingSocket's frame is 0x10 larger than retail's (the space reserved
+//   for the refused ~EmulationQueue calls differs); the body is identical.
 
 #include <list>
 
