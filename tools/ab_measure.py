@@ -31,7 +31,12 @@ CLAUDE.md "Whole-binary A/B measurement"):
   6. FORCE what the change kind needs: map/splits => restore symbols.txt,
      rm the renamer stamp, touch config.yml (a map edit is INERT without a
      forced re-split: lane CF-1 lost a leg to "[APPLIED] ... 0 files
-     patched"); configgen => rerun configure.py. The forced re-split is then
+     patched"); configgen => bump configure.py's mtime so leg B's ninja
+     build regenerates build.ninja through its own generator edge, which
+     depends on the split's output and so runs AFTER the split (lane W16-NG:
+     a hand-run configure.py BEFORE the split read the previous split's unit
+     names and refused every splits.txt heading rename; leg B must show
+     'RUN configure.py' or it REFUSES). The forced re-split is then
      ITERATED TO A symbols.txt FIXED POINT, on BOTH legs (lane ABSPLIT-1;
      see resplit_fixed_point). ONE split is not enough for any patch that
      trips a jeff merge pass, and the shortfall is SILENT and lands in the
@@ -227,6 +232,58 @@ RENAMER_RE = re.compile(
 # own ninja step instead of to line order.
 RENAMER_STEP_RE = re.compile(r"^\[\d+/\d+\]\s+PATCH target fn_")
 
+# ── configgen patches regenerate build.ninja THROUGH NINJA (lane W16-NG) ────
+# build.ninja's generator edge is
+#
+#     build build.ninja objdiff.json: configure | build/45410914/config.json \
+#         configure.py tools/project.py ... config/45410914/objects.json
+#
+# i.e. it depends on the SPLIT's OUTPUT. configure.py builds its unit list
+# from that file (dtk's view of splits.txt), so the only correct order after
+# a patch that renames a splits.txt heading is split FIRST, configure SECOND
+# -- and ninja already enforces exactly that order. This tool used to run
+# `configure.py` by hand straight after `git apply`, BEFORE the split: it then
+# read leg A's unit names against leg B's objects.json and hard-failed on every
+# renamed heading (W16-NE, which had to measure with
+# RB3_ALLOW_UNRESOLVED_SPLITS=1). The hand run also dropped `$configure_args`
+# (--dtk/--objdiff/--wrapper), so leg B's manifest differed from leg A's in its
+# tool command strings. Now apply_patch() only bumps the mtime of a generator
+# input and the leg-B build regenerates the manifest in dependency order.
+# configure.py is the input bumped because it is a static input of that edge
+# AND the generator itself: a patch whose only configgen path is NOT a static
+# input (tools/defines_common.py, tools/source_category.py,
+# tools/scope_map.py) would otherwise leave the manifest stale.
+CONFIGURE_TOUCH_REL = "configure.py"
+CONFIGURE_STEP_RE = re.compile(r"^\[\d+/\d+\]\s+RUN configure\.py\b")
+# The escape hatch in tools/project.py. Scrubbed from every build this tool
+# runs: with it set, a GENUINELY unresolved heading (a unit that can never
+# pair) would be priced instead of refused.
+ALLOW_UNRESOLVED_ENV = "RB3_ALLOW_UNRESOLVED_SPLITS"
+# tools/project.py's hard-fail banner and its per-heading lines.
+UNRESOLVED_BANNER_RE = re.compile(
+    r"ERROR: (\d+) splits\.txt heading\(s\) resolve to no objects\.json entry")
+UNRESOLVED_LINE_RE = re.compile(
+    r"^  (\S.*?) -> (no objects\.json entry|AMBIGUOUS basename.*)$")
+
+
+def unresolved_headings(log_text):
+    """Parse configure.py's unresolved-splits-heading hard fail out of a build
+    log. Returns None when the banner is absent, else a list of
+    (heading, why) pairs (possibly empty if the banner format drifted -- the
+    caller still refuses on the banner alone)."""
+    if not UNRESOLVED_BANNER_RE.search(log_text):
+        return None
+    return [(m.group(1), m.group(2)) for m in
+            (UNRESOLVED_LINE_RE.match(l) for l in log_text.splitlines()) if m]
+
+
+def build_env():
+    """Environment for every build this tool runs: the caller's, minus the
+    unresolved-splits escape hatch."""
+    env = dict(os.environ)
+    env.pop(ALLOW_UNRESOLVED_ENV, None)
+    return env
+
 # Required top-level measures keys. Per-unit measures legitimately omit
 # zero-valued keys (serde skips defaults; 3,005/3,914 units omit
 # matched_functions), so ONLY the whole-binary verdict is strict.
@@ -273,7 +330,7 @@ def git(wt, *args, check=True, log_path=None):
 def count_lines(log_text):
     """Classify ninja status lines. Returns dict with msvc/split/patch/other
     work counts and the renamer 'files patched' figure if present."""
-    msvc = split = patch = other = 0
+    msvc = split = patch = other = configure = 0
     renamer_patched = None
     in_renamer_step = False
     for line in log_text.splitlines():
@@ -295,6 +352,12 @@ def count_lines(log_text):
                 pass
             else:
                 other += 1
+                if desc == "RUN" and CONFIGURE_STEP_RE.match(line):
+                    # ninja's own generator edge regenerating build.ninja
+                    # (lane W16-NG). Still counted as other work -- it IS
+                    # work -- but also tallied so a configgen patch can PROVE
+                    # the manifest was regenerated in leg B.
+                    configure += 1
         rm = RENAMER_RE.search(line)
         if rm and in_renamer_step:
             renamer_patched = int(rm.group(2))
@@ -302,12 +365,13 @@ def count_lines(log_text):
         "msvc": msvc, "split": split, "patch": patch, "other_work": other,
         "work": msvc + split + patch + other,
         "renamer_patched": renamer_patched,
+        "configure": configure,
     }
 
 
 def zero_counts():
     return {"msvc": 0, "split": 0, "patch": 0, "other_work": 0, "work": 0,
-            "renamer_patched": None}
+            "renamer_patched": None, "configure": 0}
 
 
 def merge_counts(a, b):
@@ -322,6 +386,7 @@ def merge_counts(a, b):
     """
     out = {k: a[k] + b[k] for k in
            ("msvc", "split", "patch", "other_work", "work")}
+    out["configure"] = a.get("configure", 0) + b.get("configure", 0)
     out["renamer_patched"] = (a["renamer_patched"] if a["renamer_patched"]
                               is not None else b["renamer_patched"])
     return out
@@ -608,10 +673,26 @@ class ABMeasure:
         cmd += targets
         log = self.rundir / log_name
         t0 = time.time()
-        rc, out = run(cmd, cwd=self.wt, log_path=log, check=False)
+        rc, out = run(cmd, cwd=self.wt, log_path=log, check=False,
+                      env=build_env())
         dt = time.time() - t0
         counts = count_lines(out)
         if rc != 0:
+            unresolved = unresolved_headings(out)
+            if unresolved is not None:
+                names = "\n".join(f"      {h}  ({why})" for h, why in unresolved)
+                raise Refusal(
+                    "configure",
+                    "configure.py hard-failed on splits.txt heading(s) that "
+                    "resolve to no objects.json entry (log: "
+                    f"{log}):\n{names or '      <banner present, no lines parsed>'}"
+                    "\n    This ran from ninja's own generator edge, AFTER the "
+                    "split had re-read the patched splits.txt, so these names "
+                    "are the PATCHED tree's headings -- not a stale-config "
+                    "artifact. A unit with no objects.json entry emits "
+                    "`base_path: None` and can never pair; fix the patch "
+                    f"rather than setting {ALLOW_UNRESOLVED_ENV} (this tool "
+                    "scrubs it from every build).")
             tail = "\n".join(out.splitlines()[-30:])
             raise Refusal("build",
                           f"ninja failed rc={rc} (log: {log})\n--- tail ---\n{tail}")
@@ -1023,9 +1104,28 @@ class ABMeasure:
             self.restore_symbols()
             self.force_split()
         if "configgen" in kinds:
-            self.say("  [force] configgen change: re-running configure.py")
-            run([sys.executable, "configure.py"], cwd=self.wt,
-                log_path=self.rundir / "configure_B.log")
+            # ⛔ Do NOT run configure.py here (lane W16-NG). It would run
+            # BEFORE the split, reading build/<title>/config.json -- the
+            # previous (leg A) split's unit names -- against the patched
+            # objects.json, and hard-fail on every renamed splits.txt heading.
+            # Bump a static input of ninja's generator edge instead: that edge
+            # depends on the split's output, so the leg-B build splits first
+            # and THEN regenerates build.ninja (with $configure_args). Still
+            # strict: a heading that is unresolved after the split fails the
+            # build and is refused by name (_ninja). check_legb_counts()
+            # proves the regeneration actually happened.
+            self.say("  [force] configgen change: bumping configure.py's mtime "
+                     "so ninja's generator edge regenerates build.ninja in "
+                     "leg B's build"
+                     + (" AFTER the split (it depends on the split's "
+                        "config.json), so a renamed heading resolves"
+                        if kinds & {"map", "splits"} else ""))
+            if os.environ.get(ALLOW_UNRESOLVED_ENV):
+                self.say(f"  [force] NOTE: {ALLOW_UNRESOLVED_ENV} is set in "
+                         "the caller's environment; it is SCRUBBED from every "
+                         "build this tool runs, so unresolved headings still "
+                         "refuse")
+            os.utime(self.wt / CONFIGURE_TOUCH_REL)
 
     def leg_b_build(self, kinds):
         """Build leg B to QUIESCENCE — the same discipline as leg A.
@@ -1474,6 +1574,14 @@ def check_legb_counts(kinds, counts):
             "lanes hit this via run_objdiff hiding the compile; here the "
             "build log itself shows no compile, so the patch touched "
             "nothing the build consumes.",
+        )
+    if "configgen" in kinds and not counts.get("configure"):
+        raise Refusal(
+            "legB-build",
+            "configgen patch but ninja's generator edge ('RUN configure.py') "
+            "did not run in leg B's first build — build.ninja/objdiff.json "
+            "are still leg A's, so leg B would measure leg A's generated "
+            "output (a vacuous A/B).",
         )
     if kinds & {"map", "splits"} and counts["split"] == 0:
         raise Refusal(
@@ -2065,7 +2173,8 @@ def main():
             "source": "expect MSVC recompiles in leg B",
             "map": "will force re-split; renamer must report >0 files patched",
             "splits": "will force re-split; BOTH legs measured in fresh-split state",
-            "configgen": "will rerun configure.py after apply",
+            "configgen": "leg B's build regenerates build.ninja via ninja's "
+                         "generator edge (after the split, if one runs)",
         }
         for k in sorted(kinds):
             print(f"  [classify] {k}: {expect[k]}")
@@ -2584,6 +2693,89 @@ def selftest():
           lambda: check_legb_counts({"map"}, dict(base, split=1,
                                                  renamer_patched=7)),
           expect_refusal=False)
+
+    # ---- configgen regenerates through NINJA, after the split (W16-NG) -----
+    # A hand-run configure.py BEFORE the split read leg A's unit names and
+    # refused every heading rename. Each check below can fail: the legB gate
+    # is driven both ways, the parser is driven on a banner and on a clean
+    # log, and the shape guard fails if the hand-run comes back.
+    check("legB configgen patch with configure=0 REFUSES (stale manifest)",
+          lambda: check_legb_counts({"configgen"}, dict(base, configure=0)),
+          expect_refusal=True)
+    check("legB configgen patch with NO configure key REFUSES",
+          lambda: check_legb_counts({"configgen"}, dict(base)),
+          expect_refusal=True)
+    check("legB configgen+splits patch with split=1 configure=1 PASSES",
+          lambda: check_legb_counts({"configgen", "splits"},
+                                    dict(base, split=1, configure=1, work=2)),
+          expect_refusal=False)
+    _cl = count_lines("\n".join([
+        "[1/3] SPLIT orig/45410914/default.xex",
+        "[2/3] RUN configure.py",
+        "[3/3] PROGRESS",
+    ]))
+    # PROGRESS (the `configure.py ... progress` edge) is NON_WORK and must
+    # not be tallied as a manifest regeneration.
+    ok = (_cl["split"] == 1 and _cl["configure"] == 1
+          and _cl["other_work"] == 1)
+    print(("  PASS" if ok else "  FAIL") +
+          f"  count_lines tallies 'RUN configure.py' as configure "
+          f"(split={_cl['split']} configure={_cl['configure']} "
+          f"other={_cl['other_work']})")
+    if not ok:
+        fails.append("configure tally")
+    _cl0 = count_lines("[1/2] RUN dtk something\n[2/2] MSVC foo.obj")
+    ok = _cl0["configure"] == 0 and merge_counts(
+        _cl, _cl0)["configure"] == 1 and merge_counts(
+        zero_counts(), {"msvc": 0, "split": 0, "patch": 0, "other_work": 0,
+                        "work": 0, "renamer_patched": None})["configure"] == 0
+    print(("  PASS" if ok else "  FAIL") +
+          "  configure tally does not fire on other RUN steps and survives "
+          "merge_counts (incl. a dict without the key)")
+    if not ok:
+        fails.append("configure tally negative")
+    _banner = "\n".join([
+        "=" * 72,
+        "ERROR: 2 splits.txt heading(s) resolve to no objects.json entry.",
+        "=" * 72,
+        "  system/bandobj/Bogus.cpp -> no objects.json entry",
+        "  Mat.cpp -> AMBIGUOUS basename, 2 objects.json entries claim it:",
+        "       system/rnddx9/Mat.cpp",
+        "",
+        "Each of these emits `base_path: None` in objdiff.json and can never",
+    ])
+    _u = unresolved_headings(_banner)
+    ok = (_u is not None and [h for h, _ in _u] ==
+          ["system/bandobj/Bogus.cpp", "Mat.cpp"]
+          and unresolved_headings("[1/1] RUN configure.py\nok") is None)
+    print(("  PASS" if ok else "  FAIL") +
+          f"  unresolved_headings parses the banner ({_u}) and is None on "
+          "a clean log")
+    if not ok:
+        fails.append("unresolved_headings")
+    _saved = os.environ.get(ALLOW_UNRESOLVED_ENV)
+    os.environ[ALLOW_UNRESOLVED_ENV] = "1"
+    try:
+        ok = ALLOW_UNRESOLVED_ENV not in build_env()
+    finally:
+        if _saved is None:
+            os.environ.pop(ALLOW_UNRESOLVED_ENV, None)
+        else:
+            os.environ[ALLOW_UNRESOLVED_ENV] = _saved
+    print(("  PASS" if ok else "  FAIL") +
+          f"  build_env() scrubs {ALLOW_UNRESOLVED_ENV} (a caller's escape "
+          "hatch cannot let an unresolved heading be priced)")
+    if not ok:
+        fails.append("env scrub")
+    _src = inspect.getsource(ABMeasure.apply_patch)
+    _code = "\n".join(l.split("#", 1)[0] for l in _src.splitlines())
+    ok = ('"configure.py"' not in _code and "CONFIGURE_TOUCH_REL" in _code
+          and "env=build_env()" in inspect.getsource(ABMeasure._ninja))
+    print(("  PASS" if ok else "  FAIL") +
+          "  apply_patch does NOT hand-run configure.py (it would run BEFORE "
+          "the split); _ninja builds with the scrubbed env")
+    if not ok:
+        fails.append("apply_patch configure shape")
 
     # ---- renamer figure must come from the RENAMER's step (lane CT-1) ------
     # SIX patchers emit an identical '[APPLIED] N files checked, M files
