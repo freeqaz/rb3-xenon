@@ -75,6 +75,8 @@ namespace Quazal {
         void *m_p3c; // 0x3c
         unsigned char unk40[0x8];
         SystemComponent *m_pComponent; // 0x48
+
+        SystemComponent *GetJoinComponent() { return m_pComponent; }
     };
 
     class ProductInfo {
@@ -219,6 +221,7 @@ namespace Quazal {
     inline bool IsReferencing(const DORef &r) { return r.GetDOPtr() != NULL; }
     inline DOHandle GetRefHandle(const DORef &r) { return r.m_hReferencedDO; }
     inline const char *GetURLString(const StationURL &url) { return url.GetURL(); }
+    inline qResult GetOutcome(const CallContext &oContext) { return oContext.unk20; }
     inline bool UseIsAllowed(const SystemComponent::Use &u) { return u.mComponentExists; }
 
     extern int XNetQosLookupKey(const XNKID *, int, int, int, int);
@@ -472,12 +475,12 @@ namespace Quazal {
             }
             oContext.Wait(120000);
             if (oContext.GetState() != CallContext::CallSuccess) {
-                int iCode = oContext.unk20.m_iReturnCode;
-                if (iCode == 0x8006000B) {
+                int iCode = GetOutcome(oContext).m_iReturnCode;
+                if (iCode == (int)0x8006000B) {
                     SystemError::SignalError(0, 0, 0xE0030012, 0);
-                } else if (iCode == 0x8006000C) {
+                } else if (iCode == (int)0x8006000C) {
                     SystemError::SignalError(0, 0, 0xE0030011, 0);
-                } else if (iCode == 0x8006000D) {
+                } else if (iCode == (int)0x8006000D) {
                     SystemError::SignalError(0, 0, 0xE0030011, 0);
                 }
                 return false;
@@ -486,7 +489,8 @@ namespace Quazal {
             }
         }
         unsigned int uiRVCID = 0;
-        for (qList<StationURL>::const_iterator it = lstURLs.begin(); it != lstURLs.end(); it++) {
+        qList<StationURL>::const_iterator it = lstURLs.begin();
+        while (it != lstURLs.end()) {
             if ((*it).GetRVConnectionID() != 0) {
                 if (uiRVCID != 0 && (*it).GetRVConnectionID() != uiRVCID) {
                     SystemError::SignalError(0, 0, 0xE0000016, 0);
@@ -494,14 +498,15 @@ namespace Quazal {
                 }
                 uiRVCID = (*it).GetRVConnectionID();
             }
+            ++it;
         }
         if (XboxSessionKeys::GetNbKeys() == 0) {
-            for (qList<StationURL>::const_iterator it = lstURLs.begin(); it != lstURLs.end();
-                 it++) {
+            for (qList<StationURL>::const_iterator itKey = lstURLs.begin(); itKey != lstURLs.end();
+                 ++itKey) {
                 XNKID kid;
                 XNKEY key;
-                if ((*it).GetXNKid(&kid)) {
-                    (*it).GetXNKey(&key);
+                if ((*itKey).GetXNKid(&kid)) {
+                    (*itKey).GetXNKey(&key);
                     XboxSessionKeys::RegisterKey(&kid, &key);
                     int iRes = XNetQosLookupKey(&kid, 0, 0, 0, 1);
                 }
@@ -709,14 +714,15 @@ namespace Quazal {
     }
 
     bool Session::JoinIsAllowed() {
-        SystemComponent::Use oUse(NetZ::GetInstance()->m_pComponent, NULL);
+        SystemComponent::Use oUse(NetZ::GetInstance()->GetJoinComponent(), NULL);
         if (!UseIsAllowed(oUse)) {
             return false;
         }
         if (GetInstance()->GetRole() != 1) {
             return false;
         }
-        bool bTooSoon = s_tLastJoin != Time(0) && Time::GetTime() < s_tLastJoin + (int)s_uiJoinDelay;
+        bool bTooSoon =
+            s_tLastJoin != Time(0) && Time::GetTime() < s_tLastJoin + (int)s_uiJoinDelay;
         if (bTooSoon) {
             return false;
         }
