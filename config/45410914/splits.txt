@@ -14217,8 +14217,8 @@ network/quazal/Session.cpp:
 	.text       start:0x82A78008 end:0x82A78664
 
 network/quazal/Station.cpp:
-	.pdata      start:0x822511F8 end:0x822512B8
-	.text       start:0x82A7C6F0 end:0x82A7DE08
+	.pdata      start:0x82251168 end:0x822512F8
+	.text       start:0x82A7B860 end:0x82A7E2E0
 
 network/quazal/Core/MutexPrimitive.cpp:
 	.pdata      start:0x82251400 end:0x82251408

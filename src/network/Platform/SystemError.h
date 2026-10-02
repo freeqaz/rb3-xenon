@@ -14,5 +14,6 @@ namespace Quazal {
     class SystemError {
     public:
         static void SignalError(char *, unsigned int, unsigned int, unsigned int);
+        static void TraceLast(unsigned int);
     };
 }

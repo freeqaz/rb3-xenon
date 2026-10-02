@@ -23,6 +23,8 @@ namespace Quazal {
         unsigned int GetInitialRTT();
         unsigned int GetRTTRetransmit();
         bool FaultDetectionIsActive();
+        bool BundlingIsEnabled() { return mBundling.m_bEnabled; }
+        StreamBundling &GetBundling() { return mBundling; }
 
         unsigned char unk0; // 0x0
         int unk4; // 0x4
