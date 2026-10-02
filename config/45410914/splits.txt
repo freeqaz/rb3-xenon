@@ -837,6 +837,7 @@ BandCrowdMeter.cpp:
 	.pdata      start:0x821F6468 end:0x821F6478
 	.pdata      start:0x821F6478 end:0x821F6538
 	.pdata      start:0x821F6538 end:0x821F6540
+	.pdata      start:0x821F6548 end:0x821F6550
 	.pdata      start:0x821F6550 end:0x821F6568
 	.pdata      start:0x821F6568 end:0x821F6570
 	.pdata      start:0x821F6570 end:0x821F6598
@@ -844,6 +845,7 @@ BandCrowdMeter.cpp:
 	.pdata      start:0x821F65A0 end:0x821F6648
 	.pdata      start:0x821F6648 end:0x821F6650
 	.pdata      start:0x821F6650 end:0x821F6658
+	.pdata      start:0x821F6658 end:0x821F6660
 	.pdata      start:0x821F6668 end:0x821F6750
 	.pdata      start:0x821F6750 end:0x821F6760
 	.pdata      start:0x821F6760 end:0x821F6770
@@ -864,6 +866,7 @@ BandCrowdMeter.cpp:
 	.text       start:0x822BCF28 end:0x822BCFD0
 	.text       start:0x822BCFD0 end:0x822BDCB0
 	.text       start:0x822BDCB0 end:0x822BDD10
+	.text       start:0x822BDDB0 end:0x822BDF00
 	.text       start:0x822BDF00 end:0x822BE020
 	.text       start:0x822BE020 end:0x822BE088
 	.text       start:0x822BE088 end:0x822BE2EC
@@ -872,6 +875,7 @@ BandCrowdMeter.cpp:
 	.text       start:0x822BEAB8 end:0x822BEB04
 	.text       start:0x822BEB08 end:0x822BEB88
 	.text       start:0x822BEB88 end:0x822BECD8
+	.text       start:0x822BECD8 end:0x822BED14
 	.text       start:0x822BED88 end:0x822BF678
 	.text       start:0x822BF678 end:0x822BF980
 	.text       start:0x822BF980 end:0x822BFAE8
@@ -3479,10 +3483,6 @@ User.cpp:
 HamMove.cpp:
 	.text       start:0x827B7ED0 end:0x827B7EE0
 
-HamNavProvider.cpp:
-	.pdata      start:0x821F6548 end:0x821F6550
-	.text       start:0x822BDDB0 end:0x822BDF00
-
 Flow.cpp:
 	.pdata      start:0x821F4C70 end:0x821F4C78
 	.pdata      start:0x821F7FA0 end:0x821F7FB0
@@ -4907,7 +4907,6 @@ Mat_NG.cpp:
 	.text       start:0x824A8F74 end:0x824AA3E0
 
 CameraShot.cpp:
-	.pdata      start:0x821F6658 end:0x821F6660
 	.pdata      start:0x82201880 end:0x82201888
 	.pdata      start:0x82201888 end:0x82201890
 	.pdata      start:0x822133E0 end:0x822133F0
@@ -4935,7 +4934,6 @@ CameraShot.cpp:
 	.pdata      start:0x82213CD0 end:0x82213CD8
 	.pdata      start:0x82213CD8 end:0x82213CF0
 	.pdata      start:0x82213CF8 end:0x82213D50
-	.text       start:0x822BECD8 end:0x822BED14
 	.text       start:0x82371320 end:0x82371388
 	.text       start:0x82371388 end:0x823713B8
 	.text       start:0x824BD6C0 end:0x824BD738
