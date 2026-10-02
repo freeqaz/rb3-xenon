@@ -198,12 +198,20 @@ Branch tip after the full `./tools/ninja-locked` (log `~/tmp/rb3_build_w16nv_6.l
 longer has a unit.
 
 The branch touches `config/45410914/symbols.txt`, `splits.txt`, `objects.json`, `src/network/Platform/StringConversion.cpp`
-and this doc. No header, map or alias edit. A grep of the added lines and the commit messages finds no rb3-Wii/oracle
+and this doc. No header, map or alias edit. A grep of the added lines and the commit messages finds no port-provenance
 citation and no Co-Authored-By line.
 
-Native gate: see §7 (run last).
+Native gate: see §6 (run last).
 
-## 6. Not done
+## 6. Native gate
+
+Run last, on the code at `e4f4b4e06` (only docs commits follow it):
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+## 7. Not done
 
 - Not merged to main.
 - The rest of the StringConversion TU (§2.3): about 0x980 B of carved `/Od` leaves and wrappers, and a retail
