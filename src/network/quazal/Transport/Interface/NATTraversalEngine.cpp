@@ -213,6 +213,7 @@ namespace Quazal {
         virtual ~ByteStream();
         void Append(const unsigned char *, unsigned int, unsigned int);
         void Append(const Time *);
+        void Append(const unsigned char &uc) { Append(&uc, 1, 1); }
         bool Extract(unsigned char *, unsigned int, unsigned int);
         bool Extract(Time *);
         ByteStream &operator>>(Buffer &);
@@ -586,18 +587,17 @@ namespace Quazal {
 
     void NATTraversalEngine::SendProbe(Msg msg, const StationURL &url, Time tiSent) {
         ByteStream oStream;
-        unsigned char ucMsg = msg;
-        oStream.Append(&ucMsg, 1, 1);
+        oStream.Append((unsigned char)msg);
         oStream.Append((const unsigned char *)&m_uiLocalCID, 4, 1);
         oStream.Append(&tiSent);
         if (url.GetURLType() != 3) {
             m_pStream->SendMsg(url, oStream.GetBuffer());
         } else if (m_pDirect != 0) {
-            unsigned char *pData;
-            unsigned int uiSize;
-            if (m_pDirect->GetPendingData(&pData, &uiSize)) {
+            unsigned char *pPendingData;
+            unsigned int uiPendingSize;
+            if (m_pDirect->GetPendingData(&pPendingData, &uiPendingSize)) {
                 Buffer *pBuffer = new (__FILE__, 0xcc) Buffer(0x400);
-                pBuffer->AppendData(pData, uiSize, -1);
+                pBuffer->AppendData(pPendingData, uiPendingSize, -1);
                 *pBuffer += *oStream.GetBuffer();
                 m_pDirect->Send(url, pBuffer->GetContentPtr(), pBuffer->GetContentSize());
                 pBuffer->ReleaseRef();
@@ -611,21 +611,21 @@ namespace Quazal {
 
     void NATTraversalEngine::SendEcho() {
         if (m_pEcho != 0) {
-            StationURL oURL;
-            Buffer oBuffer(0x400);
-            unsigned char *pData = 0;
-            unsigned int uiSize = 0;
-            if (m_pDirect->GetPendingData(&pData, &uiSize)) {
-                oBuffer.AppendData(pData, uiSize, -1);
+            StationURL oTargetURL;
+            Buffer oRequestBuffer(0x400);
+            unsigned char *pPendingData = 0;
+            unsigned int uiPendingSize = 0;
+            if (m_pDirect->GetPendingData(&pPendingData, &uiPendingSize)) {
+                oRequestBuffer.AppendData(pPendingData, uiPendingSize, -1);
             }
-            unsigned char ucMsg = Echo;
-            oBuffer.AppendData(&ucMsg, 1, -1);
-            Buffer *pReply = new (__FILE__, 0xe7) Buffer(0x400);
-            m_pEcho->Process(&oBuffer, pReply, &oURL);
-            if (oURL.GetURLType() == 3) {
-                m_pDirect->Send(oURL, pReply->GetContentPtr(), pReply->GetContentSize());
+            unsigned char ucMsgType = Echo;
+            oRequestBuffer.AppendData(&ucMsgType, 1, -1);
+            Buffer *pAnswer = new (__FILE__, 0xe7) Buffer(0x400);
+            m_pEcho->Process(&oRequestBuffer, pAnswer, &oTargetURL);
+            if (oTargetURL.GetURLType() == 3) {
+                m_pDirect->Send(oTargetURL, pAnswer->GetContentPtr(), pAnswer->GetContentSize());
             }
-            pReply->ReleaseRef();
+            pAnswer->ReleaseRef();
         }
     }
 
