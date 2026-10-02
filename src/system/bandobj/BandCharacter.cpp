@@ -2392,14 +2392,14 @@ RndTex *BandCharacter::GetBandLogo() {
     return ret;
 }
 
-void BandCharacter::Compress(RndTex *tex, bool b) {
+void BandCharacter::Compress(RndTex *tex, RndTex::AlphaCompress b) {
     if (mFileMerger->AsyncLoad()) {
         // Queue the compress; TextureCompressed retires the ID.
         mCompressedTextureIDs.push_back(
-            TheRnd.CompressTexture(tex, (RndTex::AlphaCompress)b, this)
+            TheRnd.CompressTexture(tex, b, this)
         );
     } else {
-        tex->Compress((RndTex::AlphaCompress)b);
+        tex->Compress(b);
     }
 }
 

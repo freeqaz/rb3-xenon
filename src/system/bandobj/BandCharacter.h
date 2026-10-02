@@ -100,7 +100,7 @@ public:
     virtual RndTex *GetPatchTex(Patch &);
     virtual RndMesh *GetPatchMesh(Patch &);
     virtual RndTex *GetBandLogo();
-    virtual void Compress(RndTex *, bool);
+    virtual void Compress(RndTex *, RndTex::AlphaCompress);
     // Retail X360 body is `subi r3, r3, 0x268; blr` — i.e. it really does return
     // `this`, adjusted from the BandCharDesc sub-object (at +0x268 in
     // BandCharacter) back to the ObjectDir base at offset 0. An

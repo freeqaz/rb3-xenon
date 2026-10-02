@@ -299,7 +299,9 @@ bool OutfitConfig::MatSwap::Compress(BandCharDesc *desc) {
     if (mTwoColorMask && diffTex != mTwoColorMask && mTwoColorMask->Dir() == dir) {
         delete (RndTex *)mTwoColorMask;
     }
-    desc->Compress(diffTex, mMat->GetBlend() == RndMat::kBlendSrcAlpha);
+    desc->Compress(
+        diffTex, (RndTex::AlphaCompress)(mMat->GetBlend() == RndMat::kBlendSrcAlpha)
+    );
     return true;
 }
 
@@ -1259,7 +1261,7 @@ void OutfitConfig::DrawPreClear() {
             RndTex *blendDest = mTexBlender->OutputTexture();
             if (blendDest
                 && (blendDest->GetType() & RndTex::kRenderedNoZ) == RndTex::kRenderedNoZ) {
-                desc2->Compress(blendDest, false);
+                desc2->Compress(blendDest, (RndTex::AlphaCompress)0);
             }
         }
         unk3c = 2;
