@@ -96,16 +96,18 @@ void Splash::Resume() {
                     mCurrentMovie->SetShowing(false);
                     mCurrentMovie->GetMovie().UnlockThread();
                 }
-                TheNgRnd.Resume();
+                // Mirror of Suspend()'s cross-dispatch: retail 0x82741B18 calls vtable+0x114
+                // (NgRnd::Suspend) at both sites here.
+                TheNgRnd.Suspend();
                 MILO_ASSERT(SetMutableState(kResuming), 0x11c);
                 WaitForState(kResumed);
             } else {
-                MILO_ASSERT(mState == kWaitingForTerminating, 0x122);
+                MILO_ASSERT(*(volatile int *)&mState == kWaitingForTerminating, 0x122);
                 if (mCurrentMovie != NULL) {
                     mCurrentMovie->SetShowing(false);
                     mCurrentMovie->GetMovie().UnlockThread();
                 }
-                TheNgRnd.Resume();
+                TheNgRnd.Suspend();
             }
         } else {
             // Non-threaded mode: resume drawing immediately
