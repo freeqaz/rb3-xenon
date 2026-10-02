@@ -387,7 +387,9 @@ void Splash::CheckWorkerSuspend(bool b) {
         }
         {
             CritSecTracker cst(&mStateLock);
-            MILO_ASSERT(mState == kSuspending, 0x1ff);
+            // Retail emits a dead `lwz r10,0x94(r30)` here and at 0x209 (see the
+            // volatile-read note in the worker loop above).
+            MILO_ASSERT(*(volatile int *)&mState == kSuspending, 0x1ff);
             mState = kSuspended;
             mWorkerEvent.Set();
         }
@@ -395,7 +397,7 @@ void Splash::CheckWorkerSuspend(bool b) {
         TheNgRnd.Resume();
         {
             CritSecTracker cst(&mStateLock);
-            MILO_ASSERT(mState == kResuming, 0x209);
+            MILO_ASSERT(*(volatile int *)&mState == kResuming, 0x209);
             mState = kResumed;
             mWorkerEvent.Set();
         }
