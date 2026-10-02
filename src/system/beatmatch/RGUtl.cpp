@@ -51,30 +51,26 @@ bool AddChordLevel(
         strcat(buffer, end);
         gSuperscriptStarted = false;
     }
-    for (char *p = (char *)cc; *p != 0; p++) {
-        if (*p == '#') {
+    for (; *cc != 0; cc++) {
+        char c = *cc;
+        if (c == '#') {
             localBuf[bufIdx++] = -0x3E;
             localBuf[bufIdx++] = -0x54;
-        } else if (*p == 'b') {
+        } else if (c == 'b') {
             localBuf[bufIdx++] = -0x3E;
             localBuf[bufIdx++] = -0x56;
-        } else if (*p == '0') {
+        } else if (c == '0') {
             localBuf[bufIdx++] = -0x3E;
             localBuf[bufIdx++] = -0x55;
         } else {
-            localBuf[bufIdx++] = *p;
+            localBuf[bufIdx++] = c;
         }
     }
-    bool ret = false;
     localBuf[bufIdx] = '\0';
     if (strlen(buffer) + strlen(localBuf) >= bufferLen - 1)
         return false;
-    else {
-        strcat(buffer, localBuf);
-        if (i4++ + 1 < i3 || i3 == -1)
-            ret = true;
-    }
-    return ret;
+    strcat(buffer, localBuf);
+    return i4++ + 1 < i3 || i3 == -1;
 }
 
 void RGParseOverrideChord(char *buf, int bufLen, const char *cc) {

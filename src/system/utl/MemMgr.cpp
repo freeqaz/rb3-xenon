@@ -448,9 +448,7 @@ static inline int MemAlignWords(int align) {
         align >>= 1;
     }
     int result = bits + extra - 2;
-    if (0 > result)
-        result = 0;
-    return result;
+    return 0 < result ? result : 0;
 }
 
 __declspec(noinline) void *(MemAlloc)(int size, int align) {
@@ -466,13 +464,14 @@ __declspec(noinline) void *(MemAlloc)(int size, int align) {
         MemHeapStack &s2 = ThreadMemStack(true);
         int depth = s2.mSize;
         int savedSize = depth;
-        while (depth > 0) {
+        MemHeap *hp;
+        do {
+            if (depth <= 0)
+                break;
             s2.mSize = --depth;
             int h = depth ? s2.mStack[depth - 1] : MemHeapStack::sDefaultHeap;
-            MemHeap *hp = h > -1 ? &gHeaps[h] : NULL;
-            if (hp->mAllowTemp) // retail dereferences without a null check
-                break;
-        }
+            hp = h > -1 ? &gHeaps[h] : NULL;
+        } while (!hp->mAllowTemp); // retail dereferences without a null check
         s2.mTempRefs++;
         void *r = (MemAlloc)(size, align);
         s2.mSize = savedSize;

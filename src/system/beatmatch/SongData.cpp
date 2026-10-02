@@ -790,12 +790,12 @@ void SongData::AddTrack(
         if (trackTy == kTrackVocals) {
             int harmPartNum = 0;
             if (strneq(s.Str(), "HARM", 4)) {
-                harmPartNum = *(s.Str() + 4) - 0x31;
-                if (harmPartNum < 0)
-                    MILO_FAIL("Harmony part too low. Found part %d", harmPartNum);
-                if (harmPartNum >= 3)
-                    MILO_FAIL("Harmony part too high. Found part %d", harmPartNum);
-                harmPartNum++;
+                int part = *(s.Str() + 4) - 0x31;
+                if (part < 0)
+                    MILO_FAIL("Harmony part too low. Found part %d", part);
+                if (part >= 3)
+                    MILO_FAIL("Harmony part too high. Found part %d", part);
+                harmPartNum = part + 1;
             }
             while (mVocalNoteLists.size() <= harmPartNum) {
                 mVocalNoteLists.push_back(new VocalNoteList(this));

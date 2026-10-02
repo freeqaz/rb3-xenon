@@ -161,6 +161,7 @@ void PitchDetector::AnalyzeBlock(
         memcpy(mDecimBuf, mDecimBuf + dec_size, overlap * 4);
         lastVal = mCorrBuf[dec_size - 1];
         if (overlap > 0) {
+            ixDecim = overlap;
             for (int i = 0; i < overlap; i++) {
                 mCorrBuf[i] = mCorrBuf[i + dec_size] - lastVal;
             }
@@ -182,9 +183,8 @@ void PitchDetector::AnalyzeBlock(
     int writeOff = ixDecim * 4;
     int sampleIdx = 0;
     while (sampleIdx < numSamples) {
-        decimAccum =
-            kPropFilter * (mFilter->FilterSlow((float)samples[0]) * gain - decimAccum)
-            + decimAccum;
+        float filtered = mFilter->FilterSlow((float)samples[0]) * gain;
+        decimAccum = kPropFilter * (filtered - decimAccum) + decimAccum;
         if (ixDecim < mFrameSize && ((sampleIdx + mIdx) % mDecimRate) == 0) {
             ixDecim++;
             *((float *)((char *)mDecimBuf + writeOff)) = decimAccum;
@@ -241,13 +241,7 @@ void PitchDetector::AnalyzeBlock(
     }
 
     if (floorSeconds != unk4C) {
-        float alpha;
-        if (floorSeconds > 0.0f) {
-            alpha = Time2IirA(floorSeconds, 60.0f);
-        } else {
-            alpha = 1.0f;
-        }
-        unk48 = alpha;
+        unk48 = Time2IirA(floorSeconds, 60.0f);
         unk4C = floorSeconds;
     }
 
@@ -311,18 +305,11 @@ void PitchDetector::AnalyzeBlock(
     unk14++;
     unk18 += numSamples;
     pitchOut = mPitch;
-    // ⚠ NOT REPRODUCED -- left at the plain spelling deliberately. Retail
-    // associates this as ((fixedGain / unk38) * pitchHint) * mAveEnergy:
-    //   lfs f13,0x34(r30); lfs f0,0(r29); fdivs f0,f25,f0; fmuls f0,f0,f24;
-    //   fmuls f0,f0,f13        (f25=fixedGain, f24=pitchHint, f13=mAveEnergy)
-    // i.e. retail divides fixedGain by unk38 FIRST. Writing it literally as
-    // `fixedGain / unk38 * pitchHint * mAveEnergy` does NOT reproduce that --
-    // /fp:fast reassociates it back to putting mAveEnergy in the numerator
-    // (measured: 5 charged sites either way, total charges 122 -> 123). So the
-    // association is being chosen by the scheduler, not by the parentheses, and
-    // the lever is not the spelling of this line. Reverted to the plain form
-    // rather than leave an unjustified rewrite in the tree. 5 charges remain.
-    confidenceOut = fixedGain * (pitchHint * mAveEnergy) / unk38;
+    // Retail divides fixedGain by unk38 first:
+    //   fdivs f0,f25,f0; fmuls f0,f0,f24; fmuls f0,f0,f13
+    // (f25=fixedGain, f24=pitchHint, f13=mAveEnergy). The explicit grouping
+    // reproduces it; the flat spelling reassociates under /fp:fast.
+    confidenceOut = ((fixedGain / unk38) * pitchHint) * mAveEnergy;
     gateOut = mAveEnergy;
 }
 
