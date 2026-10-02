@@ -161,6 +161,8 @@ first build; renamer `[APPLIED] 3093 files checked`):
   and fail"; `--self-break-size eh|tol|onesided|firstdef`: all OK (2 / 3 / 1 / 1 red), rc=0.
 - `python3 tools/anon_candidate_scorer.py --selftest`: all checks passed.
 - `python3 scripts/verify_objs_patched.py --verify-manifest`: OK (1,258 decomp, 3,093 target objects).
+- `tools/native_build_gate.sh` (run last on the final code; only this doc line follows it):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`.
 
 ## 8. Leads left alone
 
