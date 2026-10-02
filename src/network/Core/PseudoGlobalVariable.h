@@ -52,21 +52,17 @@ namespace Quazal {
             FreeExtraContexts();
         }
         virtual void AllocateExtraContexts() {
+            // Retail (0x82A7DF58, the DOHandle instantiation) evaluates an
+            // array new whose result is never stored when the count is -1, then
+            // allocates the context list and copy-constructs the default value
+            // into every slot.
             if (s_uiNbOfExtraContexts == -1) {
-                // MWCC tolerated a constant array-new size this large; MSVC X360
-                // statically rejects it (C2148: total array size > 0x7fffffff).
-                // Hoisting the count to a variable defers the size to runtime so
-                // the (never-taken, s_uiNbOfExtraContexts==-1) branch compiles.
-                // This template method is not in any pinned/matched span.
-                unsigned int uiCount = 0xffffffc0;
-                mValueInContextList = new T[uiCount];
-            } else {
-                mValueInContextList = (T *)QUAZAL_DEFAULT_ALLOC(
-                    s_uiNbOfExtraContexts * 0x50, 0x77, _InstType10
-                );
+                new T[s_uiNbOfExtraContexts];
             }
-            for (int i = 0; i < s_uiNbOfExtraContexts; i++) {
-                mValueInContextList[i] = T();
+            unsigned int uiSize = s_uiNbOfExtraContexts * sizeof(T);
+            mValueInContextList = (T *)QUAZAL_DEFAULT_ALLOC(uiSize, 0x77, _InstType10);
+            for (unsigned int i = 0; i < s_uiNbOfExtraContexts; i++) {
+                new (&mValueInContextList[i]) T(mDefaultValue);
             }
         }
         virtual void FreeExtraContexts() {
@@ -74,7 +70,8 @@ namespace Quazal {
                 for (int i = 0; i < s_uiNbOfExtraContexts; i++) {
                     mValueInContextList[i].~T();
                 }
-                QUAZAL_DEFAULT_FREE(mValueInContextList, _InstType10);
+                T *pList = mValueInContextList;
+                QUAZAL_DEFAULT_FREE(pList, _InstType10);
                 mValueInContextList = 0;
             }
         }

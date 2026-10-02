@@ -135,15 +135,22 @@ namespace Quazal {
     class JoinSessionOperation : public DOOperation {
     public:
         static JoinSessionOperation *DynamicCast(DOOperation *pOp) {
-            if (pOp && pOp->GetType() == 14)
-                return (JoinSessionOperation *)pOp;
+            if (pOp == NULL || pOp->GetType() != 14)
+                return NULL;
             else
-                return 0;
+                return (JoinSessionOperation *)pOp;
         }
         bool IsJoining() { return m_bIsJoining; }
 
         unsigned char m_pad20[0xc];
         bool m_bIsJoining; // 0x2c
+    };
+
+    // The operation OperationEnd's case 13 handles: retail tests it through
+    // an out-of-line call (0x823F2DD0) comparing its station with the local one.
+    class StationOperation : public DOOperation {
+    public:
+        bool ConcernsLocalStation() const;
     };
 
     class StationConnectionManager {
@@ -368,7 +375,7 @@ namespace Quazal {
             }
             break;
         case 13:
-            if (((DOOperation *)pOp)->CallsBackOnDataSet() && IsLocal()) {
+            if (((StationOperation *)pOp)->ConcernsLocalStation() && IsLocal()) {
                 InitLocalStationInfo();
             }
             break;
