@@ -61,6 +61,7 @@ namespace Quazal {
 
         unsigned int GetValue() const { return mValue; }
         unsigned int GetDOClassID() const { return (mValue & 0xFFC00000) >> 22; }
+        unsigned int GetID() const { return mValue & 0x3FFFFF; }
         bool operator==(const DOHandle &h) const { return mValue == h.mValue; }
         bool operator<(const DOHandle &h) const { return mValue < h.mValue; }
 
@@ -195,10 +196,17 @@ namespace Quazal {
         virtual void _v17();
         virtual void _v18();
         virtual void _v19();
-        virtual qResult Connect(
+        virtual qResult ConnectImpl(
             Buffer *, unsigned int, void (*)(EndPoint *, qResult, const UserContext *),
             const UserContext &, unsigned int
         );
+        qResult Connect(
+            Buffer *pBuffer, unsigned int uiFlags,
+            void (*pfCallback)(EndPoint *, qResult, const UserContext *),
+            const UserContext &oContext, unsigned int uiTimeout
+        ) {
+            return ConnectImpl(pBuffer, uiFlags, pfCallback, oContext, uiTimeout);
+        }
 
         void Release();
         void SetStationHandle(unsigned int);
@@ -220,6 +228,11 @@ namespace Quazal {
     class ByteStream : public RootObject {
     public:
         void Append(const void *, unsigned int, bool);
+        template <class T>
+        ByteStream &operator<<(const T &t) {
+            Append(&t, sizeof(T), true);
+            return *this;
+        }
     };
 
     class Message : public ByteStream {
@@ -228,7 +241,9 @@ namespace Quazal {
         ~Message();
         Buffer *GetBuffer();
 
-        char m_pad[0x40];
+        void *m_pVTable; // 0x0
+        Buffer *m_pBuffer; // 0x4
+        char m_pad[0x28];
     };
 
     class SystemComponent {
@@ -266,8 +281,10 @@ namespace Quazal {
         static NetZ *GetInstance() { return GetInstance(PseudoSingleton::GetCurrentContext()); }
         SystemComponent *GetSystemComponent() { return m_pSystemComponent; }
         Listener *GetListener() { return m_pListener; }
+        class Network *GetNetwork() { return m_pNetwork; }
 
-        char m_pad0[0x20];
+        char m_pad0[0x1C];
+        class Network *m_pNetwork; // 0x1c
         SystemComponent *m_pSystemComponent; // 0x20
         char m_pad24[0x1C];
         Listener *m_pListener; // 0x40
@@ -275,12 +292,24 @@ namespace Quazal {
 
     class Network {
     public:
-        static Network *GetInstance();
+        static Network *GetInstance() {
+            Network *pNetwork = NetZ::GetInstance()->GetNetwork();
+            return pNetwork;
+        }
         bool IsShuttingDown();
         void RegisterEndPoint(EndPoint *);
         bool ConnectToURLs(
             CallContext *, Buffer *, unsigned int, qList<StationURL> *, EndPoint **, unsigned int
         );
+        static bool Connect(
+            CallContext *pContext, Buffer *pBuffer, unsigned int uiFlags,
+            qList<StationURL> *pURLs, EndPoint **ppEndPoint, unsigned int uiTimeout
+        ) {
+            Network *pNetwork = GetInstance();
+            return pNetwork->ConnectToURLs(
+                pContext, pBuffer, uiFlags, pURLs, ppEndPoint, uiTimeout
+            );
+        }
         bool RegistersEndPoints() const { return m_bRegistersEndPoints; }
 
         char m_pad0[0xBD];
@@ -450,7 +479,14 @@ namespace Quazal {
         bool AddToStoreAsDuplica(DOHandle, Message *);
         bool DeleteDuplicaMainRef();
         bool UndeleteMainRef();
-        DOHandle GetHandle() const;
+        DOHandle GetHandle() const {
+            DOHandle hResult = m_dohMyself;
+            if (hResult.GetID() == 0) {
+                SystemError::SignalError(0, 0, 0xE000000E, 0);
+                hResult = DOHandle();
+            }
+            return hResult;
+        }
 
         static DOClass *GetDOClass(unsigned int);
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
@@ -671,6 +707,7 @@ namespace Quazal {
 
         static bool s_bDisconnectOnError;
         static unsigned int s_uiConnectionTimeout;
+        static unsigned int GetConnectionTimeout() { return s_uiConnectionTimeout; }
 
         SystemComponent::Use m_oUse; // 0x78
         EndPoint *m_pEndPoint; // 0x84
@@ -870,15 +907,13 @@ namespace Quazal {
         }
         m_pEndPoint = pEndPoint;
         Message oMsg;
-        unsigned int uiLocal = Station::GetLocalStationHandle().mValue;
-        oMsg.Append(&uiLocal, 4, true);
-        unsigned int uiTarget = m_refStation.GetReferencedHandle();
-        oMsg.Append(&uiTarget, 4, true);
+        oMsg << Station::GetLocalStationHandle().GetValue();
+        oMsg << m_refStation.GetHandle();
         if (Network::GetInstance()->RegistersEndPoints()) {
             Network::GetInstance()->RegisterEndPoint(m_pEndPoint);
         }
         m_rResult = m_pEndPoint->Connect(
-            oMsg.GetBuffer(), 0, ConnectCallback, UserContext(this), s_uiConnectionTimeout
+            oMsg.GetBuffer(), 0, ConnectCallback, UserContext(this), GetConnectionTimeout()
         );
         if (m_rResult.Equals(false)) {
             m_pEndPoint->Release();
@@ -943,17 +978,21 @@ namespace Quazal {
             return;
         }
         m_oURLsContext.Trace(0x200000);
-        for (qList<StationURL>::iterator it = m_lstURLs.begin(); it != m_lstURLs.end(); it++) {
+        qList<StationURL>::iterator it = m_lstURLs.begin();
+        while (it != m_lstURLs.end()) {
             it->Trace(0x200000);
+            ++it;
         }
         SetStep(JCS_STEP(PrepareURLs));
     }
 
     void JobConnectStation::PrepareURLs() {
-        for (qList<StationURL>::iterator it = m_lstURLs.begin(); it != m_lstURLs.end(); it++) {
+        qList<StationURL>::iterator it = m_lstURLs.begin();
+        while (it != m_lstURLs.end()) {
             StationURL &url = *it;
             url.SetStreamType(Stream::DO);
             url.SetStreamID(1);
+            ++it;
         }
         SetStep(JCS_STEP(DirectConnectViaURLs));
     }
@@ -961,13 +1000,11 @@ namespace Quazal {
     void JobConnectStation::DirectConnectViaURLs() {
         m_oCallContext.Reset();
         Message oMsg;
-        unsigned int uiLocal = Station::GetLocalStationHandle().mValue;
-        oMsg.Append(&uiLocal, 4, true);
-        unsigned int uiTarget = m_refStation.GetReferencedHandle();
-        oMsg.Append(&uiTarget, 4, true);
-        if (!Network::GetInstance()->ConnectToURLs(
+        oMsg << Station::GetLocalStationHandle().GetValue();
+        oMsg << m_refStation.GetHandle();
+        if (!Network::Connect(
                 &m_oCallContext, oMsg.GetBuffer(), 0, &m_lstURLs, &m_pEndPoint,
-                s_uiConnectionTimeout
+                GetConnectionTimeout()
             )) {
             SetStep(JCS_STEP(SelectConnectionTechnique));
             return;
@@ -1122,10 +1159,11 @@ namespace Quazal {
 
     void JobConnectStation::Trace(unsigned int uiFlags) {
         JobChangeConnection::Trace(uiFlags);
-        if (m_refStation.operator->() != NULL) {
-            m_refStation->Trace(uiFlags);
-            m_refStation->GetEndPoint();
+        if (m_refStation.operator->() == NULL) {
+            return;
         }
+        m_refStation->Trace(uiFlags);
+        m_refStation->GetEndPoint();
     }
 
 }
