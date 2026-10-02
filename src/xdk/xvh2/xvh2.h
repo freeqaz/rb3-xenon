@@ -12,7 +12,9 @@ struct IXHV2Engine { /* Size=0x4 */
     // The remote talker is addressed by its 64-bit XUID: retail
     // MicManagerXbox::AddRemoteMic (0x82B60F98) loads it with `ld r4`.
     virtual DWORD StartRemoteProcessingModes(UINT64, void **, UINT32);
-    virtual DWORD StopRemoteProcessingModes(UINT32, void **, UINT32);
+    // XUID-addressed like its Start twin: retail MicManagerXbox::RemoveRemoteMic
+    // (0x82B5F748) loads it with `ld r4`.
+    virtual DWORD StopRemoteProcessingModes(UINT64, void **, UINT32);
     virtual DWORD SetMaxDecodePackets(UINT32);
     virtual DWORD RegisterLocalTalker(UINT32);
     virtual DWORD UnregisterLocalTalker(UINT32);
@@ -25,12 +27,14 @@ struct IXHV2Engine { /* Size=0x4 */
     virtual DWORD UnregisterRemoteTalker(UINT64);
     virtual DWORD GetRemoteTalkers(UINT32 *, UINT64 *);
     virtual DWORD IsHeadsetPresent(UINT32);
-    virtual DWORD IsLocalTalking(UINT32);
+    // BOOL / HRESULT, not DWORD: retail ChatReceiver::ReadLocalChat (0x82B5E2C8)
+    // tests both results with a signed `cmpwi`.
+    virtual BOOL IsLocalTalking(UINT32);
     virtual DWORD IsRemoteTalking(UINT64);
     virtual DWORD SetRemoteTalkerOutputVoice(UINT64, IXAudio2SubmixVoice *);
     virtual DWORD SetRemoteTalkerEffectParam(UINT64, DWORD, UINT32, const void *, UINT32);
     virtual UINT32 GetDataReadyFlags();
-    virtual DWORD GetLocalChatData(UINT32, unsigned char *, UINT32 *, UINT32 *);
+    virtual HRESULT GetLocalChatData(UINT32, unsigned char *, UINT32 *, UINT32 *);
     // NOTE (lane CJ-3): RB3's XDK predates the Kinect/NUI additions to
     // IXHV2Engine.  This slot exists in the DC3-era header we inherited, but
     // retail RB3 calls SubmitIncomingChatData through vtable offset 0x54, not

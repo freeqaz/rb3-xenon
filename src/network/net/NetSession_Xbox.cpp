@@ -115,7 +115,7 @@ void XboxSession::AddLocalToSession(LocalUser *user) {
         ThePlatformMgr.SetRankedContext(user, mSettings->Ranked());
         ThePlatformMgr.SetGameModeContext(user, mSettings->ModeFilter());
         mJobMgr.QueueJob(new AddLocalPlayerJob(mSessionHandle, pad, false));
-        static_cast<Synth360 *>(TheSynth)->Synth360::RequirePushToTalk(true, pad);
+        TheXboxSynth->ActivateLocalChat(pad, true);
     }
 }
 
@@ -134,7 +134,7 @@ void XboxSession::RemoveLocalFromSession(LocalUser *user) {
         && mSessionHandle != INVALID_HANDLE_VALUE) {
         mJobMgr.QueueJob(new RemoveLocalPlayerJob(mSessionHandle, pad));
     }
-    static_cast<Synth360 *>(TheSynth)->Synth360::RequirePushToTalk(false, pad);
+    TheXboxSynth->ActivateLocalChat(pad, false);
     NetSession::RemoveLocalFromSession(user);
 }
 

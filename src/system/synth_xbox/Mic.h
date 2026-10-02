@@ -28,9 +28,11 @@ public:
     ~ChatReceiver();
     ChatReceiver(IXHV2Engine *, int);
     void ActivateProcessing(bool);
+    int GetChatData(void *, int);
 
 private:
     void ProcessChatData(void *, unsigned int, int *);
+    void ReadLocalChat();
 
     IXHV2Engine *mXHV; // 0x0
     DWORD unk4; // 0x4
@@ -135,6 +137,9 @@ public:
     };
 
     void RequirePushToTalk(bool, int);
+    void ActivateLocalChat(int, bool);
+    int GetChatData(int, void *, int);
+    void AddRemoteChatData(unsigned long long const &, const void *, int);
     void Poll();
     void RemoveMic(MicXbox *);
     void AddMic(MicXbox *);
