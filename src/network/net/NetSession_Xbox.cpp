@@ -28,8 +28,6 @@ namespace Quazal {
     // 0x82A8F3D0: runs pending calls (0x82A8F300) until none is left;
     // returns whether any ran.
     bool FlushPendingCalls();
-    // 0x82A8EEF8: XNetRegisterKey for a session id and its key-exchange key.
-    void RegisterXNetKey(const XNKID *, const XNKEY *);
     // 0x82A8EC08 / 0x82A8ECB8: store a flag byte (0x82E1041B / 0x82E1041A).
     void SetXboxNetFlagA(bool);
     void SetXboxNetFlagB(bool);
@@ -142,8 +140,7 @@ public:
 static bool sVoiceReliable = true;
 
 // 0x823EF400. Retail keeps both QoS helpers out of line.
-__declspec(noinline) static void
-QosListenSetData(const XNKID *id, const void *data, int size) {
+__declspec(noinline) void QosListenSetData(const XNKID *id, const void *data, int size) {
     DWORD flags = XNET_QOS_LISTEN_ENABLE;
     if (data)
         flags = XNET_QOS_LISTEN_ENABLE | XNET_QOS_LISTEN_SET_DATA;
@@ -153,7 +150,7 @@ QosListenSetData(const XNKID *id, const void *data, int size) {
 }
 
 // 0x823EF450
-__declspec(noinline) static void QosListenRelease(const XNKID *id) {
+__declspec(noinline) void QosListenRelease(const XNKID *id) {
     int err = XNetQosListen(id, nullptr, 0, 0, XNET_QOS_LISTEN_RELEASE);
     if (err != 0 && err != ERROR_IO_PENDING)
         MILO_WARN("XNetQosListen failed: %x", XGetOverlappedExtendedError(nullptr));
