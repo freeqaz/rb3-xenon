@@ -36,6 +36,7 @@ public:
 
     int GetPadNum() const;
     const char *GetName() const;
+    LocalUser *GetLocalUser() const;
 
 protected:
     mutable bool mDirty; // 0xc (mutable: written from const SaveFixed)

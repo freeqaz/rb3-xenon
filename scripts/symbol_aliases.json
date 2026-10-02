@@ -105260,6 +105260,23 @@
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 56 B retail / 56 B ours; retail body-twins 2. Retail call site(s) reaching the survivor where we call this spelling: 0x8276c584. Previously the survivor of the group at 0x822e4f70, whose retail body it does not match (re-homed)."
     }
    ]
+  },
+  {
+   "name": "GetName",
+   "address": "0x827a4f38",
+   "survivor": "?GetName@Profile@@QBAPBDXZ",
+   "folded": [
+    "?GetLocalUser@Profile@@QBAPAVLocalUser@@XZ"
+   ],
+   "evidence": "Created by lane W16-NH-NAME: see per-member records in `admitted`.",
+   "lane": "W16-NH-NAME 2026-10-02",
+   "admitted": [
+    {
+     "spelling": "?GetLocalUser@Profile@@QBAPAVLocalUser@@XZ",
+     "lane": "W16-NH-NAME 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call site(s) reaching the survivor where we call this spelling: 0x827acbb4. 16 B forwarder (lis; lwz r4,0x10(r3); lwz r3,TheUserMgr; b GetLocalUserFromPadNum), byte-identical to our Profile::GetLocalUser; the retail caller passes its result to PlatformMgr::HasUserSigninChanged. Half its words are relocated, so flat T1 calls it vacuous; admitted on the retail call-site witness."
+    }
+   ]
   }
  ]
 }
