@@ -2328,8 +2328,26 @@
                 ]
             },
             "network/quazal/Transport/Routing/RoutingStream.cpp": "NonMatching",
-            "network/quazal/AccountManagement/Client/JobLoginOrCreateAccount.cpp": "NonMatching",
-            "network/quazal/AccountManagement/Client/JobCreateAccount.cpp": "NonMatching",
+            "network/quazal/AccountManagement/Client/JobLoginOrCreateAccount.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
+            "network/quazal/AccountManagement/Client/JobCreateAccount.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/Foundation/Protocol/DataDDL.cpp": "NonMatching",
             "network/quazal/Encryption/RC4/RC4Encryption.cpp": "NonMatching",
             "network/quazal/Transport/UDP/UDPTransport.cpp": "NonMatching",
