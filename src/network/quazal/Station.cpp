@@ -540,7 +540,7 @@ namespace Quazal {
                 r = m_oReliableBundle.Send(GetEndPoint());
             }
             if (bForce && GetStreamSettingsForContext(1)->BundlingIsEnabled()) {
-                GetStreamSettingsForContext(1)->mBundling.Flush();
+                GetStreamSettingsForContext(1)->GetBundling().Flush();
             }
             return r;
         } else {
@@ -555,7 +555,7 @@ namespace Quazal {
             it.Next(false);
         }
         if (GetStreamSettingsForContext(1)->BundlingIsEnabled()) {
-            GetStreamSettingsForContext(1)->mBundling.Flush();
+            GetStreamSettingsForContext(1)->GetBundling().Flush();
         }
     }
 
