@@ -65,7 +65,7 @@ namespace Quazal {
         // frame.
         void InitFilter() {
             DOFilter *pFilter = new (__FILE__, 0x7b) IsAKindOfDOFilter(T::GetClassID());
-            SetFilter(pFilter);
+            SelectionIterator::SetFilter(pFilter);
             pFilter->ReleaseRef();
         }
         // JobConnectStation::ConnectionFailed expands this one in place.
