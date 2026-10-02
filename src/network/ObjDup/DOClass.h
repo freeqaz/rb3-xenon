@@ -43,5 +43,7 @@ namespace Quazal {
         bool GenerateObjectID(unsigned int *, unsigned int);
 
         static DOClass *FindDOClass(unsigned int);
+        // The class's well-known object handle (retail 0x82A9A038).
+        DOHandle GetWKHandle();
     };
 }

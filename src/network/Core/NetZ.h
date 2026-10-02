@@ -15,6 +15,7 @@ namespace Quazal {
             unsigned int uiContext = PseudoSingleton::GetCurrentContext();
             return (NetZ *)InstanceTable::s_oInstanceTable.GetInstanceFromVector(4, uiContext);
         }
+        void CompleteJoin();
         OperationManager *GetOperationManager() { return m_pOperationManager; }
         // The component Station::SetState initializes when a station reaches
         // state 3 (retail 0x82A7BF08).

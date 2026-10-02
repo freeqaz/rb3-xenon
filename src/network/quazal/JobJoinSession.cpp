@@ -12,434 +12,76 @@
 // ...). PrepareURL, Cancel and SignalCallContext have no retail name; theirs are
 // descriptive.
 //
-// The classes the job calls into are declared here only as far as this TU uses
-// them, with the layouts retail's code reads. At /Od the local NAMES set the
-// stack layout (a walk over the scope's symbol hash buckets), and an inline
-// function the compiler declines to expand still reserves its slots in the
-// caller, so both are chosen to reproduce retail's frames.
+// Shared Quazal classes come from their headers. StepSequenceJob is declared
+// here with the layout retail's code reads (Core/StepSequenceJob.h's does not
+// match it), as are the classes no header declares yet. At /Od the local
+// NAMES set the stack layout (a walk over the scope's symbol hash buckets),
+// and an inline function the compiler declines to expand still reserves its
+// slots in the caller, so both are chosen to reproduce retail's frames.
 
-#include <list>
+#include "Platform/qStd.h"
+#include "Platform/ScopedCS.h"
+#include "Platform/Callback.h"
+#include "Platform/RefCountedObject.h"
+#include "Platform/Result.h"
+#include "Platform/Time.h"
+#include "Plugins/StationURL.h"
+#include "Plugins/Message.h"
+#include "Plugins/EndPoint.h"
+#include "ObjDup/DOHandle.h"
+#include "ObjDup/DORefTemplate.h"
+#include "ObjDup/Station.h"
+#include "ObjDup/ObjDupProtocol.h"
+#include "Core/CallContext.h"
+#include "Core/CallContextRegister.h"
+#include "Core/Core.h"
+#include "Core/Scheduler.h"
+#include "Core/SystemComponent.h"
+#include "Core/SystemComponents.h"
+#include "Core/NetZ.h"
+#include "Core/Job.h"
+#include "ObjDup/DOClass.h"
 
 #define JJS_FILE ".\\JobJoinSession.cpp"
 
 namespace Quazal {
 
-    class RootObject {
-    public:
-        static void *operator new(unsigned int, const char *, unsigned int);
-        static void *operator new(unsigned int, void *p) { return p; }
-        static void operator delete(void *);
-        static void operator delete(void *, const char *, unsigned int);
-        static void operator delete(void *, void *) {}
-        ~RootObject() {}
-    };
-
-    class MemoryManager : public RootObject {
-    public:
-        enum _InstructionType {
-            _InstType0,
-            _InstType1,
-            _InstType2,
-            _InstType3,
-            _InstType4,
-            _InstType5,
-            _InstType6,
-            _InstType7
-        };
-        static MemoryManager *GetDefaultMemoryManager();
-        static void *Allocate(
-            MemoryManager *, unsigned long, const char *, unsigned int, _InstructionType
-        );
-        static void Free(MemoryManager *, void *, _InstructionType);
-    };
-
+    // qList::begin called out of line: retail's begin() here is a second-level
+    // call, so it goes through this one-level helper.
     template <class T>
-    class MemAllocator {
-    public:
-        typedef unsigned int size_type;
-        typedef int difference_type;
-        typedef T value_type;
-        typedef T *pointer;
-        typedef T &reference;
-        typedef const T *const_pointer;
-        typedef const T &const_reference;
-
-        template <class T2>
-        struct rebind {
-            typedef MemAllocator<T2> other;
-        };
-
-        MemAllocator() {}
-
-        template <class T2>
-        operator MemAllocator<T2>() const {
-            return MemAllocator<T2>();
-        }
-
-        pointer address(reference value) const { return &value; }
-        const_pointer address(const_reference value) const { return &value; }
-        size_type max_size() const { return size_type(-1) / sizeof(T); }
-
-        pointer allocate(const size_type count, const void *hint = 0) const {
-            return (pointer)MemoryManager::Allocate(
-                MemoryManager::GetDefaultMemoryManager(),
-                count * sizeof(T),
-                "Unknown",
-                0,
-                MemoryManager::_InstType7
-            );
-        }
-        void deallocate(pointer ptr, size_type count) const {
-            MemoryManager::Free(
-                MemoryManager::GetDefaultMemoryManager(), ptr, MemoryManager::_InstType7
-            );
-        }
-        void construct(pointer ptr, const_reference value) const { new (ptr) T(value); }
-        void destroy(pointer ptr) const { ptr->~T(); }
-    };
-
-    template <class T>
-    class qList : public std::list<T, MemAllocator<T> >, public RootObject {
-    public:
-        typedef typename std::list<T, MemAllocator<T> >::iterator iterator;
-        typedef typename std::list<T, MemAllocator<T> >::const_iterator const_iterator;
-        iterator begin() { return std::list<T, MemAllocator<T> >::begin(); }
-    };
-
-    class MutexPrimitive : public RootObject {
-    public:
-        static bool s_bNoOp;
-        void *m_hMutex;
-    };
-
-    class CriticalSection : public RootObject {
-    public:
-        void EnterImpl();
-        void LeaveImpl();
-        void Enter() {
-            if (!MutexPrimitive::s_bNoOp)
-                EnterImpl();
-        }
-        void Leave() {
-            if (!MutexPrimitive::s_bNoOp)
-                LeaveImpl();
-        }
-        char m_data[0x14];
-    };
-
-    class ScopedCS : public RootObject {
-    public:
-        ScopedCS(CriticalSection &cs) : m_bInScope(true), m_pCS(&cs) { m_pCS->Enter(); }
-        ~ScopedCS() { EndScope(); }
-        void EndScope() {
-            if (m_bInScope) {
-                m_pCS->Leave();
-                m_bInScope = false;
-            }
-        }
-        bool m_bInScope;
-        CriticalSection *m_pCS;
-    };
-
-    template <class T>
-    class qProtectedList : public RootObject {
-    public:
-        CriticalSection mCSList;
-        qList<T> &GetList() { return mOList; }
-        CriticalSection &GetLock() { return mCSList; }
-
-        qList<T> mOList;
-    };
-
-    class DebugString {
-    public:
-        DebugString() {}
-    };
-
-    class qResult {
-    public:
-        qResult();
-        qResult(const int &);
-        bool Equals(const bool &) const;
-        operator bool() const;
-        bool operator==(const int &) const;
-        bool operator!=(const int &) const;
-        qResult &operator=(const int &);
-
-        int m_iCode;
-        int m_iLine;
-        const char *m_szFile;
-    };
-
-    class Time : public RootObject {
-    public:
-        Time(unsigned long long ui64Value) : m_ui64Value(ui64Value) {}
-        static Time GetTime();
-        long long operator-(const Time &) const;
-
-        unsigned long long m_ui64Value;
-    };
-
-    namespace Stream {
-        enum Type {
-            Invalid = 0,
-            DO = 1
-        };
+    inline typename qList<T>::iterator ListBegin(qList<T> &lst) {
+        return lst.begin();
     }
 
-    class InetAddress;
-
-    class StationURL : public RootObject {
-    public:
-        StationURL(const StationURL &);
-        ~StationURL();
-        unsigned short GetPortNumber() const;
-        void SetPortNumber(unsigned short);
-        void SetStreamType(Stream::Type);
-        void SetStreamID(unsigned char);
-        void SetRVConnectionID(unsigned int);
-        InetAddress *GetInetAddress() const;
-        void Trace(unsigned int) const;
-
-        unsigned int m_data[0x64 / 4];
-    };
-
-    class DOHandle {
-    public:
-        DOHandle() : m_uiValue(0) {}
-        DOHandle(const DOHandle &o) : m_uiValue(o.m_uiValue) {}
-        ~DOHandle() {}
-        operator unsigned int() const { return m_uiValue; }
-
-        unsigned int m_uiValue;
-    };
-
-
-    class DuplicatedObject;
-
-    class DORef : public RootObject {
-    public:
-        DORef(DOHandle);
-        ~DORef();
-
-        DuplicatedObject *m_poReferencedDO; // 0x0
-        DOHandle m_hReferencedDO; // 0x4
-        bool m_bLockRelevance; // 0x8
-    };
-
-    template <class T>
-    class DORefTemplate : public DORef {
-    public:
-        DORefTemplate(DOHandle h) : DORef(h) {}
-        bool IsValid() const;
-    };
-
-    class DataSet {};
-
-    class StationState : public DataSet {
-    public:
-        bool m_bJoined;
-    };
-
-    class SessionClock {
-    public:
-        static long long (*s_pfGetTime)();
-        static Time GetTime() {
-            if (s_pfGetTime != 0) {
-                return Time(s_pfGetTime());
-            } else {
-                return Time(0);
-            }
-        }
-    };
-
-    class DuplicatedObject : public RootObject {
-    public:
-        bool UpdateImpl(DataSet *, const Time &);
-        bool Update(DataSet *pDataSet) { return UpdateImpl(pDataSet, SessionClock::GetTime()); }
-    };
-
-    class Buffer;
-
-    class ByteStream : public RootObject {
-    public:
-        void Append(const void *, unsigned int, bool);
-        ByteStream &operator<<(unsigned int ui) {
-            Append(&ui, 4, true);
-            return *this;
-        }
-    };
-
-    class Message : public ByteStream {
-    public:
-        Message();
-        ~Message();
-        Buffer *GetBuffer();
-
-        char m_data[0x30];
-    };
+    inline ByteStream &operator<<(ByteStream &oStream, unsigned int ui) {
+        oStream.Append((const unsigned char *)&ui, 4, 1);
+        return oStream;
+    }
 
     ByteStream &operator<<(ByteStream &, const qList<StationURL> &);
 
-    class CallbackRoot : public RootObject {
-    public:
-        CallbackRoot() {}
-        virtual ~CallbackRoot() {}
-        virtual void Call();
-        virtual void CallObjectMethod() = 0;
-    };
-
-    class RefCountedObject : public RootObject {
-    public:
-        virtual ~RefCountedObject();
-        virtual void AcquireRef();
-        virtual void ReleaseRef();
-
-        unsigned short m_ui16RefCount; // 0x4
-    };
-
-    class CallContext : public RefCountedObject {
-    public:
-        enum _State {
-            CallInit = 0,
-            CallPending = 1,
-            CallSuccess = 2,
-            CallError = 3,
-            CallCancelled = 4,
-        };
-        CallContext();
-        virtual ~CallContext();
-        void Reset();
-        void SetFlag(unsigned int);
-        void RegisterCancelCallback(CallbackRoot *);
-        void SetState(_State, qResult, bool);
-
-        _State GetState() const { return m_eState; }
-
-        unsigned int m_unk8; // 0x8
-        _State m_eState; // 0xc
-        unsigned int m_unk10[16];
-    };
-
-    class CallContextRegister {
-    public:
-        CallContext *GetContext(unsigned int);
-    };
-
-    class EndPoint : public RootObject {
-    public:
-        virtual ~EndPoint();
-        virtual void Func1();
-        virtual void Func2();
-        virtual void Func3();
-        virtual bool IsConnected();
-        virtual void Func5();
-        virtual void Func6();
-        virtual void Disconnect();
-        virtual void Func8();
-        virtual void Func9();
-        virtual void Func10();
-        virtual void Func11();
-        virtual void Func12();
-        virtual void Func13();
-        virtual void Func14();
-        virtual void Func15();
-        virtual void Func16();
-        virtual void Trace(unsigned int);
-
-        void SetPID(unsigned int);
-        const StationURL &GetURL() const { return m_oURL; }
-
-        unsigned int m_unk4;
-        StationURL m_oURL; // 0x8
-    };
-
-    class SystemComponent : public RootObject {
-    public:
-        enum _State {
-            Ready = 4,
-            Running = 8,
-            Faulty = 0x80
-        };
-        _State Initialize();
-        void Trace(unsigned int, bool) const;
-        _State GetState() const { return m_eState; }
-        bool IsFaulty() const { return GetState() == Faulty; }
-        bool IsReady() const { return GetState() == Ready || GetState() == Running; }
-
-        unsigned int m_unk0[3];
-        _State m_eState; // 0xc
-    };
-
-    class SystemComponents : public RootObject {
-    public:
-        unsigned int m_unk0[9];
-        SystemComponent *m_pDupSpace; // 0x24
-    };
-
-    // Declared out of line here. With the header's inline body, /Ob1 declines
-    // it and reserves its this/ui/idx in every caller: CompleteJob's frame then
-    // matches retail, but the constructor's and ProcessGetParticipantsResponse's
-    // grow past it (measured), so this TU keeps the out-of-line declaration.
-    class InstanceTable : public RootObject {
-    public:
-        unsigned int GetInstanceFromVector(unsigned int, unsigned int);
-    };
-
-    class InstanceControl : public RootObject {
-    public:
-        static InstanceTable s_oInstanceTable;
-
-        char m_data[0xc];
-        void *m_pDelegatorInstance; // 0xc
-    };
-
-    class PseudoSingleton : public RootObject {
-    public:
-        static unsigned int GetCurrentContext();
-    };
-
-    class Scheduler : public RootObject {
-    public:
-        static Scheduler *GetInstance();
-
-        char m_data[0x3c];
-        CriticalSection m_csSystemLock; // 0x3c
-    };
-
-    // Retail calls GetInstance out of line (0x823EA910, an /O1 COMDAT): the
-    // /Ob1 inliner gives up on it here, after reserving its locals.
-    class Core : public RootObject {
-    public:
-        static Core *GetInstance() {
-            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
-            InstanceControl *pInstance =
-                (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(3, uiContext);
-            Core *pCore = 0;
-            if (pInstance != 0) {
-                pCore = (Core *)pInstance->m_pDelegatorInstance;
-            }
-            return pCore;
-        }
-        Scheduler *GetScheduler() const { return m_pScheduler; }
-        CallContextRegister *GetCallContextRegister() const { return m_pCallContextRegister; }
-        SystemComponents *GetSystemComponents() const { return m_pComponents; }
-
-        unsigned int m_unk0[2];
-        Scheduler *m_pScheduler; // 0x8
-        CallContextRegister *m_pCallContextRegister; // 0xc
-        SystemComponents *m_pComponents; // 0x10
-    };
-
-    inline Scheduler *Scheduler::GetInstance() {
-        Core *pCore = Core::GetInstance();
-        if (pCore == 0) {
-            return 0;
-        } else {
-            return pCore->GetScheduler();
-        }
+    inline CallContextRegister *GetCallContextRegister(Core *pCore) {
+        return pCore->m_pCallContextRegister;
     }
 
+    inline SystemComponents *GetSystemComponents(Core *pCore) { return pCore->m_pSystemComponents; }
+
+    inline bool IsFaulty(SystemComponent *pComponent) {
+        return pComponent->GetState() == SystemComponent::Faulty;
+    }
+
+    inline bool IsReady(SystemComponent *pComponent) {
+        return pComponent->GetState() == SystemComponent::Ready
+            || pComponent->GetState() == SystemComponent::ReadyInUse;
+    }
+
+    // The duplication-space component (SystemComponents + 0x24).
+    inline SystemComponent *GetDupSpace(SystemComponents *pComponents) {
+        return *(SystemComponent **)((char *)pComponents + 0x24);
+    }
+
+    bool LocalStationIsReady();
+    bool WellKnownObjectsCreated();
 
     class NATTraversalEngine : public RootObject {
     public:
@@ -457,7 +99,6 @@ namespace Quazal {
         PRUDPTransport *m_pTransport; // 0x4C
     };
 
-    void *GetInstanceType1Delegator();
     unsigned short GetWellKnownPort();
 
     // Retail calls this out of line (0x823EBC90, folded with an /O1 COMDAT of
@@ -484,6 +125,9 @@ namespace Quazal {
             PRUDPTransport *pTransport = pNetwork->m_pTransport;
         }
     }
+
+    inline CriticalSection &GetLock(qProtectedList<StationURL> *pList) { return pList->mCSList; }
+    inline qList<StationURL> &GetList(qProtectedList<StationURL> *pList) { return pList->mOList; }
 
     class ConnectivityTester : public RootObject {
     public:
@@ -527,21 +171,6 @@ namespace Quazal {
         void AddPeerAddress(InetAddress *);
     };
 
-    class Station : public DuplicatedObject {
-    public:
-        enum _State {
-            Joining = 3
-        };
-        static Station *GetLocalInstance();
-        static DOHandle GetLocalStation();
-        static void SetLocalStation(DOHandle);
-        static bool IsReadyToJoin();
-        void SetState(_State);
-
-        char m_data[0x70];
-        StationState m_oState; // 0x70
-    };
-
     class StationTable : public RootObject {
     public:
         static StationTable *GetInstance();
@@ -553,11 +182,6 @@ namespace Quazal {
         DOHandle m_hMaster; // 0x50
     };
 
-    class DOClass : public RootObject {
-    public:
-        DOHandle GetWKHandle();
-    };
-
     class DOClassesTable : public RootObject {
     public:
         static DOClassesTable *GetInstance();
@@ -567,53 +191,14 @@ namespace Quazal {
         DOClass **m_ppClasses; // 0x4
     };
 
-    class WKObject : public RootObject {
+    // The DO class of the well-known objects the join waits for (its
+    // DORefTemplate<>::IsValid is retail 0x82A9AA00).
+    class WKObject : public DuplicatedObject {
     public:
-        static bool AllCreated();
-    };
-
-    class NetZCore : public RootObject {
-    public:
-        static NetZCore *GetInstance(unsigned int uiContext) {
-            return (NetZCore *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(4, uiContext);
-        }
-        static NetZCore *GetInstance() { return GetInstance(PseudoSingleton::GetCurrentContext()); }
-        void StartSession();
+        static unsigned int GetClassID();
     };
 
     class JobJoinSession;
-
-    class ObjDupProtocol : public RootObject {
-    public:
-        static ObjDupProtocol *GetInstance();
-        class Message *CreateGetParticipantsRequest();
-        class Message *CreateJoinRequest();
-        qResult Send(EndPoint *, Message *, unsigned int);
-        void StopToListen();
-
-        char m_data[0x30];
-        void SetJoinSession(JobJoinSession *pJoinSession) { m_pJoinSession = pJoinSession; }
-
-        JobJoinSession *m_pJoinSession; // 0x30
-    };
-
-    class Job : public RefCountedObject {
-    public:
-        virtual ~Job();
-        virtual void DecoratedExecute();
-        virtual void Execute();
-        virtual void TestSuspendedJobState();
-        virtual void AddActivity(const char *);
-        virtual void GetTraceInfo();
-        virtual void SetDefaultPostExecutionState();
-        virtual bool SkipWaitDelayAtTermination();
-
-        void SetToWaiting(unsigned int);
-        void SetToSuspended();
-        void SetToComplete();
-
-        unsigned int m_unk8[12];
-    };
 
     class __multiple_inheritance StepSequenceJob;
 
@@ -645,8 +230,6 @@ namespace Quazal {
         unsigned int m_unk58; // 0x58
         unsigned int m_unk5c;
     };
-
-    class JobJoinSession;
 
     class JoinCancelCallback : public CallbackRoot {
     public:
@@ -723,9 +306,9 @@ namespace Quazal {
         m_pEndPoint = 0;
         m_ucJoinResponse = 0;
         m_uiCallID = uiCallID;
-        CallContext *pContext = Core::GetInstance()->GetCallContextRegister()->GetContext(uiCallID);
+        CallContext *pContext = GetCallContextRegister(Core::GetInstance())->GetCallContext(uiCallID);
         m_pCancelCallback = new (JJS_FILE, 0x48) JoinCancelCallback(this);
-        pContext->RegisterCancelCallback(m_pCancelCallback);
+        pContext->SetCancelCallback(m_pCancelCallback);
         ObjDupProtocol::GetInstance()->SetJoinSession(this);
         m_unk58 = 4;
         SetStep(Step(
@@ -743,7 +326,7 @@ namespace Quazal {
             CheckTransport();
             url.SetPortNumber(GetWellKnownPort());
         }
-        url.SetStreamType(Stream::DO);
+        url.SetStreamType((Stream::Type)1);
         url.SetStreamID(1);
     }
 
@@ -758,15 +341,15 @@ namespace Quazal {
 
     void JobJoinSession::InitiateConnection() {
         {
-            ScopedCS oCS(GetNetwork()->GetStationURLs()->GetLock());
-            qList<StationURL>::iterator it = GetNetwork()->GetStationURLs()->GetList().begin();
-            while (it != GetNetwork()->GetStationURLs()->GetList().end()) {
+            ScopedCS oCS(GetLock(GetNetwork()->GetStationURLs()));
+            qList<StationURL>::iterator it = ListBegin(GetList(GetNetwork()->GetStationURLs()));
+            while (it != GetList(GetNetwork()->GetStationURLs()).end()) {
                 (*it).Trace(0x4000);
                 ++it;
             }
         }
         Message oMsg;
-        oMsg << (unsigned int)Station::GetLocalStation();
+        oMsg << Station::GetLocalStation().GetValue();
         // Retail builds this second word in a temporary (0 stored at 0xa4,
         // copied to 0xa4-4 and appended), the shape of a default DOHandle
         // converted to unsigned int. Written that way here, /Ob1 runs out of
@@ -813,10 +396,10 @@ namespace Quazal {
         if (ConnectivityTesterRef::GetInstance()->Get() != 0) {
             Message *pMessage = ObjDupProtocol::GetInstance()->CreateGetParticipantsRequest();
             qList<StationURL> lstURLs;
-            ScopedCS oLock(GetNetwork()->GetStationURLs()->GetLock());
-            qList<StationURL>::iterator iterURL = GetNetwork()->GetStationURLs()->GetList().begin();
+            ScopedCS oLock(GetLock(GetNetwork()->GetStationURLs()));
+            qList<StationURL>::iterator iterURL = ListBegin(GetList(GetNetwork()->GetStationURLs()));
             NATTraversalEngine *pEngine = GetNetwork()->GetNATTraversalEngine();
-            while (iterURL != GetNetwork()->GetStationURLs()->GetList().end()) {
+            while (iterURL != GetList(GetNetwork()->GetStationURLs()).end()) {
                 StationURL url(*iterURL);
                 if (pEngine != 0 && pEngine->GetLocalCID() != 0) {
                     url.SetRVConnectionID(pEngine->GetLocalCID());
@@ -901,7 +484,7 @@ namespace Quazal {
             SetStep(Step((JobStateFunc)&JobJoinSession::JoinFailed, "JobJoinSession::JoinFailed"));
             return;
         }
-        if (!Station::IsReadyToJoin()) {
+        if (!LocalStationIsReady()) {
             SetToWaiting(0x32);
             SetStep(Step(
                 (JobStateFunc)&JobJoinSession::WaitForJoinTermination,
@@ -910,13 +493,13 @@ namespace Quazal {
             return;
         }
         SystemComponent *pDupSpace =
-            (Core::GetInstance() == 0 ? 0 : Core::GetInstance()->GetSystemComponents())->m_pDupSpace;
+            (SystemComponent *)(Core::GetInstance() == 0 ? 0 : GetSystemComponents(Core::GetInstance()))->unk24;
         pDupSpace->Initialize();
-        if (pDupSpace->IsFaulty()) {
+        if (IsFaulty(pDupSpace)) {
             SetStep(Step((JobStateFunc)&JobJoinSession::JoinFailed, "JobJoinSession::JoinFailed"));
             return;
         }
-        if (!pDupSpace->IsReady()) {
+        if (!IsReady(pDupSpace)) {
             pDupSpace->Trace(SystemComponent::Ready, true);
             SetToWaiting(0x32);
             SetStep(Step(
@@ -925,7 +508,7 @@ namespace Quazal {
             ));
             return;
         }
-        if (!WKObject::AllCreated()) {
+        if (!WellKnownObjectsCreated()) {
             SetToWaiting(0x32);
             SetStep(Step(
                 (JobStateFunc)&JobJoinSession::WaitForJoinTermination,
@@ -975,14 +558,14 @@ namespace Quazal {
     }
 
     void JobJoinSession::SignalCallContext(CallContext::_State eState, qResult oResult) {
-        CallContext *pContext = Core::GetInstance()->GetCallContextRegister()->GetContext(m_uiCallID);
+        CallContext *pContext = GetCallContextRegister(Core::GetInstance())->GetCallContext(m_uiCallID);
         if (pContext != 0) {
-            pContext->SetState(eState, oResult, true);
+            pContext->SetStateImpl(eState, oResult, true);
         }
     }
 
     void JobJoinSession::JoinDenied() {
-        if (m_oResult == (int)0x8006000E) {
+        if (m_oResult.Equals((int)0x8006000E)) {
             m_oResult = 0x8006000C;
         }
         SetStep(Step(
@@ -1055,13 +638,13 @@ namespace Quazal {
 
     void JobJoinSession::JoinSuccess() {
         m_oResult = 0x00060001;
-        Station::GetLocalInstance()->m_oState.m_bJoined = true;
-        Station::GetLocalInstance()->Update(&Station::GetLocalInstance()->m_oState);
+        Station::GetLocalInstance()->m_oConnectionInfo.m_bURLInitialized = true;
+        Station::GetLocalInstance()->Update(&Station::GetLocalInstance()->m_oConnectionInfo);
         SetStep(Step((JobStateFunc)&JobJoinSession::CompleteJob, "JobJoinSession::CompleteJob"));
     }
 
     void JobJoinSession::ProcessGetParticipantsResponse(Message *pMsg, bool bAccepted) {
-        ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
+        ScopedCS oCS(Scheduler::GetInstance()->unk38);
         if (bAccepted) {
             m_lParticipants.clear();
             ExtractParticipants(pMsg, &m_lParticipants);
@@ -1113,12 +696,12 @@ namespace Quazal {
         unsigned char ucResponse, DOHandle hMaster, DOHandle hStation
     ) {
         Station::SetLocalStation(hMaster);
-        m_pEndPoint->SetPID(hStation);
+        m_pEndPoint->SetPID(hStation.GetValue());
         if (ConnectionManager::GetInstance()->GetMode() == 1) {
             ConnectionManager::GetInstance()->AddPeerAddress(
-                m_pEndPoint->GetURL().GetInetAddress()
+                m_pEndPoint->GetAddress().GetInetAddress()
             );
-            m_pEndPoint->Disconnect();
+            m_pEndPoint->Unk7();
         }
         StationTable::GetInstance()->AddStation(hStation, m_pEndPoint);
         m_ucJoinResponse = ucResponse;
@@ -1131,8 +714,8 @@ namespace Quazal {
             ObjDupProtocol::GetInstance()->StopToListen();
             SignalCallContext(CallContext::CallError, m_oResult);
         } else {
-            Station::GetLocalInstance()->SetState(Station::Joining);
-            NetZCore::GetInstance()->StartSession();
+            Station::GetLocalInstance()->SetState((Station::_State)3);
+            NetZ::GetInstance()->CompleteJoin();
             SignalCallContext(CallContext::CallSuccess, qResult(0x00060001));
         }
     }
@@ -1151,7 +734,7 @@ namespace Quazal {
 
     void JobJoinSession::Trace(unsigned int uiFlags) {
         if (m_pEndPoint != 0) {
-            m_pEndPoint->Trace(uiFlags);
+            m_pEndPoint->SignalEvent(uiFlags);
         }
     }
 
