@@ -14557,8 +14557,8 @@ network/quazal/GlobalDiscovery/GlobalDiscoveryExtension.cpp:
 	.text       start:0x82B2C030 end:0x82B2C0E0
 
 network/quazal/Transport/Interface/JobConnectEndPoint.cpp:
-	.pdata      start:0x82258718 end:0x82258A70
-	.text       start:0x82B2C698 end:0x82B2FC38
+	.pdata      start:0x82258718 end:0x822589D8
+	.text       start:0x82B2C698 end:0x82B2F110
 
 network/quazal/Transport/Interface/TransportSignatureGenerator.cpp:
 	.pdata      start:0x82258A70 end:0x82258B00
