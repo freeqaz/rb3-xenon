@@ -15,17 +15,21 @@
 // The declarations record only the call shapes retail uses; each is named for
 // its retail address. (0x823EF400 and 0x82A8EEF8 are QosListenSetData and
 // Quazal::RegisterXNetKey, declared in net/XSessionData.h.)
-//   * the function-local static at 0x82CC0030: constructed by 0x82AA1658
+//   * the function-local static StationURL at 0x82CC0030: constructed by 0x82AA1658
 //     (guard bit 0 of 0x82CC0094, destroyed through atexit), filled by
 //     0x82AA2BE8 (this, &hostAddress, &sessionID, &keyExchangeKey), then
 //     handed with a fresh Quazal::CallContext to 0x82A78668.
-class QuazalJoinTarget_82AA1658 {
-public:
-    QuazalJoinTarget_82AA1658();
-    ~QuazalJoinTarget_82AA1658();
-    void Set_82AA2BE8(const XNADDR *, const XNKID *, const XNKEY *);
-};
-void QuazalJoin_82A78668(Quazal::CallContext *, const QuazalJoinTarget_82AA1658 &);
+namespace Quazal {
+    // The three members this TU calls (0x82AA1658, 0x82AA2BE8, the dtor), spelled
+    // as the StationURL TU defines them.
+    class StationURL {
+    public:
+        StationURL();
+        ~StationURL();
+        void SetXboxAddress(const XNADDR *, const XNKID *, const XNKEY *);
+    };
+}
+void QuazalJoin_82A78668(Quazal::CallContext *, const Quazal::StationURL &);
 
 // ------------------------------------------------------------------ XboxJob
 
@@ -234,8 +238,8 @@ bool MakeSessionJob::IsFinished() {
             if (mSession) {
                 // a joining client: connect to the host the session describes
                 XSESSION_INFO info = mData->mInfo;
-                static QuazalJoinTarget_82AA1658 sTarget;
-                sTarget.Set_82AA2BE8(
+                static Quazal::StationURL sTarget;
+                sTarget.SetXboxAddress(
                     &info.hostAddress, &info.sessionID, &info.keyExchangeKey
                 );
                 mJoinContext = new Quazal::CallContext();
