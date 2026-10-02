@@ -23,6 +23,9 @@ namespace Quazal {
         void CreateCopy(char **) const;
         void Format(const char *, ...);
         operator const char *() const { return m_szContent; }
+#ifdef RB3_QUAZAL_STRING_OPEQ
+        bool operator==(const String &s) const { return IsEqual(m_szContent, s.m_szContent); }
+#endif
 
         char *m_szContent;
 

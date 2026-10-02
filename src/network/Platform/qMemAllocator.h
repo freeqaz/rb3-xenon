@@ -33,7 +33,12 @@ namespace Quazal {
 #endif
 
         // ...but still has the destructor
+        // (The X360 retail StationURL TU shows no unwind action after clear()
+        // in its ~qMap, and no local for the memory manager in allocate();
+        // RB3_QUAZAL_RETAIL_MEMALLOCATOR selects that shape per TU.)
+#ifndef RB3_QUAZAL_RETAIL_MEMALLOCATOR
         ~MemAllocator() {}
+#endif
 
 #if defined(VERSION_SZBE69) || (!defined(VERSION_SZBE69_B8))
         // This is the only way to make allocator conversions
@@ -72,9 +77,19 @@ namespace Quazal {
             // bank 5/6 use type info for allocation tracing purposes
             typeid(pointer);
 #endif
+#ifdef RB3_QUAZAL_RETAIL_MEMALLOCATOR
+            return reinterpret_cast<pointer>(MemoryManager::Allocate(
+                MemoryManager::GetDefaultMemoryManager(),
+                count * sizeof(T),
+                "Unknown",
+                0,
+                MemoryManager::_InstType7
+            ));
+#else
             return reinterpret_cast<pointer>(
                 MemoryManager::Allocate(count * sizeof(T), MemoryManager::_InstType7)
             );
+#endif
         }
 
         void deallocate(pointer ptr, size_type count) const {
