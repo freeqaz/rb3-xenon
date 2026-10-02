@@ -35892,5 +35892,7 @@
  "0x82a79da8": "?clear@?$_List_base@VStationURL@Quazal@@V?$MemAllocator@VStationURL@Quazal@@@2@@stlpmtx_std@@QAAXXZ",
  "0x82a76c28": "??_GSession@Quazal@@UAAPAXI@Z",
  "0x82a79048": "?SynchronizeTermination@Session@Quazal@@QAA_NVDOHandle@2@@Z",
- "0x82a78788": "?CallApproveJoinSessionCallback@Session@Quazal@@SAXPAVJoinSessionOperation@2@@Z"
+ "0x82a78788": "?CallApproveJoinSessionCallback@Session@Quazal@@SAXPAVJoinSessionOperation@2@@Z",
+ "0x82a79a90": "??0?$SelectionIteratorTemplate@VRootDO@Quazal@@@Quazal@@QAA@H@Z",
+ "0x82a7a668": "??0?$list@P6AXXZV?$MemAllocator@P6AXXZ@Quazal@@@stlpmtx_std@@QAA@ABV01@@Z"
 }

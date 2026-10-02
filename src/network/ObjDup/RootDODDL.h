@@ -12,5 +12,7 @@ namespace Quazal {
         // Sends the RemoveFromCachedDuplicationSet action to the duplicas
         // (.\RootDODDL.cpp); DuplicatedObject::ExecChangeDupSet calls it.
         bool RemoveFromCachedDuplicationSet_OnDuplicas(DOHandle);
+        static unsigned int GetClassID() { return s_uiClassID; }
+        static unsigned int s_uiClassID;
     };
 }
