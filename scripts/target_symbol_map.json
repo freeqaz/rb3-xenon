@@ -34975,5 +34975,7 @@
  "0x82a70810": "?CreateStubMessage@DuplicatedObject@Quazal@@QAAPAVMessage@2@PAG@Z",
  "0x82a70c10": "?RemoveFromStore@DuplicatedObject@Quazal@@QAA_NVDOHandle@2@_N1@Z",
  "0x82a70c88": "?AddToStoreAsDuplica@DuplicatedObject@Quazal@@QAA_NVDOHandle@2@PAVMessage@2@@Z",
- "0x82a70d00": "?AddToStoreAsMaster@DuplicatedObject@Quazal@@QAA_NXZ"
+ "0x82a70d00": "?AddToStoreAsMaster@DuplicatedObject@Quazal@@QAA_NXZ",
+ "0x82a70d70": "?UndeleteMainRef@DuplicatedObject@Quazal@@QAA_NXZ",
+ "0x82a70860": "?SendStubMessage@DuplicatedObject@Quazal@@QAA_N_NPAVMessage@2@@Z"
 }

@@ -8,6 +8,8 @@
 #include "ObjDup/DOClass.h"
 #include "ObjDup/ObjDupProtocol.h"
 #include "ObjDup/Station.h"
+#include "ObjDup/DORefTemplate.h"
+#include "Platform/Message.h"
 #include "Platform/Time.h"
 
 namespace Quazal {
@@ -104,6 +106,34 @@ namespace Quazal {
         return ObjDupProtocol::GetInstance()->CreateStubMessage(m_dohMyself, puiSize);
     }
 
+    bool DuplicatedObject::SendStubMessage(bool bToDuplicas, Message *pMessage) {
+        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        if (bToDuplicas) {
+            if (IsADuplica()) {
+                delete pMessage;
+                SystemError::SignalError(0, 0, 0xE0030000, 0);
+                return false;
+            } else {
+                SendToAllDuplicas(pMessage, 1);
+                delete pMessage;
+            }
+        } else {
+            if (IsADuplicationMaster()) {
+                delete pMessage;
+                SystemError::SignalError(0, 0, 0xE0030001, 0);
+                return false;
+            } else {
+                DOHandle hMaster(m_refMasterStation.m_hReferencedDO.mValue);
+                {
+                    DORefTemplate<Station> refMaster(hMaster);
+                    refMaster.Get()->Send(pMessage, 1);
+                    delete pMessage;
+                }
+            }
+        }
+        return true;
+    }
+
     bool DuplicatedObject::RemoveFromStore(DOHandle hStation, bool bDelete, bool bRemoveDuplicas) {
         RemoveFromStoreOperation oOperation(hStation, this, bDelete, bRemoveDuplicas);
         return ExecuteOperation(oOperation);
@@ -117,6 +147,24 @@ namespace Quazal {
     bool DuplicatedObject::AddToStoreAsMaster() {
         AddToStoreOperation oOperation(Station::GetLocalStation(), this, true, NULL);
         return ExecuteOperation(oOperation);
+    }
+
+    bool DuplicatedObject::UndeleteMainRef() {
+        ScopedCS cs(Scheduler::GetInstance()->unk38);
+        if (!IsDeleted()) {
+            return false;
+        }
+        if (FlagIsSet(0x20)) {
+            if (IsADuplicationMaster()) {
+                return AddToStoreAsMaster();
+            } else {
+                return AddToStoreAsDuplica(Station::GetLocalStation(), NULL);
+            }
+        } else {
+            AcquireMainReference();
+            SetFlag(1);
+            return true;
+        }
     }
 
     void DuplicatedObject::OperationBegin(DOOperation *) {}

@@ -18,5 +18,6 @@ namespace Quazal {
 
         static Station *GetLocalInstance();
         static DOHandle GetLocalStation();
+        bool Send(Message *, unsigned int);
     };
 }

@@ -129,6 +129,7 @@ namespace Quazal {
         StateFuncFactory DeletedDuplicaState(const QEvent &);
 
         bool FlagIsSet(unsigned short f) const { return (m_uiFlags & f) == f; }
+        bool IsDeleted() const { return !FlagIsSet(1); }
 
         void AcquireMainReference() {
             volatile ScopedCS cs(s_csRefCount);

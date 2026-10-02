@@ -8,7 +8,10 @@ namespace Quazal {
     class DORef : public RootObject {
     public:
         DORef();
+        DORef(DOHandle);
         ~DORef();
+
+        DOHandle GetHandle() const { return m_hReferencedDO; }
 
         void SetSoft();
         void Release();
