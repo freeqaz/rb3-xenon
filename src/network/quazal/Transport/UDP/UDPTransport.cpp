@@ -103,6 +103,9 @@ namespace Quazal {
     template <class T>
     class qVector : public std::vector<T, MemAllocator<T> >, public RootObject {
     public:
+        typedef typename std::vector<T, MemAllocator<T> >::iterator iterator;
+        iterator begin() { return std::vector<T, MemAllocator<T> >::begin(); }
+        iterator end() { return std::vector<T, MemAllocator<T> >::end(); }
     };
 
     class MutexPrimitive : public RootObject {
@@ -324,7 +327,7 @@ namespace Quazal {
         void SetPortNumber(unsigned short);
         unsigned short GetPortNumber() const;
 
-        char m_data[0x80];
+        unsigned long long m_data[0x80 / 8];
     };
 
     class StationURL : public RootObject {
@@ -670,6 +673,7 @@ namespace Quazal {
     class qSortedVector : public qVector<std::pair<K, V> > {
     public:
         typedef std::pair<K, V> value_type;
+        typedef std::vector<value_type, MemAllocator<value_type> > base_vector;
         typedef typename qVector<value_type>::iterator iterator;
 
         struct KeyCompare {
@@ -682,9 +686,9 @@ namespace Quazal {
         std::pair<iterator, bool> insert(const value_type &oValue);
         iterator find(const K &key) {
             KeyCompare oCompare;
-            iterator it = std::lower_bound(this->begin(), this->end(), key, oCompare);
-            if (it != this->end() && oCompare(key, *it)) {
-                it = this->end();
+            iterator it = std::lower_bound(base_vector::begin(), base_vector::end(), key, oCompare);
+            if (it != base_vector::end() && oCompare(key, *it)) {
+                it = base_vector::end();
             }
             return it;
         }
@@ -695,8 +699,8 @@ namespace Quazal {
     std::pair<typename qSortedVector<K, V>::iterator, bool> qSortedVector<K, V>::insert(const value_type &oValue) {
         bool bInserted = false;
         KeyCompare oCompare;
-        iterator it = std::lower_bound(this->begin(), this->end(), oValue.first, oCompare);
-        if (it == this->end() || oCompare(oValue.first, *it)) {
+        iterator it = std::lower_bound(base_vector::begin(), base_vector::end(), oValue.first, oCompare);
+        if (it == base_vector::end() || oCompare(oValue.first, *it)) {
             it = qVector<value_type>::insert(it, oValue);
             bInserted = true;
         }
@@ -706,7 +710,7 @@ namespace Quazal {
     template <class K, class V>
     unsigned int qSortedVector<K, V>::erase(const K &key) {
         iterator it = find(key);
-        if (it != this->end()) {
+        if (it != base_vector::end()) {
             qVector<value_type>::erase(it);
             return 1;
         } else {
