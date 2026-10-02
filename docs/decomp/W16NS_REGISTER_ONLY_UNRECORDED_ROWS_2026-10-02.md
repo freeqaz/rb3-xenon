@@ -138,7 +138,19 @@ in §4 with their spellings.
 
 ## 7. Gates
 
-GATES-PLACEHOLDER
+On the branch tip after merging forks A and B (code identical to A/B leg B), after a full `./tools/ninja-locked`:
+
+```
+[patch-state] [pairing] 1055/1055 declared compiled objects pair with a target (100.0%); ... 0 object(s) declared by >1 unit
+[patch-state] OK: tree is a fixed point of 6 post-compile passes
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+The native gate ran last on the final code. Only this docs-only commit follows it. The branch touches no map, splits,
+`symbols.txt`, `obj/Object.h`, `os/Debug.h` or math header. Its one shared-header edit is the `ByRadius` comparator in
+`char/CharCollide.h`, which the whole-binary row diff covers (0 down). A grep of `main..w16-ns` finds no added source line or
+commit message that cites rb3-Wii or "the oracle", and no Co-Authored-By line. Main had not moved from `a01ba367e`, so no
+rebase was needed.
 
 ## 8. Not done
 
