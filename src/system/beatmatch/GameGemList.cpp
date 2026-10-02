@@ -233,20 +233,21 @@ bool GameGemList::AddGameGem(const GameGem &gem, NoStrumState noStrum) {
     MemDoTempAllocations tmp;
     if (!mGems.empty()) {
         const GameGem &last = mGems.back();
-        if (last.mMs > gem.mMs) {
+        if (mGems.back().mMs > gem.mMs) {
             mGems.insert(
                 std::lower_bound(mGems.begin(), mGems.end(), gem, GameGem::CompareTimes),
                 gem);
             return true;
         }
-        if (last.mTick != gem.mTick && last.mTick + 10 >= gem.mTick) {
+        if (last.mTick != gem.GetTick() && last.mTick + 10 >= gem.GetTick()) {
             return false;
         }
     }
     if (noStrum == kStrumDefault) {
         bool willBeNoStrum = WillBeNoStrum(gem);
         mGems.push_back(gem);
-        mGems.back().mForceStrum = willBeNoStrum;
+        GameGem &added = mGems.back();
+        added.mForceStrum = willBeNoStrum;
     } else {
         mGems.push_back(gem);
     }
