@@ -416,8 +416,19 @@ void BandPatchMesh::Render(RndTex *tex, RndMat *mat) {
                     tf88.m.y *= (float)tex->Height() / (float)tex->Width();
                     patch->SetLocalXfm(tf88);
                     patch->SetMat(mat);
-                    if (mat->GetDiffuseTex())
+                    if (mat->GetDiffuseTex()) {
+                        // DrawShowing, not Draw: the patch is drawn into the
+                        // outfit texture whatever its showing flag says (retail
+                        // DxMesh::DrawShowing, fn_82738E38, never tests it).
                         patch->DrawShowing();
+                        // Then a patch that lives in a dir is hidden, so the
+                        // scene's own Draw() pass does not draw it a second
+                        // time. Retail: `lwz 0x20` through the vbase (Dir())
+                        // and `stb r11(=0), 0x8(r30)` (mShowing) right after
+                        // the slot-0x14 DrawShowing vcall.
+                        if (patch->Dir())
+                            patch->SetShowing(false);
+                    }
                     patch->SetMat(patchmat);
                     patch->DirtyLocalXfm().Reset();
                 }
