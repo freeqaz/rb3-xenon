@@ -32,8 +32,8 @@ namespace Quazal {
         bool MustFlushNow() const;
         qResult Send(EndPoint *);
         bool IsEmpty() const;
-        // Retail's MessageBundle is a Message (Wii: its ctor builds the Message
-        // base first), whose Time at 0x18 makes it 8-byte aligned. That is what
+        // Retail's MessageBundle is a Message, whose Time at 0x18 makes it
+        // 8-byte aligned. That is what
         // rounds sizeof(Station) to the 0x198 _DOC_Station::Create allocates.
         unsigned char m_pad[0x18];
         unsigned long long m_ullIOTime; // 0x18
