@@ -495,10 +495,8 @@ void BandTrack::EnablePlayer() {
         if (trig)
             trig->Trigger();
         mDisabled = false;
-        if (MyTrackPanelDir()) {
-            int idx = mTrackIdx;
-            MyTrackPanelDir()->EnablePlayer(idx);
-        }
+        if (MyTrackPanelDir())
+            MyTrackPanelDir()->EnablePlayer(mTrackIdx);
     }
 }
 
