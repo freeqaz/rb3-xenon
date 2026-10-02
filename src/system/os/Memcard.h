@@ -1,4 +1,5 @@
 #pragma once
+#include "utl/TextStream.h"
 #include "obj/Msg.h"
 #include "obj/Object.h"
 #include "utl/MemMgr.h"
@@ -131,6 +132,7 @@ NoDeviceChosenMsg() : Message(Type()) {}
 END_MESSAGE
 
 DECLARE_MESSAGE(MCResultMsg, "memcard_result")
+virtual void PrintExtra(TextStream &ts) const { ts << "res:" << Result(); }
 MCResultMsg(MCResult res) : Message(Type(), res) {}
 MCResult Result() const { return (MCResult)mData->Int(2); }
 END_MESSAGE
