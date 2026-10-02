@@ -209,4 +209,5 @@ On the final tree (`~/tmp/wt-w16nr`, full build after a forced re-split):
   red and no other control moves.
 - Every W16-NR membership re-chased against its group survivor on the final tree: **61/61 PROVEN**
   (54 with 0 cycles, 7 through a cycle leaf carrying the two-channel witness).
-- `tools/native_build_gate.sh` (run last; no `src/` file changed in this lane): GATE
+- `tools/native_build_gate.sh` (run last; no `src/` file changed in this lane; only this doc line follows it):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`.
