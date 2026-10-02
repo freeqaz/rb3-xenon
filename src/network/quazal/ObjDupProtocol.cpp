@@ -414,8 +414,9 @@ namespace Quazal {
         Station *operator->() {
             if (!IsValid()) {
                 return 0;
+            } else {
+                return (Station *)m_pObject;
             }
-            return (Station *)m_pObject;
         }
     };
 
@@ -745,8 +746,9 @@ namespace Quazal {
         NetZ *pNetZ = (NetZ *)GetInstanceType1Delegator();
         if (pNetZ == 0) {
             return 0;
+        } else {
+            return pNetZ->m_pTransport;
         }
-        return pNetZ->m_pTransport;
     }
 
 
@@ -864,8 +866,9 @@ namespace Quazal {
             unsigned int uiContext = PseudoSingleton::GetCurrentContext();
             if (uiContext == 0) {
                 return m_tDefault;
+            } else {
+                return m_ptValues[uiContext];
             }
-            return m_ptValues[uiContext];
         }
 
         char m_pad0[8];
