@@ -15726,6 +15726,10 @@ network/net/NetSession_Xbox.cpp:
 	.pdata      start:0x82208918 end:0x822089F0
 	.text       start:0x823EEAB8 end:0x823EF5F8
 
+system/synth_xbox/XMAReaderBlock.cpp:
+	.pdata      start:0x8225EB80 end:0x8225EB98
+	.text       start:0x82BBB2E8 end:0x82BBB510
+
 system/synth_xbox/XMAReader.cpp:
 	.pdata      start:0x8225B4B0 end:0x8225B520
 	.pdata      start:0x8225B528 end:0x8225B558

@@ -1,4 +1,12 @@
 {
+ "0x82b6aeb0": "?Poll@XMAReader@@UAAXM@Z",
+ "0x82bbb2e8": "??1XMAReaderBlock@@QAA@XZ",
+ "0x82bbb330": "?FreeSpace@XMAReaderBlock@@QBAHXZ",
+ "0x82bbb378": "?ReadableBytes@XMAReaderBlock@@QBAHXZ",
+ "0x82bbb3b0": "?ReadPtr@XMAReaderBlock@@QBAPAXH@Z",
+ "0x82bbb3c0": "?Consume@XMAReaderBlock@@QAAXH@Z",
+ "0x82bbb3f0": "??0XMAReaderBlock@@QAA@H@Z",
+ "0x82bbb450": "?Write@XMAReaderBlock@@QAA_NPBXH_N@Z",
  "0x82b6aa98": "?Init@XMAReader@@QAA_NXZ",
  "0x82b6a3e8": "?FinishSeek@XMAReader@@QAA_NXZ",
  "0x823ef3e0": "?SetInvitesAllowed@XboxSession@@UAAX_N@Z",
