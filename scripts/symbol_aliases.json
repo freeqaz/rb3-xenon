@@ -89204,10 +89204,11 @@
   {
    "name": "_M_create_node",
    "address": "0x8235c328",
-   "survivor": "?_M_create_node@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVMoveDetector@@@Z",
+   "survivor": "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABVSymbol@@@Z",
    "folded": [
     "?_M_create_node@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4ScoreType@@@3@U?$_SetTraitsT@W4ScoreType@@@priv@3@V?$StlNodeAlloc@W4ScoreType@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABW4ScoreType@@@Z",
-    "?_M_create_node@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVTrackWidget@@@Z"
+    "?_M_create_node@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVTrackWidget@@@Z",
+    "?_M_create_node@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVMoveDetector@@@Z"
    ],
    "evidence": "CORRECTED by lane W6-ACCURACY on retail bytes. The group previously named the map<int,float> spelling as SURVIVOR and set<MoveDetector*> as folded -- the roles were INVERTED, because target_symbol_map.json/0x8235c328 carried the wrong name. Retail's body at 0x8235c328 allocates 0x14 (li r3,0x14) and copies ONE word (lwz/stw) into node+0x10, i.e. a 4-byte value_type. pair<const int,float> is 8 bytes and needs 0x18 + two copies, so a map<int,float> node builder CANNOT be this body. set<MoveDetector*> (value_type = a 4-byte pointer) fits exactly, and our compiled body is byte-identical to retail's 76 bytes once the single relocation slot at +0x18 is masked (both call MemOrPoolAlloc/STL, already equated by group @0x827bd208). Corroborated independently: retail _M_insert@set<MoveDetector*> at 0x8235C538 -- already pinned to MoveAsyncDetector.cpp -- calls 0x8235C328 three times. | Lane W7-D, T1 on retail bytes (2026-09-13). Our COMDAT for the folded spelling and our COMDAT for the survivor are both 76 B, sha256 56915aab763000b5, with IDENTICAL relocations compared BY TARGET NAME: (24,?MemOrPoolAllocSTL@@YAPAXH@Z). Retail@0x8235c328 corroborates (same size; every non-relocated word equal as a full 32-bit value). Every relocation target is TYPE-INDEPENDENT, which is why this family folds where list<T*>::insert / vector<T>::resize / ~list<T> do NOT (those carry a per-T callee -- _M_create_node<T>, _M_fill_insert<T>, _List_base<T>::clear -- and retail keeps 4, 48 and 11 of them respectively at DISTINCT addresses). Injective: the map places the folded spelling at no other address. Population control: no other retail address carries a branch-masked-identical body.",
    "withdrawn": [
@@ -89222,6 +89223,13 @@
      "spelling": "?_M_create_node@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABQAVTrackWidget@@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 76 B retail / 76 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x82b9a94c, 0x82b9a9a0."
+    }
+   ],
+   "repair_log": [
+    {
+     "lane": "W16-NE-F3 2026-10-02",
+     "change": "survivor swapped to the map name",
+     "why": "pinned to Tour, whose obj compiles _Rb_tree<Symbol> (MoveDetector is a Dance Central type with no retail RTTI); old survivor kept folded until --chase adjudicates it"
     }
    ]
   },
