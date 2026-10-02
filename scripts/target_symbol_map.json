@@ -34614,5 +34614,6 @@
  "0x823f0e58": "?push_back@?$vector@UTypeCreatorPair@NetMessageFactory@@V?$StlNodeAlloc@UTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUTypeCreatorPair@NetMessageFactory@@@Z",
  "0x823f0ed8": "?RegisterNetMessage@NetMessageFactory@@QAAXVString@@P6APAVNetMessage@@XZ@Z",
  "0x827038e0": "??$_Destroy_Range@PAUJumpInstance@@@stlpmtx_std@@YAXPAUJumpInstance@@0@Z",
- "0x82270b90": "?AppDebugModal@@YAXAA_NPAD_N@Z"
+ "0x82270b90": "?AppDebugModal@@YAXAA_NPAD_N@Z",
+ "0x82270a58": "?Replace@?$ObjDirPtr@VObjectDir@@@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z"
 }
