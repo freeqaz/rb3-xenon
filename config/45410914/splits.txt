@@ -829,11 +829,8 @@ VocalTrackDir.cpp:
 	.text       start:0x82300030 end:0x823000D0
 	.text       start:0x823000D0 end:0x823028E8
 	.text       start:0x823028E8 end:0x823038A0
-	.text       start:0x827F3544 end:0x827F3568
-	.text       start:0x827F4278 end:0x827F4288
 	.text       start:0x827F4298 end:0x827F42A8
 	.text       start:0x827F42B8 end:0x827F42E0
-	.text       start:0x827F443C end:0x827F4450
 	.text       start:0x827F446C end:0x827F4478
 
 BandCrowdMeter.cpp:
@@ -847,6 +844,7 @@ BandCrowdMeter.cpp:
 	.pdata      start:0x821F63E8 end:0x821F63F0
 	.pdata      start:0x821F63F0 end:0x821F6400
 	.pdata      start:0x821F6400 end:0x821F6458
+	.pdata      start:0x821F6458 end:0x821F6468
 	.pdata      start:0x821F6468 end:0x821F6478
 	.pdata      start:0x821F6478 end:0x821F6538
 	.pdata      start:0x821F6538 end:0x821F6540
@@ -877,6 +875,7 @@ BandCrowdMeter.cpp:
 	.text       start:0x822BC838 end:0x822BC8BC
 	.text       start:0x822BC8C0 end:0x822BC9B4
 	.text       start:0x822BC9B8 end:0x822BCEC0
+	.text       start:0x822BCEC0 end:0x822BCF28
 	.text       start:0x822BCF28 end:0x822BCFD0
 	.text       start:0x822BCFD0 end:0x822BDCB0
 	.text       start:0x822BDCB0 end:0x822BDD10
@@ -1016,6 +1015,7 @@ PatchDir.cpp:
 	.text       start:0x82275500 end:0x822756A0
 	.text       start:0x822759C8 end:0x82276138
 	.text       start:0x82276138 end:0x82276828
+	.text       start:0x82276828 end:0x82276888
 	.text       start:0x82276888 end:0x822768F8
 	.text       start:0x82276C78 end:0x82276D50
 	.text       start:0x82277014 end:0x822770C8
@@ -1107,6 +1107,7 @@ BandStarDisplay.cpp:
 	.pdata      start:0x821F71D0 end:0x821F71D8
 	.pdata      start:0x821F71D8 end:0x821F71E0
 	.pdata      start:0x821F71E0 end:0x821F7208
+	.pdata      start:0x821F7208 end:0x821F7210
 	.pdata      start:0x821F7210 end:0x821F7220
 	.pdata      start:0x821F7220 end:0x821F7230
 	.pdata      start:0x821F7230 end:0x821F7240
@@ -1138,6 +1139,7 @@ BandStarDisplay.cpp:
 	.text       start:0x822CB018 end:0x822CB074
 	.text       start:0x822CB074 end:0x822CB0F8
 	.text       start:0x822CB0F8 end:0x822CB284
+	.text       start:0x822CB284 end:0x822CB2D8
 	.text       start:0x822CB2D8 end:0x822CB428
 	.text       start:0x822CB428 end:0x822CB4D0
 	.text       start:0x822CB4D0 end:0x822CB540
@@ -1198,7 +1200,6 @@ BandRetargetVignette.cpp:
 	.text       start:0x822C6A90 end:0x822C70D8
 
 StreakMeter.cpp:
-	.pdata      start:0x821F7208 end:0x821F7210
 	.pdata      start:0x821F7D10 end:0x821F7D28
 	.pdata      start:0x821F7D28 end:0x821F7D30
 	.pdata      start:0x821F7DD0 end:0x821F7DF0
@@ -1218,7 +1219,6 @@ StreakMeter.cpp:
 	.pdata      start:0x821F8288 end:0x821F82B8
 	.pdata      start:0x821F82D0 end:0x821F82D8
 	.text       start:0x822CB014 end:0x822CB018
-	.text       start:0x822CB284 end:0x822CB2D8
 	.text       start:0x822CBE1C end:0x822CBE28
 	.text       start:0x822CC2B4 end:0x822CC2B8
 	.text       start:0x822CC2C4 end:0x822CC2C8
@@ -1417,6 +1417,7 @@ JoypadController.cpp:
 	.pdata      start:0x8223FC00 end:0x8223FC08
 	.text       start:0x8279B280 end:0x8279B2C8
 	.text       start:0x8279B2C8 end:0x8279B2DC
+	.text       start:0x8279B2DC end:0x8279B2E8
 	.text       start:0x8279B2E8 end:0x8279B390
 	.text       start:0x8279B390 end:0x8279B498
 	.text       start:0x8279B498 end:0x8279B688
@@ -1489,7 +1490,6 @@ TourDescPanel.cpp:
 	.text       start:0x825F3378 end:0x825F33D0
 	.text       start:0x825F4598 end:0x825F45EC
 	.text       start:0x82808FC4 end:0x82808FC8
-	.text       start:0x82808FF8 end:0x82809008
 	.text       start:0x82809024 end:0x82809028
 	.text       start:0x82809034 end:0x82809038
 	.text       start:0x82809044 end:0x82809048
@@ -2603,7 +2603,6 @@ CharClipGroup.cpp:
 	.text       start:0x82390B34 end:0x82390B38
 
 CharClipSet.cpp:
-	.pdata      start:0x821FB2C8 end:0x821FB2D0
 	.pdata      start:0x82206A28 end:0x82206A30
 	.pdata      start:0x82206A30 end:0x82206A90
 	.pdata      start:0x82206A90 end:0x82206A98
@@ -2611,7 +2610,6 @@ CharClipSet.cpp:
 	.pdata      start:0x82206B90 end:0x82206B98
 	.pdata      start:0x82206B98 end:0x82206C88
 	.pdata      start:0x82206C88 end:0x82206C90
-	.text       start:0x8230B260 end:0x8230B2C0
 	.text       start:0x823D0588 end:0x823D0640
 	.text       start:0x823D0640 end:0x823D0BA8
 	.text       start:0x823D0BA8 end:0x823D0BD8
@@ -3109,6 +3107,7 @@ UI.cpp:
 
 system/rndobj/Utl.cpp:
 	.pdata      start:0x8220CE78 end:0x8220D018
+	.pdata      start:0x8220D018 end:0x8220D020
 	.pdata      start:0x8220D020 end:0x8220D2A8
 	.pdata      start:0x8220D2B0 end:0x8220D2D0
 	.pdata      start:0x8220D2D8 end:0x8220D2E8
@@ -3116,6 +3115,7 @@ system/rndobj/Utl.cpp:
 	.pdata      start:0x8220D310 end:0x8220D330
 	.pdata      start:0x82237B00 end:0x82237B08
 	.text       start:0x82439910 end:0x8243E108
+	.text       start:0x8243E108 end:0x8243E15C
 	.text       start:0x8243E15C end:0x824423E8
 	.text       start:0x8244243C end:0x82442C78
 	.text       start:0x82442CCC end:0x82442DF8
@@ -3148,6 +3148,7 @@ LightPreset.cpp:
 	.pdata      start:0x82212460 end:0x82212488
 	.pdata      start:0x82212488 end:0x82212BC8
 	.pdata      start:0x82212BD0 end:0x82212CF0
+	.pdata      start:0x82212CF0 end:0x82212CF8
 	.pdata      start:0x82212CF8 end:0x82212F20
 	.text       start:0x823808B0 end:0x82380A44
 	.text       start:0x82380A44 end:0x82380CB8
@@ -3162,6 +3163,7 @@ LightPreset.cpp:
 	.text       start:0x824AACB0 end:0x824AAEA4
 	.text       start:0x824AAEA8 end:0x824B4390
 	.text       start:0x824B43F8 end:0x824B5570
+	.text       start:0x824B5570 end:0x824B55A0
 	.text       start:0x824B55A0 end:0x824B885C
 
 Timer.cpp:
@@ -3598,6 +3600,7 @@ Mesh.cpp:
 	.pdata      start:0x8220B128 end:0x8220B140
 	.pdata      start:0x8220B140 end:0x8220B358
 	.pdata      start:0x8220B358 end:0x8220B450
+	.pdata      start:0x8220B450 end:0x8220B460
 	.pdata      start:0x8220B460 end:0x8220B508
 	.pdata      start:0x8220B508 end:0x8220B510
 	.pdata      start:0x8220B510 end:0x8220B530
@@ -3622,7 +3625,6 @@ Mesh.cpp:
 	.pdata      start:0x8223A6F0 end:0x8223A6F8
 	.pdata      start:0x8223CFF8 end:0x8223D008
 	.pdata      start:0x8223D058 end:0x8223D060
-	.pdata      start:0x822449B0 end:0x822449C0
 	.pdata      start:0x8225E8D8 end:0x8225E8E0
 	.pdata      start:0x8225E8F0 end:0x8225E8F8
 	.pdata      start:0x8225E8F8 end:0x8225E908
@@ -3643,6 +3645,7 @@ Mesh.cpp:
 	.text       start:0x82417728 end:0x82417898
 	.text       start:0x82417960 end:0x8241AAC8
 	.text       start:0x8241AB94 end:0x8241BAF8
+	.text       start:0x8241BAF8 end:0x8241BB90
 	.text       start:0x8241BB90 end:0x8241C560
 	.text       start:0x8241C560 end:0x8241C590
 	.text       start:0x8241C590 end:0x8241C8C8
@@ -3668,7 +3671,6 @@ Mesh.cpp:
 	.text       start:0x82737688 end:0x827378B4
 	.text       start:0x82766EF8 end:0x82766FA8
 	.text       start:0x827674E8 end:0x82767518
-	.text       start:0x827ED4B0 end:0x827ED548
 	.text       start:0x82BB3510 end:0x82BB3578
 	.text       start:0x82BB3750 end:0x82BB37C4
 	.text       start:0x82BB37D0 end:0x82BB3870
@@ -3684,6 +3686,7 @@ Mesh.cpp:
 CharMeshHide.cpp:
 	.pdata      start:0x82204198 end:0x822041C8
 	.pdata      start:0x822041C8 end:0x822041D0
+	.pdata      start:0x822041D0 end:0x822041D8
 	.pdata      start:0x822041D8 end:0x822041E0
 	.pdata      start:0x822041E0 end:0x822043B8
 	.pdata      start:0x822133F0 end:0x822133F8
@@ -3695,6 +3698,7 @@ CharMeshHide.cpp:
 	.text       start:0x822D4088 end:0x822D408C
 	.text       start:0x823A0680 end:0x823A0848
 	.text       start:0x823A0848 end:0x823A08C0
+	.text       start:0x823A08C0 end:0x823A0914
 	.text       start:0x823A0914 end:0x823A0A00
 	.text       start:0x823A0A00 end:0x823A23B4
 	.text       start:0x824BD788 end:0x824BD7E0
@@ -4121,6 +4125,7 @@ UILabel.cpp:
 	.pdata      start:0x821FF990 end:0x821FF998
 	.pdata      start:0x82244DD0 end:0x82244DF8
 	.pdata      start:0x82244DF8 end:0x82244E10
+	.pdata      start:0x82244E10 end:0x82244E18
 	.pdata      start:0x82244E18 end:0x82244E20
 	.pdata      start:0x82244E20 end:0x82244E30
 	.pdata      start:0x82244E38 end:0x82244E58
@@ -4136,14 +4141,18 @@ UILabel.cpp:
 	.text       start:0x82355B84 end:0x82355BD0
 	.text       start:0x827F2148 end:0x827F22A4
 	.text       start:0x827F22A8 end:0x827F23B8
+	.text       start:0x827F23B8 end:0x827F2438
 	.text       start:0x827F2438 end:0x827F2494
 	.text       start:0x827F2498 end:0x827F2630
 	.text       start:0x827F2680 end:0x827F288C
 	.text       start:0x827F2890 end:0x827F33D4
 	.text       start:0x827F33D8 end:0x827F3544
+	.text       start:0x827F3544 end:0x827F3568
 	.text       start:0x827F3568 end:0x827F4278
+	.text       start:0x827F4278 end:0x827F4288
 	.text       start:0x827F4288 end:0x827F4298
 	.text       start:0x827F42E0 end:0x827F443C
+	.text       start:0x827F443C end:0x827F4450
 	.text       start:0x827F4450 end:0x827F446C
 	.text       start:0x827F4478 end:0x827F4778
 	.text       start:0x827F4778 end:0x827F4910
@@ -4699,7 +4708,6 @@ WaveFile.cpp:
 	.text       start:0x822A2F18 end:0x822A2F78
 	.text       start:0x822A2F80 end:0x822A2FA8
 	.text       start:0x82451F98 end:0x82451FF8
-	.text       start:0x827C1A80 end:0x827C1A84
 	.text       start:0x827D2E70 end:0x827D3FAC
 	.text       start:0x827D5BB0 end:0x827D5C00
 
@@ -4713,7 +4721,6 @@ Env.cpp:
 	.pdata      start:0x8220A280 end:0x8220A2B0
 	.pdata      start:0x8220A2B0 end:0x8220A2B8
 	.pdata      start:0x8220A2B8 end:0x8220A448
-	.pdata      start:0x82212CF0 end:0x82212CF8
 	.text       start:0x82407948 end:0x824079B8
 	.text       start:0x824079B8 end:0x824079C4
 	.text       start:0x824079C8 end:0x82407A6C
@@ -4724,7 +4731,6 @@ Env.cpp:
 	.text       start:0x82409610 end:0x824098E8
 	.text       start:0x824098E8 end:0x82409AC4
 	.text       start:0x82409AC4 end:0x8240B050
-	.text       start:0x824B5570 end:0x824B55A0
 
 BaseMaterial.cpp:
 	.pdata      start:0x8220CA60 end:0x8220CB00
@@ -4774,7 +4780,6 @@ FileCache.cpp:
 	.pdata      start:0x82218488 end:0x82218490
 	.pdata      start:0x82218490 end:0x82218498
 	.pdata      start:0x82218498 end:0x82218610
-	.text       start:0x82276828 end:0x82276888
 	.text       start:0x82518358 end:0x82518430
 	.text       start:0x82518430 end:0x825184C4
 	.text       start:0x825184C8 end:0x8251A004
@@ -4935,6 +4940,7 @@ PropSync.cpp:
 	.pdata      start:0x82214290 end:0x82214298
 	.pdata      start:0x82214298 end:0x822142B0
 	.pdata      start:0x822142C0 end:0x822142F8
+	.pdata      start:0x822142F8 end:0x82214300
 	.pdata      start:0x82214300 end:0x822143D8
 	.pdata      start:0x82214468 end:0x82214470
 	.pdata      start:0x822144A8 end:0x82214550
@@ -4953,6 +4959,7 @@ PropSync.cpp:
 	.text       start:0x824CDBEC end:0x824CDBF0
 	.text       start:0x824CDBF0 end:0x824CDCE8
 	.text       start:0x824CDD60 end:0x824CE130
+	.text       start:0x824CE130 end:0x824CE1A0
 	.text       start:0x824CE1A0 end:0x824CEDA0
 	.text       start:0x824CF800 end:0x824CF890
 	.text       start:0x824CFB24 end:0x824D02C8
@@ -5176,6 +5183,7 @@ DataEventList.cpp:
 	.pdata      start:0x82244980 end:0x82244990
 	.pdata      start:0x82244990 end:0x82244998
 	.pdata      start:0x82244998 end:0x822449B0
+	.pdata      start:0x822449B0 end:0x822449C0
 	.pdata      start:0x822449C0 end:0x822449C8
 	.pdata      start:0x822449C8 end:0x822449D0
 	.pdata      start:0x822449D0 end:0x822449E0
@@ -5194,6 +5202,7 @@ DataEventList.cpp:
 	.text       start:0x827ED238 end:0x827ED2F0
 	.text       start:0x827ED2F0 end:0x827ED3AC
 	.text       start:0x827ED3B0 end:0x827ED4B0
+	.text       start:0x827ED4B0 end:0x827ED548
 	.text       start:0x827ED548 end:0x827ED6A0
 	.text       start:0x827ED6A0 end:0x827ED6F8
 	.text       start:0x827ED6F8 end:0x827ED8D8
@@ -5800,7 +5809,6 @@ CheatProvider.cpp:
 	.pdata      start:0x82209048 end:0x82209050
 	.pdata      start:0x82209060 end:0x82209070
 	.pdata      start:0x822090B0 end:0x822090B8
-	.pdata      start:0x8220D018 end:0x8220D020
 	.pdata      start:0x82237588 end:0x822375A8
 	.pdata      start:0x822375A8 end:0x822375B0
 	.pdata      start:0x822376F8 end:0x82237708
@@ -5818,7 +5826,6 @@ CheatProvider.cpp:
 	.text       start:0x823F4CE4 end:0x823F4D58
 	.text       start:0x823F4E0C end:0x823F4FA0
 	.text       start:0x823F52BC end:0x823F5334
-	.text       start:0x8243E108 end:0x8243E15C
 	.text       start:0x826FE5CC end:0x826FE7F0
 	.text       start:0x826FE7F0 end:0x826FE8A8
 	.text       start:0x826FFCA8 end:0x826FFD58
@@ -6227,6 +6234,7 @@ Cheats.cpp:
 	.text       start:0x827C1200 end:0x827C12E0
 	.text       start:0x827C12E0 end:0x827C12FC
 	.text       start:0x827C1300 end:0x827C1A80
+	.text       start:0x827C1A80 end:0x827C1A84
 	.text       start:0x827C1A84 end:0x827C3340
 
 MakeString.cpp:
@@ -6455,7 +6463,6 @@ PreloadPanel.cpp:
 	.text       start:0x828026A8 end:0x82802730
 
 PanelDir.cpp:
-	.pdata      start:0x8220B450 end:0x8220B460
 	.pdata      start:0x82214470 end:0x82214498
 	.pdata      start:0x822145F8 end:0x82214610
 	.pdata      start:0x82214610 end:0x82214618
@@ -6466,7 +6473,6 @@ PanelDir.cpp:
 	.pdata      start:0x822462C8 end:0x82246398
 	.pdata      start:0x82246398 end:0x822463A0
 	.pdata      start:0x822463A0 end:0x822463C8
-	.text       start:0x8241BAF8 end:0x8241BB90
 	.text       start:0x824CF890 end:0x824CFA78
 	.text       start:0x824D0EF0 end:0x824D1120
 	.text       start:0x824D1120 end:0x824D11A0
@@ -6482,6 +6488,7 @@ PanelDir.cpp:
 	.text       start:0x82808FB8 end:0x82808FC4
 	.text       start:0x82808FC8 end:0x82808FD4
 	.text       start:0x82808FD4 end:0x82808FF8
+	.text       start:0x82808FF8 end:0x82809008
 	.text       start:0x82809008 end:0x82809018
 	.text       start:0x82809018 end:0x82809024
 	.text       start:0x82809028 end:0x82809034
@@ -6673,6 +6680,7 @@ Rnd_Xbox.cpp:
 	.pdata      start:0x8223A818 end:0x8223A940
 	.pdata      start:0x8223A950 end:0x8223AAE8
 	.pdata      start:0x8223AAE8 end:0x8223AB08
+	.pdata      start:0x8223AB08 end:0x8223AB10
 	.pdata      start:0x8223AB10 end:0x8223AB48
 	.text       start:0x8235CC80 end:0x8235CCC8
 	.text       start:0x827372E8 end:0x82737688
@@ -6683,6 +6691,7 @@ Rnd_Xbox.cpp:
 	.text       start:0x827390F8 end:0x8273A470
 	.text       start:0x8273A594 end:0x8273CA70
 	.text       start:0x8273CA70 end:0x8273CBAC
+	.text       start:0x8273CBAC end:0x8273CBFC
 	.text       start:0x8273CC08 end:0x8273D658
 
 MidiSynth.cpp:
@@ -6819,12 +6828,10 @@ rtti.cpp:
 	.text       start:0x8282A258 end:0x8282A2AC
 
 MeasureMap.cpp:
-	.pdata      start:0x821F6458 end:0x821F6468
 	.pdata      start:0x8220D678 end:0x8220D680
 	.pdata      start:0x8223D9A0 end:0x8223D9A8
 	.pdata      start:0x82242E70 end:0x82242E98
 	.pdata      start:0x82242E98 end:0x82242EA8
-	.text       start:0x822BCEC0 end:0x822BCF28
 	.text       start:0x82449998 end:0x824499F8
 	.text       start:0x82771728 end:0x82771798
 	.text       start:0x827D0C20 end:0x827D0C60
@@ -7313,7 +7320,6 @@ WavMgr.cpp:
 	.text       start:0x82845F78 end:0x82845FF0
 
 ClipGraphGen.cpp:
-	.text       start:0x82684E90 end:0x82684E98
 	.text       start:0x82684EA4 end:0x82684EA8
 
 CharGuitarString.cpp:
@@ -7623,10 +7629,8 @@ FlowQueueable.cpp:
 	.text       start:0x82487834 end:0x82487838
 
 Shockwave.cpp:
-	.pdata      start:0x822142F8 end:0x82214300
 	.pdata      start:0x82214558 end:0x82214578
 	.pdata      start:0x822145A0 end:0x822145D0
-	.text       start:0x824CE130 end:0x824CE1A0
 	.text       start:0x824D0338 end:0x824D0430
 	.text       start:0x824D05A4 end:0x824D0898
 
@@ -7659,11 +7663,9 @@ PlatformMgr_Xbox.cpp:
 	.text       start:0x8251DAB0 end:0x8251E448
 
 FlowCommand.cpp:
-	.pdata      start:0x82207D28 end:0x82207D30
 	.pdata      start:0x82218B50 end:0x82218B80
 	.pdata      start:0x82218B88 end:0x82218B90
 	.pdata      start:0x82218B90 end:0x82218BF0
-	.text       start:0x823E35E8 end:0x823E3618
 	.text       start:0x8251E928 end:0x8251EB38
 	.text       start:0x8251EB70 end:0x8251EBA8
 	.text       start:0x8251EBA8 end:0x8251F0C8
@@ -7707,13 +7709,11 @@ Stream.cpp:
 	.text       start:0x82712160 end:0x827121AC
 
 DirUnloader.cpp:
-	.pdata      start:0x8223AB08 end:0x8223AB10
 	.pdata      start:0x8223D578 end:0x8223D598
 	.pdata      start:0x8223D598 end:0x8223D5A0
 	.pdata      start:0x8223D5B0 end:0x8223D5D0
 	.pdata      start:0x8223D5D0 end:0x8223D608
 	.pdata      start:0x8223D608 end:0x8223D630
-	.text       start:0x8273CBAC end:0x8273CBFC
 	.text       start:0x8276C958 end:0x8276C968
 	.text       start:0x8276C968 end:0x8276CA80
 	.text       start:0x8276CA80 end:0x8276CB18
@@ -7786,12 +7786,10 @@ DisplayEvents.cpp:
 
 UITransitionHandler.cpp:
 	.pdata      start:0x8222F540 end:0x8222F548
-	.pdata      start:0x82244E10 end:0x82244E18
 	.pdata      start:0x82245C80 end:0x82245C88
 	.pdata      start:0x82245C88 end:0x82245CF8
 	.text       start:0x825A48D8 end:0x825A48E0
 	.text       start:0x826714D8 end:0x82671594
-	.text       start:0x827F23B8 end:0x827F2438
 	.text       start:0x828019A0 end:0x82801A0C
 	.text       start:0x82801A10 end:0x82801F78
 
@@ -9380,6 +9378,7 @@ network/net/NetSession.cpp:
 	.pdata      start:0x82207BE8 end:0x82207C18
 	.pdata      start:0x82207C18 end:0x82207C20
 	.pdata      start:0x82207C20 end:0x82207D28
+	.pdata      start:0x82207D28 end:0x82207D30
 	.pdata      start:0x82207D40 end:0x82207D50
 	.pdata      start:0x82207D50 end:0x82207D68
 	.pdata      start:0x82207D68 end:0x82207D70
@@ -9446,6 +9445,7 @@ network/net/NetSession.cpp:
 	.text       start:0x823E2A58 end:0x823E2C30
 	.text       start:0x823E2C30 end:0x823E2C70
 	.text       start:0x823E2C70 end:0x823E35E8
+	.text       start:0x823E35E8 end:0x823E3618
 	.text       start:0x823E3618 end:0x823E3630
 	.text       start:0x823E3790 end:0x823E38EC
 	.text       start:0x823E38EC end:0x823E3A28
@@ -10333,7 +10333,6 @@ TrackWatcherImpl.cpp:
 	.text       start:0x82480FB0 end:0x82480FBC
 	.text       start:0x82606004 end:0x82606008
 	.text       start:0x82794730 end:0x82797760
-	.text       start:0x8279B2DC end:0x8279B2E8
 	.text       start:0x8279B774 end:0x8279B778
 
 SongParser.cpp:
@@ -11654,7 +11653,6 @@ NoteTube.cpp:
 
 Faders.cpp:
 	.pdata      start:0x821FB8B0 end:0x821FB8C0
-	.pdata      start:0x822041D0 end:0x822041D8
 	.pdata      start:0x822383C8 end:0x822383D0
 	.pdata      start:0x822383D0 end:0x822383D8
 	.pdata      start:0x822383D8 end:0x822383E0
@@ -11676,7 +11674,6 @@ Faders.cpp:
 	.pdata      start:0x82238558 end:0x82238560
 	.text       start:0x822E4500 end:0x822E4508
 	.text       start:0x82310E50 end:0x82310ED0
-	.text       start:0x823A08C0 end:0x823A0914
 	.text       start:0x8270B910 end:0x8270B960
 	.text       start:0x8270B960 end:0x8270B9D0
 	.text       start:0x8270B9D0 end:0x8270BA40
@@ -12361,6 +12358,7 @@ SongDB.cpp:
 	.text       start:0x823F14C0 end:0x823F1520
 	.text       start:0x82684E40 end:0x82684E84
 	.text       start:0x82684E84 end:0x82684E90
+	.text       start:0x82684E90 end:0x82684E98
 	.text       start:0x82684E98 end:0x82684EA4
 	.text       start:0x82684EA8 end:0x82684EC8
 	.text       start:0x82684EC8 end:0x82684ED4
@@ -13382,12 +13380,14 @@ OvershellDir.cpp:
 	.pdata      start:0x821FB200 end:0x821FB208
 	.pdata      start:0x821FB220 end:0x821FB230
 	.pdata      start:0x821FB230 end:0x821FB2C8
+	.pdata      start:0x821FB2C8 end:0x821FB2D0
 	.pdata      start:0x821FB2D0 end:0x821FB300
 	.pdata      start:0x821FB300 end:0x821FB378
 	.text       start:0x8230A774 end:0x8230A780
 	.text       start:0x8230A780 end:0x8230A7D8
 	.text       start:0x8230A920 end:0x8230AA78
 	.text       start:0x8230AA78 end:0x8230B260
+	.text       start:0x8230B260 end:0x8230B2C0
 	.text       start:0x8230B2C0 end:0x8230B598
 	.text       start:0x8230B598 end:0x8230B608
 	.text       start:0x8230B608 end:0x8230B618
