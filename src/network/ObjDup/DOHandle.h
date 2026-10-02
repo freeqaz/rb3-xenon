@@ -17,6 +17,7 @@ namespace Quazal {
             return *this;
         }
 
+        unsigned int GetValue() const { return mValue; }
         unsigned int GetDOClassID() const { return (mValue & 0xFFC00000) >> 22; }
         unsigned int GetID() const {
             unsigned int uiID = mValue & 0x3FFFFF;

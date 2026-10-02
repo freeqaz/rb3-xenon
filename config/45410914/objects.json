@@ -2348,7 +2348,16 @@
             },
             "network/quazal/SessionDiscovery/Interface/SessionDiscoveryTable.cpp": "NonMatching",
             "network/quazal/PromotionRefereeDDL.cpp": "NonMatching",
-            "network/quazal/JobJoinSession.cpp": "NonMatching",
+            "network/quazal/JobJoinSession.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/JobListenOnWellKnown.cpp": "NonMatching",
             "network/quazal/Job.cpp": "NonMatching",
             "network/quazal/SessionClock/SessionClockDDL.cpp": "NonMatching",

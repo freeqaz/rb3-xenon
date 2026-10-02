@@ -60,6 +60,8 @@ namespace Quazal {
         }
         void CompleteInitialisation();
         DOHandle GetIDGenerator() const;
+        // The class's well-known object handle (retail 0x82A9A038).
+        DOHandle GetWKHandle();
 
         unsigned char m_pad4[8];
         // One policy per dataset index (retail's lookups are at +0xc).
