@@ -182,3 +182,9 @@ Run it only in your own worktree.
 - Nothing in the map, the alias file or any gate was changed. Every fix here is a
   fixture, a premise or a docstring.
 - No metric A/B: no compiled source or map row changed, so there is nothing to price.
+
+## Native gate (run last, on `246f6d1be` rebased onto `dc741ff08`)
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
