@@ -3106,18 +3106,9 @@ DataNode BandCharacter::OnSetFileMerger(DataArray *da) {
     mUseMicStandClips = false;
     if (ty != BandCharDesc::kNumInstruments) {
         if (!mGenre.Null() && !mTempo.Null()) {
-            if (ty == BandCharacter::kMic) {
-                // NOTE (laneBF-3): residual 4-instruction wall — retail
-                // materializes this bool with a branch (`clrlwi.`/`li 1`/`beq`/
-                // `mr r11,r23`) reusing the zero reg from the
-                // `mUseMicStandClips = false` above; MSVC gives us the
-                // branchless `cntlzw`/`extrwi` form for every spelling tried
-                // (`!=`, `!(==)`, `?:`, if/else). The conditional-store form
-                // `if (mGenre != "banger") mUseMicStandClips = true;` DOES
-                // reproduce the branch but cascades a whole-function r22/r23
-                // regalloc shift (99.2% -> 97.8%), so it is a net loss.
-                mUseMicStandClips = mGenre != "banger";
-            }
+            // Retail stores this unconditionally: a non-mic instrument jumps
+            // straight to the store of the zero register, a mic tests the genre.
+            mUseMicStandClips = ty == BandCharacter::kMic && mGenre != "banger";
             fp94.SetRoot(MakeString(
                 "char/main/anim/%s/body/%s/realtime_%s.milo", animinst, mGender, mGenre
             ));
