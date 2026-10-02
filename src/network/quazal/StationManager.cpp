@@ -186,8 +186,8 @@ namespace Quazal {
     class DuplicatedObject : public RootObject {
     public:
         DOHandle GetHandle() const {
-            DOID oID = m_dohMyself.GetID();
-            if (oID.m_uiValue == 0) {
+            unsigned int uiID = m_dohMyself.GetID();
+            if (uiID == 0) {
                 SystemError::SignalError(0, 0, 0xE000000E, 0);
                 return DOHandle(0);
             } else {
@@ -219,6 +219,7 @@ namespace Quazal {
     public:
         DORef(DOHandle);
         ~DORef();
+        DOHandle GetReferencedHandle() const { return m_hReferencedDO; }
 
         DuplicatedObject *m_poReferencedDO; // 0x0
         DOHandle m_hReferencedDO; // 0x4
@@ -328,28 +329,40 @@ namespace Quazal {
         char m_pad70[0x10];
     };
 
-    class Scheduler {
+    class Scheduler;
+
+    class InstanceControlRef : public RootObject {
     public:
-        void Queue(Job *, bool);
+        char m_pad0[0xC];
+        void *m_pDelegatorInstance; // 0xc
     };
 
-    class SchedulerHolder {
+    class Core : public RootObject {
     public:
-        static SchedulerHolder *GetInstance();
+        static Core *GetInstance() {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            InstanceControlRef *inst = (InstanceControlRef *)InstanceControl::s_oInstanceTable
+                                           .GetInstanceFromVector(3, uiContext);
+            Core *pCore = inst ? (Core *)inst->m_pDelegatorInstance : 0;
+            return pCore;
+        }
         Scheduler *GetScheduler() { return m_pScheduler; }
 
         char m_pad0[8];
         Scheduler *m_pScheduler; // 0x8
     };
 
-    inline Scheduler *GetScheduler() {
-        SchedulerHolder *pHolder = SchedulerHolder::GetInstance();
-        if (pHolder == 0) {
-            return 0;
-        } else {
-            return pHolder->GetScheduler();
+    class Scheduler {
+    public:
+        static Scheduler *GetInstance() {
+            Core *inst = Core::GetInstance();
+            if (!inst)
+                return 0;
+            else
+                return inst->GetScheduler();
         }
-    }
+        void Queue(Job *, bool);
+    };
 
     class DOCallContext {
     public:
@@ -385,6 +398,8 @@ namespace Quazal {
         class ConnectionJobs : public RootObject {
         public:
             ConnectionJobs() : m_pCurrentJob(NULL), m_pPendingJob(NULL) {}
+            JobChangeConnection *GetCurrentJob() { return m_pCurrentJob; }
+            JobChangeConnection *GetPendingJob() { return m_pPendingJob; }
 
             JobChangeConnection *m_pCurrentJob; // 0x0
             JobChangeConnection *m_pPendingJob; // 0x4
@@ -503,13 +518,14 @@ namespace Quazal {
         DOHandle hStation = pJob->m_refStation.m_hReferencedDO;
         qMap<DOHandle, ConnectionJobs *>::iterator it = m_mapConnectionJobs.find(hStation);
         ConnectionJobs *pJobs = it->second;
-        if (pJob == pJobs->m_pCurrentJob) {
+        JobChangeConnection *pPending;
+        if (pJob == pJobs->GetCurrentJob()) {
             pJobs->m_pCurrentJob = NULL;
-            if (pJobs->m_pPendingJob != NULL) {
-                JobChangeConnection *pNext = pJobs->m_pPendingJob;
+            if (pJobs->GetPendingJob() != NULL) {
+                pPending = pJobs->m_pPendingJob;
                 pJobs->m_pPendingJob = NULL;
-                pJobs->m_pCurrentJob = pNext;
-                GetScheduler()->Queue(pNext, false);
+                pJobs->m_pCurrentJob = pPending;
+                Scheduler::GetInstance()->Queue(pPending, false);
             } else {
                 delete pJobs;
                 m_mapConnectionJobs.erase(it);
@@ -520,7 +536,7 @@ namespace Quazal {
     }
 
     void StationManager::ActivateJob(JobChangeConnection *pJob) {
-        DOHandle hStation = pJob->m_refStation.m_hReferencedDO;
+        DOHandle hStation = pJob->m_refStation.GetReferencedHandle();
         qMap<DOHandle, ConnectionJobs *>::iterator it = m_mapConnectionJobs.find(hStation);
         ConnectionJobs *pJobs = NULL;
         if (it != m_mapConnectionJobs.end()) {
@@ -529,15 +545,15 @@ namespace Quazal {
             pJobs = new (__FILE__, 0x81) ConnectionJobs();
             m_mapConnectionJobs[hStation] = pJobs;
         }
-        if (pJobs->m_pPendingJob != NULL) {
-            pJobs->m_pPendingJob->Cancel();
+        if (pJobs->GetPendingJob() != NULL) {
+            pJobs->GetPendingJob()->Cancel();
             pJobs->m_pPendingJob = pJob;
-        } else if (pJobs->m_pCurrentJob != NULL) {
-            pJobs->m_pCurrentJob->m_bCancelRequested = true;
+        } else if (pJobs->GetCurrentJob() != NULL) {
+            pJobs->GetCurrentJob()->m_bCancelRequested = true;
             pJobs->m_pPendingJob = pJob;
         } else {
             pJobs->m_pCurrentJob = pJob;
-            GetScheduler()->Queue(pJob, false);
+            Scheduler::GetInstance()->Queue(pJob, false);
         }
     }
 
@@ -552,7 +568,7 @@ namespace Quazal {
             return NULL;
         } else {
             ConnectionJobs *pJobs = it->second;
-            if (pJobs->m_pPendingJob != NULL) {
+            if (pJobs->GetPendingJob() != NULL) {
                 return pJobs->m_pPendingJob;
             } else {
                 return pJobs->m_pCurrentJob;
@@ -582,14 +598,16 @@ namespace Quazal {
 
     void StationManager::StateTransition(_State eState) {
         if (eState == Terminating) {
-            qMap<DOHandle, ConnectionJobs *>::iterator it = m_mapConnectionJobs.begin();
-            for (; it != m_mapConnectionJobs.end(); ++it) {
-                if (it->second->m_pCurrentJob->GetState() == 1) {
-                    DOHandle hStation = it->first;
+            ConnectionJobsMap::iterator it = m_mapConnectionJobs.begin();
+            DOHandle hStation;
+            while (it != m_mapConnectionJobs.end()) {
+                if (it->second->GetCurrentJob()->GetState() == 1) {
+                    hStation = it->first;
                     CallRegister::GetInstanceRef()->SignalRelevantFetchContextes(
                         hStation, DOCallContext::CallCancelled
                     );
                 }
+                ++it;
             }
             SelectionIteratorTemplate<Station> itStation;
             while (!itStation.EndReached()) {
@@ -621,13 +639,13 @@ namespace Quazal {
     }
 
     JobChangeConnection *StationManager::DisconnectStation(Station *pStation) {
-        JobChangeConnection *pJob = GetLatestJob(pStation->GetHandle());
-        if (pJob != NULL && pJob->GetTargetState() == 0) {
-            return pJob;
+        JobChangeConnection *pLatest = GetLatestJob(pStation->GetHandle());
+        if (pLatest != NULL && pLatest->GetTargetState() == 0) {
+            return pLatest;
         }
-        JobChangeConnection *pNewJob = new (__FILE__, 0x11F) JobDisconnectStation(pStation);
-        ActivateJob(pNewJob);
-        return pNewJob;
+        JobChangeConnection *pJob = new (__FILE__, 0x11F) JobDisconnectStation(pStation);
+        ActivateJob(pJob);
+        return pJob;
     }
 
     int StationManager::ConnectStation(DOHandle hStation) {
@@ -641,16 +659,18 @@ namespace Quazal {
         if (hStation == Station::GetLocalStation()) {
             return 0;
         }
-        if (GetTargetConnectionState(hStation) == 2) {
-            if (GetLatestJob(hStation) != NULL) {
+        int iState = GetTargetConnectionState(hStation);
+        if (iState == 2) {
+            JobChangeConnection *pLatest = GetLatestJob(hStation);
+            if (pLatest != NULL) {
                 return 2;
             } else {
                 return 0;
             }
         }
-        DORefTemplate<Station> refStation(hStation);
-        if (refStation.IsValid()
-            && (refStation->GetState() == 4 || refStation->GetState() == 5)) {
+        DORefTemplate<Station> oRef(hStation);
+        if (oRef.IsValid()
+            && (oRef->GetState() == 4 || oRef->GetState() == 5)) {
             return 1;
         }
         JobChangeConnection *pJob = new (__FILE__, 0x158) JobConnectStation(hStation);
@@ -663,11 +683,11 @@ namespace Quazal {
         if (it == m_mapConnectionJobs.end()) {
             return;
         }
-        if (it->second->m_pCurrentJob != NULL) {
-            it->second->m_pCurrentJob->Trace(uiFlags);
+        if (it->second->GetCurrentJob() != NULL) {
+            it->second->GetCurrentJob()->Trace(uiFlags);
         }
-        if (it->second->m_pPendingJob != NULL) {
-            it->second->m_pPendingJob->Trace(uiFlags);
+        if (it->second->GetPendingJob() != NULL) {
+            it->second->GetPendingJob()->Trace(uiFlags);
         }
     }
 

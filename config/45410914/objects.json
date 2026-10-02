@@ -2313,7 +2313,9 @@
                     "/Ob1",
                     "/EHs-c-",
                     "/GR-",
-                    "/DRB3_QUAZAL_RETAIL_MEMALLOCATOR"
+                    "/DRB3_QUAZAL_RETAIL_MEMALLOCATOR",
+                    "/DRB3_QUAZAL_MEMALLOCATOR_CTORS",
+                    "/DRB3_QUAZAL_MEMALLOCATOR_DTOR"
                 ]
             },
             "network/quazal/CallRegister.cpp": {
