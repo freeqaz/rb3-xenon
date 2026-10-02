@@ -6,6 +6,10 @@
 // survivor of the identical map<unsigned int, X*> instantiations and is pinned
 // with BandwidthCounter.
 //
+// The destructor (0x82B3F508) and the map's clear (0x82B3FB80) are also fold
+// survivors: other TUs' map destructors and clear() calls land on them. They
+// are left unnamed in the map so those call sites stay uncharged.
+//
 // The declarations below are local to this TU; their layouts are the ones the
 // retail code uses.
 
