@@ -23,9 +23,9 @@ BandLabel::~BandLabel() {}
 BEGIN_COPYS(BandLabel)
     COPY_SUPERCLASS(UILabel)
     CREATE_COPY(BandLabel)
-    BEGIN_COPYING_MEMBERS
-        CopyHandlerData(c);
-    END_COPYING_MEMBERS
+    // Retail calls this with no null check on c: the only test is the
+    // BandLabel* -> UITransitionHandler* adjustment (cmplwi / addi 0x214 / li 0).
+    CopyHandlerData(c);
 END_COPYS
 
 BEGIN_SAVES(BandLabel)
