@@ -258,8 +258,8 @@ bool StoreOffer::HasSong(StoreOffer const *c) const {
     // Retail (fn_82782068) reads the other offer's song id through a hoisted
     // &c->mSongsInOffer with a ternary, not a GetSingleSongID call.
     for (int i = 0; i < NumSongs(); i++) {
-        const std::vector<int> &v = c->mSongsInOffer;
         int songId = Song(i);
+        const std::vector<int> &v = c->mSongsInOffer;
         if (songId == (v.empty() ? 0 : v.front())) {
             return true;
         }
