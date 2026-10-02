@@ -382,9 +382,9 @@ namespace Quazal {
             m_pEndPoint = StationManager::GetInstance()->GetInitialEndPoint();
             if (!m_pEndPoint->IsConnected()) {
                 SetStep(JCS_STEP(SelectConnectionTechnique));
-            } else {
-                SetStep(JCS_STEP(CompleteConnection));
+                return;
             }
+            SetStep(JCS_STEP(CompleteConnection));
         } else {
             SetStep(JCS_STEP(SelectConnectionTechnique));
         }
