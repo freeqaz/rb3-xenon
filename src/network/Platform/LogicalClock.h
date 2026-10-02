@@ -1,5 +1,6 @@
 #pragma once
 #include "Platform/RootObject.h"
+#include <stdlib.h>
 
 namespace Quazal {
     template <class T>
@@ -22,4 +23,17 @@ namespace Quazal {
 
         T m_value; // 0x0
     };
+
+    template <class T>
+    int LogicalClockTmpl<T>::Compare(const LogicalClockTmpl &o) const {
+        int a = m_value;
+        int b = o.m_value;
+        if (abs(a - b) < 0x80) {
+            return a - b;
+        } else if (a < b) {
+            return (a + 0x100) - b;
+        } else {
+            return a - (b + 0x100);
+        }
+    }
 }

@@ -15,6 +15,7 @@ namespace Quazal {
         void Add(class DuplicatedObject *);
         void AddDO(class DuplicatedObject *pDO) { Add(pDO); }
         bool Remove(DOHandle);
+        bool Remove(const class DuplicatedObject *);
         const_iterator find(DOHandle h) const {
             return qMap<DOHandle, class DuplicatedObject *>::find(h);
         }

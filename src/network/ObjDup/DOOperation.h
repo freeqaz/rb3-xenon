@@ -56,6 +56,7 @@ namespace Quazal {
         virtual bool CallsBackOnDataSet(unsigned char);
 
         Message *GetMessage() const { return m_pMessage; }
+        bool IsAMaster() const { return m_bIsAMaster; }
         bool IsADuplica() const { return !m_bIsAMaster; }
 
         bool m_bIsAMaster; // 0x20
@@ -85,6 +86,8 @@ namespace Quazal {
             return static_cast<ChangeMasterStationOperation *>(pOp);
         }
         int GetContext() const { return m_eContext; }
+        DOHandle GetStation() const { return m_refStation.m_hReferencedDO; }
+        DOHandle GetNewMasterStation() const { return m_refNewMaster.m_hReferencedDO; }
         const qList<DOHandle> *GetStationList() const { return m_pStationList; }
 
         DORef m_refStation; // 0x20
@@ -94,6 +97,9 @@ namespace Quazal {
     };
 
     // Layout from the retail ctor 0x82AB48D0.
+    // Signal 7; only cast to here (its members live in the RMC code).
+    class CallMethodOperation : public DOOperation {};
+
     class UpdateDataSetOperation : public DOOperation {
     public:
         UpdateDataSetOperation(DOHandle, DuplicatedObject *, unsigned char, Message *);
@@ -141,6 +147,11 @@ namespace Quazal {
         virtual bool CallsBackOnDataSet(unsigned char);
 
         unsigned char unk20[0x14];
+
+        DOID GetDOID() const { return m_oDOID; }
+
+        MasterStationRef m_refMasterStation; // 0x20
+        DOID m_oDOID; // 0x30
     };
 
     class ChangeDupSetOperation : public DOOperation {

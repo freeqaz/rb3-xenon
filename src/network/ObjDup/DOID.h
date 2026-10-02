@@ -8,6 +8,7 @@ namespace Quazal {
         DOID(const DOID &o) : m_uiValue(o.m_uiValue) {}
 
         operator unsigned int() const { return m_uiValue; }
+        bool IsNull() const { return (unsigned int)*this == 0; }
 
         unsigned int m_uiValue; // 0x0
     };
