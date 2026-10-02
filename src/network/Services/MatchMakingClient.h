@@ -22,5 +22,9 @@ namespace Quazal {
         void SetState(ProtocolCallContext *, unsigned int, unsigned int);
         bool
         FindByID(ProtocolCallContext *, unsigned int, AnyObjectHolder<Gathering, String> *);
+
+        // sizeof 0x8C: XboxServer::Poll allocates it with `li r3, 0x8c` before the
+        // ctor at 0x82A8DDB0. The members are not identified.
+        unsigned char unk4[0x88]; // 0x4
     };
 }

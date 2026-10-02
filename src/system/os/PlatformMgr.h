@@ -248,6 +248,11 @@ public:
     // Retail 0x82514BD0 / 0x82514C18 / 0x82514C60: LocalUser forwarders to
     // the pad-number setters above. The names are ours.
     void SetUserContext(const LocalUser *, int, int) const;
+    // Retail 0x8251BF80 / 0x8251BF98: X_CONTEXT_GAME_TYPE = !ranked and
+    // X_CONTEXT_GAME_MODE = mode for one user (XboxSession::AddLocalToSession).
+    // Retail keeps no names; these are descriptive.
+    void SetRankedContext(const LocalUser *, bool) const;
+    void SetGameModeContext(const LocalUser *, int) const;
     void SetUserProperty(const LocalUser *, int, unsigned short const *) const;
     void SetUserPresence(const LocalUser *, int) const;
     void EnumerateFriends(int, std::vector<Friend *> &, Hmx::Object *);

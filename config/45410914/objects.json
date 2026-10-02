@@ -325,6 +325,7 @@
             "system/beatmatch/SlotChannelMapping.cpp": "NonMatching",
             "system/beatmatch/DrumTrackWatcherImpl.cpp": "NonMatching",
             "system/synth_xbox/FxSend.cpp": "NonMatching",
+            "system/synth_xbox/XMAReader.cpp": "NonMatching",
             "system/utl/Pool.cpp": "NonMatching",
             "system/utl/VarTimer.cpp": "NonMatching",
             "system/utl/BeatMap.cpp": "NonMatching",
@@ -2199,6 +2200,18 @@
             "network/net/SessionMessages.cpp": "NonMatching",
             "network/net/SyncStore.cpp": "NonMatching",
             "network/net/Synchronize.cpp": "NonMatching",
+            "network/net/SessionSearcher_Xbox.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
+            "network/net/NetSession_Xbox.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
             "network/net/Server.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

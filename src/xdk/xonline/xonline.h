@@ -118,6 +118,8 @@ DWORD XSessionArbitrationRegister(
 
 #define XSESSION_CREATE_HOST 0x00000001
 #define XSESSION_CREATE_USES_ARBITRATION 0x00000010
+#define XSESSION_CREATE_INVITES_DISABLED 0x00000100
+#define XSESSION_CREATE_JOIN_VIA_PRESENCE_DISABLED 0x00000200
 
 #define XONLINE_GAMERTAG_SIZE 16
 #define XONLINE_FRIENDSTATE_FLAG_SENTREQUEST 0x40000000
@@ -163,6 +165,60 @@ DWORD XStringVerify(
     STRING_VERIFY_RESPONSE *pResults,
     XOVERLAPPED *pXOverlapped
 );
+
+/* Session search and invites (XSessionSearcher, network/net/SessionSearcher_Xbox.cpp). */
+#define X_CONTEXT_GAME_TYPE 0x0000800A
+#define X_CONTEXT_GAME_MODE 0x0000800B
+
+typedef struct _XUSER_CONTEXT { /* Size=0x8 */
+    /* 0x0000 */ DWORD dwContextId;
+    /* 0x0004 */ DWORD dwValue;
+} XUSER_CONTEXT;
+
+typedef struct _XSESSION_SEARCHRESULT { /* Size=0x5c */
+    /* 0x0000 */ XSESSION_INFO info;
+    /* 0x003c */ DWORD dwOpenPublicSlots;
+    /* 0x0040 */ DWORD dwOpenPrivateSlots;
+    /* 0x0044 */ DWORD dwFilledPublicSlots;
+    /* 0x0048 */ DWORD dwFilledPrivateSlots;
+    /* 0x004c */ DWORD cProperties;
+    /* 0x0050 */ DWORD cContexts;
+    /* 0x0054 */ XUSER_PROPERTY *pProperties;
+    /* 0x0058 */ XUSER_CONTEXT *pContexts;
+} XSESSION_SEARCHRESULT;
+
+typedef struct _XSESSION_SEARCHRESULT_HEADER { /* Size=0x8 */
+    /* 0x0000 */ DWORD dwSearchResults;
+    /* 0x0004 */ XSESSION_SEARCHRESULT *pResults;
+} XSESSION_SEARCHRESULT_HEADER;
+
+DWORD XSessionSearchEx(
+    DWORD dwProcedureIndex,
+    DWORD dwUserIndex,
+    DWORD dwNumResults,
+    DWORD dwNumUsers,
+    WORD wNumProperties,
+    WORD wNumContexts,
+    XUSER_PROPERTY *pSearchProperties,
+    XUSER_CONTEXT *pSearchContexts,
+    DWORD *pcbResultsBuffer,
+    XSESSION_SEARCHRESULT_HEADER *pSearchResults,
+    XOVERLAPPED *pXOverlapped
+);
+
+/* 4-byte packed: XSessionSearcher holds one at +0x44 with its own members
+   right after it at +0x98. */
+#pragma pack(push, 4)
+typedef struct _XINVITE_INFO { /* Size=0x54 */
+    /* 0x0000 */ XUID xuidInviter;
+    /* 0x0008 */ XUID xuidInvitee;
+    /* 0x0010 */ DWORD dwTitleID;
+    /* 0x0014 */ XSESSION_INFO hostInfo;
+    /* 0x0050 */ BOOL fFromGameInvite;
+} XINVITE_INFO;
+#pragma pack(pop)
+
+DWORD XInviteGetAcceptedInfo(DWORD dwUserIndex, XINVITE_INFO *pInfo);
 
 DWORD XOnlineStartup();
 DWORD XOnlineCleanup();

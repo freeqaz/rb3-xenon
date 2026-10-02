@@ -1,12 +1,25 @@
 #pragma once
 #include "synth/StreamReader.h"
+#include "xdk/xaudio2/xmaplayback.h"
+#include <vector>
 
 class File;
 class StandardStream;
 
+// An element of XMAReader's 0x60 vector. Not identified: its non-virtual dtor
+// (retail 0x82BBB2E8, in an unpinned synth_xbox unit) frees the buffer at +0x10
+// when the flag at +0x14 says it owns it.
+class XMAReaderBlock {
+public:
+    XMAReaderBlock(int); // 0x82BBB3F0; XMAReader::Init passes 0x10000
+    ~XMAReaderBlock();
+    unsigned char unk0[0x18]; // sizeof 0x18 (`li r3, 0x18` in XMAReader::Init)
+};
+
 // RB3-360 XMA stream decoder (retail RTTI .?AVXMAReader@@ @82C75A3C).
 // Synth360::NewStreamDecoder allocates 0x74 bytes for it and constructs with
-// (File *, StandardStream *) — ctor @82B3B938 (own TU, not yet carved/ported).
+// (File *, StandardStream *). Retail .text 0x82B6A384-0x82B6B4F0; ctor 0x82B6A568.
+// Members are named from what the written bodies do with them.
 class XMAReader : public StreamReader {
 public:
     XMAReader(File *, StandardStream *);
@@ -25,10 +38,39 @@ public:
     // objects.json, so this is a declaration-accuracy fix and is metric-neutral
     // by construction -- our build emits no XMAReader vtable at all.)
 #ifdef HX_NATIVE
-    virtual
+    virtual void Init();
+#else
+    // 0x82B6AA98: parse the header out of the first read and create the XMA
+    // playback object; true once the header has been consumed.
+    bool Init();
 #endif
-        void Init();
 
-private:
-    int unk4[0x1C]; // pad to retail sizeof 0x74
+    // 0x82B6A518: the sum of the 0x24 table.
+    int TableSum() const;
+    // 0x82B6A3E8: once the outstanding read has landed, flush every stream and
+    // reposition the file on the block Seek chose. Name descriptive.
+    bool FinishSeek();
+
+    File *mFile; // 0x4
+    StandardStream *mStream; // 0x8
+    XMAPLAYBACK *mPlayback; // 0xc
+    int unk10; // 0x10
+    int mBlockSize; // 0x14
+    int unk18; // 0x18
+    int unk1c; // 0x1c
+    int unk20; // 0x20
+    std::vector<int> unk24; // 0x24
+    int unk30; // 0x30
+    std::vector<int> mSeekTable; // 0x34, ascending sample offsets
+    int mBlockOffset; // 0x40
+    int mSampleOffset; // 0x44
+    void *mPhysicalBuffers[2]; // 0x48, PhysicalFree'd
+    int unk50[2]; // 0x50
+    int unk58; // 0x58
+    int unk5c; // 0x5c
+    std::vector<XMAReaderBlock *> mBlocks; // 0x60
+    char *mReadBuffer; // 0x6c, 20000 bytes
+    bool unk70; // 0x70
+    bool unk71; // 0x71
+    bool mDone; // 0x72
 };

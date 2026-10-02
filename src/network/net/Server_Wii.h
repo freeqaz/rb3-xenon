@@ -19,7 +19,7 @@ public:
     virtual Quazal::MatchMakingClient *GetMatchMakingClient();
     virtual Quazal::CustomMatchMakingClient *GetCustomMatchMakingClient();
     virtual Quazal::ServiceClient *GetPersistentStoreClient();
-    virtual int GetCompetitionClient();
+    virtual Quazal::ServiceClient *GetCompetitionClient();
     virtual Quazal::SecureConnectionClient *GetSecureConnectionClient();
     virtual Quazal::AccountManagementClient *GetAccountManagementClient();
     virtual unsigned int GetMasterProfileID();
