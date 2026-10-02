@@ -460,9 +460,24 @@ namespace Quazal {
         virtual void AcquireRef();
         virtual void ReleaseRef();
 
-        void SetResponseMessage(Message *);
-        void ProcessResponse(Message *pResponse) { Message *pMsg = pResponse; SetResponseMessage(pMsg); }
-        void SetOutcome(DOHandle, int);
+    };
+
+    // An RMC response hands its message to the context as the user context.
+    class UserContext {
+    public:
+        UserContext(void *pPointer) : m_pPointer(pPointer) {}
+        void *m_pPointer;
+    };
+
+    // The contexts in the protocol's call register are DO call contexts
+    // (.\DOCallContext.cpp).
+    class DOCallContext : public CallContext {
+    public:
+        enum _Outcome {
+        };
+        static const char *GetOutcomeString(_Outcome);
+        void SignalResponse(UserContext);
+        void SignalOutcome(DOHandle, _Outcome);
     };
 
     // The protocol's own register of outstanding RMC calls.
@@ -671,7 +686,6 @@ namespace Quazal {
         char m_pad[0x68];
     };
 
-    const char *OutcomeToString(int);
 
     class StationURL {
     public:
@@ -1444,7 +1458,7 @@ namespace Quazal {
     void ObjDupProtocol::ProcessRMCResponse(Message *pMsg, unsigned short *pusCallID) {
         CallContext *pContext = m_oCallContextRegister.GetCallContextRef(*pusCallID);
         if (pContext != 0) {
-            pContext->ProcessResponse(pMsg);
+            static_cast<DOCallContext *>(pContext)->SignalResponse(UserContext(pMsg));
             pContext->ReleaseRef();
         }
     }
@@ -1547,7 +1561,7 @@ namespace Quazal {
             pTrace->Format(
                 "CALL_OUTCOME message for call %d. Outcome is %s",
                 usCallID,
-                OutcomeToString(eOutcome)
+                DOCallContext::GetOutcomeString((DOCallContext::_Outcome)eOutcome)
             );
         }
         if (bProcess) {
@@ -1559,7 +1573,7 @@ namespace Quazal {
     void ObjDupProtocol::ProcessCallOutcome(DOHandle hStation, unsigned short usCallID, int iOutcome) {
         CallContext *pContext = m_oCallContextRegister.GetCallContextRef(usCallID);
         if (pContext != 0) {
-            pContext->SetOutcome(hStation, iOutcome);
+            static_cast<DOCallContext *>(pContext)->SignalOutcome(hStation, (DOCallContext::_Outcome)iOutcome);
             pContext->ReleaseRef();
         }
     }

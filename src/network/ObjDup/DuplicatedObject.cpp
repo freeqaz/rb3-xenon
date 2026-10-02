@@ -388,7 +388,7 @@ namespace Quazal {
         if (op.IsARemoval()) {
             RemoveFromDuplicationSet(hStation);
             if (op.GetContext() != 0) {
-                ForgetDuplicaOn(hStation);
+                static_cast<_DO_RootDO *>(this)->RemoveFromCachedDuplicationSet_OnDuplicas(hStation);
             }
             return;
         }
