@@ -104283,6 +104283,26 @@
    "added": {
     "lane": "W16-NF 2026-10-02"
    }
+  },
+  {
+   "name": "_Copy_Construct",
+   "address": "0x822a4738",
+   "survivor": "??$_Copy_Construct@VMeshAO@OutfitConfig@@@stlpmtx_std@@YAXPAVMeshAO@OutfitConfig@@ABV12@@Z",
+   "folded": [
+    "??$_Param_Construct@VMeshAO@OutfitConfig@@V12@@stlpmtx_std@@YAXPAVMeshAO@OutfitConfig@@ABV12@@Z"
+   ],
+   "evidence": "W16-NF: survivor named in wave 2 (caller binding); after the rebase onto W16-NE the MeshAO helpers in Gem call it through STLport _Param_Construct, the usual _Param_Construct/_Copy_Construct fold.",
+   "lane": "W16-NF",
+   "admitted": [
+    {
+     "spelling": "??$_Param_Construct@VMeshAO@OutfitConfig@@V12@@stlpmtx_std@@YAXPAVMeshAO@OutfitConfig@@ABV12@@Z",
+     "lane": "W16-NF 2026-10-02",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 60 B both sides; retail carries 112 bodies of this shape, so the call sites carry the identity: retail 0x822a678c and 0x822a6824 in __uninitialized_fill_n<OutfitConfig::MeshAO*> (0x822a6750) and __uninitialized_copy<OutfitConfig::MeshAO*> (0x822a67e8) reach the survivor where our Gem.obj instantiations call this spelling."
+    }
+   ],
+   "added": {
+    "lane": "W16-NF 2026-10-02"
+   }
   }
  ]
 }
