@@ -2444,7 +2444,7 @@
  "0x8279c290": "?Handle@JoypadController@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x827e4098": "??0TrackWidget@@QAA@XZ",
  "0x827e5668": "?PushInstance@CharWidgetImp@@UAAXAAVTextInstance@@@Z",
- "0x827e5f60": "??0CharWidgetImp@@QAA@PAVRndFont@@PAVRndText@@HHW4Alignment@2@VColor32@Hmx@@3_N@Z",
+ "0x827e5f60": "??0CharWidgetImp@@QAA@PAVRndFont@@PAVRndText@@HHW4Alignment@2@VColor@Hmx@@3_N@Z",
  "0x827e6190": "?AddTextInstance@CharWidgetImp@@UAAHVTransform@@VString@@_N@Z",
  "0x824aa6e0": "?NewObject@ColorPalette@@SAPAVObject@Hmx@@XZ",
  "0x824aa768": "?NewObject@WorldCrowd@@SAPAVObject@Hmx@@XZ",

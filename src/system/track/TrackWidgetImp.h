@@ -54,7 +54,6 @@ public:
     // because macros.h force-defines MILO_DEBUG tree-wide and multiple TUs see
     // this layout via track/TrackWidget.h. Do not re-add.
 
-    NEW_OVERLOAD
     DELETE_OVERLOAD
 };
 
@@ -176,7 +175,6 @@ public:
         SetDirty(true);
     }
 
-    NEW_OVERLOAD
     DELETE_OVERLOAD
 };
 
@@ -226,7 +224,6 @@ public:
         return mText && mFont && mCharsPerInst > 0 && mMaxInstances > 0;
     }
 
-    NEW_OVERLOAD
     DELETE_OVERLOAD
 
     bool mNeedRebuild; // 0x4
@@ -255,7 +252,6 @@ public:
     virtual void DrawInstances(const ObjPtrList<RndMesh> &, int);
     virtual std::list<MeshInstance> &Instances() { return mInstances; }
 
-    NEW_OVERLOAD
     DELETE_OVERLOAD
 
     std::list<MeshInstance> mInstances; // 0x4
@@ -288,7 +284,6 @@ public:
     virtual RndMultiMesh::InstanceList &Instances();
     virtual void PushInstance(RndMultiMesh::Instance &);
 
-    NEW_OVERLOAD
     DELETE_OVERLOAD
 
     std::vector<RndMultiMesh *> mMultiMeshes; // 0x4
@@ -310,7 +305,6 @@ public:
     virtual void DrawInstances(const ObjPtrList<RndMesh> &, int);
     virtual RndMultiMesh::InstanceList &Instances() { return mInstances; }
 
-    NEW_OVERLOAD
     DELETE_OVERLOAD
 
     RndMultiMesh::InstanceList mInstances; // 0x4
