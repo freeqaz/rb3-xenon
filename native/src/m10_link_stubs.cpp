@@ -29,13 +29,10 @@
 #include "net/Net.h"
 #include "game/NetGameMsgs.h"
 
-// ===== REAL collaborator: PlayerBehavior (used by GetIndividualMultiplier) ====
-PlayerBehavior::PlayerBehavior()
-    : mCanDeployOverdrive(0), mTiltDeployBand(0), mFillsDeployBand(0),
-      mRequireAllCodas(0), mCanFreestyleGems(0), mHasSolos(0), mStreakType(),
-      mMaxMultiplier(0) {}
-void PlayerBehavior::SetStreakType(Symbol s) { mStreakType = s; }
-void PlayerBehavior::SetMaxMultiplier(int i) { mMaxMultiplier = i; }
+// PlayerBehavior: the real TU, src/band3/game/PlayerBehavior.cpp (retail
+// 0x826EEC38), is in M6_GAME_SOURCES (W16-PD). The copy that lived here was NOT
+// faithful: it defaulted mCanDeployOverdrive=0 / mStreakType=() / mMaxMultiplier=0
+// where the real ctor sets true / "default" / 2.
 
 // ===== off-path leaf stubs ===================================================
 void BandDirector::SetCharacterHideHackEnabled(bool a0)  { }

@@ -524,6 +524,8 @@ set(M6_GAME_SOURCES
     ${REPO_ROOT}/src/band3/game/Scoring.cpp
     ${REPO_ROOT}/src/band3/game/Stats.cpp
     ${REPO_ROOT}/src/band3/game/Band.cpp
+    # W16-PD: real TU replaces the hand copies in m6/m8/m10/m12_link_stubs.cpp.
+    ${REPO_ROOT}/src/band3/game/PlayerBehavior.cpp
 )
 rb3_add_executable(rb3-score2
     ${CMAKE_SOURCE_DIR}/src/main_score2.cpp

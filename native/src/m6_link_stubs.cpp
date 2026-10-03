@@ -7,8 +7,8 @@
 // it lets the object graph link without dragging the whole foreign domain. If
 // any of these were reached during scoring it would be a bug — the scoring
 // chain (AddPoints/GetMultiplier/GetIndividualMultiplier/Build*Streak/Scoring/
-// Stats) touches none of them. PlayerBehavior below is the exception: it is a
-// REAL (trivial) collaborator the scoring path uses, so it gets faithful bodies.
+// Stats) touches none of them. (PlayerBehavior, the one real collaborator the
+// scoring path uses, now links from its own src/ TU -- W16-PD.)
 #include "game/Game.h"
 #include "game/SongDB.h"
 #include "game/Band.h"
@@ -29,13 +29,10 @@
 #include "net/Net.h"
 #include "game/NetGameMsgs.h"
 
-// ===== REAL collaborator: PlayerBehavior (used by GetIndividualMultiplier) ====
-PlayerBehavior::PlayerBehavior()
-    : mCanDeployOverdrive(0), mTiltDeployBand(0), mFillsDeployBand(0),
-      mRequireAllCodas(0), mCanFreestyleGems(0), mHasSolos(0), mStreakType(),
-      mMaxMultiplier(0) {}
-void PlayerBehavior::SetStreakType(Symbol s) { mStreakType = s; }
-void PlayerBehavior::SetMaxMultiplier(int i) { mMaxMultiplier = i; }
+// PlayerBehavior: the real TU, src/band3/game/PlayerBehavior.cpp (retail
+// 0x826EEC38), is in M6_GAME_SOURCES (W16-PD). The copy that lived here was NOT
+// faithful: it defaulted mCanDeployOverdrive=0 / mStreakType=() / mMaxMultiplier=0
+// where the real ctor sets true / "default" / 2.
 
 // ===== off-path leaf stubs (auto-generated signatures) =======================
 void BandDirector::SetCharacterHideHackEnabled(bool a0)  { }
