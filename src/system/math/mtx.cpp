@@ -60,8 +60,8 @@ void Multiply(const Hmx::Matrix3 &a, const Hmx::Matrix3 &b, Hmx::Matrix3 &out) {
         Multiply(a.y, b, y);
         Multiply(a.z, b, z);
         out.x = x;
-        out.y = y;
         out.z = z;
+        out.y = y;
     }
 }
 
