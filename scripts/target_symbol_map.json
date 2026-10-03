@@ -2258,7 +2258,7 @@
  "0x8242ede0": "?UpdateBlendPrevious@RndPostProc@@IAAXXZ",
  "0x823a2150": "?resize@?$ObjVector@VHide@CharMeshHide@@@@QAAXI@Z",
  "0x822f6168": "?DeactivateVolume@VocalTrackDir@@QAAXW4VocalParam@@@Z",
- "0x8238d1c0": "?SetLipSync@CharLipSyncDriver@@QAA_NPAVCharLipSync@@@Z",
+ "0x8238d1c0": "?SetLipSync@CharLipSyncDriver@@QAAXPAVCharLipSync@@@Z",
  "0x8227b118": "?NewObject@BandConfiguration@@SAPAVObject@Hmx@@XZ",
  "0x8227b2e0": "?NewObject@BandSongPref@@SAPAVObject@Hmx@@XZ",
  "0x8227b4a8": "?NewObject@BandFaceDeform@@SAPAVObject@Hmx@@XZ",

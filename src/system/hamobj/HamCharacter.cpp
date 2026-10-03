@@ -388,7 +388,11 @@ void HamCharacter::EnableFacialAnimation(CharLipSync *sync, float f2) {
     mBaseLipsyncOffset = f2;
     CharLipSyncDriver *driver = Find<CharLipSyncDriver>("face.lipdrv", false);
     if (sync && driver) {
-        if (!driver->SetLipSync(sync)) {
+        // CharLipSyncDriver::SetLipSync returns void (as in RB3 retail); it
+        // syncs only when the lipsync changes, so sync here when it did not.
+        bool changed = driver->LipSync() != sync;
+        driver->SetLipSync(sync);
+        if (!changed) {
             driver->Sync();
         }
         driver->SetSongOffset(f2);
