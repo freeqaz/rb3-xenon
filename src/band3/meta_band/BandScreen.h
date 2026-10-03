@@ -6,7 +6,8 @@
 class BandScreen : public UIScreen {
 public:
     BandScreen() {}
-    virtual ~BandScreen() {}
+    // No user-declared destructor: retail ~BandScreen (implicit) does not
+    // re-store the vptr before ~UIScreen, which a user-declared one does.
     OBJ_CLASSNAME(BandScreen);
     OBJ_SET_TYPE(BandScreen);
     virtual DataNode Handle(DataArray *, bool);

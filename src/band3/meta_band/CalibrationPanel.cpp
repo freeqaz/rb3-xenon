@@ -247,7 +247,8 @@ void CalibrationPanel::UpdateLabel() {
 
 void CalibrationPanel::UpdateProgress(bool b) {
     RndTransAnim *tabanim = mDir->Find<RndTransAnim>("prog_bar_tab.tnm", true);
-    RndTransAnim *boneanim = mDir->Find<RndTransAnim>("bone_prog_bar.tnm", true);
+    ObjectDir *dir = mDir;
+    RndTransAnim *boneanim = dir->Find<RndTransAnim>("bone_prog_bar.tnm", true);
     float progress = (float)mTestSamples.size();
     float maxProgress;
     if (b) {

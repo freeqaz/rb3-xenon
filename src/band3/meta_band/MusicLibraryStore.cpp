@@ -171,17 +171,18 @@ void MusicLibraryStore::ParseOffers(DataArray *data, std::vector<StoreOffer *> &
     DeleteAll(offers);
     for (int i = 1; i < arr->Size(); i++) {
         StoreOffer *offer = new StoreOffer(arr->Array(i), &TheSongMgr);
-        // Residual (88.9): retail lays the single merged `delete` block out right
-        // after the IsTest test and the ValidTitle test after it; ours lands
-        // between ValidTitle and push_back. `||`, `&&` and if/else-if spellings
-        // were tried; this one is closest.
+        // Two early-`continue` arms: retail keeps the IsTest arm's delete in place
+        // and the ValidTitle arm's delete is tail-merged into it (its beq jumps
+        // back to that block).
         if (offer->IsTest()) {
             delete offer;
-        } else if (!offer->ValidTitle()) {
-            delete offer;
-        } else {
-            offers.push_back(offer);
+            continue;
         }
+        if (!offer->ValidTitle()) {
+            delete offer;
+            continue;
+        }
+        offers.push_back(offer);
     }
     data->Release();
 }

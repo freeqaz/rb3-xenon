@@ -186,7 +186,9 @@ void AssetProvider::Update(AssetType assetType, AssetBoutique assetBoutique) {
 
 UIComponent::State
 AssetProvider::ComponentStateOverride(int, int idx, UIComponent::State state) const {
-    if (!mProfile->mProfileAssets.HasAsset(mAssets[idx])) {
+    ProfileAssets &assets = mProfile->mProfileAssets;
+    Symbol asset = mAssets[idx];
+    if (!assets.HasAsset(asset)) {
         return UIComponent::kDisabled;
     }
     return state;

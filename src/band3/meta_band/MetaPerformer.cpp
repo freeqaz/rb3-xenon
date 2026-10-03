@@ -788,7 +788,7 @@ void MetaPerformer::UpdateLastOfflineScores(Symbol s, const BandStatsInfo &info)
 void MetaPerformer::SaveAndUploadScores(
     std::vector<LocalBandUser *> &users, Symbol s, const BandStatsInfo &info
 ) {
-    if (users.size() == 0)
+    if (users.size() <= 0)
         return;
     if (!TheGame->IsInvalidScore()) {
         // Retail builds this dispatch Symbol as a FUNCTION-LOCAL STATIC, not the
@@ -825,8 +825,8 @@ void MetaPerformer::SaveAndUploadScores(
                     s.Str()
                 );
             }
-            if (TheNet.GetServer() && TheNet.GetServer()->IsConnected()
-                && !scores.empty()) {
+            Server *server = TheNet.GetServer();
+            if (server && server->IsConnected() && !scores.empty()) {
                 mHasOnlineScoring = true;
                 int id = unk338++;
                 unk33c = id;
