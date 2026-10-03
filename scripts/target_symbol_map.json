@@ -5550,7 +5550,7 @@
  "0x822b7ab8": "?Handle@BandCamShot@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x822b7ac8": "??4?$ObjList@UTarget@BandCamShot@@@@QAAXABV0@@Z",
  "0x822b7b38": "??$?5VOldTrigger@@V?$StlNodeAlloc@VOldTrigger@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VOldTrigger@@V?$StlNodeAlloc@VOldTrigger@@@stlpmtx_std@@@stlpmtx_std@@@Z",
- "0x822b7ba8": "??$_Destroy_Range@V?$reverse_iterator@PAVSingerStats@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSingerStats@@@0@0@Z",
+ "0x822b7ba8": "?_M_create_node@?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABVKeyFrame@EventAnim@@@Z",
  "0x822b7c20": "?Copy@BandCamShot@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
  "0x822b7cc0": "?erase@?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VKeyFrame@EventAnim@@U?$_Nonconst_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@2@U32@0@Z",
  "0x822b7d30": null,
