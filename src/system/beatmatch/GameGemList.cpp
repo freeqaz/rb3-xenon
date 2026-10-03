@@ -22,13 +22,13 @@ __unguarded_partition<GameGem *, GameGem, less<GameGem> >(
     GameGem *__first,
     GameGem *__last,
     GameGem __pivot,
-    less<GameGem>
+    less<GameGem> __comp
 ) {
     for (;;) {
-        while (__first->mMs < __pivot.mMs)
+        while (__comp(*__first, __pivot))
             ++__first;
         --__last;
-        while (__pivot.mMs < __last->mMs)
+        while (__comp(__pivot, *__last))
             --__last;
         if (!(__first < __last))
             return __first;
@@ -41,11 +41,11 @@ template <>
 void __unguarded_linear_insert<GameGem *, GameGem, less<GameGem> >(
     GameGem *__last,
     GameGem __val,
-    less<GameGem>
+    less<GameGem> __comp
 ) {
     GameGem *__next = __last;
     --__next;
-    while (__val.mMs < __next->mMs) {
+    while (__comp(__val, *__next)) {
         *__last = *__next;
         __last = __next;
         --__next;
