@@ -310,6 +310,9 @@ set(META_SONG_SOURCES
 set(M1_SOURCES
     ${REPO_ROOT}/src/band3/meta_band/BandSongMgr.cpp
     ${REPO_ROOT}/src/band3/meta_band/BandSongMetadata.cpp
+    # W16-PD: real TrackTypeToSym (was a weak no-op in m1_link_stubs.s).
+    ${REPO_ROOT}/src/system/beatmatch/TrackType.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongUpgradeMgr.cpp
 )
 
 rb3_add_executable(rb3-song
@@ -377,7 +380,8 @@ target_link_libraries(rb3-midi PRIVATE Threads::Threads ZLIB::ZLIB)
 # M2 MIDI cluster (MidiReader drives SongParser; MidiParserMgr fires the gem
 # branch). BeatMatchUtl / SongInfoCopy come in via M3_SOURCES; the rest of
 # beatmatch/ (BeatMatcher, TrackWatcher*, controllers) is NOT on the parse path
-# needs no stubs (m3_link_stubs.s / m3b_link_stubs.s were empty; deleted, W16-PD).
+# and needs no stubs (m3_link_stubs.s / m3b_link_stubs.s were empty; deleted,
+# W16-PD).
 set(M3_SOURCES
     ${REPO_ROOT}/src/system/beatmatch/SongParser.cpp
     ${REPO_ROOT}/src/system/beatmatch/GameGem.cpp

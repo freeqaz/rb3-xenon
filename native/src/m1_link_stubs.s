@@ -9,12 +9,6 @@
 
 .text
 // TrackTypeToSym(TrackType)
-.weak _Z14TrackTypeToSym9TrackType
-.type _Z14TrackTypeToSym9TrackType,@function
-_Z14TrackTypeToSym9TrackType:
-    xorq %rax, %rax
-    ret
-
 // AllowedToAccessContent(int)
 .weak _Z22AllowedToAccessContenti
 .type _Z22AllowedToAccessContenti,@function
@@ -61,34 +55,6 @@ _ZN10UIEventMgr12TriggerEventE6SymbolP9DataArray:
 .weak _ZN11RockCentral18SyncAvailableSongsERKSt6vectorIP11BandProfileSaIS2_EERKS0_IiSaIiEESA_PN3Hmx6ObjectE
 .type _ZN11RockCentral18SyncAvailableSongsERKSt6vectorIP11BandProfileSaIS2_EERKS0_IiSaIiEESA_PN3Hmx6ObjectE,@function
 _ZN11RockCentral18SyncAvailableSongsERKSt6vectorIP11BandProfileSaIS2_EERKS0_IiSaIiEESA_PN3Hmx6ObjectE:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeMgr::ClearCachedContent()
-.weak _ZN14SongUpgradeMgr18ClearCachedContentEv
-.type _ZN14SongUpgradeMgr18ClearCachedContentEv,@function
-_ZN14SongUpgradeMgr18ClearCachedContentEv:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeMgr::ClearSongCacheNeedsWrite()
-.weak _ZN14SongUpgradeMgr24ClearSongCacheNeedsWriteEv
-.type _ZN14SongUpgradeMgr24ClearSongCacheNeedsWriteEv,@function
-_ZN14SongUpgradeMgr24ClearSongCacheNeedsWriteEv:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeMgr::ReadCachedMetadataFromStream(BinStream&, int)
-.weak _ZN14SongUpgradeMgr28ReadCachedMetadataFromStreamER9BinStreami
-.type _ZN14SongUpgradeMgr28ReadCachedMetadataFromStreamER9BinStreami,@function
-_ZN14SongUpgradeMgr28ReadCachedMetadataFromStreamER9BinStreami:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeMgr::SongUpgradeMgr()
-.weak _ZN14SongUpgradeMgrC1Ev
-.type _ZN14SongUpgradeMgrC1Ev,@function
-_ZN14SongUpgradeMgrC1Ev:
     xorq %rax, %rax
     ret
 
@@ -166,76 +132,6 @@ _ZNK14BandMachineMgr15GetLocalMachineEv:
 .weak _ZNK14BandMachineMgr23IsSongAllowedToHavePartEi6Symbol
 .type _ZNK14BandMachineMgr23IsSongAllowedToHavePartEi6Symbol,@function
 _ZNK14BandMachineMgr23IsSongAllowedToHavePartEi6Symbol:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeMgr::HasUpgrade(int) const
-.weak _ZNK14SongUpgradeMgr10HasUpgradeEi
-.type _ZNK14SongUpgradeMgr10HasUpgradeEi,@function
-_ZNK14SongUpgradeMgr10HasUpgradeEi:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeMgr::ContentName(int) const
-.weak _ZNK14SongUpgradeMgr11ContentNameEi
-.type _ZNK14SongUpgradeMgr11ContentNameEi,@function
-_ZNK14SongUpgradeMgr11ContentNameEi:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeMgr::UpgradeData(int) const
-.weak _ZNK14SongUpgradeMgr11UpgradeDataEi
-.type _ZNK14SongUpgradeMgr11UpgradeDataEi,@function
-_ZNK14SongUpgradeMgr11UpgradeDataEi:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeMgr::SongCacheNeedsWrite() const
-.weak _ZNK14SongUpgradeMgr19SongCacheNeedsWriteEv
-.type _ZNK14SongUpgradeMgr19SongCacheNeedsWriteEv,@function
-_ZNK14SongUpgradeMgr19SongCacheNeedsWriteEv:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeMgr::WriteCachedMetadataToStream(BinStream&) const
-.weak _ZNK14SongUpgradeMgr27WriteCachedMetadataToStreamER9BinStream
-.type _ZNK14SongUpgradeMgr27WriteCachedMetadataToStreamER9BinStream,@function
-_ZNK14SongUpgradeMgr27WriteCachedMetadataToStreamER9BinStream:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeData::RealBassTuning(int) const
-.weak _ZNK15SongUpgradeData14RealBassTuningEi
-.type _ZNK15SongUpgradeData14RealBassTuningEi,@function
-_ZNK15SongUpgradeData14RealBassTuningEi:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeData::RealGuitarTuning(int) const
-.weak _ZNK15SongUpgradeData16RealGuitarTuningEi
-.type _ZNK15SongUpgradeData16RealGuitarTuningEi,@function
-_ZNK15SongUpgradeData16RealGuitarTuningEi:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeData::Rank(Symbol) const
-.weak _ZNK15SongUpgradeData4RankE6Symbol
-.type _ZNK15SongUpgradeData4RankE6Symbol,@function
-_ZNK15SongUpgradeData4RankE6Symbol:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeData::HasPart(Symbol) const
-.weak _ZNK15SongUpgradeData7HasPartE6Symbol
-.type _ZNK15SongUpgradeData7HasPartE6Symbol,@function
-_ZNK15SongUpgradeData7HasPartE6Symbol:
-    xorq %rax, %rax
-    ret
-
-// SongUpgradeData::MidiFile() const
-.weak _ZNK15SongUpgradeData8MidiFileEv
-.type _ZNK15SongUpgradeData8MidiFileEv,@function
-_ZNK15SongUpgradeData8MidiFileEv:
     xorq %rax, %rax
     ret
 
