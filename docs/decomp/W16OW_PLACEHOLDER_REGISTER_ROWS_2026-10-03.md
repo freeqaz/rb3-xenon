@@ -95,7 +95,14 @@ pairing. Three rows / 964 B here; the same shape may sit in other register-only 
 ## 4. Gates
 
 On the final rebased tip, after a full build: the classifier re-run in §1, and the native gate, run last on the final
-code (result appended below).
+code:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+Only this docs-only commit follows the gate. The branch touches no map, splits, `symbols.txt`, `obj/Object.h` or
+`os/Debug.h`, and none of the files W16-OT edited.
 
 ## 5. Not done
 
