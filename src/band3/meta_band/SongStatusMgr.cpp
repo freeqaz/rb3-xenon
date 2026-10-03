@@ -383,11 +383,12 @@ bool SongStatusMgr::UpdateSongStats(
     ScoreType ty, Difficulty diff, const PerformerStatsInfo &stats, SongStatus *songStatus
 ) {
     MILO_ASSERT(songStatus, 0x409);
-    bool updated = songStatus->UpdateStars(ty, diff, stats.mStars);
-    if (updated) {
+    bool updated = false;
+    bool starsUpdated = songStatus->UpdateStars(ty, diff, stats.mStars);
+    if (starsUpdated) {
         UpdateCachedTotalStars(ty);
     }
-    updated = updated != 0;
+    updated |= starsUpdated;
     updated |= songStatus->UpdateAccuracy(ty, diff, stats.mAccuracy);
     updated |= songStatus->UpdateStreak(ty, diff, stats.mStreak);
     if (ty == kScoreVocals || ty == kScoreHarmony) {

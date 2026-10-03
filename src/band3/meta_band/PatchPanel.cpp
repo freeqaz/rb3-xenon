@@ -77,8 +77,11 @@ inline RndMat *LayerProvider::GetMatForData(int idx) const {
         Scale(v98, scale, tf.m);
     }
     Multiply(m74, tf.m, tf.m);
-    curMat->SetTexGen(kTexGenXfm);
-    curMat->SetTexWrap(kTexBorderBlack);
+    // Retail stores mTexGen (0x44) and mTexWrap (0x48) raw: the only
+    // `mDirty |= 2` in this function is SetTexXfm's, after the memcpy.
+    // SetTexGen/SetTexWrap would add a second read-modify-write before it.
+    curMat->mTexGen = kTexGenXfm;
+    curMat->mTexWrap = kTexBorderBlack;
     curMat->SetTexXfm(tf);
     return curMat;
 }
