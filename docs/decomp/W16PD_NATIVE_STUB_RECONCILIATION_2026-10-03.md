@@ -188,8 +188,8 @@ Everything else in the inventory is **unreached**, measured, not assumed.
   init line removed; zero behavioural value), the 116 redundant explicit
   instantiations in native_link_glue (instantiations of *real* templates, not
   stubs), the 89 dead XDK shims (platform API surface).
-- **`Character::RemoveFromPoll`** (x7): no body in this tree; rb3-Wii has the
-  one-liner `VectorRemove(mPolls, poll)`. Unreached on every run (rb3-render
+- **`Character::RemoveFromPoll`** (x7): no body in this tree; the expected body is
+  the one-liner `VectorRemove(mPolls, poll)`. Unreached on every run (rb3-render
   included), so not written; the retail address was not identified.
 - **`ObjOwnerPtr` `operator<<`**: the permanent fix (definition in
   `ObjPtr_p.h` under `HX_NATIVE`) would retire ~29 hand instantiations; not
