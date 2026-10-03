@@ -111,7 +111,21 @@
   "derangement control at exactly 0. Zero overlap with the 71 hand-adjudicated",
   "restorations of 72ed4634, which consensus independently confirms 70/71.",
   "Run of record: decomp-bench archive/runs/2026-08-20-alias-partition-preland/",
-  "COMDAT-IDENTITY TIER (CF, lane R, 2026-08-12) -- like the FOLD-THUNK tier below, these groups have BOTH spellings map-resident, deliberately: target_symbol_map.json is a VA->name FUNCTION over an ICF-folded link and can name a fold class only once. The difference from FT is the comparator, not the claim: CF compares the words our COFF relocation table does not relocate as FULL 32-bit values instead of masking every relocation-CAPABLE field, and REFUSES rather than accepts a 16-bit-immediate relocation, whose target a linked image cannot name. Every CF group is one survivor address; a spelling admitted against two addresses was refused at both. See docs/plans/comdat-fold-gate-2026-08-12.md."
+  "COMDAT-IDENTITY TIER (CF, lane R, 2026-08-12) -- like the FOLD-THUNK tier below, these groups have BOTH spellings map-resident, deliberately: target_symbol_map.json is a VA->name FUNCTION over an ICF-folded link and can name a fold class only once. The difference from FT is the comparator, not the claim: CF compares the words our COFF relocation table does not relocate as FULL 32-bit values instead of masking every relocation-CAPABLE field, and REFUSES rather than accepts a 16-bit-immediate relocation, whose target a linked image cannot name. Every CF group is one survivor address; a spelling admitted against two addresses was refused at both. See docs/plans/comdat-fold-gate-2026-08-12.md.",
+  "",
+  "==== 2026-10-03, lane W16-OS: SURVIVOR == THE MAP'S NAME AT THE ADDRESS (enforced) ====",
+  "A placed group renders [survivor, *folded] as ONE objdiff bucket at `address`, and the",
+  "retail target objs spell that address with target_symbol_map.json's name. So `survivor`",
+  "is NOT a free label: it must BE that name (or the fn_/lbl_ placeholder when the map names",
+  "nothing there). 186 placed groups had drifted (W16-OA counted 228 at d792b486f) because",
+  "map renames never touched this file; their folded members forgave nothing, or forgave",
+  "against the wrong function, and every chase keyed on `survivor` read the wrong body.",
+  "All 186 were relabelled by tools/alias_survivor_relabel.py, which re-chases every",
+  "membership against the body at the address and records each verdict in the group's",
+  "`rechase_w16os` list (old label kept under `relabelled`). tools/alias_survivor_drift.py",
+  "now FAILS THE BUILD on drift (in-graph edge gating the report) and --validate on it.",
+  "After a map rename, run: python3 tools/alias_survivor_relabel.py --write",
+  "Findings: docs/decomp/W16OS_ALIAS_SURVIVOR_RELABEL_2026-10-03.md"
  ],
  "groups": [
   {
