@@ -37,6 +37,7 @@ CATEGORY_ROWS = [
     ("engine", "Milo engine (`src/system/`)"),
     ("network", "Quazal network (`src/network/`)"),
     ("thirdparty", "Third-party libs (vendored under `src/system/`)"),
+    ("sdk", "Xbox 360 SDK (`src/xdk/`)²"),
 ]
 
 
@@ -54,6 +55,17 @@ def fn_cell(matched: int, total: int) -> str:
     return f"{matched:,} / {total:,} ({pct(matched, total):.1f}%)"
 
 
+def ruler(report: dict) -> str:
+    # provenance.diff_config is a list of "key=value" strings written by the
+    # grading run itself; the ruler changes byte figures by ~8 pp, so the
+    # table names it rather than leaving it implied.
+    for kv in (report.get("provenance") or {}).get("diff_config") or []:
+        key, _, val = kv.partition("=")
+        if key == "functionRelocDiffs":
+            return val
+    return "unknown"
+
+
 def build_table(report: dict, as_of: datetime.date) -> str:
     m = report["measures"]
     total_fns = m["total_functions"]
@@ -62,12 +74,12 @@ def build_table(report: dict, as_of: datetime.date) -> str:
     matched_code = int(m["matched_code"])
 
     lines = [
-        f"As of **{as_of.isoformat()}**:",
+        f"As of **{as_of.isoformat()}** (all figures on the **`{ruler(report)}`** ruler):",
         "",
         "| Area | Functions matched | Code bytes | Progress |",
         "|---|---:|---:|:---|",
         f"| **Whole binary** | **{fn_cell(matched_fns, total_fns)}** "
-        f"| **{pct(matched_code, total_code):.1f}%** | {bar(pct(matched_fns, total_fns))} |",
+        f"| **{pct(matched_code, total_code):.2f}%** | {bar(pct(matched_fns, total_fns))} |",
     ]
 
     by_id = {c["id"]: c["measures"] for c in report.get("categories", [])}
@@ -79,7 +91,7 @@ def build_table(report: dict, as_of: datetime.date) -> str:
         ccode, cmcode = int(cm.get("total_code", 0)), int(cm.get("matched_code", 0))
         lines.append(
             f"| {label} | {fn_cell(cmfns, cfns)} "
-            f"| {pct(cmcode, ccode):.1f}% | {bar(pct(cmfns, cfns))} |"
+            f"| {pct(cmcode, ccode):.2f}% | {bar(pct(cmfns, cfns))} |"
         )
 
     # Units carrying no progress_categories = the unattributed remainder
