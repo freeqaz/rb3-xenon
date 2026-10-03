@@ -6913,9 +6913,7 @@
    "name": "clear",
    "address": "0x82597098",
    "survivor": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VSetlistRecord@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@VSetlistRecord@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@VSetlistRecord@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VSetlistRecord@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
-   "folded": [
-    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 32, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 3 census sites over 1 functions.",
    "relabelled": {
     "from": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
@@ -6931,6 +6929,30 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x82597098, ?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VSetlist | ours ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_ (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-OU 2026-10-03",
+     "class": "CALLEE_LOCATED_ELSEWHERE_W16OU",
+     "evidence": "chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U? @ 0x82597098, ?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?) fails at callee: retail ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@ @ 0x825962a8 vs ours ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@. retail calls our callee ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@ at 0x82768f98 (2 path(s), e.g. ??1SongRecord@@UAA@XZ <- ?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpm); retail's body there (92 B) differs from retail's ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@st at 0x825962a8 (88 B). Retail holds both callee bodies and they differ, so the body at 0x82597098 is not this member's."
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:CALLSITE",
+     "callee_home": "0x82768f98",
+     "evidence": "chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U? @ 0x82597098, ?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?) fails at callee: retail ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@ @ 0x825962a8 vs ours ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@. retail calls our callee ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@ at 0x82768f98 (2 path(s), e.g. ??1SongRecord@@UAA@XZ <- ?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpm); retail's body there (92 B) differs from retail's ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@st at 0x825962a8 (88 B). Retail holds both callee bodies and they differ, so the body at 0x82597098 is not this member's.",
+     "member_home": null,
+     "member_how": "CALLSITE-UNCHASED",
+     "member_evidence": "retail call sites: 2 path(s), all to 0x827690d0; e.g. ??1SongRecord@@UAA@XZ[PAIRED]",
+     "disposition": "withdrawn"
     }
    ]
   },
@@ -10295,6 +10317,18 @@
      "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
      "evidence": "tools/icf_pair_adjudicate.chase(?insert@?$list@UEventSink@MsgSource@@V?$StlNodeAlloc@UEventSink@MsgSou @ 0x82767518, ?insert@?$list@UEventSink@MsgSinks@@V?$StlNodeAlloc@UEventSink@MsgSink): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?_M_create_node@?$list@UEventSink@MsgSource@@V?$StlNodeAlloc@UEventSink@MsgSource@@@stlpmt | ours ?_M_create_node@?$list@UEventSink@MsgSinks@@V?$StlNodeAlloc@UEventSink@MsgSinks@@@stlpmtx_ (same operation, our callee not proven at a retail address of its own)"
     }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?insert@?$list@UEventSink@MsgSinks@@V?$StlNodeAlloc@UEventSink@MsgSinks@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UEventSink@MsgSinks@@U?$_Nonconst_traits@UEventSink@MsgSinks@@@stlpmtx_std@@@2@U32@ABUEventSink@MsgSinks@@@Z",
+     "role": "old-label",
+     "w16os": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
    ]
   },
   {
@@ -12183,6 +12217,22 @@
      "disposition": "map name at 0x824a07a0 (not a member here)",
      "evidence": "tools/icf_pair_adjudicate.chase(?insert@?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlp @ 0x82749630, ?insert@?$list@UProxyCall@EventTrigger@@V?$StlNodeAlloc@UProxyCall@Eve): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?_M_create_node@?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_std@@@st | ours ?_M_create_node@?$list@UProxyCall@EventTrigger@@V?$StlNodeAlloc@UProxyCall@EventTrigger@@@ (same operation, our callee not proven at a retail address of its own)"
     }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?insert@?$list@UProxyCall@EventTrigger@@V?$StlNodeAlloc@UProxyCall@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UProxyCall@EventTrigger@@U?$_Nonconst_traits@UProxyCall@EventTrigger@@@stlpmtx_std@@@2@U32@ABUProxyCall@EventTrigger@@@Z",
+     "role": "old-label",
+     "w16os": "map name at 0x824a07a0 (not a member here)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:CALLSITE",
+     "callee_home": "0x824a0430",
+     "evidence": "chase(?insert@?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptT @ 0x82749630, ?insert@?$list@UProxyCall@EventTrigger@@V?$StlNodeAlloc@UPro) fails at callee: retail ?_M_create_node@?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar @ 0x82749550 vs ours ?_M_create_node@?$list@UProxyCall@EventTrigger@@V?$StlNodeAl. retail calls our callee ?_M_create_node@?$list@UProxyCall@EventTrigger@@V?$StlNodeAl at 0x824a0430 (1 path(s), e.g. ?insert@?$list@UProxyCall@EventTrigger@@V?$StlNode); retail's body there (72 B) differs from retail's ?_M_create_node@?$list@UVar@ScriptTask@@V?$StlNode at 0x82749550 (72 B). Retail holds both callee bodies and they differ, so the body at 0x82749630 is not this member's.",
+     "member_home": "0x824a07a0",
+     "member_how": "BODY",
+     "member_evidence": "locate_retail: exactly one retail body (0x824a07a0) chases PROVEN clean",
+     "disposition": "record only (map name at 0x824a07a0)"
+    }
    ]
   },
   {
@@ -12940,6 +12990,12 @@
      "w9d_confirmed": "NEEDS_SOURCE",
      "w9d_note": "W9-D re-adjudicated this membership on RETAIL BYTES and the withdrawal STANDS; the live membership it contradicted has now been removed from `folded`. Not adjudicable: our build has no body for this spelling ('absent'), so no retail-byte evidence can license it. Measured to forgive 0 B today, so enacting the withdrawal is free; re-admit via the override mechanism if source later lands AND the fold is proven on retail bytes.",
      "w9d_lane": "W9-D 2026-09-13"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndAnimatable@@U?$_Nonconst_traits@PAVRndAnimatable@@@stlpmtx_std@@@2@U32@ABQAVRndAnimatable@@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "chase(?insert@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTa @ 0x822b1f90, ?insert@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnima) fails at callee: retail ?_M_create_node@?$list@VTargetCache@BandCamShot@@V?$StlNodeA @ 0x822b12b0 vs ours ?_M_create_node@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAV. our callee ?_M_create_node@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimata PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only. Retail holds both callee bodies and they differ, so the body at 0x822b1f90 is not this member's."
     }
    ],
    "repair": {
@@ -12970,7 +13026,13 @@
       "spelling": "?insert@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndAnimatable@@U?$_Nonconst_traits@PAVRndAnimatable@@@stlpmtx_std@@@2@U32@ABQAVRndAnimatable@@@Z",
       "lane": "W16-OS 2026-10-03",
       "verdict": "UNDECIDABLE",
-      "evidence": "tools/icf_pair_adjudicate.chase(?insert@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTargetCache@ @ 0x822b1f90, ?insert@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@st): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?_M_create_node@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTargetCache@BandCamShot@ | ours ?_M_create_node@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@ (same operation, our callee not proven at a retail address of its own)"
+      "evidence": "tools/icf_pair_adjudicate.chase(?insert@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTargetCache@ @ 0x822b1f90, ?insert@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@st): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?_M_create_node@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTargetCache@BandCamShot@ | ours ?_M_create_node@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@ (same operation, our callee not proven at a retail address of its own)",
+      "resolved_w16ou": {
+       "verdict": "REFUTED",
+       "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+       "member_home": "0x823d14c0",
+       "evidence": "chase(?insert@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTa @ 0x822b1f90, ?insert@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnima) fails at callee: retail ?_M_create_node@?$list@VTargetCache@BandCamShot@@V?$StlNodeA @ 0x822b12b0 vs ours ?_M_create_node@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAV. our callee ?_M_create_node@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimata PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only. Retail holds both callee bodies and they differ, so the body at 0x822b1f90 is not this member's."
+      }
      }
     ]
    },
@@ -12982,6 +13044,22 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
      "evidence": "tools/icf_pair_adjudicate.chase(?insert@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTargetCache@ @ 0x822b1f90, ?insert@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@st): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?_M_create_node@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTargetCache@BandCamShot@ | ours ?_M_create_node@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@ (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?insert@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndAnimatable@@U?$_Nonconst_traits@PAVRndAnimatable@@@stlpmtx_std@@@2@U32@ABQAVRndAnimatable@@@Z",
+     "role": "old-label",
+     "w16os": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+     "callee_home": "0x82520150",
+     "evidence": "chase(?insert@?$list@VTargetCache@BandCamShot@@V?$StlNodeAlloc@VTa @ 0x822b1f90, ?insert@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnima) fails at callee: retail ?_M_create_node@?$list@VTargetCache@BandCamShot@@V?$StlNodeA @ 0x822b12b0 vs ours ?_M_create_node@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAV. our callee ?_M_create_node@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimata PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only. Retail holds both callee bodies and they differ, so the body at 0x822b1f90 is not this member's.",
+     "member_home": "0x823d14c0",
+     "member_how": "BODY",
+     "member_evidence": "locate_retail: exactly one retail body (0x823d14c0) chases PROVEN clean",
+     "disposition": "held label refuted (withdrawal record), re-homed to 0x823d14c0"
     }
    ]
   },
@@ -13421,6 +13499,12 @@
      "spelling": "?insert@?$list@W4TrackType@@V?$StlNodeAlloc@W4TrackType@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@W4TrackType@@U?$_Nonconst_traits@W4TrackType@@@stlpmtx_std@@@2@U32@ABW4TrackType@@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "?insert@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndDrawable@@U?$_Nonconst_traits@PAVRndDrawable@@@stlpmtx_std@@@2@U32@ABQAVRndDrawable@@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "chase(?insert@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventC @ 0x822b5728, ?insert@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawabl) fails at callee: retail ?_M_create_node@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc @ 0x822b4ca8 vs ours ?_M_create_node@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRn. our callee ?_M_create_node@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@ PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only. Retail holds both callee bodies and they differ, so the body at 0x822b5728 is not this member's."
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 9 other group(s) at 10 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 9 of the 10 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
@@ -13434,7 +13518,13 @@
       "spelling": "?insert@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndDrawable@@U?$_Nonconst_traits@PAVRndDrawable@@@stlpmtx_std@@@2@U32@ABQAVRndDrawable@@@Z",
       "lane": "W16-OS 2026-10-03",
       "verdict": "UNDECIDABLE",
-      "evidence": "tools/icf_pair_adjudicate.chase(?insert@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventA @ 0x822b5728, ?insert@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmt): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?_M_create_node@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmt | ours ?_M_create_node@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlp (same operation, our callee not proven at a retail address of its own)"
+      "evidence": "tools/icf_pair_adjudicate.chase(?insert@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventA @ 0x822b5728, ?insert@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmt): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?_M_create_node@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmt | ours ?_M_create_node@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlp (same operation, our callee not proven at a retail address of its own)",
+      "resolved_w16ou": {
+       "verdict": "REFUTED",
+       "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+       "member_home": "0x823d14c0",
+       "evidence": "chase(?insert@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventC @ 0x822b5728, ?insert@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawabl) fails at callee: retail ?_M_create_node@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc @ 0x822b4ca8 vs ours ?_M_create_node@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRn. our callee ?_M_create_node@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@ PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only. Retail holds both callee bodies and they differ, so the body at 0x822b5728 is not this member's."
+      }
      }
     ]
    },
@@ -13446,6 +13536,22 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
      "evidence": "tools/icf_pair_adjudicate.chase(?insert@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventA @ 0x822b5728, ?insert@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmt): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?_M_create_node@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventCall@EventAnim@@@stlpmt | ours ?_M_create_node@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlp (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?insert@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndDrawable@@U?$_Nonconst_traits@PAVRndDrawable@@@stlpmtx_std@@@2@U32@ABQAVRndDrawable@@@Z",
+     "role": "old-label",
+     "w16os": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+     "callee_home": "0x82520150",
+     "evidence": "chase(?insert@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc@VEventC @ 0x822b5728, ?insert@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawabl) fails at callee: retail ?_M_create_node@?$list@VEventCall@EventAnim@@V?$StlNodeAlloc @ 0x822b4ca8 vs ours ?_M_create_node@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRn. our callee ?_M_create_node@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@ PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only. Retail holds both callee bodies and they differ, so the body at 0x822b5728 is not this member's.",
+     "member_home": "0x823d14c0",
+     "member_how": "BODY",
+     "member_evidence": "locate_retail: exactly one retail body (0x823d14c0) chases PROVEN clean",
+     "disposition": "held label refuted (withdrawal record), re-homed to 0x823d14c0"
     }
    ]
   },
@@ -14813,11 +14919,17 @@
    "address": "0x823a94f0",
    "survivor": "??$_Destroy_Range@PAVStrand@CharHair@@@stlpmtx_std@@YAXPAVStrand@CharHair@@0@Z",
    "folded": [
-    "??$__destroy_range@PAVStrand@CharHair@@V12@@stlpmtx_std@@YAXPAVStrand@CharHair@@00@Z",
-    "??$_Destroy_Range@PAUDynamicPropertyEntry@Flow@@@stlpmtx_std@@YAXPAUDynamicPropertyEntry@Flow@@0@Z"
+    "??$__destroy_range@PAVStrand@CharHair@@V12@@stlpmtx_std@@YAXPAVStrand@CharHair@@00@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$_Destroy_Range@PAUDynamicPropertyEntry@Flow@@@stlpmtx_std@@YAXPAUDynamicPropertyEntry@Flow@@0@Z",
+     "lane": "W16-OU 2026-10-03",
+     "class": "CALLEE_LOCATED_ELSEWHERE_W16OU",
+     "evidence": "chase(??$_Destroy_Range@PAVStrand@CharHair@@@stlpmtx_std@@YAXPAVSt @ 0x823a94f0, ??$_Destroy_Range@PAUDynamicPropertyEntry@Flow@@@stlpmtx_std) fails at callee: retail ??1Strand@CharHair@@QAA@XZ @ 0x823a8c40 vs ours ??1DynamicPropertyEntry@Flow@@QAA@XZ. retail calls our callee ??1DynamicPropertyEntry@Flow@@QAA@XZ at 0x822a4060 (1 path(s), e.g. ??$__destroy_range@PAUDynamicPropertyEntry@Flow@@U); retail's body there (144 B) differs from retail's ??1Strand@CharHair@@QAA@XZ at 0x823a8c40 (72 B). Retail holds both callee bodies and they differ, so the body at 0x823a94f0 is not this member's."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -14909,6 +15021,22 @@
       }
      },
      "why": "address-less partition class whose survivor is the map name at this address: the same fold class. Members chased here (see rechase_w16os); the class's survivor is now this group's."
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??$_Destroy_Range@PAUDynamicPropertyEntry@Flow@@@stlpmtx_std@@YAXPAUDynamicPropertyEntry@Flow@@0@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:CALLSITE",
+     "callee_home": "0x822a4060",
+     "evidence": "chase(??$_Destroy_Range@PAVStrand@CharHair@@@stlpmtx_std@@YAXPAVSt @ 0x823a94f0, ??$_Destroy_Range@PAUDynamicPropertyEntry@Flow@@@stlpmtx_std) fails at callee: retail ??1Strand@CharHair@@QAA@XZ @ 0x823a8c40 vs ours ??1DynamicPropertyEntry@Flow@@QAA@XZ. retail calls our callee ??1DynamicPropertyEntry@Flow@@QAA@XZ at 0x822a4060 (1 path(s), e.g. ??$__destroy_range@PAUDynamicPropertyEntry@Flow@@U); retail's body there (144 B) differs from retail's ??1Strand@CharHair@@QAA@XZ at 0x823a8c40 (72 B). Retail holds both callee bodies and they differ, so the body at 0x823a94f0 is not this member's.",
+     "member_home": null,
+     "member_how": "CALLSITE-NONE",
+     "member_evidence": "{}",
+     "disposition": "withdrawn"
     }
    ]
   },
@@ -17437,11 +17565,16 @@
    "name": "$?0U?$_List_iterator",
    "address": "0x82469a28",
    "survivor": "??$?0U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Const_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Const_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@1@0ABV?$TransformListAlloc@UInstance@RndMultiMesh@@@1@@Z",
-   "folded": [
-    "??$?0U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@PAVVoice@@@1@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 3, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$?0U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@PAVVoice@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "class": "CALLEE_LOCATED_ELSEWHERE_W16OU",
+     "evidence": "chase(??$?0U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Const_tra @ 0x82469a28, ??$?0U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@) fails at callee: retail ?_M_create_node@?$list@UInstance@RndMultiMesh@@V?$TransformL @ 0x82419220 vs ours ?_M_create_node@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@. our callee ?_M_create_node@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_st PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only. Retail holds both callee bodies and they differ, so the body at 0x82469a28 is not this member's. Re-homed to 0x82276d58 (BODY)."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -17483,6 +17616,22 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(??$?0U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Const_traits@UInsta @ 0x82469a28, ??$?0U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@@stlpmtx_s): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 2: retail ?_M_create_node@?$list@UInstance@RndMultiMesh@@V?$TransformListAlloc@UInstance@RndMultiMes | ours ?_M_create_node@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@IAA (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??$?0U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@PAVVoice@@@1@@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+     "callee_home": "0x82520150",
+     "evidence": "chase(??$?0U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Const_tra @ 0x82469a28, ??$?0U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@) fails at callee: retail ?_M_create_node@?$list@UInstance@RndMultiMesh@@V?$TransformL @ 0x82419220 vs ours ?_M_create_node@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@. our callee ?_M_create_node@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_st PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only. Retail holds both callee bodies and they differ, so the body at 0x82469a28 is not this member's.",
+     "member_home": "0x82276d58",
+     "member_how": "BODY",
+     "member_evidence": "locate_retail: exactly one retail body (0x82276d58) chases PROVEN clean",
+     "disposition": "withdrawn, re-homed to 0x82276d58"
     }
    ]
   },
@@ -18307,6 +18456,18 @@
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(??$sort@PAVDataArrayPtr@@UForAllKeyframesSorter@@@stlpmtx_std@@YAXPAVD @ 0x8242c568, ??$sort@PAPAUEventEntry@@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@0): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??$__introsort_loop@PAVDataArrayPtr@@V1@HUForAllKeyframesSorter@@@stlpmtx_std@@YAXPAVDataA | ours ??$__introsort_loop@PAPAUEventEntry@@PAU1@HUMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@00H (same operation, our callee not proven at a retail address of its own)"
     }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??$sort@PAPAUEventEntry@@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@0UMaxSort@@@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
    ]
   },
   {
@@ -18856,6 +19017,18 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(??$_Copy_Construct@VContentPoolMapping@SongSectionController@@@stlpmtx @ 0x8230df20, ??$_Copy_Construct@UEventSink@MsgSinks@@@stlpmtx_std@@YAXPAUEventSink@): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??0ContentPoolMapping@SongSectionController@@QAA@ABV01@@Z | ours ??0EventSink@MsgSinks@@QAA@ABU01@@Z (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??$_Copy_Construct@UEventSink@MsgSinks@@@stlpmtx_std@@YAXPAUEventSink@MsgSinks@@ABU12@@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
     }
    ]
   },
@@ -20745,11 +20918,16 @@
    "name": "0?$vector",
    "address": "0x8263fd68",
    "survivor": "??0?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVString@@ABV?$StlNodeAlloc@VString@@@1@@Z",
-   "folded": [
-    "??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVVector2@@ABV?$StlNodeAlloc@VVector2@@@1@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVVector2@@ABV?$StlNodeAlloc@VVector2@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "class": "CALLEE_LOCATED_ELSEWHERE_W16OU",
+     "evidence": "chase(??0?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@ @ 0x8263fd68, ??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std) fails at callee: retail ??0?$_Vector_base@VString@@V?$StlNodeAlloc@VString@@@stlpmtx @ 0x82516fc0 vs ours ??0?$_Vector_base@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpm. our callee ??0?$_Vector_base@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@s PROVEN (clean chase) at 0x82685778 = ??0?$_Vector_base@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@@stl only. Retail holds both callee bodies and they differ, so the body at 0x8263fd68 is not this member's. Re-homed to 0x82698540 (BODY)."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -20798,6 +20976,22 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(??0?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_s @ 0x8263fd68, ??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??0?$_Vector_base@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$ | ours ??0?$_Vector_base@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVVector2@@ABV?$StlNodeAlloc@VVector2@@@1@@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+     "callee_home": "0x82685778",
+     "evidence": "chase(??0?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@ @ 0x8263fd68, ??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std) fails at callee: retail ??0?$_Vector_base@VString@@V?$StlNodeAlloc@VString@@@stlpmtx @ 0x82516fc0 vs ours ??0?$_Vector_base@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpm. our callee ??0?$_Vector_base@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@s PROVEN (clean chase) at 0x82685778 = ??0?$_Vector_base@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@@stl only. Retail holds both callee bodies and they differ, so the body at 0x8263fd68 is not this member's.",
+     "member_home": "0x82698540",
+     "member_how": "BODY",
+     "member_evidence": "locate_retail: exactly one retail body (0x82698540) chases PROVEN clean",
+     "disposition": "withdrawn, re-homed to 0x82698540"
     }
    ]
   },
@@ -62295,6 +62489,18 @@
      "disposition": "folded (PROVEN)",
      "evidence": "tools/icf_pair_adjudicate.chase(fn_822C9048 @ 0x822c9048, ??$_Copy_Construct@UObjVersion@@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@): PROVEN [CHASED] retail 60 B / ours 60 B, 0 cycle-assumed"
     }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??$_Copy_Construct@USink@MsgSinks@@@stlpmtx_std@@YAXPAUSink@MsgSinks@@ABU12@@Z",
+     "role": "folded",
+     "w16os": "kept",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
    ]
   },
   {
@@ -65168,6 +65374,18 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
      "evidence": "tools/icf_pair_adjudicate.chase(?SyncProperty@BandHighlight@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp @ 0x82342680, ?SyncProperty@FlowWhile@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?SyncProperty@UIComponent@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z | ours ?SyncProperty@FlowSwitch@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?SyncProperty@FlowWhile@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+     "role": "old-label",
+     "w16os": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
     }
    ]
   },
@@ -78606,6 +78824,18 @@
      "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
      "evidence": "tools/icf_pair_adjudicate.chase(??_DUILabelDir@@QAAXXZ @ 0x828123a8, ??_DHamCharacter@@QAAXXZ): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??1UILabelDir@@UAA@XZ | ours ??1HamCharacter@@UAA@XZ (same operation, our callee not proven at a retail address of its own)"
     }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??_DHamCharacter@@QAAXXZ",
+     "role": "old-label",
+     "w16os": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
    ]
   },
   {
@@ -80471,6 +80701,18 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(??$_Param_Construct@VSfxMap@@V1@@stlpmtx_std@@YAXPAVSfxMap@@ABV1@@Z @ 0x826fe590, ??$_Param_Construct@UCheat@CheatProvider@@U12@@stlpmtx_std@@YAXPAUChea): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??0SfxMap@@QAA@ABV0@@Z | ours ??0Cheat@CheatProvider@@QAA@ABU01@@Z (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??$_Param_Construct@UCheat@CheatProvider@@U12@@stlpmtx_std@@YAXPAUCheat@CheatProvider@@ABU12@@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
     }
    ]
   },
@@ -83351,6 +83593,18 @@
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(?_M_fill_insert@?$vector@VStrand@CharHair@@V?$StlNodeAlloc@VStrand@Cha @ 0x823aade0, ?_M_fill_insert@?$vector@UDynamicPropertyEntry@Flow@@V?$StlNodeAlloc@U): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 2: retail ??0Strand@CharHair@@QAA@ABV01@@Z | ours ??0DynamicPropertyEntry@Flow@@QAA@ABU01@@Z (same operation, our callee not proven at a retail address of its own)"
     }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@UDynamicPropertyEntry@Flow@@V?$StlNodeAlloc@UDynamicPropertyEntry@Flow@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUDynamicPropertyEntry@Flow@@IABU34@@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
    ]
   },
   {
@@ -83864,9 +84118,7 @@
    "name": "_M_insert",
    "address": "0x826da488",
    "survivor": "?_M_insert@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@2@00@Z",
-   "folded": [
-    "?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@00@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 5, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "relabelled": {
     "from": "?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@00@Z",
@@ -83882,6 +84134,30 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(?_M_insert@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@ @ 0x826da488, ?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?_M_create_node@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4T | ours ?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@ (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@00@Z",
+     "lane": "W16-OU 2026-10-03",
+     "class": "CALLEE_LOCATED_ELSEWHERE_W16OU",
+     "evidence": "chase(?_M_insert@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stl @ 0x826da488, ?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHV) fails at callee: retail ?_M_create_node@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@ @ 0x826da1f0 vs ours ?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$. our callee ?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbo PROVEN (clean chase) at 0x82768ff8 = ?_M_create_node@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_ only. Retail holds both callee bodies and they differ, so the body at 0x826da488 is not this member's. Re-homed to 0x827c6708 (BODY)."
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@00@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+     "callee_home": "0x82768ff8",
+     "evidence": "chase(?_M_insert@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stl @ 0x826da488, ?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHV) fails at callee: retail ?_M_create_node@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@ @ 0x826da1f0 vs ours ?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$. our callee ?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbo PROVEN (clean chase) at 0x82768ff8 = ?_M_create_node@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_ only. Retail holds both callee bodies and they differ, so the body at 0x826da488 is not this member's.",
+     "member_home": "0x827c6708",
+     "member_how": "BODY",
+     "member_evidence": "locate_retail: exactly one retail body (0x827c6708) chases PROVEN clean",
+     "disposition": "withdrawn, re-homed to 0x827c6708"
     }
    ]
   },
@@ -84619,6 +84895,18 @@
      "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
      "evidence": "tools/icf_pair_adjudicate.chase(?Handle@RetryAudioPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z @ 0x82630690, ?Handle@FlowValueCase@@UAA?AVDataNode@@PAVDataArray@@_N@Z): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?Handle@VoiceoverPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z | ours ?Handle@FlowNode@@UAA?AVDataNode@@PAVDataArray@@_N@Z (same operation, our callee not proven at a retail address of its own)"
     }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?Handle@FlowValueCase@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+     "role": "old-label",
+     "w16os": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
    ]
   },
   {
@@ -84773,6 +85061,18 @@
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(??$_Param_Construct@USpotlightEntry@LightPreset@@U12@@stlpmtx_std@@YAX @ 0x824adbd0, ??$_Copy_Construct@UEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@Local): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??0SpotlightEntry@LightPreset@@QAA@ABU01@@Z | ours ??0Entry@LocalePanel@@QAA@ABU01@@Z (same operation, our callee not proven at a retail address of its own)"
     }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??$_Copy_Construct@UEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@ABU12@@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
    ]
   },
   {
@@ -84915,6 +85215,18 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(?contains@String@@QBA_NPBD@Z @ 0x827be190, ?contains@FixedString@@QBA_NPBD@Z): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?find@String@@QBAIPBDI@Z | ours ?find@FixedString@@QBAIPBDI@Z (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?contains@FixedString@@QBA_NPBD@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
     }
    ]
   },
@@ -86123,6 +86435,18 @@
      "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
      "evidence": "tools/icf_pair_adjudicate.chase(??$_Copy_Construct@UPropertyFilter@CameraManager@@@stlpmtx_std@@YAXPAU @ 0x82290ed0, ??$_Copy_Construct@VDrivenPropertyEntry@@@stlpmtx_std@@YAXPAVDrivenPro): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??0PropertyFilter@CameraManager@@QAA@ABU01@@Z | ours ??0DrivenPropertyEntry@@QAA@ABV0@@Z (same operation, our callee not proven at a retail address of its own)"
     }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??$_Copy_Construct@VDrivenPropertyEntry@@@stlpmtx_std@@YAXPAVDrivenPropertyEntry@@ABV1@@Z",
+     "role": "old-label",
+     "w16os": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
    ]
   },
   {
@@ -86198,6 +86522,12 @@
      "lane": "ALIAS-REPAIR 2026-08-19",
      "class": "UNDER_PARTITIONED_ICF_CLOSURE",
      "disposition": "dropped_singleton"
+    },
+    {
+     "spelling": "?insert@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@IU?$_Nonconst_traits@I@stlpmtx_std@@@2@U32@ABI@Z",
+     "lane": "W16-OU 2026-10-03",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "chase(?insert@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlp @ 0x824e0f68, ?insert@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@) fails at callee: retail ?_M_create_node@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMIns @ 0x824e0458 vs ours ?_M_create_node@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlp. our callee ?_M_create_node@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@I PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only. Retail holds both callee bodies and they differ, so the body at 0x824e0f68 is not this member's."
     }
    ],
    "repair": {
@@ -86221,7 +86551,13 @@
       "spelling": "?insert@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@IU?$_Nonconst_traits@I@stlpmtx_std@@@2@U32@ABI@Z",
       "lane": "W16-OS 2026-10-03",
       "verdict": "UNDECIDABLE",
-      "evidence": "tools/icf_pair_adjudicate.chase(?insert@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlpmtx_std@@@ @ 0x824e0f68, ?insert@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?_M_create_node@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlpmtx_std@@@stlpmtx_std@ | ours ?_M_create_node@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base (same operation, our callee not proven at a retail address of its own)"
+      "evidence": "tools/icf_pair_adjudicate.chase(?insert@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlpmtx_std@@@ @ 0x824e0f68, ?insert@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?_M_create_node@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlpmtx_std@@@stlpmtx_std@ | ours ?_M_create_node@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base (same operation, our callee not proven at a retail address of its own)",
+      "resolved_w16ou": {
+       "verdict": "REFUTED",
+       "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+       "member_home": "0x823d14c0",
+       "evidence": "chase(?insert@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlp @ 0x824e0f68, ?insert@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@) fails at callee: retail ?_M_create_node@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMIns @ 0x824e0458 vs ours ?_M_create_node@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlp. our callee ?_M_create_node@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@I PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only. Retail holds both callee bodies and they differ, so the body at 0x824e0f68 is not this member's."
+      }
      }
     ]
    },
@@ -86233,6 +86569,22 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
      "evidence": "tools/icf_pair_adjudicate.chase(?insert@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlpmtx_std@@@ @ 0x824e0f68, ?insert@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?_M_create_node@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlpmtx_std@@@stlpmtx_std@ | ours ?_M_create_node@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?insert@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@IU?$_Nonconst_traits@I@stlpmtx_std@@@2@U32@ABI@Z",
+     "role": "old-label",
+     "w16os": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+     "callee_home": "0x82520150",
+     "evidence": "chase(?insert@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMInst@@@stlp @ 0x824e0f68, ?insert@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@) fails at callee: retail ?_M_create_node@?$list@UOldMMInst@@V?$StlNodeAlloc@UOldMMIns @ 0x824e0458 vs ours ?_M_create_node@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlp. our callee ?_M_create_node@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@I PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only. Retail holds both callee bodies and they differ, so the body at 0x824e0f68 is not this member's.",
+     "member_home": "0x823d14c0",
+     "member_how": "BODY",
+     "member_evidence": "locate_retail: exactly one retail body (0x823d14c0) chases PROVEN clean",
+     "disposition": "held label refuted (withdrawal record), re-homed to 0x823d14c0"
     }
    ]
   },
@@ -87697,6 +88049,18 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
      "evidence": "tools/icf_pair_adjudicate.chase(?resize@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverri @ 0x824cf800, ?resize@?$list@USink@MsgSinks@@V?$StlNodeAlloc@USink@MsgSinks@@@stlpmt): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?erase@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx | ours ?erase@?$list@USink@MsgSinks@@V?$StlNodeAlloc@USink@MsgSinks@@@stlpmtx_std@@@stlpmtx_std@@ (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?resize@?$list@USink@MsgSinks@@V?$StlNodeAlloc@USink@MsgSinks@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUSink@MsgSinks@@@Z",
+     "role": "old-label",
+     "w16os": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
     }
    ]
   },
@@ -90614,6 +90978,18 @@
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(?GetTotalDurationSeconds@BandCamShot@@QAAMXZ @ 0x822b4eb0, ?GetTotalDurationSeconds@HamCamShot@@QAAMXZ): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?ListNextShots@BandCamShot@@IAA_NAAV?$list@PAVBandCamShot@@V?$StlNodeAlloc@PAVBandCamShot@ | ours ?ListNextShots@HamCamShot@@IAA_NAAV?$list@PAVHamCamShot@@V?$StlNodeAlloc@PAVHamCamShot@@@s (same operation, our callee not proven at a retail address of its own)"
     }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?GetTotalDurationSeconds@HamCamShot@@QAAMXZ",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
    ]
   },
   {
@@ -90874,6 +91250,18 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(?GetNumShots@BandCamShot@@QAAHXZ @ 0x822b4df0, ?GetNumShots@HamCamShot@@QAAHXZ): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?ListNextShots@BandCamShot@@IAA_NAAV?$list@PAVBandCamShot@@V?$StlNodeAlloc@PAVBandCamShot@ | ours ?ListNextShots@HamCamShot@@IAA_NAAV?$list@PAVHamCamShot@@V?$StlNodeAlloc@PAVHamCamShot@@@s (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?GetNumShots@HamCamShot@@QAAHXZ",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
     }
    ]
   },
@@ -91280,9 +91668,59 @@
     "?_M_create_node@?$list@P6AXXZV?$StlNodeAlloc@P6AXXZ@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQ6AXXZ@Z",
     "?_M_create_node@?$list@PADV?$StlNodeAlloc@PAD@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAD@Z",
     "?_M_create_node@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVCharClip@@@Z",
-    "?_M_create_node@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVContent@@@Z"
+    "?_M_create_node@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVContent@@@Z",
+    "?_M_create_node@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVRndAnimatable@@@Z",
+    "?_M_create_node@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVRndDrawable@@@Z",
+    "?_M_create_node@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVVoice@@@Z",
+    "?_M_create_node@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABI@Z"
    ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1].  | ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1].  || COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF5. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x82520150 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (ZERO REFERENCES -- no branch, no address-taken immediate pair, no .rdata/.data pointer word -- or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 1 charged name_check sites. Per spelling: [?_M_create_node@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVContent@@@Z residual CF5, 1 sites: identical: 15/16 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)] || COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF5. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x82520150 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (ZERO REFERENCES -- no branch, no address-taken immediate pair, no .rdata/.data pointer word -- or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 1 charged name_check sites. Per spelling: [?_M_create_node@?$list@PADV?$StlNodeAlloc@PAD@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAD@Z residual CF5, 1 sites: identical: 15/16 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)]"
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1].  | ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1].  || COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF5. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x82520150 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (ZERO REFERENCES -- no branch, no address-taken immediate pair, no .rdata/.data pointer word -- or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 1 charged name_check sites. Per spelling: [?_M_create_node@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVContent@@@Z residual CF5, 1 sites: identical: 15/16 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)] || COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF5. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x82520150 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (ZERO REFERENCES -- no branch, no address-taken immediate pair, no .rdata/.data pointer word -- or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 1 charged name_check sites. Per spelling: [?_M_create_node@?$list@PADV?$StlNodeAlloc@PAD@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAD@Z residual CF5, 1 sites: identical: 15/16 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)]",
+   "admitted": [
+    {
+     "spelling": "?_M_create_node@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVRndAnimatable@@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "our callee ?_M_create_node@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimata PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD @ 0x82520150, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x822b1f90",
+      "as": "callee of ?insert@?$list@PAVRndAnimatable@@V?$StlNodeAlloc@PAVRndAnimatable@@@stlpmtx_std@"
+     }
+    },
+    {
+     "spelling": "?_M_create_node@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVRndDrawable@@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "our callee ?_M_create_node@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@ PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD @ 0x82520150, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x822b5728",
+      "as": "callee of ?insert@?$list@PAVRndDrawable@@V?$StlNodeAlloc@PAVRndDrawable@@@stlpmtx_std@@@st"
+     }
+    },
+    {
+     "spelling": "?_M_create_node@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVVoice@@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "our callee ?_M_create_node@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_st PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD @ 0x82520150, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x82469a28",
+      "as": "callee of ??$?0U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@@stlpmtx_std@@@stlpm"
+     }
+    },
+    {
+     "spelling": "?_M_create_node@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABI@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "our callee ?_M_create_node@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@I PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD @ 0x82520150, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x824e0f68",
+      "as": "callee of ?insert@?$list@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_itera"
+     }
+    }
+   ]
   },
   {
    "name": "$_S_remove_if",
@@ -96404,9 +96842,7 @@
    "name": "consensus_partition",
    "address": "0x827ed198",
    "survivor": "??$__uninitialized_copy@PAVDataEvent@@PAV1@@stlpmtx_std@@YAPAVDataEvent@@PAV1@00ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_copy@PBVFilePath@@PAV1@@stlpmtx_std@@YAPAVFilePath@@PBV1@0PAV1@ABU__false_type@0@@Z"
-   ],
+   "folded": [],
    "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/. W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x827ed198). \"ours\" spelling ??$__uninitialized_copy@PAVDataEvent@@PAV1@@stlpmtx_std@@YAPAVDataEvent@@PAV1@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PBVFilePath@@PAV1@@stlpmtx_std@@YAPAVFilePath@@PBV1@0PAV1@ABU__false_type@0@@Z at retail address 0x827ed198. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 3 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 436 B (436 B honest) across ['default/DataEventList'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md.",
    "withdrawn": [
     {
@@ -96419,6 +96855,12 @@
      "adjudicator_detail": "size 96 vs 64 | different body SIZE -- cannot be one COMDAT",
      "callee_layer": "HARD_SIZE",
      "note": "W10-D adjudicated all 104 ledger-wide live CONTRADICTED memberships INDIVIDUALLY (no bulk action; W9-D measured 69 of 74 bulk withdrawals WRONG). The instrument is W7-D's rule -- a family folds iff its relocation targets are type-independent -- applied ONE LEVEL DOWN on COMDAT bytes, which is the ground truth /OPT:ICF consumes, rather than name equality closed over the fold class under test (the circularity FIXPOINT_ROOT_DIFFERS is named for). Cross-validated against a SOURCE-INDEPENDENT instrument -- distinct retail addresses for the two callees in target_symbol_map.json -- which is decisive on 7 of these and AGREES 7/7 with zero conflicts. Re-admit via the override mechanism only on positive retail-byte fold evidence."
+    },
+    {
+     "spelling": "??$__uninitialized_copy@PBVFilePath@@PAV1@@stlpmtx_std@@YAPAVFilePath@@PBV1@0PAV1@ABU__false_type@0@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "class": "CALLEE_LOCATED_ELSEWHERE_W16OU",
+     "evidence": "chase(??$__uninitialized_copy@PAVDataEvent@@PAV1@@stlpmtx_std@@YAP @ 0x827ed198, ??$__uninitialized_copy@PBVFilePath@@PAV1@@stlpmtx_std@@YAPA) fails at callee: retail ??$_Param_Construct@VDataEvent@@V1@@stlpmtx_std@@YAXPAVDataE @ 0x827ece48 vs ours ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePa. our callee ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@ PROVEN (clean chase) at 0x824cad98 = ??$_Copy_Construct@VFilePath@@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@Z only. Retail holds both callee bodies and they differ, so the body at 0x827ed198 is not this member's. Re-homed to 0x828070e0 (BODY)."
     }
    ],
    "relabelled": {
@@ -96435,6 +96877,22 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(??$__uninitialized_copy@PAVDataEvent@@PAV1@@stlpmtx_std@@YAPAVDataEven @ 0x827ed198, ??$__uninitialized_copy@PBVFilePath@@PAV1@@stlpmtx_std@@YAPAVFilePath@): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??$_Param_Construct@VDataEvent@@V1@@stlpmtx_std@@YAXPAVDataEvent@@ABV1@@Z | ours ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@Z (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??$__uninitialized_copy@PBVFilePath@@PAV1@@stlpmtx_std@@YAPAVFilePath@@PBV1@0PAV1@ABU__false_type@0@@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+     "callee_home": "0x824cad98",
+     "evidence": "chase(??$__uninitialized_copy@PAVDataEvent@@PAV1@@stlpmtx_std@@YAP @ 0x827ed198, ??$__uninitialized_copy@PBVFilePath@@PAV1@@stlpmtx_std@@YAPA) fails at callee: retail ??$_Param_Construct@VDataEvent@@V1@@stlpmtx_std@@YAXPAVDataE @ 0x827ece48 vs ours ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePa. our callee ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@ PROVEN (clean chase) at 0x824cad98 = ??$_Copy_Construct@VFilePath@@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@Z only. Retail holds both callee bodies and they differ, so the body at 0x827ed198 is not this member's.",
+     "member_home": "0x828070e0",
+     "member_how": "BODY",
+     "member_evidence": "locate_retail: exactly one retail body (0x828070e0) chases PROVEN clean",
+     "disposition": "withdrawn, re-homed to 0x828070e0"
     }
    ]
   },
@@ -97774,6 +98232,18 @@
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(?find@String@@QBAIPBD@Z @ 0x827be188, ?find@FixedString@@QBAIPBD@Z): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?find@String@@QBAIPBDI@Z | ours ?find@FixedString@@QBAIPBDI@Z (same operation, our callee not proven at a retail address of its own)"
     }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?find@FixedString@@QBAIPBD@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
    ]
   },
   {
@@ -97922,6 +98392,18 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
      "evidence": "tools/icf_pair_adjudicate.chase(??$PropSync@VStrand@CharHair@@@@YA_NAAV?$ObjVector@VStrand@CharHair@@@ @ 0x823aae58, ??$PropSync@UDynamicPropertyEntry@Flow@@@@YA_NAAV?$ObjVector@UDynamicP): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 2: retail ??4Strand@CharHair@@QAAAAV01@ABV01@@Z | ours ??4DynamicPropertyEntry@Flow@@QAAAAU01@ABU01@@Z (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??$PropSync@UDynamicPropertyEntry@Flow@@@@YA_NAAV?$ObjVector@UDynamicPropertyEntry@Flow@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+     "role": "old-label",
+     "w16os": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
     }
    ]
   },
@@ -99561,9 +100043,7 @@
    "name": "$__uninitialized_fill_n",
    "address": "0x8246f0c0",
    "survivor": "??$__uninitialized_fill_n@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@IV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@IABV1@ABU__false_type@0@@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@IABV1@ABU__false_type@0@@Z"
-   ],
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -99587,6 +100067,30 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(??$__uninitialized_fill_n@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc @ 0x8246f0c0, ??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAll): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 2: retail ??0?$vector@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z | ours ??0?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@ (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@IABV1@ABU__false_type@0@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "class": "CALLEE_LOCATED_ELSEWHERE_W16OU",
+     "evidence": "chase(??$__uninitialized_fill_n@PAV?$Key@V?$vector@VVector2@@V?$St @ 0x8246f0c0, ??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$) fails at callee: retail ??0?$vector@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@ @ 0x82686260 vs ours ??0?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx. our callee ??0?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stl PROVEN (clean chase) at 0x823e4630 = ??0?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx only. Retail holds both callee bodies and they differ, so the body at 0x8246f0c0 is not this member's. Re-homed to 0x8246f020 (BODY)."
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@IABV1@ABU__false_type@0@@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+     "callee_home": "0x823e4630",
+     "evidence": "chase(??$__uninitialized_fill_n@PAV?$Key@V?$vector@VVector2@@V?$St @ 0x8246f0c0, ??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$) fails at callee: retail ??0?$vector@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@ @ 0x82686260 vs ours ??0?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx. our callee ??0?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stl PROVEN (clean chase) at 0x823e4630 = ??0?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx only. Retail holds both callee bodies and they differ, so the body at 0x8246f0c0 is not this member's.",
+     "member_home": "0x8246f020",
+     "member_how": "BODY",
+     "member_evidence": "locate_retail: exactly one retail body (0x8246f020) chases PROVEN clean",
+     "disposition": "withdrawn, re-homed to 0x8246f020"
     }
    ]
   },
@@ -100104,7 +100608,8 @@
    "survivor": "?_M_create_node@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_std@@U?$pair@QAVFlowNode@@W4QueueState@1@@3@U?$_Select1st@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@QAVFlowNode@@W4QueueState@1@@2@@Z",
    "folded": [
     "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@H@2@@Z",
-    "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@PAVFixedSetlist@@@2@@Z"
+    "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@PAVFixedSetlist@@@2@@Z",
+    "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -100118,6 +100623,17 @@
      "spelling": "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@PAVFixedSetlist@@@2@@Z",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 84 B retail / 84 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?_M_insert@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@PAVFixedSetlist@@@2@00@Z."
+    },
+    {
+     "spelling": "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "our callee ?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbo PROVEN (clean chase) at 0x82768ff8 = ?_M_create_node@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_ only",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_create_node@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_ @ 0x82768ff8, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x826da488",
+      "as": "callee of ?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Selec"
+     }
     }
    ]
   },
@@ -100320,9 +100836,7 @@
    "name": "$__insertion_sort",
    "address": "0x825196d0",
    "survivor": "??$__insertion_sort@PAPAVFileCacheEntry@@PAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@00UPriority@@@Z",
-   "folded": [
-    "??$__insertion_sort@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@00UMoveDetectorCmp@@@Z"
-   ],
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -100346,6 +100860,30 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(??$__insertion_sort@PAPAVFileCacheEntry@@PAV1@UPriority@@@stlpmtx_std@ @ 0x825196d0, ??$__insertion_sort@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??$__linear_insert@PAPAVFileCacheEntry@@PAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEnt | ours ??$__linear_insert@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDet (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__insertion_sort@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@00UMoveDetectorCmp@@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "class": "CALLEE_LOCATED_ELSEWHERE_W16OU",
+     "evidence": "chase(??$__insertion_sort@PAPAVFileCacheEntry@@PAV1@UPriority@@@st @ 0x825196d0, ??$__insertion_sort@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp) fails at callee: retail ??$__linear_insert@PAPAVFileCacheEntry@@PAV1@UPriority@@@stl @ 0x82519038 vs ours ??$__linear_insert@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@. our callee ??$__linear_insert@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_ PROVEN (clean chase) at 0x82347030 = ??$__linear_insert@PAPAVMeshVert@BandPatchMesh@@PAV12@USortByPointer@@ only. Retail holds both callee bodies and they differ, so the body at 0x825196d0 is not this member's. Re-homed to 0x82347770 (BODY)."
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??$__insertion_sort@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@00UMoveDetectorCmp@@@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+     "callee_home": "0x82347030",
+     "evidence": "chase(??$__insertion_sort@PAPAVFileCacheEntry@@PAV1@UPriority@@@st @ 0x825196d0, ??$__insertion_sort@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp) fails at callee: retail ??$__linear_insert@PAPAVFileCacheEntry@@PAV1@UPriority@@@stl @ 0x82519038 vs ours ??$__linear_insert@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@. our callee ??$__linear_insert@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_ PROVEN (clean chase) at 0x82347030 = ??$__linear_insert@PAPAVMeshVert@BandPatchMesh@@PAV12@USortByPointer@@ only. Retail holds both callee bodies and they differ, so the body at 0x825196d0 is not this member's.",
+     "member_home": "0x82347770",
+     "member_how": "BODY",
+     "member_evidence": "locate_retail: exactly one retail body (0x82347770) chases PROVEN clean",
+     "disposition": "withdrawn, re-homed to 0x82347770"
     }
    ]
   },
@@ -101219,9 +101757,7 @@
    "name": "_M_insert_overflow_aux",
    "address": "0x827ed550",
    "survivor": "?_M_insert_overflow_aux@?$vector@VDataEvent@@V?$StlNodeAlloc@VDataEvent@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVDataEvent@@ABV3@ABU__false_type@2@I_N@Z",
-   "folded": [
-    "?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVFilePath@@ABV3@ABU__false_type@2@I_N@Z"
-   ],
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -101245,6 +101781,30 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(?_M_insert_overflow_aux@?$vector@VDataEvent@@V?$StlNodeAlloc@VDataEven @ 0x827ed550, ?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 2: retail ??$_Param_Construct@VDataEvent@@V1@@stlpmtx_std@@YAXPAVDataEvent@@ABV1@@Z | ours ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@Z (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVFilePath@@ABV3@ABU__false_type@2@I_N@Z",
+     "lane": "W16-OU 2026-10-03",
+     "class": "CALLEE_LOCATED_ELSEWHERE_W16OU",
+     "evidence": "chase(?_M_insert_overflow_aux@?$vector@VDataEvent@@V?$StlNodeAlloc @ 0x827ed550, ?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@) fails at callee: retail ??$_Param_Construct@VDataEvent@@V1@@stlpmtx_std@@YAXPAVDataE @ 0x827ece48 vs ours ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePa. our callee ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@ PROVEN (clean chase) at 0x824cad98 = ??$_Copy_Construct@VFilePath@@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@Z only. Retail holds both callee bodies and they differ, so the body at 0x827ed550 is not this member's. Re-homed to 0x824ce758 (BODY)."
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVFilePath@@ABV3@ABU__false_type@2@I_N@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+     "callee_home": "0x824cad98",
+     "evidence": "chase(?_M_insert_overflow_aux@?$vector@VDataEvent@@V?$StlNodeAlloc @ 0x827ed550, ?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@) fails at callee: retail ??$_Param_Construct@VDataEvent@@V1@@stlpmtx_std@@YAXPAVDataE @ 0x827ece48 vs ours ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePa. our callee ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@ PROVEN (clean chase) at 0x824cad98 = ??$_Copy_Construct@VFilePath@@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@Z only. Retail holds both callee bodies and they differ, so the body at 0x827ed550 is not this member's.",
+     "member_home": "0x824ce758",
+     "member_how": "BODY",
+     "member_evidence": "locate_retail: exactly one retail body (0x824ce758) chases PROVEN clean",
+     "disposition": "withdrawn, re-homed to 0x824ce758"
     }
    ]
   },
@@ -101472,6 +102032,18 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(??$sort@PAPAVFileCacheEntry@@UPriority@@@stlpmtx_std@@YAXPAPAVFileCach @ 0x82519f38, ??$sort@PAPAVMoveDetector@@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMov): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??$__introsort_loop@PAPAVFileCacheEntry@@PAV1@HUPriority@@@stlpmtx_std@@YAXPAPAVFileCacheE | ours ??$__introsort_loop@PAPAVMoveDetector@@PAV1@HUMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveD (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "??$sort@PAPAVMoveDetector@@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@0UMoveDetectorCmp@@@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNLOCATED",
+     "disposition": "unchanged",
+     "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
     }
    ]
   },
@@ -102325,7 +102897,8 @@
    "survivor": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@PAVCampaignKey@@@2@ABU32@@Z",
    "folded": [
     "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@V1@@2@ABU32@@Z",
-    "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@2@ABU32@@Z"
+    "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@2@ABU32@@Z",
+    "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@PAVDataArray@@@2@ABU32@@Z"
    ],
    "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (masked bodies match but relocation TARGETS disagree -- template-twin, not a fold), CHASED T1 PROVEN, 0 CYCLE leaves; retail_bodytwins 9, discriminated by the chased callee chain. Charged call site(s) where retail branches to this survivor and our compiled code calls the spelling: ??A?$hash_map@VSymbol@@ (124 B, 99.839). Reachable only after the 0x82276828 _S_next_size map repair (the chain bottoms out in _M_initialize_buckets -> _S_next_size).",
    "lane": "W16-KD 2026-10-01",
@@ -102334,6 +102907,17 @@
      "spelling": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@2@ABU32@@Z",
      "lane": "W16-NH 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED); 88 B retail / 88 B ours; retail body-twins 9. Retail call site(s) reaching the survivor where we call this spelling: 0x827b0ec8."
+    },
+    {
+     "spelling": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@PAVDataArray@@@2@ABU32@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "locate_retail: exactly one retail body (0x825a8b98) chases PROVEN clean",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_s @ 0x825a8b98, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825afb38",
+      "evidence_there": "chase(?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@V?$hash_map@VSym @ 0x825afb38, ?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@s) fails at callee: retail ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@V?$hash_map@VSym @ 0x825af418 vs ours ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@s. our callee ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std PROVEN (clean chase) at 0x825d2988 = ?_M_rehash@?$hashtable@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@HU?$h only. Retail holds both callee bodies and they differ, so the body at 0x825afb38 is not this member's."
+     }
     }
    ]
   },
@@ -102341,9 +102925,7 @@
    "name": "_M_insert",
    "address": "0x825afb38",
    "survivor": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@4@@stlpmtx_std@@@2@ABU32@@Z",
-   "folded": [
-    "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@PAVDataArray@@@2@ABU32@@Z"
-   ],
+   "folded": [],
    "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (masked bodies match but relocation TARGETS disagree -- template-twin, not a fold), CHASED T1 PROVEN, 0 CYCLE leaves; retail_bodytwins 9, discriminated by the chased callee chain. Charged call site(s) where retail branches to this survivor and our compiled code calls the spelling: ??A?$hash_map@VSymbol@@ (180 B, 99.778). Reachable only after the 0x82276828 _S_next_size map repair (the chain bottoms out in _M_initialize_buckets -> _S_next_size).",
    "lane": "W16-KD 2026-10-01",
    "relabelled": {
@@ -102360,6 +102942,30 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDa @ 0x825afb38, ?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 2: retail ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@V?$hash_map@VSymbol@@PAVDataArray@@U?$hash@VSy | ours ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@@U?$hash@V (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@PAVDataArray@@@2@ABU32@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "class": "CALLEE_LOCATED_ELSEWHERE_W16OU",
+     "evidence": "chase(?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@V?$hash_map@VSym @ 0x825afb38, ?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@s) fails at callee: retail ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@V?$hash_map@VSym @ 0x825af418 vs ours ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@s. our callee ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std PROVEN (clean chase) at 0x825d2988 = ?_M_rehash@?$hashtable@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@HU?$h only. Retail holds both callee bodies and they differ, so the body at 0x825afb38 is not this member's. Re-homed to 0x825a8b98 (BODY)."
+    }
+   ],
+   "rechase_w16ou": [
+    {
+     "spelling": "?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@$$CBVSymbol@@PAVDataArray@@@2@ABU32@@Z",
+     "role": "old-label",
+     "w16os": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "lane": "W16-OU 2026-10-03",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-LOCATED-ELSEWHERE:BODY",
+     "callee_home": "0x825d2988",
+     "evidence": "chase(?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@V?$hash_map@VSym @ 0x825afb38, ?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@s) fails at callee: retail ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@V?$hash_map@VSym @ 0x825af418 vs ours ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@s. our callee ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std PROVEN (clean chase) at 0x825d2988 = ?_M_rehash@?$hashtable@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@HU?$h only. Retail holds both callee bodies and they differ, so the body at 0x825afb38 is not this member's.",
+     "member_home": "0x825a8b98",
+     "member_how": "BODY",
+     "member_evidence": "locate_retail: exactly one retail body (0x825a8b98) chases PROVEN clean",
+     "disposition": "withdrawn, re-homed to 0x825a8b98"
     }
    ]
   },
@@ -114343,6 +114949,571 @@
      "moved_from": {
       "address": "0x824a0608",
       "evidence_there": "tools/icf_pair_adjudicate.chase(??1?$ObjList@UProxyCall@EventTrigger@@@@QAA@XZ @ 0x824a0608, ??1?$_List_base@UAnim@EventTrigger@@V?$StlNodeAlloc@UAnim@EventTrigger): REFUTED [CALLEE-TWIN-DISTINCT] depth 1: retail ?clear@?$_List_base@UProxyCall@EventTrigger@@V?$StlNodeAlloc@UProxyCall@EventTrigger@@@stl | ours ?clear@?$_List_base@UAnim@EventTrigger@@V?$StlNodeAlloc@UAnim@EventTrigger@@@stlpmtx_std@@; anchor ??1?$ObjList@UProxyCall@EventTrigger@@@@QAA@XZ PROVEN here; our callee is PROVEN at its own map address, so retail holds both callee bodies and they differ"
+     }
+    }
+   ]
+  },
+  {
+   "name": "?0U?$_List_iterator",
+   "address": "0x82276d58",
+   "survivor": "??$?0U?$_List_iterator@HU?$_Const_traits@H@stlpmtx_std@@@stlpmtx_std@@@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@HU?$_Const_traits@H@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@H@1@@Z",
+   "folded": [
+    "??$?0U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@PAVVoice@@@1@@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??$?0U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_std@@@stlpmtx_std@@QAA@U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@@stlpmtx_std@@@1@0ABV?$StlNodeAlloc@PAVVoice@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "locate_retail: exactly one retail body (0x82276d58) chases PROVEN clean",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?0U?$_List_iterator@HU?$_Const_traits@H@stlpmtx_std@@@stlpmtx_std@@ @ 0x82276d58, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x82469a28",
+      "evidence_there": "chase(??$?0U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Const_tra @ 0x82469a28, ??$?0U?$_List_iterator@PAVVoice@@U?$_Const_traits@PAVVoice@@) fails at callee: retail ?_M_create_node@?$list@UInstance@RndMultiMesh@@V?$TransformL @ 0x82419220 vs ours ?_M_create_node@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@. our callee ?_M_create_node@?$list@PAVVoice@@V?$StlNodeAlloc@PAVVoice@@@stlpmtx_st PROVEN (clean chase) at 0x82520150 = ?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUD only. Retail holds both callee bodies and they differ, so the body at 0x82469a28 is not this member's."
+     }
+    }
+   ]
+  },
+  {
+   "name": "??0",
+   "address": "0x822788a8",
+   "survivor": "??0?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@USymbolHash@PatchDir@@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABUSymbolHash@PatchDir@@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+   "folded": [
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 2 path(s), all to 0x822788a8 [BODY-EQUAL,PAIRED]; e.g. ??0SongMgr@@QAA@XZ <- ??0?$hash_map@VSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticke, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlN @ 0x822788a8, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x822788a8 [BODY-EQUAL,PAIRED]; e.g. ??0LicenseMgr@@QAA@XZ <- ??0?$hash_map@VSymbol@@V?$vector@VSymbol@@V?$StlNodeAlloc@VS; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticke, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlN @ 0x822788a8, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    }
+   ]
+  },
+  {
+   "name": "__linear_insert",
+   "address": "0x82347030",
+   "survivor": "??$__linear_insert@PAPAVMeshVert@BandPatchMesh@@PAV12@USortByPointer@@@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@0PAV12@USortByPointer@@@Z",
+   "folded": [
+    "??$__linear_insert@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@0PAV1@UMoveDetectorCmp@@@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??$__linear_insert@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@0PAV1@UMoveDetectorCmp@@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "our callee ??$__linear_insert@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_ PROVEN (clean chase) at 0x82347030 = ??$__linear_insert@PAPAVMeshVert@BandPatchMesh@@PAV12@USortByPointer@@ only",
+     "chase": "tools/icf_pair_adjudicate.chase(??$__linear_insert@PAPAVMeshVert@BandPatchMesh@@PAV12@USortByPointer@@ @ 0x82347030, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825196d0",
+      "as": "callee of ??$__insertion_sort@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXP"
+     }
+    }
+   ]
+  },
+  {
+   "name": "__insertion_sort",
+   "address": "0x82347770",
+   "survivor": "??$__insertion_sort@PAPAVMeshVert@BandPatchMesh@@PAV12@USortByPointer@@@stlpmtx_std@@YAXPAPAVMeshVert@BandPatchMesh@@00USortByPointer@@@Z",
+   "folded": [
+    "??$__insertion_sort@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@00UMoveDetectorCmp@@@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??$__insertion_sort@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@00UMoveDetectorCmp@@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "locate_retail: exactly one retail body (0x82347770) chases PROVEN clean",
+     "chase": "tools/icf_pair_adjudicate.chase(??$__insertion_sort@PAPAVMeshVert@BandPatchMesh@@PAV12@USortByPointer@ @ 0x82347770, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825196d0",
+      "evidence_there": "chase(??$__insertion_sort@PAPAVFileCacheEntry@@PAV1@UPriority@@@st @ 0x825196d0, ??$__insertion_sort@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp) fails at callee: retail ??$__linear_insert@PAPAVFileCacheEntry@@PAV1@UPriority@@@stl @ 0x82519038 vs ours ??$__linear_insert@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@. our callee ??$__linear_insert@PAPAVMoveDetector@@PAV1@UMoveDetectorCmp@@@stlpmtx_ PROVEN (clean chase) at 0x82347030 = ??$__linear_insert@PAPAVMeshVert@BandPatchMesh@@PAV12@USortByPointer@@ only. Retail holds both callee bodies and they differ, so the body at 0x825196d0 is not this member's."
+     }
+    }
+   ]
+  },
+  {
+   "name": "fn_8246F020",
+   "address": "0x8246f020",
+   "survivor": "fn_8246F020",
+   "folded": [
+    "??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@IABV1@ABU__false_type@0@@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@IABV1@ABU__false_type@0@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "locate_retail: exactly one retail body (0x8246f020) chases PROVEN clean",
+     "chase": "tools/icf_pair_adjudicate.chase(fn_8246F020 @ 0x8246f020, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x8246f0c0",
+      "evidence_there": "chase(??$__uninitialized_fill_n@PAV?$Key@V?$vector@VVector2@@V?$St @ 0x8246f0c0, ??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$) fails at callee: retail ??0?$vector@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@ @ 0x82686260 vs ours ??0?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx. our callee ??0?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stl PROVEN (clean chase) at 0x823e4630 = ??0?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx only. Retail holds both callee bodies and they differ, so the body at 0x8246f0c0 is not this member's."
+     }
+    }
+   ]
+  },
+  {
+   "name": "fn_824CE758",
+   "address": "0x824ce758",
+   "survivor": "fn_824CE758",
+   "folded": [
+    "?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVFilePath@@ABV3@ABU__false_type@2@I_N@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVFilePath@@ABV3@ABU__false_type@2@I_N@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "locate_retail: exactly one retail body (0x824ce758) chases PROVEN clean",
+     "chase": "tools/icf_pair_adjudicate.chase(fn_824CE758 @ 0x824ce758, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x827ed550",
+      "evidence_there": "chase(?_M_insert_overflow_aux@?$vector@VDataEvent@@V?$StlNodeAlloc @ 0x827ed550, ?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@) fails at callee: retail ??$_Param_Construct@VDataEvent@@V1@@stlpmtx_std@@YAXPAVDataE @ 0x827ece48 vs ours ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePa. our callee ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@ PROVEN (clean chase) at 0x824cad98 = ??$_Copy_Construct@VFilePath@@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@Z only. Retail holds both callee bodies and they differ, so the body at 0x827ed550 is not this member's."
+     }
+    }
+   ]
+  },
+  {
+   "name": "??0",
+   "address": "0x8255c968",
+   "survivor": "??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@1@@Z",
+   "folded": [
+    "??0?$hashtable@U?$pair@$$CBHH@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHH@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@1@@Z",
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@1@@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBHH@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHH@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0AccomplishmentProgress@@QAA@PAVBandProfile@@@Z <- ??0?$hash_map@HHU?$hash@H@stlpmtx_std@@U?$equal_to@H@2@V?$St; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHPAVColorPalette@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0ChooseColorPanel@@QAA@XZ <- ??0?$hash_map@HPAVColorPalette@@U?$hash@H@stlpmtx_std@@U?$eq; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHPAVSongMetadata@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 2 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0SongMgr@@QAA@XZ <- ??0?$hash_map@HPAVSongMetadata@@U?$hash@H@stlpmtx_std@@U?$eq; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0SongStatusMgr@@QAA@PAVLocalBandUser@@PAVBandSongMgr@@@Z <- ??0?$hash_map@HPAVSongStatus@@U?$hash@H@stlpmtx_std@@U?$equa; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHPAVSongUpgradeData@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0SongUpgradeMgr@@QAA@XZ <- ??0?$hash_map@HPAVSongUpgradeData@@U?$hash@H@stlpmtx_std@@U?; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 2 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0CharacterCreatorPanel@@QAA@XZ <- ??0?$hash_map@HPAVUIComponent@@U?$hash@H@stlpmtx_std@@U?$equ; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 5 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0SongMgr@@QAA@XZ <- ??0?$hash_map@HVSymbol@@U?$hash@H@stlpmtx_std@@U?$equal_to@H; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0AccomplishmentManager@@QAA@XZ <- ??0?$hash_map@VSymbol@@PAV?$list@VSymbol@@V?$StlNodeAlloc@VS; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0AccomplishmentManager@@QAA@XZ <- ??0?$hash_map@VSymbol@@PAV?$set@VSymbol@@U?$less@VSymbol@@@s; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 3 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0AccomplishmentManager@@QAA@XZ <- ??0?$hash_map@VSymbol@@PAV?$vector@VSymbol@@V?$StlNodeAlloc@; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishment@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0AccomplishmentManager@@QAA@XZ <- ??0?$hash_map@VSymbol@@PAVAccomplishment@@U?$hash@VSymbol@@@; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishmentCategory@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0AccomplishmentManager@@QAA@XZ <- ??0?$hash_map@VSymbol@@PAVAccomplishmentCategory@@U?$hash@VS; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAccomplishmentGroup@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0AccomplishmentManager@@QAA@XZ <- ??0?$hash_map@VSymbol@@PAVAccomplishmentGroup@@U?$hash@VSymb; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVAward@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0AccomplishmentManager@@QAA@XZ <- ??0?$hash_map@VSymbol@@PAVAward@@U?$hash@VSymbol@@@stlpmtx_s; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignKey@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,OFFSET-ALIGNED]; e.g. ??0Campaign@@QAA@PAVDataArray@@@Z <- ??0?$hash_map@VSymbol@@PAVCampaignKey@@U?$hash@VSymbol@@@stl; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCampaignLevel@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,OFFSET-ALIGNED]; e.g. ??0Campaign@@QAA@PAVDataArray@@@Z <- ??0?$hash_map@VSymbol@@PAVCampaignLevel@@U?$hash@VSymbol@@@s; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVLesson@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0LessonMgr@@QAA@XZ <- ??0?$hash_map@VSymbol@@PAVLesson@@U?$hash@VSymbol@@@stlpmtx_; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMetaMusicScene@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0MetaMusicManager@@QAA@PAVDataArray@@@Z <- ??0?$hash_map@VSymbol@@PAVMetaMusicScene@@U?$hash@VSymbol@@@; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVSongFilter@SongSortMgr@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0AccomplishmentManager@@QAA@XZ <- ??0?$hash_map@VSymbol@@PAVSongFilter@SongSortMgr@@U?$hash@VS; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 1 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0InterstitialMgr@@QAA@XZ <- ??0?$hash_map@VSymbol@@PAVUIScreen@@U?$hash@VSymbol@@@stlpmt; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 4 path(s), all to 0x8255c968 [BODY-EQUAL,OFFSET-ALIGNED,PAIRED]; e.g. ??0AccomplishmentManager@@QAA@XZ <- ??0?$hash_map@VSymbol@@V1@U?$hash@VSymbol@@@stlpmtx_std@@U?$; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    },
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 4 path(s), all to 0x8255c968 [BODY-EQUAL,PAIRED]; e.g. ??0BandProfile@@QAA@H@Z <- ??0?$hash_map@VSymbol@@MU?$hash@VSymbol@@@stlpmtx_std@@U?$eq; chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@VSymbol@@U?$hash@VS @ 0x8255c968, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "FORMER_SURVIVOR_LABEL_REFUTED"
+     }
+    }
+   ]
+  },
+  {
+   "name": "??0",
+   "address": "0x8256b298",
+   "survivor": "??0?$hashtable@U?$pair@$$CBHVString@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@H@1@ABU?$equal_to@H@1@ABV?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@1@@Z",
+   "folded": [
+    "??0?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@1@@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??0?$hashtable@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABU?$hash@VSymbol@@@1@ABU?$equal_to@VSymbol@@@1@ABV?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "CALLSITE",
+     "evidence": "BODY is ambiguous (5 retail bodies chase clean: ['0x822788a8', '0x8255c968', '0x8256b298', '0x825983d8', '0x825af728']); retail call sites: 2 path(s), all to 0x8256b298 [BODY-EQUAL,PAIRED]; e.g. ??$?5V?$hash_map@VSymbol@@VString@@U?$hash@VSymbol@@@stlpmtx <- ??0?$hash_map@VSymbol@@VString@@U?$hash@VSymbol@@@stlpmtx_st; chase(??0?$hashtable@U?$pair@$$CBHVString@@@stlpmtx_std@@HU?$hash@, ours) PROVEN, 0 cycle-assumed",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$hashtable@U?$pair@$$CBHVString@@@stlpmtx_std@@HU?$hash@H@2@U?$_Ha @ 0x8256b298, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825a07e0",
+      "withdrawn_by": "W16-OS 2026-10-03",
+      "class": "STALE_SURVIVOR_RECHASE_REFUTED"
+     }
+    }
+   ]
+  },
+  {
+   "name": "_M_rehash",
+   "address": "0x825d2988",
+   "survivor": "?_M_rehash@?$hashtable@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXI@Z",
+   "folded": [
+    "?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXI@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@@U?$hash@VSymbol@@@2@U?$_HashMapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@U?$equal_to@VSymbol@@@2@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXI@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "our callee ?_M_rehash@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std PROVEN (clean chase) at 0x825d2988 = ?_M_rehash@?$hashtable@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@HU?$h only",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_rehash@?$hashtable@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@HU?$h @ 0x825d2988, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x825afb38",
+      "as": "callee of ?_M_insert@?$hashtable@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@VSymbol@"
+     }
+    }
+   ]
+  },
+  {
+   "name": "??0",
+   "address": "0x82698540",
+   "survivor": "??0?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVStreakInfo@Stats@@ABV?$StlNodeAlloc@VStreakInfo@Stats@@@1@@Z",
+   "folded": [
+    "??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVVector2@@ABV?$StlNodeAlloc@VVector2@@@1@@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVVector2@@ABV?$StlNodeAlloc@VVector2@@@1@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "locate_retail: exactly one retail body (0x82698540) chases PROVEN clean",
+     "chase": "tools/icf_pair_adjudicate.chase(??0?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stl @ 0x82698540, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x8263fd68",
+      "evidence_there": "chase(??0?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@ @ 0x8263fd68, ??0?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std) fails at callee: retail ??0?$_Vector_base@VString@@V?$StlNodeAlloc@VString@@@stlpmtx @ 0x82516fc0 vs ours ??0?$_Vector_base@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpm. our callee ??0?$_Vector_base@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@s PROVEN (clean chase) at 0x82685778 = ??0?$_Vector_base@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@@stl only. Retail holds both callee bodies and they differ, so the body at 0x8263fd68 is not this member's."
+     }
+    }
+   ]
+  },
+  {
+   "name": "fn_827C6708",
+   "address": "0x827c6708",
+   "survivor": "fn_827C6708",
+   "folded": [
+    "?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@00@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@00@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "locate_retail: exactly one retail body (0x827c6708) chases PROVEN clean",
+     "chase": "tools/icf_pair_adjudicate.chase(fn_827C6708 @ 0x827c6708, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x826da488",
+      "evidence_there": "chase(?_M_insert@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stl @ 0x826da488, ?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHV) fails at callee: retail ?_M_create_node@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@ @ 0x826da1f0 vs ours ?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$. our callee ?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbo PROVEN (clean chase) at 0x82768ff8 = ?_M_create_node@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_ only. Retail holds both callee bodies and they differ, so the body at 0x826da488 is not this member's."
+     }
+    }
+   ]
+  },
+  {
+   "name": "fn_828070E0",
+   "address": "0x828070e0",
+   "survivor": "fn_828070E0",
+   "folded": [
+    "??$__uninitialized_copy@PBVFilePath@@PAV1@@stlpmtx_std@@YAPAVFilePath@@PBV1@0PAV1@ABU__false_type@0@@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??$__uninitialized_copy@PBVFilePath@@PAV1@@stlpmtx_std@@YAPAVFilePath@@PBV1@0PAV1@ABU__false_type@0@@Z",
+     "lane": "W16-OU 2026-10-03",
+     "how": "BODY",
+     "evidence": "locate_retail: exactly one retail body (0x828070e0) chases PROVEN clean",
+     "chase": "tools/icf_pair_adjudicate.chase(fn_828070E0 @ 0x828070e0, ours): PROVEN, 0 cycle-assumed",
+     "moved_from": {
+      "address": "0x827ed198",
+      "evidence_there": "chase(??$__uninitialized_copy@PAVDataEvent@@PAV1@@stlpmtx_std@@YAP @ 0x827ed198, ??$__uninitialized_copy@PBVFilePath@@PAV1@@stlpmtx_std@@YAPA) fails at callee: retail ??$_Param_Construct@VDataEvent@@V1@@stlpmtx_std@@YAXPAVDataE @ 0x827ece48 vs ours ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePa. our callee ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@ PROVEN (clean chase) at 0x824cad98 = ??$_Copy_Construct@VFilePath@@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@Z only. Retail holds both callee bodies and they differ, so the body at 0x827ed198 is not this member's."
      }
     }
    ]
