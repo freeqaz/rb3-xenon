@@ -5546,7 +5546,7 @@
  "0x822b7998": null,
  "0x822b7a50": "??$_Copy_Construct@VKeyFrame@EventAnim@@@stlpmtx_std@@YAXPAVKeyFrame@EventAnim@@ABV12@@Z",
  "0x822b7ab8": "?Handle@BandCamShot@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x822b7ac8": null,
+ "0x822b7ac8": "??4?$ObjList@UTarget@BandCamShot@@@@QAAXABV0@@Z",
  "0x822b7b38": "??$?5VOldTrigger@@V?$StlNodeAlloc@VOldTrigger@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@VOldTrigger@@V?$StlNodeAlloc@VOldTrigger@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x822b7ba8": "??$_Destroy_Range@V?$reverse_iterator@PAVSingerStats@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSingerStats@@@0@0@Z",
  "0x822b7c20": "?Copy@BandCamShot@@UAAXPBVObject@Hmx@@W4CopyType@23@@Z",
@@ -6849,7 +6849,7 @@
  "0x8231b298": "?Save@MeterDisplay@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x8231b2a8": "?SetType@MeterDisplay@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
  "0x8231b2c0": "?NewObject@MeterDisplay@@SAPAVObject@Hmx@@XZ",
- "0x8231b358": null,
+ "0x8231b358": "??_GMeterDisplay@@UAAPAXI@Z",
  "0x8231b3b0": "?Update@MeterDisplay@@MAAXXZ",
  "0x8231b570": "?Handle@MeterDisplay@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x8231b700": "??$SetTokenFmt@VString@@@UILabel@@QAAXVSymbol@@VString@@@Z",
@@ -36263,5 +36263,9 @@
  "0x823cab20": "?SetName@CharIKSliderMidi@@UAAXPBDPAVObjectDir@@@Z",
  "0x823cb280": "?SetName@CharIKSliderMidi@@$4PPPPPPPM@A@AAXPBDPAVObjectDir@@@Z",
  "0x8238f270": "?Replace@CharClipGroup@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
- "0x8238fb08": "?Replace@CharClipGroup@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z"
+ "0x8238fb08": "?Replace@CharClipGroup@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x82319db0": "??0MiniLeaderboardDisplay@@QAA@XZ",
+ "0x827cd8b8": "??0NetLoaderRef@@QAA@ABU0@@Z",
+ "0x8233f2b8": "??_GBandList@@UAAPAXI@Z",
+ "0x824ca290": "??_GEventAnim@@UAAPAXI@Z"
 }
