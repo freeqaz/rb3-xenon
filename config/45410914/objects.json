@@ -2271,7 +2271,16 @@
             "network/quazal/CallContext.cpp": "NonMatching",
             "network/quazal/Competition/Client/CompetitionClient.cpp": "NonMatching",
             "network/quazal/MatchMaking/Client/MatchMakingClient.cpp": "NonMatching",
-            "network/quazal/Foundation/ProductFacade.cpp": "NonMatching",
+            "network/quazal/Foundation/ProductFacade.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/SessionDDL.cpp": "NonMatching",
             "network/quazal/ObjDupProtocol.cpp": {
                 "status": "NonMatching",
