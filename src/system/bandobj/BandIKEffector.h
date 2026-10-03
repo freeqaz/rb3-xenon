@@ -36,10 +36,7 @@ public:
     virtual void Load(BinStream &);
     virtual void SetName(const char *, ObjectDir *);
 
-    // DECLARE_REVS expanded inline to avoid pulling obj/ObjMacros.h into this
-    // header (which would flip other TUs' INIT_REVS macro arity — see BandWardrobe.h).
-    static unsigned short gRev;
-    static unsigned short gAltRev;
+    // No class gRev/gAltRev: retail keeps them as file statics in BandIKEffector.cpp.
     OBJ_MEM_OVERLOAD_INLINE_DEL(0x12)
     NEW_OBJ(BandIKEffector)
     static void Init() { REGISTER_OBJ_FACTORY(BandIKEffector); }

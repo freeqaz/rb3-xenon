@@ -148,7 +148,11 @@ inline void Multiply(const Hmx::Matrix3 &a, const Hmx::Matrix3 &b, Hmx::Matrix3 
 }
 #endif
 
-INIT_REVS(BandIKEffector)
+// Retail addresses both rev statics off ONE base register (+0 gAltRev, +4 gRev),
+// which needs an INTERNAL-linkage adjacent pair rather than DECLARE_REVS's class
+// statics (same as LayerDir.cpp). Explicit `= 0` keeps them out of .bss.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 CharClip *BandIKEffector::sDeformClip;
 
 BandIKEffector::Constraint::Constraint(Hmx::Object *o)
@@ -265,7 +269,7 @@ void BandIKEffector::Highlight() {}
 BinStream &operator>>(BinStream &bs, BandIKEffector::Constraint &c) {
     bs >> c.mTarget;
     bs >> c.mFinger;
-    if (BandIKEffector::gRev > 2)
+    if (gRev > 2)
         bs >> c.mWeight;
     return bs;
 }
