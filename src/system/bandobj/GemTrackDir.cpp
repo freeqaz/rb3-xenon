@@ -1000,11 +1000,9 @@ int SemitoneToWhiteKey(int semitone) {
         semitone -= kNumSemitones;
         whiteKey += kNumWhiteKeys;
     }
+    // C and C# add kWhiteKeyC (0): retail has no case for them (its jump
+    // table starts at kNoteD).
     switch (semitone) {
-    case kNoteC:
-    case kNoteCSharp:
-        whiteKey += kWhiteKeyC;
-        break;
     case kNoteD:
     case kNoteDSharp:
         whiteKey += kWhiteKeyD;
