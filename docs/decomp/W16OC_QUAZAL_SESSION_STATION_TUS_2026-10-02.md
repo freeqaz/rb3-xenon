@@ -314,6 +314,12 @@ Three rows are renamed, at their old scores: ObjDupProtocol `Send` (`qResult` is
 
 ## 6. Native gate
 
+Run last, on the code at `8c4d1e15d` (only this docs edit follows it):
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
 ## 7. Not done
 
 - **RefCountedObject** (`0x82AA6918..0x82AA6B98`, 640 B) is its own TU, unpinned and unwritten. So is the TU between
