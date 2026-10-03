@@ -531,20 +531,17 @@ void PatchDir::SaveFixed(FixedSizeSaveableStream &stream) const {
     for (unsigned int i = 0; i < mLayers.size(); i++) {
         mLayers[i].SavePacked(packer);
     }
-    unsigned int size = packer.mPos >> 3 & 0xFFFF;
+    unsigned short size = packer.mPos >> 3;
     if (packer.mPos & 7)
-        size = size + 1 & 0xFFFF;
+        size++;
     stream.Write(buf, size);
+    // Retail writes no has-layers flag: both sides re-derive it from HasLayers().
     if (HasLayers()) {
-        bool b = true;
-        stream.Write(&b, 1);
         RndBitmap bmap;
         mTex->LockBitmap(bmap, 1);
         bmap.Save(stream);
         mTex->UnlockBitmap();
     } else {
-        bool b = false;
-        stream.Write(&b, 1);
         char *empty = new char[0x10020];
         memset(empty, 0, 0x10020);
         stream.Write(empty, 0x10020);
@@ -567,9 +564,7 @@ void PatchDir::LoadFixed(FixedSizeSaveableStream &stream, int) {
     for (unsigned int i = 0; i < mLayers.size(); i++) {
         mLayers[i].LoadPacked(packer2);
     }
-    char hasLayers;
-    stream.Read(&hasLayers, 1);
-    if (hasLayers > 0) {
+    if (HasLayers()) {
         RndBitmap bmap;
         bmap.Load(stream);
         mTex->SetBitmap(bmap, 0, true);
