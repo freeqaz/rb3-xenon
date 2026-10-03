@@ -853,22 +853,14 @@ DataNode BandCamShot::OnListAllNextShots(const DataArray *da) {
     return ptr;
 }
 
-// sw3 cross-dialect scatter-include (BandCamShot <- hamobj/HamCamShot.cpp)
-// HamCamShot is Object.h-dialect; shim re-installs those macros for its body.
-// Guarded so it stays inert when BandCamShot.cpp is itself transitively
-// #include'd as a scatter-owner (HamCamShot's DC3 hamobj headers define
-// Difficulty/PracticeSection which collide with band3/game in such a host TU).
+// No hamobj/HamCamShot.cpp here.  HamCamShot is DC3's later rename of this
+// class; retail RB3 carries no HamCamShot type (no RTTI, no map row), and its
+// Target / TargetCache / GetNumShots / GetTotalDurationSeconds bodies are the
+// BandCamShot ones defined in this file.  A scatter-include of the DC3 file
+// used to emit a second, HamCamShot-spelled copy of all of them, which no
+// paired function called and which reached retail only through aliases.
 #undef gRev
 #undef gAltRev
-#ifndef SW_SCATTER_OWNER_INCLUDE
-#define gRev gRev_HamCamShot
-#define gAltRev gAltRev_HamCamShot
-#include "obj/dialect_object_push.h"
-#include "hamobj/HamCamShot.cpp"
-#include "obj/dialect_object_pop.h"
-#undef gRev
-#undef gAltRev
-#endif
 
 // sw3 cross-dialect scatter-include (default/BandCamShot <- rndobj/EventTrigger.cpp) [Object owner]
 #ifndef SW_SCATTER_OWNER_INCLUDE
