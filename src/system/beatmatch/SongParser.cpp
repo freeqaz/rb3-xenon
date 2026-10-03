@@ -1055,13 +1055,11 @@ void SongParser::StartVocalNote(int tick, unsigned char data, const char *lyric)
                 mLyricBends = ParseAndStripLyricText(lyric, mCurVocalNote);
             }
             if (mLyricPitchSet && mLyricTextSet && mLyricBends) {
-                int prevticks = mPrevVocalNote.GetTick();
-                unsigned short ticks = mPrevVocalNote.GetDurationTicks();
                 float ms_sum = mPrevVocalNote.GetMs() + mPrevVocalNote.GetDurationMs();
-                int curticks = mCurVocalNote.GetTick();
-                if (prevticks + ticks < curticks) {
+                int prevEnd = mPrevVocalNote.GetTick() + mPrevVocalNote.GetDurationTicks();
+                if (prevEnd < mCurVocalNote.GetTick()) {
                     VocalNote note(mPrevVocalNote);
-                    note.SetNoteTime(ms_sum, prevticks + ticks);
+                    note.SetNoteTime(ms_sum, prevEnd);
                     note.SetDurationTime(
                         mCurVocalNote.GetMs() - note.GetMs(),
                         mCurVocalNote.GetTick() - note.GetTick()
