@@ -257,4 +257,10 @@ Every chase verdict in this lane depends on this instrument. On the rebased, bui
 
 ## 8. Native gate (run last)
 
-See the final line of this section, added after the run.
+`tools/native_build_gate.sh`, run last on the tip `81268f3e2` (only this doc line follows it):
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+No commit carries a co-author line.
