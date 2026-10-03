@@ -1,56 +1,59 @@
-Rock Band 3 (Xbox 360) — AI-Assisted Fork
-=========================================
+Rock Band 3 (Xbox 360) — AI-Assisted Decompilation
+==================================================
 
-> ⚠️ **Unofficial fork.** This repository is **not** the canonical RB3 Xbox 360
-> decomp. It is a personal experiment by
-> [@freeqaz](https://github.com/freeqaz) exploring how far AI agents can push a
-> clean-room Xbox 360 decompilation project. Code, commits, decisions, tooling,
-> and most of the documentation in this fork are **AI-assisted** (primarily via
-> Claude Code). Do not assume anything here represents the views, code quality
-> bar, or roadmap of the upstream maintainers.
+> **About this fork.** This is an independent project by
+> [@freeqaz](https://github.com/freeqaz) exploring how far AI agents can take a
+> matching Xbox 360 decompilation. The code, tooling, commits and most of the
+> documentation are **AI-assisted** (primarily Claude Code), with every match
+> checked mechanically against the retail binary. It is separate from, and not
+> endorsed by, the canonical human-curated decomp at
+> **[rjkiv/rb3-xenon](https://github.com/rjkiv/rb3-xenon)** — go there to follow
+> or contribute to that effort.
 >
-> The **canonical, human-curated** project lives at
-> **[rjkiv/rb3-xenon](https://github.com/rjkiv/rb3-xenon)**. If you want to
-> contribute to or follow the official effort, please go there instead.
->
-> No game assets, no Xbox 360 assembly, and no copyrighted binaries are stored
-> in this repo. An existing copy of the game is required to do anything useful
-> with it.
+> No game assets, Xbox 360 assembly or copyrighted binaries are stored in this
+> repo. You need your own copy of the game to build anything.
 
 What is this?
 -------------
 
 A **matching decompilation** of **Rock Band 3** for the **Xbox 360** (PowerPC
-Xenon). "Matching" means the goal is not just readable pseudo-code: we write
-C++ source that, when compiled with the *original* toolchain (MSVC for Xbox
+Xenon): C++ source that, compiled with the *original* toolchain (MSVC for Xbox
 360, `16.00.10224.00`, from XDK 2.0.11164) at the *original* retail flags
-(`/O1 /Oi /GR /EHsc`, no LTCG — read off the retail binary's RTTI, EH metadata
-and Rich header, then confirmed by whole-binary A/B), produces machine code
-**byte-identical** to the shipped executable. Every function is proven correct
-by comparing compiler output against the retail binary — the same standard the
-GameCube/Wii decomp community uses.
+(`/O1 /Oi /GR /EHsc`, no LTCG), produces machine code **byte-identical** to the
+shipped executable. Every matched function is proven by comparing compiler
+output against the retail binary — the same standard the GameCube/Wii decomp
+community uses. (The flags were read off the retail binary's RTTI, exception
+metadata and Rich header, then confirmed by whole-binary A/B builds.)
 
-The target is the **Title Update 5** executable (title ID `45410914`, v0.0.5.1),
-specifically the **RB3DX-lineage TU5 image**, byte-identical to
-`RB3DX-Xbox/default.xex`. It differs from clean retail TU5 by 53 words of
-in-place byte patches, so a handful of functions (`DataSet`, `IsDemo`,
-`AddSongData`, `SetDiskError`, `main`) cannot match this image from any source.
-It lives at `orig/45410914/default.xex` (not committed; the vanilla TU0 build is
-archived under `orig/45410914/tu0-archive/`).
+A byte-matched source tree is a *provably faithful* reimplementation of the
+game. It enables ports, bug-accurate mods and preservation — and, through the
+native build below, running RB3's own code on modern hardware.
 
-Why do this? A byte-matched source tree is a *provably faithful* reimplementation.
-It enables ports, bug-level-accurate mods, preservation, and — via the native
-build track below — running the Milo engine directly on modern hardware.
+### Highlights
+
+- **98.8% of RB3's game-code functions are byte-matched** (19,087 of 19,313 in
+  `src/band3/`), covering 94.4% of the game layer's code bytes.
+- **77.4% of every function in the executable** is matched — 57.5% of all code
+  bytes, which is **88.9% of the code this project can reach** (see
+  [Reading the numbers](#reading-the-numbers)).
+- **98.0% of functions / 93.0% of bytes** matched across the code the native
+  port runs: the core engine plus the game layer, beatmatch, MIDI and track
+  code.
+- **RB3's real code runs natively on Linux**: 18 driver programs mount the
+  game's archive, run full songs through the real scoring, overdrive, vocal
+  and crowd systems, and render venues and band characters headless to PNG.
+- All of this from a binary that shipped with **no symbols at all** —
+  function names are recovered by cross-referencing two sibling decomps
+  (below).
 
 Progress
 --------
 
-**"Matched" = the function our compiler emits is byte-identical to the retail
-binary.** The denominator is the *whole binary* — every function in the
-executable, including SDK/CRT/middleware code — so there is no denominator
-gaming. Numbers regenerate on every build (`build/45410914/report.json`); the
-table below is refreshed from that report by
-`python3 tools/update_readme_progress.py`.
+**"Matched" means the function our compiler emits is byte-identical to the
+retail binary.** The denominator is the *whole executable* — including SDK,
+CRT and middleware code — so nothing is left out of the count. Numbers come
+from `build/45410914/report.json`, which every build regenerates, and the table
+is produced from it by `python3 tools/update_readme_progress.py`.
 
 <!-- progress-table:begin — generated by tools/update_readme_progress.py; do not edit by hand -->
 As of **2026-10-03** (all figures on the **`name_check`** ruler):
@@ -66,47 +69,42 @@ As of **2026-10-03** (all figures on the **`name_check`** ruler):
 | Not yet attributed¹ | 0 / 8,863 | — | `░░░░░░░░░░░░░░░░░░░░` |
 <!-- progress-table:end -->
 
-*(Regenerated 2026-10-03 from a full build of `c11e2ebcb`.)*
+*(Regenerated 2026-10-03 from a full build of `c11e2ebcb`. Since the previous
+refresh on 2026-08-17, whole-binary code bytes rose from 36.08% to 57.48% and
+game code from 64.15% to 94.41%.)*
 
-¹ Functions not yet mapped to a source translation unit (1,792 auto-generated
-units, 1.47 MB, 14.3% of the denominator) — CRT and unattributed vendor
-middleware (RAD BINK, Quazal, and XDK code that has not been attributed to a
-TU), plus exception-handling funclets. Not to be confused with the
-*Third-party libs* row above, which is vendored source we compile and can
-therefore pair. Deliberately lowest priority: the RB3-specific value
-concentrates in the game code, which is where matching effort goes (see below).
+¹ Code not yet assigned to a source file (1,792 auto-generated units, 1.47 MB,
+14.3% of the binary): CRT, unattributed vendor middleware (RAD Bink, Quazal,
+SDK) and exception-handling funclets. It is mostly vendor code; the
+RB3-specific value is in the game code.
 
-² Microsoft's Xbox 360 SDK (D3DX9, XAUDIO2, XGRAPHICS). These *are* attributed
-to translation units and so are fully **mapped**, but only 2 of the 243 units
-have source in the tree — writing Microsoft vendor source is out of scope, so
-this row is expected to stay near zero. It is 20.5% of the whole-binary
-denominator, which is the single largest reason the reachable ceiling is ~65%,
-not 100%.
+² Microsoft's Xbox 360 SDK (D3DX9, XAudio2, XGraphics). Every one of its 243
+units is mapped to an address range, but only 2 have source in the tree:
+writing Microsoft's library source is out of scope, so this row stays near zero.
 
-The *Code bytes* column is all-or-nothing: a function contributes its size only
-at `fuzzy_match_percent == 100`, so a 99.9% function counts zero. Measured on
-the same build as the table, the size-weighted *mean* `fuzzy_match_percent` over
-the whole binary is **63.61%** against that **57.48%** — i.e. ~6.1 pp of
-near-miss work already done and being ground toward 100.
+### Reading the numbers
 
-Two caveats worth stating up front, because they make the headline mean less
-than it looks. First, **the ruler matters**: these numbers are on
-`name_check`, which compares relocation *target names* and so charges a call to
-the wrong function. The older `none` ruler ignored those names and scored the
-same tree ~7.9 pp higher — so any byte figure from before 2026-08-12 is not
-comparable to one after it. Second, **100% of the binary is not reachable**:
-~20% is Microsoft SDK source we will not write, ~14% is code not yet attributed
-to a translation unit, and ~0.6% is map scaffolding, so the reachable ceiling is
-**64.62%** and the 57.48% above is **88.9% of the surface that can actually
-pair** (gap 732,624 B; `tools/ceiling_recompute.py`). For comparison, the last
-refresh of this README (2026-08-17, same ruler) read 36.08% of the binary and
-59.0% of a 61.1% ceiling.
+- **Code bytes are all-or-nothing.** A function counts its size only once it
+  matches 100%, so a 99.9% function counts zero. Size-weighted, the average
+  match across the whole binary is **63.61%** — ~6 points of near-miss work
+  already done beyond the 57.48% headline.
+- **Not all of the binary is reachable.** The SDK (20.5%), not-yet-assigned
+  code (14.3%) and a few placeholder units (0.6%) have no source to compile
+  against, so the reachable ceiling is **64.62%** of the binary. 57.48% is **88.9% of that ceiling**; the remaining
+  gap is 732,624 bytes (`tools/ceiling_recompute.py`).
+- **The scoring is strict.** Figures use objdiff's `name_check` ruler: a call to
+  the wrong function counts as a mismatch even when the instructions are
+  identical. Byte figures from before 2026-08-12 used a looser ruler and are not
+  directly comparable.
+- **The target is the Title Update 5 executable** (title ID `45410914`,
+  v0.0.5.1), specifically the RB3DX-lineage TU5 image (byte-identical to
+  `RB3DX-Xbox/default.xex`). It carries 53 words of in-place patches over clean
+  retail TU5, so five functions (`DataSet`, `IsDemo`, `AddSongData`,
+  `SetDiskError`, `main`) cannot match it from any source. It lives at
+  `orig/45410914/default.xex` (not committed; vanilla TU0 is archived under
+  `orig/45410914/tu0-archive/`).
 
-Scoped to what the native port actually runs — the core engine (`obj`, `utl`,
-`os`, `math`) plus the game layer, beatmatch, MIDI and track code — the same
-build is **98.0% of functions / 93.0% of bytes** matched
-(`scripts/native_scope_map.py`). Current partition, provenance and the ranked
-remaining work:
+The full partition of the remaining work, with provenance:
 [`docs/decomp/CAMPAIGN_STATE_2026-10-03.md`](docs/decomp/CAMPAIGN_STATE_2026-10-03.md).
 
 This is the third project in a series, and it sits at the **intersection** of
@@ -143,27 +141,24 @@ Sister projects
   where the AI-assisted methodology below was first built and proven, on the
   harder target (no DWARF, ICF, link-time pragmas).
 
-> **Why this is hard, precisely.** The asymmetry between us and DC3 is **not**
-> optimization level — both are `/O1`, no whole-program optimization, so TU
-> spatial grouping in `.text` is preserved (MasterAudio's functions pack into
-> a few KB). `/Ob2` inlines leaf math aggressively (SHA1 K-constants used 20× in
-> source appear 0× in `.text`), but there is no cross-TU reordering or
-> whole-program inlining. The difference is that DC3 had a leaked PDB giving its
-> functions names+addresses, while RB3's are anonymous `fn_8XXXXXXX`. So we use
-> DC3 as a **Rosetta Stone for the engine** and Wii-RB3 as a **Rosetta Stone for
-> the game**, transferring their labels onto our anonymous functions via shared
-> string content (`tools/fingerprint_match.py`), byte/relocation-masked
-> correlation (`scripts/harvest/`), or structural similarity (Ghidra + BinDiff).
+> **The core challenge: no symbols.** DC3 and RB3 were built the same way —
+> `/O1`, no whole-program optimization, so each source file's functions stay
+> grouped together in `.text`. The difference is that DC3 shipped a leaked PDB
+> naming its functions, while RB3's are all anonymous `fn_8XXXXXXX`. So this
+> project uses DC3 as a **Rosetta Stone for the engine** and the Wii decomp as a
+> **Rosetta Stone for the game**, transferring their names onto RB3's functions
+> through shared string content (`tools/fingerprint_match.py`),
+> relocation-masked byte correlation (`scripts/harvest/`), and structural
+> similarity (Ghidra + BinDiff).
 
-Decomp priority: the GAME, not the engine
+Decomp priority: the game, not the engine
 -----------------------------------------
 
-Matching/porting effort goes into RB3's **game layer** (`src/band3/`, plus the
-RB3-only band objects in `src/system/bandobj/` that DC3 does not have) and the
-engine pieces the native port runs — not the bulk of the Milo engine
-(`src/system/`). Quazal network middleware (`src/network/`) is low priority and
-the Xbox 360 SDK is out of scope. The engine is effectively
-pre-solved: DC3 is the same engine on the same platform, and DC3's
+Effort goes where RB3 is unique: the **game layer** (`src/band3/`), the
+RB3-only band objects in `src/system/bandobj/` that DC3 does not have, and the
+engine pieces the native port runs. Quazal network middleware (`src/network/`)
+is lower priority, and the Xbox 360 SDK is out of scope. The bulk of the engine
+is effectively pre-solved: DC3 is the same engine on the same platform, and DC3's
 already-decompiled engine **loads and renders RB3-360 `.milo_xbox` assets** with
 zero rb3-xenon code (same texture tiling, vertex compression, endianness; DC3's
 loaders keep backward-compat parse branches for RB3's older revisions). A 3-way
@@ -177,19 +172,19 @@ asset-render experiment are in
 Status
 ------
 
-Two build tracks are alive:
+Two build tracks are active:
 
-**1. X360 decomp-matching build** (`ninja`) — the main event. The full pipeline
+**1. X360 matching build** (`ninja`) — the main event. The full pipeline
 runs end-to-end on every build: dtk splits the retail XEX into per-TU target
 objects → MSVC compiles our source through `wibo` → objdiff compares the two and
 emits `report.json` with the numbers in the table above. **3,090 units** appear
 in that report — units pinned to address ranges in `splits.txt` plus the
-auto-generated ones for code not yet attributed to a TU. Broad directory sweeps
-are largely exhausted; the remaining in-scope gap (~305 KB once the SDK and
-Quazal are excluded, measured 2026-10-03) is worked with targeted levers: source
-divergences adjudicated against retail bytes, register/scheduling residue,
-wrong-callee relocation names, struct/vtable layout, and the identification
-tail of still-anonymous functions.
+auto-generated ones for code not yet attributed to a TU. With most of the game
+layer matched, the remaining in-scope work (~305 KB, excluding the SDK and
+Quazal, measured 2026-10-03) is targeted: source differences checked against
+the retail bytes, register-allocation and scheduling residue, calls to the
+wrong function, struct and vtable layout, and naming the last anonymous
+functions. Each fix is priced by a whole-binary A/B build before it lands.
 
 **2. Native engine build** (`native/`, x86_64 Linux + clang). A host build that
 actually *runs* RB3 code. It consumes the shared Milo runtime in
@@ -212,10 +207,11 @@ targets**, each proving one subsystem on real game data:
   characters posed from real animation clips. `rb3-frame` is the engine-link
   smoke test.
 
-There is not yet a playable game loop tying these together. Any change to
-shared `src/` must pass `tools/native_build_gate.sh` (18/18, no skips) before
-landing, because the X360 matching build never links and so cannot see a
-native link break.
+The next milestone is tying these subsystems together into a playable game
+loop. To keep the native build healthy alongside the matching work, every
+change to shared `src/` must pass `tools/native_build_gate.sh` (18/18 targets,
+no skips) before landing — the X360 matching build never links, so this gate is
+what catches a native link break.
 
 How the AI tooling works
 ========================
