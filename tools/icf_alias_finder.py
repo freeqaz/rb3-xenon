@@ -471,6 +471,25 @@ def cmd_validate(args=None) -> int:
               file=sys.stderr)
         return 2
 
+    # ── SURVIVOR DRIFT (FATAL) -- lane W16-OS, 2026-10-03 ──────────────────────
+    # A placed group renders `[survivor, *folded]` into ONE objdiff bucket at its
+    # address, and the retail target objs spell that address with the MAP's name.
+    # If the survivor is not that name, the bucket omits the only name retail
+    # uses there: every folded member forgives nothing -- or, when the stale
+    # label is the map's name at ANOTHER address, forgives against the wrong
+    # function. classify_group() cannot see this (its named-member test passes a
+    # stale label that the target objs simply never mention), so 228 of 2,062
+    # placed groups had drifted by 2026-10-02 (lane W16-OA) with this gate PASS.
+    # One predicate, shared with the in-graph build edge: tools/alias_survivor_drift.py.
+    sys.path.insert(0, str(PROJECT_ROOT / "tools"))
+    import alias_survivor_drift
+    drift = alias_survivor_drift.find_drift(groups, alias_survivor_drift.applied_names())
+    for g, _want, why in drift:
+        buckets["CONTRADICTED"].append(
+            (g.get("name", g["survivor"]), g["address"],
+             f"SURVIVOR_DRIFTED: survivor {g['survivor'][:80]} -- {why[:160]}; "
+             f"fix: tools/alias_survivor_relabel.py --write"))
+
     n_bad = len(buckets.get("CONTRADICTED", []))
     n_ok = len(buckets.get("OK", []))
     n_tol = sum(len(v) for k, v in buckets.items() if k in TOLERATED)
@@ -521,7 +540,7 @@ def cmd_validate(args=None) -> int:
               f"per-group `contradiction_exempt` reason in scripts/symbol_aliases.json "
               f"(printed above); each is licensed by a retail bl-caller census or a "
               f"prior measured adjudication, never by silence")
-    print(f"  CONTRADICTED (FATAL)   {n_bad:5d}")
+    print(f"  CONTRADICTED (FATAL)   {n_bad:5d}   (of which SURVIVOR_DRIFTED {len(drift)})")
     if args is not None and getattr(args, "json", None):
         Path(args.json).write_text(json.dumps(
             {k: [{"name": n, "address": a, "detail": d} for n, a, d in v]

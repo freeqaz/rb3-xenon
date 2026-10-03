@@ -524,6 +524,11 @@ def generate_build_ninja(
     mapinj_script = Path("tools") / "map_name_injectivity.py"
     mapinj_json = Path("scripts") / "target_symbol_map.json"
     mapinj_checked = build_path / "map_name_injectivity_checked.stamp"
+    # Every placed alias group's survivor must be the map's name at its
+    # address (lane W16-OS). Same shape and neighbourhood as the two gates
+    # above, because it is the seam BETWEEN their two files; see its edge.
+    survdrift_script = Path("tools") / "alias_survivor_drift.py"
+    survdrift_checked = build_path / "alias_survivor_drift_checked.stamp"
     # Assert the SPLIT TARGET OBJS actually carry the mangled names the renamer
     # is supposed to install. objdiff pairs BY NAME, so virgin `fn_<addr>` objs
     # un-pair essentially every named row -- measured on main 2026-08-21 as
@@ -1541,6 +1546,7 @@ def generate_build_ninja(
                 report_path,
                 str(icf_map_checked),
                 str(mapinj_checked),
+                str(survdrift_checked),
                 str(renamed_checked),
             ],
             order_only="post-build",
@@ -1764,6 +1770,40 @@ def generate_build_ninja(
             implicit=[str(mapinj_script), str(mapinj_json), "always"],
         )
 
+        ###
+        # *** EVERY PLACED ALIAS GROUP'S SURVIVOR IS THE MAP'S NAME THERE. ***
+        # (lane W16-OS, 2026-10-03.) The rendered alias map puts
+        # `[survivor, *folded]` in ONE objdiff bucket at the group's address,
+        # and the target objs spell that address with the name
+        # scripts/target_symbol_map.json gives it. A survivor that is not that
+        # name leaves the retail name out of the bucket, so the folded members
+        # forgive nothing -- or, when the stale label is the map's name at
+        # ANOTHER address, forgive against the wrong function -- and every tool
+        # that chases a group by its `survivor` field reads the wrong retail
+        # body. 228 of 2,062 placed groups had drifted (lane W16-OA) because a
+        # map rename never touched the alias file and nothing compared the two.
+        # Neither file's mtime can express "the other one moved", so this is an
+        # `always` edge over BOTH, gating the report like the injectivity gate.
+        # Cost: one interpreter start, two JSON reads. Fix on failure:
+        # `tools/alias_survivor_relabel.py --write` (relabel + re-chase).
+        ###
+        n.comment("Assert every placed alias group's survivor is the map name at its address")
+        n.rule(
+            name="alias_survivor_drift_check",
+            command=(f"$python {survdrift_script} --quiet"
+                     f" --stamp $out --stamp-input {survdrift_script}"
+                     f" --stamp-input {icf_aliases_json}"
+                     f" --stamp-input {mapinj_json}"),
+            description="CHECK ALIAS SURVIVORS VS MAP",
+            restat=True,
+        )
+        n.build(
+            outputs=str(survdrift_checked),
+            rule="alias_survivor_drift_check",
+            implicit=[str(survdrift_script), str(icf_aliases_json),
+                      str(mapinj_json), "always"],
+        )
+
         n.comment("Assert the split target objs carry their mangled names")
         n.rule(
             name="target_objs_renamed_check",
@@ -1926,6 +1966,10 @@ def generate_build_ninja(
             objdiff, "objdiff.json", "all_source",
             str(icf_map_path),
             str(mapinj_checked), str(renamed_checked),
+            # ... and on the alias-survivor check (lane W16-OS): a drifted
+            # survivor puts the wrong names in the equivalence buckets this
+            # report scores with.
+            str(survdrift_checked),
             # ... and on the split-currency check, because the TARGET side of
             # every diff in this report is written by an edge that declares
             # none of it. Without this the report is free to measure objects
