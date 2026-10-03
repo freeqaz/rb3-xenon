@@ -5272,7 +5272,6 @@ UIList.cpp:
 	.pdata      start:0x8222A440 end:0x8222A458
 	.pdata      start:0x8222E898 end:0x8222E8D8
 	.pdata      start:0x8222E8F0 end:0x8222E8F8
-	.pdata      start:0x8223D5A0 end:0x8223D5B0
 	.pdata      start:0x8223DDE8 end:0x8223DDF8
 	.pdata      start:0x8223DE48 end:0x8223DE50
 	.pdata      start:0x8223DE50 end:0x8223DE58
@@ -5295,7 +5294,6 @@ UIList.cpp:
 	.text       start:0x82665D94 end:0x82665D98
 	.text       start:0x82665DE4 end:0x82666160
 	.text       start:0x82666290 end:0x826662E0
-	.text       start:0x8276CB20 end:0x8276CBC0
 	.text       start:0x82775B70 end:0x82775DC0
 	.text       start:0x82776698 end:0x827767F0
 	.text       start:0x827767F0 end:0x82776838
@@ -7696,12 +7694,14 @@ Stream.cpp:
 DirUnloader.cpp:
 	.pdata      start:0x8223D578 end:0x8223D598
 	.pdata      start:0x8223D598 end:0x8223D5A0
+	.pdata      start:0x8223D5A0 end:0x8223D5B0
 	.pdata      start:0x8223D5B0 end:0x8223D5D0
 	.pdata      start:0x8223D5D0 end:0x8223D608
 	.pdata      start:0x8223D608 end:0x8223D630
 	.text       start:0x8276C958 end:0x8276C968
 	.text       start:0x8276C968 end:0x8276CA80
 	.text       start:0x8276CA80 end:0x8276CB18
+	.text       start:0x8276CB20 end:0x8276CBC0
 	.text       start:0x8276CBC0 end:0x8276CE10
 	.text       start:0x8276CE10 end:0x8276D174
 	.text       start:0x8276D174 end:0x8276D244

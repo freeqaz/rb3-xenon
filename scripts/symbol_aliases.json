@@ -100082,10 +100082,8 @@
   {
    "name": "_M_allocate_and_copy",
    "address": "0x8276cb20",
-   "survivor": "??$_M_allocate_and_copy@PBVFlowMathOp@@@?$vector@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFlowMathOp@@IPBV2@0@Z",
-   "folded": [
-    "??$__uninitialized_fill_n@PAV?$ObjPtr@VObject@Hmx@@@@IV1@@stlpmtx_std@@YAPAV?$ObjPtr@VObject@Hmx@@@@PAV1@IABV1@ABU__false_type@0@@Z"
-   ],
+   "survivor": "??$__uninitialized_fill_n@PAV?$ObjPtr@VObject@Hmx@@@@IV1@@stlpmtx_std@@YAPAV?$ObjPtr@VObject@Hmx@@@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "folded": [],
    "evidence": "Fold group opened by W16-LB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
@@ -100093,7 +100091,12 @@
      "lane": "W16-LB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 96 B retail / 96 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?_M_insert_overflow_aux@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAV?$ObjPtr@VObject@Hmx@@@@ABV3@ABU__false_type@2@I_N@Z."
     }
-   ]
+   ],
+   "survivor_renamed": {
+    "from": "??$_M_allocate_and_copy@PBVFlowMathOp@@@?$vector@VFlowMathOp@@V?$StlNodeAlloc@VFlowMathOp@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFlowMathOp@@IPBV2@0@Z",
+    "lane": "W16-OQ 2026-10-03",
+    "why": "Retail 0x8276cb20 is __uninitialized_fill_n<ObjPtr<Hmx::Object>> (loop of _Copy_Construct<ObjPtr<Object>> at 0x8276C970, stride 0xc), sits among DirUnloader's vector<ObjPtr<Object>> COMDATs and is called only by its _M_insert_overflow_aux (0x8276CC68). W16-LB's admitted member below IS that spelling, so it becomes the map name and survivor; the range is re-homed UIList.cpp -> DirUnloader.cpp, which defines it. With the right name there is no fold left to forgive: folded is empty and the group is kept as the record."
+   }
   },
   {
    "name": "__uninitialized_copy",
