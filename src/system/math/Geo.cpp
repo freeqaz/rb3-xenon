@@ -1053,13 +1053,13 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
     for (std::list<BSPFace>::iterator faceIt = faces.begin(); faceIt != faces.end(); ++faceIt) {
         if (candidateIdx >= gBSPMaxCandidates) break;
         for (std::list<Plane>::iterator planeIt = faceIt->planes.begin(); planeIt != faceIt->planes.end(); ++planeIt) {
+            int frontCount = 0, backCount = 0, spanCount = 0;
+            float frontArea = zero, backArea = zero;
             if (totalFaces == 1) {
                 node->plane = *planeIt;
                 bestScore = zero;
                 break;
             }
-            int frontCount = 0, backCount = 0, spanCount = 0;
-            float frontArea = zero, backArea = zero;
             std::list<BSPFace>::iterator jt;
             for (jt = faces.begin(); jt != faces.end(); ++jt) {
                 bool front, back;
@@ -1069,13 +1069,14 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
                     if (fabs(planeIt->a * n.x + planeIt->b * n.y + planeIt->c * n.z) < gBSPDirTol)
                         break;
                 } else {
+                    float area = jt->area;
                     if (back) {
-                        backArea += jt->area;
+                        backArea += area;
                         backCount++;
                         if (!front) continue;
                         spanCount++;
                     }
-                    frontArea += jt->area;
+                    frontArea += area;
                     frontCount++;
                 }
             }
@@ -1083,9 +1084,9 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
                 candidateIdx--;
                 continue;
             }
-            float powBack = (float)pow((double)(spanCount + backCount), powExp);
-            float score = (float)pow((double)(spanCount + frontCount), powExp) * frontArea
-                        + powBack * backArea;
+            float powFront = pow((float)(spanCount + frontCount), powExp);
+            float powBack = pow((float)(spanCount + backCount), powExp);
+            float score = powFront * frontArea + powBack * backArea;
             if (frontCount < totalFaces && backCount < totalFaces && (bestScore < zero || score < bestScore)) {
                 node->plane = *planeIt;
                 bestScore = score;
