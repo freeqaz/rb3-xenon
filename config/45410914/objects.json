@@ -2421,8 +2421,25 @@
             "network/quazal/JobProcessJoinRequest.cpp": "NonMatching",
             "network/quazal/IDGeneratorDDL.cpp": "NonMatching",
             "network/quazal/Core/StringConverter.cpp": "NonMatching",
-            "network/quazal/Core/EventHandler.cpp": "NonMatching",
-            "network/quazal/StepSequenceJob.cpp": "NonMatching",
+            "network/quazal/Core/EventHandler.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/EHs-c-"
+                ]
+            },
+            "network/quazal/StepSequenceJob.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-",
+                    "/EHs-c-"
+                ]
+            },
             "network/quazal/Transport/PRUDP/PRUDPStream.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

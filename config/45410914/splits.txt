@@ -14465,12 +14465,12 @@ network/quazal/Core/StringConverter.cpp:
 	.text       start:0x82AF1E00 end:0x82AF1F6C
 
 network/quazal/Core/EventHandler.cpp:
-	.pdata      start:0x82255E88 end:0x82255EA0
-	.text       start:0x82AF2388 end:0x82AF2784
+	.pdata      start:0x82255E88 end:0x82255EE0
+	.text       start:0x82AF2388 end:0x82AF2DC8
 
 network/quazal/StepSequenceJob.cpp:
-	.pdata      start:0x82256258 end:0x82256260
-	.text       start:0x82AF9190 end:0x82AF926C
+	.pdata      start:0x82256238 end:0x82256298
+	.text       start:0x82AF8F50 end:0x82AF9538
 
 network/quazal/Transport/PRUDP/PRUDPStream.cpp:
 	.pdata      start:0x822563D0 end:0x82256830
