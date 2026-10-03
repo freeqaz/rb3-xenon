@@ -135,7 +135,6 @@ class SetlistSubmissionMsg : public NetMessage {
 public:
     SetlistSubmissionMsg() {}
     SetlistSubmissionMsg(const std::vector<int> &, int);
-    virtual ~SetlistSubmissionMsg() {}
     virtual void Save(BinStream &) const;
     virtual void Load(BinStream &);
     virtual void Dispatch();
