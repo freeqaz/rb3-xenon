@@ -1,6 +1,6 @@
 # W16-OL — sub-100 rows in `src/system/{bandobj,char,world,beatmatch}` (2026-10-03)
 
-**Branch** `w16-ol`, started off main `8bba58005`, rebased onto `92074833f` (Merge W16-OK) after the first A/B.
+**Branch** `w16-ol`, started off main `8bba58005`, rebased onto `92074833f` and then onto `80fc81d14` (the W16-OK merges).
 **Ruler** `name_check` (graded, from `report.json` `provenance.diff_config`). The permuter was not run, and no
 alias was added (`git diff main w16-ol -- scripts/symbol_aliases.json` is empty). `src/network`, the Quazal block
 and `src/band3` (lane W16-OK) were not edited.
@@ -33,7 +33,24 @@ worked the population serially. It worked through the rows in this order:
 
 ## 2. Whole-binary A/B
 
-**Final, on the rebased branch** (main `92074833f`, fresh worktree, run dir
+**FINAL** (main `80fc81d14`, fresh worktree, patch = map + source + splits, 20 paths; run dir
+`~/tmp/wt-w16ol-ab3/.ab_measure_runs/20261003-023557-branch3-1688807/`):
+
+```
+leg A: matched=53193 masked=25130 honest=28063 code%=57.270410  (recompiles: 0, settled)
+leg B: matched=53216 masked=25132 honest=28084 code%=57.312560  (recompiles: 596, split=1, patch_steps=7, settle iterations: 2)
+Δmatched=+23  Δmasked_equal=+2  Δhonest=+21  Δcode%=+0.042150pp  Δcode_bytes=+4320
+Δfuzzy=+0.014115pp   (legA 63.520740 -> legB 63.534855)
+unit net (ALL units) = +23   vs whole-binary Δmatched = +23
+unit REGRESSIONS: default/band3/bandtrack/GemRepTemplate (35->34)
+units at 100% [mpn]: 521 -> 522 (CharIKFoot MATCHED_ROSE; system/world/Dir DENOMINATOR_SHRANK, the
+  re-homed row left it; GemRepTemplate fell off)
+```
+
+**Prediction, written before the run:** +22 / +3,924 B (the run below) plus the re-homed
+`_M_fill_insert_aux` (+1 / +396 B) = **+23 / +4,320 B**, with the same one row down. **Measured identical.**
+
+Earlier run on the rebased branch, before the re-home (main `92074833f`) (main `92074833f`, fresh worktree, run dir
 `~/tmp/wt-w16ol-ab2/.ab_measure_runs/20261003-022640-branch2-1611554/`):
 
 ```
