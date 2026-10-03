@@ -162,12 +162,7 @@ FormatString &FormatString::operator<<(int i) {
 }
 
 const char *FormatString::Str() {
-    if (mType != kNone) {
-        // for whatever reason, this has the FormatString expanded out
-        FormatString str("FormatString: '%s' doesn't start with kNone.  Format: '%s'");
-        str << mFmt << mFmtBuf;
-        TheDebugNotifier << str.Str();
-    }
+    // retail does not check mType here; the copy is the whole body
     if (*mFmt != '\0') {
         MILO_ASSERT(mFmtEnd - mFmt < mBufSize, 0x16F);
         strcpy(mBuf + MAX_BUF_SIZE - mBufSize, mFmt);
