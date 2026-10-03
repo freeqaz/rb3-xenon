@@ -20471,6 +20471,7 @@
  "0x826c2070": "?SetFilling@GemPlayer@@QAAX_NH@Z",
  "0x826c2250": "?CheckFretReleases@GemPlayer@@QAAXM@Z",
  "0x826c22e0": "?RemoveFretReleasesInSlot@GemPlayer@@QAAXH@Z",
+ "0x826c23a0": "?_M_fill_insert_aux@?$vector@VHeldNote@@V?$StlNodeAlloc@VHeldNote@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVHeldNote@@IABV3@ABU__false_type@2@@Z",
  "0x826c2530": "?PostDynamicAdd@GemPlayer@@UAAXXZ",
  "0x826c2648": "??_GGemStatus@@QAAPAXI@Z",
  "0x826c26a8": "?FillComplete@GemPlayer@@UAAXHH@Z",
