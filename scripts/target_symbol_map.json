@@ -36009,5 +36009,13 @@
  "0x82a80338": "??$qDeletePOD@U_RTL_CRITICAL_SECTION@@@Quazal@@YAXPAU_RTL_CRITICAL_SECTION@@@Z",
  "0x82a802a0": "?LeaveImpl@MutexPrimitive@Quazal@@QAAXXZ",
  "0x82a80270": "?EnterImpl@MutexPrimitive@Quazal@@QAAXXZ",
- "0x82a802d0": "??$qNewPOD@U_RTL_CRITICAL_SECTION@@@Quazal@@YAPAU_RTL_CRITICAL_SECTION@@PBDI@Z"
+ "0x82a802d0": "??$qNewPOD@U_RTL_CRITICAL_SECTION@@@Quazal@@YAPAU_RTL_CRITICAL_SECTION@@PBDI@Z",
+ "0x82b000e8": "??0WorkerThreads@Quazal@@QAA@XZ",
+ "0x82b00210": "?Start@WorkerThreads@Quazal@@QAA_NI@Z",
+ "0x82b00778": "?clear@?$vector@PAV?$ObjectThread@VWorkerThreads@Quazal@@H@Quazal@@V?$MemAllocator@PAV?$ObjectThread@VWorkerThreads@Quazal@@H@Quazal@@@2@@stlpmtx_std@@QAAXXZ",
+ "0x82b00178": "??_GWorkerThreads@Quazal@@UAAPAXI@Z",
+ "0x82b006c8": "?GetNbWorkers@WorkerThreads@Quazal@@QBAIXZ",
+ "0x82b006f8": "?Run@WorkerThreads@Quazal@@QAAXH@Z",
+ "0x82b001c0": "??1WorkerThreads@Quazal@@UAA@XZ",
+ "0x82b00470": "?Stop@WorkerThreads@Quazal@@QAA_NXZ"
 }
