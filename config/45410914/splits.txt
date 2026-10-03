@@ -14564,6 +14564,10 @@ network/quazal/Transport/Interface/JobConnectEndPoint.cpp:
 	.pdata      start:0x82258718 end:0x822589D8
 	.text       start:0x82B2C698 end:0x82B2F110
 
+network/quazal/Transport/Interface/StationContactInfo.cpp:
+	.pdata      start:0x822589D8 end:0x82258A70
+	.text       start:0x82B2F110 end:0x82B2FC38
+
 network/quazal/Transport/Interface/TransportSignatureGenerator.cpp:
 	.pdata      start:0x82258A70 end:0x82258B00
 	.text       start:0x82B2FC40 end:0x82B30278
@@ -14577,8 +14581,12 @@ network/quazal/Transport/Interface/XboxConnectivityTester.cpp:
 	.text       start:0x82B36DF0 end:0x82B37010
 
 network/quazal/Stack/Core/IOCompletionNotifier.cpp:
-	.pdata      start:0x822591D8 end:0x822591F0
-	.text       start:0x82B383E0 end:0x82B386B4
+	.pdata      start:0x822591D8 end:0x82259220
+	.text       start:0x82B383E0 end:0x82B392D0
+
+network/quazal/Stack/Core/Inet.cpp:
+	.pdata      start:0x82259220 end:0x82259230
+	.text       start:0x82B392D0 end:0x82B39320
 
 network/quazal/Transport/UDP/QueuingSocket.cpp:
 	.pdata      start:0x82259230 end:0x82259478
