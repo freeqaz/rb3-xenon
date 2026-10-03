@@ -964,6 +964,18 @@ void RndMesh::VertVector::resize(int n) {
     }
 }
 
+// Retail 0x82418388 (52 B): grow to `capacity` through resize() with the
+// capacity guard dropped, then pin the capacity and restore the vert count.
+void RndMesh::VertVector::reserve(int capacity) {
+    MILO_ASSERT(capacity > mCapacity, 0x297);
+    MILO_ASSERT(capacity > mNumVerts, 0x298);
+    mCapacity = 0;
+    int num = mNumVerts;
+    resize(capacity);
+    mCapacity = capacity;
+    mNumVerts = num;
+}
+
 int RndMesh::EstimatedSizeKb() const {
     // sizeof(Vert) is 0x50 here
     // but the actual struct is size 0x60
