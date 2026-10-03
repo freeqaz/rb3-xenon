@@ -49,21 +49,23 @@ namespace Quazal {
     };
 
     // The shared header declares CallMethodOperation without its members (they
-    // live in the RMC code); this view adds the ones the stubs below read.
-    class RMCOperation : public CallMethodOperation {
+    // live in the RMC code); this view gives the ones the stubs below read, at
+    // the offsets retail reads them from.
+    class RMCOperation {
     public:
-        DuplicatedObject *GetTargetObject() const { return m_refTargetObject.m_poReferencedDO; }
+        DuplicatedObject *GetTargetObject() const { return m_pTarget; }
         unsigned short GetMethodID() const { return m_usMethodID; }
         Message *GetParameters() const;
         unsigned int SignalSuccess() const;
         void SetOutcome(qResult oOutcome) const { m_oOutcome = oOutcome; }
 
-        char m_pad20[0x12];
+        char m_pad0[0x14];
+        DuplicatedObject *m_pTarget; // 0x14 (the target DORef's object)
+        char m_pad18[0x1A];
         unsigned short m_usMethodID; // 0x32
         char m_pad34[0xC];
         mutable qResult m_oOutcome; // 0x40
     };
-
 
     class RMCContext {
     public:
@@ -295,7 +297,7 @@ namespace Quazal {
         return _DOC_RootDO::DispatchAction(pDO, usActionID, pMsg);
     }
 
-    #define RMC_OP static_cast<const RMCOperation &>(oOperation)
+    #define RMC_OP reinterpret_cast<const RMCOperation &>(oOperation)
 
     void _DOC_SessionClock::DispatchRMCCall(const CallMethodOperation &oOperation) {
         if (RMC_OP.GetMethodID() == m_usAdjustTimeID) {
