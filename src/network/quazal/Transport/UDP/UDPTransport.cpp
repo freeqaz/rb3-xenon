@@ -291,9 +291,9 @@ namespace Quazal {
         ObjectThreadRoot(const String &);
         virtual ~ObjectThreadRoot();
         virtual void CallObjectMethod() = 0;
-        void Launch();
+        bool Launch();
         bool Wait(unsigned int);
-        void MethodStarted();
+        void ReadyToRun();
         bool IsRunning() const { return m_bRunning; }
         static void Sleep(unsigned int);
 
@@ -321,7 +321,7 @@ namespace Quazal {
             T *pObject = m_pObject;
             Method pfn = m_pfMethod;
             P pParam = m_oParam;
-            MethodStarted();
+            ReadyToRun();
             (pObject->*pfn)(pParam);
         }
 

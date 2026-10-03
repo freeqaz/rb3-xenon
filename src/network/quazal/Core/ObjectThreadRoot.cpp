@@ -68,6 +68,13 @@ namespace Quazal {
 
     template <class T>
     class ThreadVariable : public ThreadVariableRoot {
+        // A plain map, not a qMap: retail's constructor expands the map
+        // constructor in place, which a qMap member (one more level of
+        // inlining) does not get under /Ob1.
+        typedef std::map<
+            unsigned int, T, std::less<unsigned int>,
+            MemAllocator<std::pair<const unsigned int, T> > >
+            ValueMap;
     public:
         ThreadVariable(const T &tDefault);
         virtual ~ThreadVariable();
@@ -79,14 +86,64 @@ namespace Quazal {
 
         T m_tDefaultValue; // 0xc
         CriticalSection m_csValues; // 0x10
-        qMap<unsigned int, T> m_mapValues; // 0x24
+        ValueMap m_mapValues; // 0x24
     };
+
+    template <class T>
+    inline T &ThreadVariable<T>::GetValueRef() {
+        ScopedCS oCS(m_csValues);
+        ValueMap::iterator it = m_mapValues.find(GetCurrentThreadKey());
+        if (it == m_mapValues.end()) {
+            m_mapValues[GetCurrentThreadKey()] = m_tDefaultValue;
+            return m_mapValues[GetCurrentThreadKey()];
+        } else {
+            return it->second;
+        }
+    }
+
+    template <class T>
+    inline ThreadVariable<T>::ThreadVariable(const T &tDefault)
+        : m_tDefaultValue(tDefault), m_csValues(0) {
+        m_mapValues[GetCurrentThreadKey()] = tDefault;
+    }
+
+    template <class T>
+    void ThreadVariable<T>::ResetValues() {
+        ScopedCS oCS(m_csValues);
+        ValueMap::iterator it;
+        while (!m_mapValues.empty()) {
+            it = m_mapValues.begin();
+            m_mapValues.erase(it);
+        }
+    }
+
+    template <class T>
+    void ThreadVariable<T>::ClearValue() {
+        ScopedCS oCS(m_csValues);
+        ValueMap::iterator it;
+        it = m_mapValues.find(GetCurrentThreadKey());
+        if (it != m_mapValues.end()) {
+            m_mapValues.erase(it);
+        }
+    }
+
+    template <class T>
+    inline ThreadVariable<T>::~ThreadVariable() {
+        ResetValues();
+    }
+
+    template <class T>
+    inline void ThreadVariable<T>::SetValue(const T &tValue) {
+        ScopedCS oCS(m_csValues);
+        m_mapValues[GetCurrentThreadKey()] = tValue;
+    }
 
     class ObjectThreadRoot : public RootObject {
     public:
         class Handle : public RootObject {
         public:
             Handle() : m_hThread(INVALID_HANDLE_VALUE) {}
+            ~Handle() {}
 
             HANDLE m_hThread; // 0x0
         };
@@ -151,6 +208,9 @@ namespace Quazal {
     }
 
     ObjectThreadRoot::~ObjectThreadRoot() {
+        // Retail evaluates mHandle once before the delete with no code for
+        // the test (its registers are allocated, nothing is emitted).
+        if (mHandle) {}
         delete mHandle;
         mHandle = NULL;
     }
@@ -175,13 +235,14 @@ namespace Quazal {
     void ObjectThreadRoot::ThreadStarted(unsigned int uiThreadID) {
         mThreadID = uiThreadID;
         s_oThreadCount.m_csCount.Enter();
-        s_oThreadCount.m_uiCount++;
+        // Retail keeps the counter's previous value in a stack slot.
+        unsigned int uiCount = s_oThreadCount.m_uiCount++;
         s_oThreadCount.m_csCount.Leave();
     }
 
     void ObjectThreadRoot::ThreadEnded() {
         s_oThreadCount.m_csCount.Enter();
-        s_oThreadCount.m_uiCount--;
+        unsigned int uiCount = s_oThreadCount.m_uiCount--;
         s_oThreadCount.m_csCount.Leave();
         ThreadVariableList::GetInstanceRef().ClearCurrentThreadValues();
     }
@@ -260,8 +321,8 @@ namespace Quazal {
 
     void ObjectThreadRoot::ApplyProcessor(unsigned int uiProcessor) {
         HANDLE hThread = (HANDLE)-2;
-        DWORD dwResult = XSetThreadProcessor(hThread, uiProcessor);
-        if (dwResult == (DWORD)-1) {
+        DWORD dwPrevious = XSetThreadProcessor(hThread, uiProcessor);
+        if (dwPrevious == (DWORD)-1) {
         } else {
             DWORD dwCurrent = GetCurrentProcessorNumber();
         }
@@ -279,8 +340,9 @@ namespace Quazal {
     const char *ObjectThreadRoot::GetCurrentThreadName() {
         if (GetCurrentThread() != NULL) {
             return GetCurrentThread()->mName;
+        } else {
+            return NULL;
         }
-        return NULL;
     }
 
     unsigned int ObjectThreadRoot::GetDefaultStackSize() { return s_uiDefaultStackSize; }
@@ -289,50 +351,4 @@ namespace Quazal {
         s_uiDefaultStackSize = uiSize;
     }
 
-    template <class T>
-    T &ThreadVariable<T>::GetValueRef() {
-        ScopedCS oCS(m_csValues);
-        qMap<unsigned int, T>::iterator it = m_mapValues.find(GetCurrentThreadKey());
-        if (it == m_mapValues.end()) {
-            m_mapValues[GetCurrentThreadKey()] = m_tDefaultValue;
-            return m_mapValues[GetCurrentThreadKey()];
-        }
-        return it->second;
-    }
-
-    template <class T>
-    ThreadVariable<T>::ThreadVariable(const T &tDefault)
-        : m_tDefaultValue(tDefault), m_csValues(0) {
-        m_mapValues[GetCurrentThreadKey()] = tDefault;
-    }
-
-    template <class T>
-    void ThreadVariable<T>::ResetValues() {
-        ScopedCS oCS(m_csValues);
-        qMap<unsigned int, T>::iterator it;
-        while (!m_mapValues.empty()) {
-            it = m_mapValues.begin();
-            m_mapValues.erase(it);
-        }
-    }
-
-    template <class T>
-    void ThreadVariable<T>::ClearValue() {
-        ScopedCS oCS(m_csValues);
-        qMap<unsigned int, T>::iterator it = m_mapValues.find(GetCurrentThreadKey());
-        if (it != m_mapValues.end()) {
-            m_mapValues.erase(it);
-        }
-    }
-
-    template <class T>
-    ThreadVariable<T>::~ThreadVariable() {
-        ResetValues();
-    }
-
-    template <class T>
-    void ThreadVariable<T>::SetValue(const T &tValue) {
-        ScopedCS oCS(m_csValues);
-        m_mapValues[GetCurrentThreadKey()] = tValue;
-    }
 }
