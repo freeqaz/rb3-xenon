@@ -781,29 +781,18 @@ void Frustum::Set(float near, float far, float fovY, float ratio) {
     }
 }
 
+static inline bool BehindPlane(const Plane &p, const Vector3 &v, float negRadius) {
+    return p.Dot(v) < negRadius;
+}
+
 bool operator>(const Sphere &s, const Frustum &f) {
-    float neg_r = -s.radius;
-    bool r;
-    r = f.front.Dot(s.center) < neg_r;
-    if (r == 0) {
-        r = f.back.Dot(s.center) < neg_r;
-        if (r == 0) {
-            r = f.left.Dot(s.center) < neg_r;
-            if (r == 0) {
-                r = f.right.Dot(s.center) < neg_r;
-                if (r == 0) {
-                    r = f.top.Dot(s.center) < neg_r;
-                    if (r == 0) {
-                        r = f.bottom.Dot(s.center) < neg_r;
-                        if (r == 0) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return true;
+    float negRadius = -s.radius;
+    return BehindPlane(f.front, s.center, negRadius)
+        || BehindPlane(f.back, s.center, negRadius)
+        || BehindPlane(f.left, s.center, negRadius)
+        || BehindPlane(f.right, s.center, negRadius)
+        || BehindPlane(f.top, s.center, negRadius)
+        || BehindPlane(f.bottom, s.center, negRadius);
 }
 
 bool Intersect(const Segment &seg, const Sphere &sphere) {
