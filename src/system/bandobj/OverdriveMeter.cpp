@@ -86,11 +86,12 @@ void OverdriveMeter::Deploy() {
 void OverdriveMeter::StopDeploy() {
     if (mBeFillingTrig)
         mBeFillingTrig->Trigger();
-    static Symbol range("range");
-    if (mPulseAnimGroup)
+    if (mPulseAnimGroup) {
+        static Symbol range("range");
         mPulseAnimGroup->Animate(
             0.0f, false, 0.0f, RndAnimatable::k30_fps_ui, 0.0f, 0.0f, 0.0f, 1.0f, range
         );
+    }
 }
 
 void OverdriveMeter::SetNoOverdrive() {
@@ -108,11 +109,12 @@ void OverdriveMeter::MiloReset() {
 void OverdriveMeter::EnergyReady(Symbol s, bool b, float f) {
     if (mBeReadyTrig)
         mBeReadyTrig->Trigger();
-    static Symbol loop("loop");
-    if (mPulseAnimGroup)
+    if (mPulseAnimGroup) {
+        static Symbol loop("loop");
         mPulseAnimGroup->Animate(
             0.0f, false, f, RndAnimatable::k1_fpb, 0.0f, 1.0f, 0.0f, 1.0f, loop
         );
+    }
     if (b) {
         const char *seqname = MakeString("rp_available_%s.cue", s);
         Sequence *seq = Find<Sequence>(seqname, true);
