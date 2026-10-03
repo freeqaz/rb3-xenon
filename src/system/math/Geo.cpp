@@ -1018,19 +1018,25 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
     stlpmtx_std::less<BSPFace> _cmp;
     stlpmtx_std::_S_sort<BSPFace, stlpmtx_std::StlNodeAlloc<BSPFace>, stlpmtx_std::less<BSPFace>>(faces, _cmp);
 
-    int totalFaces = 0;
-    for (std::list<BSPFace>::iterator it = faces.begin(); it != faces.end(); ++it)
-        totalFaces++;
+    // size(), not a hand count: distance()'s by-const-ref first parameter homes
+    // the begin() temporary (the stw to 0x60) and walks a copy of it.
+    int totalFaces = faces.size();
 
     int candidateIdx = 0;
     float bestScore = -1.0f;
     float zero = 0.0f;
     double powExp = (double)0.6f;
-    for (std::list<BSPFace>::iterator faceIt = faces.begin(); faceIt != faces.end(); ++faceIt) {
+    std::list<BSPFace>::iterator it;
+    for (it = faces.begin(); it != faces.end(); ++it) {
         if (candidateIdx >= gBSPMaxCandidates) break;
-        for (std::list<Plane>::iterator planeIt = faceIt->planes.begin(); planeIt != faceIt->planes.end(); ++planeIt) {
-            int frontCount = 0, backCount = 0, spanCount = 0;
-            float frontArea = zero, backArea = zero;
+        for (std::list<Plane>::iterator planeIt = it->planes.begin(); planeIt != it->planes.end(); ++planeIt) {
+            // Declared above the single-face test: retail zeroes all five
+            // before the totalFaces == 1 compare.
+            float frontArea = zero;
+            int frontCount = 0;
+            float backArea = zero;
+            int backCount = 0;
+            int spanCount = 0;
             if (totalFaces == 1) {
                 node->plane = *planeIt;
                 bestScore = zero;
@@ -1038,11 +1044,12 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
             }
             std::list<BSPFace>::iterator jt;
             for (jt = faces.begin(); jt != faces.end(); ++jt) {
-                bool front, back;
+                bool back, front;
                 jt->OnSide(*planeIt, front, back);
                 if (!front && !back) {
-                    const Vector3 &n = jt->t.m.z;
-                    if (fabs(planeIt->a * n.x + planeIt->b * n.y + planeIt->c * n.z) < gBSPDirTol)
+                    const Vector3 &faceNormal = jt->t.m.z;
+                    const Plane &plane = *planeIt;
+                    if (fabs(plane.a * faceNormal.x + plane.b * faceNormal.y + plane.c * faceNormal.z) < gBSPDirTol)
                         break;
                 } else {
                     float area = jt->area;
@@ -1060,6 +1067,7 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
                 candidateIdx--;
                 continue;
             }
+            // pow takes the counts as float (fcfid; frsp before the promotion).
             float powFront = pow((float)(spanCount + frontCount), powExp);
             float powBack = pow((float)(spanCount + backCount), powExp);
             float score = powFront * frontArea + powBack * backArea;
@@ -1076,49 +1084,49 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
         return false;
     }
 
-    std::list<BSPFace> backFaces, frontFaces;
-    std::list<BSPFace>::iterator it = faces.begin();
+    // frontFaces (0x68) is constructed first and recursed into node->left.
+    std::list<BSPFace> frontFaces, backFaces;
+    it = faces.begin();
     while (it != faces.end()) {
         bool front, back;
         it->OnSide(node->plane, front, back);
         if (!front && !back) {
             it = faces.erase(it);
         } else if (!back) {
+            // Retail splices at end() (the list's own address), keeping the
+            // child list in the parent's order.
             std::list<BSPFace>::iterator cur = it++;
-            frontFaces.splice(frontFaces.begin(), faces, cur);
+            frontFaces.splice(frontFaces.end(), faces, cur);
         } else if (!front) {
             std::list<BSPFace>::iterator cur = it++;
-            backFaces.splice(backFaces.begin(), faces, cur);
+            backFaces.splice(backFaces.end(), faces, cur);
         } else {
-            std::list<BSPFace>::iterator cur = it++;
+            // The split arm advances `it` only when the back half survives; a
+            // face whose back half clips away stays in `faces` and is examined
+            // again with its polygon already cut to the back side.
             Hmx::Ray ray;
-            Intersect(cur->t, node->plane, ray);
+            Intersect(it->t, node->plane, ray);
             BSPFace frontFace;
-            frontFace.t = cur->t;
-            Clip(cur->p, ray, frontFace.p);
+            frontFace.t = it->t;
+            Clip(it->p, ray, frontFace.p);
             if (frontFace.p.points.size() > 2) {
                 frontFace.Update();
-                frontFaces.insert(frontFaces.begin(), frontFace);
+                frontFaces.insert(frontFaces.end(), frontFace);
             }
             ray.dir.Set(-ray.dir.x, -ray.dir.y);
-            Clip(cur->p, ray, cur->p);
-            if (cur->p.points.size() > 2) {
-                cur->Update();
-                backFaces.splice(backFaces.begin(), faces, cur);
+            Clip(it->p, ray, it->p);
+            if (it->p.points.size() > 2) {
+                it->Update();
+                backFaces.splice(backFaces.end(), faces, it++);
             }
         }
     }
 
-    bool ok = MakeBSPTree(node->left, frontFaces, nextDepth);
-    if (!ok) {
-        backFaces.clear();
-        frontFaces.clear();
+    if (!MakeBSPTree(node->left, frontFaces, nextDepth))
         return false;
-    }
-    ok = MakeBSPTree(node->right, backFaces, nextDepth);
-    backFaces.clear();
-    frontFaces.clear();
-    return ok;
+    if (!MakeBSPTree(node->right, backFaces, nextDepth))
+        return false;
+    return true;
 }
 #else
 bool MakeBSPTree(BSPNode *&, std::list<BSPFace> &, int) { return false; }
