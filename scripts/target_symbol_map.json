@@ -36279,5 +36279,7 @@
  "0x827e63a8": "??_GCharWidgetImp@@UAAPAXI@Z",
  "0x8276e228": "??_GHxMaster@@UAAPAXI@Z",
  "0x827d1098": "??_GSongInfo@@UAAPAXI@Z",
- "0x8228dbc0": "?ReadyForMidiParsers@BandDirector@@QAA_NXZ"
+ "0x8228dbc0": "?ReadyForMidiParsers@BandDirector@@QAA_NXZ",
+ "0x82769050": "?DataInit@@YAXXZ",
+ "0x822d3850": "??_DUnisonIcon@@QAAXXZ"
 }

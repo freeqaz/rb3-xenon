@@ -167,8 +167,8 @@ void DataPopVar() {
 
 void DataInit() {
     DataInitFuncs();
+    // Retail 0x82769050 registers the loader for "dta" only (no "dtx").
     TheLoadMgr.RegisterFactory("dta", DataFactory);
-    TheLoadMgr.RegisterFactory("dtx", DataFactory);
     REGISTER_OBJ_FACTORY(TextFile);
     gDataMacroWarning = OptionBool("no_macro_warn", true);
     ObjectDir::PreInit(19997, 150000);

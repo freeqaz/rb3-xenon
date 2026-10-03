@@ -5230,6 +5230,7 @@ DataUtl.cpp:
 	.pdata      start:0x8223D1C8 end:0x8223D1D8
 	.pdata      start:0x8223D1D8 end:0x8223D1F0
 	.pdata      start:0x8223D1F0 end:0x8223D200
+	.pdata      start:0x8223D210 end:0x8223D220
 	.pdata      start:0x8223D220 end:0x8223D228
 	.pdata      start:0x8223D228 end:0x8223D230
 	.pdata      start:0x8223D230 end:0x8223D238
@@ -5247,6 +5248,7 @@ DataUtl.cpp:
 	.text       start:0x82768C60 end:0x82768DC0
 	.text       start:0x82768DC0 end:0x82768EF0
 	.text       start:0x82768EF0 end:0x82768F98
+	.text       start:0x8276904C end:0x82769120
 	.text       start:0x82769120 end:0x82769170
 	.text       start:0x82769170 end:0x827691FC
 	.text       start:0x82769200 end:0x8276927C
@@ -8790,7 +8792,7 @@ band3/meta_band/ViewSetting.cpp:
 	.pdata      start:0x82224CA0 end:0x82224CA8
 	.pdata      start:0x82224CA8 end:0x82224D38
 	.pdata      start:0x82224D38 end:0x82224F78
-	.pdata      start:0x8223D208 end:0x8223D220
+	.pdata      start:0x8223D208 end:0x8223D210
 	.pdata      start:0x82245C10 end:0x82245C18
 	.text       start:0x824CEDD0 end:0x824CEE58
 	.text       start:0x824CEE58 end:0x824CF800
@@ -8800,7 +8802,7 @@ band3/meta_band/ViewSetting.cpp:
 	.text       start:0x825D4770 end:0x825D47A4
 	.text       start:0x825D47A8 end:0x825D4E88
 	.text       start:0x825D4E88 end:0x825D6F80
-	.text       start:0x82768FF8 end:0x82769120
+	.text       start:0x82768FF8 end:0x8276904C
 	.text       start:0x828012E0 end:0x82801328
 	.text       start:0x82BF6B78 end:0x82BF6B80
 
