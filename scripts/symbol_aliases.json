@@ -103385,11 +103385,10 @@
   {
    "name": "$__destroy_aux",
    "address": "0x82ba2288",
-   "survivor": "??$__destroy_aux@UMerger@FileMerger@@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU__false_type@0@@Z",
+   "survivor": "??1?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
    "folded": [
     "??1?$deque@PAVLyricPlate@@V?$StlNodeAlloc@PAVLyricPlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$deque@PAVTambourineGem@@V?$StlNodeAlloc@PAVTambourineGem@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-    "??1?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$deque@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "W16-KD 2026-10-01: group created for an ICF fold proven on retail bytes; the survivor is the map name at 0x82ba2288.",
@@ -103414,21 +103413,91 @@
      "lane": "W16-KD 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 UNDECIDABLE: VACUOUS: body under 4 words or over half the words masked -- compares ); 4 B retail / 4 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x82ba936c, 0x82ba9fd4."
     }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_aux@UMerger@FileMerger@@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU__false_type@0@@Z",
+     "lane": "W16-OX 2026-10-03",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@ @ 0x82ba2288, ??$__destroy_aux@UMerger@FileMerger@@@stlpmtx_std@@YAXPAUMerger@FileMe): REFUTED [CALLEE-TWIN-DISTINCT] depth 1: retail ??1?$_Deque_base@U?$pair@W4KeyframeCmd@LightPreset@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair | ours ??1Merger@FileMerger@@QAA@XZ; anchor ??1?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ PROVEN here; our callee is PROVEN at its own map address, so retail holds both callee bodies and they differ"
+    }
+   ],
+   "relabelled": {
+    "from": "??$__destroy_aux@UMerger@FileMerger@@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU__false_type@0@@Z",
+    "to": "??1?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "lane": "W16-OX 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??1?$deque@PAVLyricPlate@@V?$StlNodeAlloc@PAVLyricPlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@ @ 0x82ba2288, ??1?$deque@PAVLyricPlate@@V?$StlNodeAlloc@PAVLyricPlate@@@stlpmtx_std@): PROVEN [CHASED] retail 4 B / ours 4 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$deque@PAVTambourineGem@@V?$StlNodeAlloc@PAVTambourineGem@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@ @ 0x82ba2288, ??1?$deque@PAVTambourineGem@@V?$StlNodeAlloc@PAVTambourineGem@@@stlpmt): PROVEN [CHASED] retail 4 B / ours 4 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$deque@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMesh@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@ @ 0x82ba2288, ??1?$deque@U?$pair@PAVRndMesh@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@): PROVEN [CHASED] retail 4 B / ours 4 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$__destroy_aux@UMerger@FileMerger@@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU__false_type@0@@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-TWIN-DISTINCT",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@ @ 0x82ba2288, ??$__destroy_aux@UMerger@FileMerger@@@stlpmtx_std@@YAXPAUMerger@FileMe): REFUTED [CALLEE-TWIN-DISTINCT] depth 1: retail ??1?$_Deque_base@U?$pair@W4KeyframeCmd@LightPreset@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair | ours ??1Merger@FileMerger@@QAA@XZ; anchor ??1?$deque@PAVTubePlate@@V?$StlNodeAlloc@PAVTubePlate@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ PROVEN here; our callee is PROVEN at its own map address, so retail holds both callee bodies and they differ"
+    }
    ]
   },
   {
    "name": "$__ucopy_aux",
    "address": "0x82b90740",
-   "survivor": "??$__ucopy_aux@PAPAVTrack@@PAPAV1@@stlpmtx_std@@YAPAPAVTrack@@PAPAV1@00ABU__true_type@0@@Z",
-   "folded": [
-    "??1TrackPanelInterface@@UAA@XZ"
-   ],
+   "survivor": "??1TrackPanelInterface@@UAA@XZ",
+   "folded": [],
    "evidence": "W16-KD 2026-10-01: group created for an ICF fold proven on retail bytes; the survivor is the map name at 0x82b90740.",
    "admitted": [
     {
      "spelling": "??1TrackPanelInterface@@UAA@XZ",
      "lane": "W16-KD 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 UNDECIDABLE: VACUOUS: body under 4 words or over half the words masked -- compares ); 4 B retail / 4 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x82b92ac0, 0x82b93b40."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__ucopy_aux@PAPAVTrack@@PAPAV1@@stlpmtx_std@@YAPAPAVTrack@@PAPAV1@00ABU__true_type@0@@Z",
+     "lane": "W16-OX 2026-10-03",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1TrackPanelInterface@@UAA@XZ @ 0x82b90740, ??$__ucopy_aux@PAPAVTrack@@PAPAV1@@stlpmtx_std@@YAPAPAVTrack@@PAPAV1@0): REFUTED [CALLEE-OPERATION-DIFFERS] depth 1: retail ??1UIPanel@@UAA@XZ | ours ?__ucopy_trivial@stlpmtx_std@@YAPAXPBX0PAX@Z; anchor ??1TrackPanelInterface@@UAA@XZ PROVEN here; ??1 vs __ucopy_trivial"
+    }
+   ],
+   "relabelled": {
+    "from": "??$__ucopy_aux@PAPAVTrack@@PAPAV1@@stlpmtx_std@@YAPAPAVTrack@@PAPAV1@00ABU__true_type@0@@Z",
+    "to": "??1TrackPanelInterface@@UAA@XZ",
+    "lane": "W16-OX 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__ucopy_aux@PAPAVTrack@@PAPAV1@@stlpmtx_std@@YAPAPAVTrack@@PAPAV1@00ABU__true_type@0@@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-OPERATION-DIFFERS",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1TrackPanelInterface@@UAA@XZ @ 0x82b90740, ??$__ucopy_aux@PAPAVTrack@@PAPAV1@@stlpmtx_std@@YAPAPAVTrack@@PAPAV1@0): REFUTED [CALLEE-OPERATION-DIFFERS] depth 1: retail ??1UIPanel@@UAA@XZ | ours ?__ucopy_trivial@stlpmtx_std@@YAPAXPBX0PAX@Z; anchor ??1TrackPanelInterface@@UAA@XZ PROVEN here; ??1 vs __ucopy_trivial"
     }
    ]
   },
@@ -105651,16 +105720,38 @@
   {
    "name": "remove_if",
    "address": "0x82749c28",
-   "survivor": "??$remove_if@UObjMatchPr@@@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAAXUObjMatchPr@@@Z",
-   "folded": [
-    "??1?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
-   ],
+   "survivor": "??1?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [],
    "evidence": "Fold group opened by W16-LB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
      "spelling": "??1?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
      "lane": "W16-LB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 UNDECIDABLE); 4 B retail / 4 B ours. Retail calls the survivor where we call this spelling in 2 row(s), e.g. fn_82749E00, fn_82749FD4."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$remove_if@UObjMatchPr@@@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAAXUObjMatchPr@@@Z",
+     "lane": "W16-OX 2026-10-03",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_s @ 0x82749c28, ??$remove_if@UObjMatchPr@@@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVOb): REFUTED [CALLEE-OPERATION-DIFFERS] depth 1: retail ?clear@?$_List_base@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_std@@@stlpm | ours ??$_S_remove_if@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@UObjMatchPr@@@; anchor ??1?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_std@@@stlpmtx_std@@QA PROVEN here; clear vs _S_remove_if"
+    }
+   ],
+   "relabelled": {
+    "from": "??$remove_if@UObjMatchPr@@@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAAXUObjMatchPr@@@Z",
+    "to": "??1?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "lane": "W16-OX 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$remove_if@UObjMatchPr@@@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAAXUObjMatchPr@@@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-OPERATION-DIFFERS",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_s @ 0x82749c28, ??$remove_if@UObjMatchPr@@@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVOb): REFUTED [CALLEE-OPERATION-DIFFERS] depth 1: retail ?clear@?$_List_base@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_std@@@stlpm | ours ??$_S_remove_if@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@UObjMatchPr@@@; anchor ??1?$list@UVar@ScriptTask@@V?$StlNodeAlloc@UVar@ScriptTask@@@stlpmtx_std@@@stlpmtx_std@@QA PROVEN here; clear vs _S_remove_if"
     }
    ]
   },
@@ -105711,10 +105802,8 @@
   {
    "name": "_Destroy",
    "address": "0x827bfce8",
-   "survivor": "??$_Destroy@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@0@@Z",
-   "folded": [
-    "??1?$list@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
-   ],
+   "survivor": "??1?$list@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+   "folded": [],
    "evidence": "Fold group opened by W16-LB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
@@ -105722,21 +105811,67 @@
      "lane": "W16-LB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 UNDECIDABLE); 4 B retail / 4 B ours. Retail calls the survivor where we call this spelling in 2 row(s), e.g. fn_827BFD70, fn_827BFE64."
     }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$_Destroy@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@0@@Z",
+     "lane": "W16-OX 2026-10-03",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$list@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@ @ 0x827bfce8, ??$_Destroy@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@): REFUTED [CALLEE-OPERATION-DIFFERS] depth 1: retail ?clear@?$_List_base@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_st | ours ??1String@@UAA@XZ; anchor ??1?$list@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@V?$StlN PROVEN here; clear vs ??1"
+    }
+   ],
+   "relabelled": {
+    "from": "??$_Destroy@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@0@@Z",
+    "to": "??1?$list@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    "lane": "W16-OX 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$_Destroy@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@0@@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-OPERATION-DIFFERS",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$list@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@ @ 0x827bfce8, ??$_Destroy@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@): REFUTED [CALLEE-OPERATION-DIFFERS] depth 1: retail ?clear@?$_List_base@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_st | ours ??1String@@UAA@XZ; anchor ??1?$list@U?$pair@VString@@P6APAVLoader@@ABVFilePath@@W4LoaderPos@@@Z@stlpmtx_std@@V?$StlN PROVEN here; clear vs ??1"
+    }
    ]
   },
   {
    "name": "_Destroy",
    "address": "0x827ce990",
-   "survivor": "??$_Destroy@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@@Z",
-   "folded": [
-    "??1?$list@UServerData@NetCacheMgr@@V?$StlNodeAlloc@UServerData@NetCacheMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
-   ],
+   "survivor": "??1?$list@UServerData@NetCacheMgr@@V?$StlNodeAlloc@UServerData@NetCacheMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [],
    "evidence": "Fold group opened by W16-LB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
      "spelling": "??1?$list@UServerData@NetCacheMgr@@V?$StlNodeAlloc@UServerData@NetCacheMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
      "lane": "W16-LB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 UNDECIDABLE); 4 B retail / 4 B ours. Retail calls the survivor where we call this spelling in 2 row(s), e.g. fn_827CEC38, fn_827CED50."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$_Destroy@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@@Z",
+     "lane": "W16-OX 2026-10-03",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$list@UServerData@NetCacheMgr@@V?$StlNodeAlloc@UServerData@NetCach @ 0x827ce990, ??$_Destroy@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@@Z): REFUTED [CALLEE-OPERATION-DIFFERS] depth 1: retail ?clear@?$_List_base@UServerData@NetCacheMgr@@V?$StlNodeAlloc@UServerData@NetCacheMgr@@@stl | ours ??1String@@UAA@XZ; anchor ??1?$list@UServerData@NetCacheMgr@@V?$StlNodeAlloc@UServerData@NetCacheMgr@@@stlpmtx_std@@ PROVEN here; clear vs ??1"
+    }
+   ],
+   "relabelled": {
+    "from": "??$_Destroy@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@@Z",
+    "to": "??1?$list@UServerData@NetCacheMgr@@V?$StlNodeAlloc@UServerData@NetCacheMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "lane": "W16-OX 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$_Destroy@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-OPERATION-DIFFERS",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$list@UServerData@NetCacheMgr@@V?$StlNodeAlloc@UServerData@NetCach @ 0x827ce990, ??$_Destroy@UNetLoaderRef@@@stlpmtx_std@@YAXPAUNetLoaderRef@@@Z): REFUTED [CALLEE-OPERATION-DIFFERS] depth 1: retail ?clear@?$_List_base@UServerData@NetCacheMgr@@V?$StlNodeAlloc@UServerData@NetCacheMgr@@@stl | ours ??1String@@UAA@XZ; anchor ??1?$list@UServerData@NetCacheMgr@@V?$StlNodeAlloc@UServerData@NetCacheMgr@@@stlpmtx_std@@ PROVEN here; clear vs ??1"
     }
    ]
   },
@@ -105851,16 +105986,38 @@
   {
    "name": "1logic_error",
    "address": "0x824f9cd0",
-   "survivor": "??1logic_error@stlpmtx_std@@UAA@XZ",
-   "folded": [
-    "??1?$map@VString@@VDataNode@@U?$less@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ"
-   ],
+   "survivor": "??1?$map@VString@@VDataNode@@U?$less@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
+   "folded": [],
    "evidence": "Fold group opened by W16-LB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
      "spelling": "??1?$map@VString@@VDataNode@@U?$less@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
      "lane": "W16-LB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 UNDECIDABLE); 4 B retail / 4 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. fn_8276C6CC."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??1logic_error@stlpmtx_std@@UAA@XZ",
+     "lane": "W16-OX 2026-10-03",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$map@VString@@VDataNode@@U?$less@VString@@@stlpmtx_std@@V?$StlNode @ 0x824f9cd0, ??1logic_error@stlpmtx_std@@UAA@XZ): REFUTED [CALLEE-OPERATION-DIFFERS] depth 1: retail ?clear@?$_Rb_tree@VString@@U?$less@VString@@@stlpmtx_std@@U?$pair@$$CBVString@@VDataNode@@ | ours ??1exception@std@@UAA@XZ; anchor ??1?$map@VString@@VDataNode@@U?$less@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVS PROVEN here; clear vs ??1"
+    }
+   ],
+   "relabelled": {
+    "from": "??1logic_error@stlpmtx_std@@UAA@XZ",
+    "to": "??1?$map@VString@@VDataNode@@U?$less@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVString@@VDataNode@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
+    "lane": "W16-OX 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??1logic_error@stlpmtx_std@@UAA@XZ",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-OPERATION-DIFFERS",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$map@VString@@VDataNode@@U?$less@VString@@@stlpmtx_std@@V?$StlNode @ 0x824f9cd0, ??1logic_error@stlpmtx_std@@UAA@XZ): REFUTED [CALLEE-OPERATION-DIFFERS] depth 1: retail ?clear@?$_Rb_tree@VString@@U?$less@VString@@@stlpmtx_std@@U?$pair@$$CBVString@@VDataNode@@ | ours ??1exception@std@@UAA@XZ; anchor ??1?$map@VString@@VDataNode@@U?$less@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVS PROVEN here; clear vs ??1"
     }
    ]
   },
@@ -107911,16 +108068,38 @@
   {
    "name": "__ucopy_ptrs",
    "address": "0x825aac18",
-   "survivor": "??$__ucopy_ptrs@PBHPAH@stlpmtx_std@@YAPAHPBH0PAHABU__true_type@0@@Z",
-   "folded": [
-    "??1BasicStartLockMsg@@UAA@XZ"
-   ],
+   "survivor": "??1BasicStartLockMsg@@UAA@XZ",
+   "folded": [],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
      "spelling": "??1BasicStartLockMsg@@UAA@XZ",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 UNDECIDABLE); 4 B retail / 4 B ours. Retail calls the survivor where we call this spelling in 2 row(s), e.g. fn_825AC7B4, fn_826350B8."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__ucopy_ptrs@PBHPAH@stlpmtx_std@@YAPAHPBH0PAHABU__true_type@0@@Z",
+     "lane": "W16-OX 2026-10-03",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1BasicStartLockMsg@@UAA@XZ @ 0x825aac18, ??$__ucopy_ptrs@PBHPAH@stlpmtx_std@@YAPAHPBH0PAHABU__true_type@0@@Z): REFUTED [CALLEE-OPERATION-DIFFERS] depth 1: retail ??1StartLockMsg@@UAA@XZ | ours ?__ucopy_trivial@stlpmtx_std@@YAPAXPBX0PAX@Z; anchor ??1BasicStartLockMsg@@UAA@XZ PROVEN here; ??1 vs __ucopy_trivial"
+    }
+   ],
+   "relabelled": {
+    "from": "??$__ucopy_ptrs@PBHPAH@stlpmtx_std@@YAPAHPBH0PAHABU__true_type@0@@Z",
+    "to": "??1BasicStartLockMsg@@UAA@XZ",
+    "lane": "W16-OX 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__ucopy_ptrs@PBHPAH@stlpmtx_std@@YAPAHPBH0PAHABU__true_type@0@@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "CALLEE-OPERATION-DIFFERS",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1BasicStartLockMsg@@UAA@XZ @ 0x825aac18, ??$__ucopy_ptrs@PBHPAH@stlpmtx_std@@YAPAHPBH0PAHABU__true_type@0@@Z): REFUTED [CALLEE-OPERATION-DIFFERS] depth 1: retail ??1StartLockMsg@@UAA@XZ | ours ?__ucopy_trivial@stlpmtx_std@@YAPAXPBX0PAX@Z; anchor ??1BasicStartLockMsg@@UAA@XZ PROVEN here; ??1 vs __ucopy_trivial"
     }
    ]
   },
