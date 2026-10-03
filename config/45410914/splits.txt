@@ -1695,8 +1695,8 @@ system/utl/SongInfoAudioType.cpp:
 	.text       start:0x827D4260 end:0x827D44C4
 
 DataFlex.c:
-	.pdata      start:0x8223D698 end:0x8223D6C8
-	.text       start:0x8276D858 end:0x8276E26C
+	.pdata      start:0x8223D698 end:0x8223D6C0
+	.text       start:0x8276D858 end:0x8276E228
 
 CompressionEffect.cpp:
 	.pdata      start:0x8225E9F0 end:0x8225EA08
@@ -1739,8 +1739,9 @@ BeatMap.cpp:
 	.text       start:0x827D2C60 end:0x827D2E70
 
 MBT.cpp:
-	.pdata      start:0x82242EA8 end:0x82242EB8
-	.text       start:0x827D1018 end:0x827D10E0
+	.pdata      start:0x82242EA8 end:0x82242EB0
+	.text       start:0x827D1018 end:0x827D1098
+	.text       start:0x827D10DC end:0x827D10E0
 
 MemHeap.cpp:
 	.pdata      start:0x82241A98 end:0x82241AA0
@@ -2646,11 +2647,10 @@ MidiParser.cpp:
 	.pdata      start:0x822441A8 end:0x822441B0
 	.pdata      start:0x822441B8 end:0x822441C8
 	.pdata      start:0x822441E0 end:0x822441E8
-	.pdata      start:0x82244208 end:0x82244210
 	.pdata      start:0x82244218 end:0x82244220
 	.pdata      start:0x82244248 end:0x82244260
 	.pdata      start:0x82244268 end:0x82244278
-	.pdata      start:0x82244280 end:0x82244298
+	.pdata      start:0x82244280 end:0x82244290
 	.pdata      start:0x822442A8 end:0x822442B8
 	.pdata      start:0x822442B8 end:0x822442C0
 	.pdata      start:0x822442C0 end:0x822442C8
@@ -2664,12 +2664,12 @@ MidiParser.cpp:
 	.text       start:0x827E53E0 end:0x827E542C
 	.text       start:0x827E5510 end:0x827E5564
 	.text       start:0x827E5818 end:0x827E5840
-	.text       start:0x827E5994 end:0x827E59E4
 	.text       start:0x827E5BC4 end:0x827E5BEC
 	.text       start:0x827E5C44 end:0x827E5C4C
 	.text       start:0x827E60F4 end:0x827E6188
 	.text       start:0x827E6284 end:0x827E62D4
-	.text       start:0x827E6350 end:0x827E63F8
+	.text       start:0x827E6350 end:0x827E63A4
+	.text       start:0x827E63F4 end:0x827E63F8
 	.text       start:0x827E64B8 end:0x827E6530
 	.text       start:0x827E6530 end:0x827E658C
 	.text       start:0x827E6590 end:0x827E6598
@@ -6202,6 +6202,7 @@ SongMetadata.cpp:
 	.text       start:0x827AA510 end:0x827AA5A8
 	.text       start:0x827AA5A8 end:0x827AA5B4
 	.text       start:0x827AA5B8 end:0x827AA5CC
+	.text       start:0x827AA5D0 end:0x827AA5F0
 	.text       start:0x827AA5F0 end:0x827AA6E8
 	.text       start:0x827AA6E8 end:0x827AAC88
 	.text       start:0x827AAC88 end:0x827AAD98
@@ -6374,9 +6375,11 @@ NetLoader.cpp:
 	.text       start:0x827D0388 end:0x827D03EC
 
 SongInfoCopy.cpp:
+	.pdata      start:0x82242EB0 end:0x82242EB8
 	.pdata      start:0x82242EB8 end:0x82242FC8
 	.pdata      start:0x82242FC8 end:0x82242FD0
 	.pdata      start:0x82242FD0 end:0x82243040
+	.text       start:0x827D1098 end:0x827D10DC
 	.text       start:0x827D10E8 end:0x827D1110
 	.text       start:0x827D1120 end:0x827D1D98
 	.text       start:0x827D1D98 end:0x827D1EF0
@@ -9121,7 +9124,6 @@ TrackWidget.cpp:
 	.pdata      start:0x82244118 end:0x82244128
 	.pdata      start:0x82244148 end:0x82244150
 	.pdata      start:0x82244190 end:0x822441A0
-	.text       start:0x827AA5D0 end:0x827AA5F0
 	.text       start:0x827DCE58 end:0x827DCED0
 	.text       start:0x827E0A58 end:0x827E0AF0
 	.text       start:0x827E0AF0 end:0x827E0B54
@@ -9166,6 +9168,7 @@ TrackWidgetImp.cpp:
 	.pdata      start:0x822441D8 end:0x822441E0
 	.pdata      start:0x822441E8 end:0x822441F0
 	.pdata      start:0x822441F0 end:0x82244208
+	.pdata      start:0x82244208 end:0x82244210
 	.pdata      start:0x82244210 end:0x82244218
 	.pdata      start:0x82244220 end:0x82244228
 	.pdata      start:0x82244228 end:0x82244230
@@ -9173,6 +9176,7 @@ TrackWidgetImp.cpp:
 	.pdata      start:0x82244240 end:0x82244248
 	.pdata      start:0x82244260 end:0x82244268
 	.pdata      start:0x82244278 end:0x82244280
+	.pdata      start:0x82244290 end:0x82244298
 	.pdata      start:0x82244298 end:0x822442A8
 	.text       start:0x827E2BA4 end:0x827E2C88
 	.text       start:0x827E4900 end:0x827E495C
@@ -9198,6 +9202,7 @@ TrackWidgetImp.cpp:
 	.text       start:0x827E5660 end:0x827E5818
 	.text       start:0x827E5840 end:0x827E58AC
 	.text       start:0x827E58AC end:0x827E5994
+	.text       start:0x827E5994 end:0x827E59E4
 	.text       start:0x827E59E4 end:0x827E5A2C
 	.text       start:0x827E5A2C end:0x827E5BC4
 	.text       start:0x827E5BEC end:0x827E5C44
@@ -9207,6 +9212,7 @@ TrackWidgetImp.cpp:
 	.text       start:0x827E5F58 end:0x827E60F4
 	.text       start:0x827E6188 end:0x827E6284
 	.text       start:0x827E62D4 end:0x827E6350
+	.text       start:0x827E63A4 end:0x827E63F4
 	.text       start:0x827E63F8 end:0x827E64B8
 
 NetworkEmulator.cpp:
@@ -10972,6 +10978,7 @@ EventAnim.cpp:
 	.text       start:0x824CAC58 end:0x824CAC64
 
 system/beatmatch/BeatMaster.cpp:
+	.pdata      start:0x8223D6C0 end:0x8223D6C8
 	.pdata      start:0x8223D6C8 end:0x8223D6D0
 	.pdata      start:0x8223D6D0 end:0x8223D6D8
 	.pdata      start:0x8223D6D8 end:0x8223D6F0
@@ -10979,6 +10986,7 @@ system/beatmatch/BeatMaster.cpp:
 	.pdata      start:0x8223D7D0 end:0x8223D7D8
 	.pdata      start:0x8223D7D8 end:0x8223D7E0
 	.pdata      start:0x8223D7E0 end:0x8223D808
+	.text       start:0x8276E228 end:0x8276E26C
 	.text       start:0x8276E26C end:0x8276E2B8
 	.text       start:0x8276E2B8 end:0x8276E328
 	.text       start:0x8276E328 end:0x8276E3D8
@@ -12374,7 +12382,7 @@ VocalPart.cpp:
 	.pdata      start:0x82236BC8 end:0x82236BD0
 	.pdata      start:0x82236BD0 end:0x82236BD8
 	.pdata      start:0x82236BD8 end:0x82236BE0
-	.pdata      start:0x82236BE0 end:0x82236BF0
+	.pdata      start:0x82236BE0 end:0x82236BE8
 	.text       start:0x826F15FC end:0x826F2144
 	.text       start:0x826F2148 end:0x826F28C8
 	.text       start:0x826F28C8 end:0x826F2AE8
@@ -12386,7 +12394,11 @@ VocalPart.cpp:
 	.text       start:0x826F3830 end:0x826F3954
 	.text       start:0x826F3958 end:0x826F3990
 	.text       start:0x826F3990 end:0x826F39F4
-	.text       start:0x826F39F8 end:0x826F3B18
+	.text       start:0x826F39F8 end:0x826F3AC8
+
+band3/game/ScoreUtl.cpp:
+	.pdata      start:0x82236BE8 end:0x82236BF0
+	.text       start:0x826F3AC8 end:0x826F3B18
 
 HeldNote.cpp:
 	.pdata      start:0x82236BF0 end:0x82236C08

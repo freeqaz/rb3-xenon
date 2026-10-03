@@ -36267,5 +36267,16 @@
  "0x82319db0": "??0MiniLeaderboardDisplay@@QAA@XZ",
  "0x827cd8b8": "??0NetLoaderRef@@QAA@ABU0@@Z",
  "0x8233f2b8": "??_GBandList@@UAAPAXI@Z",
- "0x824ca290": "??_GEventAnim@@UAAPAXI@Z"
+ "0x824ca290": "??_GEventAnim@@UAAPAXI@Z",
+ "0x8231bcf0": "?SetValues@MeterDisplay@@QAAXHH@Z",
+ "0x8231bd08": "?SetShowText@MeterDisplay@@QAAX_N@Z",
+ "0x8231bd10": "?SetPercentageText@MeterDisplay@@QAAX_N@Z",
+ "0x826f3ac8": "?GetStarsForScore@@YAHHABVUserGuid@@@Z",
+ "0x827efa10": "?SkipCurrentTrack@MidiReceiver@@QAAXXZ",
+ "0x827aa5d0": "?NumVocalParts@SongMetadata@@QBAHXZ",
+ "0x827ced80": "??_GNetCacheMgr@@UAAPAXI@Z",
+ "0x827e5998": "??_GMultiMeshWidgetImp@@UAAPAXI@Z",
+ "0x827e63a8": "??_GCharWidgetImp@@UAAPAXI@Z",
+ "0x8276e228": "??_GHxMaster@@UAAPAXI@Z",
+ "0x827d1098": "??_GSongInfo@@UAAPAXI@Z"
 }
