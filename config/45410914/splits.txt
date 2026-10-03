@@ -14513,8 +14513,8 @@ network/quazal/Transport/UDP/UDPTransport.cpp:
 	.text       start:0x82B15808 end:0x82B1A518
 
 network/quazal/Compression/ZLib/ZLibCompression.cpp:
-	.pdata      start:0x82257B98 end:0x82257BA0
-	.text       start:0x82B1B6D0 end:0x82B1B80C
+	.pdata      start:0x82257B88 end:0x82257BD0
+	.text       start:0x82B1B660 end:0x82B1BE58
 
 network/quazal/SystemComponents.cpp:
 	.pdata      start:0x82257C20 end:0x82257C28
