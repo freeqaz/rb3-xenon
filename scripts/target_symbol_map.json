@@ -20503,7 +20503,7 @@
  "0x826c6c58": "?ReleaseGem@GemPlayer@@UAAXHMHM@Z",
  "0x826c6d00": "?Poll@GemPlayer@@UAAXMABVSongPos@@@Z",
  "0x826c7260": "?Restart@GemPlayer@@UAAX_N@Z",
- "0x826c75e0": "?_M_fill_insert@?$vector@VDetectFrame@@V?$StlNodeAlloc@VDetectFrame@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVDetectFrame@@IABV3@@Z",
+ "0x826c75e0": "?_M_fill_insert@?$vector@VHeldNote@@V?$StlNodeAlloc@VHeldNote@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVHeldNote@@IABV3@@Z",
  "0x826c7650": "??_GGemPlayer@@UAAPAXI@Z",
  "0x826c76b0": "?Hit@GemPlayer@@UAAXHMHIW4GemHitFlags@@@Z",
  "0x826c83e8": "?resize@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@Z",

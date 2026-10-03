@@ -3890,10 +3890,6 @@ HamRibbon.cpp:
 	.pdata      start:0x821F9710 end:0x821F9718
 	.text       start:0x822F0408 end:0x822F047C
 
-MoveAsyncDetector.cpp:
-	.pdata      start:0x82234690 end:0x82234698
-	.text       start:0x826C75E0 end:0x826C7650
-
 Text.cpp:
 	.pdata      start:0x821FC500 end:0x821FC508
 	.pdata      start:0x82203ED8 end:0x82203EE0
@@ -9675,6 +9671,7 @@ GemPlayer.cpp:
 	.pdata      start:0x82234428 end:0x82234440
 	.pdata      start:0x82234440 end:0x82234448
 	.pdata      start:0x82234448 end:0x82234690
+	.pdata      start:0x82234690 end:0x82234698
 	.pdata      start:0x82234698 end:0x82234730
 	.text       start:0x826BBC38 end:0x826BBC7C
 	.text       start:0x826BBC7C end:0x826BBCEC
@@ -9728,6 +9725,7 @@ GemPlayer.cpp:
 	.text       start:0x826C3F50 end:0x826C44F8
 	.text       start:0x826C44F8 end:0x826C5AE4
 	.text       start:0x826C5AE4 end:0x826C75DC
+	.text       start:0x826C75E0 end:0x826C7650
 	.text       start:0x826C7650 end:0x826C83E4
 
 TrackerManager.cpp:
