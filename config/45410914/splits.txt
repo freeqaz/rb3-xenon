@@ -9893,7 +9893,6 @@ Performer.cpp:
 	.pdata      start:0x82232240 end:0x822323C8
 	.pdata      start:0x822323C8 end:0x822323D8
 	.pdata      start:0x822323D8 end:0x822323E8
-	.text       start:0x82365E58 end:0x82365E68
 	.text       start:0x82657C50 end:0x82657CF0
 	.text       start:0x82657CF0 end:0x82657E08
 	.text       start:0x82657FA0 end:0x8265853C
@@ -13520,8 +13519,7 @@ band3/tour/TourWeightManager.cpp:
 
 band3/tour/TourGameRules.cpp:
 	.pdata      start:0x82200BB0 end:0x82200BD8
-	.text       start:0x82365E40 end:0x82365E58
-	.text       start:0x82365E68 end:0x823660F8
+	.text       start:0x82365E40 end:0x823660F8
 
 band3/tour/TourQuestGameRules.cpp:
 	.pdata      start:0x82200B78 end:0x82200BB0
