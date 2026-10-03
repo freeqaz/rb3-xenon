@@ -14229,8 +14229,8 @@ network/quazal/StationDDL.cpp:
 	.text       start:0x82A82830 end:0x82A847B8
 
 network/quazal/Core/String.cpp:
-	.pdata      start:0x82251908 end:0x822519A0
-	.text       start:0x82A873C0 end:0x82A87D2C
+	.pdata      start:0x822518A8 end:0x822519B8
+	.text       start:0x82A86ED0 end:0x82A87F20
 
 network/quazal/XboxLSP/Client/LSPBackEndServices.cpp:
 	.pdata      start:0x822519D8 end:0x82251A10
