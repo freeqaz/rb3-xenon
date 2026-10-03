@@ -553,18 +553,12 @@ void BandCamShot::ViewFreeze() {
 void BandCamShot::FreezeChar(Character *c, bool b) { c->SetFrozen(b); }
 
 void BandCamShot::Freeze() {
-    bool b;
     FOREACH (it, mTargets) {
-        Target &cur = *it;
-        Character *charObj;
-        b = false;
-        if (!(*it).mTarget.Null()) {
-            charObj = dynamic_cast<Character *>(GetTargetCache(cur.mTarget)->unk4);
+        if (!it->mTarget.Null()) {
+            Character *charObj =
+                dynamic_cast<Character *>(GetTargetCache(it->mTarget)->unk4);
             if (charObj)
-                b = true;
-        }
-        if (b) {
-            FreezeChar(charObj, true);
+                FreezeChar(charObj, true);
         }
     }
 }

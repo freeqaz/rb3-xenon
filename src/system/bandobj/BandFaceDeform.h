@@ -55,7 +55,7 @@ public:
     int TotalSize();
     void SetFromMeshAnim(RndMeshAnim *, RndMeshAnim *, int, int);
 
-    DECLARE_REVS;
+    // No class gRev/gAltRev: retail keeps them as file statics in BandFaceDeform.cpp.
     OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(BandFaceDeform)

@@ -7,7 +7,10 @@
 #include "math/Utl.h"
 #include <cmath>
 
-INIT_REVS(BandFaceDeform);
+// Retail addresses both rev statics off ONE base register (+0 gAltRev, +4 gRev):
+// an INTERNAL-linkage adjacent pair, not DECLARE_REVS's class statics.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 // Quantizes (pos - base) to three signed bytes: clamped to +-2 units, 63.5 steps per unit.
 inline void CompressDelta(signed char *out, const Vector3 &pos, const Vector3 &base) {

@@ -635,10 +635,10 @@ Symbol BandCharDesc::NameToDrumVenue(const char *name) {
 }
 
 bool BandCharDesc::DrumCallback(char *name) {
-    char buf[264];
+    char buf[256];
     strcpy(buf, FileGetBase(name));
-    for (int i = 0, offset = 0; i < 4; i++, offset += 8) {
-        char *found = strstr(buf, sDrumVenueMappings[offset / 4]);
+    for (int i = 0; i < 4; i++) {
+        char *found = strstr(buf, sDrumVenueMappings[i * 2]);
         if (found) {
             found[-1] = 0;
             break;
