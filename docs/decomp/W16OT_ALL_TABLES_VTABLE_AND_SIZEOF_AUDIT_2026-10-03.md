@@ -343,3 +343,14 @@ row missing from leg B counted as down so the check can fail.
 Trans `__final_insertion_sort` / `__partial_sort<RndTransformable**>`
 (100 → 99.63 / 99.87). The cause was naming the folded STL helpers for
 `Friend**` (§3).
+
+## Native gate (run last, after the A/B, on the committed tree `ec5c44d95`)
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+The native build links the `HX_NATIVE` arms kept by this lane:
+- `Object::Export`, `DOFProc::Handle`, `Debug::Print`, the overlays;
+- the new inline `User::IsNullUser`, whose out-of-line native stub was removed;
+- the `Synth` slot-25 change.
