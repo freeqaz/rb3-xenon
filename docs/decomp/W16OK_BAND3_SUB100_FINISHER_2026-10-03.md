@@ -272,3 +272,10 @@ Every fork and every S5 commit was also row-diffed with 0 down.
   `system/world/Dir`.
 - `BandHeadShaper::~BandHeadShaper` reads 87.5% in its own row. Its body is the `~TrackerDesc` fold
   target installed in §3.3.
+
+## 7. Native gate (run last, on `149f492a9`)
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+Log: `~/tmp/w16ok/native_gate.log`.
