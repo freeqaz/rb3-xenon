@@ -2424,7 +2424,16 @@
                     "/DRB3_QUAZAL_MEMALLOCATOR_CTORS"
                 ]
             },
-            "network/quazal/WorkerThreads.cpp": "NonMatching",
+            "network/quazal/WorkerThreads.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-",
+                    "/EHs-c-"
+                ]
+            },
             "network/quazal/Transport/Interface/NATTraversalEngine.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

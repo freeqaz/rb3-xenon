@@ -36003,5 +36003,13 @@
  "0x82ab6a58": "?DirectConnectViaURLs@JobConnectStation@Quazal@@QAAXXZ",
  "0x82ab6958": "?PrepareURLs@JobConnectStation@Quazal@@QAAXXZ",
  "0x82ab6db0": "?QueueOperation@JobConnectStation@Quazal@@QAAXPAVDOOperation@2@@Z",
- "0x82ab5148": "??1JobConnectStation@Quazal@@UAA@XZ"
+ "0x82ab5148": "??1JobConnectStation@Quazal@@UAA@XZ",
+ "0x82b00778": "?clear@?$vector@PAV?$ObjectThread@VWorkerThreads@Quazal@@H@Quazal@@V?$MemAllocator@PAV?$ObjectThread@VWorkerThreads@Quazal@@H@Quazal@@@2@@stlpmtx_std@@QAAXXZ",
+ "0x82b00210": "?Start@WorkerThreads@Quazal@@QAA_NI@Z",
+ "0x82b001c0": "??1WorkerThreads@Quazal@@UAA@XZ",
+ "0x82b00178": "??_GWorkerThreads@Quazal@@UAAPAXI@Z",
+ "0x82b006f8": "?Run@WorkerThreads@Quazal@@QAAXH@Z",
+ "0x82b000e8": "??0WorkerThreads@Quazal@@QAA@XZ",
+ "0x82b00470": "?Stop@WorkerThreads@Quazal@@QAA_NXZ",
+ "0x82b006c8": "?GetNbWorkers@WorkerThreads@Quazal@@QBAIXZ"
 }

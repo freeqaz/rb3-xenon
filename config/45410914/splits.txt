@@ -14477,8 +14477,8 @@ network/quazal/Transport/PRUDP/PRUDPStream.cpp:
 	.text       start:0x82AFB6E0 end:0x82AFFEC0
 
 network/quazal/WorkerThreads.cpp:
-	.pdata      start:0x82256878 end:0x82256880
-	.text       start:0x82B00210 end:0x82B0046C
+	.pdata      start:0x82256860 end:0x82256898
+	.text       start:0x82B000E8 end:0x82B007F0
 
 network/quazal/Transport/Interface/NATTraversalEngine.cpp:
 	.pdata      start:0x82256A18 end:0x82256E80
