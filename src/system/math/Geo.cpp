@@ -815,9 +815,10 @@ bool Intersect(const Segment &seg, const Sphere &sphere) {
     if (a == 0.0f)
         return false;
     float t = Clamp(0.0f, 1.0f, Dot(toCenter, dir) / a);
-    Vector3 closest;
-    Interp(seg.start, seg.end, t, closest);
-    return !(DistanceSquared(closest, sphere.center) > sphere.radius * sphere.radius);
+    Interp(seg.start, seg.end, t, dir);
+    if (DistanceSquared(dir, sphere.center) > sphere.radius * sphere.radius)
+        return false;
+    return true;
 }
 
 bool Intersect(const Vector3 &v, const BSPNode *n) {
