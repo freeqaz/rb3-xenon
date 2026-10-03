@@ -166,6 +166,26 @@ void MeterDisplay::AnimateToValue(int x, int y) {
     unk4c = (y / 1000.0f) + TheTaskMgr.UISeconds();
 }
 
+void MeterDisplay::SetValues(int current, int max) {
+    if (current < 0) {
+        MILO_WARN("MeterDisplay cannot have a current value that is negative.\n");
+        current = 0;
+    }
+    mCurrentValue = current;
+    mMaxValue = max;
+    UpdateDisplay();
+}
+
+void MeterDisplay::SetShowText(bool show) {
+    mShowText = show;
+    UpdateDisplay();
+}
+
+void MeterDisplay::SetPercentageText(bool percentage) {
+    mPercentageText = percentage;
+    UpdateDisplay();
+}
+
 void MeterDisplay::UpdateDisplay() {
     if (unk54) {
         static Symbol meter_progress_generic_wrapper("meter_progress_generic_wrapper");

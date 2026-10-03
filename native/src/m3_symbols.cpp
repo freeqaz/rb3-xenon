@@ -21,10 +21,7 @@
 // `?Init@Movie@@SAXXZ` the map claimed. Both are
 // `return TheTempoMap->TickToTime(f);`.
 
-// MidiReceiver::SkipCurrentTrack(): absent from rb3-xenon's MidiReceiver.cpp
-// (which only carries the ctor + Error). SongParser
-// calls it when a track is not read. Real body.
-void MidiReceiver::SkipCurrentTrack() {
-    MILO_ASSERT(mReader, 0x2B);
-    mReader->SkipCurrentTrack();
-}
+// MidiReceiver::SkipCurrentTrack(): REMOVED 2026-10-03 (lane W16-OZ) -- no longer a
+// shim, because midi/MidiReceiver.cpp now DEFINES it (retail 0x827EFA10:
+// `lwz r3,4(r3); b MidiReader::SkipCurrentTrack`, the same body this shim had).
+// Keeping a definition here would be a duplicate-symbol link error.

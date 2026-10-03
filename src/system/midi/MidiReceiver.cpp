@@ -4,6 +4,8 @@
 
 MidiReceiver::MidiReceiver() : mReader(0) {}
 
+void MidiReceiver::SkipCurrentTrack() { mReader->SkipCurrentTrack(); }
+
 void MidiReceiver::Error(const char *msg, int tick) {
     MILO_ASSERT(mReader, 0x16);
     if (tick != -1) {
