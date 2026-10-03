@@ -1,6 +1,6 @@
 # W16-OL — sub-100 rows in `src/system/{bandobj,char,world,beatmatch}` (2026-10-03)
 
-**Branch** `w16-ol`, off main `8bba58005` (main did not move during the lane, so no rebase was needed).
+**Branch** `w16-ol`, started off main `8bba58005`, rebased onto `92074833f` (Merge W16-OK) after the first A/B.
 **Ruler** `name_check` (graded, from `report.json` `provenance.diff_config`). The permuter was not run, and no
 alias was added (`git diff main w16-ol -- scripts/symbol_aliases.json` is empty). `src/network`, the Quazal block
 and `src/band3` (lane W16-OK) were not edited.
@@ -32,6 +32,21 @@ worked the population serially. It worked through the rows in this order:
   (`~/tmp/w16ol/blocks.py`, 75 rows). This scan found almost every real fix below.
 
 ## 2. Whole-binary A/B
+
+**Final, on the rebased branch** (main `92074833f`, fresh worktree, run dir
+`~/tmp/wt-w16ol-ab2/.ab_measure_runs/20261003-022640-branch2-1611554/`):
+
+```
+leg A: matched=53193 masked=25130 honest=28063 code%=57.270410  (recompiles: 0, settled)
+leg B: matched=53215 masked=25132 honest=28083 code%=57.308697  (recompiles: 596, split=1, patch_steps=7, settle iterations: 2)
+Δmatched=+22  Δmasked_equal=+2  Δhonest=+20  Δcode%=+0.038287pp  Δcode_bytes=+3924
+unit REGRESSIONS: default/band3/bandtrack/GemRepTemplate (35->34)
+```
+
+Predicted, before the run, as unchanged from the first A/B: W16-OK touched none of these rows. **Measured:
+identical deltas.**
+
+First run, before the rebase:
 
 `python3 tools/ab_measure.py --worktree ~/tmp/wt-w16ol-ab --patch <git diff main w16-ol>`, run on a fresh
 `scripts/setup_worktree.sh` worktree at main `8bba58005`. Patch kinds: map + source, 19 paths. Forced re-split on
