@@ -274,25 +274,24 @@ void LayerDir::RefreshLayer(Layer &layer, bool useColorIdx) {
     }
 }
 
-DataNode LayerDir::GetBitmapList(DataArray *arr) {
-    char _slotpad[8]; (void)_slotpad;
+DataNode LayerDir::GetBitmapList(DataArray *) {
+    // milo_prop_path is (layers <idx> <field>): point it at the layer's name and
+    // read that through our own property tree.
     DataArray *propPath = DataVariable(Symbol("milo_prop_path")).Array(NULL);
     DataNode savedNode(propPath->Node(2));
     propPath->Node(2) = DataNode(Symbol("name"));
-    const char *name = (*reinterpret_cast<Hmx::Object **>(arr))->Property(propPath, true)->Str(NULL);
+    const char *name = Property(propPath, true)->Str(NULL);
     for (ObjList<Layer>::iterator it = mLayers.begin(); it != mLayers.end(); ++it) {
         if (strcmp(it->mName.c_str(), name) == 0) {
-            DataArray *result = new DataArray(it->mBitmapList.size());
-            if (!result)
-                result = new DataArray(0);
-            std::list<FilePath>::iterator fp = it->mBitmapList.begin();
+            DataArrayPtr result(new DataArray(it->mBitmapList.size()));
             int i = 0;
-            for (; fp != it->mBitmapList.end(); ++fp, i++) {
+            for (std::list<FilePath>::iterator fp = it->mBitmapList.begin();
+                 fp != it->mBitmapList.end();
+                 ++fp, i++) {
                 String fileName(FileGetName(fp->c_str()));
-                result->Node(i) =
-                    DataNode(fileName.substr(0, fileName.length() - 4));
+                result->Node(i) = DataNode(fileName.substr(0, fileName.length() - 4));
             }
-            return DataNode(DataArrayPtr(result));
+            return DataNode(result);
         }
     }
     return DataNode(DataArrayPtr(new DataArray(0)));

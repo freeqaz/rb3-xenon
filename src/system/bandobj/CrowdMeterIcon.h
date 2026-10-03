@@ -40,7 +40,6 @@ public:
     void SetIcon(const char *);
     bool HasIcon() const;
 
-    DECLARE_REVS;
     OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(CrowdMeterIcon)

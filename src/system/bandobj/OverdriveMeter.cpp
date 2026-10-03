@@ -3,7 +3,10 @@
 #include "bandobj/OverdriveMeter.h"
 #include "utl/Symbols.h"
 
-INIT_REVS(OverdriveMeter)
+// Retail addresses both rev statics off ONE base register (+0 altRev, +4 rev),
+// i.e. an INTERNAL-linkage adjacent pair, not DECLARE_REVS' two class statics.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 OverdriveMeter::OverdriveMeter()
     : mState((State)0), mResetTrig(this, 0), mSpotlightPhraseSuccessTrig(this, 0),

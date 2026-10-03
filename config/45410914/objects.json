@@ -189,7 +189,8 @@
             "system/bandobj/BandRetargetVignette.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
-                    "/DRB3_SYNCPROP_LOCAL_STATIC"
+                    "/DRB3_SYNCPROP_LOCAL_STATIC",
+                    "/DRB3_NOTIFY_ONCE_EVAL"
                 ]
             },
             "system/bandobj/SongSectionController.cpp": {

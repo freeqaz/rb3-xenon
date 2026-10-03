@@ -10,7 +10,10 @@
 #include "utl/Symbols2.h"
 #include "utl/Symbols3.h"
 
-INIT_REVS(ScoreDisplay)
+// Retail addresses both rev statics off ONE base register (+0 altRev, +4 rev),
+// i.e. an INTERNAL-linkage adjacent pair, not DECLARE_REVS' two class statics.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 void ScoreDisplay::Init() {
     Register();

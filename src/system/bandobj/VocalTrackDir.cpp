@@ -878,7 +878,7 @@ void VocalTrackDir::RecalculateLyricZ(bool *leadChanged, bool *harmChanged) {
     float oldHarmPhonemeZ = unk6a0;
     unk698 = topZ + mHarmText->LocalXfm().v.z;
     unk6a0 = topZ + mHarmPhonemeText->LocalXfm().v.z;
-    if (oldLeadZ != newLeadZ || oldLeadPhonemeZ != newLeadPhonemeZ) {
+    if (oldLeadZ != unk694 || oldLeadPhonemeZ != unk69c) {
         *leadChanged = true;
     }
     if (oldHarmZ != unk698 || oldHarmPhonemeZ != unk6a0) {

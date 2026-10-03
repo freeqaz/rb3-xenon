@@ -2,7 +2,10 @@
 #include "bandobj/UnisonIcon.h"
 #include "utl/Symbols.h"
 
-INIT_REVS(UnisonIcon)
+// Retail addresses both rev statics off ONE base register (+0 altRev, +4 rev),
+// i.e. an INTERNAL-linkage adjacent pair, not DECLARE_REVS' two class statics.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 UnisonIcon::UnisonIcon()
     : mProgress(0), mStartTrig(0), mEndTrig(0), mSucceedTrig(0), mFailTrig(0),

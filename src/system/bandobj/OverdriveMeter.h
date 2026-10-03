@@ -32,7 +32,6 @@ public:
     void StopDeploy();
     void SetNoOverdrive();
 
-    DECLARE_REVS;
     OBJ_MEM_OVERLOAD_INLINE_DEL(0x24);
     NEW_OBJ(OverdriveMeter)
     static void Init() { Register(); }

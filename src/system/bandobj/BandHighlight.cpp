@@ -5,7 +5,10 @@
 #include "utl/Loader.h"
 #include "utl/Symbols.h"
 
-INIT_REVS(BandHighlight)
+// Retail addresses both rev statics off ONE base register (+0 altRev, +4 rev),
+// i.e. an INTERNAL-linkage adjacent pair, not DECLARE_REVS' two class statics.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 void BandHighlight::Init() {
     TheUI->InitResources("BandHighlight");

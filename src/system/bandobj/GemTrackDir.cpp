@@ -893,13 +893,8 @@ void GemTrackDir::SetInstrument(TrackInstrument inst) {
 DECOMP_FORCEACTIVE(GemTrackDir, "game.cam")
 
 void GemTrackDir::SetPlayerLocal(float f) {
-    bool b2 = true;
-    bool b1 = false;
-    if (BandTrack::mParent && BandTrack::mParent->HasNetPlayer())
-        b1 = true;
-    if (!b1 && !mSimulatedNet)
-        b2 = false;
-    if (b2)
+    bool remote = (BandTrack::mParent && BandTrack::mParent->HasNetPlayer()) || mSimulatedNet;
+    if (remote)
         Find<EventTrigger>("network_remote.trig", true)->Trigger();
     else
         Find<EventTrigger>("network_local.trig", true)->Trigger();
@@ -952,13 +947,12 @@ enum {
 int WhiteKeyToSemitone(int whiteKey) {
     MILO_ASSERT(whiteKey > -1, 0x557);
     int semitone = 0;
-    while (whiteKey >= kNumWhiteKeys) {
+    while (whiteKey > kWhiteKeyB) {
         whiteKey -= kNumWhiteKeys;
         semitone += kNumSemitones;
     }
     switch (whiteKey) {
-    case kWhiteKeyC:
-        semitone += kNoteC;
+    case kWhiteKeyC: // adds kNoteC (0)
         break;
     case kWhiteKeyD:
         semitone += kNoteD;
@@ -992,9 +986,10 @@ int SemitoneToWhiteKey(int semitone) {
         semitone -= kNumSemitones;
         whiteKey += kNumWhiteKeys;
     }
-    // C and C# add kWhiteKeyC (0): retail has no case for them (its jump
-    // table starts at kNoteD).
     switch (semitone) {
+    case kNoteC: // C and C# add kWhiteKeyC (0)
+    case kNoteCSharp:
+        break;
     case kNoteD:
     case kNoteDSharp:
         whiteKey += kWhiteKeyD;
