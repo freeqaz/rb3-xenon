@@ -86204,9 +86204,17 @@
     "??0?$_Vector_base@U?$pair@HM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@HM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@U?$pair@HM@stlpmtx_std@@@1@@Z",
     "??0?$_Vector_base@V?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@V?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@1@@Z",
     "??0?$_Vector_base@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VStreakInfo@Stats@@@1@@Z",
-    "??0?$_Vector_base@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VVector2@@@1@@Z"
+    "??0?$_Vector_base@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VVector2@@@1@@Z",
+    "??0?$_Vector_base@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@1@@Z"
    ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
+   "admitted": [
+    {
+     "spelling": "??0?$_Vector_base@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@1@@Z",
+     "lane": "W16-OK 2026-10-03",
+     "evidence": "W16-OK 2026-10-03: icf_pair_adjudicate --chase PROVEN with 0 CYCLE-ASSUMED leaves (96 B both sides). The one relocation-name difference, retail MemOrPoolAlloc vs our MemOrPoolAllocSTL, is the existing proven fold at 0x827bd208. Retail twins of the survivor's masked body: 1. Call site: retail vector<pair<float,float>>'s ctor (the charged 116 B row) calls this body where we call _Vector_base<pair<float,float>>'s ctor."
+    }
+   ]
   },
   {
    "name": "0?$_Vector_base",
@@ -88767,9 +88775,23 @@
     "??1VirtualKeyboardResultMsg@@UAA@XZ",
     "??1VoiceChatDisabledMsg@@UAA@XZ",
     "??1XMPStateChangedMsg@@UAA@XZ",
-    "??1InviteAcceptedMsg@@UAA@XZ"
+    "??1InviteAcceptedMsg@@UAA@XZ",
+    "??1FriendsListChangedMsg@@UAA@XZ",
+    "??1ContentInstalledMsg@@UAA@XZ"
    ],
-   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x823426f8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 475 against 282 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies. W16-AE 2026-09-14: ??1InviteAcceptedMsg@@UAA@XZ added on our-side COMDAT identity (tools/comdat_bytes.py over build/45410914/src/network/net/SessionSearcher.obj): fn bytes AND all 5 relocations (??_7Message@@6B@ x2, ?Release@DataArray@@QAAXXZ) identical to our ??1Message@@UAA@XZ COMDAT, 24 B each -- the /OPT:ICF condition; retail T1 is VACUOUS on a 6-word body (>50% masked). Caller: fn_823EB228 (SessionSearcher::Handle funclet path)."
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x823426f8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 475 against 282 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies. W16-AE 2026-09-14: ??1InviteAcceptedMsg@@UAA@XZ added on our-side COMDAT identity (tools/comdat_bytes.py over build/45410914/src/network/net/SessionSearcher.obj): fn bytes AND all 5 relocations (??_7Message@@6B@ x2, ?Release@DataArray@@QAAXXZ) identical to our ??1Message@@UAA@XZ COMDAT, 24 B each -- the /OPT:ICF condition; retail T1 is VACUOUS on a 6-word body (>50% masked). Caller: fn_823EB228 (SessionSearcher::Handle funclet path).",
+   "admitted": [
+    {
+     "spelling": "??1FriendsListChangedMsg@@UAA@XZ",
+     "lane": "W16-OK 2026-10-03",
+     "evidence": "W16-OK 2026-10-03: our implicit dtor is byte-identical to retail ~Message (masked body and relocation shape equal). The only relocation-name difference is the vptr store: ours stores ??_7Message@@6B@, retail ~Message stores placeholder lbl_82000A18, which is Message's vtable by construction (it is the vptr ~Message itself installs; the derived vptr store is dead and dropped). Census: 1 retail body image-wide has this shape. Call site: the charged EH funclet fn_825085B0 calls ~Message where we call ~??1FriendsListChangedMsg@@UAA@XZ. Same shape as the existing derived dtors already folded in this group."
+    },
+    {
+     "spelling": "??1ContentInstalledMsg@@UAA@XZ",
+     "lane": "W16-OK 2026-10-03",
+     "evidence": "W16-OK 2026-10-03: our implicit dtor is byte-identical to retail ~Message (masked body and relocation shape equal). The only relocation-name difference is the vptr store: ours stores ??_7Message@@6B@, retail ~Message stores placeholder lbl_82000A18, which is Message's vtable by construction (it is the vptr ~Message itself installs; the derived vptr store is dead and dropped). Census: 1 retail body image-wide has this shape. Call site: the charged EH funclet fn_825BD33C calls ~Message where we call ~??1ContentInstalledMsg@@UAA@XZ. Same shape as the existing derived dtors already folded in this group."
+    }
+   ]
   },
   {
    "name": "ourside_comdat_identity",
@@ -88790,9 +88812,29 @@
     "??1TourMostStarsMsg@@UAA@XZ",
     "??1TourPlayedMsg@@UAA@XZ",
     "??1TriggerBackSoundMsg@@UAA@XZ",
-    "??1UserLeftMsg@@UAA@XZ"
+    "??1UserLeftMsg@@UAA@XZ",
+    "??1TourHideShowFiltersMsg@@UAA@XZ",
+    "??1KickPlayerMsg@?A0x3d644e05@@UAA@XZ",
+    "??1SyncLocalMachineMsg@?A0x5fd33732@@UAA@XZ"
    ],
-   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x826908c8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 94 against 33 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x826908c8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 94 against 33 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies.",
+   "admitted": [
+    {
+     "spelling": "??1TourHideShowFiltersMsg@@UAA@XZ",
+     "lane": "W16-OK 2026-10-03",
+     "evidence": "W16-OK 2026-10-03: our implicit dtor is byte-identical to retail ~NetMessage (masked body and relocation shape equal). The only relocation-name difference is the vptr store: ours stores ??_7NetMessage@@6B@, retail ~NetMessage stores placeholder lbl_8203D19C, which is NetMessage's vtable by construction (it is the vptr ~NetMessage itself installs; the derived vptr store is dead and dropped). Census: 1 retail body image-wide has this shape. Call site: the charged EH funclet fn_82B7A260 calls ~NetMessage where we call ~??1TourHideShowFiltersMsg@@UAA@XZ. Same shape as the existing derived dtors already folded in this group."
+    },
+    {
+     "spelling": "??1KickPlayerMsg@?A0x3d644e05@@UAA@XZ",
+     "lane": "W16-OK 2026-10-03",
+     "evidence": "W16-OK 2026-10-03: our implicit dtor is byte-identical to retail ~NetMessage (masked body and relocation shape equal). The only relocation-name difference is the vptr store: ours stores ??_7NetMessage@@6B@, retail ~NetMessage stores placeholder lbl_8203D19C, which is NetMessage's vtable by construction (it is the vptr ~NetMessage itself installs; the derived vptr store is dead and dropped). Census: 1 retail body image-wide has this shape. Call site: the charged EH funclet fn_82654324 calls ~NetMessage where we call ~??1KickPlayerMsg@?A0x3d644e05@@UAA@XZ. Same shape as the existing derived dtors already folded in this group."
+    },
+    {
+     "spelling": "??1SyncLocalMachineMsg@?A0x5fd33732@@UAA@XZ",
+     "lane": "W16-OK 2026-10-03",
+     "evidence": "W16-OK 2026-10-03: our implicit dtor is byte-identical to retail ~NetMessage (masked body and relocation shape equal). The only relocation-name difference is the vptr store: ours stores ??_7NetMessage@@6B@, retail ~NetMessage stores placeholder lbl_8203D19C, which is NetMessage's vtable by construction (it is the vptr ~NetMessage itself installs; the derived vptr store is dead and dropped). Census: 1 retail body image-wide has this shape. Call site: the charged EH funclet fn_825C36A8 calls ~NetMessage where we call ~??1SyncLocalMachineMsg@?A0x5fd33732@@UAA@XZ. Same shape as the existing derived dtors already folded in this group."
+    }
+   ]
   },
   {
    "name": "ourside_comdat_identity",
