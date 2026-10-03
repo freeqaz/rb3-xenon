@@ -5,6 +5,7 @@ class AsyncFileHolmes : public AsyncFile {
 public:
     AsyncFileHolmes(const char *, int);
     virtual ~AsyncFileHolmes();
+    virtual bool GetFileHandle(void *&) { return false; }
 
     MEM_OVERLOAD(AsyncFile, 0x14);
 

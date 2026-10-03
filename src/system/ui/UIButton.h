@@ -21,6 +21,9 @@ public:
     virtual void Load(BinStream &);
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
+    // retail UIButton primary-vtable slot 17 is the `li r3,1; blr` hub, where
+    // UILabel's is `li r3,0` (lane W16-OR).
+    virtual bool CanHaveFocus() { return true; }
 
     // INLINE_DEL, adjudicated on retail bytes (lane W16-X 2026-09-14):
     // retail folded ??_GUIButton into ??_GUILabel at 0x827f5348 (both classes'

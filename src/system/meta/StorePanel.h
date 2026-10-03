@@ -110,6 +110,12 @@ public:
     // is its only possible source.
     static StorePanel *Instance();
 
+protected:
+    // UIPanel
+    virtual void PollForLoading();
+
+public:
+
     // Retail layout (offsets are of the complete-object; UIPanel non-virtual
     // part ends at 0x3c, Hmx::Object is a shared virtual base at the tail):
     std::vector<StoreOffer *> mOffers;          // 0x3c

@@ -24,6 +24,9 @@ public:
     virtual ~SongPreview();
     virtual void ContentMounted(const char *, const char *);
     virtual void ContentFailed(const char *);
+    // retail SongPreview's Callback-table slot 11 is the `li r3,0; blr` hub,
+    // not ContentMgr::Callback's "." (0x8253A830) (lane W16-OR).
+    virtual const char *ContentDir() { return 0; }
 
     // Hmx::Object
     virtual DataNode Handle(DataArray *, bool);

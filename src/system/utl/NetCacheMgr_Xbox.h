@@ -5,7 +5,10 @@
 class NetCacheMgrXbox : public NetCacheMgr {
 public:
     NetCacheMgrXbox();
-    virtual DataNode Handle(DataArray *, bool);
+    // No Handle override: retail NetCacheMgrXbox's slot 6 is NetCacheMgr::Handle
+    // itself (0x827CE8A8, shared by both tables). The forwarding wrapper that
+    // used to be here is a distinct body ICF cannot fold into its target
+    // (lane W16-OR; DC3 removed the same wrapper).
     virtual void Poll();
 
     unsigned int GetIP();

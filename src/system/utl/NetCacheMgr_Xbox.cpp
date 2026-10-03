@@ -5,10 +5,6 @@
 
 NetCacheMgrXbox::NetCacheMgrXbox() : mDoneLoading(false) {}
 
-DataNode NetCacheMgrXbox::Handle(DataArray *da, bool b) {
-    return NetCacheMgr::Handle(da, b);
-}
-
 void NetCacheMgrXbox::Poll() {
     NetCacheMgr::Poll();
     mConnection.Poll();

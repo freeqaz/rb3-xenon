@@ -19,7 +19,13 @@ public:
     virtual int UncompressedSize() { return mUCSize; }
     virtual bool ReadDone(int &);
     virtual bool WriteDone(int &i);
+    // AsyncFile does NOT override File::GetFileHandle in retail: its primary
+    // vtable slot 15 is _purecall (0x828299B8) and AsyncFileWin supplies the
+    // body (lane W16-OR; DC3 reached the same answer). The native engine's
+    // AsyncFileNative declares none, so the native build keeps this one.
+#ifdef HX_NATIVE
     virtual bool GetFileHandle(void *&) { return false; }
+#endif
 
     void Init();
     static AsyncFile *New(const char *, int);

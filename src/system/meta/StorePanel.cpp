@@ -349,6 +349,16 @@ void StorePanel::HandleNetCacheMgrFailure() {
     ExitError(err);
 }
 
+// retail 0x827B51F8 (lane W16-OR): StorePanel's primary-vtable slot 13 is its
+// own body, not UIPanel's 0x82812680. The 360 build has no Wii commerce
+// session, so all that is left is the cache-failure check.
+void StorePanel::PollForLoading() {
+    UIPanel::PollForLoading();
+    if (!TheNetCacheMgr->IsReady() && TheNetCacheMgr->GetHasFailed()) {
+        HandleNetCacheMgrFailure();
+    }
+}
+
 void StorePanel::HandleNetCacheLoaderFailure(int failType) {
     MILO_ASSERT((0) <= (failType) && (failType) < (kNCMFT_Max), 0xe5);
 
