@@ -21,7 +21,9 @@ extern MemTracker *gMemTracker;
 CriticalSection *gMemLock;
 
 #define MAX_HEAPS 16
-#define MAX_BUF_THREADS 32
+// Retail holds 6: gThreadIds is 6 words at 0x82C78E0C (sDefaultHeap follows at
+// 0x82C78E24) and gThreadBuf fits 6 x 0x48 between the null stack and gHeaps.
+#define MAX_BUF_THREADS 6
 
 const char *gStlAllocName = "StlAlloc";
 bool gStlAllocNameLookup = false;
