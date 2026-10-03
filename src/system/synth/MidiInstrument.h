@@ -128,7 +128,8 @@ public:
     void ReleaseNote(unsigned char);
     void PlayNote(unsigned char, unsigned char, int);
 
-    OBJ_MEM_OVERLOAD(0x71);
+    // Retail ??_GMidiInstrument calls MemFree directly (inlined delete).
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x71);
     NEW_OBJ(MidiInstrument)
 private:
     void StartSample(unsigned char, unsigned char, int, int);

@@ -32424,7 +32424,6 @@
  "0x82bc4eb8": "?SetParameters@CAudioFilterMatrixMix@LEAPFX@@UAAXPBXI@Z",
  "0x82bc50e8": "?GetParameters@CAudioFilterMatrixMix@LEAPFX@@UAAXPAXI@Z",
  "0x82bc6b28": "?CalcMaxOutputFrames@CAudioADPCM@LEAPFX@@UAAII@Z",
- "0x82bc6b70": "??3@YAXPAX@Z",
  "0x82bc6ca0": "?LockForProcess@CAudioADPCM@LEAPFX@@UAAJIPBUXAPO_LOCKFORPROCESS_BUFFER_PARAMETERS@@I0@Z",
  "0x82bc6d90": "?CalcOutputFrames@CAudioADPCM@LEAPFX@@UAAII@Z",
  "0x82bc6f60": "??0CAudioADPCM@LEAPFX@@QAA@XZ",

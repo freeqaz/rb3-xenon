@@ -17,11 +17,23 @@
 #include <cstdlib>
 #include <cstring>
 
+#ifndef HX_NATIVE
+// Retail compiled MemHeap and this file as ONE translation unit (their .text
+// interleaves; see the reunification note in MemHeap.cpp). With MemHeap's
+// method bodies visible, MemFree/MemTruncate/MemAllocSize keep gNumHeaps in a
+// register across MemHeap::Free/Truncate/AllocSize, as retail does.
+#define RB3_MEMHEAP_METHODS_ONLY
+#include "utl/MemHeap.cpp"
+#undef RB3_MEMHEAP_METHODS_ONLY
+#endif
+
 extern MemTracker *gMemTracker;
 CriticalSection *gMemLock;
 
 #define MAX_HEAPS 16
-#define MAX_BUF_THREADS 32
+// Retail holds 6: gThreadIds is 6 words at 0x82C78E0C (sDefaultHeap follows at
+// 0x82C78E24) and gThreadBuf fits 6 x 0x48 between the null stack and gHeaps.
+#define MAX_BUF_THREADS 6
 
 const char *gStlAllocName = "StlAlloc";
 bool gStlAllocNameLookup = false;
@@ -36,9 +48,14 @@ int gNewOperatorAlign;
 int gSingleHeap;
 extern String gMemLogType;
 std::vector<String> gUseLowestMipExceptions;
-MemHeapStack gNullMemStack;
-int gNumThreads;
-int gThreadIds[MAX_BUF_THREADS];
+// Internal statics: retail ThreadMemStack addresses the null stack, gThreadBuf,
+// gThreadBufCurrentIndex and gNumThreads off ONE .bss anchor (0x82E069A8: +0,
+// +0x48, +0x440, +0x444), which MSVC only does for internal linkage.
+// gThreadIds sits in .data (0x82C78E0C) initialised { -1, 0, 0, 0, 0, 0 },
+// the same shape as MakeString.cpp's per-thread table.
+static MemHeapStack gNullMemStack;
+static int gNumThreads;
+static int gThreadIds[MAX_BUF_THREADS] = { -1 };
 
 bool gInitted;
 
@@ -1018,10 +1035,6 @@ MemHandle::MemHandle(void *alloc) {
 // `heapNum > -1 ? &gHeaps[heapNum] : NULL` (mulli 0x24 = sizeof(MemHeap)).
 // Its single retail caller is _MemAllocH's heap assert, whose value dies but
 // whose call survives -- which is why this is a real function, not a macro.
-MemHeap *MemCurrentHeap() {
-    int heapNum = GetCurrentHeapNum();
-    return heapNum > -1 ? &gHeaps[heapNum] : NULL;
-}
 
 // Retail/match _MemAllocH, 0x827BD190 (120 B), unit `default/MemMgr`.
 // MILO_ASSERT is ((void)(cond)) in the match
@@ -1084,15 +1097,14 @@ void MemFreeBlockStats(int heapNum, int &a, int &b, int &c, int &d) {
 static MemHeapStack gThreadBuf[MAX_BUF_THREADS];
 static int gThreadBufCurrentIndex;
 
+// Retail 0x827BB890 holds the lock with a CritSecTracker: it has an EH frame
+// and an unwind funclet (0x827BB9F4), and every return shares one Exit tail.
 MemHeapStack &ThreadMemStack(bool createIfMissing) {
     int idx;
-    CriticalSection *lock = gMemStackLock;
-    if (lock) {
-        lock->Enter();
-    }
+    CritSecTracker tracker(gMemStackLock);
     if (gNumThreads == 0) {
-        gNumThreads = 1;
         gThreadIds[0] = GetCurrentThreadId();
+        gNumThreads = 1;
         idx = gThreadBufCurrentIndex;
     } else {
         DWORD currentThreadId = GetCurrentThreadId();
@@ -1111,9 +1123,6 @@ MemHeapStack &ThreadMemStack(bool createIfMissing) {
                 } while (idx < gNumThreads);
             }
             if (!createIfMissing) {
-                if (lock) {
-                    lock->Exit();
-                }
                 return gNullMemStack;
             }
             if (idx == gNumThreads) {
@@ -1143,11 +1152,7 @@ MemHeapStack &ThreadMemStack(bool createIfMissing) {
         }
     }
     gThreadBufCurrentIndex = idx;
-    MemHeapStack &result = gThreadBuf[gThreadBufCurrentIndex];
-    if (lock) {
-        lock->Exit();
-    }
-    return result;
+    return gThreadBuf[gThreadBufCurrentIndex];
 }
 int GetCurrentHeapNum() {
     MemHeapStack &stack = ThreadMemStack(false);
@@ -1155,6 +1160,16 @@ int GetCurrentHeapNum() {
         return stack.mStack[stack.mSize - 1];
     }
     return MemHeapStack::sDefaultHeap;
+}
+
+// Retail reads the top of the heap stack in place (one ThreadMemStack(false)
+// call, no `bl GetCurrentHeapNum`); calling GetCurrentHeapNum() is not inlined
+// by this compiler.
+MemHeap *MemCurrentHeap() {
+    MemHeapStack &stack = ThreadMemStack(false);
+    int heapNum = stack.mSize != 0 ? stack.mStack[stack.mSize - 1]
+                                   : MemHeapStack::sDefaultHeap;
+    return heapNum > -1 ? &gHeaps[heapNum] : NULL;
 }
 static int gPrevFree[MAX_HEAPS] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 

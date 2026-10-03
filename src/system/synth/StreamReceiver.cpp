@@ -80,7 +80,8 @@ void StreamReceiver::WriteData(const void *data, int size) {
     mWantToSend = false;
 #else
     MILO_ASSERT(size > 0 && size <= BytesWriteable(), 0x51);
-    memcpy(mBuffer + mRingFreeSpace, data, size);
+    // Retail calls XMemCpy here, as Poll does for the overflow copy.
+    XMemCpy(mBuffer + mRingFreeSpace, data, size);
     mRingFreeSpace += size;
 #endif
 }
