@@ -1122,11 +1122,16 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
         }
     }
 
-    if (!MakeBSPTree(node->left, frontFaces, nextDepth))
+    bool ok = MakeBSPTree(node->left, frontFaces, nextDepth);
+    if (!ok) {
+        backFaces.clear();
+        frontFaces.clear();
         return false;
-    if (!MakeBSPTree(node->right, backFaces, nextDepth))
-        return false;
-    return true;
+    }
+    ok = MakeBSPTree(node->right, backFaces, nextDepth);
+    backFaces.clear();
+    frontFaces.clear();
+    return ok;
 }
 #else
 bool MakeBSPTree(BSPNode *&, std::list<BSPFace> &, int) { return false; }
