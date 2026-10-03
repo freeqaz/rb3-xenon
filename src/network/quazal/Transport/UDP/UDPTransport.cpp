@@ -244,7 +244,10 @@ namespace Quazal {
             unsigned int uiContext = PseudoSingleton::GetCurrentContext();
             InstanceControl *pInstance =
                 (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(3, uiContext);
-            Core *pCore = pInstance ? (Core *)pInstance->m_pDelegatorInstance : 0;
+            Core *pCore = 0;
+            if (pInstance != 0) {
+                pCore = (Core *)pInstance->m_pDelegatorInstance;
+            }
             return pCore;
         }
         Scheduler *GetScheduler() const { return m_pScheduler; }
