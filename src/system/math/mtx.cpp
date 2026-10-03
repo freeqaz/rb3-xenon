@@ -108,39 +108,25 @@ void Multiply(const Transform &a, const Transform &b, Transform &out) {
     out.v.y = av.x * bm.x.y + av.y * bm.y.y + av.z * bm.z.y + bv.y;
     out.v.z = av.x * bm.x.z + av.y * bm.y.z + av.z * bm.z.z + bv.z;
 #else
-    float fVar1 = a.v.y;
-    float fVar2 = a.v.x;
-    float fVar3 = a.v.z;
-    float fVar4 = b.m.z.y;
-
-    float fVar10 = b.m.x.y * fVar2 + b.m.y.y * fVar1;
-
-    float fVar5;
-    if (&b != &out) {
-        float bzx = b.m.z.x;
-        float byx = b.m.y.x;
-        float bxx = b.m.x.x;
-        float fVar8 = b.m.z.z * fVar3 + b.m.x.z * fVar2 + b.m.y.z * fVar1;
-        out.v.z = fVar8;
-        out.v.y = fVar4 * fVar3 + fVar10;
-        out.v.x = fVar2 * bxx + byx * fVar1 + bzx * fVar3;
-        fVar5 = b.v.z;
-        float bvx = b.v.x;
-        out.v.y += b.v.y;
-        out.v.x += bvx;
-        fVar5 = fVar5 + fVar8;
+    // The translation is the Multiply(const Vector3 &, const Transform &,
+    // Vector3 &) shape: rotate straight into out.v and add t.v when out does
+    // not alias b, rotate into a temporary otherwise. The fast arm goes through
+    // the v / t references and adds t.v + out.v; the alias arm uses a.v / b
+    // directly. Both spellings set the hoisted y partial and the load order.
+    const Vector3 &v = a.v;
+    const Transform &t = b;
+    if (&t != &out) {
+        out.v.Set(
+            t.m.x.x * v.x + t.m.y.x * v.y + t.m.z.x * v.z,
+            t.m.x.y * v.x + t.m.y.y * v.y + t.m.z.y * v.z,
+            t.m.x.z * v.x + t.m.y.z * v.y + t.m.z.z * v.z
+        );
+        Add(t.v, out.v, out.v);
     } else {
-        float fVar6 = b.m.y.z;
-        float fVar7 = b.m.x.z;
-        float fVar8 = b.m.z.z;
-        float bvz = b.v.z;
-        float fVar9 = b.v.y;
-
-        out.v.x = b.v.x + fVar2 * b.m.x.x + b.m.y.x * fVar1 + b.m.z.x * fVar3;
-        out.v.y = fVar9 + fVar4 * fVar3 + fVar10;
-        fVar5 = bvz + fVar8 * fVar3 + fVar7 * fVar2 + fVar6 * fVar1;
+        Vector3 tmp;
+        Multiply(a.v, b.m, tmp);
+        Add(tmp, b.v, out.v);
     }
-    out.v.z = fVar5;
     Multiply(a.m, b.m, out.m);
 #endif
 }
