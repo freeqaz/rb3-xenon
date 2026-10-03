@@ -101,6 +101,12 @@ the next word is `blr`, the census is empty, and the bodies are non-vacuous.
 
 The same 14 runs also passed on `80fc81d14` before the rebase.
 
+Native gate, run last on the rebased branch (only `tools/` and `docs/` changed):
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
 ## Re-chase of `scripts/symbol_aliases.json`
 
 Method: one loaded tree, and for every group, each `folded` spelling and each
