@@ -4038,6 +4038,7 @@ CharIKHand.cpp:
 	.pdata      start:0x82201858 end:0x82201860
 	.pdata      start:0x82201A30 end:0x82201A38
 	.pdata      start:0x82201B30 end:0x82201B38
+	.pdata      start:0x82203AC0 end:0x82203AD0
 	.pdata      start:0x82203B50 end:0x82203B58
 	.pdata      start:0x82203BD0 end:0x82203BD8
 	.pdata      start:0x82203BE0 end:0x82203C00
@@ -4048,6 +4049,7 @@ CharIKHand.cpp:
 	.text       start:0x82371148 end:0x82371198
 	.text       start:0x82372CA8 end:0x82372D18
 	.text       start:0x82373CE8 end:0x82373D68
+	.text       start:0x82397808 end:0x82397898
 	.text       start:0x82397F08 end:0x82397F38
 	.text       start:0x82398750 end:0x82398794
 	.text       start:0x82398804 end:0x82398A04
@@ -4716,13 +4718,9 @@ system/bandobj/MeterDisplay.cpp:
 	.text       start:0x8231B794 end:0x8231C150
 
 WaveFile.cpp:
-	.pdata      start:0x821F4860 end:0x821F4868
-	.pdata      start:0x821F4868 end:0x821F4870
 	.pdata      start:0x8220DE00 end:0x8220DE08
 	.pdata      start:0x82243088 end:0x822431D0
 	.pdata      start:0x82243320 end:0x82243328
-	.text       start:0x822A2F18 end:0x822A2F78
-	.text       start:0x822A2F80 end:0x822A2FA8
 	.text       start:0x82451F98 end:0x82451FF8
 	.text       start:0x827D2E70 end:0x827D3FAC
 	.text       start:0x827D5BB0 end:0x827D5C00
@@ -5184,7 +5182,6 @@ System.cpp:
 	.text       start:0x82C42910 end:0x82C42958
 
 DataEventList.cpp:
-	.pdata      start:0x82203AC0 end:0x82203AD0
 	.pdata      start:0x82244688 end:0x82244690
 	.pdata      start:0x82244910 end:0x82244950
 	.pdata      start:0x82244950 end:0x82244958
@@ -5202,7 +5199,6 @@ DataEventList.cpp:
 	.pdata      start:0x822449F8 end:0x82244A00
 	.pdata      start:0x82244A00 end:0x82244A10
 	.pdata      start:0x82244A10 end:0x82244A28
-	.text       start:0x82397808 end:0x82397898
 	.text       start:0x827EA060 end:0x827EA210
 	.text       start:0x827ECA70 end:0x827ECA98
 	.text       start:0x827ECA98 end:0x827ED008
@@ -11868,6 +11864,8 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4818 end:0x821F4828
 	.pdata      start:0x821F4828 end:0x821F4830
 	.pdata      start:0x821F4830 end:0x821F4840
+	.pdata      start:0x821F4860 end:0x821F4868
+	.pdata      start:0x821F4868 end:0x821F4870
 	.pdata      start:0x821F4870 end:0x821F4878
 	.pdata      start:0x821F4888 end:0x821F4898
 	.pdata      start:0x821F4898 end:0x821F48A8
@@ -11974,6 +11972,8 @@ OutfitConfig.cpp:
 	.text       start:0x822A2C70 end:0x822A2CE8
 	.text       start:0x822A2CE8 end:0x822A2D50
 	.text       start:0x822A2D50 end:0x822A2DB8
+	.text       start:0x822A2F18 end:0x822A2F78
+	.text       start:0x822A2F80 end:0x822A2FA8
 	.text       start:0x822A2FA8 end:0x822A3008
 	.text       start:0x822A30C0 end:0x822A3174
 	.text       start:0x822A3178 end:0x822A3340
