@@ -323,3 +323,9 @@ AccomplishmentCategory, AccomplishmentCategoryProvider, AccomplishmentConditiona
 | TourPerformerRemote:27 | OURS_OVERRIDES | 0x826c3888 x6234 / 0x826c3888 x6234 | `?SyncSave@TourPerformerRemote@@UBAXAAVBinStream@@I@Z` |
 | VocalPlayer:8 | OURS_OVERRIDES | 0x8269cca8 x6 / 0x8269cca8 x6 | `?GetStarRating@VocalPlayer@@UBA?AVSymbol@@XZ` |
 | VocalPlayer:102 | OURS_OVERRIDES | 0x82533618 x281 / 0x82533618 x281 | `?ShouldDrainEnergy@VocalPlayer@@UBA_NXZ` |
+
+## Native gate (run last, after the A/B, on the committed tree)
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
