@@ -79,6 +79,7 @@ namespace Quazal {
     class String : public RootObject {
     public:
         ~String();
+        bool operator==(const String &s) const { return IsEqual(m_szContent, s.m_szContent); }
         static bool IsEqual(const char *, const char *);
 
         char *m_szContent;
@@ -162,40 +163,41 @@ namespace Quazal {
     // Keeps the target's public URLs last, and drops its private ones unless
     // one of its public addresses is also one of ours (same NAT).
     void StationContactInfo::SortAndFilterTarget(StationContactInfo &oTarget) const {
-        qList<StationURL>::iterator itTarget = oTarget.m_lstURLs.begin();
-        bool bSameNAT = false;
-        unsigned int uiNbPublic = 0;
-        while (itTarget != oTarget.m_lstURLs.end() && !bSameNAT) {
-            if (itTarget->IsPublic()) {
+        qList<StationURL>::const_iterator itTargetURL = oTarget.m_lstURLs.begin();
+        bool bBehindSameNAT = false;
+        unsigned int uiPublicCount = 0;
+        while (itTargetURL != oTarget.m_lstURLs.end() && !bBehindSameNAT) {
+            if (itTargetURL->IsPublic()) {
                 qList<StationURL>::const_iterator itLocal = m_lstURLs.begin();
-                while (itLocal != m_lstURLs.end() && !bSameNAT) {
-                    bool bEqual = String::IsEqual(
-                        itTarget->GetAddress().m_szContent, itLocal->GetAddress().m_szContent
-                    );
-                    if (bEqual) {
-                        bSameNAT = true;
+                while (itLocal != m_lstURLs.end() && !bBehindSameNAT) {
+                    if (itLocal->GetAddress() == itTargetURL->GetAddress()) {
+                        bBehindSameNAT = true;
                     }
                     ++itLocal;
                 }
-                uiNbPublic++;
+                uiPublicCount++;
             }
-            ++itTarget;
+            ++itTargetURL;
         }
-        if (uiNbPublic == 0) {
+        if (uiPublicCount == 0) {
             return;
         }
         qList<StationURL> lstSorted;
-        if (bSameNAT) {
-            for (itTarget = oTarget.m_lstURLs.begin(); itTarget != oTarget.m_lstURLs.end(); ++itTarget) {
-                if (!itTarget->IsPublic()) {
-                    lstSorted.insert(lstSorted.end(), *itTarget);
+        if (bBehindSameNAT) {
+            itTargetURL = oTarget.m_lstURLs.begin();
+            while (itTargetURL != oTarget.m_lstURLs.end()) {
+                if (!itTargetURL->IsPublic()) {
+                    lstSorted.push_back(*itTargetURL);
                 }
+                ++itTargetURL;
             }
         }
-        for (itTarget = oTarget.m_lstURLs.begin(); itTarget != oTarget.m_lstURLs.end(); ++itTarget) {
-            if (itTarget->IsPublic()) {
-                lstSorted.insert(lstSorted.end(), *itTarget);
+        itTargetURL = oTarget.m_lstURLs.begin();
+        while (itTargetURL != oTarget.m_lstURLs.end()) {
+            if (itTargetURL->IsPublic()) {
+                lstSorted.push_back(*itTargetURL);
             }
+            ++itTargetURL;
         }
         oTarget.m_lstURLs = lstSorted;
     }
