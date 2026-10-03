@@ -49,6 +49,7 @@ from tools.retail_rtti import RetailRtti  # noqa: E402
 import tools.vtable_class_name_audit as vca  # noqa: E402
 
 NONVOL = set(range(14, 32))
+MEMBER0_RULE = True  # W16-OT; the selftest flips it off to prove its leg can fail
 WINDOW = 48          # instructions followed after the allocator call
 
 
@@ -85,6 +86,44 @@ class Witness:
         self._own[y] = cls
         return cls
 
+    def _complete_class_at(self, vt):
+        """(class, COL) of a vtable that is a COMPLETE object's primary table
+        (COL.offset == 0), else (None, None).  A class's own secondary /
+        virtual-base tables store at this+d with COL naming the SAME class --
+        they must never read as "another object at d"."""
+        col = self.R.u32(vt - 4)
+        if not self.R.is_image_va(col):
+            return None, None
+        c = self.R.decode_col(col)
+        if not self.R._col_is_plausible(c) or c.offset != 0:
+            return None, None
+        return self.R.class_of_vtable(vt), col
+
+    def member0(self, cls, stores, n):
+        """W16-OT: the FIRST-MEMBER blind spot.  `stores` = [(disp, vt)] in
+        program order onto the allocated pointer.  If, at some 0 < d < n, the
+        LAST complete-object vtable stored is `cls` itself, or a class whose
+        RTTI hierarchy holds `cls` at mdisp 0 (a cls-derived object), then a
+        complete `cls` lives at this+d -- impossible inside one `cls` -- so
+        sizeof(cls) <= d < n and the allocation is an AGGREGATE whose first
+        member is a `cls` (FileCacheEntry { FilePath; FilePath; ... }).
+        -> the offending d, else None."""
+        last = {}
+        for d, vt in stores:
+            if 0 < d < n:
+                c, col = self._complete_class_at(vt)
+                if c:
+                    last[d] = (c, col)
+        for d in sorted(last):
+            c, col = last[d]
+            if c == cls:
+                return d
+            got = self.R.bases_of_col(col)
+            if got and any(b.name == cls and b.mdisp == 0 and b.pdisp == -1
+                           for b in got[2][1:]):
+                return d
+        return None
+
     def follow(self, fn, size, start):
         """From the word after the allocator `bl` at index `start`, follow the
         returned pointer.  -> (class, how, ctor_va|None) or None."""
@@ -92,6 +131,7 @@ class Witness:
         ptr = {3}
         regs = {}
         cls = how = ctor = None
+        stores = []                  # (disp, vt) onto the allocated pointer
         for i in range(start + 1, min(size // 4, start + 1 + WINDOW)):
             pc = fn + 4 * i
             w = R.u32(pc)
@@ -148,6 +188,8 @@ class Witness:
                     regs.pop(d, None)
             elif op in (36, 37):                                # stw
                 disp = imm - 0x10000 if imm & 0x8000 else imm
+                if a in ptr and d in regs:
+                    stores.append((disp, regs[d]))
                 if disp == 0 and a in ptr and d in regs:
                     c = R.class_of_vtable(regs[d])
                     if c:
@@ -184,7 +226,7 @@ class Witness:
                     regs.pop(a, None)
         if cls is None:
             return None
-        return cls, how, ctor
+        return cls, how, ctor, stores
 
     def scan(self):
         """[(fn, site, allocator, N, class, how, ctor)]"""
@@ -208,7 +250,15 @@ class Witness:
                     if li3 is not None and li3[0] >= 4 and i - li3[1] <= 8:
                         f = self.follow(fn, size, i)
                         if f:
-                            out.append((fn, pc, _bl_target(pc, w), li3[0]) + f)
+                            cls, how, ctor, stores = f
+                            if ctor is not None:
+                                csz = self.extent(ctor)
+                                stores = stores + ([(dd, vt) for _i, dd, vt in
+                                                    vca.this_stores(self.R, ctor, csz)]
+                                                   if csz else [])
+                            if MEMBER0_RULE and self.member0(cls, stores, li3[0]) is not None:
+                                how = "MEMBER0"
+                            out.append((fn, pc, _bl_target(pc, w), li3[0], cls, how, ctor))
                     li3 = None
                     continue
                 # anything else that writes r3 kills the constant
@@ -229,12 +279,15 @@ class Witness:
 
 
 def by_class(rows, allowed=None):
+    """MEMBER0 witnesses are kept in `sites` (flagged) but never enter the
+    size census or CONFLICT counting: they measure an enclosing aggregate."""
     agg = collections.defaultdict(lambda: collections.Counter())
     sites = collections.defaultdict(list)
     for fn, pc, x, n, cls, how, ctor in rows:
         if allowed is not None and x not in allowed:
             continue
-        agg[cls][n] += 1
+        if how != "MEMBER0":
+            agg[cls][n] += 1
         sites[cls].append((pc, x, n, how, ctor))
     return agg, sites
 
@@ -245,6 +298,10 @@ def demangle_td(td):
     s = s.rstrip("@")
     parts = [p for p in s.split("@") if p]
     return "::".join(reversed(parts))
+
+
+def sites_of(rows, td):
+    return [(pc, x, n, how, ctor) for _fn, pc, x, n, cls, how, ctor in rows if cls == td]
 
 
 def allocator_census(rows, R=None):
@@ -265,6 +322,19 @@ def selftest():
     if not pp or pp.most_common(1)[0][0] != 164:
         print("FAIL: PreloadPanel control not witnessed at 164")
         ok = False
+    # W16-OT leg: FileCacheEntry { FilePath; FilePath; ... } is allocated
+    # PoolAlloc(52); its two ctors store FilePath's vtable at +0 AND +0xc, so
+    # both sites must be MEMBER0 and FilePath must have no 52-byte witness.
+    fp = agg.get(".?AVFilePath@@") or {}
+    fsites = {s[4]: s[3] for s in sites_of(rows, ".?AVFilePath@@")}
+    print("FilePath sizes:", dict(fp), "ctor->how:", {hex(k): v for k, v in fsites.items() if k})
+    if fp.get(52):
+        print("FAIL: FilePath still witnessed at 52 (first-member blind spot)")
+        ok = False
+    for c in (0x825185F8, 0x825186A0):
+        if fsites.get(c) != "MEMBER0":
+            print("FAIL: FileCacheEntry ctor 0x%08x not MEMBER0" % c)
+            ok = False
     n = len(rows)
     print("witnesses:", n, "classes:", len(agg))
     if n < 500:
@@ -279,7 +349,12 @@ def main():
     ap.add_argument("--allocators", action="store_true")
     ap.add_argument("--class", dest="cls")
     ap.add_argument("--selftest", action="store_true")
+    ap.add_argument("--no-member0", action="store_true",
+                    help="disable the W16-OT first-member rule (fail-proof only)")
     a = ap.parse_args()
+    global MEMBER0_RULE
+    if a.no_member0:
+        MEMBER0_RULE = False
     if a.selftest:
         return selftest()
     W = Witness()
@@ -298,14 +373,19 @@ def main():
                         s[0], s[1], s[2], s[3], hex(s[4]) if s[4] else "-"))
         return 0
     out = {}
-    for td, cnt in sorted(agg.items()):
+    for td in sorted(set(agg) | set(sites)):
+        cnt = agg.get(td, collections.Counter())
         out[td] = {"name": demangle_td(td), "sizes": {str(k): v for k, v in cnt.items()},
+                   "member0": [[hex(s[0]), s[2], hex(s[4]) if s[4] else None]
+                               for s in sites[td] if s[3] == "MEMBER0"],
                    "sites": [[hex(s[0]), hex(s[1]), s[2], s[3],
                               hex(s[4]) if s[4] else None] for s in sites[td]]}
     if a.json:
         json.dump(out, open(a.json, "w"), indent=1)
     conf = sum(1 for v in agg.values() if len(v) > 1)
-    print(f"witness rows {len(rows)}  classes {len(agg)}  CONFLICT {conf}")
+    m0 = [r for r in rows if r[5] == "MEMBER0"]
+    print(f"witness rows {len(rows)}  classes {len(agg)}  CONFLICT {conf}  "
+          f"MEMBER0 rows {len(m0)} over {len({r[4] for r in m0})} classes")
     return 0
 
 
