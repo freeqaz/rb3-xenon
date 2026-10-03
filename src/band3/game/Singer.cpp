@@ -631,8 +631,20 @@ void Singer::Poll(float ms, const SongPos &pos, float f3, float f4) {
     }
 }
 
+// Retail builds the (part1, part2) pair as one 8-byte object before the search
+// loop -- both arguments are stored to adjacent stack words on entry
+// (0x826F9440/48: stw r4,0x50(r1); stw r5,0x54(r1)) -- and copies it into the new
+// entry with a single ld/std pair, so the two parts travel as one aggregate,
+// the same pairing the clear() copy above shows. A plain member-by-member
+// fill stores r4/r5 straight into the entry and has no such object.
+struct AmbiguousPartPair {
+    int part1;
+    int part2;
+};
+
 void Singer::AddAmbiguousPart(int i_iPart1, int i_iPart2) {
     MILO_ASSERT(i_iPart1 < i_iPart2, 0x13E);
+    AmbiguousPartPair parts = { i_iPart1, i_iPart2 };
     bool bFound = false;
     for (std::vector<AmbiguousData>::iterator iter = mAmbiguousData.begin();
          iter != mAmbiguousData.end(); ++iter) {
@@ -643,8 +655,7 @@ void Singer::AddAmbiguousPart(int i_iPart1, int i_iPart2) {
     }
     if (!bFound) {
         AmbiguousData entry;
-        entry.part1 = i_iPart1;
-        entry.part2 = i_iPart2;
+        *reinterpret_cast<AmbiguousPartPair *>(&entry.part1) = parts;
         entry.isResolved = false;
         entry.winningPart = -1;
         entry.ambiguousPoints = -1.0f;
