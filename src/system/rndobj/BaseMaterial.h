@@ -144,6 +144,7 @@ struct MatPerfSettings {
 class RndMat : public Hmx::Object {
     friend class NgLight;
     friend class NgSpotlightDrawer;
+    friend class LayerProvider;
 
 public:
     enum PropDisplay {
