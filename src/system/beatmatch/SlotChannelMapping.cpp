@@ -22,7 +22,7 @@ void SingleSlotChannelMapping::FillChannelList(std::list<int> &chanList, int i) 
 }
 
 MassChannelMapping::MassChannelMapping(const std::vector<int> &vec) {
-    mChannels.insert(mChannels.end(), vec.begin(), vec.end());
+    mChannels.insert(mChannels.begin(), vec.begin(), vec.end());
 }
 
 void MassChannelMapping::FillChannelList(std::list<int> &chanList) const {

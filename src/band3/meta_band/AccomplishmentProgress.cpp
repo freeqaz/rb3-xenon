@@ -734,20 +734,20 @@ void AccomplishmentProgress::HandlePendingGamerRewards() {
          ++it) {
         GamerAwardStatus *status = *it;
         if (!status->unk10) {
-            DWORD res;
             if (status->unkc == 1) {
-                res = XUserAwardGamerPicture(
-                    mParentProfile->GetPadNum(), status->unk8, 0, &status->mOverlapped
-                );
+                if (XUserAwardGamerPicture(
+                        mParentProfile->GetPadNum(), status->unk8, 0, &status->mOverlapped
+                    )
+                    == ERROR_IO_PENDING)
+                    status->unk10 = true;
             } else if (status->unkc == 2) {
                 XUSER_AVATARASSET asset;
                 asset.dwUserIndex = mParentProfile->GetPadNum();
                 asset.dwAwardId = status->unk8;
-                res = XUserAwardAvatarAssets(1, &asset, &status->mOverlapped);
-            } else
-                continue;
-            if (res == ERROR_IO_PENDING)
-                status->unk10 = true;
+                if (XUserAwardAvatarAssets(1, &asset, &status->mOverlapped)
+                    == ERROR_IO_PENDING)
+                    status->unk10 = true;
+            }
         }
     }
 }

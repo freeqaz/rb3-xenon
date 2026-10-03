@@ -14,10 +14,12 @@ Symbol TrackTypeToSym(TrackType type) {
 
 // 0x8277B530
 TrackType SymToTrackType(Symbol sym) {
-    for (int i = 0; i < 11; i++) {
-        if (sym == TrackTypeToSym((TrackType)i)) {
+    // Retail tests the bound at the TOP of the loop (no rotation).
+    for (int i = 0;; i++) {
+        if (i > kTrackNone)
+            break;
+        if (sym == TrackTypeToSym((TrackType)i))
             return (TrackType)i;
-        }
     }
     MILO_ASSERT(false, 0x1B);
     return kTrackNone;

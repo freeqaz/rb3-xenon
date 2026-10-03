@@ -99,8 +99,8 @@ BEGIN_LOADS(RndParticleSysAnim)
     RndAnimatable::Load(bs);
     bs >> mParticleSys >> mStartColorKeys >> mEndColorKeys;
     if (rev < 2) {
-        float scale = 1.0f;
         Keys<float, float> floatKeys;
+        float scale = 1.0f;
         bs >> floatKeys >> mKeysOwner;
         if (rev == 1) {
             bs >> scale;
@@ -110,7 +110,7 @@ BEGIN_LOADS(RndParticleSysAnim)
         for (Keys<float, float>::iterator it = floatKeys.begin(); it != floatKeys.end();
              ++it) {
             Key<Vector2> vecKey;
-            vecKey.value = Vector2(it->value, it->value * scale);
+            vecKey.value.Set(it->value, it->value * scale);
             vecKey.frame = it->frame;
             mEmitRateKeys.push_back(vecKey);
         }
