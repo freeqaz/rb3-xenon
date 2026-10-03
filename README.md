@@ -34,7 +34,7 @@ native build below, running RB3's own code on modern hardware.
 - **98.8% of RB3's game-code functions are byte-matched** (19,087 of 19,313 in
   `src/band3/`), covering 94.4% of the game layer's code bytes.
 - **77.4% of every function in the executable** is matched — 57.5% of all code
-  bytes, which is **88.9% of the code this project can reach** (see
+  bytes, which is **89.0% of the code this project can reach** (see
   [Reading the numbers](#reading-the-numbers)).
 - **98.0% of functions / 93.0% of bytes** matched across the code the native
   port runs: the core engine plus the game layer, beatmatch, MIDI and track
@@ -60,17 +60,17 @@ As of **2026-10-03** (all figures on the **`name_check`** ruler):
 
 | Area | Functions matched | Code bytes | Progress |
 |---|---:|---:|:---|
-| **Whole binary** | **53,332 / 68,913 (77.4%)** | **57.48%** | `███████████████░░░░░` |
+| **Whole binary** | **53,349 / 68,909 (77.4%)** | **57.49%** | `███████████████░░░░░` |
 | Game code (`src/band3/`) | 19,087 / 19,313 (98.8%) | 94.41% | `████████████████████` |
-| Milo engine (`src/system/`) | 31,616 / 32,923 (96.0%) | 87.70% | `███████████████████░` |
+| Milo engine (`src/system/`) | 31,633 / 32,919 (96.1%) | 87.75% | `███████████████████░` |
 | Quazal network (`src/network/`) | 2,370 / 3,029 (78.2%) | 63.01% | `████████████████░░░░` |
 | Third-party libs (vendored under `src/system/`) | 254 / 261 (97.3%) | 95.06% | `███████████████████░` |
 | Xbox 360 SDK (`src/xdk/`)² | 5 / 4,524 (0.1%) | 0.02% | `░░░░░░░░░░░░░░░░░░░░` |
 | Not yet attributed¹ | 0 / 8,863 | — | `░░░░░░░░░░░░░░░░░░░░` |
 <!-- progress-table:end -->
 
-*(Regenerated 2026-10-03 from a full build of `c11e2ebcb`. Since the previous
-refresh on 2026-08-17, whole-binary code bytes rose from 36.08% to 57.48% and
+*(Regenerated 2026-10-03 from a full build of `10477fbaf`. Since the previous
+refresh on 2026-08-17, whole-binary code bytes rose from 36.08% to 57.49% and
 game code from 64.15% to 94.41%.)*
 
 ¹ Code not yet assigned to a source file (1,792 auto-generated units, 1.47 MB,
@@ -86,12 +86,13 @@ writing Microsoft's library source is out of scope, so this row stays near zero.
 
 - **Code bytes are all-or-nothing.** A function counts its size only once it
   matches 100%, so a 99.9% function counts zero. Size-weighted, the average
-  match across the whole binary is **63.61%** — ~6 points of near-miss work
-  already done beyond the 57.48% headline.
+  match across the whole binary is **63.63%** — ~6 points of near-miss work
+  already done beyond the 57.49% headline.
 - **Not all of the binary is reachable.** The SDK (20.5%), not-yet-assigned
   code (14.3%) and a few placeholder units (0.6%) have no source to compile
-  against, so the reachable ceiling is **64.62%** of the binary. 57.48% is **88.9% of that ceiling**; the remaining
-  gap is 732,624 bytes (`tools/ceiling_recompute.py`).
+  against, so the reachable ceiling is **64.62%** of the binary. 57.49% is
+  **89.0% of that ceiling**; the remaining gap is 730,844 bytes
+  (`tools/ceiling_recompute.py`).
 - **The scoring is strict.** Figures use objdiff's `name_check` ruler: a call to
   the wrong function counts as a mismatch even when the instructions are
   identical. Byte figures from before 2026-08-12 used a looser ruler and are not
@@ -214,24 +215,25 @@ no skips) before landing — the X360 matching build never links, so this gate i
 what catches a native link break.
 
 How the AI tooling works
-========================
+------------------------
 
-This fork is organized around a small set of services that give LLM agents
-structured, reproducible access to the binary, the build, and the prior-art
-sibling codebases. Agents don't "look at assembly and guess" — they call typed
-tools that report match percentages, struct offsets, and cross-references. Most
-of this was built on DC3 and ported here verbatim (same MSVC X360 toolchain).
+The project is built around a small set of services that give AI agents
+structured, reproducible access to the binary, the build and the two sibling
+decomps. Agents don't eyeball assembly and guess: they call typed tools that
+report match percentages, struct offsets and cross-references, and claimed
+improvements are measured on a whole-binary build before they land. Most of
+this tooling was first built for the DC3 decomp and carried over, since both
+projects share the MSVC X360 toolchain.
 
-Decomp services
----------------
+### Decomp services
 
 - **Orchestrator MCP** (`scripts/orchestrator/`, server name `decomp`) — the
   central tool surface, backed by `decomp.db` (SQLite, 69k functions seeded from
-  `report.json`). 11 tools: `report_result`, `query_functions`, `get_attempts`,
-  `run_objdiff`, `run_diff_inspect`, `run_analyze_function`,
-  `lookup_struct_offset`, `lookup_merged_symbol`, `mark_patch_result`, plus the
-  two sibling oracles: **`lookup_rb3wii`** (greps the Wii RB3 decomp — game code)
-  and **`lookup_dc3`** (greps the DC3 decomp — engine code).
+  `report.json`). 10 tools: `report_result`, `query_functions`, `get_attempts`,
+  `run_objdiff`, `run_diff_inspect`, `lookup_struct_offset`,
+  `lookup_merged_symbol`, `mark_patch_result`, plus the two sibling oracles:
+  **`lookup_rb3wii`** (searches the Wii RB3 decomp — game code) and
+  **`lookup_dc3`** (searches the DC3 decomp — engine code).
 - **Ghidra MCP** (`tools/ghidra/`, pyghidra over HTTP on port **8002**; DC3 owns
   8000, Wii-RB3 owns 8001) — headless Ghidra serving decompiled C, switch/cast
   analysis, semantic search across the binary's functions, and DTM-vs-header
@@ -257,34 +259,31 @@ Decomp services
   number when a precondition fails (unsettled tree, stale report cache, a patch
   that never reached the compiler) instead of reporting noise.
 
-Agent harness
--------------
+### Agent harness
 
 - **`.claude/skills/`** — 24 slash-command skills wrapping the tools above into
   agent-callable verbs: `/recon`, `/permute`, `/batch-check`,
   `/ghidra-decompile`, `/ghidra-search`, `/ghidra-struct`, `/struct-info`,
   `/vtable`, `/resolve-vcall`, `/stack-layout`, `/compare-asm`, `/data-diff`,
-  `/refactor-staff`, `/progress`, `/unicorn-query`, **`/ab-measure`** (the
-  whole-binary A/B harness — it refuses a broken run rather than reporting
-  noise), and the two pairing oracles **`/dc3-pair`**
-  (engine) and **`/rb3wii-pair`** (game code). Native-port skills too:
-  `/asset-extract`, `/screenshot`, `/gpu-capture`, `/gpu-debug`,
-  `/gpu-inspect`, `/xenia-gameplay`. There is deliberately no native-BUILD
-  skill: the native build has exactly one supported entry point,
-  `tools/native_build_gate.sh`, documented in `CLAUDE.md`.
-- **Worktree pool** (`scripts/setup_worktree.sh`, `worktree_pool.py`) —
-  concurrent agents work on isolated git worktrees built via btrfs CoW reflinks,
-  sharing the warm build cache, tools, and target objects without serializing on
-  one working tree.
-- **Persistent memory** (`~/.claude/projects/.../memory/`) — an index of
-  prior-session findings (vtable layouts, divergence classes, known bugs,
-  workflow lessons, project roadmap) that future sessions read before starting.
-- **`CLAUDE.md`** — the full agent context: build wiring, source provenance per
-  directory, the matching workflow, and the hard rules for concurrent agents
-  sharing the working tree.
+  `/refactor-staff`, `/progress`, `/unicorn-query`, **`/ab-measure`**, and the
+  two pairing oracles **`/dc3-pair`** (engine) and **`/rb3wii-pair`** (game
+  code). For the native port: `/asset-extract`, `/screenshot`, `/gpu-capture`,
+  `/gpu-debug`, `/gpu-inspect`, and `/xenia-gameplay` (runs the original game
+  in the Xenia emulator for side-by-side comparison).
+- **Parallel worktrees** (`scripts/setup_worktree.sh`) — many agents work at
+  once, each in its own git worktree created in seconds via btrfs copy-on-write
+  reflinks, with a warm build cache, so nobody waits on a shared working tree.
+  Each lane lands with a `git merge --no-ff`, so its full history — including
+  failed attempts and reverts — stays in the log.
+- **`CLAUDE.md`** and **`docs/`** — the agents' shared context: build wiring,
+  source provenance per directory, the matching workflow, the MSVC X360 codegen
+  pattern catalog, and the rules for concurrent work. Findings are written down
+  as they are measured, including the negative ones, so later sessions build on
+  them instead of rediscovering them. Agents also keep a persistent memory of
+  cross-session lessons outside the repo.
 
 Toolchain
-=========
+---------
 
 The MSVC X360 compiler (`cl.exe`), STLport, and the XDK CRT headers (`LIBCMT`)
 are borrowed from `../dc3-decomp`.
@@ -319,22 +318,30 @@ release binary by hand:
   runtime.
 
 Building
-========
+--------
 
-The X360 matching build is Linux-first (it drives the Windows `cl.exe` through
-`wibo`). Install [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages),
-then:
+The X360 matching build runs on Linux, driving the Windows `cl.exe` through
+`wibo`. You need:
+
+- Python 3 and [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages).
+- The TU5 executable at `orig/45410914/default.xex` (not committed; see
+  [Reading the numbers](#reading-the-numbers) for exactly which image).
+- Sibling checkouts under `../`: `dc3-decomp` (compiler, STLport, CRT headers)
+  and the four tool forks listed under [Toolchain](#toolchain).
+
+Then:
 
 ```sh
-# Place the retail TU5 executable at orig/45410914/default.xex (not committed).
-python3 configure.py            # regenerate build.ninja
-./tools/ninja-locked            # ALWAYS use this wrapper, never bare `ninja`
+python3 configure.py                              # generate build.ninja
+mkdir -p build
+./tools/ninja-locked 2>&1 | tee build/build.log   # use this wrapper, not bare ninja
 ```
 
-> `./tools/ninja-locked` takes an `flock` so concurrent agents don't corrupt the
-> shared build dir. Always `tee` build output to a log — dtk/MSVC failures are
-> invisible without it. After editing `splits.txt`/`objects.json`, `touch
-> config/45410914/config.yml` to force a re-SPLIT, then re-run configure/ninja.
+> `./tools/ninja-locked` takes a lock so concurrent builds don't corrupt the
+> build directory. Keep the log: dtk and MSVC failures are easy to miss
+> otherwise. After editing `splits.txt` or `objects.json`, `touch
+> config/45410914/config.yml` to force a re-split, then re-run configure and the
+> build.
 
 The build prints the headline progress figure at the end; the full per-unit and
 per-category breakdown lands in `build/45410914/report.json` (the source of the
@@ -354,20 +361,22 @@ tools/native_build_gate.sh     # expect NATIVE_GATE_RESULT verdict=PASS ... rc=0
 ```
 
 Diffing
-=======
+-------
 
-After the initial build, an `objdiff.json` exists in the project root. Build the
-[`freeqaz/objdiff`](https://github.com/freeqaz/objdiff) fork at `../objdiff` (or,
-for a quick look, download an upstream release from
-[encounter/objdiff](https://github.com/encounter/objdiff)), set **Project
-directory** to this repo under **Project → Settings**, and the configuration
-loads automatically. Selecting an
-object from the left sidebar starts diffing against the retail XEX; edits to
-source, headers, `configure.py`, `splits.txt`, or `symbols.txt` trigger
-automatic rebuilds.
+After the first build, `objdiff.json` exists in the project root. Open the
+objdiff GUI (the [`freeqaz/objdiff`](https://github.com/freeqaz/objdiff) fork at
+`../objdiff`, or an upstream [encounter/objdiff](https://github.com/encounter/objdiff)
+release for a quick look), set **Project directory** to this repo under
+**Project → Settings**, and the configuration loads automatically. Pick an
+object in the left sidebar to diff it against the retail XEX; edits to source,
+headers, `configure.py`, `splits.txt` or `symbols.txt` rebuild automatically.
+
+For scripted use, `objdiff.json` pins the same scoring options the build's
+report uses, so a command-line `objdiff-cli diff` gives the same percentages as
+the progress table.
 
 Identification tooling
-======================
+----------------------
 
 `tools/fingerprint_match.py` is the entry point for turning anonymous functions
 into source-file proposals:
@@ -383,15 +392,17 @@ Outputs are gitignored / regenerable. The `autoid` table is the basis for
 `splits.txt` pinning (see the splits-bootstrap recipe in `CLAUDE.md`).
 
 Project structure
-=================
+-----------------
 
 - `configure.py` — project configuration and build generator.
 - `config/45410914/` — config for the retail XEX (`config.yml`, `symbols.txt`,
   `splits.txt`, `objects.json`).
 - `orig/45410914/default.xex` — the retail TU5 executable (not committed;
   vanilla TU0 archived under `orig/45410914/tu0-archive/`).
-- `src/system/` — Milo engine code (sourced from dc3-decomp).
-- `src/band3/`, `src/network/` — RB3 game code (sourced from rb3-Wii).
+- `src/system/` — Milo engine code (based on the DC3 decomp).
+- `src/band3/` — RB3 game code (ported from the Wii decomp).
+- `src/system/bandobj/` — RB3-only band objects (no DC3 counterpart).
+- `src/network/` — Quazal networking and RB3's net layer.
 - `src/xdk/`, `src/system/stlport/` — Xbox 360 SDK + STLport (from dc3-decomp).
 - `tools/` — build scripts + identification/struct/vtable tooling.
 - `scripts/` — orchestrator MCP, analysis engine, harvest scanners, and the
@@ -399,12 +410,12 @@ Project structure
 - `native/` — host (x86_64 Linux + clang) build: 18 driver targets over the
   shared `../milo-native-engine` runtime.
 - `.claude/skills/` — agent slash-command skills.
-- `docs/` — dependencies, getting-started, splits/symbols/config/objects format
-  docs, MSVC X360 pattern catalog, and plan files (`docs/INDEX.md` is the
-  audited master index).
+- `docs/` — getting started, dependencies, the `splits`/`symbols`/`config`/
+  `objects` file formats, the MSVC X360 codegen pattern catalog, and dated
+  campaign records. Start at `docs/INDEX.md`.
 
 References
-==========
+----------
 
 - [freeqaz/objdiff](https://github.com/freeqaz/objdiff) — **the diffing fork we
   use** (checked out at `../objdiff`); forked from
@@ -420,7 +431,7 @@ References
 - [decomp.me](https://decomp.me) — collaborate on matches
 
 Acknowledgments
-===============
+---------------
 
 - [rjkiv/rb3-xenon](https://github.com/rjkiv/rb3-xenon) — the canonical RB3
   Xbox 360 decomp, whose template this project was scaffolded from. This fork
