@@ -14301,12 +14301,16 @@ network/quazal/Core/Platform.cpp:
 	.text       start:0x82AAB9B0 end:0x82AABA14
 
 network/quazal/Core/ObjectThreadRoot.cpp:
-	.pdata      start:0x82252FC8 end:0x82252FD0
-	.text       start:0x82AABE98 end:0x82AABF60
+	.pdata      start:0x82252FC8 end:0x82253090
+	.pdata      start:0x822618B0 end:0x822618C0
+	.pdata      start:0x82261D28 end:0x82261D38
+	.text       start:0x82AABE98 end:0x82AACDE0
+	.text       start:0x82C41F68 end:0x82C41FF0
+	.text       start:0x82C4ADB8 end:0x82C4AE10
 
 network/quazal/Core/StringStream.cpp:
-	.pdata      start:0x82253678 end:0x82253680
-	.text       start:0x82AB3648 end:0x82AB36E8
+	.pdata      start:0x82253658 end:0x822536E8
+	.text       start:0x82AB34C0 end:0x82AB3DC8
 
 network/quazal/DOClassesTable.cpp:
 	.pdata      start:0x82253708 end:0x82253710
