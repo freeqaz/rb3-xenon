@@ -437,7 +437,7 @@ void InlineHelp::SyncLabelsToConfig() {
         for (int i = labels_size; i < cfg_size; i++) {
             // Retail 0x82316930: New<BandLabel> (0x82314140), then the template is
             // applied with ResourceCopy (UIComponent vtable slot 12), not Copy.
-            UILabel *lbl = Hmx::Object::New<BandLabel>();
+            BandLabel *lbl = Hmx::Object::New<BandLabel>();
             lbl->ResourceCopy(mTemplateLabel);
             lbl->SetColorOverride(mTextColor);
             mTextLabels.push_back(lbl);

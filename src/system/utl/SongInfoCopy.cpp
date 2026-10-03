@@ -13,6 +13,30 @@ const std::vector<float> &SongInfoCopy::GetVols() const { return mVols; }
 
 const std::vector<int> &SongInfoCopy::GetCores() const { return mCores; }
 
+// Retail defines all seven in this TU (W16-PB). 0x827D10F8/1100/1108 (the three
+// vector getters) and 0x827D1110/1118 (the two float getters, pinned to
+// PanelDir as fold survivors) sit between GetVols and GetPackageName; the two
+// int getters fold onto earlier identical bodies (0x8252E038, 0x8235AFA0).
+// They were HX_NATIVE-only, which left five SongInfoCopy and
+// DataArraySongInfo vtable slots pointing at symbols no object defined.
+int SongInfoCopy::GetNumVocalParts() const { return mNumVocalParts; }
+
+int SongInfoCopy::GetHopoThreshold() const { return mHopoThreshold; }
+
+const std::vector<int> &SongInfoCopy::GetCrowdChannels() const { return mCrowdChannels; }
+
+const std::vector<Symbol> &SongInfoCopy::GetDrumSoloSamples() const {
+    return mDrumSoloSamples;
+}
+
+const std::vector<Symbol> &SongInfoCopy::GetDrumFreestyleSamples() const {
+    return mDrumFreestyleSamples;
+}
+
+float SongInfoCopy::GetMuteVolume() const { return mMuteVolume; }
+
+float SongInfoCopy::GetVocalMuteVolume() const { return mVocalMuteVolume; }
+
 // GetTracks is in CharBoneDir.cpp (cross-unit)
 
 const char *SongInfoCopy::GetPackageName() const {
@@ -121,28 +145,3 @@ SongInfoCopy::SongInfoCopy(const SongInfo *info) {
     }
 }
 
-#ifdef HX_NATIVE
-// Trivial member accessors. In the retail X360 object these are emitted from a
-// different TU / inlined into the vtable emitter, so their out-of-line bodies
-// are absent from SongInfoCopy.obj — but the native rb3-dta build references
-// them through the vtable and needs real definitions. The bodies
-// return the members.
-// Guarded so retail bytes are byte-identical (HX_NATIVE is native-only).
-int SongInfoCopy::GetNumVocalParts() const { return mNumVocalParts; }
-
-int SongInfoCopy::GetHopoThreshold() const { return mHopoThreshold; }
-
-const std::vector<int> &SongInfoCopy::GetCrowdChannels() const { return mCrowdChannels; }
-
-const std::vector<Symbol> &SongInfoCopy::GetDrumSoloSamples() const {
-    return mDrumSoloSamples;
-}
-
-const std::vector<Symbol> &SongInfoCopy::GetDrumFreestyleSamples() const {
-    return mDrumFreestyleSamples;
-}
-
-float SongInfoCopy::GetMuteVolume() const { return mMuteVolume; }
-
-float SongInfoCopy::GetVocalMuteVolume() const { return mVocalMuteVolume; }
-#endif
