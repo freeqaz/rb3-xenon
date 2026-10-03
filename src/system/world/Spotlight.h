@@ -116,7 +116,9 @@ public:
     BeamDef GetBeam() const { return mBeam; }
     bool HasBeam() const { return mBeam.HasLength(); }
     RndFlare *GetFlare() const { return mFlare; }
-    ObjPtrList<RndDrawable> GetAdditionalObjects() const { return mAdditionalObjects; }
+    const ObjPtrList<RndDrawable> &GetAdditionalObjects() const {
+        return mAdditionalObjects;
+    }
     RndMat *LensMesh() const { return mLensMaterial; }
     const Transform &LensXfm() const { return mLensXfm; }
     static RndMesh *GetDiskMesh() { return sDiskMesh; }
