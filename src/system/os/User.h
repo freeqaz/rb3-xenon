@@ -49,7 +49,9 @@ public:
     // through the User virtual base, not through BandUser's own vtable. Result is tested
     // with `clrlwi. r11, r3, 24` (byte/bool), consistent with the OvershellSlot::UpdateView
     // reading `if (user->IsLocal() && !user->IsNullUser())`.
-    virtual bool IsNullUser() const;
+    // Retail slot 28 is the `li r3,0; blr` fold; it had no definition in this
+    // tree (lane W16-OT, BODY check). NullLocalBandUser overrides it.
+    virtual bool IsNullUser() const { return false; }
     virtual const char *UserName() const = 0;
 
     unsigned int GetMachineID() const { return mMachineID; }
