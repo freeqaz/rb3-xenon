@@ -7987,7 +7987,7 @@
  "0x82365d60": "?Init@TourQuestGameRules@@UAAXPBVDataArray@@@Z",
  "0x82365df0": "??_GTourQuestGameRules@@UAAPAXI@Z",
  "0x82365e40": "?GetNumTargets@TourGameRules@@QBAHXZ",
- "0x82365e58": "?GetVocalPartPercentage@Stats@@QBAMH@Z",
+ "0x82365e58": "?GetTarget@TourGameRules@@QBAMH@Z",
  "0x82365e68": "??0TourGameRules@@QAA@XZ",
  "0x82365e90": "??1TourGameRules@@UAA@XZ",
  "0x82365ec0": "??_GTourGameRules@@UAAPAXI@Z",
