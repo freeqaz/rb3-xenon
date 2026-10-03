@@ -36152,5 +36152,17 @@
  "0x82b2f190": "??0StationContactInfo@Quazal@@QAA@ABV?$qList@VStationURL@Quazal@@@1@@Z",
  "0x82b2f2a8": "??1StationContactInfo@Quazal@@QAA@XZ",
  "0x82b38818": "?GetOverlappedResult@IOCompletionNotifier@Quazal@@QAAHPAVIOCompletionContext@2@PA_NPAI@Z",
- "0x82b386b8": "?DeleteIOCompletionContext@IOCompletionNotifier@Quazal@@QAAXPAVIOCompletionContext@2@@Z"
+ "0x82b386b8": "?DeleteIOCompletionContext@IOCompletionNotifier@Quazal@@QAAXPAVIOCompletionContext@2@@Z",
+ "0x82ae10a0": "?Clone@_DDL_Tournament@Quazal@@UBAPAVGathering@2@XZ",
+ "0x82ae1128": "?GetGatheringType@_DDL_Tournament@Quazal@@UBA?AVString@2@XZ",
+ "0x82ae1160": "?IsA@_DDL_Tournament@Quazal@@UBA_NABVString@2@@Z",
+ "0x82ae1198": "?IsAKindOf@_DDL_Tournament@Quazal@@UBA_NABVString@2@@Z",
+ "0x82ae5b50": "?Add@_DDL_GameSession@Quazal@@SAXPAVMessage@2@ABV12@@Z",
+ "0x82ae5b80": "?Extract@_DDL_GameSession@Quazal@@SAXPAVMessage@2@PAV12@@Z",
+ "0x82ae5bb0": "?Clone@_DDL_GameSession@Quazal@@UBAPAVGathering@2@XZ",
+ "0x82ae5c38": "?GetGatheringType@_DDL_GameSession@Quazal@@UBA?AVString@2@XZ",
+ "0x82ae5c70": "?IsA@_DDL_GameSession@Quazal@@UBA_NABVString@2@@Z",
+ "0x82ae5ca8": "?IsAKindOf@_DDL_GameSession@Quazal@@UBA_NABVString@2@@Z",
+ "0x82ae5d20": "?StreamIn@_DDL_GameSession@Quazal@@UBAXPAVMessage@2@@Z",
+ "0x82ae5d50": "?StreamOut@_DDL_GameSession@Quazal@@UAAXPAVMessage@2@@Z"
 }
