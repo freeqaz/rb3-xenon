@@ -14,8 +14,10 @@ void MoggClipMap::mySave(BinStream &bs) const {
 MoggClipMap::MoggClipMap(Hmx::Object *obj)
     : mMoggClip(obj), mPan(0.0f), mPanWidth(0.0f), mVolume(0.0f), mIsStereo(false) {}
 
+// Retail copy-constructs the Hmx::Object base (0x822774F8, the body every other
+// caller spells as Object's copy ctor), not its default ctor (0x8275CB88).
 MoggClipMap::MoggClipMap(const MoggClipMap &mogg)
-    : mMoggClip(mogg.mMoggClip), mPan(mogg.mPan), mPanWidth(mogg.mPanWidth),
+    : Hmx::Object(mogg), mMoggClip(mogg.mMoggClip), mPan(mogg.mPan), mPanWidth(mogg.mPanWidth),
       mVolume(mogg.mVolume), mIsStereo(mogg.mIsStereo) {}
 
 MoggClipMap &MoggClipMap::operator=(const MoggClipMap &mogg) {
