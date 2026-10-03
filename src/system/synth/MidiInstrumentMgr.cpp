@@ -13,10 +13,12 @@ MidiInstrumentMgr::~MidiInstrumentMgr() { UnloadInstrument(); }
 
 void MidiInstrumentMgr::SetInstrument(MidiInstrument *inst) { mInstrument = inst; }
 
+// Retail 0x82716248 open-codes the null assignment:
+// `if (mObject) { mObject->Release(this); mObject = 0; }`.
 void MidiInstrumentMgr::UnloadInstrument() {
     if (mInstrument)
         mInstrument->KillAllVoices();
-    mInstrument = 0;
+    mInstrument.ReleaseObjConcrete();
 }
 
 void MidiInstrumentMgr::Poll() {
