@@ -2436,8 +2436,26 @@
             "network/quazal/Services/Facades/Client/JobBackEndServicesLogout.cpp": "NonMatching",
             "network/quazal/Services/Facades/Client/JobBackEndServicesTerminate.cpp": "NonMatching",
             "network/quazal/CallContextRegister.cpp": "NonMatching",
-            "network/quazal/Competition/Protocol/TournamentDDL.cpp": "NonMatching",
-            "network/quazal/MatchMaking/Protocol/GameSessionDDL.cpp": "NonMatching",
+            "network/quazal/Competition/Protocol/TournamentDDL.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
+            "network/quazal/MatchMaking/Protocol/GameSessionDDL.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/MatchMaking/Protocol/DynamicGatheringDDL.cpp": "NonMatching",
             "network/quazal/SessionDiscovery/LAN/LANSessionDiscovery.cpp": "NonMatching",
             "network/quazal/Foundation/JobTerminateFacade.cpp": "NonMatching",

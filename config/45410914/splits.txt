@@ -14425,12 +14425,12 @@ network/quazal/CallContextRegister.cpp:
 	.text       start:0x82AE0138 end:0x82AE02C8
 
 network/quazal/Competition/Protocol/TournamentDDL.cpp:
-	.pdata      start:0x822552C8 end:0x822552D0
-	.text       start:0x82AE10A0 end:0x82AE1124
+	.pdata      start:0x822552C8 end:0x822552E8
+	.text       start:0x82AE10A0 end:0x82AE1210
 
 network/quazal/MatchMaking/Protocol/GameSessionDDL.cpp:
-	.pdata      start:0x82255568 end:0x82255570
-	.text       start:0x82AE5BB0 end:0x82AE5C34
+	.pdata      start:0x82255558 end:0x82255598
+	.text       start:0x82AE5B50 end:0x82AE5D80
 
 network/quazal/MatchMaking/Protocol/DynamicGatheringDDL.cpp:
 	.pdata      start:0x822555A8 end:0x822555B0
