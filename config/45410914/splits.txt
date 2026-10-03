@@ -14553,12 +14553,12 @@ network/quazal/SessionClock/SessionClockExtension.cpp:
 	.text       start:0x82B26A40 end:0x82B26B1C
 
 network/quazal/DupSpace/DupSpaceExtension.cpp:
-	.pdata      start:0x822584A0 end:0x822584B0
-	.text       start:0x82B26DD8 end:0x82B26FFC
+	.pdata      start:0x82258470 end:0x822584C0
+	.text       start:0x82B26B20 end:0x82B270E8
 
 network/quazal/GlobalDiscovery/GlobalDiscoveryExtension.cpp:
-	.pdata      start:0x822586C0 end:0x822586C8
-	.text       start:0x82B2C030 end:0x82B2C0E0
+	.pdata      start:0x822586A0 end:0x822586C8
+	.text       start:0x82B2BE80 end:0x82B2C0E0
 
 network/quazal/Transport/Interface/JobConnectEndPoint.cpp:
 	.pdata      start:0x82258718 end:0x822589D8

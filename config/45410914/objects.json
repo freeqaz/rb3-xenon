@@ -2569,8 +2569,26 @@
             "network/quazal/MatchMaking/Protocol/GatheringDDL.cpp": "NonMatching",
             "network/quazal/Transport/UDP/PacketOut.cpp": "NonMatching",
             "network/quazal/SessionClock/SessionClockExtension.cpp": "NonMatching",
-            "network/quazal/DupSpace/DupSpaceExtension.cpp": "NonMatching",
-            "network/quazal/GlobalDiscovery/GlobalDiscoveryExtension.cpp": "NonMatching",
+            "network/quazal/DupSpace/DupSpaceExtension.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
+            "network/quazal/GlobalDiscovery/GlobalDiscoveryExtension.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/Transport/Interface/JobConnectEndPoint.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
