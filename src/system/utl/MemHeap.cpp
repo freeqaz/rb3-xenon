@@ -521,6 +521,7 @@ bool MemHeap::Free(int *ptr) {
     return true;
 }
 
+#ifndef RB3_MEMHEAP_METHODS_ONLY
 #ifndef HX_NATIVE
 // --- retail TU-reunification (matching build only) ---
 // In retail RB3 the free Mem* API and Str/FixedString glue below were compiled
@@ -617,3 +618,5 @@ void MemHandle::Unlock() { --mAlloc->mLockCount; }
 #endif
 #undef gRev
 #undef gAltRev
+
+#endif // RB3_MEMHEAP_METHODS_ONLY

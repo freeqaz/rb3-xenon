@@ -17,6 +17,16 @@
 #include <cstdlib>
 #include <cstring>
 
+#ifndef HX_NATIVE
+// Retail compiled MemHeap and this file as ONE translation unit (their .text
+// interleaves; see the reunification note in MemHeap.cpp). With MemHeap's
+// method bodies visible, MemFree/MemTruncate/MemAllocSize keep gNumHeaps in a
+// register across MemHeap::Free/Truncate/AllocSize, as retail does.
+#define RB3_MEMHEAP_METHODS_ONLY
+#include "utl/MemHeap.cpp"
+#undef RB3_MEMHEAP_METHODS_ONLY
+#endif
+
 extern MemTracker *gMemTracker;
 CriticalSection *gMemLock;
 
@@ -1087,12 +1097,11 @@ void MemFreeBlockStats(int heapNum, int &a, int &b, int &c, int &d) {
 static MemHeapStack gThreadBuf[MAX_BUF_THREADS];
 static int gThreadBufCurrentIndex;
 
+// Retail 0x827BB890 holds the lock with a CritSecTracker: it has an EH frame
+// and an unwind funclet (0x827BB9F4), and every return shares one Exit tail.
 MemHeapStack &ThreadMemStack(bool createIfMissing) {
     int idx;
-    CriticalSection *lock = gMemStackLock;
-    if (lock) {
-        lock->Enter();
-    }
+    CritSecTracker tracker(gMemStackLock);
     if (gNumThreads == 0) {
         gThreadIds[0] = GetCurrentThreadId();
         gNumThreads = 1;
@@ -1114,9 +1123,6 @@ MemHeapStack &ThreadMemStack(bool createIfMissing) {
                 } while (idx < gNumThreads);
             }
             if (!createIfMissing) {
-                if (lock) {
-                    lock->Exit();
-                }
                 return gNullMemStack;
             }
             if (idx == gNumThreads) {
@@ -1146,11 +1152,7 @@ MemHeapStack &ThreadMemStack(bool createIfMissing) {
         }
     }
     gThreadBufCurrentIndex = idx;
-    MemHeapStack &result = gThreadBuf[gThreadBufCurrentIndex];
-    if (lock) {
-        lock->Exit();
-    }
-    return result;
+    return gThreadBuf[gThreadBufCurrentIndex];
 }
 int GetCurrentHeapNum() {
     MemHeapStack &stack = ThreadMemStack(false);
