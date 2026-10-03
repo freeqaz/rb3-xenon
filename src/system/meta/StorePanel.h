@@ -66,8 +66,13 @@ public:
     virtual bool IsLoaded() const;
     virtual void Unload();
     virtual bool Unloading() const;
-    virtual bool IsSongInLibrary(int const &) const { return false; }
-    virtual void ExitStore(StoreError) const;
+    // PURE in retail: StorePanel's own primary table (0x82115FAC) holds
+    // `_purecall` (0x828299B8) at slots 15, 16, 17, 19, 21 and 27 -- IsSongInLibrary,
+    // ExitStore, StoreUser, FindOffer, GetOfferIDsToEnumerate and
+    // StoreUserProfileSwappedToUser. BandStorePanel overrides all six
+    // (lane W16-OT, vtable_override_pattern --all-tables PURE check).
+    virtual bool IsSongInLibrary(int const &) const = 0;
+    virtual void ExitStore(StoreError) const = 0;
     // Retail 360 has StoreUser() — NOT StoreProfile() — in this vtable position
     // (slot 17 / dispatch offset 0x44). Proven from band.exe: BandStorePanel's
     // primary vtable slot 0x44 = 0x82605720, whose body is
@@ -80,7 +85,7 @@ public:
     // members all override User). In RB3's
     // StorePanel.h this is `virtual int StoreUser() const = 0; // fix ret type`,
     // in this same position, and declares no StoreProfile at all.
-    virtual LocalUser *StoreUser() const;
+    virtual LocalUser *StoreUser() const = 0;
     // PURE in retail (lane STOREPANEL, 2026-08-22).  StorePanel's own primary
     // vtable (0x82115fac, located via RTTI, not via the map) has slot 18 =
     // 0x828299b8 -- the binary's `_purecall`, referenced 849 times.  The base
@@ -90,9 +95,9 @@ public:
     // be pure again, so our slot 18 emits `_purecall` exactly as retail's does.
     // BandStorePanel is the only subclass in the tree.
     virtual StoreOffer *MakeNewOffer(DataArray *) = 0;
-    virtual StoreOffer *FindOffer(Symbol) const;
+    virtual StoreOffer *FindOffer(Symbol) const = 0;
     virtual bool EnumerateSubsetOfOfferIDs() const { return false; }
-    virtual void GetOfferIDsToEnumerate(std::vector<u64> &, bool) const {}
+    virtual void GetOfferIDsToEnumerate(std::vector<u64> &, bool) const = 0;
     virtual void LoadArt(char const *, UIPanel *);
 
     StorePanel();
@@ -142,7 +147,7 @@ protected:
     // RB3 returns int (not StoreError).
     virtual int UpdateOffers(std::list<EnumProduct> const &, bool);
     virtual void UpdateFromEnumProduct(StorePurchaseable *, EnumProduct const *);
-    virtual void StoreUserProfileSwappedToUser(LocalUser *);
+    virtual void StoreUserProfileSwappedToUser(LocalUser *) = 0;
     // Retail has no StoreProfile() virtual at all (see the StoreUser() note
     // above). Six StorePanel.cpp bodies still call it, so it is kept — but it
     // is NON-VIRTUAL, so it occupies no slot at all.

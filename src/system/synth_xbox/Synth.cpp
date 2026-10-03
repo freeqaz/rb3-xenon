@@ -497,11 +497,8 @@ void Synth360::EnableLevels(bool enable) {
     }
 }
 
-bool Synth360::IsUsingDolby() const {
-    DWORD speakerConfig;
-    XAudioGetSpeakerConfig(&speakerConfig);
-    return (speakerConfig >> 16) & 1;
-}
+// No IsUsingDolby override: retail Synth360's slot 25 is Synth's empty
+// SetMono (lane W16-OT).
 
 // Retail @82B2BE38 (0x54).
 void Synth360::UpdateDolby() {

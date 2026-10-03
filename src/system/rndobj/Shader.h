@@ -73,6 +73,10 @@ protected:
 };
 
 class RndShaderStandard : public RndShader {
+public:
+    // Retail slot 1 is the `li r3,1; blr` fold (lane W16-OT; DC3 agrees).
+    virtual bool CheckError(MatFlagErrorType) { return true; }
+
 protected:
     virtual void Select(RndMat *, ShaderType, bool);
     virtual u64 CalcShaderOpts(NgMat *, ShaderType, bool);
@@ -103,6 +107,10 @@ protected:
 };
 
 class RndShaderFur : public RndShader {
+public:
+    // Retail slot 1 is the `li r3,1; blr` fold (lane W16-OT; DC3 agrees).
+    virtual bool CheckError(MatFlagErrorType) { return true; }
+
 protected:
     virtual void Select(RndMat *, ShaderType, bool);
     virtual u64 CalcShaderOpts(NgMat *, ShaderType, bool);

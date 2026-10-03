@@ -165,7 +165,9 @@ public:
     virtual void ListAnimChildren(std::list<RndAnimatable *> &) const;
     // CamShot
     virtual void SetPreFrame(float, float) {}
-    virtual CamShot *CurrentShot() { return nullptr; }
+    // Retail slot 10 is a bare `blr` (r3 = this): a CamShot is its own current
+    // shot (lane W16-OT, BODY check).
+    virtual CamShot *CurrentShot() { return this; }
 
     static void Init();
 

@@ -19,7 +19,6 @@ class Synth360 : public Synth {
 public:
     virtual void PreInit();
     virtual DataNode Handle(DataArray *, bool);
-    virtual bool IsUsingDolby() const;
     virtual bool HasPendingVoices();
     virtual void EnableLevels(bool);
     virtual int GetNumConnectedMics();

@@ -1,4 +1,5 @@
 #include "synth_xbox/SampleInst360.h"
+#include "synth_xbox/FxSend.h"
 #include "synth_xbox/Voice.h"
 
 #ifdef HX_NATIVE
@@ -47,3 +48,15 @@ void SampleInst360::SetADSR(const ADSRImpl &adsr) {
     mVoice->mAttackRate = adsr.GetAttackRate();
     mVoice->mReleaseRate = adsr.GetReleaseRate();
 }
+
+// retail 0x82B6E138: __RTDynamicCast(send, FxSend -> FxSend360), then
+// Voice::SetSend.
+void SampleInst360::SetSendImpl(FxSend *send) {
+    mVoice->SetSend(dynamic_cast<FxSend360 *>(send));
+}
+
+// retail 0x82B6E190: `lwz r3, 0x54(r3); b Voice::SetReverbMixDb`
+void SampleInst360::SetReverbMixDbImpl(float db) { mVoice->SetReverbMixDb(db); }
+
+// retail 0x82B6E198: `lwz r3, 0x54(r3); b Voice::SetReverbEnable`
+void SampleInst360::SetReverbEnableImpl(bool b) { mVoice->SetReverbEnable(b); }

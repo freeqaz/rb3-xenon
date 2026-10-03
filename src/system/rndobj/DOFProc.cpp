@@ -35,6 +35,7 @@ void DOFProc::Terminate() {
 #endif
 }
 
+#ifdef HX_NATIVE
 BEGIN_HANDLERS(DOFProc)
     HANDLE_ACTION(unset, UnSet())
     HANDLE_ACTION(
@@ -47,3 +48,4 @@ BEGIN_HANDLERS(DOFProc)
     )
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
+#endif

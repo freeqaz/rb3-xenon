@@ -244,8 +244,6 @@ StorePanel *StorePanel::Instance() {
     return ObjectDir::Main()->Find<StorePanel>("store_panel", true);
 }
 
-void StorePanel::ExitStore(StoreError) const {}
-LocalUser *StorePanel::StoreUser() const { return nullptr; }
 Profile *StorePanel::StoreProfile() const { return nullptr; }
 
 // NOTE (laneFAMILY-1, measured against retail bytes): retail carries a THIRD
@@ -704,8 +702,6 @@ void StorePanel::SetSource(Symbol src, bool backup) {
         mBackupPurchaseSource = src;
 }
 
-StoreOffer *StorePanel::FindOffer(Symbol) const { return nullptr; }
-void StorePanel::StoreUserProfileSwappedToUser(LocalUser *) {}
 
 BEGIN_HANDLERS(StorePanel)
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)

@@ -2312,7 +2312,15 @@ namespace Hmx {
         virtual void PostSave(BinStream &) {}
         /** Prints relevant info about this Object to the debug console. */
         virtual void Print() {}
+        // Vtable slot 14. RB3 retail's body is an empty `blr` (0x826C3888, the
+        // shared empty-body fold) in Object's own table and in all 524 tables
+        // that inherit it -- lane W16-OT, vtable_override_pattern --all-tables
+        // BODY check. DC3's body (HandleType + sink export) is native-only.
+#ifdef HX_NATIVE
         virtual void Export(DataArray *msg, bool);
+#else
+        virtual void Export(DataArray *msg, bool) {}
+#endif
         /** Set this Object's mTypeDef array.
          * @param [in] data The array to set.
          */

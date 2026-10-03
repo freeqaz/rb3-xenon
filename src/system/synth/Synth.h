@@ -49,8 +49,13 @@ public:
     virtual void PreInit() {}
     virtual void Init();
     virtual void InitSecurity();
-    virtual void SetDolby(bool, bool) {} // 0x64
-    virtual bool IsUsingDolby() const { return false; }
+    // Slot 24 (0x60): retail ProfileMgr calls TheSynth->vtable[0x60](mDolby, 0).
+    virtual void SetDolby(bool, bool) {}
+    // Slot 25. Retail's body is an empty `blr` in Synth AND Synth360, which
+    // fits rb3-Wii's `void SetMono(bool) {}` and cannot be a bool getter.
+    // DC3 declares `bool IsUsingDolby() const` here; nothing calls slot 25
+    // through TheSynth in retail (lane W16-OT).
+    virtual void SetMono(bool) {}
     virtual bool Fail() { return false; }
     virtual void Terminate();
     virtual void Poll();
