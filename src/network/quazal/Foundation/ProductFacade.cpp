@@ -35,6 +35,10 @@ namespace Quazal {
         char *m_szContent; // 0x0
     };
 
+    // GetInstanceFromVector is a plain inline that /Ob1 declines: each call is
+    // out of line (retail 0x823EA8A0), but the caller still reserves its
+    // argument slots (the 12-byte holes before each DOCore::GetInstance's
+    // context temp in Terminate(CallContext *)).
     class InstanceTable : public RootObject {
     public:
         unsigned int GetInstanceFromVector(unsigned int ui, unsigned int idx) {
@@ -92,6 +96,9 @@ namespace Quazal {
         static void AcquireInstance();
         static void ReleaseInstance();
 
+        // Called out of line (retail 0x823EA910); its three locals stay reserved
+        // in the caller. Of the spellings tried, only this one gives both the
+        // constructor's and the destructor's frames.
         static Core *GetInstance() {
             unsigned int uiContext = PseudoSingleton::GetCurrentContext();
             InstanceControl *inst =
@@ -133,6 +140,8 @@ namespace Quazal {
 
     class SystemComponents : public SystemComponentGroup {
     public:
+        // Expanded in place at every use. /Ob1 declines the ternary spelling of
+        // the same test, which leaves an out-of-line call instead.
         static SystemComponents *GetInstance() {
             if (Core::GetInstance() == 0)
                 return 0;
@@ -156,7 +165,6 @@ namespace Quazal {
         SystemComponentGroup *m_pSessionGroup; // 0x24
         SystemComponentGroup *m_pDOCoreGroup; // 0x28
     };
-
 
     class Scheduler : public RootObject {
     public:
@@ -212,6 +220,8 @@ namespace Quazal {
         bool Wait(unsigned int);
         bool InitiateCall();
         void SetStateImpl(_State, qResult, bool);
+        // Inline: retail builds the qResult and its int temporary among the
+        // inline-expansion temps of Terminate(CallContext *). The name is ours.
         void SignalSuccess() { SetStateImpl(CallSuccess, qResult(0x10001), true); }
         _State GetState() const { return m_eState; }
         unsigned int GetID() const { return m_uiID; }
@@ -330,6 +340,8 @@ namespace Quazal {
         ProductFacade(ProductSpecifics *);
         virtual ~ProductFacade();
 
+        // Terminate() (0x82A90718), CreateUtilitySubsystem (0x82A90B60) and
+        // DeleteUtilitySubsystem (0x82A90C08) are our names for these bodies.
         bool Terminate();
         bool Terminate(CallContext *);
         static bool DecrementDOCoreRefCount();
@@ -381,6 +393,7 @@ namespace Quazal {
         Network::AcquireInstance();
         SystemComponents::GetInstance()->CreateDOCoreGroup();
         SystemComponents::GetInstance()->CreateSessionGroup();
+        // Retail stores the new DOCore to the local and then stores it again.
         DOCore *pDOCore = new (__FILE__, 0x90) DOCore();
         pDOCore = pDOCore;
         pSpecifics->RegisterSpecificComponents();
