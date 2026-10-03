@@ -57,6 +57,7 @@ namespace Quazal {
         char m_puDecompression[0x48]; // 0x70
     };
 
+    // The inline constructor is what gives retail's `new` its third temp.
     struct ZLibStreams : public RootObject {
         ZLibStreams() {}
 
@@ -141,11 +142,14 @@ namespace Quazal {
         return false;
     }
 
+    // Returns nonzero when inflate does not reach Z_STREAM_END. The local
+    // names are load-bearing: /Od lays locals out by a walk over their names,
+    // and these four reproduce retail's 0x50/0x54/0x58/0x5c slots.
     int ZLibCompression::DecompressImpl(const Buffer &in, Buffer *out) {
-        int iResult = 0;
+        int res = 0;
         unsigned char ucRatio = *in.GetContentPtr();
         if (ucRatio != 0) {
-            int iErr = 0;
+            int err = 0;
             bool bDone = false;
             if (out->GetSize() < in.GetContentSize() * ucRatio) {
                 out->Resize(in.GetContentSize() * ucRatio);
@@ -158,18 +162,18 @@ namespace Quazal {
                 mStreams->inflate_stream.next_in = in.GetContentPtr();
                 mStreams->inflate_stream.next_in++;
                 mStreams->inflate_stream.avail_in--;
-                iErr = inflate(&mStreams->inflate_stream, Z_FINISH);
-                if ((mStreams->inflate_stream.avail_out == 0 && iErr == Z_OK)
-                    || iErr == Z_BUF_ERROR) {
+                err = inflate(&mStreams->inflate_stream, Z_FINISH);
+                if ((mStreams->inflate_stream.avail_out == 0 && err == Z_OK)
+                    || err == Z_BUF_ERROR) {
                     out->Resize(out->GetSize() * 2);
                 } else {
                     bDone = true;
                 }
             } while (!bDone);
-            if (iErr == Z_STREAM_END) {
+            if (err == Z_STREAM_END) {
                 out->SetContentSize(mStreams->inflate_stream.total_out);
             } else {
-                iResult = 1;
+                res = 1;
             }
         } else {
             unsigned char *pSrc = in.GetContentPtr();
@@ -177,7 +181,7 @@ namespace Quazal {
             pSrc++;
             memcpy(out->GetContentPtr(), pSrc, in.GetContentSize() - 1);
         }
-        return iResult;
+        return res;
     }
 
 }
