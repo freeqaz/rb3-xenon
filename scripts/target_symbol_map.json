@@ -36003,5 +36003,11 @@
  "0x82ab6a58": "?DirectConnectViaURLs@JobConnectStation@Quazal@@QAAXXZ",
  "0x82ab6958": "?PrepareURLs@JobConnectStation@Quazal@@QAAXXZ",
  "0x82ab6db0": "?QueueOperation@JobConnectStation@Quazal@@QAAXPAVDOOperation@2@@Z",
- "0x82ab5148": "??1JobConnectStation@Quazal@@UAA@XZ"
+ "0x82ab5148": "??1JobConnectStation@Quazal@@UAA@XZ",
+ "0x82a801f0": "??0MutexPrimitive@Quazal@@QAA@XZ",
+ "0x82a80238": "??1MutexPrimitive@Quazal@@QAA@XZ",
+ "0x82a80338": "??$qDeletePOD@U_RTL_CRITICAL_SECTION@@@Quazal@@YAXPAU_RTL_CRITICAL_SECTION@@@Z",
+ "0x82a802a0": "?LeaveImpl@MutexPrimitive@Quazal@@QAAXXZ",
+ "0x82a80270": "?EnterImpl@MutexPrimitive@Quazal@@QAAXXZ",
+ "0x82a802d0": "??$qNewPOD@U_RTL_CRITICAL_SECTION@@@Quazal@@YAPAU_RTL_CRITICAL_SECTION@@PBDI@Z"
 }
