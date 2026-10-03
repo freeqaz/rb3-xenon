@@ -292,29 +292,25 @@ void StorePanel::LoadArt(const char *cc, UIPanel *panel) {
     mPendingArtCallback = panel;
 }
 
+// Retail (260 B) keys the purchaser off StoreUser() (vslot 0x44) -- the
+// StoreProfile() placeholder returns NULL, so the old body dereferenced NULL --
+// and reads the pad number through LocalUser's vslot 0.
+// ⚠ NOT YET WRITTEN: retail's last ctor argument is the online player id,
+//     unsigned int id = 0;
+//     Server *s = TheNet.GetServer();            // lwz 0x34(TheNet)
+//     if (s && s->IsConnected())                 // Server vslot 0x14
+//         id = s->GetPlayerID(user->GetPadNum()); // Server vslot 0x1c
+// and GetPadNum() is called a second time for the first ctor argument.
+// net/Net.h cannot be included from this engine TU (it pulls band3's
+// meta_band headers: Difficulty is redefined and obj/ObjMacros.h replaces the
+// handler macros), so the id is still passed as 0 here.
 void StorePanel::CheckOut(StorePurchaseable *p) {
-    StorePurchaser *purchaser;
-
     MILO_ASSERT(p->IsAvailable(), 0x2c0);
     MILO_ASSERT(!mPurchaser, 0x2c1);
-    Profile *profile = StoreProfile();
-    MILO_ASSERT(profile, 0x2c4);
-
-    // Allocate and construct XboxPurchaser
-    void *mem = operator new(sizeof(XboxPurchaser));
-    if (mem) {
-        purchaser = new (mem) XboxPurchaser(
-            profile->GetPadNum(),
-            p->songID,
-            0,
-            0,
-            mPurchaseSource,
-            0
-        );
-    } else {
-        purchaser = 0;
-    }
-    mPurchaser = purchaser;
+    LocalUser *user = StoreUser();
+    MILO_ASSERT(user, 0x2c4);
+    mPurchaser =
+        new XboxPurchaser(user->GetPadNum(), p->songID, 0, 0, mPurchaseSource, 0);
     mPurchaser->Initiate();
 }
 
