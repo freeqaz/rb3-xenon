@@ -14365,8 +14365,8 @@ network/quazal/Job.cpp:
 	.text       start:0x82ACF5A8 end:0x82ACF7BC
 
 network/quazal/SessionClock/SessionClockDDL.cpp:
-	.pdata      start:0x82254960 end:0x822549C0
-	.text       start:0x82AD2548 end:0x82AD2B6C
+	.pdata      start:0x82254960 end:0x82254A10
+	.text       start:0x82AD2548 end:0x82AD30D0
 
 network/quazal/LocalClock.cpp:
 	.pdata      start:0x82254A18 end:0x82254A20

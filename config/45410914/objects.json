@@ -2412,7 +2412,15 @@
             },
             "network/quazal/JobListenOnWellKnown.cpp": "NonMatching",
             "network/quazal/Job.cpp": "NonMatching",
-            "network/quazal/SessionClock/SessionClockDDL.cpp": "NonMatching",
+            "network/quazal/SessionClock/SessionClockDDL.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1"
+                ]
+            },
             "network/quazal/LocalClock.cpp": "NonMatching",
             "network/quazal/XboxLSP/Client/JobLSPLoginBypassSG.cpp": "NonMatching",
             "network/quazal/XboxLSP/Client/JobLSPLogin.cpp": "NonMatching",
