@@ -1,5 +1,7 @@
 # Campaign state — 2026-10-03 (lane W16-OV)
 
+> **SUPERSEDED** for numbers and priorities by [CAMPAIGN_STATE_2026-10-03b.md](CAMPAIGN_STATE_2026-10-03b.md) (main `83e92ed07`: in-scope gap 295,552 B, 88.96% of the ceiling). Kept as the method record; 10-03b reruns this method unchanged.
+
 Sixth edition of the single current-state doc. Supersedes `CAMPAIGN_STATE_2026-10-02.md` for numbers and
 priorities. **New in this edition: the ranking is scoped to the native port**, per the standing user directive
 (memory `feedback_scope_native_port_2026-07-24`): XDK is hard-skipped, Quazal is low value and not to be funded,
