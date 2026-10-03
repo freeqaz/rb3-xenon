@@ -310,11 +310,11 @@ int CharacterCreatorPanel::GetEyeColor() {
 // check, like GetGlasses.
 void CharacterCreatorPanel::SetGlasses(Symbol s) {
     static Symbol none_glasses("none_glasses");
-    BandCharDesc *desc = mPreviewDesc;
+    BandCharDesc::Outfit &outfit = mPreviewDesc->mOutfit;
     if (s != none_glasses)
-        desc->mOutfit.mGlasses.mName = s;
+        outfit.mGlasses.mName = s;
     else
-        desc->mOutfit.mGlasses.mName = gNullStr;
+        outfit.mGlasses.mName = gNullStr;
     static Symbol glasses("glasses");
     mClosetMgr->SetCurrentOutfitPiece(glasses);
     mClosetMgr->PreviewCharacter(true, false);
@@ -335,11 +335,11 @@ Symbol CharacterCreatorPanel::GetGlasses() {
 // check, like GetHair.
 void CharacterCreatorPanel::SetHair(Symbol s) {
     static Symbol none_hair("none_hair");
-    BandCharDesc *desc = mPreviewDesc;
+    BandCharDesc::Outfit &outfit = mPreviewDesc->mOutfit;
     if (s != none_hair)
-        desc->mOutfit.mHair.mName = s;
+        outfit.mHair.mName = s;
     else
-        desc->mOutfit.mHair.mName = gNullStr;
+        outfit.mHair.mName = gNullStr;
     static Symbol hair("hair");
     mClosetMgr->SetCurrentOutfitPiece(hair);
     mClosetMgr->PreviewCharacter(true, false);
@@ -357,11 +357,11 @@ Symbol CharacterCreatorPanel::GetHair() {
 
 void CharacterCreatorPanel::SetFaceHair(Symbol s) {
     static Symbol none_facehair("none_facehair");
-    BandCharDesc *desc = mPreviewDesc;
+    BandCharDesc::Outfit &outfit = mPreviewDesc->mOutfit;
     if (s != none_facehair)
-        desc->mOutfit.mFaceHair.mName = s;
+        outfit.mFaceHair.mName = s;
     else
-        desc->mOutfit.mFaceHair.mName = gNullStr;
+        outfit.mFaceHair.mName = gNullStr;
     static Symbol facehair("facehair");
     mClosetMgr->SetCurrentOutfitPiece(facehair);
     mClosetMgr->PreviewCharacter(true, false);
