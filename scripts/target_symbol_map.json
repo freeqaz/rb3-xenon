@@ -36282,5 +36282,15 @@
  "0x82769050": "?DataInit@@YAXXZ",
  "0x822d3850": "??_DUnisonIcon@@QAAXXZ",
  "0x827bda08": "?rfind@String@@QBAIPBD@Z",
- "0x827cb578": "??0HxGuid@@QAA@XZ"
+ "0x827cb578": "??0HxGuid@@QAA@XZ",
+ "0x822ca890": "?PopRev@@YAHPAVObject@Hmx@@@Z",
+ "0x822cadd8": "?PushRev@@YAXHPAVObject@Hmx@@@Z",
+ "0x822cad58": "?push_back@?$vector@UObjVersion@@V?$StlNodeAlloc@UObjVersion@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUObjVersion@@@Z",
+ "0x822cabd0": "?_M_insert_overflow_aux@?$vector@UObjVersion@@V?$StlNodeAlloc@UObjVersion@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUObjVersion@@ABU3@ABU__false_type@2@I_N@Z",
+ "0x822cab58": "?_M_clear_after_move@?$vector@UObjVersion@@V?$StlNodeAlloc@UObjVersion@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+ "0x822c9b90": "??$__destroy_range_aux@V?$reverse_iterator@PAUObjVersion@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUObjVersion@@@0@0ABU__false_type@0@@Z",
+ "0x822c9bf0": "??$_Destroy_Range@PAUObjVersion@@@stlpmtx_std@@YAXPAUObjVersion@@0@Z",
+ "0x822c9c48": "??$__uninitialized_copy@PAUObjVersion@@PAU1@@stlpmtx_std@@YAPAUObjVersion@@PAU1@00ABU__false_type@0@@Z",
+ "0x822ca900": "??$__uninitialized_fill_n@PAUObjVersion@@IU1@@stlpmtx_std@@YAPAUObjVersion@@PAU1@IABU1@ABU__false_type@0@@Z",
+ "0x8275cdc8": "??1?$vector@UObjVersion@@V?$StlNodeAlloc@UObjVersion@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
 }
