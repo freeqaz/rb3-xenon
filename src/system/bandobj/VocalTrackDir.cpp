@@ -781,10 +781,7 @@ void VocalTrackDir::ShowPhraseFeedback(int i1, int i2, int i3, bool b) {
     int n = mStreakMeter->NumActiveParts();
     if (BandTrack::mParent) {
         int singers = BandTrack::mParent->NumSingers();
-        int *partsPtr = &n;
-        if (singers < n)
-            partsPtr = &singers;
-        n = *partsPtr;
+        n = std::min(n, singers);
     }
     int parts = n;
     int i_sum = 0;
@@ -795,10 +792,10 @@ void VocalTrackDir::ShowPhraseFeedback(int i1, int i2, int i3, bool b) {
     if (i3 == 4)
         i_sum++;
     if (mLeadPhraseFeedbackBottomLbl) {
-        static Symbol perfect_harmony("perfect_harmony");
-        if (parts > 1 && i_sum == parts)
+        if (parts > 1 && i_sum == parts) {
+            static Symbol perfect_harmony("perfect_harmony");
             mLeadPhraseFeedbackBottomLbl->SetTextToken(perfect_harmony);
-        else
+        } else
             mLeadPhraseFeedbackBottomLbl->SetTextToken(GetRating(i1));
     }
     if (mStreakMeter)
@@ -1233,7 +1230,7 @@ void VocalTrackDir::SetRange(float min, float max, int tonic, bool b) {
 
 Hmx::Color VocalTrackDir::GetLyricColor(int idx) const {
     if ((idx & 3) == 0 && (idx & 8) == 0) {
-        return Hmx::Color(0, 0, 0);
+        return Hmx::Color(0);
     }
     return mLyricColorMap.find(idx & 0x1f)->second;
 }

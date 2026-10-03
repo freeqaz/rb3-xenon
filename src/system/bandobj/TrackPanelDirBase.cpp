@@ -155,8 +155,12 @@ void TrackPanelDirBase::SetConfiguration(Hmx::Object *o, bool b) {
         mConfiguration = o;
         o->Handle(apply, true);
     }
+#ifdef HX_NATIVE
+    // Retail TU5 returns after Handle: no mPerformanceMode test, no HUD re-show
+    // (same as ReapplyConfiguration).
     if (!mPerformanceMode)
         SetShowing(gShowHUD);
+#endif
 }
 
 void TrackPanelDirBase::ReapplyConfiguration(bool b) {

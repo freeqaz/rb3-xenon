@@ -9,8 +9,9 @@ public:
     class Layer {
     public:
         Layer(Hmx::Object *o)
-            : mName(""), mMat(o, 0), mActive(1), mColorIdx(0), mAlpha(1.0f), mBitmap(""),
-              unk40(""), mLayerOptional(0), mAllowColor(1), mColorPalette(o, 0),
+            : mName(""), mMat(o, 0), mActive(1), mColor(1.0f, 1.0f, 1.0f), mColorIdx(0),
+              mAlpha(1.0f), mBitmap(""), unk40(""), mLayerOptional(0), mAllowColor(1),
+              mColorPalette(o, 0),
               mAllowAlpha(0), mAlphaMin(0.0f), mAlphaMax(1.0f), mProxy(o, 0) {}
 
         String mName; // 0x0

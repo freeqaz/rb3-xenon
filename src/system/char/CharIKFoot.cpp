@@ -155,8 +155,8 @@ void CharIKFoot::DoFSM(Transform &tf) {
     }
     if (mFootFsmState == 0) {
         const Transform &wt = mFinger->WorldXfm();
-        tf.v.x = wt.v.x;
-        tf.v.y = wt.v.y;
+        // Retail moves x/y as one 8-byte aggregate (lwz/stw pairs, no FPRs).
+        (Vector2 &)tf.v = (const Vector2 &)wt.v;
         if (b2) {
             mFootPosition = tf.v;
             mFootFsmState = 1;

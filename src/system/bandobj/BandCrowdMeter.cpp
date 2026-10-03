@@ -53,9 +53,10 @@ void BandCrowdMeter::IconData::SetUsed(bool used) {
 }
 
 float BandCrowdMeter::InitialCrowdRating() const {
-    if (mTrackPanel)
+    if (mTrackPanel) {
+        static Symbol easy("easy");
         return mTrackPanel->CrowdRatingDefaultVal(easy);
-    else
+    } else
         return 0.5f;
 }
 
@@ -159,11 +160,11 @@ void BandCrowdMeter::Poll() {
 
 float BandCrowdMeter::GetPeakValue() {
     float f3 = 1.0f;
-    if (mOrderedPeaks.size() <= 0)
-        return f3;
-    for (int i = 0; i < mIconData.size(); i++) {
-        if (mIconData[i].mUsed && mIconData[i].unk1c >= 1.0f)
-            return mPeakValue;
+    if (mOrderedPeaks.size() > 0) {
+        for (int i = 0; i < mIconData.size(); i++) {
+            if (mIconData[i].mUsed && mIconData[i].unk1c >= f3)
+                return mPeakValue;
+        }
     }
     return f3;
 }

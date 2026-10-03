@@ -111,6 +111,7 @@ public:
         void Load(BinStream &);
         void LegacyLoadP9(BinStream &);
         void LegacyLoadStageKit(BinStream &);
+        void ApplyStageKit() const;
 
         /** "Description of the keyframe" */
         String mDescription; // 0x0

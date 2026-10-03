@@ -9662,6 +9662,7 @@ GemPlayer.cpp:
 	.pdata      start:0x82234130 end:0x82234288
 	.pdata      start:0x82234288 end:0x82234290
 	.pdata      start:0x82234290 end:0x82234308
+	.pdata      start:0x82234308 end:0x82234310
 	.pdata      start:0x82234310 end:0x82234318
 	.pdata      start:0x82234318 end:0x82234320
 	.pdata      start:0x82234320 end:0x82234328
@@ -9716,6 +9717,7 @@ GemPlayer.cpp:
 	.text       start:0x826C0238 end:0x826C1760
 	.text       start:0x826C1760 end:0x826C17D8
 	.text       start:0x826C17D8 end:0x826C23A0
+	.text       start:0x826C23A0 end:0x826C252C
 	.text       start:0x826C2530 end:0x826C2644
 	.text       start:0x826C2648 end:0x826C26A8
 	.text       start:0x826C26A8 end:0x826C2780
@@ -12788,7 +12790,6 @@ system/world/Dir.cpp:
 	.pdata      start:0x822145D0 end:0x822145D8
 	.pdata      start:0x822145F0 end:0x822145F8
 	.pdata      start:0x82214640 end:0x82214660
-	.pdata      start:0x82234308 end:0x82234310
 	.text       start:0x824CEDA0 end:0x824CEDD0
 	.text       start:0x824CFA78 end:0x824CFB18
 	.text       start:0x824D0430 end:0x824D049C
@@ -12799,7 +12800,6 @@ system/world/Dir.cpp:
 	.text       start:0x824D0EB0 end:0x824D0EEC
 	.text       start:0x824D13A0 end:0x824D17A0
 	.text       start:0x824D17B0 end:0x824D17BC
-	.text       start:0x826C23A0 end:0x826C252C
 
 ContextChecker.cpp:
 	.pdata      start:0x82208F68 end:0x82208F88

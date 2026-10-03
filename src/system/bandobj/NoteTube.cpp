@@ -428,6 +428,7 @@ TubePlate::TubePlate(int i)
       mBeginX(FLT_MAX), mWidthX(0), mBaked(0),
       mActiveMs(FLT_MAX), mInvalidateMs(FLT_MAX),
       mMatSize(0), mDeploy(0) {
+    mMesh->Verts().reserve(mAllocationCount);
     mMesh->Faces().reserve(mAllocationCount);
     Reset();
 }
@@ -436,7 +437,14 @@ TubePlate::~TubePlate() { RELEASE(mMesh); }
 
 void TubePlate::AllocateVerts(int num, bool warn) {
     RndMesh::VertVector &verts = mMesh->Verts();
-    int newsize = num + verts.size();
+    int newsize = verts.size() + num;
+    int cap = verts.mCapacity;
+    if (newsize > cap) {
+        // Grow in whole mAllocationCount steps; retail emits no warning here.
+        int count = mAllocationCount;
+        float ceiled = std::ceil((float)(newsize - cap) / (float)count);
+        verts.reserve((int)ceiled * mAllocationCount + verts.mCapacity);
+    }
     verts.resize(newsize);
 }
 

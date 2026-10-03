@@ -140,6 +140,7 @@ public:
         const Vert &operator[](int i) const { return mVerts[i]; }
         void clear() { resize(0); }
         void resize(int);
+        void reserve(int);
         Vert *begin() { return &mVerts[0]; }
         Vert *end() { return &mVerts[mNumVerts]; }
         void operator=(const VertVector &);

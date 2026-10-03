@@ -887,8 +887,8 @@ void GemTrackDir::ResetCoda() {
 }
 
 void GemTrackDir::CrashFill() {
-    static Message drum_fill_complete_msg("drum_fill_complete");
     if (BandTrack::mParent) {
+        static Message drum_fill_complete_msg("drum_fill_complete");
         BandTrack::mParent->GetSmasher(4)->Handle(drum_fill_complete_msg, true);
     }
 }
@@ -1000,11 +1000,9 @@ int SemitoneToWhiteKey(int semitone) {
         semitone -= kNumSemitones;
         whiteKey += kNumWhiteKeys;
     }
+    // C and C# add kWhiteKeyC (0): retail has no case for them (its jump
+    // table starts at kNoteD).
     switch (semitone) {
-    case kNoteC:
-    case kNoteCSharp:
-        whiteKey += kWhiteKeyC;
-        break;
     case kNoteD:
     case kNoteDSharp:
         whiteKey += kWhiteKeyD;
