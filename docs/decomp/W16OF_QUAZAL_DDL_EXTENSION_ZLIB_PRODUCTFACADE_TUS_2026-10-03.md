@@ -1,12 +1,13 @@
 # W16-OF — eight Quazal `/Od` TUs (DDLs, extensions, ZLib, ProductFacade) written from the retail asm (2026-10-03)
 
-**Branch** `w16-of`, rebased onto main `7431336d6`. **Ruler** `name_check` (graded). Permuter not run. No
+**Branch** `w16-of`, rebased onto main `24a47ebd2`. **Ruler** `name_check` (graded). Permuter not run. No
 `scripts/symbol_aliases.json` entry, no `symbols.txt` line and **no shared header** touched.
 
 Method and TU table: `docs/decomp/W16NY_OD_BLOCK_PRICING_AND_LARGEST_TUS_2026-10-02.md` (rows 21, 25, 26, 27, 29,
 40, 42, 48). The sub-lane-per-region split is W16-OE's (`W16OE_QUAZAL_ACCOUNT_AND_OBJDUP_TUS_2026-10-02.md` §1).
-Lanes W16-OC (session/station) and W16-OD (transport) worked other TUs of the block in parallel and both landed
-while this lane ran (`36d8bd9f3`, then `7431336d6`); every sub-lane rebased onto `7431336d6` and re-read its rows.
+Lanes W16-OC (session/station), W16-OD (transport) and W16-OG (core) worked other TUs of the block in parallel and
+all three landed while this lane ran (`36d8bd9f3`, `7431336d6`, `24a47ebd2`). Every sub-lane rebased onto `7431336d6`
+and re-read its rows. The integrated branch was then rebased onto `24a47ebd2` and measured there (§3).
 
 ## 1. How the work was split
 
@@ -53,8 +54,10 @@ points, not a re-fit.
 
 ## 3. Whole-binary A/B
 
-`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-of-ab --patch ~/tmp/w16of/ab.patch`, in a fresh
-`setup_worktree.sh` worktree at main `7431336d6`. The patch is the whole branch diff (`git diff 7431336d6 w16-of`).
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-of-ab2 --patch ~/tmp/w16of/ab2.patch`, in a fresh
+`setup_worktree.sh` worktree at main `24a47ebd2`. The patch is the whole branch diff without this doc
+(`git diff 24a47ebd2 w16-of -- . ':!docs'`; kinds configgen, map, source, splits). Run dir copied to
+`~/tmp/w16of/ab2_run_dir/`.
 
 **Prediction, written before the run** (the sum of the five sub-lane A/Bs; C and D measured on `36d8bd9f3`, the
 others on `7431336d6`): C +12 / +920 B, D +9 (masked +2) / +2,000 B, E +20 / +2,060 B, B +25 / +2,916 B, A +11 /
@@ -62,11 +65,48 @@ others on `7431336d6`): C +12 / +920 B, D +9 (masked +2) / +2,000 B, E +20 / +2,
 down. After rebasing C and D onto `7431336d6`, an integration build of main + C + D read their three units
 unchanged (4/4, 8/8, 9/9, 2,920 B).
 
-AB_RESULT_PLACEHOLDER
+```
+leg A: matched=53088 masked=25125 honest=27963 code%=57.098587  (recompiles: 0, settled)
+leg B: matched=53165 masked=25127 honest=28038 code%=57.205140  (recompiles: 8, split=1, patch_steps=7, settle iterations: 2)
+split fixed point: leg A converged after 0 extra re-split(s), leg B after 0
+Δmatched=+77  Δmasked_equal=+2  Δhonest=+75  Δcode%=+0.106553pp  Δcode_bytes=+10920
+Δfuzzy=+0.119869pp   (legA 63.387966 -> legB 63.507835)
+unit net (ALL units) = +77   vs whole-binary Δmatched = +77
+units at 100% [mpn ruler]: legA 504 -> legB 510  (Δ+6; 6 reached 100, 0 fell off)
+```
+
+**Measured exactly as predicted.** `total_functions` (68,914) and `total_code` (10,247,792) do not move; the new
+pins only move rows out of `auto_*` units. The +2 `masked_equal` is ZLibCompression's two EH funclets, which pair by
+byte signature, so the honest gain is +75. Units reaching 100%: JobListenOnWellKnown, TournamentDDL,
+GameSessionDDL, ZLibCompression, DupSpaceExtension, GlobalDiscoveryExtension.
+
+An earlier identical run on main `7431336d6` (log `~/tmp/w16of/ab_run.log`) read the same deltas on every key. On
+`24a47ebd2` one row had dropped before the fix in §5.1 (ProductFacade `CreateUtilitySubsystem`, 100 → 99.76).
+
+### 3.1 Rows that went down
+
+**None.** Row comparison of the two archived leg reports, keyed by unit and row name:
+- 0 rows down and 0 rows up outside the eight TUs.
+- 333 rows vanish and 333 appear (58,364 B each way, 0 resized). Every vanished row is a fuzzy-0 `fn_` placeholder:
+  either named in its TU now, or (304 of them) an `auto_*` row whose unit name changed at the new pin edges.
+- No row scoring above 0 vanished.
 
 ## 4. Per-TU results (graded, leg B `report.json`)
 
-PERTU_PLACEHOLDER
+| TU | main: rows at 100 / rows | main: matched / unit B | branch: rows at 100 / rows | branch: matched / unit B |
+|---|---:|---:|---:|---:|
+| ProductFacade | 0 / 9 | 0 / 3,592 | 11 / 12 | 3,024 / 3,812 |
+| SessionClockDDL | 0 / 13 | 0 / 1,560 | 20 / 23 | 2,284 / 2,912 |
+| ZLibCompression | 0 / 1 | 0 / 316 | 9 / 9 | 2,000 / 2,000 |
+| DupSpaceExtension | 0 / 2 | 0 / 548 | 13 / 13 | 1,460 / 1,460 |
+| JobListenOnWellKnown | 0 / 1 | 0 / 176 | 5 / 5 | 632 / 632 |
+| GlobalDiscoveryExtension | 0 / 1 | 0 / 176 | 7 / 7 | 600 / 600 |
+| GameSessionDDL | 0 / 1 | 0 / 132 | 8 / 8 | 556 / 556 |
+| TournamentDDL | 0 / 1 | 0 / 132 | 4 / 4 | 364 / 364 |
+| **total** | | **0** | **77 / 81** | **10,920** |
+
+ZLibCompression's rows include its two EH funclets (40 B each, both at 100). TournamentDDL's unit is 364 B because
+its other four functions are RankingDDL's folded copies (§2).
 
 ### 4.1 Rows below 100
 
@@ -90,6 +130,10 @@ codegen. W16-OC's header changes moved one row here, in SessionClockDDL (§5.1).
 
 ### 5.1 Integration notes
 
+- **ProductFacade after W16-OG.** OG maps `0x82AAC608` as `ObjectThreadRoot::GetCurrentThreadName`. ProductFacade
+  stored it as a free `Quazal::GetThreadName` in the thread-name resolver, which cost `CreateUtilitySubsystem`
+  168 B (100 → 99.76) after the rebase. It now uses OG's name through a local declaration, and the row is back at
+  100. Same code; one spelling per retail function.
 - **SessionClockDDL after W16-OC.** OC's header changes grew `DOOperation` by 0x2C, which dropped
   `DispatchRMCCall` to 99.943. Its `CallMethodOperation` view is now a standalone local layout with retail's
   offsets, and the row is back at 100. The same changes let `DuplicatedObject::GetHandle` expand inline as it does
