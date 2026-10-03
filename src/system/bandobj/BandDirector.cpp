@@ -639,16 +639,10 @@ void BandDirector::SetShot(Symbol cat, Symbol s2) {
     }
 }
 
+// Retail 0x8228DBC0 has no DLC pre-merge step here: only the three readiness tests.
 bool BandDirector::ReadyForMidiParsers() {
-    if (!mPropAnim && gIsLoadingDlc) {
-        static Message msg("on_pre_merge", 0, 0, 0);
-        msg[0] = song;
-        msg[1] = NULL_OBJ;
-        OnFileLoaded(msg);
-    }
-    bool cond = mPropAnim && (mVenue.Dir() || mVenue.Name() == "none");
-    if (cond) cond = TheBandWardrobe->AllCharsLoaded();
-    return cond;
+    return mPropAnim && (mVenue.Dir() || mVenue.Name() == "none")
+        && TheBandWardrobe->AllCharsLoaded();
 }
 
 void BandDirector::SendMessage(Symbol s1, Symbol s2) {

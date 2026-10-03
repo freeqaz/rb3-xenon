@@ -23,6 +23,11 @@ void SongMetadata::PreviewTimes(float &start, float &end) const {
     end = mPreviewEndTime;
 }
 
+int SongMetadata::NumVocalParts() const {
+    MILO_ASSERT(mSongInfo, 0x79);
+    return mSongInfo->GetNumVocalParts();
+}
+
 SongMetadata::SongMetadata() { InitSongMetadata(); }
 
 SongMetadata::SongMetadata(DataArray *main_arr, DataArray *backup_arr, bool onDisc)

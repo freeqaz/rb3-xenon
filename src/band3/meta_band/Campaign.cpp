@@ -610,7 +610,12 @@ bool Campaign::HasValidUser() const {
         return true;
 }
 
-LocalBandUser *Campaign::GetLaunchUser() const {
+// Retail (0x825A6000) is called out of line from OnMsg(ProfileSwappedMsg), and
+// its body sets up an r31 frame pointer with no call besides
+// GetAssociatedLocalBandUser -- the residue of some destructible temp that was
+// optimised away, which is also why /Ob2 did not inline it. That construct is
+// not identified, so the out-of-line call is reproduced with noinline.
+__declspec(noinline) LocalBandUser *Campaign::GetLaunchUser() const {
     LocalBandUser *u = GetUser();
     if (u)
         return u;

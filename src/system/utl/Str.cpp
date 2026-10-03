@@ -612,6 +612,30 @@ unsigned int String::find_last_of(const char *str) const {
         return a;
 }
 
+// Retail 0x827BDA08: the last position of each needle character must follow the
+// previous one; the first character's last position is the match.
+unsigned int String::rfind(const char *str) const {
+    if (!str)
+        return -1;
+    int start = -1;
+    const char *p = str;
+    int offset = 0;
+    while (*p != '\0') {
+        int idx = find_last_of(*p);
+        if (idx == -1)
+            return -1;
+        if (start == -1)
+            start = idx;
+        else if (idx != offset + start)
+            return -1;
+        p++;
+        offset++;
+    }
+    if (start == -1)
+        return -1;
+    return start;
+}
+
 void String::ToLower() {
     char *p;
     for (p = mStr; *p != '\0'; p++) {

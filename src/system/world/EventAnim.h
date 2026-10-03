@@ -53,7 +53,8 @@ public:
     // the class allocator is class-specific and does not fold into the
     // global operator new at 0x827BD2F0.
     OBJ_NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    // Retail ??_GEventAnim (0x824CA290) calls MemFree directly: the delete inlines.
+    DELETE_OVERLOAD_INLINE;
     NEW_OBJ(EventAnim)
     static void Init() { REGISTER_OBJ_FACTORY(EventAnim) }
 

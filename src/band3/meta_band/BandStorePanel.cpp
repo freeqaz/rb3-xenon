@@ -319,8 +319,8 @@ DataNode BandStorePanel::OnMsg(const MetadataLoadedMsg &msg) {
         DataArray *info = data->FindArray(Symbol("index_info"), false);
         if (info) {
             // The directory part of the request path: retail calls
-            // find_last_of("/") and feeds pos+1 to substr(0, n) as the count.
-            String dir(path.substr(0, path.find_last_of("/") + 1));
+            // rfind("/") (0x827BDA08) and feeds pos+1 to substr(0, n) as the count.
+            String dir(path.substr(0, path.rfind("/") + 1));
             DataArray *prev = info->FindArray(Symbol("previous_chunk"), false);
             if (prev) {
                 const char *s = prev->Str(1);

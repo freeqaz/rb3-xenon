@@ -4,7 +4,6 @@
 // mTrackGems (ObjPtr<RndEnviron>), which are therefore spelled (this, nullptr).
 #define RB3_OBJPTR_INLINE_OWNER_CTOR
 #define RB3_OBJPTR_INLINE_OWNER_CTOR_EH
-#include "compiler_macros.h"
 #include "decomp.h"
 #include "obj/ObjMacros.h"
 #include "track/TrackDir.h"

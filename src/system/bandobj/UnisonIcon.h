@@ -14,7 +14,6 @@ public:
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, CopyType);
-    virtual ~UnisonIcon() {}
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
     virtual void SyncObjects();
@@ -28,7 +27,8 @@ public:
     void SetIcon(const char *);
 
     DECLARE_REVS;
-    OBJ_MEM_OVERLOAD(0x1f);
+    // Retail ??_GUnisonIcon (0x822D38B0) calls MemFree directly: the delete inlines.
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x1f);
     NEW_OBJ(UnisonIcon)
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(UnisonIcon)

@@ -115971,6 +115971,26 @@
      "evidence": "tools/icf_pair_adjudicate.py --chase: our ??_GCampaignGoalsLeaderboardChoicePanel@@UAAPAXI@Z chases PROVEN against retail ??_GTourDescPanel@@UAAPAXI@Z at 0x825f4598 (0 CYCLE-ASSUMED; the one tolerated slot is operator delete, ??3@YAXPAX@Z vs ??3BinStream@@SAXPAX@Z, an admitted fold). The body stores no vtable, so the W16-JE ctor/dtor RTTI audit has no slot to check; instead retail's own vtable for CampaignGoalsLeaderboardChoicePanel (located from its RTTI type descriptor) has slot 0 = 0x82b7cac0 (TourDescPanels $4 thunk) and the WDM thunk 0x825f4288, the same deleting-destructor entry as TourDescPanel. ??_ECampaignGoalsLeaderboardChoicePanel@@UAAPAXI@Z is not a separate body in our objs: it is a COFF WEAK EXTERNAL (storage class 105) whose default is ??_GCampaignGoalsLeaderboardChoicePanel@@UAAPAXI@Z, so it names the same code. Our ??_G matched only after this lane removed the user-declared empty `virtual ~CampaignGoalsLeaderboardChoicePanel() {}`: with it the body called an out-of-line ??_D (76 B) where retail inlines ~TexLoadPanel + ~Object (84 B)."
     }
    ]
+  },
+  {
+   "name": "0HxGuid",
+   "address": "0x827cb578",
+   "survivor": "??0HxGuid@@QAA@XZ",
+   "folded": [
+    "?Clear@HxGuid@@QAAXXZ"
+   ],
+   "evidence": "W16-OZ: the map named this address ??0HxGuid at 0x827cb670, a dangling entry inside HxGuid::operator<; the zero-fill body is here and both spellings fold into it; the folded spelling is admitted by icf_pair_adjudicate.py --chase with a per-address retail call-site witness (admitted[]).",
+   "lane": "W16-OZ",
+   "admitted": [
+    {
+     "spelling": "?Clear@HxGuid@@QAAXXZ",
+     "lane": "W16-OZ 2026-10-03",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED; retail carries 1 bodies of this shape. Retail call site(s) reaching the survivor where our aligned caller calls this spelling: 0x826826F0 (?ResetSlots@BandUserMgr@@QAAXXZ)."
+    }
+   ],
+   "added": {
+    "lane": "W16-OZ 2026-10-03"
+   }
   }
  ]
 }

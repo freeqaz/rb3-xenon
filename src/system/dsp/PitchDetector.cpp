@@ -180,20 +180,17 @@ void PitchDetector::AnalyzeBlock(
 
     mFilter->Begin();
     float decimAccum = gain * mFilter->FilterSlow((float)samples[0]);
-    int writeOff = ixDecim * 4;
     int sampleIdx = 0;
     while (sampleIdx < numSamples) {
-        float filtered = mFilter->FilterSlow((float)samples[0]) * gain;
+        float filtered = mFilter->FilterSlow((float)samples[sampleIdx]) * gain;
         decimAccum = kPropFilter * (filtered - decimAccum) + decimAccum;
         if (ixDecim < mFrameSize && ((sampleIdx + mIdx) % mDecimRate) == 0) {
-            ixDecim++;
-            *((float *)((char *)mDecimBuf + writeOff)) = decimAccum;
+            mDecimBuf[ixDecim] = decimAccum;
             float sq = decimAccum * decimAccum + lastVal;
-            *((float *)((char *)mCorrBuf + writeOff)) = sq;
-            lastVal = *((float *)((char *)mCorrBuf + writeOff));
-            writeOff += 4;
+            mCorrBuf[ixDecim] = sq;
+            lastVal = mCorrBuf[ixDecim];
+            ixDecim++;
         }
-        samples += 1;
         sampleIdx += 1;
     }
     mFilter->End();
