@@ -57,7 +57,11 @@ void __cyg_profile_func_exit(void *fn, void *call_site) {
     (void)fn; (void)call_site;
 }
 
+static int g_dumped;
+
 __attribute__((destructor)) static void cc5_dump(void) {
+    if (g_dumped) return;
+    g_dumped = 1;
     const char *path = getenv("RB3_STUB_PROBE_OUT");
     FILE *f = path ? fopen(path, "w") : stderr;
     int i;
@@ -71,3 +75,9 @@ __attribute__((destructor)) static void cc5_dump(void) {
     }
     if (path) fclose(f);
 }
+
+/* W16-PD: drivers that leave through _exit() (rb3-render does, to dodge Dawn's
+ * static-destructor ordering) never run the destructor above, so the probe saw
+ * NOTHING of them. They call this explicitly; it is declared weak at the call
+ * site, so a normal (non-probe) build links without it and skips the call. */
+void rb3_stub_probe_dump(void) { cc5_dump(); }

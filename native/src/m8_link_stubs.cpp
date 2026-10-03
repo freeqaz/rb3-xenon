@@ -29,16 +29,12 @@
 #include "net/Net.h"
 #include "game/NetGameMsgs.h"
 
-// ===== REAL collaborator: PlayerBehavior (used by GetIndividualMultiplier) ====
-PlayerBehavior::PlayerBehavior()
-    : mCanDeployOverdrive(0), mTiltDeployBand(0), mFillsDeployBand(0),
-      mRequireAllCodas(0), mCanFreestyleGems(0), mHasSolos(0), mStreakType(),
-      mMaxMultiplier(0) {}
-void PlayerBehavior::SetStreakType(Symbol s) { mStreakType = s; }
-void PlayerBehavior::SetMaxMultiplier(int i) { mMaxMultiplier = i; }
+// PlayerBehavior: the real TU, src/band3/game/PlayerBehavior.cpp (retail
+// 0x826EEC38), is in M6_GAME_SOURCES (W16-PD). The copy that lived here was NOT
+// faithful: it defaulted mCanDeployOverdrive=0 / mStreakType=() / mMaxMultiplier=0
+// where the real ctor sets true / "default" / 2.
 
 // ===== off-path leaf stubs ===================================================
-void BandDirector::SetCharacterHideHackEnabled(bool a0)  { }
 void BandTrack::DropIn()  { }
 void BandTrack::DropOut()  { }
 void BandTrack::PlayerDisabled()  { }
@@ -55,16 +51,9 @@ NullLocalBandUser* BandUserMgr::GetNullUser() const { return 0; }
 int BandUserMgr::GetParticipatingBandUsers(std::vector<BandUser*>& a0) const { return 0; }
 BandUser* BandUserMgr::GetUserFromSlot(int a0) const { return 0; }
 bool BandUserMgr::IsMultiplayerGame() const { return false; }
-ExcitementLevel CrowdRating::GetExcitement() const { return (ExcitementLevel)0; }
-void CrowdRating::ChangeDifficulty(BandUser* a0, Difficulty a1)  { }
-float CrowdRating::GetDisplayValue() const { return 0.0f; }
-float CrowdRating::GetThreshold(ExcitementLevel a0) const { return 0.0f; }
-bool CrowdRating::IsInWarning() const { return false; }
-void CrowdRating::Poll(float a0)  { }
-void CrowdRating::Reset()  { }
-void CrowdRating::SetActive(bool a0)  { }
-void CrowdRating::SetDisplayValue(float a0)  { }
-void CrowdRating::SetValue(float a0)  { }
+// CrowdRating: the real TU, src/band3/game/CrowdRating.cpp, now links in every
+// target that used to stub it (W16-PD). The stubs that were here ran on the hot
+// path (CC-5 probe: Poll 25,905x in rb3-score4, 12,401x in rb3-harmony).
 bool GameConfig::CanEndGame() const { return false; }
 void GameConfig::ChangeDifficulty(BandUser* a0, int a1)  { }
 void Game::ForceTrackerStars(int a0)  { }

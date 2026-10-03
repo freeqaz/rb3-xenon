@@ -179,7 +179,16 @@ set(RB3_STUB_TUS
     ${CMAKE_SOURCE_DIR}/src/m10_leaf_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/m4_save_link_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/native_undecomp_stubs.cpp
-    ${CMAKE_SOURCE_DIR}/src/native_job_stubs.cpp
+    # W16-PD: the list above omitted every stub TU added after CC-5, so the
+    # instrument could not see them at all. Widened to the whole hand-written
+    # link surface (the .s stubs cannot be instrumented this way).
+    ${CMAKE_SOURCE_DIR}/src/milo_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/x7_band_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/x20_bandpatchmesh_link.cpp
+    ${CMAKE_SOURCE_DIR}/src/native_link_glue.cpp
+    ${CMAKE_SOURCE_DIR}/src/m8_support.cpp
+    ${CMAKE_SOURCE_DIR}/src/m10_support.cpp
+    ${CMAKE_SOURCE_DIR}/src/xdk_shims.cpp
 )
 if(RB3_STUB_PROBE)
     set_source_files_properties(${RB3_STUB_TUS} PROPERTIES
@@ -249,8 +258,6 @@ rb3x_drop_hidden(PLATFORM_SHIMS)
 set(NATIVE_SHIMS
     ${CMAKE_SOURCE_DIR}/src/xdk_shims.cpp
     ${CMAKE_SOURCE_DIR}/src/native_link_glue.cpp
-    ${CMAKE_SOURCE_DIR}/src/thunk_stubs.cpp
-    ${CMAKE_SOURCE_DIR}/src/native_job_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/native_undecomp_stubs.cpp
     ${PLATFORM_SHIMS}
 )
@@ -303,6 +310,9 @@ set(META_SONG_SOURCES
 set(M1_SOURCES
     ${REPO_ROOT}/src/band3/meta_band/BandSongMgr.cpp
     ${REPO_ROOT}/src/band3/meta_band/BandSongMetadata.cpp
+    # W16-PD: real TrackTypeToSym (was a weak no-op in m1_link_stubs.s).
+    ${REPO_ROOT}/src/system/beatmatch/TrackType.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongUpgradeMgr.cpp
 )
 
 rb3_add_executable(rb3-song
@@ -370,7 +380,8 @@ target_link_libraries(rb3-midi PRIVATE Threads::Threads ZLIB::ZLIB)
 # M2 MIDI cluster (MidiReader drives SongParser; MidiParserMgr fires the gem
 # branch). BeatMatchUtl / SongInfoCopy come in via M3_SOURCES; the rest of
 # beatmatch/ (BeatMatcher, TrackWatcher*, controllers) is NOT on the parse path
-# and is satisfied by weak stubs in m3_link_stubs.s.
+# and needs no stubs (m3_link_stubs.s / m3b_link_stubs.s were empty; deleted,
+# W16-PD).
 set(M3_SOURCES
     ${REPO_ROOT}/src/system/beatmatch/SongParser.cpp
     ${REPO_ROOT}/src/system/beatmatch/GameGem.cpp
@@ -392,7 +403,6 @@ rb3_add_executable(rb3-gem
     ${NATIVE_SHIMS}
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
 )
 target_compile_options(rb3-gem PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
 target_compile_definitions(rb3-gem PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
@@ -448,8 +458,6 @@ rb3_add_executable(rb3-hit
     ${NATIVE_SHIMS}
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-hit PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
 target_compile_definitions(rb3-hit PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
@@ -485,8 +493,6 @@ rb3_add_executable(rb3-score
     ${NATIVE_SHIMS}
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-score PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
 target_compile_definitions(rb3-score PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
@@ -512,6 +518,11 @@ set(M6_GAME_SOURCES
     ${REPO_ROOT}/src/band3/game/Scoring.cpp
     ${REPO_ROOT}/src/band3/game/Stats.cpp
     ${REPO_ROOT}/src/band3/game/Band.cpp
+    # W16-PD: real TU replaces the hand copies in the m6/m8/m10/m12 link stubs.
+    ${REPO_ROOT}/src/band3/game/PlayerBehavior.cpp
+    # W16-PD: the real crowd meter replaces the m6/m8/m10 stubs everywhere (it
+    # used to link only in rb3-crowd).
+    ${REPO_ROOT}/src/band3/game/CrowdRating.cpp
 )
 rb3_add_executable(rb3-score2
     ${CMAKE_SOURCE_DIR}/src/main_score2.cpp
@@ -529,8 +540,6 @@ rb3_add_executable(rb3-score2
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-score2 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
@@ -570,8 +579,6 @@ rb3_add_executable(rb3-score3
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-score3 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
@@ -613,8 +620,6 @@ rb3_add_executable(rb3-score4
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-score4 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
@@ -656,8 +661,6 @@ rb3_add_executable(rb3-vocal
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-vocal PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
@@ -710,8 +713,6 @@ rb3_add_executable(rb3-vocal2
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-vocal2 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
@@ -762,8 +763,6 @@ rb3_add_executable(rb3-harmony
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-harmony PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
@@ -788,12 +787,12 @@ target_link_libraries(rb3-harmony PRIVATE Threads::Threads ZLIB::ZLIB)
 # CrowdRating::Poll running 25,905 times in ONE rb3-score4 run -- the crowd meter
 # was a no-op on the hot path while the demo reported results as if it were real.
 # The implementation had been decompiled in-tree the whole time; only the native
-# build stubbed it. m12_link_stubs.cpp is m8_link_stubs.cpp with the 10
-# CrowdRating stubs removed so the real definitions win.
+# build stubbed it. (W16-PD: every scoring target now links the real TU through
+# M6_GAME_SOURCES, which made m12_link_stubs.cpp -- "m8 minus CrowdRating" --
+# identical to m8_link_stubs.cpp, so it was deleted and this target uses m8.)
 rb3_add_executable(rb3-crowd
     ${CMAKE_SOURCE_DIR}/src/main_crowd.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
-    ${REPO_ROOT}/src/band3/game/CrowdRating.cpp
     ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
     ${M6_GAME_SOURCES}
     ${ENGINE_SOURCES}
@@ -804,17 +803,15 @@ rb3_add_executable(rb3-crowd
     ${DTA_LEXER}
     ${NATIVE_SHIMS}
     ${CMAKE_SOURCE_DIR}/src/m8_support.cpp
-    ${CMAKE_SOURCE_DIR}/src/m12_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m8_link_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-crowd PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
 target_link_options(rb3-crowd PRIVATE -Wl,--gc-sections)
-target_compile_definitions(rb3-crowd PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1 RB3_REAL_CROWD=1)
+target_compile_definitions(rb3-crowd PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
 target_include_directories(rb3-crowd SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(rb3-crowd PRIVATE
     ${CMAKE_SOURCE_DIR}/src

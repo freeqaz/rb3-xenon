@@ -7,8 +7,8 @@
 // it lets the object graph link without dragging the whole foreign domain. If
 // any of these were reached during scoring it would be a bug — the scoring
 // chain (AddPoints/GetMultiplier/GetIndividualMultiplier/Build*Streak/Scoring/
-// Stats) touches none of them. PlayerBehavior below is the exception: it is a
-// REAL (trivial) collaborator the scoring path uses, so it gets faithful bodies.
+// Stats) touches none of them. (PlayerBehavior, the one real collaborator the
+// scoring path uses, now links from its own src/ TU -- W16-PD.)
 #include "game/Game.h"
 #include "game/SongDB.h"
 #include "game/Band.h"
@@ -29,16 +29,12 @@
 #include "net/Net.h"
 #include "game/NetGameMsgs.h"
 
-// ===== REAL collaborator: PlayerBehavior (used by GetIndividualMultiplier) ====
-PlayerBehavior::PlayerBehavior()
-    : mCanDeployOverdrive(0), mTiltDeployBand(0), mFillsDeployBand(0),
-      mRequireAllCodas(0), mCanFreestyleGems(0), mHasSolos(0), mStreakType(),
-      mMaxMultiplier(0) {}
-void PlayerBehavior::SetStreakType(Symbol s) { mStreakType = s; }
-void PlayerBehavior::SetMaxMultiplier(int i) { mMaxMultiplier = i; }
+// PlayerBehavior: the real TU, src/band3/game/PlayerBehavior.cpp (retail
+// 0x826EEC38), is in M6_GAME_SOURCES (W16-PD). The copy that lived here was NOT
+// faithful: it defaulted mCanDeployOverdrive=0 / mStreakType=() / mMaxMultiplier=0
+// where the real ctor sets true / "default" / 2.
 
 // ===== off-path leaf stubs (auto-generated signatures) =======================
-void BandDirector::SetCharacterHideHackEnabled(bool a0)  { }
 void BandTrack::DropIn()  { }
 void BandTrack::DropOut()  { }
 void BandTrack::PlayerDisabled()  { }
@@ -58,15 +54,9 @@ bool BandUserMgr::IsMultiplayerGame() const { return false; }
 void CommonPhraseCapturer::Enabled(Player* a0, int a1, int a2, bool a3)  { }
 void CommonPhraseCapturer::LocalFail(Player* a0, int a1, int a2)  { }
 void CommonPhraseCapturer::LocalHitLastGem(Player* a0, int a1, int a2)  { }
-void CrowdRating::ChangeDifficulty(BandUser* a0, Difficulty a1)  { }
-float CrowdRating::GetDisplayValue() const { return 0.0f; }
-float CrowdRating::GetThreshold(ExcitementLevel a0) const { return 0.0f; }
-bool CrowdRating::IsInWarning() const { return false; }
-void CrowdRating::Poll(float a0)  { }
-void CrowdRating::Reset()  { }
-void CrowdRating::SetActive(bool a0)  { }
-void CrowdRating::SetDisplayValue(float a0)  { }
-void CrowdRating::SetValue(float a0)  { }
+// CrowdRating: the real TU, src/band3/game/CrowdRating.cpp, now links in every
+// target that used to stub it (W16-PD). The stubs that were here ran on the hot
+// path (CC-5 probe: Poll 25,905x in rb3-score4, 12,401x in rb3-harmony).
 bool GameConfig::CanEndGame() const { return false; }
 void GameConfig::ChangeDifficulty(BandUser* a0, int a1)  { }
 void Game::ForceTrackerStars(int a0)  { }

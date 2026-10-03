@@ -26,10 +26,6 @@
 #include <vector>
 
 // ---- handler Message globals (VocalPlayer::LocalBlowCoda / HitCoda etc.) ----
-Message coda_blown_msg{Symbol()};
-Message finished_coda_msg{Symbol()};
-Message tambourine_hit_msg{Symbol()};
-Message tambourine_miss_msg{Symbol()};
 
 // ---- audio leaves (Restart/Leave/PostDynamicAdd/SetTrack; never on Poll path) --
 void MasterAudio::ResetTrack(int, bool) {}
@@ -45,20 +41,25 @@ void BandTrack::SoloHit(int) {}
 void BandTrack::SoloStart() {}
 
 // ---- crowd / config / game leaves ----
-bool CrowdRating::CantFailYet() const { return false; }
-bool CrowdRating::IsBelowLoseLevel() const { return false; }
-void CrowdRating::UpdatePhrase(float, float) {}
+// CrowdRating: the real TU, src/band3/game/CrowdRating.cpp, now links in every
+// target that used to stub it (W16-PD). The stubs that were here ran on the hot
+// path (CC-5 probe: Poll 25,905x in rb3-score4, 12,401x in rb3-harmony).
 void Game::AddBonusPoints(BandUser *, int, int) {}
 void Game::AdjustForVocalPhrases(float &, float &) const {}
 void GameConfig::GetPracticeSections(int &, int &) const {}
 void GameConfig::GetSectionBounds(int, float &, float &) const {}
 void SongDB::ChangeDifficulty(int, Difficulty) {}
-bool NetSession::HasUser(const User *) const { return false; }
 
-// ---- VocalPlayer off-path virtual leaves ----
-// InTambourinePhrase IS on the Poll path (VocalPart::Poll reads it) -> honest
-// headless default: the synthetic run has no tambourine phrases.
-bool VocalPlayer::InTambourinePhrase() const { return false; }
+// ---- VocalPlayer::InTambourinePhrase -- the REAL body, not a stub (W16-PD) ----
+// Hot path: the probe counted 37,203 calls in one rb3-harmony run. It used to
+// return a constant false here ("the synthetic run has no tambourine phrases"),
+// which was an assumption, not a measurement. Retail places the real body in
+// VocalTrack's TU (src/band3/bandtrack/VocalTrack.cpp:2827, beside
+// Player::InTambourinePhrase), and VocalTrack.cpp drags the whole bandtrack/UI
+// render closure, so it cannot link here -- but the body only reads the
+// TambourineManager, which these targets DO link (TambourineManager.cpp). This
+// is that body verbatim; keep the two in step.
+bool VocalPlayer::InTambourinePhrase() const { return mTambourineManager.unk60 > 0; }
 
 // ---- handler Symbol globals (VocalPlayer BEGIN_HANDLERS / property sync) ----
 // Off-path (only the Handle/SyncProperty virtuals reference these).
@@ -108,15 +109,12 @@ Symbol set_star_power_deploy_rate;
 Symbol set_star_power_phrase_boost;
 Symbol set_vocal_part_bias;
 Symbol star_rating;
-Symbol tambourine;
 Symbol toggle_frame_spew;
 Symbol toggle_overlay;
 Symbol toggle_solo_quantize;
 
 // ---- VocalOverlay (mVocalOverlay stays null -> these are never called) ------
 #include "../../src/band3/game/VocalOverlay.h"
-VocalOverlay::VocalOverlay() {}
-VocalOverlay::~VocalOverlay() {}
 void VocalOverlay::Reset(int) {}
 void VocalOverlay::AppendSingerPitch(int, float) {}
 void VocalOverlay::AddPossiblePart(int, VocalPart *) {}
@@ -151,7 +149,6 @@ void VocalOverlay::FinalizeDisplayString() {}
 #include "bandobj/VocalTrackDir.h"
 
 Synth *TheSynth = 0;                                   // no synth device headless
-void ProfileMgr::UpdateAllMicLevels() {}
 bool MetaPerformer::IsNoFailActive() const { return false; }
 void RndOverlay::Clear() {}
 

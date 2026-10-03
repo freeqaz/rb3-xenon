@@ -2103,6 +2103,16 @@ bool VocalPlayer::PressingToTalk() {
     if (!IsLocal())
         return false;
     BandUser *u = GetUser();
+#ifdef HX_NATIVE
+    // The headless vocal drivers (native rb3-vocal2 / rb3-harmony) build the
+    // player through the native scoring-core ctor with NO BandUser. They used to
+    // be shielded by a `!TheNetSession->IsLocal()` gate in Poll; f3ec9592d made
+    // Poll call this unconditionally (retail shape), and both targets have
+    // segfaulted here on their first frame since. No user => no pad => not
+    // pressing. Native-only: the X360 build never defines HX_NATIVE.
+    if (!u)
+        return false;
+#endif
     if (!u->IsLocal())
         return false;
     else {

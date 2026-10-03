@@ -87,6 +87,8 @@
 //             1 = a gate failed.  2 = no usable GPU (reported, not faked).
 
 #include "char/CharBoneDir.h"
+// W16-PD: weak hook into native/src/cc5_stub_probe.c (probe builds only).
+extern "C" __attribute__((weak)) void rb3_stub_probe_dump(void);
 #include "char/CharClip.h"
 #include "char/CharClipSet.h"
 #include "char/CharDriver.h"
@@ -5185,6 +5187,9 @@ int main(int argc, char **argv) {
     // with _exit(rc) for the same reason (milo_viewer.cpp:488).
     // Reported as an engine-backlog item in the X3 write-up.
     if (gWgpuRnd) gWgpuRnd->Terminate();
+    // _exit skips the stub probe's destructor; dump explicitly (no-op symbol
+    // absent outside -DRB3_STUB_PROBE=ON builds -- see cc5_stub_probe.c).
+    if (rb3_stub_probe_dump) rb3_stub_probe_dump();
     fflush(stdout);
     fflush(stderr);
     _exit(gFailures == 0 ? 0 : 1);

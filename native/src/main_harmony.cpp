@@ -34,6 +34,8 @@
 #include "game/PlayerBehavior.h"
 #include "game/Scoring.h"
 #include "game/CrowdRating.h"
+#include "crowd_config_dta.h" // W16-PD: real shipped (crowd ...) block
+#include <string>
 #include "game/SongDB.h"
 #include "game/Game.h"
 #include "game/GameMicManager.h"
@@ -160,8 +162,11 @@ static const char *kConfigDta =
     "      (tambourine"
     "         (awards (0 0 tamb_rating_1)(1 5 tamb_rating_2)(40 10 tamb_rating_3)"
     "                 (60 20 tamb_rating_4)(80 50 tamb_rating_5)(100 100 tamb_rating_6))))"
-    "   (crowd"
-    "      (save_level 0.3)(time_to_return_from_brink 2.0)(crowd_loss_per_sec 0.1))"
+    // W16-PD: the REAL shipped (crowd ...) block (crowd_config_dta.h) is spliced
+    // in at @CROWD@ at startup -- the real CrowdRating::Configure reads it. The
+    // three save/brink keys this used to hand-write (0.3 / 2.0 / 0.1) are in that
+    // block with their shipped values (0.8333 / 3.5 / 0.04).
+    "   @CROWD@"
     "   (star_ratings"
     "      (new_instrument_thresholds"
     "         (vocals 5.0e-2 0.11 0.19 0.46 0.77 1.06))"
@@ -237,7 +242,11 @@ int main(int argc, char **argv) {
     Symbol::Init();
     DataInit();
     ObjectDir::PreInit(256, 4096);
-    gSystemConfig = DataReadString(kConfigDta);
+    {
+        std::string cfg(kConfigDta);
+        cfg.replace(cfg.find("@CROWD@"), 7, kRealCrowdConfigDta);
+        gSystemConfig = DataReadString(cfg.c_str());
+    }
 
     printf("=== rb3-xenon native M11: multi-part HARMONY scoring topology ===\n");
     printf("mid : %s\n\n", midPath);
