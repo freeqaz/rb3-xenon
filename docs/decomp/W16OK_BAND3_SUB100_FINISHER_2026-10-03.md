@@ -128,7 +128,7 @@ below. Each also has the retail call site as a witness.
 ### 3.4 `SetlistToStorePanel::StartMetadataLoaders` was never written
 
 The row scored 0 because our source declared it and never defined it, so `LoadSongMetadata` called
-nothing. Neither rb3-Wii nor DC3 has it. It was written from the retail asm (`0x826429A0`, 256 B):
+nothing. It was written from the retail asm (`0x826429A0`, 256 B):
 resume `mSongs` at index `mLoaders.size()`, push `new DataNetLoader(String(path.c_str()))`, stop after
 20 per call. Its anonymous helper `fn_82642918` (124 B, also a 0 row) builds
 `MakeString("dlc_store/%s/%s/songs/%i/", region, SystemLanguage(), id)` from a `.data` format pointer.
@@ -188,7 +188,7 @@ merged into `w16-ok` with `--no-ff`.
 
 - **`VocalTrack::PollLyricAnimations`** (744 B, 84.26 → 100). There is a behaviour bug here:
   `DumpLyricPlates` takes `plate->mSyllables.front()->mLead` (`lwz 0x34; lwz 0; lwz 0x48`), and our
-  source, following the oracle, passed `!mSyllables.empty()`. Also: a debug print retail does not have
+  source passed `!mSyllables.empty()`. Also: a debug print retail does not have
   was removed, the rollback poll time no longer overwrites `ms`, and `end()` is evaluated once.
   `MakeString<float,const char*>` was re-homed to DisplayEvents, its only retail caller, which removed
   the −92 B cost a source comment had recorded for dropping the print.
