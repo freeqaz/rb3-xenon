@@ -220,6 +220,10 @@ SCRIPT_ARM: list[dict] = [
     {"path": "tools/test_icf_alias_join_guard.py", "timeout": 120},
     {"path": "tools/test_icf_alias_no_ourbuild_gate.py", "timeout": 120},
     {"path": "tools/test_icf_alias_withdrawal_guard.py", "timeout": 120},
+    # W16-OS (2026-10-03): every placed group's survivor is the map's name at
+    # its address (the rendered bucket must contain the name retail uses
+    # there).  Includes live-ledger mutations so the check is shown to fail.
+    {"path": "tools/test_alias_survivor_drift.py", "timeout": 120},
     {"path": "tools/test_fold_thunk_gate_install.py", "timeout": 60},
     # W16-FM (2026-09-16): comdat_fold_gate.py's MAP-SILENT tier CF5.  The gate
     # used to coerce `base_addr` unconditionally, so a folded spelling the map
