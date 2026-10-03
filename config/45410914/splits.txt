@@ -5973,6 +5973,7 @@ Msg.cpp:
 	.pdata      start:0x822072E8 end:0x822072F0
 	.pdata      start:0x8220E5B0 end:0x8220E5B8
 	.pdata      start:0x8223CF88 end:0x8223CF90
+	.pdata      start:0x8223CF90 end:0x8223CFA0
 	.pdata      start:0x8223CFA0 end:0x8223CFA8
 	.pdata      start:0x8223CFA8 end:0x8223CFB0
 	.pdata      start:0x8223CFB0 end:0x8223CFB8
@@ -6002,6 +6003,7 @@ Msg.cpp:
 	.text       start:0x823D9624 end:0x823D9628
 	.text       start:0x8245CC78 end:0x8245CCE0
 	.text       start:0x82766770 end:0x82766828
+	.text       start:0x82766828 end:0x827668E8
 	.text       start:0x827668E8 end:0x8276696C
 	.text       start:0x82766970 end:0x82766A9C
 	.text       start:0x82766AA0 end:0x82766B68
@@ -6332,14 +6334,12 @@ ChunkStream.cpp:
 	.text       start:0x827CA128 end:0x827CB590
 
 NetCacheMgr.cpp:
-	.pdata      start:0x8223CF90 end:0x8223CFA0
 	.pdata      start:0x82242BA0 end:0x82242BA8
 	.pdata      start:0x82242BB8 end:0x82242CA0
 	.pdata      start:0x82242CA0 end:0x82242CC8
 	.text       start:0x8239CC9C end:0x8239CCA8
 	.text       start:0x824549A0 end:0x824549B0
 	.text       start:0x826E0F30 end:0x826E0F38
-	.text       start:0x82766828 end:0x827668E8
 	.text       start:0x827CDCA0 end:0x827CDD28
 	.text       start:0x827CDDE8 end:0x827CEC98
 	.text       start:0x827CEC98 end:0x827CEDD0
@@ -7302,11 +7302,9 @@ DrivenPropertyEntry.cpp:
 WavMgr.cpp:
 	.pdata      start:0x822084E8 end:0x82208530
 	.pdata      start:0x82208F38 end:0x82208F58
-	.pdata      start:0x82249040 end:0x82249048
 	.text       start:0x823EA988 end:0x823EAD68
 	.text       start:0x823F3EE0 end:0x823F3EFC
 	.text       start:0x823F3F00 end:0x823F4168
-	.text       start:0x82845F78 end:0x82845FF0
 
 ClipGraphGen.cpp:
 	.text       start:0x82684EA4 end:0x82684EA8
