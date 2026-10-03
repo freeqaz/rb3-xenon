@@ -26,10 +26,6 @@
 #include <vector>
 
 // ---- handler Message globals (VocalPlayer::LocalBlowCoda / HitCoda etc.) ----
-Message coda_blown_msg{Symbol()};
-Message finished_coda_msg{Symbol()};
-Message tambourine_hit_msg{Symbol()};
-Message tambourine_miss_msg{Symbol()};
 
 // ---- audio leaves (Restart/Leave/PostDynamicAdd/SetTrack; never on Poll path) --
 void MasterAudio::ResetTrack(int, bool) {}
@@ -53,7 +49,6 @@ void Game::AdjustForVocalPhrases(float &, float &) const {}
 void GameConfig::GetPracticeSections(int &, int &) const {}
 void GameConfig::GetSectionBounds(int, float &, float &) const {}
 void SongDB::ChangeDifficulty(int, Difficulty) {}
-bool NetSession::HasUser(const User *) const { return false; }
 
 // ---- VocalPlayer::InTambourinePhrase -- the REAL body, not a stub (W16-PD) ----
 // Hot path: the probe counted 37,203 calls in one rb3-harmony run. It used to
@@ -114,15 +109,12 @@ Symbol set_star_power_deploy_rate;
 Symbol set_star_power_phrase_boost;
 Symbol set_vocal_part_bias;
 Symbol star_rating;
-Symbol tambourine;
 Symbol toggle_frame_spew;
 Symbol toggle_overlay;
 Symbol toggle_solo_quantize;
 
 // ---- VocalOverlay (mVocalOverlay stays null -> these are never called) ------
 #include "../../src/band3/game/VocalOverlay.h"
-VocalOverlay::VocalOverlay() {}
-VocalOverlay::~VocalOverlay() {}
 void VocalOverlay::Reset(int) {}
 void VocalOverlay::AppendSingerPitch(int, float) {}
 void VocalOverlay::AddPossiblePart(int, VocalPart *) {}
@@ -157,7 +149,6 @@ void VocalOverlay::FinalizeDisplayString() {}
 #include "bandobj/VocalTrackDir.h"
 
 Synth *TheSynth = 0;                                   // no synth device headless
-void ProfileMgr::UpdateAllMicLevels() {}
 bool MetaPerformer::IsNoFailActive() const { return false; }
 void RndOverlay::Clear() {}
 

@@ -35,7 +35,6 @@
 // where the real ctor sets true / "default" / 2.
 
 // ===== off-path leaf stubs (auto-generated signatures) =======================
-void BandDirector::SetCharacterHideHackEnabled(bool a0)  { }
 void BandTrack::DropIn()  { }
 void BandTrack::DropOut()  { }
 void BandTrack::PlayerDisabled()  { }

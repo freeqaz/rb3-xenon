@@ -148,13 +148,6 @@ _ZNK11BandUserMgr25GetParticipatingBandUsersERSt6vectorIP8BandUserSaIS2_EE:
     xorq %rax, %rax
     ret
 
-// SongMetadata::NumVocalParts() const
-.weak _ZNK12SongMetadata13NumVocalPartsEv
-.type _ZNK12SongMetadata13NumVocalPartsEv,@function
-_ZNK12SongMetadata13NumVocalPartsEv:
-    xorq %rax, %rax
-    ret
-
 // BandMachineMgr::IsSongShared(int) const
 .weak _ZNK14BandMachineMgr12IsSongSharedEi
 .type _ZNK14BandMachineMgr12IsSongSharedEi,@function

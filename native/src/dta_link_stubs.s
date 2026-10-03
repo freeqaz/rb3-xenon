@@ -10,12 +10,6 @@ DmCaptureStackBackTrace:
     xorq %rax, %rax
     ret
 
-.weak DmGetSystemInfo
-.type DmGetSystemInfo,@function
-DmGetSystemInfo:
-    xorq %rax, %rax
-    ret
-
 .weak DmIsDebuggerPresent
 .type DmIsDebuggerPresent,@function
 DmIsDebuggerPresent:
@@ -127,12 +121,6 @@ _Z12SetupHXDrumsiRK20_XINPUT_CAPABILITIES:
     xorq %rax, %rax
     ret
 
-.weak _Z13NativeArkReadixPvi
-.type _Z13NativeArkReadixPvi,@function
-_Z13NativeArkReadixPvi:
-    xorq %rax, %rax
-    ret
-
 .weak _Z13SetupHXGuitariRK20_XINPUT_CAPABILITIES
 .type _Z13SetupHXGuitariRK20_XINPUT_CAPABILITIES,@function
 _Z13SetupHXGuitariRK20_XINPUT_CAPABILITIES:
@@ -193,12 +181,6 @@ _Z23GetXinputSinceLastFrameiP13_XINPUT_STATEPj:
     xorq %rax, %rax
     ret
 
-.weak _Z3Modff
-.type _Z3Modff,@function
-_Z3Modff:
-    xorq %rax, %rax
-    ret
-
 .weak _ZN10MidiParser4PollEv
 .type _ZN10MidiParser4PollEv,@function
 _ZN10MidiParser4PollEv:
@@ -238,48 +220,6 @@ _ZN13CameraManager4PollEv:
 .weak _ZN13NetLoaderXboxC1ERK6String
 .type _ZN13NetLoaderXboxC1ERK6String,@function
 _ZN13NetLoaderXboxC1ERK6String:
-    xorq %rax, %rax
-    ret
-
-.weak _ZN13RndAnimatable12SyncPropertyER8DataNodeP9DataArrayi6PropOp
-.type _ZN13RndAnimatable12SyncPropertyER8DataNodeP9DataArrayi6PropOp,@function
-_ZN13RndAnimatable12SyncPropertyER8DataNodeP9DataArrayi6PropOp:
-    xorq %rax, %rax
-    ret
-
-.weak _ZN13RndAnimatable4CopyEPKN3Hmx6ObjectENS1_8CopyTypeE
-.type _ZN13RndAnimatable4CopyEPKN3Hmx6ObjectENS1_8CopyTypeE,@function
-_ZN13RndAnimatable4CopyEPKN3Hmx6ObjectENS1_8CopyTypeE:
-    xorq %rax, %rax
-    ret
-
-.weak _ZN13RndAnimatable4LoadER9BinStream
-.type _ZN13RndAnimatable4LoadER9BinStream,@function
-_ZN13RndAnimatable4LoadER9BinStream:
-    xorq %rax, %rax
-    ret
-
-.weak _ZN13RndAnimatable4SaveER9BinStream
-.type _ZN13RndAnimatable4SaveER9BinStream,@function
-_ZN13RndAnimatable4SaveER9BinStream:
-    xorq %rax, %rax
-    ret
-
-.weak _ZN13RndAnimatable6HandleEP9DataArrayb
-.type _ZN13RndAnimatable6HandleEP9DataArrayb,@function
-_ZN13RndAnimatable6HandleEP9DataArrayb:
-    xorq %rax, %rax
-    ret
-
-.weak _ZN13RndAnimatable8SetFrameEff
-.type _ZN13RndAnimatable8SetFrameEff,@function
-_ZN13RndAnimatable8SetFrameEff:
-    xorq %rax, %rax
-    ret
-
-.weak _ZN13RndAnimatableC2Ev
-.type _ZN13RndAnimatableC2Ev,@function
-_ZN13RndAnimatableC2Ev:
     xorq %rax, %rax
     ret
 
@@ -368,36 +308,6 @@ _ZNK11HamGameData6PlayerEi:
     ret
 
 
-.weak _ZTv0_n104_N13RndAnimatable4LoadER9BinStream
-.type _ZTv0_n104_N13RndAnimatable4LoadER9BinStream,@function
-_ZTv0_n104_N13RndAnimatable4LoadER9BinStream:
-    xorq %rax, %rax
-    ret
-
-.weak _ZTv0_n64_N13RndAnimatable6HandleEP9DataArrayb
-.type _ZTv0_n64_N13RndAnimatable6HandleEP9DataArrayb,@function
-_ZTv0_n64_N13RndAnimatable6HandleEP9DataArrayb:
-    xorq %rax, %rax
-    ret
-
-.weak _ZTv0_n72_N13RndAnimatable12SyncPropertyER8DataNodeP9DataArrayi6PropOp
-.type _ZTv0_n72_N13RndAnimatable12SyncPropertyER8DataNodeP9DataArrayi6PropOp,@function
-_ZTv0_n72_N13RndAnimatable12SyncPropertyER8DataNodeP9DataArrayi6PropOp:
-    xorq %rax, %rax
-    ret
-
-.weak _ZTv0_n88_N13RndAnimatable4SaveER9BinStream
-.type _ZTv0_n88_N13RndAnimatable4SaveER9BinStream,@function
-_ZTv0_n88_N13RndAnimatable4SaveER9BinStream:
-    xorq %rax, %rax
-    ret
-
-.weak _ZTv0_n96_N13RndAnimatable4CopyEPKN3Hmx6ObjectENS1_8CopyTypeE
-.type _ZTv0_n96_N13RndAnimatable4CopyEPKN3Hmx6ObjectENS1_8CopyTypeE,@function
-_ZTv0_n96_N13RndAnimatable4CopyEPKN3Hmx6ObjectENS1_8CopyTypeE:
-    xorq %rax, %rax
-    ret
-
 // RndGroup::AddObject(Hmx::Object*, Hmx::Object*) — referenced by
 // RndAnimatable::OnAnimate in Anim.cpp (animation runtime, NOT on the DTA-parse
 // path). RndGroup.cpp isn't compiled for native, so a no-op stub satisfies the
@@ -476,22 +386,10 @@ _ZN12MemHeapStack12sDefaultHeapE:
 _ZTI11RndPollable:
     .zero 128
 
-.weak _ZTI13RndAnimatable
-.type _ZTI13RndAnimatable,@object
-.size _ZTI13RndAnimatable, 128
-_ZTI13RndAnimatable:
-    .zero 128
-
 .weak _ZTI8WorldDir
 .type _ZTI8WorldDir,@object
 .size _ZTI8WorldDir, 128
 _ZTI8WorldDir:
-    .zero 128
-
-.weak _ZTT13RndAnimatable
-.type _ZTT13RndAnimatable,@object
-.size _ZTT13RndAnimatable, 128
-_ZTT13RndAnimatable:
     .zero 128
 
 // typeinfo for RndGroup / RndAnimFilter — referenced by RndAnimatable::OnAnimate

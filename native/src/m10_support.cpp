@@ -30,15 +30,6 @@
 #include <cstring>
 
 // ==================================== Poll-path decomp-mangled shims ==========
-// VocalPart.cpp calls VocalNoteList::NoteAt / ::PitchAt through their MWCC X360
-// symbol names (so the retail obj links against the real methods). Native (Itanium
-// ABI) has no such symbols; forward the extern "C" name to the real C++ method.
-extern "C" VocalNote *NoteAt__13VocalNoteListCFf(const VocalNoteList *self, float ms) {
-    return const_cast<VocalNote *>(self->NoteAt(ms));
-}
-extern "C" float PitchAt__13VocalNoteListCFf(const VocalNoteList *self, float ms) {
-    return self->PitchAt(ms);
-}
 
 // ------------------------------------------------------------- driver state --
 // The synthetic mic bank, keyed by MicClientID.mClientID (== singer index). The

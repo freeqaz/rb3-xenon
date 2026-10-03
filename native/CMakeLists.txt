@@ -179,7 +179,6 @@ set(RB3_STUB_TUS
     ${CMAKE_SOURCE_DIR}/src/m10_leaf_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/m4_save_link_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/native_undecomp_stubs.cpp
-    ${CMAKE_SOURCE_DIR}/src/native_job_stubs.cpp
     # W16-PD: the list above omitted every stub TU added after CC-5, so the
     # instrument could not see them at all. Widened to the whole hand-written
     # link surface (the .s stubs cannot be instrumented this way).
@@ -187,7 +186,6 @@ set(RB3_STUB_TUS
     ${CMAKE_SOURCE_DIR}/src/x7_band_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/x20_bandpatchmesh_link.cpp
     ${CMAKE_SOURCE_DIR}/src/native_link_glue.cpp
-    ${CMAKE_SOURCE_DIR}/src/thunk_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/m8_support.cpp
     ${CMAKE_SOURCE_DIR}/src/m10_support.cpp
     ${CMAKE_SOURCE_DIR}/src/xdk_shims.cpp
@@ -260,8 +258,6 @@ rb3x_drop_hidden(PLATFORM_SHIMS)
 set(NATIVE_SHIMS
     ${CMAKE_SOURCE_DIR}/src/xdk_shims.cpp
     ${CMAKE_SOURCE_DIR}/src/native_link_glue.cpp
-    ${CMAKE_SOURCE_DIR}/src/thunk_stubs.cpp
-    ${CMAKE_SOURCE_DIR}/src/native_job_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/native_undecomp_stubs.cpp
     ${PLATFORM_SHIMS}
 )
@@ -381,7 +377,7 @@ target_link_libraries(rb3-midi PRIVATE Threads::Threads ZLIB::ZLIB)
 # M2 MIDI cluster (MidiReader drives SongParser; MidiParserMgr fires the gem
 # branch). BeatMatchUtl / SongInfoCopy come in via M3_SOURCES; the rest of
 # beatmatch/ (BeatMatcher, TrackWatcher*, controllers) is NOT on the parse path
-# and is satisfied by weak stubs in m3_link_stubs.s.
+# needs no stubs (m3_link_stubs.s / m3b_link_stubs.s were empty; deleted, W16-PD).
 set(M3_SOURCES
     ${REPO_ROOT}/src/system/beatmatch/SongParser.cpp
     ${REPO_ROOT}/src/system/beatmatch/GameGem.cpp
@@ -403,7 +399,6 @@ rb3_add_executable(rb3-gem
     ${NATIVE_SHIMS}
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
 )
 target_compile_options(rb3-gem PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
 target_compile_definitions(rb3-gem PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
@@ -459,8 +454,6 @@ rb3_add_executable(rb3-hit
     ${NATIVE_SHIMS}
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-hit PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
 target_compile_definitions(rb3-hit PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
@@ -496,8 +489,6 @@ rb3_add_executable(rb3-score
     ${NATIVE_SHIMS}
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-score PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
 target_compile_definitions(rb3-score PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
@@ -545,8 +536,6 @@ rb3_add_executable(rb3-score2
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-score2 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
@@ -586,8 +575,6 @@ rb3_add_executable(rb3-score3
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-score3 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
@@ -629,8 +616,6 @@ rb3_add_executable(rb3-score4
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-score4 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
@@ -672,8 +657,6 @@ rb3_add_executable(rb3-vocal
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-vocal PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
@@ -726,8 +709,6 @@ rb3_add_executable(rb3-vocal2
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-vocal2 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
@@ -778,8 +759,6 @@ rb3_add_executable(rb3-harmony
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-harmony PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
@@ -824,8 +803,6 @@ rb3_add_executable(rb3-crowd
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3_link_stubs.s
-    ${CMAKE_SOURCE_DIR}/src/m3b_link_stubs.s
 )
 target_compile_options(rb3-crowd PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
