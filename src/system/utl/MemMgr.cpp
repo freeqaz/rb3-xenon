@@ -1023,10 +1023,6 @@ MemHandle::MemHandle(void *alloc) {
 // `heapNum > -1 ? &gHeaps[heapNum] : NULL` (mulli 0x24 = sizeof(MemHeap)).
 // Its single retail caller is _MemAllocH's heap assert, whose value dies but
 // whose call survives -- which is why this is a real function, not a macro.
-MemHeap *MemCurrentHeap() {
-    int heapNum = GetCurrentHeapNum();
-    return heapNum > -1 ? &gHeaps[heapNum] : NULL;
-}
 
 // Retail/match _MemAllocH, 0x827BD190 (120 B), unit `default/MemMgr`.
 // MILO_ASSERT is ((void)(cond)) in the match
@@ -1160,6 +1156,16 @@ int GetCurrentHeapNum() {
         return stack.mStack[stack.mSize - 1];
     }
     return MemHeapStack::sDefaultHeap;
+}
+
+// Retail reads the top of the heap stack in place (one ThreadMemStack(false)
+// call, no `bl GetCurrentHeapNum`); calling GetCurrentHeapNum() is not inlined
+// by this compiler.
+MemHeap *MemCurrentHeap() {
+    MemHeapStack &stack = ThreadMemStack(false);
+    int heapNum = stack.mSize != 0 ? stack.mStack[stack.mSize - 1]
+                                   : MemHeapStack::sDefaultHeap;
+    return heapNum > -1 ? &gHeaps[heapNum] : NULL;
 }
 static int gPrevFree[MAX_HEAPS] = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
 
