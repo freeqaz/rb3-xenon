@@ -229,6 +229,10 @@ Of the 35 held labels, 10 were CALLEE-UNANCHORED (3 resolved above, 7 not). The 
 
 ## 8. Native gate (run last)
 
-PENDING
+`tools/native_build_gate.sh`, run last on the tip `f97c18476` (only this doc line follows it):
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
 
 No commit carries a co-author line.
