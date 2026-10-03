@@ -166,7 +166,6 @@ Hubs used below:
 | `CacheIDXbox:3` | `0x8252E068` `lwz r3,0x10(r3)` (folded with `ArkFile::Size`) | `GetDeviceID() const { return mContentData.DeviceID; }` (0x10) |
 | `AsyncFileWin:15` | `li r3,0` hub, while **AsyncFile's own slot is `_purecall`** | AsyncFile's body is now `HX_NATIVE`-only; AsyncFileWin (and the non-retail AsyncFileHolmes) return false |
 
-The UILabel, UIButton and SongPreview overrides are all present in rb3-Wii.
 The CacheIDXbox, AsyncFile and NetCacheMgrXbox answers match DC3's
 already-corrected headers, so these were drift in our copies. The four new
 bodies (UILabel ×3, StorePanel) sit inside their own units' pins and were
