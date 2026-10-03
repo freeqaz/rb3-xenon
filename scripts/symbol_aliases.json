@@ -109385,6 +109385,23 @@
      "evidence": "W16-OK 2026-10-03: ~TrackerDesc (implicit; destroys vector<float> at +0x18) is byte-identical, relocation names included, to retail 0x822afd68 (lwz r4,0x18; cmplwi; beqlr; lwz r11,0x20; subf; srawi 2; slwi 2; b MemOrPoolFreeSTL). Ours is 36 B only because MSVC's trailing blr is inside our COMDAT; retail has the same blr at 0x822AFD88, which dtk carved as its own 4-byte function, so the chase's 'masked bodies DIFFER' is that carve. Twin census: exactly 1 retail body image-wide has this masked body and relocation shape. Call sites: all 5 charged retail EH funclets bl 0x822afd68 with r3 = Tracker this+0x1c (fn_826D2248, fn_826D236C; Tracker::mDesc @0x1c), TrackerManager this+0x20 (fn_82694460; TrackerManager::mDesc @0x20), or a stack TrackerDesc (fn_826946AC, fn_8269479C) -- the member offsets are the type witness."
     }
    ]
+  },
+  {
+   "name": "GetIdentifyingToken",
+   "address": "0x82596580",
+   "survivor": "?GetIdentifyingToken@InternalSavedSetlist@@UBA?AVSymbol@@XZ",
+   "folded": [
+    "?GetCurrentQuestFilter@TourPerformerImpl@@QBA?AVSymbol@@XZ"
+   ],
+   "evidence": "Created by lane W16-OK: see per-member records in `admitted`.",
+   "lane": "W16-OK 2026-10-03",
+   "admitted": [
+    {
+     "spelling": "?GetCurrentQuestFilter@TourPerformerImpl@@QBA?AVSymbol@@XZ",
+     "lane": "W16-OK 2026-10-03",
+     "evidence": "W16-OK 2026-10-03: both are `lwz r11,0x30(r4); stw r11,0(r3); blr` (12 B, no relocations; retail's 16 B extent is that plus one word of alignment padding). Compiler layout: TourPerformerImpl::mQuestFilter and InternalSavedSetlist::mNameSymbol are both Symbol @0x30. Census: exactly 1 retail body image-wide has these bytes, so a relocation-free COMDAT with this body can only live there. Call sites: retail Tour::GetCurrentFilterName and TourChallengeResultsPanel::UpdateSetlistLabel call this body at the site where our source calls TourPerformerImpl::GetCurrentQuestFilter."
+    }
+   ]
   }
  ]
 }
