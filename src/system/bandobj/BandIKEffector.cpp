@@ -227,31 +227,20 @@ void BandIKEffector::NeutralLocalXfm(RndTransformable *bone, Transform &tf) {
     if (sDeformClip) {
         bool pelvisMatch = (strcmp(bone->Name(), "bone_pelvis.mesh") == 0);
         if (!pelvisMatch) {
-            void *posChan = sDeformClip->GetChannel(
-                CharBones::ChannelName(bone->Name(), CharBones::TYPE_POS)
-            );
+            Symbol channel = CharBones::ChannelName(bone->Name(), CharBones::TYPE_POS);
+            void *posChan = sDeformClip->GetChannel(channel);
             if (posChan)
                 sDeformClip->EvaluateChannel(&tf.v, posChan, 0.0f);
-            void *scaleChan = sDeformClip->GetChannel(
-                CharBones::ChannelName(bone->Name(), CharBones::TYPE_SCALE)
-            );
+            channel = CharBones::ChannelName(bone->Name(), CharBones::TYPE_SCALE);
+            void *scaleChan = sDeformClip->GetChannel(channel);
             if (scaleChan) {
                 Vector3 targetScale;
                 sDeformClip->EvaluateChannel(&targetScale, scaleChan, 0.0f);
                 Vector3 currScale;
                 MakeScale(tf.m, currScale);
-                float rx = targetScale.x / currScale.x;
-                tf.m.x.x *= rx;
-                tf.m.x.y *= rx;
-                tf.m.x.z *= rx;
-                float ry = targetScale.y / currScale.y;
-                tf.m.y.x *= ry;
-                tf.m.y.y *= ry;
-                tf.m.y.z *= ry;
-                float rz = targetScale.z / currScale.z;
-                tf.m.z.x *= rz;
-                tf.m.z.y *= rz;
-                tf.m.z.z *= rz;
+                tf.m.x *= targetScale.x / currScale.x;
+                tf.m.y *= targetScale.y / currScale.y;
+                tf.m.z *= targetScale.z / currScale.z;
             }
         }
     }
