@@ -735,8 +735,7 @@ void BandTrack::SoloHide() {
     if (mPlayerFeedback) {
         RndPropAnim *hideSoloAnim =
             mPlayerFeedback->Find<RndPropAnim>("hide_solo.anim", true);
-        float endFrame = hideSoloAnim->EndFrame();
-        hideSoloAnim->SetFrame(endFrame, 1.0f);
+        hideSoloAnim->SetFrame(hideSoloAnim->EndFrame(), 1.0f);
     }
 }
 
@@ -758,8 +757,7 @@ void BandTrack::SpotlightFail(bool guilty) {
 void BandTrack::SpotlightPhraseSuccess() {
     if (MyTrackPanelDir()) {
         if (MyTrackPanelDir()->GetEndingBonus()) {
-            int trackIdx = mTrackIdx;
-            MyTrackPanelDir()->GetEndingBonus()->PlayerSuccess(trackIdx);
+            MyTrackPanelDir()->GetEndingBonus()->PlayerSuccess(mTrackIdx);
         }
     }
     if (mUnisonIcon)
