@@ -178,7 +178,11 @@ void(MemFree)(void *mem) {
 
 void MemForceNewOperatorAlign(int align) { gNewOperatorAlign = align; }
 
+#ifdef HX_NATIVE
 void *MemTruncate(void *mem, int size, const char *file, int line, const char *name) {
+#else
+void *(MemTruncate)(void *mem, int size) {
+#endif
     CritSecTracker tracker(gMemLock);
     if (!mem)
         return nullptr;
@@ -809,20 +813,21 @@ void *MemResizeElem(
     return (char *)mem + prefixSize;
 }
 
+#ifdef HX_NATIVE
 void *
 MemRealloc(void *mem, int size, const char *file, int line, const char *name, int align) {
+#else
+void *(MemRealloc)(void *mem, int size, int align) {
+#endif
     CritSecTracker tracker(gMemLock);
     if (gNumHeaps != 0) {
         int memSize = MemAllocSize(mem);
         // The 2-arg retail allocator `MemAlloc(int size, int align)` is declared
-        // ONLY `#ifndef HX_NATIVE` (utl/MemMgr.h:154-157), so the X360 spelling
-        // below does not compile natively ("too few arguments to function call,
-        // expected at least 4"). Natively, route to the 5-arg debug allocator --
-        // the same call this line carried before wave4 f278d4d7.
+        // only `#ifndef HX_NATIVE`; natively, route to the 5-arg debug allocator.
 #ifdef HX_NATIVE
         void *dst = (MemAlloc)(size, file, line, name, align);
 #else
-        void *dst = (MemAlloc)(size, (int)file);
+        void *dst = (MemAlloc)(size, align);
 #endif
         memcpy(dst, mem, size < memSize ? size : memSize);
         MemFree(mem);
