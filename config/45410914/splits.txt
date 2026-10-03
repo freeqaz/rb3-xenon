@@ -4574,7 +4574,6 @@ MemMgr.cpp:
 	.pdata      start:0x82241B98 end:0x82241BC0
 	.pdata      start:0x82241BC0 end:0x82241BC8
 	.pdata      start:0x82241BC8 end:0x82241BE8
-	.pdata      start:0x8225F038 end:0x8225F040
 	.text       start:0x823F1898 end:0x823F18B4
 	.text       start:0x827BB3E8 end:0x827BB450
 	.text       start:0x827BB638 end:0x827BB678
@@ -4590,7 +4589,6 @@ MemMgr.cpp:
 	.text       start:0x827BCFF0 end:0x827BD230
 	.text       start:0x827BD230 end:0x827BD300
 	.text       start:0x827BD300 end:0x827BD690
-	.text       start:0x82BC6B70 end:0x82BC6C04
 
 StorePurchaser.cpp:
 	.pdata      start:0x82241170 end:0x82241178
