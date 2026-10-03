@@ -184,12 +184,10 @@ void TrackDir::DrawShowing() {
             v148.Zero();
             RndEnvironTracker tracker(mTrack, &v148);
             RndCam *i7 = nullptr;
-            RndCam *cur;
             RndCam *i6 = Cam();
             if (i6) {
-                cur = RndCam::Current();
+                i7 = RndCam::Current();
                 i6->Select();
-                i7 = cur;
             } else {
                 MILO_ASSERT(TheLoadMgr.EditMode(), 0x104);
                 i6 = RndCam::Current();
