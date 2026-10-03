@@ -64,7 +64,6 @@ bool dumpLyricShifts;
 // flag as `lis r28, lbl_82E4BCF9@h` / `lbz r11, lbl_82E4BCF9@l(r28)` -- an
 // ANONYMOUS data label, which is what a file-static compiles to, where an extern
 // would carry its own name. Same shape as sDumpPlateStates (ca3e940a, +760 B).
-// Measured worth +92 B / +1 fn: reverting it took ??$MakeString@MPBD@@ 100 -> 0.
 static bool sDumpLyricPlates;
 static bool sDumpPlateStates;
 bool gDebugSpew;
@@ -1060,102 +1059,24 @@ void VocalTrack::PollLyricAnimations(
                 && plates.front()->CurrentEndX(plateMs) < mDir->mTrackLeftX - unk78)
                || plates.front()->mInvalidateMs < ms)) {
         LyricPlate *cur = plates.front();
-        // DO NOT remove the `if (sDumpLyricPlates)` BLOCK -- retail HAS it
-        // (`lbz lbl_82E4BCF9`, the flag test and `bl DumpLyricPlates` all appear
-        // as `delete` charges when the whole block goes). Only the SPEW is ours.
-        //
-        // CORRECTION (lane W16-DA, 2026-09-16). The note that used to sit here
-        // said "retail never loads ?TheDebug@@3VDebug@@A, so retail's spew
-        // reaches MakeString by some other sink. That sink is unidentified."
-        // BOTH HALVES ARE FALSE, measured on retail bytes (orig/45410914/band.exe):
-        //   * retail materializes 0x82cc9874 (= ?TheDebug@@3VDebug@@A, .data) at
-        //     68 sites, and calls ??6TextStream@@QAAAAV0@VSymbol@@@Z -- the ICF
-        //     survivor that scripts/symbol_aliases.json already proves at tier T1
-        //     to be folded with ??6TextStream@@QAAAAV0@PBD@Z -- from 651 sites.
-        //   * the sink IS TheDebug, spelled exactly as we spell it. Witness:
-        //     ?Print@CharBonesSamples@@UAAXXZ+0x2c does
-        //         bl ??$MakeString@HHHH@@ ; addi r27,r11,-0x678c ; bl ??6TextStream
-        //     where r11=lis -0x7d33 so r27 == 0x82cc9874 == TheDebug.
-        // ==> the 185 tree-wide `TheDebug <<` sites are NOT a defect. Do not guard
-        //     them as a class; in the corroborated units retail has MORE stream
-        //     output than we spell, not less (MeshAnim 6 ours / 60 retail).
-        //
-        // THIS SITE is the local exception, and it is proven separately:
-        // ??$MakeString@MPBD@@ (0x827efa60) has exactly ONE retail `bl` caller,
-        // 0x827efd68, inside ?DisplayEvents@@YAMPAVDataEventList@@MM@Z -- not this
-        // function -- and retail's VocalTrack.cpp pin range holds ZERO TheDebug
-        // references and ZERO `bl ??6TextStream` calls. objdiff agrees:
-        // ??$MakeString@MPBD@@ and ??6TextStream@@QAAAAV0@PBD@Z are BASE-ONLY
-        // calls here, and the extra live value costs one more callee-saved GPR
-        // (target __savegprlr_25 vs our __savegprlr_24), which is what drives the
-        // 47-instruction r30<->r31 swap cascade.
-        //
-        // MEASURED, and DELIBERATELY NOT GUARDED. Guarding just this statement
-        // with the house MILO_DEBUG/HX_NATIVE guard (leaving the block and
-        // DumpLyricPlates live) was A/B'd whole-binary on the name_check ruler:
-        //     Delta matched=-1, Delta code_bytes=-92, Delta code%=-0.000900pp
-        //     (default/VocalTrack 179->178; 0 units reached 100, 0 fell off)
-        // i.e. exactly the ??$MakeString@MPBD@@ row leaving, with NO offsetting
-        // gain: PollLyricAnimations does NOT cross to fuzzy 100, because a second
-        // and independent defect survives.
-        //
-        // ==> THAT RESIDUAL IS REGISTER ALLOCATION, NOT A STRUCT DEFECT.  The claim
-        // that used to sit here -- "objdiff idx 136/137 show target reading
-        // Track::unk50 where we read Track::mIntroPlaying and vice versa (a field
-        // swap)" -- is REFUTED (lane W16-EA, 2026-09-16):
-        //   * idx 136/137 are target `lwz r30,0x60(r1)` / `lwz r27,0x70(r1)` against
-        //     our `lwz r11,0x70(r1)` / `lwz r30,0x60(r1)`.  The base register is r1,
-        //     the STACK POINTER: two spilled locals reloaded from the frame in
-        //     swapped slot order.  0x70(r1) is specifically the temp our side fills
-        //     at idx 190-199 with a 16-byte copy of the deque header
-        //     (`addi r10,r1,0x70`; stw 0x0..0xc) where retail hoists the end
-        //     iterator into r27.  Track is not involved at either row.
-        //   * provenance of the error: run_analyze_function's offset resolver
-        //     compared OFFSETS ONLY and never read the base register it had already
-        //     captured, looked 0x60/0x70 up in StructDB under Track, and emitted
-        //     "Source accesses 'mIntroPlaying' but target accesses 'unk50' -- wrong
-        //     field?" for each half of the mirrored pair -- which is where the
-        //     "and vice versa" came from.  Fixed in scripts/orchestrator/mcp_server.py
-        //     (_NON_STRUCT_BASE_REGS skips r1/r13).
-        //   * ground truth: cl.exe /d1reportSingleClassLayout puts unk50 at 0x60 and
-        //     mIntroPlaying at 0x70; class_layout_report.py --check-header reports
-        //     every // 0xHEX comment in Track.h agreeing with the compiler; the
-        //     natural source order is the SAME ORDER (uniformly -0x10, a base-class
-        //     shift, and unk50 is merely NAMED for a narrower offset); and retail's ONLY
-        //     this-relative byte access in this entire function is `lbz r11,0x70(r3)`
-        //     == our `if (mIntroPlaying) return;`, which objdiff already scores EQUAL
-        //     at idx 5.  This function reads unk50 ZERO times, so the "vice versa"
-        //     half was structurally impossible.
-        //   * measured control: swapping the two bool declarations left idx 136/137
-        //     BIT-IDENTICAL and broke idx 5, fuzzy 84.26344 -> 84.258064 and mpn
-        //     85.98387 -> 85.97849 on the graded (name_check) ruler, full build +
-        //     report.json.  DO NOT SWAP THEM.
-        //
-        // The 92 B is held by a hand-placed 0x68-byte splits block, VocalTrack.cpp
-        // 0x827efa60-0x827efac8, that exists only to bind this COMDAT into our unit.
-        // ==> CONDITIONAL FOR A FUTURE LANE: guarding this site is a PREREQUISITE for
-        //     this 744 B function ever reaching 100, but it is -92 B standalone, and
-        //     guarding ALONE will not cross it either.  Beyond the 26 insert/delete
-        //     charges (idx 31-36 + 67-77 = this spew; 190-199 = the deque-header
-        //     copy) there remain 62 diff_arg charges -- 29 register, 31 stack/mem
-        //     offset, 2 relocation-name -- a regalloc cascade rooted in one extra
-        //     callee-saved GPR (target __savegprlr_25 vs our __savegprlr_24, idx 1).
-        //     That residual is permuter-class, not source-class.
+        // Retail keeps the sDumpLyricPlates test and the DumpLyricPlates call
+        // but has no TheDebug/MakeString spew here (no MakeString or
+        // TextStream call anywhere in this TU's pin range). Its second
+        // argument is the plate's lead flag, read through the first
+        // syllable: `lwz 0x34(plate); lwz 0(...); lwz 0x48(lyric)` = mLead.
+        // ??$MakeString@MPBD@@ (0x827efa60) is emitted by DisplayEvents.cpp,
+        // whose .text pin it now opens.
         if (sDumpLyricPlates) {
-            TheDebug << MakeString(
-                "recycling lyric plate at %.2f sec %s\n",
-                ms / 1000.0f,
-                cur->mText->RawText().c_str()
-            );
-            DumpLyricPlates(plates, !cur->mSyllables.empty());
+            DumpLyricPlates(plates, cur->mSyllables.front()->mLead);
         }
         plates.pop_front();
         cur->Reset();
         plates.push_back(cur);
     }
-    if (TheGame->InRollback())
-        ms = unk2a4;
-    FOREACH (it, plates) {
+    float pollMs = TheGame->InRollback() ? unk2a4 : ms;
+    std::deque<LyricPlate *>::iterator it = plates.begin();
+    std::deque<LyricPlate *>::iterator end = plates.end();
+    for (; it != end; ++it) {
         LyricPlate *cur = *it;
         if (cur->Empty())
             return;
@@ -1172,7 +1093,7 @@ void VocalTrack::PollLyricAnimations(
         if (!scrolling) {
             cur->mPastNow = endX < 2.0f * mStaticDeployMarginX + mDir->mNowBarX;
         }
-        cur->Poll(ms);
+        cur->Poll(pollMs);
     }
 }
 
