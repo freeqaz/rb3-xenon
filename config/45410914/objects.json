@@ -2239,7 +2239,15 @@
                     "/GR-"
                 ]
             },
-            "network/quazal/Core/MutexPrimitive.cpp": "NonMatching",
+            "network/quazal/Core/MutexPrimitive.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/EHs-c-"
+                ]
+            },
             "network/quazal/StationDDL.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
