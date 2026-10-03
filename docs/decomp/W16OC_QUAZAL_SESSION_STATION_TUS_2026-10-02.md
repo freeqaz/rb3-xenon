@@ -1,6 +1,6 @@
 # W16-OC — the Quazal session/station TUs written from the retail asm (2026-10-02)
 
-**Branch** `w16-oc`, on main `1505d4c74`. **Ruler** `name_check` (graded). Permuter not run. Method and TU table:
+**Branch** `w16-oc`, rebased onto main `36d8bd9f3` (after W16-OE and W16-OD landed). **Ruler** `name_check` (graded). Permuter not run. Method and TU table:
 `docs/decomp/W16NY_OD_BLOCK_PRICING_AND_LARGEST_TUS_2026-10-02.md`. Lanes W16-OD (transport) and W16-OE
 (account/DO) ran in parallel on other Quazal TUs.
 
@@ -96,7 +96,7 @@ Rows below 100:
   `ParseSpecificMessage`); the other 138 instructions match.
 - `WaitForTerminatedState` (99.84): every local matches; only the two `Scheduler::GetInstance` temps sit 8 B
   higher in retail (`0xf8/0xfc` vs `0xf0/0xf4`) because retail reserves 20 B for the declined
-  `Core::GetInstance` and the current header reserves 12 B. See §3.2.
+  `Core::GetInstance` and the current header reserves 12 B. See §3.4.
 
 ### 2.2 Session (sub-lane)
 
@@ -220,7 +220,33 @@ Integration fixes made on this branch (each measured on the merged tree):
   all on `MasterStationRef`. Moving the copy form to `DORefTemplate` only swaps which rows are higher; it measured
   Δ0 fns / Δ0 B (no row crosses 100 either way), so JCS's form was kept.
 
-### 3.3 A probe of the open `Core`/`Scheduler` shape (W16-NY §3.3), not taken
+### 3.3 Reconciling with W16-OE and W16-OD (landed while this lane ran)
+
+Rebasing onto main after W16-OE and W16-OD surfaced the same "one spelling per retail function" problem across lanes.
+Each case was decided on retail bytes or on the landed map:
+
+- **Main's names kept:** `CallRegister::GetInstanceRef()` returns a reference; `0x82ABB820` is
+  `CallRegister::GetFetchContext`; `0x82A8B9E0` is `CallContext::InitiateCall`; `0x82ABB298` is
+  `CallRegister::QueueCancelCallToStation`; ObjDupProtocol's type-4 instance is W16-OE's `DOCore`; `_DO_RootDO`'s
+  extractor is `SpecificExtractADataset`, and `_DO_Station`'s now follows the same name (`DOClassTemplate`
+  forwards to it). Callers on this branch were respelled.
+- **One landed name corrected:** `0x82A99638` `_DOC_RootDO::DispatchRMCResult` returns `bool`, not `void`.
+  `DOClass::DispatchRMCResult` (`0x82AB2278`) is `li r3,0; blr`, and `_DOC_Station`'s override (`0x82A83050`)
+  returns 1 on one path and this function's value on the other. One virtual slot cannot be both, and `/Od` emits
+  `return f(x);` as a bare `bl`, which is why the root's body reads like a void call. The row stays at 100
+  under the corrected name.
+- **A patcher gap, fixed.** `scripts/obj_anon_ns_patcher.py` matched only `?A0x<hash>@@` (global scope).
+  W16-OD's `JobConnectEndPoint` callbacks live in `Quazal::{anon}` (`?A0x<hash>@Quazal@@`), so their hash was
+  never rewritten and four W16-OD rows were 100 only while a cache-served object carried the hash their map
+  names were taken from. This branch's header additions recompile that TU, and the four rows went to 0 / 0 /
+  99.91 / 99.94 (−4 fns / −1,632 B in the first A/B on `36d8bd9f3`). The hash is not even stable per build
+  root: compiling the unchanged file by hand from main and from a worktree gave `18540d5a` and `aa73134c`,
+  against `8260cece` / `b4b23aec` in the ninja-built objects. The pattern now accepts `@<scope>` after the hash;
+  global templates are unchanged, the hashless `?A@@` keeps its own marker. Result: exactly those four rows
+  back to 100 and no other row moved; `--batch --check`, `verify_objs_patched.py --check` and
+  `test_patch_state.py` (27/27) pass.
+
+### 3.4 A probe of the open `Core`/`Scheduler` shape (W16-NY §3.3), not taken
 
 Retail `0x823EA910` (`Core::GetInstance`'s surviving copy) is an optimised `/O1` body (`mr r5,r3`, no stack
 temps): ICF kept a non-`/Od` copy, so it says nothing about the `/Od` source. Only the `/Od` callers' reserved
@@ -246,8 +272,66 @@ function. Reverted; the build restored to 52,203 / 5,718,532 B exactly.
 
 ## 4. Whole-binary A/B
 
-## 5. Rows that went down
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16-oc-ab --patch ab5.patch` (the whole `main..w16-oc` diff), in a
+fresh `setup_worktree.sh` worktree on main **`36d8bd9f3`**, run dir
+`~/tmp/wt-w16-oc-ab/.ab_measure_runs/20261003-001634-ab5-548696/`. `symbols.txt` is untouched by this branch.
+
+**Prediction, written before the run** (this worktree's own build minus main's expected reading, main =
+52,189 + W16-OE's +140 + W16-OD's +365): leg A 52,694 / 5,783,888 B; Δmatched **+230**, Δcode **+45,564 B**.
+
+```
+leg A: matched=52694 masked=25107 honest=27587 code%=56.440334  (recompiles: 0, settled)
+leg B: matched=52924 masked=25107 honest=27817 code%=56.884956  (recompiles: 312, split=1, patch_steps=7, settle iterations: 2)
+split fixed point: leg A converged after 0 extra re-split(s), leg B after 0
+Δmatched=+230  Δmasked_equal=+0  Δhonest=+230  Δcode%=+0.444622pp  Δcode_bytes=+45564
+Δfuzzy=+0.681442pp   (legA 62.486965 -> legB 63.168407)
+unit net (ALL units) = +230   vs whole-binary Δmatched = +230
+units at 100% [mpn]: 498 -> 499 (DupSpace/MatchOperation)
+```
+
+**Measured exactly as predicted.** Every gained function is honest (`masked_equal` +0). Bytes by unit: the seven TUs
+42,028 B, DuplicatedObject +2,960 B (six rows to 100 from the `DOID` change), and W16-OE's MatchOperation +576 B
+(`ExecuteOperation` 99.875 → 100. Its frame was 0x10 short on main and the shortfall closes on this branch,
+which is consistent with the declined-inline `IsValid` reservation; not isolated). No unit regressed.
+
+Earlier runs of the same branch, kept for the record: on main `b2b2cb8ac` (before W16-OD) +227 / +44,556 B, predicted
+exactly, before the W16-OE spelling fixes of §3.3 (+3 fns / +1,008 B); on `36d8bd9f3` +226 / +43,932 B, predicted
+exactly, before the patcher fix (the four W16-OD rows).
+
+## 5. Rows that went down (leg A → leg B, keyed by unit and row name)
+
+None went down from 100, so no matched byte was lost.
+
+| row | size | fuzzy | reason |
+|---|---:|---|---|
+| DuplicatedObject `ExecRemoveFromStore` | 456 | 92.386 → 71.272 | `DOID` without the `RootObject` base lets `/Ob1` expand `GetHandle()`; retail expands it in six DuplicatedObject rows (now at 100) but calls it out of line here |
+| DuplicatedObject `SelectNewLocation` | 360 | 94.978 → 68.333 | same |
+| DuplicatedObject `FaultRecoveryImpl` | 712 | 88.775 → 86.809 | JobConnectStation's `DORef::GetHandle()` copies the member; its charged instructions fall 110 → 103, but the frame shifts. `GetHandle`'s form is site-dependent (§3.2) |
+
+Three rows are renamed, at their old scores: ObjDupProtocol `Send` (`qResult` is a class: `?AU` → `?AV`, 99.694),
+`ProcessJoinRequest` (parameter type `_DS_StationIdentification`, 99.653) and `_DOC_RootDO::DispatchRMCResult`
+(returns `bool`, 100).
 
 ## 6. Native gate
 
 ## 7. Not done
+
+- **RefCountedObject** (`0x82AA6918..0x82AA6B98`, 640 B) is its own TU, unpinned and unwritten. So is the TU between
+  Session and Station (`0x82A7ADD0..0x82A7B860`: protocol-name strings, a PGV vtable), the Protocol TU before
+  RefCountedObject, and the DOFilter subclasses after StationDDL (`0x82A847B8..`).
+- **`StepSequenceJob.h` does not match retail** (Step 0x10 bytes at 0x48, start time 0x38, a word at 0x58). It stays
+  local to JobConnectStation.cpp and JobJoinSession.cpp, as in JBESL and ObjDupProtocol, and JobConnectStation.cpp
+  also keeps a local `JobConnectStation`/`JobChangeConnection`, so those two classes are still defined twice
+  (here and in `ObjDup/JobChangeConnection.h`).
+- **The `Core::GetInstance` / `GetInstanceFromVector` frame question (§3.4) and `DORef::GetHandle`'s
+  site-dependent form (§3.2)** are open; both look like different inline helpers at different retail call sites.
+- **Fold/alias charges left for the alias lane:** `0x823EA598` (the 4-byte copy ctor, StationManager ×5, JCS ×1),
+  `0x82B35690` (StationDDL `CallSignalAsFaulty`), the shared `list<Message*>` erase/clear copies (JCS ×3), the
+  `GetStreamSettingsForContext` anonymous-namespace survivor (Station `FlushBundle`), `SetVolume` as
+  `DOHandle(unsigned)` and `reverse_iterator` as the DOHandle copy (Session).
+- `/Ob1` inline-budget residue: StationDDL's `UpdateProtocol` ctor declined at its fourth use only; JobJoinSession's
+  `~ScopedCS`; Session's `GetNbKeys`/`EndReached`/`_M_empty_initialize`; StationManager's `list::insert`.
+- Session's six `map<String,String>` tree rows (1,160 B): nothing attested in the TU instantiates them.
+- SystemComponent's `objects.json` entry lacks `/GR-` (no `.text` effect; §2).
+- Method names for functions that only exist out of line in this build are lane-chosen and not attested
+  (`BeginUse`/`EndUse`, `SendImpl`, `FindIncomingEndPoint`, `PrepareURL`, and others listed per TU).
