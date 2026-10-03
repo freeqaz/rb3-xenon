@@ -468,10 +468,10 @@ void AccomplishmentProgress::UpdateScoreTypeSpecificStats(
     Band *i_pBand
 ) {
     MILO_ASSERT(i_pBand, 0x420);
-    mTotalOverdriveDeploys[type] += stats.mDeployCount;
-    mTotalOverdriveTime[type] += (int)(0.001f * stats.mTotalOverdriveDurationMs);
-    mTotalOverdrivePhrases[type] += stats.mOverdrivePhrasesCompleted;
-    mTotalUnisonPhrases[type] += stats.mUnisonPhraseCompleted;
+    mTotalOverdriveDeploys[type] += stats.GetDeployCount();
+    mTotalOverdriveTime[type] += (int)(0.001f * stats.GetTotalOverdriveDuration());
+    mTotalOverdrivePhrases[type] += stats.GetOverdrivePhrasesCompleted();
+    mTotalUnisonPhrases[type] += stats.GetUnisonPhrasesCompleted();
     int overdriveTime = (int)(i_pBand->mMsWithMultiplier / 1000.0f);
     if (overdriveTime > mMostOverdriveTime[type]) {
         mMostOverdriveTime[type] = overdriveTime;
