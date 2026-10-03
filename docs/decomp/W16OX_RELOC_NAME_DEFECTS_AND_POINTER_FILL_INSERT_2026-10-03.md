@@ -255,3 +255,5 @@ Gates on the final tree (lane worktree, full build after `touch config.yml`):
   contradicted / 2125).
 - `tools/test_alias_survivor_drift.py`: 14 passed.
 - `icf_pair_adjudicate.py --chasetest`: PASSED.
+- Native gate, run last on the final code at `1a1a25f2e` (rebased on `283366657`; only this line changed afterwards):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
