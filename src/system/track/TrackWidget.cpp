@@ -281,17 +281,10 @@ void TrackWidget::Mats(std::list<class RndMat *> &mats, bool) {
                 MatShaderOptions opts;
                 if (mWidgetType == kMultiMeshWidget) {
                     int constraint = cur->TransConstraint();
-                    int mask = 0xC;
-                    // Match-only pattern: explicit zero-then-set produces the
-                    // rlwinm+rlwimi sequence the original uses for the i5 bit,
-                    // and the inlined SetLast5 keeps `pack & ~0x1F` live across
-                    // the branch so it doesn't have to be reloaded.
                     opts.shader_struct.i5 = 0;
                     opts.shader_struct.i5
                         = (constraint == RndTransformable::kConstraintFastBillboardXYZ);
-                    int packCleared = opts.pack & ~0x1F;
-                    if ((opts.pack >> 5) & 1) mask = 0xD;
-                    opts.pack = packCleared | (mask & 0x1F);
+                    opts.SetLast5(0xC | ((opts.pack >> 5) & 1));
                 } else {
                     opts.SetLast5(0x12);
                 }

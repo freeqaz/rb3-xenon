@@ -67,13 +67,9 @@
 #include "rndobj/MeshDeform.h"
 #include "rndobj/Rnd.h"
 
-// --- Character (char/Character.h:153-154). Declared, never defined.
-// (RepointSphereBase used to be an inert stub here; lane W16-LA wrote the real
-// body in char/Character.cpp from retail 0x8236F1D0.)
-// RemoveFromPoll drops a pollable from the character's poll list. Inert means
-// a removed pollable keeps polling — a leak of work, not of correctness, for a
-// single-frame render.
-void Character::RemoveFromPoll(RndPollable *) {}
+// --- Character. (RepointSphereBase and RemoveFromPoll used to be inert stubs
+// here; their real bodies are in char/Character.cpp, from retail 0x8236F1D0
+// (lane W16-LA) and 0x823710B8 (lane W16-PC).)
 
 // (CharClip::InGroup and CharClip::MakeMRU, and the four deformation passes
 // CharCollide::Deform, CharCuff::Deform, CharBoneOffset::ApplyToLocal and

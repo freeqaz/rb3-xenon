@@ -335,32 +335,25 @@ void Multiply(const Vector3 &vin, const Hmx::Quat &q, Vector3 &vout) {
     vout.y = vx * 2*(xy+zw)       + vy * (1 - 2*(xx+zz)) + vz * 2*(yz-xw);
     vout.z = vx * 2*(xz-yw)       + vy * 2*(yz+xw)     + vz * (1 - 2*(xx+yy));
 #else
-    // Load quaternion components
+    float qw = q.w;
     float qx = q.x;
     float qz = q.z;
     float qy = q.y;
-    float qw = q.w;
-
-    // Compute quaternion products interleaved with vector loads
-    float qxqy = qy * qx;
+    float vinx = vin.x;
     float qzqw = qz * qw;
     float viny = vin.y;
-    float qyqz = qz * qy;
-    float vinx = vin.x;
+    float qxqy = qy * qx;
     float qxqw = qx * qw;
+    float qyqz = qz * qy;
     float vinz = vin.z;
-    float qxqz = qz * qx;
     float qyqw = qy * qw;
-
-    // Negated squared terms
+    float qxqz = qz * qx;
     float neg_qxqx = -(qx * qx);
-    float neg_qzqz = -(qz * qz);
     float neg_qyqy = -(qy * qy);
-
-    // Quaternion rotation formula
-    vout.z = ((neg_qyqy + neg_qxqx) * vinz + (qxqz - qyqw) * vinx + (qyqz + qxqw) * viny) * 2.0f + vinz;
-    vout.x = ((qxqz + qyqw) * vinz + (neg_qzqz + neg_qyqy) * vinx + (qxqy - qzqw) * viny) * 2.0f + vinx;
-    vout.y = ((qyqz - qxqw) * vinz + (qxqy + qzqw) * vinx + (neg_qzqz + neg_qxqx) * viny) * 2.0f + viny;
+    float neg_qzqz = -(qz * qz);
+    vout.z = ((((((qxqz - qyqw) * vinx) + ((qyqz + qxqw) * viny)) + ((neg_qyqy + neg_qxqx) * vinz)) * 2.0f) + vinz);
+    vout.x = ((((((neg_qzqz + neg_qyqy) * vinx) + ((qxqy - qzqw) * viny)) + ((qxqz + qyqw) * vinz)) * 2.0f) + vinx);
+    vout.y = ((((((qxqy + qzqw) * vinx) + ((neg_qzqz + neg_qxqx) * viny)) + ((qyqz - qxqw) * vinz)) * 2.0f) + viny);
 #endif
 }
 
