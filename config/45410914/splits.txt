@@ -390,6 +390,7 @@ TrackPanelDir.cpp:
 	.pdata      start:0x821FAF38 end:0x821FAF48
 	.pdata      start:0x821FAF48 end:0x821FAF60
 	.pdata      start:0x821FAF60 end:0x821FAF70
+	.pdata      start:0x821FAF70 end:0x821FAFB0
 	.pdata      start:0x821FAFB0 end:0x821FAFB8
 	.pdata      start:0x821FAFB8 end:0x821FAFC0
 	.pdata      start:0x821FAFC0 end:0x821FAFD8
@@ -405,9 +406,11 @@ TrackPanelDir.cpp:
 	.text       start:0x82307EA8 end:0x82308060
 	.text       start:0x82308060 end:0x823082D0
 	.text       start:0x823082D0 end:0x8230846C
+	.text       start:0x82308478 end:0x8230869C
 	.text       start:0x8230869C end:0x82308710
 	.text       start:0x82308710 end:0x82308780
 	.text       start:0x82308780 end:0x82308C38
+	.text       start:0x82308C88 end:0x82308CEC
 	.text       start:0x82308CEC end:0x82308D5C
 	.text       start:0x82308D60 end:0x8230A774
 	.text       start:0x8230A7D8 end:0x8230A7E0
@@ -4980,13 +4983,10 @@ PropSync.cpp:
 	.text       start:0x82769AB0 end:0x8276A758
 
 SpotlightDrawer.cpp:
-	.pdata      start:0x821FAF70 end:0x821FAFB0
 	.pdata      start:0x82214660 end:0x82214670
 	.pdata      start:0x82214830 end:0x822149F0
 	.pdata      start:0x822149F8 end:0x82214A98
 	.pdata      start:0x82261B08 end:0x82261B10
-	.text       start:0x82308478 end:0x8230869C
-	.text       start:0x82308C88 end:0x82308CEC
 	.text       start:0x824D17AC end:0x824D17B0
 	.text       start:0x824D17BC end:0x824D1848
 	.text       start:0x824D4C28 end:0x824D6F68
