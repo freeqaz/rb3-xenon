@@ -14249,8 +14249,12 @@ network/quazal/MatchMaking/Client/MatchMakingClient.cpp:
 	.text       start:0x82A8DDB0 end:0x82A8E148
 
 network/quazal/Foundation/ProductFacade.cpp:
-	.pdata      start:0x82251E00 end:0x82251E48
-	.text       start:0x82A8FDF0 end:0x82A90C08
+	.pdata      start:0x82251E00 end:0x82251E50
+	.pdata      start:0x822617D0 end:0x822617D8
+	.pdata      start:0x82261C40 end:0x82261C48
+	.text       start:0x82A8FDF0 end:0x82A90C88
+	.text       start:0x82C417E8 end:0x82C41820
+	.text       start:0x82C4A8F8 end:0x82C4A920
 
 network/quazal/SessionDDL.cpp:
 	.pdata      start:0x82251E98 end:0x82251EF0
@@ -14357,16 +14361,16 @@ network/quazal/JobJoinSession.cpp:
 	.text       start:0x82AC8658 end:0x82ACAB10
 
 network/quazal/JobListenOnWellKnown.cpp:
-	.pdata      start:0x82254628 end:0x82254630
-	.text       start:0x82ACE5B0 end:0x82ACE660
+	.pdata      start:0x82254628 end:0x82254650
+	.text       start:0x82ACE5B0 end:0x82ACE828
 
 network/quazal/Job.cpp:
 	.pdata      start:0x82254718 end:0x82254720
 	.text       start:0x82ACF5A8 end:0x82ACF7BC
 
 network/quazal/SessionClock/SessionClockDDL.cpp:
-	.pdata      start:0x82254960 end:0x822549C0
-	.text       start:0x82AD2548 end:0x82AD2B6C
+	.pdata      start:0x82254960 end:0x82254A10
+	.text       start:0x82AD2548 end:0x82AD30D0
 
 network/quazal/LocalClock.cpp:
 	.pdata      start:0x82254A18 end:0x82254A20
@@ -14425,12 +14429,12 @@ network/quazal/CallContextRegister.cpp:
 	.text       start:0x82AE0138 end:0x82AE02C8
 
 network/quazal/Competition/Protocol/TournamentDDL.cpp:
-	.pdata      start:0x822552C8 end:0x822552D0
-	.text       start:0x82AE10A0 end:0x82AE1124
+	.pdata      start:0x822552C8 end:0x822552E8
+	.text       start:0x82AE10A0 end:0x82AE1210
 
 network/quazal/MatchMaking/Protocol/GameSessionDDL.cpp:
-	.pdata      start:0x82255568 end:0x82255570
-	.text       start:0x82AE5BB0 end:0x82AE5C34
+	.pdata      start:0x82255558 end:0x82255598
+	.text       start:0x82AE5B50 end:0x82AE5D80
 
 network/quazal/MatchMaking/Protocol/DynamicGatheringDDL.cpp:
 	.pdata      start:0x822555A8 end:0x822555B0
@@ -14513,8 +14517,8 @@ network/quazal/Transport/UDP/UDPTransport.cpp:
 	.text       start:0x82B15808 end:0x82B1A518
 
 network/quazal/Compression/ZLib/ZLibCompression.cpp:
-	.pdata      start:0x82257B98 end:0x82257BA0
-	.text       start:0x82B1B6D0 end:0x82B1B80C
+	.pdata      start:0x82257B88 end:0x82257BD0
+	.text       start:0x82B1B660 end:0x82B1BE58
 
 network/quazal/SystemComponents.cpp:
 	.pdata      start:0x82257C20 end:0x82257C28
@@ -14553,12 +14557,12 @@ network/quazal/SessionClock/SessionClockExtension.cpp:
 	.text       start:0x82B26A40 end:0x82B26B1C
 
 network/quazal/DupSpace/DupSpaceExtension.cpp:
-	.pdata      start:0x822584A0 end:0x822584B0
-	.text       start:0x82B26DD8 end:0x82B26FFC
+	.pdata      start:0x82258470 end:0x822584C0
+	.text       start:0x82B26B20 end:0x82B270E8
 
 network/quazal/GlobalDiscovery/GlobalDiscoveryExtension.cpp:
-	.pdata      start:0x822586C0 end:0x822586C8
-	.text       start:0x82B2C030 end:0x82B2C0E0
+	.pdata      start:0x822586A0 end:0x822586C8
+	.text       start:0x82B2BE80 end:0x82B2C0E0
 
 network/quazal/Transport/Interface/JobConnectEndPoint.cpp:
 	.pdata      start:0x82258718 end:0x822589D8
