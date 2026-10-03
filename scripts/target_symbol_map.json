@@ -5440,7 +5440,6 @@
  "0x822afcc8": "?AddDegrees@BandHeadShaper@@QAAXPBDHPAMH@Z",
  "0x822afd50": "??0BandHeadShaper@@QAA@XZ",
  "0x822afd68": "??1BandHeadShaper@@QAA@XZ",
- "0x822afd88": "??0Vector3@@QAA@XZ",
  "0x822afd90": "?AddChildBones@BandHeadShaper@@QAAXPAVRndTransformable@@@Z",
  "0x822afe10": "?Reskin@BandHeadShaper@@QAAXXZ",
  "0x822b00a0": "?End@BandHeadShaper@@QAAXXZ",
