@@ -2410,7 +2410,16 @@
                     "/GR-"
                 ]
             },
-            "network/quazal/JobListenOnWellKnown.cpp": "NonMatching",
+            "network/quazal/JobListenOnWellKnown.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/EHs-c-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/Job.cpp": "NonMatching",
             "network/quazal/SessionClock/SessionClockDDL.cpp": {
                 "status": "NonMatching",
