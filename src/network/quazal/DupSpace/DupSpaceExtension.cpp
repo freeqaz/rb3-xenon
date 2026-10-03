@@ -235,7 +235,7 @@ namespace Quazal {
     class DuplicationSpaceTable : public RootObject {
     public:
         DuplicationSpaceTable();
-        ~DuplicationSpaceTable();
+        virtual ~DuplicationSpaceTable();
 
         static DuplicationSpaceTable *GetInstance();
         void RegisterDuplicationSpaces();
@@ -244,7 +244,7 @@ namespace Quazal {
         void StopPeriodicMatch();
         void OperationEndMatchTrigger(DOOperation *);
 
-        char m_pad0[0x38];
+        char m_pad4[0x34];
     };
 
     class DuplicationSpace : public RootObject {
@@ -285,7 +285,7 @@ namespace Quazal {
         DuplicationSpaceTable m_oDupSpaceTable; // 0x20
     };
 
-    DupSpaceExtension::DupSpaceExtension() : SystemComponent(String("DupSpace extension")) {}
+    DupSpaceExtension::DupSpaceExtension() : SystemComponent("DupSpace extension") {}
 
     DupSpaceExtension::~DupSpaceExtension() {}
 
@@ -309,7 +309,7 @@ namespace Quazal {
         DuplicationSpaceTable::GetInstance()->StopPeriodicMatch();
         MethodCallJob<DuplicationSpaceTable, int, PeriodicJob> *pJob =
             new (DUPSPACEEXTENSION_FILE, 0x31) MethodCallJob<DuplicationSpaceTable, int, PeriodicJob>(
-                String("UnregisterDuplicationSpaces"),
+                "UnregisterDuplicationSpaces",
                 DuplicationSpaceTable::GetInstance(),
                 &DuplicationSpaceTable::UnregisterDuplicationSpaces,
                 0

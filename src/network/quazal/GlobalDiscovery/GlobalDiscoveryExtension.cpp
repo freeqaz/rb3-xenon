@@ -136,7 +136,7 @@ namespace Quazal {
     };
 
     GlobalDiscoveryExtension::GlobalDiscoveryExtension()
-        : SystemComponent(String("GlobalDiscovery extension")) {}
+        : SystemComponent("GlobalDiscovery extension") {}
 
     GlobalDiscoveryExtension::~GlobalDiscoveryExtension() {}
 
