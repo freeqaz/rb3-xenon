@@ -103,7 +103,8 @@ public:
     // so retail's single-base addressing reproduces. Re-adding it here would
     // silently make that inert (class scope beats namespace scope in PreLoad).
     OBJ_NEW_OVERLOAD;
-    DELETE_OVERLOAD;
+    // Retail ??_GBandList (0x8233F2B8) calls MemFree directly: the delete inlines.
+    DELETE_OVERLOAD_INLINE;
 
     int mBandListRev; // 0x23c
     std::map<int, AnimState> mAnimStates; // 0x240
