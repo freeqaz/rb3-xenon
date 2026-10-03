@@ -1233,7 +1233,7 @@ void VocalTrackDir::SetRange(float min, float max, int tonic, bool b) {
 
 Hmx::Color VocalTrackDir::GetLyricColor(int idx) const {
     if ((idx & 3) == 0 && (idx & 8) == 0) {
-        return Hmx::Color(0, 0, 0);
+        return Hmx::Color(0);
     }
     return mLyricColorMap.find(idx & 0x1f)->second;
 }
