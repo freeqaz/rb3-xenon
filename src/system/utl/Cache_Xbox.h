@@ -13,6 +13,9 @@ public:
     virtual ~CacheIDXbox() {}
     virtual const char *GetCachePath(const char *);
     virtual const char *GetCacheSearchPath(const char *);
+    // retail CacheIDXbox slot 3 is `lwz r3,0x10(r3); blr` (ICF-shared with
+    // ArkFile::Size), not CacheID's `li r3,-1` (lane W16-OR).
+    virtual unsigned int GetDeviceID() const { return mContentData.DeviceID; }
 
     const char *Name() const { return mStrCacheName.c_str(); }
     DWORD DeviceID() const { return mContentData.DeviceID; }

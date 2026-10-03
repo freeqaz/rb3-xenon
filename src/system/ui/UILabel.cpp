@@ -417,6 +417,19 @@ void UILabel::Draw() {
         RndDrawable::Draw();
 }
 
+// retail 0x827F23B8: RndDrawable::Collide is the non-virtual entry point.
+RndDrawable *UILabel::CollideShowing(const Segment &s, float &f, Plane &pl) {
+    return mText->Collide(s, f, pl) ? this : 0;
+}
+
+// retail 0x827F23F8
+int UILabel::CollidePlane(const Plane &p) { return mText->CollidePlane(p); }
+
+// retail 0x827F2410
+float UILabel::GetDistanceToPlane(const Plane &p, Vector3 &v) {
+    return mText->GetDistanceToPlane(p, v);
+}
+
 // retail 0x827F4910. RndText::mFont payload is at 0xec (RndText.h), confirmed
 // against retail (`lwz r11, 0xec(r11)`). Every Mat() lookup here uses the
 // FONT's material through the non-virtual GetMat() (see rndobj/Font.h) --

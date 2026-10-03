@@ -85,7 +85,9 @@ BEGIN_LOADS(Screenshot)
 END_LOADS
 
 void Screenshot::DrawShowing() {
-    if (!TheRnd.DrawMode() && TheLoadMgr.EditMode() && mMat) {
+    // Editor-only. Retail's primary-vtable slot 5 is the empty `blr` hub
+    // (lane W16-OR): LOADMGR_EDITMODE is false outside the native build.
+    if (!TheRnd.DrawMode() && LOADMGR_EDITMODE && mMat) {
         TheRnd.DrawRect(
             Hmx::Rect(0, 0, TheRnd.Width(), TheRnd.Height()),
             Hmx::Color(0, 0, 0),

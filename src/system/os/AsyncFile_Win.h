@@ -7,6 +7,7 @@ class AsyncFileWin : public AsyncFile {
 public:
     AsyncFileWin(const char *, int);
     virtual ~AsyncFileWin();
+    virtual bool GetFileHandle(void *&) { return false; }
 
 #ifdef HX_NATIVE
     MEM_OVERLOAD(AsyncFile, 0x17);

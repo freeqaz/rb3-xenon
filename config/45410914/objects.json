@@ -1727,6 +1727,12 @@
                 ]
             },
             "band3/meta_band/OvershellPartSelectProvider.cpp": "NonMatching",
+            "band3/meta_band/OvershellProfileProvider.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/DRB3_HANDLE_LOCAL_STATIC"
+                ]
+            },
             "band3/meta_band/OvershellPanel.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

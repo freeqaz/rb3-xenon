@@ -569,6 +569,83 @@ def run_report(project_dir, cls, tu=None, verbose=False,
     return src, text
 
 
+# ------------------------------------------------- true sizeof for vbase classes
+#
+# ⚠ /d1reportSingleClassLayout's `size(N)` is NOT sizeof() for a class with a
+# VIRTUAL BASE: it stops at the end of the virtual-base region and omits the
+# tail pad to the class's alignment (lane W16-OP §1.2, fixed by lane W16-OR).
+# FadePanel prints size(196) while its own compiled NewObject allocates
+# `li r3,0xc8` (200) -- Timer carries a u64, so the class is 8-aligned -- and
+# 11 of W16-OP's 12 sizeof "disagreements" were this artifact.  For a class
+# with no virtual base the printed size already includes the tail pad.
+#
+# The fix asks the COMPILER, not arithmetic over the report: a wrapper TU
+# #includes the real source and instantiates an UNDEFINED template on
+# sizeof(T) / __alignof(T); the resulting C2079 diagnostic names the value.
+# A class the probe cannot name (private nested, anonymous namespace, ...)
+# keeps its printed size and is labelled size_source="printed-UNVERIFIED".
+
+def probe_true_sizes(project_dir, src, parsed, verbose=False):
+    """Replace `size` with the compiler's sizeof() for every reported class
+    that has a virtual base.  Returns the number of classes probed."""
+    want = [k for k, c in parsed["classes"].items() if c.get("has_vbase")]
+    if not want:
+        return 0
+    obj = _obj_for_source(project_dir, src)
+    if not obj:
+        for k in want:
+            parsed["classes"][k]["size_source"] = "printed-UNVERIFIED"
+        return 0
+    with tempfile.TemporaryDirectory(dir=os.path.expanduser("~/tmp")) as td:
+        argv, env, cwd = build_command(project_dir, obj, None,
+                                       os.path.join(td, "probe.obj"),
+                                       all_classes=True)
+        argv = [a for a in argv if a != "/d1reportAllClassLayout"]
+        src_abs = os.path.abspath(os.path.join(cwd, argv[-1]))
+        wrap = os.path.join(td, "sizeof_probe.cpp")
+        lines = ['#include "%s"' % src_abs.replace("\\", "/"),
+                 "template <int N> struct __clr_sizeof_probe;",
+                 "template <int N> struct __clr_alignof_probe;"]
+        for i, k in enumerate(want):
+            lines.append(f"__clr_sizeof_probe<sizeof(::{k})> __clr_s{i};")
+            lines.append(f"__clr_alignof_probe<__alignof(::{k})> __clr_a{i};")
+        open(wrap, "w").write("\n".join(lines) + "\n")
+        # relative: an absolute /home/... operand is parsed by cl as an option
+        argv[-1] = os.path.relpath(wrap, cwd)
+        if verbose:
+            print("# sizeof probe: " + " ".join(shlex.quote(a) for a in argv),
+                  file=sys.stderr)
+        p = subprocess.run(argv, cwd=cwd, capture_output=True, text=True, env=env)
+    # cl prints the template argument on a later line:
+    #   w.cpp(5) : error C2079: '__clr_s0' uses undefined struct '__clr_sizeof_probe<N>'
+    #           with
+    #           [
+    #               N=200
+    #           ]
+    got, pending = {}, None
+    for line in (p.stdout + p.stderr).splitlines():
+        m = re.search(r"'__clr_([sa])(\d+)' uses undefined struct", line)
+        if m:
+            pending = (m.group(1), int(m.group(2)))
+            m2 = re.search(r"_probe<(\d+)>", line)
+            if m2:
+                got[pending], pending = int(m2.group(1)), None
+            continue
+        m = re.match(r"^\s*N=(\d+)\s*$", line)
+        if m and pending:
+            got[pending], pending = int(m.group(1)), None
+    for i, k in enumerate(want):
+        c = parsed["classes"][k]
+        sz, al = got.get(("s", i)), got.get(("a", i))
+        if sz is None:
+            c["size_source"] = "printed-UNVERIFIED"
+            continue
+        c["size"] = sz
+        c["align"] = al
+        c["size_source"] = "compiler-sizeof"
+    return len(want)
+
+
 # --------------------------------------------------------------------- parsing
 
 RE_CLASS = re.compile(r"^(?:class|struct|union)\s+(\S+)\s+size\((\d+)\):")
@@ -609,7 +686,8 @@ def parse(text):
         m = RE_CLASS.match(line)
         if m:
             cur = {"name": m.group(1), "size": int(m.group(2)),
-                   "members": [], "padding": []}
+                   "size_printed": int(m.group(2)), "size_source": "printed",
+                   "has_vbase": False, "members": [], "padding": []}
             classes[m.group(1)] = cur
             base_at_depth = {}
             vft = None
@@ -640,6 +718,8 @@ def parse(text):
 
         bm = RE_BASE_OPEN.match(body)
         if bm:
+            if "(virtual base " in body:
+                cur["has_vbase"] = True
             # this `+---` sits one level deeper than its bars
             base_at_depth[depth + 1] = bm.group(1)
             continue
@@ -849,6 +929,13 @@ def emit(parsed, cls, exact, offset_query, raw_text, show_vtable):
     for k in keys:
         c = classes[k]
         print(f"\n=== {k}   sizeof = {c['size']} (0x{c['size']:x}) ===")
+        if c.get("size_source") == "compiler-sizeof" and c["size"] != c["size_printed"]:
+            print(f"  # compiler printed size({c['size_printed']}); true sizeof is "
+                  f"{c['size']} (tail pad to __alignof {c.get('align')} omitted by "
+                  f"/d1reportSingleClassLayout for a class with a virtual base)")
+        elif c.get("size_source") == "printed-UNVERIFIED":
+            print(f"  # !! has a virtual base and the sizeof probe could not name it:"
+                  f" size({c['size']}) may be short by the tail pad")
         pad_by_off = {}
         for p in c["padding"]:
             pad_by_off.setdefault(p["after_offset"], 0)
@@ -1130,6 +1217,27 @@ def run_selftest(project_dir, sabotage=None, verbose=False):
             f"compared={cmp_r} (want 1 finding / 1 compared, so the audit really "
             f"does fire when it can)")
 
+    # -- I  ★ VIRTUAL-BASE TAIL PAD (lane W16-OR).  FadePanel has a virtual base
+    #       and an 8-aligned member (Timer's u64).  The compiler PRINTS
+    #       size(196); retail's FadePanel::NewObject allocates `li r3,0xc8` and
+    #       our own compiled NewObject (fuzzy 100) does too, so sizeof is 200.
+    #       The leg requires BOTH numbers: printed == 196 proves the artifact is
+    #       still there to correct (so the leg cannot pass vacuously), and
+    #       size == 200 proves the probe corrected it.
+    st_i, dg_i, _k, p_i, _t = _probe(project_dir, "FadePanel",
+                                     tu="src/band3/game/FadePanel.cpp",
+                                     verbose=verbose)
+    fp = p_i["classes"].get("FadePanel", {})
+    if st_i == OK:
+        probe_true_sizes(project_dir, "src/band3/game/FadePanel.cpp", p_i, verbose)
+    chk("I. virtual-base class: sizeof from the compiler, not size(N) -- "
+        "FadePanel printed 196, sizeof 200",
+        st_i == OK and fp.get("size_printed") == 196 and fp.get("size") == 200
+        and fp.get("size_source") == "compiler-sizeof" and fp.get("align") == 8,
+        f"status={st_i} printed={fp.get('size_printed')} size={fp.get('size')} "
+        f"align={fp.get('align')} source={fp.get('size_source')} "
+        f"(want OK / 196 / 200 / 8 / compiler-sizeof)")
+
     nfail = 0
     for name, ok, detail in rows:
         print(f"  [{'PASS' if ok else 'FAIL'}] {name}\n         {detail}")
@@ -1210,6 +1318,8 @@ def main():
     # compiler actually answer?" from an empty dict.
     status, diags = classify(text, parsed,
                              None if args.all_classes else args.cls, args.exact)
+    if status == OK:
+        probe_true_sizes(args.project_dir, src, parsed, args.verbose)
     if args.json:
         parsed["_tu"] = src
         parsed["status"] = status

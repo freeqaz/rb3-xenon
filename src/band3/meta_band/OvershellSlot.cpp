@@ -2162,36 +2162,5 @@ BEGIN_HANDLERS(OvershellSlot)
 END_HANDLERS
 #pragma pop
 
-#ifdef HX_NATIVE
-// OvershellProfileProvider has a header (meta_band/OvershellProfileProvider.h) but
-// NO decomp .cpp anywhere in the tree — its body lives in Wii-only profile-swap code
-// that was never decompiled. OvershellSlot's ctor `new`s one (mSwappableProfilesProvider)
-// and hands it to a UIList via `setup_providers`; UIList::Handle(set_provider) then
-// dynamic_casts it to UIListProvider*. With the weak no-op ctor stub the object's
-// vtable/RTTI is garbage -> the dynamic_cast (or any virtual call) crashes. Provide a
-// minimal native impl so the provider constructs with a real vtable and answers
-// offline-empty (Wii profile swapping has no native meaning). Mirrors the MetaPanel.cpp
-// JoinInvitePanel/WiiProfilePanel native-glue precedent for un-decompiled Wii classes.
-OvershellProfileProvider::OvershellProfileProvider(BandUserMgr *mgr)
-    : unk20(0), unk24(0), unk28(0), unk2c(mgr) {}
-OvershellProfileProvider::~OvershellProfileProvider() {}
-void OvershellProfileProvider::Text(int, int, UIListLabel *, UILabel *) const {}
-RndMat *OvershellProfileProvider::Mat(int, int, UIListMesh *) const { return 0; }
-int OvershellProfileProvider::NumData() const { return 0; }
-DataNode OvershellProfileProvider::Handle(DataArray *, bool) { return DataNode(0); }
-WiiProfileActResult
-OvershellProfileProvider::ActOnProfile(int, LocalBandUser *, bool) {
-    return kWiiProfileActResult_Done;
-}
-WiiProfileActResult OvershellProfileProvider::ActOnProfileConfirmed(LocalBandUser *) {
-    return kWiiProfileActResult_Done;
-}
-void OvershellProfileProvider::SetWiiProfileListMode(WiiProfileListMode, bool) {}
-OvershellProfileProvider::WiiProfileListMode
-OvershellProfileProvider::GetWiiProfileListMode() {
-    return (WiiProfileListMode)0;
-}
-int OvershellProfileProvider::GetWiiProfileCount(LocalBandUser *) const { return 0; }
-void OvershellProfileProvider::Reload() {}
-const char *OvershellProfileProvider::GetWiiProfileSelectedName() const { return ""; }
-#endif
+// OvershellProfileProvider's bodies live in their own TU,
+// meta_band/OvershellProfileProvider.cpp (retail 0x82667FE0-0x8266849C).

@@ -66,6 +66,15 @@ public:
     virtual void Poll();
     virtual void Highlight();
     virtual void DrawShowing();
+    // RndDrawable overrides that forward to mText (0x144). Retail UILabel's
+    // primary vtable has its own bodies in slots 1/7/8, distinct from
+    // UIComponent's (lane W16-OR, tools/vtable_override_pattern.py):
+    //   0x827F2410 GetDistanceToPlane  tail-call mText->GetDistanceToPlane
+    //   0x827F23B8 CollideShowing      mText->Collide(...) ? this : 0
+    //   0x827F23F8 CollidePlane        tail-call mText->CollidePlane
+    virtual float GetDistanceToPlane(const Plane &, Vector3 &);
+    virtual RndDrawable *CollideShowing(const Segment &, float &, Plane &);
+    virtual int CollidePlane(const Plane &);
     virtual bool CanHaveFocus();
     // retail-360 UILabel own-virtual @ vtable slot 0x50 (first UILabel own slot).
     // RndDrawable::Draw is NON-virtual in retail-360 (rndobj/Draw.h), so this is
