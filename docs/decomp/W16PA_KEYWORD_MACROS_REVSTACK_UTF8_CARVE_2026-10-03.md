@@ -279,3 +279,4 @@ for every input. Both are now written to retail's shape: **50.98 → 100 and 56.
 ## 8. Native gate (run last)
 
 `tools/native_build_gate.sh` on the final code (only this doc line follows it):
+`NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
