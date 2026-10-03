@@ -86554,7 +86554,9 @@
    "name": "_M_fill_insert",
    "address": "0x823ea1c8",
    "survivor": "?_M_fill_insert@?$vector@DV?$StlNodeAlloc@D@stlpmtx_std@@@stlpmtx_std@@AAAXPADIABD@Z",
-   "folded": [],
+   "folded": [
+    "?_M_fill_insert@?$vector@EV?$StlNodeAlloc@E@stlpmtx_std@@@stlpmtx_std@@AAAXPAEIABE@Z"
+   ],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [2].  [W16-AE 2026-09-14: survivor/folded ROLE SWAP -- the former survivor spelling is withdrawn (see withdrawn[]); membership now asserts no fold at all.]",
    "withdrawn": [
     {
@@ -86563,6 +86565,13 @@
      "class": "SURVIVOR_NAME_WRONG_SIZE_AND_BODY_DIFFER",
      "disposition": "withdrawn; map row at 0x823ea1c8 renamed to the former folded spelling (the only spelling whose COMDAT matches retail size and reloc offsets); .text line re-homed to the TU whose blocks flank it",
      "evidence": "retail 104 B, relocs +0x3c _M_fill_insert_aux<vector<char>> +0x54 _M_insert_overflow<vector<uchar>>; our vector<Hmx::Color>::_M_fill_insert is 108 B (+0x40/+0x58), masked words differ; the vector<char> spelling is 104 B with identical offsets. Address sits between SyncStore.cpp blocks (0x823EA0D0-0x823EA1C8 / 0x823EA238-)."
+    }
+   ],
+   "admitted": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@EV?$StlNodeAlloc@E@stlpmtx_std@@@stlpmtx_std@@AAAXPAEIABE@Z",
+     "lane": "W16-OK 2026-10-03",
+     "evidence": "W16-OK 2026-10-03: chase PROVEN; the one CYCLE-ASSUMED leaf (_M_fill_insert_aux<char>/<unsigned char>, self-recursive) is broken by W16-JE's two channels: (1) the leaf's masked body and relocation shape is unique image-wide (census = the survivor's leaf only); (2) heterogeneous fan-in: retail callers of the survivor chain named for our element type, ??$?5EV?$StlNodeAlloc@E@stlpmtx_std@@@@YAAAVBinStream@@AAV0@, ??$CachedRead@EV?$StlNodeAlloc@E@stlpmtx_std@@@@YAAAVBinStre. Call site: the charged row calls this body where ours calls _M_fill_insert<unsigned char>."
     }
    ]
   },
