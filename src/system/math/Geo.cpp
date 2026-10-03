@@ -455,53 +455,41 @@ bool Intersect(const Triangle &tri, const Box &box) {
     float cy = box.mMin.y + halfY;
     float cz = box.mMin.z + halfZ;
 
-    // Translate triangle to box center
+    // The untranslated vertices are Vector3 locals built by Add(); each axis
+    // range is a Vector2 (x = min, y = max), so both fsels are computed before
+    // the first compare.
     float v0x = v0.x - cx;
-    float v1x = (tri.frame.x.x + tri.origin.x) - cx;
-    float v2x = (tri.frame.y.x + tri.origin.x) - cx;
+    Vector3 v1, v2;
+    Add(tri.frame.x, tri.origin, v1);
+    Add(tri.frame.y, tri.origin, v2);
+    float v1x = v1.x - cx;
+    float v2x = v2.x - cx;
 
     float v0y = v0.y - cy;
-    float v1y = (tri.frame.x.y + tri.origin.y) - cy;
-    float v2y = (tri.frame.y.y + tri.origin.y) - cy;
+    float v1y = v1.y - cy;
+    float v2y = v2.y - cy;
 
     float v0z = v0.z - cz;
-    float v1z = (tri.frame.x.z + tri.origin.z) - cz;
-    float v2z = (tri.frame.y.z + tri.origin.z) - cz;
+    float v1z = v1.z - cz;
+    float v2z = v2.z - cz;
 
-    // X axis separation test (fsel ternary for min/max)
     {
-        float diff = v0x - v1x;
-        float mn = diff >= 0.0f ? v1x : v0x;
-        float mx = diff >= 0.0f ? v0x : v1x;
-        float sub_mn = mn - v2x;
-        float sub_mx = mx - v2x;
-        mn = sub_mn >= 0.0f ? v2x : mn;
-        mx = sub_mx >= 0.0f ? mx : v2x;
-        if (mn > halfX || mx < -halfX) return false;
+        Vector2 range;
+        range.x = Min(Min(v0x, v1x), v2x);
+        range.y = Max(Max(v0x, v1x), v2x);
+        if (range.x > halfX || range.y < -halfX) return false;
     }
-
-    // Y axis separation test
     {
-        float diff = v0y - v1y;
-        float mn = diff >= 0.0f ? v1y : v0y;
-        float mx = diff >= 0.0f ? v0y : v1y;
-        float sub_mn = mn - v2y;
-        float sub_mx = mx - v2y;
-        mn = sub_mn >= 0.0f ? v2y : mn;
-        mx = sub_mx >= 0.0f ? mx : v2y;
-        if (mn > halfY || mx < -halfY) return false;
+        Vector2 range;
+        range.x = Min(Min(v0y, v1y), v2y);
+        range.y = Max(Max(v0y, v1y), v2y);
+        if (range.x > halfY || range.y < -halfY) return false;
     }
-
-    // Z axis separation test
     {
-        float diff = v0z - v1z;
-        float mn = diff >= 0.0f ? v1z : v0z;
-        float mx = diff >= 0.0f ? v0z : v1z;
-        float sub_mn = mn - v2z;
-        float sub_mx = mx - v2z;
-        mn = sub_mn >= 0.0f ? v2z : mn;
-        mx = sub_mx >= 0.0f ? mx : v2z;
-        if (mn > halfZ || mx < -halfZ) return false;
+        Vector2 range;
+        range.x = Min(Min(v0z, v1z), v2z);
+        range.y = Max(Max(v0z, v1z), v2z);
+        if (range.x > halfZ || range.y < -halfZ) return false;
     }
 
     // Face normal plane test — reuse v0 stack for plane
@@ -520,34 +508,32 @@ bool Intersect(const Triangle &tri, const Box &box) {
     float e1x = v2x - v1x, e1y = v2y - v1y, e1z = v2z - v1z;
     float e2x = v0x - v2x, e2y = v0y - v2y, e2z = v0z - v2z;
 
-    // Cross products with box axes — 4-float stride (ax, ay, az, pad)
-    float axes[9][4] = {
-        { 0, -e0z, e0y, 0 },
-        { e0z, 0, -e0x, 0 },
-        { -e0y, e0x, 0, 0 },
-        { 0, -e1z, e1y, 0 },
-        { e1z, 0, -e1x, 0 },
-        { -e1y, e1x, 0, 0 },
-        { 0, -e2z, e2y, 0 },
-        { e2z, 0, -e2x, 0 },
-        { -e2y, e2x, 0, 0 },
-    };
+    Vector3 axes[9];
+    axes[0].Set(0.0f, -e0z, e0y);
+    axes[1].Set(0.0f, -e1z, e1y);
+    axes[2].Set(0.0f, -e2z, e2y);
+    axes[3].Set(e0z, 0.0f, -e0x);
+    axes[4].Set(e1z, 0.0f, -e1x);
+    axes[5].Set(e2z, 0.0f, -e2x);
+    axes[6].Set(-e0y, e0x, 0.0f);
+    axes[7].Set(-e1y, e1x, 0.0f);
+    axes[8].Set(-e2y, e2x, 0.0f);
 
     float radii[9];
-    float *pfAxis = &axes[0][1];
-    float *pfR = radii;
     unsigned int i = 0;
+    float *pfR = radii;
+    const float *pfAxis = &axes[0].y;
     do {
-        float ax = pfAxis[-1], ay = pfAxis[0], az = pfAxis[1];
-        float absx = ax; if (absx <= 0.0f) absx = -absx;
-        float absy = ay; if (absy <= 0.0f) absy = -absy;
-        float absz = az; if (absz <= 0.0f) absz = -absz;
-        float r = absx * halfX + absy * halfY + absz * halfZ;
+        float absx = pfAxis[-1]; if (absx <= 0.0f) absx = -absx;
+        float absy = pfAxis[0];  if (absy <= 0.0f) absy = -absy;
+        float absz = pfAxis[1];  if (absz <= 0.0f) absz = -absz;
+        float r = absy * halfY + absz * halfZ + absx * halfX;
         *pfR = r;
 
-        float p0 = ax * v0x + ay * v0y + az * v0z;
-        float p1 = ax * v1x + ay * v1y + az * v1z;
-        float p2 = ax * v2x + ay * v2y + az * v2z;
+        const Vector3 &axis = axes[i];
+        float p0 = axis.x * v0x + axis.z * v0z + axis.y * v0y;
+        float p1 = axis.x * v1x + axis.z * v1z + axis.y * v1y;
+        float p2 = axis.x * v2x + axis.z * v2z + axis.y * v2y;
 
         float diff = p1 - p2;
         float mx = diff >= 0.0f ? p1 : p2;
@@ -555,7 +541,7 @@ bool Intersect(const Triangle &tri, const Box &box) {
         mx = p0 - mx >= 0.0f ? p0 : mx;
         if (mx < -r) return false;
         mn = p0 - mn >= 0.0f ? mn : p0;
-        if (r < mn) return false;
+        if (mn > r) return false;
 
         i++;
         pfAxis += 4;
