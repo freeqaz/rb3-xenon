@@ -198,5 +198,6 @@ Three leads came from the coordinator/W16-OK at the end of the lane. One closed 
 ## 7. Gates
 
 - A/B: §2 (`rc=0`, tree restored and verified by the tool).
-- Native gate, run last, on the final source tree (only this doc changed afterwards):
+- Native gate, run last, on the final tree at `7063925e5` (rebased on `80fc81d14`; only this doc changed afterwards):
   `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
+  The two earlier runs (before each rebase) also passed 18/18.
