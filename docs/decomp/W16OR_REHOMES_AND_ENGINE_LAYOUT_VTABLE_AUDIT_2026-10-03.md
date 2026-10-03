@@ -260,6 +260,13 @@ down.** The only in-place change outside the touched units is
 - `retail_sizeof_witness.py` was not changed for the aggregate-first-member
   limit found in §3; it is recorded here.
 
-## Native gate (run last, after the A/B, on the committed tree)
+## Native gate (run last, after the A/B, on the committed tree `54d85961d`)
 
-PLACEHOLDER
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+The native build globs `src/system/{os,utl}` and compiles UILabel and
+Screenshot. So the AsyncFile `GetFileHandle` move (`AsyncFileNative` keeps
+the HX_NATIVE body), the NetCacheMgrXbox `Handle` removal and the UILabel
+overrides were all linked by it.
