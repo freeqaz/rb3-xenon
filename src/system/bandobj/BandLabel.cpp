@@ -28,6 +28,16 @@ BEGIN_COPYS(BandLabel)
     CopyHandlerData(c);
 END_COPYS
 
+// Retail 0x82340A38: base copy, dynamic_cast with no null test (the assert is
+// compiled out), then mInAnim (0x218) and mOutAnim (0x224) from the source.
+void BandLabel::CopyMembers(const UIComponent *o, Hmx::Object::CopyType ty) {
+    UILabel::CopyMembers(o, ty);
+    CREATE_COPY_AS(BandLabel, label);
+    MILO_ASSERT(label, 0x36);
+    COPY_MEMBER_FROM(label, mInAnim);
+    COPY_MEMBER_FROM(label, mOutAnim);
+}
+
 BEGIN_SAVES(BandLabel)
     SAVE_REVS(0x11, 0)
     SAVE_SUPERCLASS(UILabel)

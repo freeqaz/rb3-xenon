@@ -40,8 +40,9 @@ BinStream &operator>>(BinStream &bs, PatchDescriptor &d) {
     return bs;
 }
 
-PatchSticker::PatchSticker()
-    : unk18(1.0f), unk1c(1.0f), unk20(0), unk24(1), mLoader(0), mTex(0), unk30(0) {}
+// Retail 0x82274608 initialises only the two strings and 0x28/0x2c/0x30; the
+// size/color/flag fields at 0x18..0x24 are left for the dta load to fill in.
+PatchSticker::PatchSticker() : mLoader(0), mTex(0), unk30(0) {}
 
 PatchSticker::~PatchSticker() { Unload(); }
 

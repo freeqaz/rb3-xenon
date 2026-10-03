@@ -33,8 +33,16 @@ public:
     // UIListProvider overrides (bodies not yet decompiled — declarations only
     // so no COMDATs leak into including TUs)
     virtual void Text(int, int, UIListLabel *, UILabel *) const;
-    virtual Symbol DataSymbol(int) const;
+    // NO DataSymbol override: retail's primary-table slot 8 is UIListProvider's
+    // own 0x822AD878 (lane W16-OP). The overrides retail does have are the
+    // dtor, Text (slot 1), Mat (2), NumData (10) and InitData (13).
+    /** Retail 0x82666078 (primary vtable slot 2; UIListProvider's is the
+        shared 0x828012D8): the online/offline status material. */
+    virtual RndMat *Mat(int, int, UIListMesh *) const;
     virtual int NumData() const;
+    /** Retail 0x82665F70 (primary vtable slot 13; UIListProvider's is the
+        empty-body fold): looks the two status materials up in the list dir. */
+    virtual void InitData(RndDir *);
 
     // Declared but not yet decompiled (called from OvershellSlot::UpdateFriendsList
     // -- retail's target asm loads mFriendsProvider and does a direct `bl` to a
@@ -60,6 +68,6 @@ public:
     // is the same 12 bytes, so this is a pure TYPE correction: no layout moves,
     // and `mpn` is arg-blind to it — it is landed on correctness, not on metric.
     std::vector<Friend *> mFriends;
-    int unk38; // 0x38
-    int unk3c; // 0x3c
+    RndMat *mOnlineMat; // 0x38 -- "status_online.mat", set by InitData
+    RndMat *mOfflineMat; // 0x3c -- "status_offline.mat", set by InitData
 };
