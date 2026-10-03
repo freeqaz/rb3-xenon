@@ -108,7 +108,7 @@ namespace Quazal {
     }
 
     template <class T>
-    void ThreadVariable<T>::ResetValues() {
+    inline void ThreadVariable<T>::ResetValues() {
         ScopedCS oCS(m_csValues);
         ValueMap::iterator it;
         while (!m_mapValues.empty()) {
