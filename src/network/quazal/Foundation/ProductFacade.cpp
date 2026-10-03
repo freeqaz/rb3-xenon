@@ -147,6 +147,7 @@ namespace Quazal {
             RegisterComponent(m_pDOCoreGroup);
         }
 
+        SystemComponentGroup *GetSessionGroup() { return m_pSessionGroup; }
         SystemComponentGroup *GetDOCoreGroup() { return m_pDOCoreGroup; }
 
         int m_unk20; // 0x20
@@ -209,6 +210,7 @@ namespace Quazal {
         bool Wait(unsigned int);
         bool InitiateCall();
         void SetStateImpl(_State, qResult, bool);
+        void SignalSuccess() { SetStateImpl(CallSuccess, qResult(0x10001), true); }
         _State GetState() const { return m_eState; }
         unsigned int GetID() const { return m_uiID; }
 
@@ -402,8 +404,8 @@ namespace Quazal {
         if (IsInitialized())
             Station::SetLocalStation(DOHandle());
         if (IsInitialized() && Core::GetInstance()) {
-            SystemComponents::GetInstance()->UnregisterComponent(SystemComponents::GetInstance()->m_pDOCoreGroup);
-            SystemComponents::GetInstance()->UnregisterComponent(SystemComponents::GetInstance()->m_pSessionGroup);
+            SystemComponents::GetInstance()->UnregisterComponent(SystemComponents::GetInstance()->GetDOCoreGroup());
+            SystemComponents::GetInstance()->UnregisterComponent(SystemComponents::GetInstance()->GetSessionGroup());
             ScopedCS oCS(Scheduler::GetInstance()->m_csSystemLock);
             SystemComponents::GetInstance()->Initialize();
         }
@@ -426,7 +428,7 @@ namespace Quazal {
         }
         m_bTerminated = true;
         if (!IsInitialized()) {
-            pContext->SetStateImpl(CallContext::CallSuccess, qResult(0x10001), true);
+            pContext->SignalSuccess();
             return true;
         }
         DOCore::GetInstance()->GetStationConnectionManager()->DenyIncomingConnectionsFromNewStation();
