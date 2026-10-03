@@ -36,9 +36,14 @@ int gNewOperatorAlign;
 int gSingleHeap;
 extern String gMemLogType;
 std::vector<String> gUseLowestMipExceptions;
-MemHeapStack gNullMemStack;
-int gNumThreads;
-int gThreadIds[MAX_BUF_THREADS];
+// Internal statics: retail ThreadMemStack addresses the null stack, gThreadBuf,
+// gThreadBufCurrentIndex and gNumThreads off ONE .bss anchor (0x82E069A8: +0,
+// +0x48, +0x440, +0x444), which MSVC only does for internal linkage.
+// gThreadIds sits in .data (0x82C78E0C) initialised { -1, 0, 0, 0, 0, 0 },
+// the same shape as MakeString.cpp's per-thread table.
+static MemHeapStack gNullMemStack;
+static int gNumThreads;
+static int gThreadIds[MAX_BUF_THREADS] = { -1 };
 
 bool gInitted;
 
@@ -1091,8 +1096,8 @@ MemHeapStack &ThreadMemStack(bool createIfMissing) {
         lock->Enter();
     }
     if (gNumThreads == 0) {
-        gNumThreads = 1;
         gThreadIds[0] = GetCurrentThreadId();
+        gNumThreads = 1;
         idx = gThreadBufCurrentIndex;
     } else {
         DWORD currentThreadId = GetCurrentThreadId();
