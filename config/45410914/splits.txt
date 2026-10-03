@@ -3365,6 +3365,7 @@ Character.cpp:
 	.pdata      start:0x82201528 end:0x82201678
 	.pdata      start:0x82201678 end:0x82201680
 	.pdata      start:0x82201680 end:0x82201848
+	.pdata      start:0x82201848 end:0x82201850
 	.pdata      start:0x82201850 end:0x82201858
 	.pdata      start:0x82201860 end:0x82201880
 	.pdata      start:0x82201890 end:0x822018C0
@@ -3413,6 +3414,7 @@ Character.cpp:
 	.text       start:0x8236D4E8 end:0x8236E8B0
 	.text       start:0x8236E8B0 end:0x8236E8F8
 	.text       start:0x8236E8F8 end:0x823710B8
+	.text       start:0x823710B8 end:0x823710E4
 	.text       start:0x823710E4 end:0x82371148
 	.text       start:0x82371198 end:0x82371320
 	.text       start:0x823713B8 end:0x823715E0
@@ -9073,7 +9075,6 @@ band3/meta_band/BandProfile.cpp:
 	.text       start:0x8258E6D0 end:0x8258EF80
 
 TrackDir.cpp:
-	.pdata      start:0x82201848 end:0x82201850
 	.pdata      start:0x8220DE48 end:0x8220DE50
 	.pdata      start:0x82243968 end:0x82243978
 	.pdata      start:0x82243988 end:0x822439B8
@@ -9082,7 +9083,6 @@ TrackDir.cpp:
 	.pdata      start:0x82243A98 end:0x82243AA0
 	.pdata      start:0x82243AA0 end:0x82243BE0
 	.pdata      start:0x82243BE0 end:0x82243D48
-	.text       start:0x823710B8 end:0x823710E4
 	.text       start:0x824523F8 end:0x82452494
 	.text       start:0x827DCDD0 end:0x827DCE58
 	.text       start:0x827DCED0 end:0x827DD0F8

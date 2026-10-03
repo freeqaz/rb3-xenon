@@ -2245,6 +2245,7 @@
  "0x822c3238": "??$?6VConstraint@BandIKEffector@@V?$StlNodeAlloc@VConstraint@BandIKEffector@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VConstraint@BandIKEffector@@V?$StlNodeAlloc@VConstraint@BandIKEffector@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x8238e768": "??$__uninitialized_copy@PBV?$ObjOwnerPtr@VCharClip@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjOwnerPtr@VCharClip@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
  "0x82371058": "?SetShadow@Character@@IAAXPAVRndGroup@@@Z",
+ "0x823710b8": "?RemoveFromPoll@Character@@QAAXPAVRndPollable@@@Z",
  "0x82373260": "??$__uninitialized_fill_n@PAV?$ObjVector@ULod@Character@@@@IV1@@stlpmtx_std@@YAPAV?$ObjVector@ULod@Character@@@@PAV1@IABV1@ABU__false_type@0@@Z",
  "0x823732f8": "??$__uninitialized_copy@PAV?$ObjVector@ULod@Character@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjVector@ULod@Character@@@@PAV1@00ABU__false_type@0@@Z",
  "0x8241b488": "??$__uninitialized_fill_n@PAVRndBone@@IV1@@stlpmtx_std@@YAPAVRndBone@@PAV1@IABV1@ABU__false_type@0@@Z",
