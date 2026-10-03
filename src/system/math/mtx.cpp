@@ -20,7 +20,7 @@ float Det(const Hmx::Matrix3 &m) {
                 - (m.y.x * m.z.z - m.y.z * m.z.x) * m.x.y
                 + (m.y.x * m.z.y - m.y.y * m.z.x) * m.x.z;
     if (det == 0) {
-        return det;
+        return 0.0f;
     }
     return 1.0f / det;
 }
