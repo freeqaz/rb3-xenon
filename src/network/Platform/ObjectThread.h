@@ -31,7 +31,7 @@ namespace Quazal {
         virtual ~ObjectThreadRoot();
         virtual void CallObjectMethod() = 0;
 
-        void Launch();
+        bool Launch(); // retail 0x82AAC1C8 returns 1 on success, 0 otherwise
         bool Wait(unsigned int);
         void ReadyToRun();
 

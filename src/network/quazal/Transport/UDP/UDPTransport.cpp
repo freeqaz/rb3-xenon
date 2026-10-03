@@ -244,7 +244,10 @@ namespace Quazal {
             unsigned int uiContext = PseudoSingleton::GetCurrentContext();
             InstanceControl *pInstance =
                 (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(3, uiContext);
-            Core *pCore = pInstance ? (Core *)pInstance->m_pDelegatorInstance : 0;
+            Core *pCore = 0;
+            if (pInstance != 0) {
+                pCore = (Core *)pInstance->m_pDelegatorInstance;
+            }
             return pCore;
         }
         Scheduler *GetScheduler() const { return m_pScheduler; }
@@ -291,9 +294,9 @@ namespace Quazal {
         ObjectThreadRoot(const String &);
         virtual ~ObjectThreadRoot();
         virtual void CallObjectMethod() = 0;
-        void Launch();
+        bool Launch();
         bool Wait(unsigned int);
-        void MethodStarted();
+        void ReadyToRun();
         bool IsRunning() const { return m_bRunning; }
         static void Sleep(unsigned int);
 
@@ -321,7 +324,7 @@ namespace Quazal {
             T *pObject = m_pObject;
             Method pfn = m_pfMethod;
             P pParam = m_oParam;
-            MethodStarted();
+            ReadyToRun();
             (pObject->*pfn)(pParam);
         }
 
@@ -656,7 +659,7 @@ namespace Quazal {
     class Inet : public RootObject {
     public:
         static bool Initialize();
-        static void Terminate();
+        static bool Terminate();
     };
 
     class RootTransport : public RootObject {

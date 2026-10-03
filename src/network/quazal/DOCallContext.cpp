@@ -131,9 +131,12 @@ namespace Quazal {
     public:
         static Core *GetInstance() {
             unsigned int uiContext = PseudoSingleton::GetCurrentContext();
-            InstanceControl *inst =
+            InstanceControl *pInstance =
                 (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(3, uiContext);
-            Core *pCore = inst ? (Core *)inst->m_pDelegatorInstance : nullptr;
+            Core *pCore = 0;
+            if (pInstance != 0) {
+                pCore = (Core *)pInstance->m_pDelegatorInstance;
+            }
             return pCore;
         }
 
@@ -147,11 +150,12 @@ namespace Quazal {
         static bool CurrentThreadCanWaitForJob();
         static void GlobalSingleThreadDispatch(unsigned int);
         static Scheduler *GetInstance() {
-            Core *inst = Core::GetInstance();
-            if (!inst)
-                return nullptr;
-            else
-                return inst->GetScheduler();
+            Core *pCore = Core::GetInstance();
+            if (pCore == 0) {
+                return 0;
+            } else {
+                return pCore->GetScheduler();
+            }
         }
 
         char m_pad0[0x3c];

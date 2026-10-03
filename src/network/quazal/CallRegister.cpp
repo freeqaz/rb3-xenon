@@ -229,13 +229,11 @@ namespace Quazal {
     public:
         static Core *GetInstance() {
             unsigned int uiContext = PseudoSingleton::GetCurrentContext();
-            InstanceControl *inst =
+            InstanceControl *pInstance =
                 (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(3, uiContext);
-            Core *pCore;
-            if (inst) {
-                pCore = (Core *)inst->m_pDelegatorInstance;
-            } else {
-                pCore = 0;
+            Core *pCore = 0;
+            if (pInstance != 0) {
+                pCore = (Core *)pInstance->m_pDelegatorInstance;
             }
             return pCore;
         }
@@ -248,11 +246,11 @@ namespace Quazal {
     class Scheduler {
     public:
         static Scheduler *GetInstance() {
-            Core *inst = Core::GetInstance();
-            if (inst == 0) {
+            Core *pCore = Core::GetInstance();
+            if (pCore == 0) {
                 return 0;
             } else {
-                return inst->GetScheduler();
+                return pCore->GetScheduler();
             }
         }
         void Queue(Job *, bool);

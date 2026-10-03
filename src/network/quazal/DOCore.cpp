@@ -442,9 +442,12 @@ namespace Quazal {
     public:
         static Core *GetInstance() {
             unsigned int uiContext = PseudoSingleton::GetCurrentContext();
-            InstanceControl *inst =
+            InstanceControl *pInstance =
                 (InstanceControl *)InstanceControl::s_oInstanceTable.LookupInstance(3, uiContext);
-            Core *pCore = inst ? (Core *)inst->m_pDelegatorInstance : 0;
+            Core *pCore = 0;
+            if (pInstance != 0) {
+                pCore = (Core *)pInstance->m_pDelegatorInstance;
+            }
             return pCore;
         }
         Scheduler *GetScheduler() { return m_pScheduler; }
@@ -457,11 +460,12 @@ namespace Quazal {
     public:
         static CriticalSection s_csGlobalSystemLock;
         static Scheduler *GetInstance() {
-            Core *inst = Core::GetInstance();
-            if (!inst)
+            Core *pCore = Core::GetInstance();
+            if (pCore == 0) {
                 return 0;
-            else
-                return inst->GetScheduler();
+            } else {
+                return pCore->GetScheduler();
+            }
         }
         void Trace(unsigned int) {}
     };
