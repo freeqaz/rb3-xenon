@@ -1,8 +1,10 @@
 #pragma once
 #include "ui/UIListProvider.h"
 #include "obj/Object.h"
+#include <vector>
 
 class BandUserMgr;
+class LocalBandUser;
 
 enum WiiProfileActResult {
     kWiiProfileActResult_Done = 0,

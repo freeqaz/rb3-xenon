@@ -538,6 +538,7 @@ BandCharacter.cpp:
 	.pdata      start:0x821F2F90 end:0x821F2FB8
 	.pdata      start:0x821F2FB8 end:0x821F2FC0
 	.pdata      start:0x821F2FC0 end:0x821F3210
+	.pdata      start:0x821F42D0 end:0x821F4300
 	.text       start:0x8227A228 end:0x8227A2A0
 	.text       start:0x8227A528 end:0x8227A5A8
 	.text       start:0x8227A728 end:0x8227A7A8
@@ -578,6 +579,7 @@ BandCharacter.cpp:
 	.text       start:0x8228A648 end:0x8228A900
 	.text       start:0x8228A900 end:0x8228A988
 	.text       start:0x8228A988 end:0x8228C908
+	.text       start:0x8229CC10 end:0x8229CE30
 	.text       start:0x82545C88 end:0x82545C90
 
 Console.cpp:
@@ -5259,10 +5261,18 @@ ThreeDSoundManager.cpp:
 	.text       start:0x8256B544 end:0x8256B570
 
 FriendsProvider.cpp:
+	.pdata      start:0x8222E898 end:0x8222E8D8
 	.pdata      start:0x8222E8E0 end:0x8222E8F0
+	.pdata      start:0x8222E8F0 end:0x8222E8F8
 	.pdata      start:0x8222E8F8 end:0x8222E920
+	.text       start:0x82665DE4 end:0x82666160
 	.text       start:0x826661CC end:0x82666290
+	.text       start:0x82666290 end:0x826662E0
 	.text       start:0x826662E0 end:0x8266643C
+
+band3/meta_band/OvershellProfileProvider.cpp:
+	.pdata      start:0x8222EA78 end:0x8222EAE0
+	.text       start:0x82667FE0 end:0x8266849C
 
 UIList.cpp:
 	.pdata      start:0x82228318 end:0x82228340
@@ -5270,8 +5280,6 @@ UIList.cpp:
 	.pdata      start:0x82228380 end:0x82228388
 	.pdata      start:0x8222A438 end:0x8222A440
 	.pdata      start:0x8222A440 end:0x8222A458
-	.pdata      start:0x8222E898 end:0x8222E8D8
-	.pdata      start:0x8222E8F0 end:0x8222E8F8
 	.pdata      start:0x8223DDE8 end:0x8223DDF8
 	.pdata      start:0x8223DE48 end:0x8223DE50
 	.pdata      start:0x8223DE50 end:0x8223DE58
@@ -5292,8 +5300,6 @@ UIList.cpp:
 	.text       start:0x82626FB8 end:0x8262709C
 	.text       start:0x8262709C end:0x82627118
 	.text       start:0x82665D94 end:0x82665D98
-	.text       start:0x82665DE4 end:0x82666160
-	.text       start:0x82666290 end:0x826662E0
 	.text       start:0x82775B70 end:0x82775DC0
 	.text       start:0x82776698 end:0x827767F0
 	.text       start:0x827767F0 end:0x82776838
@@ -5669,7 +5675,6 @@ PropKeys.cpp:
 	.pdata      start:0x8222B678 end:0x8222B690
 	.pdata      start:0x8222D7A0 end:0x8222D7A8
 	.pdata      start:0x8222D7C8 end:0x8222D7D8
-	.pdata      start:0x8222EA78 end:0x8222EAE0
 	.pdata      start:0x82231100 end:0x82231108
 	.pdata      start:0x82231108 end:0x82231110
 	.pdata      start:0x82231D80 end:0x82231D88
@@ -5690,7 +5695,6 @@ PropKeys.cpp:
 	.text       start:0x8263FD2C end:0x8263FD30
 	.text       start:0x82656180 end:0x82656350
 	.text       start:0x82656630 end:0x82656800
-	.text       start:0x82667FE0 end:0x8266849C
 	.text       start:0x8268C920 end:0x8268C988
 	.text       start:0x8268C998 end:0x8268C9E8
 	.text       start:0x82698B20 end:0x82698B98
@@ -6257,7 +6261,6 @@ MakeString.cpp:
 	.text       start:0x827C4340 end:0x827C43D4
 
 Song.cpp:
-	.pdata      start:0x821F42D0 end:0x821F4300
 	.pdata      start:0x821FB660 end:0x821FB670
 	.pdata      start:0x82242420 end:0x82242548
 	.pdata      start:0x82242560 end:0x82242568
@@ -6272,7 +6275,6 @@ Song.cpp:
 	.pdata      start:0x82242658 end:0x82242670
 	.pdata      start:0x82242670 end:0x82242700
 	.pdata      start:0x82242700 end:0x82242748
-	.text       start:0x8229CC10 end:0x8229CE30
 	.text       start:0x8230E604 end:0x8230E608
 	.text       start:0x8230E654 end:0x8230E658
 	.text       start:0x8230EBE0 end:0x8230EC88

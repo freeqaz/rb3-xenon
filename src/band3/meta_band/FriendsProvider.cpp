@@ -1,8 +1,10 @@
 #include "meta_band/FriendsProvider.h"
+#include "net/NetSession.h"
 #include "os/Friend.h"
 #include "rndobj/Dir.h"
 #include "rndobj/Mat.h"
 #include "ui/UIListMesh.h"
+#include "utl/Locale.h"
 #include "utl/Std.h"
 
 // Retail RB3 X360 FriendsProvider bodies, read from the retail XEX by lane
@@ -19,14 +21,17 @@
 // (slot 1, 0x82665FD8), Mat (2, 0x82666078), NumData (10, 0x8269A8E8 -- a
 // vector-size body ICF-shared with Band::NumActivePlayers) and InitData (13,
 // 0x82665F70); DataSymbol is UIListProvider's (lane W16-OP). Mat, NumData
-// and InitData are defined below. Text lives OUTSIDE this run in retail and is
-// deliberately left as a declaration (its record type is AppLabel::FriendRecord,
-// a layout-identical stand-in for Friend): the match
-// build only COMPILES, so the vtable's references to them are ordinary
-// undefined externals, and this TU is not part of the native link (native
-// CMakeLists lists src/band3/meta_band explicitly; only src/system/* and
-// src/platform are globbed). Writing speculative bodies for them would be
-// fabrication, not decomp.
+// and InitData are defined below. Text (0x82665FD8) is deliberately left as a
+// declaration: its record type is AppLabel::FriendRecord, a layout-identical
+// stand-in for Friend, and unifying the two renames a mapped, matching symbol.
+// The match build only COMPILES, so the vtable's reference to it is an
+// ordinary undefined external, and this TU is not part of the native link
+// (native CMakeLists lists src/band3/meta_band explicitly).
+//
+// The TU's leading run 0x82665DE4-0x82666160 (InviteFriend, a Friend sort
+// comparator, InitData, Text, Mat, an STL heap helper) and the STL helper at
+// 0x82666290 used to be pinned to UIList.cpp, which cannot define any of them;
+// lane W16-OR re-homed both blocks here.
 
 FriendsProvider::FriendsProvider() {}
 
@@ -38,6 +43,18 @@ FriendsProvider::~FriendsProvider() { DeleteAll(mFriends); }
 // `b DeleteAll<vector<Friend*,StlNodeAlloc<Friend*>>>` -- a tail call, so the
 // body is the single DeleteAll and nothing else.
 void FriendsProvider::Reload() { DeleteAll(mFriends); }
+
+// retail 0x82665DF0 (lane W16-OR): two function-local static Symbols (guard
+// bits 0 and 1, in this order), then NetSession's slot-3 virtual
+// InviteFriend(Friend*, subject, body). Its two 32-byte guard-reset funclets
+// are retail 0x82665EC0 / 0x82665EE0.
+void FriendsProvider::InviteFriend(int i) {
+    static Symbol invite_subject("invite_subject");
+    static Symbol invite_body("invite_body");
+    TheNetSession->InviteFriend(
+        mFriends[i], Localize(invite_subject, nullptr), Localize(invite_body, nullptr)
+    );
+}
 
 // retail 0x82665F70
 void FriendsProvider::InitData(RndDir *dir) {
