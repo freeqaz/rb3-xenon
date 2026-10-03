@@ -291,9 +291,9 @@ void RGGetChordName(
         for (unsigned int i = 0; i < 6 && fret < 0; i++) {
             fret = chord.GetFret(i);
             if (fret >= 0) {
+                gSlashNote = (gTunedNotes[i] + fret) % 12;
                 gSlashString = i;
                 gSlashFret = fret;
-                gSlashNote = (gTunedNotes[i] + fret) % 12;
                 chord.SetFret(i, -1);
             }
         }
