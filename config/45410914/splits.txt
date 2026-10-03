@@ -2644,7 +2644,6 @@ CharClipSet.cpp:
 	.text       start:0x823D3330 end:0x823D333C
 
 MidiParser.cpp:
-	.pdata      start:0x822440B8 end:0x82244110
 	.pdata      start:0x822441A8 end:0x822441B0
 	.pdata      start:0x822441B8 end:0x822441C8
 	.pdata      start:0x822441E0 end:0x822441E8
@@ -2660,7 +2659,6 @@ MidiParser.cpp:
 	.pdata      start:0x822442D8 end:0x822442E0
 	.pdata      start:0x822442E0 end:0x82244688
 	.pdata      start:0x82244690 end:0x82244768
-	.text       start:0x827E4358 end:0x827E4568
 	.text       start:0x827E495C end:0x827E4968
 	.text       start:0x827E53E0 end:0x827E542C
 	.text       start:0x827E5510 end:0x827E5564
@@ -9123,6 +9121,7 @@ TrackWidget.cpp:
 	.pdata      start:0x82243DF8 end:0x82243F68
 	.pdata      start:0x82243F70 end:0x822440B0
 	.pdata      start:0x822440B0 end:0x822440B8
+	.pdata      start:0x822440B8 end:0x82244110
 	.pdata      start:0x82244110 end:0x82244118
 	.pdata      start:0x82244118 end:0x82244128
 	.pdata      start:0x82244148 end:0x82244150
@@ -9146,6 +9145,7 @@ TrackWidget.cpp:
 	.text       start:0x827E1768 end:0x827E2BA4
 	.text       start:0x827E2C88 end:0x827E4098
 	.text       start:0x827E4098 end:0x827E4358
+	.text       start:0x827E4358 end:0x827E4568
 	.text       start:0x827E4568 end:0x827E4858
 	.text       start:0x827E4858 end:0x827E487C
 	.text       start:0x827E487C end:0x827E4900
