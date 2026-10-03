@@ -14357,16 +14357,16 @@ network/quazal/JobJoinSession.cpp:
 	.text       start:0x82AC8658 end:0x82ACAB10
 
 network/quazal/JobListenOnWellKnown.cpp:
-	.pdata      start:0x82254628 end:0x82254630
-	.text       start:0x82ACE5B0 end:0x82ACE660
+	.pdata      start:0x82254628 end:0x82254650
+	.text       start:0x82ACE5B0 end:0x82ACE828
 
 network/quazal/Job.cpp:
 	.pdata      start:0x82254718 end:0x82254720
 	.text       start:0x82ACF5A8 end:0x82ACF7BC
 
 network/quazal/SessionClock/SessionClockDDL.cpp:
-	.pdata      start:0x82254960 end:0x822549C0
-	.text       start:0x82AD2548 end:0x82AD2B6C
+	.pdata      start:0x82254960 end:0x82254A10
+	.text       start:0x82AD2548 end:0x82AD30D0
 
 network/quazal/LocalClock.cpp:
 	.pdata      start:0x82254A18 end:0x82254A20
