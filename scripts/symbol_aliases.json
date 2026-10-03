@@ -14821,7 +14821,10 @@
   {
    "name": "$_Param_Construct",
    "address": "0x822cdc18",
-   "survivor": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z",
+   "survivor": "??$_Param_Construct@V?$ObjPtr@VRndMesh@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndMesh@@@@ABV1@@Z",
+   "survivor_renamed": {"from": "??$_Param_Construct@VFlowMathOp@@V1@@stlpmtx_std@@YAXPAVFlowMathOp@@ABV1@@Z", "lane": "W16-OQ 2026-10-03", "why": "0x822cdc18 is BandScoreboard's vector<ObjPtr<RndMesh>> _Param_Construct: it calls fn_822CDB70, a copy ctor that stores vftable 0x82011184 (= ObjPtr<RndMesh>, slot 0 ??_G?$ObjPtr@VRndMesh), and it sits among BandScoreboard's functions. The map row and the six sibling vector<FlowMathOp> rows are renamed to their ObjPtr<RndMesh> spellings and re-homed DrivenPropertyEntry.cpp -> BandScoreboard.cpp. The folded memberships are unchanged by this relabel and were re-chased against the new survivor (see membership_rechase)."},
+   "admitted": [{"spelling": "??$_Copy_Construct@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndMesh@@@@ABV1@@Z", "lane": "W16-OQ 2026-10-03", "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN (60 B retail / 60 B ours, 1 reloc, tolerated placeholder), CHASED T1 PROVEN: the callee slot fn_822CDB70 is discharged as ??0?$ObjPtr@VRndMesh@@@@QAA@ABV0@@Z by its vftable lbl_82011184 = ??_7?$ObjPtr@VRndMesh@@@@6B@ (RTTI .?AV?$ObjPtr@VRndMesh@@...). STLport _Copy_Construct and _Param_Construct are the same body; retail _M_insert_overflow_aux<ObjPtr<RndMesh>> (0x822CE258) calls this address where our STLport spells _Copy_Construct. Re-admitted on its own pair proof, not on the closure ALIAS-CONSOLIDATION withdrew."}],
+   "membership_rechase": "W16-OQ 2026-10-03: the 10 pre-existing folded spellings (DebugGraph / map<Symbol,String> Copy/Param_Construct) are referenced by no compiled obj (validator: STALE_SPELLING, forgive nothing); --chase against the new survivor reads REFUTED for all 10 on MISSING(ours). Left in place, not pruned (pruning this class is measured harmful, a745039e).",
    "folded": [
     "??$_Copy_Construct@UDebugGraph@?A0x364ee173@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
@@ -14832,7 +14835,8 @@
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z"
+    "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
+    "??$_Copy_Construct@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndMesh@@@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [

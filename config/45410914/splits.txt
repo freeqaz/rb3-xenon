@@ -258,13 +258,19 @@ BandScoreboard.cpp:
 	.pdata      start:0x821F7490 end:0x821F7498
 	.pdata      start:0x821F7498 end:0x821F74A0
 	.pdata      start:0x821F74A0 end:0x821F74A8
+	.pdata      start:0x821F74B8 end:0x821F74C8
 	.pdata      start:0x821F74C8 end:0x821F74D0
 	.pdata      start:0x821F74D0 end:0x821F74E8
+	.pdata      start:0x821F74E8 end:0x821F74F8
+	.pdata      start:0x821F74F8 end:0x821F7520
 	.pdata      start:0x821F7520 end:0x821F7528
+	.pdata      start:0x821F7528 end:0x821F7538
 	.pdata      start:0x821F7538 end:0x821F7570
 	.pdata      start:0x821F7570 end:0x821F75D8
 	.pdata      start:0x821F75D8 end:0x821F75E0
+	.pdata      start:0x821F75E0 end:0x821F75E8
 	.pdata      start:0x821F75E8 end:0x821F75F0
+	.pdata      start:0x821F75F0 end:0x821F75F8
 	.pdata      start:0x821F75F8 end:0x821F7600
 	.pdata      start:0x821F7600 end:0x821F7618
 	.pdata      start:0x821F7618 end:0x821F7698
@@ -274,14 +280,22 @@ BandScoreboard.cpp:
 	.text       start:0x822CD9B4 end:0x822CDA30
 	.text       start:0x822CDA30 end:0x822CDA7C
 	.text       start:0x822CDA7C end:0x822CDB68
+	.text       start:0x822CDC18 end:0x822CDC80
 	.text       start:0x822CDC80 end:0x822CDD00
 	.text       start:0x822CDD00 end:0x822CDE70
+	.text       start:0x822CDE70 end:0x822CDF18
+	.text       start:0x822CDF18 end:0x822CE1E4
 	.text       start:0x822CE1E4 end:0x822CE250
+	.text       start:0x822CE250 end:0x822CE258
+	.text       start:0x822CE258 end:0x822CE3F4
 	.text       start:0x822CE3F4 end:0x822CE6A8
 	.text       start:0x822CE6A8 end:0x822CEC70
 	.text       start:0x822CEC70 end:0x822CECDC
+	.text       start:0x822CECE0 end:0x822CED50
 	.text       start:0x822CED50 end:0x822CEDA0
+	.text       start:0x822CEDA0 end:0x822CEE20
 	.text       start:0x822CEE20 end:0x822CEEDC
+	.text       start:0x822CEEDC end:0x822CEEE8
 	.text       start:0x822CEEE8 end:0x822CEF8C
 	.text       start:0x822CEF8C end:0x822CF888
 
@@ -7283,20 +7297,6 @@ system/synth/FxSendPitchShift.cpp:
 	.text       start:0x82713020 end:0x827130B0
 
 DrivenPropertyEntry.cpp:
-	.pdata      start:0x821F74B8 end:0x821F74C8
-	.pdata      start:0x821F74E8 end:0x821F74F8
-	.pdata      start:0x821F74F8 end:0x821F7520
-	.pdata      start:0x821F7528 end:0x821F7538
-	.pdata      start:0x821F75E0 end:0x821F75E8
-	.pdata      start:0x821F75F0 end:0x821F75F8
-	.text       start:0x822CDC18 end:0x822CDC80
-	.text       start:0x822CDE70 end:0x822CDF18
-	.text       start:0x822CDF18 end:0x822CE1E4
-	.text       start:0x822CE250 end:0x822CE258
-	.text       start:0x822CE258 end:0x822CE3F4
-	.text       start:0x822CECE0 end:0x822CED50
-	.text       start:0x822CEDA0 end:0x822CEE20
-	.text       start:0x822CEEDC end:0x822CEEE8
 	.text       start:0x82781654 end:0x82781660
 
 WavMgr.cpp:
