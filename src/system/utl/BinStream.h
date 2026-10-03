@@ -76,6 +76,14 @@ public:
     bool WaitUntilReady(int sleepMs = 0);
 #endif
 
+#ifdef HX_NATIVE
+    // Native-only forwarders for milo-native-engine's RndTex_Native.cpp, which
+    // still spells the rev stack as BinStream members. The match build has one
+    // spelling, the free PushRev/PopRev (obj/Object.h).
+    static void PushRev(int revs, Hmx::Object *o) { ::PushRev(revs, o); }
+    static int PopRev(Hmx::Object *o) { return ::PopRev(o); }
+#endif
+
     MEM_OVERLOAD(BinStream, 0x55);
 
     BinStream &operator<<(const char *);
