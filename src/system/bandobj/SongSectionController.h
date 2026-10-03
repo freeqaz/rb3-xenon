@@ -60,7 +60,6 @@ public:
     DataNode OnAddTriggerPool(const DataArray *);
     DataNode OnWaitForEventReceived(const DataArray *);
 
-    DECLARE_REVS;
     OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
     NEW_OBJ(SongSectionController)

@@ -5,7 +5,10 @@
 #include "obj/Utl.h"
 #include "utl/Symbols.h"
 
-INIT_REVS(SongSectionController)
+// Retail keeps the two revs as file-scope (internal) statics: Load reaches both
+// through one base register, operator>> reads gRev through its own address.
+static unsigned short gAltRev;
+static unsigned short gRev;
 
 SongSectionController::SongSectionController()
     : mActivePool(this, 0), mPendingPool(this, 0), mSectionMappings(this),
@@ -62,7 +65,7 @@ BinStream &operator>>(BinStream &bs, SongSectionController::PracticeSectionMappi
         bs >> str;
         m.mValidPracticeSections.push_back(str);
     }
-    if (SongSectionController::gRev > 2) {
+    if (gRev > 2) {
         bs >> count;
         m.mInvalidPracticeSections.clear();
         for (int i = 0; i < count; i++) {
