@@ -196,7 +196,7 @@ public:
     CharWidgetImp(
         RndFont *, RndText *, int, int, RndText::Alignment, Hmx::Color, Hmx::Color, bool
     );
-    virtual ~CharWidgetImp() {}
+    // no user-declared dtor: retail ~CharWidgetImp stores no vptr of its own
     virtual void Clear();
     virtual int AddTextInstance(Transform tf, String s, bool alt) {
         bool b2 = !Empty() && tf.v.y < GetLastInstanceY();
