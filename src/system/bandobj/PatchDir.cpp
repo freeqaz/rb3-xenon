@@ -419,7 +419,7 @@ void PatchLayer::SetPosition(const Vector3 &v) {
     mPosZ = v.z;
 }
 
-float PatchLayer::Rotation() const { return (mRot * 360.0f) / 511.0f; }
+float PatchLayer::Rotation() const { return mRot * (360.0f / 511.0f); }
 
 void PatchLayer::SetRotation(float r) {
     for (; r > 360.0f; r -= 360.0f)
