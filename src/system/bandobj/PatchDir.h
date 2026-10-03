@@ -144,8 +144,7 @@ public:
     static void Terminate();
     static int SaveSize(int);
 
-    DECLARE_REVS;
-    static int GetCurrentRev() { return gRev; }
+    static int GetCurrentRev();
     // PatchDir has no own operator new/delete in retail -- it inherits
     // RndDir's OBJ_MEM_OVERLOAD. The shared OBJ_MEM_OVERLOAD lever is
     // noinline (CacheMgr-verified), so retail's `new PatchDir()` call site

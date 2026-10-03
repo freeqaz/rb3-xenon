@@ -22,7 +22,12 @@ RndMat *PatchLayer::sMat;
 RndGroup *PatchLayer::sGrpAnim;
 RndTransAnim *PatchLayer::sTransAnim;
 ColorPalette *PatchLayer::sColorPalette;
-INIT_REVS(PatchDir);
+// Retail addresses both rev statics off ONE base register (+0 altRev, +4 rev),
+// i.e. an INTERNAL-linkage adjacent pair, not DECLARE_REVS' two class statics.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
+
+inline int PatchDir::GetCurrentRev() { return gRev; }
 
 float hackyScaleValue = 1.0f;
 
@@ -373,17 +378,17 @@ void PatchLayer::SavePacked(IntPacker &packer) const {
 }
 
 void PatchLayer::LoadPacked(IntPacker &packer) {
-    int count = PatchDir::gRev > 4 ? packer.ExtractS(8) : packer.ExtractS(6);
+    int count = gRev > 4 ? packer.ExtractS(8) : packer.ExtractS(6);
     if (count < 0 || count >= sCategoryNames.size()) {
         mStickerCategory = gNullStr;
     } else
         mStickerCategory = sCategoryNames[count];
-    if (PatchDir::gRev <= 3)
+    if (gRev <= 3)
         mStickerIdx = packer.ExtractU(5);
     else
         mStickerIdx = packer.ExtractU(6);
     mColorIdx = packer.ExtractU(6);
-    if (PatchDir::gRev == 1) {
+    if (gRev == 1) {
         Vector3 pos;
         pos.x = packer.ExtractS(9);
         pos.z = packer.ExtractS(9);
@@ -841,5 +846,11 @@ END_HANDLERS
 // sw3 scatter-include (default/PatchDir <- bandobj/BandCamShot.cpp) [ObjMacros owner]
 // SW_SCATTER_OWNER_INCLUDE keeps BandCamShot's own scatter-includes inert here.
 #define SW_SCATTER_OWNER_INCLUDE
+// BandCamShot.cpp has its own file-scope gRev/gAltRev pair, as this file now
+// does: rename the included pair (internal linkage, so no emitted code changes).
+#define gRev gRev_BandCamShot
+#define gAltRev gAltRev_BandCamShot
 #include "bandobj/BandCamShot.cpp"
+#undef gRev
+#undef gAltRev
 #undef SW_SCATTER_OWNER_INCLUDE
