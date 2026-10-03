@@ -18456,6 +18456,7 @@
  "0x82642300": "??_GUploadErrorMgr@@UAAPAXI@Z",
  "0x826428a0": "?Exit@BandScreen@@UAAXPAVUIScreen@@@Z",
  "0x826428e0": "?Enter@SetlistToStorePanel@@UAAXXZ",
+ "0x82642918": "?GetSongMetadataPath@SetlistToStorePanel@@QAAXHAAVString@@@Z",
  "0x826429a0": "?StartMetadataLoaders@SetlistToStorePanel@@QAAXXZ",
  "0x82642ce0": "??$DeleteAll@V?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@@YAXAAV?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@@Z",
  "0x82642d48": "?Poll@SetlistToStorePanel@@UAAXXZ",
