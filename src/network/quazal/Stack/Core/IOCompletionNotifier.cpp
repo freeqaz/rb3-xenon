@@ -4,8 +4,9 @@
 // (see objects.json). No .pdata record in the TU has the EH bit although
 // CreateIOCompletionContext, DeleteIOCompletionContext and Wait hold a
 // ScopedCS, and the TU defines no vtable (so /GR- cannot be read from its
-// .rdata; it follows the transport TUs around it). Its .rdata is the __FILE__
-// string alone.
+// .rdata; it follows the transport TUs around it). Its .rdata is two copies
+// of the __FILE__ string (0x8218D958, 0x8218D980), one per allocating
+// function, directly after the EH tables of the object before it.
 //
 // The notifier owns up to eight outstanding IOCompletionContexts, each with a
 // WSA event. Wait either asks the installed SocketDriver to poll the pending
