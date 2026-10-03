@@ -24835,7 +24835,6 @@
  "0x827cb1d0": "?Eof@ChunkStream@@UAA?AW4EofType@@XZ",
  "0x827cb5d0": "??8HxGuid@@QBA_NABV0@@Z",
  "0x827cb620": "??MHxGuid@@QBA_NABV0@@Z",
- "0x827cb670": "??0HxGuid@@QAA@XZ",
  "0x827cb6a8": "?ToString@HxGuid@@QBAPBDXZ",
  "0x827cb6c8": "??6@YAAAVBinStream@@AAV0@ABVHxGuid@@@Z",
  "0x827cb778": "??5@YAAAVBinStream@@AAV0@AAVHxGuid@@@Z",
@@ -36282,5 +36281,6 @@
  "0x8228dbc0": "?ReadyForMidiParsers@BandDirector@@QAA_NXZ",
  "0x82769050": "?DataInit@@YAXXZ",
  "0x822d3850": "??_DUnisonIcon@@QAAXXZ",
- "0x827bda08": "?rfind@String@@QBAIPBD@Z"
+ "0x827bda08": "?rfind@String@@QBAIPBD@Z",
+ "0x827cb578": "??0HxGuid@@QAA@XZ"
 }

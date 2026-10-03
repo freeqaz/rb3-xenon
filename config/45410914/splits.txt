@@ -2065,6 +2065,7 @@ ctr.c:
 HxGuid.cpp:
 	.pdata      start:0x82242940 end:0x82242948
 	.pdata      start:0x82242948 end:0x82242950
+	.text       start:0x827CB574 end:0x827CB590
 	.text       start:0x827CB590 end:0x827CB5D0
 	.text       start:0x827CB5D0 end:0x827CB774
 	.text       start:0x827CB778 end:0x827CB7FC
@@ -6346,7 +6347,7 @@ Loader.cpp:
 
 ChunkStream.cpp:
 	.pdata      start:0x82242868 end:0x82242940
-	.text       start:0x827CA128 end:0x827CB590
+	.text       start:0x827CA128 end:0x827CB574
 
 NetCacheMgr.cpp:
 	.pdata      start:0x82242BA0 end:0x82242BA8
