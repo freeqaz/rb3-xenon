@@ -166,4 +166,13 @@ unwind funclet `fn_827BB9F4` 100 → 99.9. That exposed ThreadMemStack's missing
 
 ## 7. Gates
 
-(filled in at the end)
+- A/B: §2 (`rc=0`, tree restored and verified by the tool).
+- Build-time checks on the final tree: `CHECK RULER AGREEMENT` passed; `[patch-state] OK: tree is a fixed point
+  of 6 post-compile passes` (1054/1054 declared objects pair with a target);
+  `[map-injectivity] OK: 35141 applied rows, 35140 distinct names, injective`;
+  `icf_alias_finder.py --validate`: PASS, 0 contradicted (§3.1).
+- Alias chase: not applicable. No alias was added (`git diff main w16-oo -- scripts/symbol_aliases.json` is empty).
+- No source line added on this branch cites rb3-Wii or "the oracle" (`git diff main -- src | grep -iE 'wii|oracle'`
+  on added lines: no hits).
+- Native gate, run last, on the final code at `9b72a2a7f` (rebased on `2d4643b0b`; only this doc changed afterwards):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
