@@ -31,7 +31,8 @@ public:
     String mStr2; // 0x28
 
     Instarank();
-    virtual ~Instarank() {}
+    // No user-declared destructor: retail ~Instarank (implicit) skips the
+    // vptr re-store a user-declared one emits.
 
     void Clear();
     void Init(int, bool, ScoreType, int, bool, String, String);
