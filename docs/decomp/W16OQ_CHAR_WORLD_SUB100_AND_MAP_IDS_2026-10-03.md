@@ -172,4 +172,5 @@ Fixed (both behaviour-shaped):
   6 post-compile passes`.
 - `icf_alias_finder.py --validate`: PASS, 0 contradicted (1799 map-consistent / 310 tolerated).
 - No added source line cites rb3-Wii or "the oracle" (`git diff main -- src | grep -E '^\+' | grep -iE 'wii|oracle'`: no hits).
-- Native gate: __GATE__
+- Native gate, run last, on the final code at `39ece0707` (rebased on `08777873d`; only this doc changed afterwards):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
