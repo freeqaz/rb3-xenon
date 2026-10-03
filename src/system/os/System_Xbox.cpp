@@ -377,3 +377,12 @@ void CaptureStackTrace(int p1, struct StackData *stackData, void *p3) {
         );
     }
 }
+
+// HDCache::Flush is called out of line from HDCache::Init() and HDCache::Poll(), and
+// the callee is the empty `blr` body at 0x826C3888 (the FT-EMPTY fold group). Defined
+// in HDCache.cpp the empty body is deleted at its call sites even under
+// __declspec(noinline), so it lives in another TU. Which TU originally held it cannot be
+// read off the image: ICF kept GemPlayer.cpp's copy of the empty body. The native build
+// defines it in native/src/native_link_glue.cpp.
+#include "os/HDCache.h"
+void HDCache::Flush() {}
