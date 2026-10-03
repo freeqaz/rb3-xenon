@@ -20,12 +20,18 @@ namespace Quazal {
         static bool s_bUsesThreads;
         static bool s_bIsThreadSafe;
         static unsigned int s_uiCoreCount;
-        // lol, gotta love unsafe static casts
+        // Three named locals, assigned through an if rather than a ?:. Retail
+        // /Od callers never expand this (/Ob1 declines it) but reserve its
+        // three locals, and both the local count and the if-form decide where
+        // their own temporaries land.
         static Core *GetInstance() {
             unsigned int uiContext = PseudoSingleton::GetCurrentContext();
-            InstanceControl *inst =
+            InstanceControl *pInstance =
                 (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(3, uiContext);
-            Core *pCore = inst ? (Core *)inst->m_pDelegatorInstance : nullptr;
+            Core *pCore = 0;
+            if (pInstance != 0) {
+                pCore = (Core *)pInstance->m_pDelegatorInstance;
+            }
             return pCore;
         }
 

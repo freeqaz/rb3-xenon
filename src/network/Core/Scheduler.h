@@ -35,16 +35,23 @@ namespace Quazal {
         static bool CurrentThreadCanWaitForJob();
         static void GlobalSingleThreadDispatch(unsigned int);
         static CriticalSection s_csGlobalSystemLock;
+        // The braced if/else with an explicit == 0 test is what retail's /Od
+        // callers' frames require (the unbraced and !p forms move their
+        // temporaries).
         static Scheduler *GetInstance() {
-            Core *inst = Core::GetInstance();
-            if (!inst)
-                return nullptr;
-            else
-                return inst->GetScheduler();
+            Core *pCore = Core::GetInstance();
+            if (pCore == 0) {
+                return 0;
+            } else {
+                return pCore->GetScheduler();
+            }
         }
 
         // Retail 0x82A6F650. Inline, but /Ob1 rejects it at every call site
         // (callers reserve its frame), so it is always called out of line.
+        // Retail's out-of-line copy has a 0x80 frame (temporaries at 0x68 and
+        // 0x6c); ours has 0x70 (0x60, 0x64). Its callers' reservations match
+        // ours, so the extra eight bytes are not from this definition.
         static CriticalSection *GetSystemLock() { return &GetInstance()->unk38; }
 
         int unk4; // 0x4
