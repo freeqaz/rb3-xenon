@@ -98,7 +98,8 @@ void DataResultList::Update(Message *msg) {
 }
 
 void DataResultList::Clear() {
-    *mQDataResultString = 0;
+    // Retail calls Quazal::String::operator=(const wchar_t *) with a null pointer.
+    *mQDataResultString = (const wchar_t *)0;
     mUpdated = false;
 }
 

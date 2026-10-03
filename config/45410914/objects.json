@@ -2250,7 +2250,15 @@
                     "/GR-"
                 ]
             },
-            "network/quazal/Core/String.cpp": "NonMatching",
+            "network/quazal/Core/String.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/EHs-c-"
+                ]
+            },
             "network/quazal/XboxLSP/Client/LSPBackEndServices.cpp": "NonMatching",
             "network/quazal/CallContext.cpp": "NonMatching",
             "network/quazal/Competition/Client/CompetitionClient.cpp": "NonMatching",
