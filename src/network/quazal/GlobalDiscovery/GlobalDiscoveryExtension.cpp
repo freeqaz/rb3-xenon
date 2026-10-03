@@ -73,10 +73,39 @@ namespace Quazal {
         SystemComponentGroup *m_pExtensions; // 0x28
     };
 
-    // Retail calls GetInstance out of line (0x823EA910, an /O1 copy).
+    class InstanceTable : public RootObject {
+    public:
+        unsigned int LookupInstance(unsigned int, unsigned int);
+    };
+
+    class InstanceControl : public RootObject {
+    public:
+        virtual ~InstanceControl();
+
+        static InstanceTable s_oInstanceTable;
+
+        unsigned int m_icInstanceContext; // 0x4
+        unsigned int m_icInstanceType; // 0x8
+        void *m_pDelegatorInstance; // 0xc
+    };
+
+    class PseudoSingleton : public RootObject {
+    public:
+        static unsigned int GetCurrentContext();
+    };
+
+    // Retail calls GetInstance out of line (0x823EA910, an /O1 copy): /Ob1
+    // declines it, and each call site keeps its three locals reserved in the
+    // caller's frame.
     class Core : public RootObject {
     public:
-        static Core *GetInstance();
+        static Core *GetInstance() {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            InstanceControl *inst =
+                (InstanceControl *)InstanceControl::s_oInstanceTable.LookupInstance(3, uiContext);
+            Core *pCore = inst ? (Core *)inst->m_pDelegatorInstance : 0;
+            return pCore;
+        }
         SystemComponents *GetSystemComponents() { return m_pSystemComponents; }
 
         char m_pad0[0x10];
@@ -84,11 +113,9 @@ namespace Quazal {
     };
 
     inline SystemComponents *GetSystemComponents() {
-        if (Core::GetInstance() == 0) {
+        if (Core::GetInstance() == 0)
             return 0;
-        } else {
-            return Core::GetInstance()->GetSystemComponents();
-        }
+        return Core::GetInstance()->GetSystemComponents();
     }
 
     class Operation;

@@ -38,7 +38,8 @@ namespace Quazal {
         ~StringStream();
 
         StringStream &operator<<(const char *);
-        StringStream &operator<<(int);
+        StringStream &operator<<(long);
+        StringStream &operator<<(int i) { return *this << (long)i; }
 
         const char *m_szBuffer; // 0x0
         unsigned int m_uiSize; // 0x4
@@ -51,9 +52,16 @@ namespace Quazal {
 
     StringStream &operator<<(StringStream &, const String &);
 
+    class InstanceTable : public RootObject {
+    public:
+        unsigned int LookupInstance(unsigned int, unsigned int);
+    };
+
     class InstanceControl : public RootObject {
     public:
         virtual ~InstanceControl();
+
+        static InstanceTable s_oInstanceTable;
 
         unsigned int m_icInstanceContext; // 0x4
         unsigned int m_icInstanceType; // 0x8
@@ -110,10 +118,21 @@ namespace Quazal {
     class Scheduler;
     class Job;
 
+    class PseudoSingleton : public RootObject {
+    public:
+        static unsigned int GetCurrentContext();
+    };
+
     // Retail calls GetInstance out of line (0x823EA910, an /O1 copy).
     class Core : public RootObject {
     public:
-        static Core *GetInstance();
+        static Core *GetInstance() {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            InstanceControl *inst =
+                (InstanceControl *)InstanceControl::s_oInstanceTable.LookupInstance(3, uiContext);
+            Core *pCore = inst ? (Core *)inst->m_pDelegatorInstance : 0;
+            return pCore;
+        }
         Scheduler *GetScheduler() { return m_pScheduler; }
         SystemComponents *GetSystemComponents() { return m_pSystemComponents; }
 
@@ -137,11 +156,9 @@ namespace Quazal {
     };
 
     inline SystemComponents *GetSystemComponents() {
-        if (Core::GetInstance() == 0) {
+        if (Core::GetInstance() == 0)
             return 0;
-        } else {
-            return Core::GetInstance()->GetSystemComponents();
-        }
+        return Core::GetInstance()->GetSystemComponents();
     }
 
     class RefCountedObject : public RootObject {
