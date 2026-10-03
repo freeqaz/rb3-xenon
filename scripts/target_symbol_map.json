@@ -7487,6 +7487,7 @@
  "0x82340740": "?Save@BandLabel@@UAAXAAVBinStream@@@Z",
  "0x823408f8": "?FinishValueChange@BandLabel@@MAAXXZ",
  "0x82340940": "??0BandLabelCountDoneMsg@@QAA@PAVBandLabel@@@Z",
+ "0x82340a38": "?CopyMembers@BandLabel@@UAAXPBVUIComponent@@W4CopyType@Object@Hmx@@@Z",
  "0x82340ab0": "?PreLoad@BandLabel@@UAAXAAVBinStream@@@Z",
  "0x82340f48": "?Handle@BandLabel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82341190": "?SyncProperty@BandLabel@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",

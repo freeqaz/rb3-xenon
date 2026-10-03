@@ -16,6 +16,10 @@ public:
     virtual ~BandLabel();
     virtual void PreLoad(BinStream &);
     virtual void Poll();
+    /** Retail overrides this (0x82340A38; primary vtable slot 18 differs from
+        UILabel's 0x827F4778): UILabel::CopyMembers, then the two
+        UITransitionHandler anims at 0x218/0x224. */
+    virtual void CopyMembers(const UIComponent *, CopyType);
     virtual void SetDisplayText(const char *, bool);
     virtual void Count(int, int, float, Symbol);
     virtual void FinishCount();

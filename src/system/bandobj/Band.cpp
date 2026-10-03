@@ -1,6 +1,11 @@
 #include "Band.h"
 #include "obj/Object.h"
 #include "obj/ObjMacros.h"
+#include "beatmatch/BeatMaster.h"
+#include "beatmatch/PlayerTrackConfig.h"
+#include "beatmatch/SongData.h"
+#include "meta/DataArraySongInfo.h"
+#include "obj/DataUtl.h"
 #include "bandobj/BandButton.h"
 #include "bandobj/BandCamShot.h"
 #include "bandobj/BandCharDesc.h"
@@ -78,7 +83,32 @@ public:
     NEW_OBJ(BandSong)
     static void Init() { Register(); }
     REGISTER_OBJ_FACTORY_FUNC(BandSong)
+
+private:
+    // Retail overrides Song's null-returning CreateSong (BandSong primary-table
+    // slot 10 = 0x8229CC10, Song's = 0x827C6F38). Without it a BandSong builds
+    // no song data or master at all.
+    virtual void CreateSong(Symbol, DataArray *, HxSongData **, HxMaster **);
 };
+
+// retail 0x8229CC10: new SongData (0x174), new BeatMaster(sdata, 1) between
+// DataMacroWarning(false/true), then BeatMaster::Load of the song's DataArray
+// with this song's MidiReceiver as the only receiver.
+void BandSong::CreateSong(
+    Symbol s, DataArray *arr, HxSongData **songdata, HxMaster **hxmaster
+) {
+    SongData *sdata = new SongData();
+    *songdata = sdata;
+    DataMacroWarning(false);
+    BeatMaster *bmaster = new BeatMaster(sdata, 1);
+    *hxmaster = bmaster;
+    DataMacroWarning(true);
+    std::vector<MidiReceiver *> mreceivers;
+    mreceivers.push_back(this);
+    PlayerTrackConfigList plist(0);
+    DataArraySongInfo info(arr, 0, s);
+    bmaster->Load(&info, 4, &plist, true, kSongData_NoValidation, &mreceivers);
+}
 class DialogDisplay { public: static void Init(); };
 class InstrumentDifficultyDisplay { public: static void Init(); };
 class MicInputArrow { public: static void Init(); };
