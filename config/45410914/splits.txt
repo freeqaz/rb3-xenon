@@ -390,6 +390,7 @@ TrackPanelDir.cpp:
 	.pdata      start:0x821FAF38 end:0x821FAF48
 	.pdata      start:0x821FAF48 end:0x821FAF60
 	.pdata      start:0x821FAF60 end:0x821FAF70
+	.pdata      start:0x821FAF70 end:0x821FAFB0
 	.pdata      start:0x821FAFB0 end:0x821FAFB8
 	.pdata      start:0x821FAFB8 end:0x821FAFC0
 	.pdata      start:0x821FAFC0 end:0x821FAFD8
@@ -405,9 +406,11 @@ TrackPanelDir.cpp:
 	.text       start:0x82307EA8 end:0x82308060
 	.text       start:0x82308060 end:0x823082D0
 	.text       start:0x823082D0 end:0x8230846C
+	.text       start:0x82308478 end:0x8230869C
 	.text       start:0x8230869C end:0x82308710
 	.text       start:0x82308710 end:0x82308780
 	.text       start:0x82308780 end:0x82308C38
+	.text       start:0x82308C88 end:0x82308CEC
 	.text       start:0x82308CEC end:0x82308D5C
 	.text       start:0x82308D60 end:0x8230A774
 	.text       start:0x8230A7D8 end:0x8230A7E0
@@ -4035,6 +4038,7 @@ CharIKHand.cpp:
 	.pdata      start:0x82201858 end:0x82201860
 	.pdata      start:0x82201A30 end:0x82201A38
 	.pdata      start:0x82201B30 end:0x82201B38
+	.pdata      start:0x82203AC0 end:0x82203AD0
 	.pdata      start:0x82203B50 end:0x82203B58
 	.pdata      start:0x82203BD0 end:0x82203BD8
 	.pdata      start:0x82203BE0 end:0x82203C00
@@ -4045,6 +4049,7 @@ CharIKHand.cpp:
 	.text       start:0x82371148 end:0x82371198
 	.text       start:0x82372CA8 end:0x82372D18
 	.text       start:0x82373CE8 end:0x82373D68
+	.text       start:0x82397808 end:0x82397898
 	.text       start:0x82397F08 end:0x82397F38
 	.text       start:0x82398750 end:0x82398794
 	.text       start:0x82398804 end:0x82398A04
@@ -4713,13 +4718,9 @@ system/bandobj/MeterDisplay.cpp:
 	.text       start:0x8231B794 end:0x8231C150
 
 WaveFile.cpp:
-	.pdata      start:0x821F4860 end:0x821F4868
-	.pdata      start:0x821F4868 end:0x821F4870
 	.pdata      start:0x8220DE00 end:0x8220DE08
 	.pdata      start:0x82243088 end:0x822431D0
 	.pdata      start:0x82243320 end:0x82243328
-	.text       start:0x822A2F18 end:0x822A2F78
-	.text       start:0x822A2F80 end:0x822A2FA8
 	.text       start:0x82451F98 end:0x82451FF8
 	.text       start:0x827D2E70 end:0x827D3FAC
 	.text       start:0x827D5BB0 end:0x827D5C00
@@ -4980,13 +4981,10 @@ PropSync.cpp:
 	.text       start:0x82769AB0 end:0x8276A758
 
 SpotlightDrawer.cpp:
-	.pdata      start:0x821FAF70 end:0x821FAFB0
 	.pdata      start:0x82214660 end:0x82214670
 	.pdata      start:0x82214830 end:0x822149F0
 	.pdata      start:0x822149F8 end:0x82214A98
 	.pdata      start:0x82261B08 end:0x82261B10
-	.text       start:0x82308478 end:0x8230869C
-	.text       start:0x82308C88 end:0x82308CEC
 	.text       start:0x824D17AC end:0x824D17B0
 	.text       start:0x824D17BC end:0x824D1848
 	.text       start:0x824D4C28 end:0x824D6F68
@@ -5184,7 +5182,6 @@ System.cpp:
 	.text       start:0x82C42910 end:0x82C42958
 
 DataEventList.cpp:
-	.pdata      start:0x82203AC0 end:0x82203AD0
 	.pdata      start:0x82244688 end:0x82244690
 	.pdata      start:0x82244910 end:0x82244950
 	.pdata      start:0x82244950 end:0x82244958
@@ -5202,7 +5199,6 @@ DataEventList.cpp:
 	.pdata      start:0x822449F8 end:0x82244A00
 	.pdata      start:0x82244A00 end:0x82244A10
 	.pdata      start:0x82244A10 end:0x82244A28
-	.text       start:0x82397808 end:0x82397898
 	.text       start:0x827EA060 end:0x827EA210
 	.text       start:0x827ECA70 end:0x827ECA98
 	.text       start:0x827ECA98 end:0x827ED008
@@ -11868,6 +11864,8 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4818 end:0x821F4828
 	.pdata      start:0x821F4828 end:0x821F4830
 	.pdata      start:0x821F4830 end:0x821F4840
+	.pdata      start:0x821F4860 end:0x821F4868
+	.pdata      start:0x821F4868 end:0x821F4870
 	.pdata      start:0x821F4870 end:0x821F4878
 	.pdata      start:0x821F4888 end:0x821F4898
 	.pdata      start:0x821F4898 end:0x821F48A8
@@ -11974,6 +11972,8 @@ OutfitConfig.cpp:
 	.text       start:0x822A2C70 end:0x822A2CE8
 	.text       start:0x822A2CE8 end:0x822A2D50
 	.text       start:0x822A2D50 end:0x822A2DB8
+	.text       start:0x822A2F18 end:0x822A2F78
+	.text       start:0x822A2F80 end:0x822A2FA8
 	.text       start:0x822A2FA8 end:0x822A3008
 	.text       start:0x822A30C0 end:0x822A3174
 	.text       start:0x822A3178 end:0x822A3340

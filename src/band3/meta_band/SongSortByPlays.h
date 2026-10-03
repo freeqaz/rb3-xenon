@@ -20,7 +20,9 @@ public:
         static Symbol by_plays("by_plays");
         mShortName = by_plays;
     }
-    virtual ~SongSortByPlays() {}
+    // No user-declared destructor: retail's vtable slot 0 for this class is
+    // NodeSort's deleting destructor (0x82597ED0), which never stores this
+    // class's vtables, so the destructor here is the implicit one.
     virtual ShortcutNode *NewShortcutNode(SongSortNode *) const;
     virtual HeaderSortNode *NewHeaderNode(SongSortNode *) const;
     virtual OwnedSongSortNode *NewSongNode(SongRecord *) const;

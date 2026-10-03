@@ -56,7 +56,8 @@ public:
     OBJ_CLASSNAME(CampaignGoalsLeaderboardChoicePanel);
     OBJ_SET_TYPE(CampaignGoalsLeaderboardChoicePanel);
     virtual DataNode Handle(DataArray *, bool);
-    virtual ~CampaignGoalsLeaderboardChoicePanel() {}
+    // No user-declared destructor: retail's vtable slot 0 is TourDescPanel's
+    // deleting-destructor thunk (0x82B7CAC0), so the destructor is the implicit one.
     virtual void Enter();
     virtual void Load();
     virtual void Unload();

@@ -22,7 +22,9 @@ public:
         static Symbol by_stars("by_stars");
         mShortName = by_stars;
     }
-    virtual ~SongSortByStars() {}
+    // No user-declared destructor: retail's vtable slot 0 for this class is
+    // NodeSort's deleting destructor (0x82597ED0), which never stores this
+    // class's vtables, so the destructor here is the implicit one.
     virtual void Init();
     virtual bool CustomForNode(ShortcutNode *, UIListCustom *, Hmx::Object *) const;
     virtual bool TextForNode(ShortcutNode *, UIListLabel *, UILabel *) const;
