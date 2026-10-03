@@ -132,7 +132,3 @@ void BandUser::SyncSave(BinStream &, unsigned int) const { }
 BandUser::~BandUser() { }
 
 // ===== M10 additions (vocal orchestration) ==================================
-// NetSession::IsLocal(): offline single-player. VocalPlayer::Poll's chat gate
-// (`!TheNetSession->IsLocal()`) short-circuits, so the absent BandUser is never
-// dereferenced. (Real NetSession.cpp is not compiled.)
-bool NetSession::IsLocal() const { return true; }

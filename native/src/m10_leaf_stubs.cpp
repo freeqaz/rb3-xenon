@@ -55,10 +55,16 @@ void GameConfig::GetSectionBounds(int, float &, float &) const {}
 void SongDB::ChangeDifficulty(int, Difficulty) {}
 bool NetSession::HasUser(const User *) const { return false; }
 
-// ---- VocalPlayer off-path virtual leaves ----
-// InTambourinePhrase IS on the Poll path (VocalPart::Poll reads it) -> honest
-// headless default: the synthetic run has no tambourine phrases.
-bool VocalPlayer::InTambourinePhrase() const { return false; }
+// ---- VocalPlayer::InTambourinePhrase -- the REAL body, not a stub (W16-PD) ----
+// Hot path: the probe counted 37,203 calls in one rb3-harmony run. It used to
+// return a constant false here ("the synthetic run has no tambourine phrases"),
+// which was an assumption, not a measurement. Retail places the real body in
+// VocalTrack's TU (src/band3/bandtrack/VocalTrack.cpp:2827, beside
+// Player::InTambourinePhrase), and VocalTrack.cpp drags the whole bandtrack/UI
+// render closure, so it cannot link here -- but the body only reads the
+// TambourineManager, which these targets DO link (TambourineManager.cpp). This
+// is that body verbatim; keep the two in step.
+bool VocalPlayer::InTambourinePhrase() const { return mTambourineManager.unk60 > 0; }
 
 // ---- handler Symbol globals (VocalPlayer BEGIN_HANDLERS / property sync) ----
 // Off-path (only the Handle/SyncProperty virtuals reference these).

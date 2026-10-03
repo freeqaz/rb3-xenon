@@ -178,11 +178,11 @@ void SongDB::OverrideBasePoints(int, TrackType, const UserGuid &, int, int, int)
 
 // ==================================================== other singletons =========
 // TheNetSession / TheGameConfig globals live in m6_symbols.cpp (both null). The
-// driver points TheNetSession at a calloc'd NetSession; NetSession::IsLocal() is
-// stubbed to return true (offline single-player) in m10_link_stubs.cpp so
-// VocalPlayer::Poll's `!TheNetSession->IsLocal()` chat gate short-circuits before
-// dereferencing the (absent) BandUser. TheGameConfig stays null (only the
-// HX_NATIVE-compiled-out spotlight path would read it).
+// driver points TheNetSession at a calloc'd NetSession. (The NetSession::IsLocal
+// stub that once shielded VocalPlayer::Poll's chat path is gone -- Poll no longer
+// asks TheNetSession; the absent-BandUser case is handled in PressingToTalk under
+// HX_NATIVE, W16-PD.) TheGameConfig stays null (only the HX_NATIVE-compiled-out
+// spotlight path would read it).
 NetSession *NativeMakeNetSession() {
     return (NetSession *)std::calloc(1, sizeof(NetSession));
 }
