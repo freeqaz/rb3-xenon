@@ -38,31 +38,39 @@ private:
     bool *mUploadedFlags; // 0x10
     Symbol mFile; // 0x14
     int mNumFilesLoaded; // 0x18
-    bool mInitialized; // 0x1c - checked in Init
-    DataArray *mMagnuStrings; // 0x20
+#ifdef HX_NATIVE
+    bool mInitialized; // checked in Init
+    DataArray *mMagnuStrings;
+#endif
+    // Retail TheLocale is 0x1C bytes (lbl_82E07138) and ends at
+    // mNumFilesLoaded: no init flag and no Magnu-string table. Its static
+    // initializer (0x82C40F08) constructs only mFile and registers an empty
+    // destructor (0x82C4A0D0 is a bare blr).
 public:
 #ifdef HX_NATIVE
     // Native builds need explicit init since globals aren't BSS-zeroed
     Locale() : mSize(0), mSymTable(0), mStrTable(0), mStringData(0),
         mUploadedFlags(0), mNumFilesLoaded(0), mInitialized(true), mMagnuStrings(0) {}
-#else
-    // PPC: BSS zeroes all members. Only Symbol mFile needs construction (sets gNullStr).
-    // mInitialized is UB in original binary — never written, happens to be nonzero.
-    Locale() {}
-#endif
     ~Locale() {
         if (mMagnuStrings) {
             mMagnuStrings->Release();
             mMagnuStrings = 0;
         }
     }
+#else
+    // PPC: BSS zeroes all members. Only Symbol mFile needs construction (sets gNullStr).
+    Locale() {}
+    ~Locale() {}
+#endif
 
     void Init();
     void Terminate();
 
     static const char *sIgnoreMissingText;
 
+#ifdef HX_NATIVE
     void SetMagnuStrings(DataArray *);
+#endif
     const char *Localize(Symbol, bool) const;
 
     static void SetLocaleVerboseNotify(bool set) { Locale::sVerboseNotify = set; }

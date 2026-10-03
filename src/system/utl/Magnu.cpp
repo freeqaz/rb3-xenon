@@ -18,7 +18,11 @@ DataNode MagnuRefreshStrings(DataArray *arr) {
         MILO_NOTIFY("Must be using Holmes to retrieve Magnu strings");
 
     if (yeet) {
+        // Retail's Locale has no Magnu-string table (see Locale.h); only the
+        // native build keeps the override.
+#ifdef HX_NATIVE
         TheLocale.SetMagnuStrings(yeet);
+#endif
         return yeet->Size();
     } else
         return 0;

@@ -2471,6 +2471,7 @@ BufStream.cpp:
 Locale.cpp:
 	.pdata      start:0x82242808 end:0x82242868
 	.text       start:0x827C97C8 end:0x827CA128
+	.text       start:0x82C40F08 end:0x82C40F28
 
 NetCacheLoader.cpp:
 	.pdata      start:0x82242E10 end:0x82242E58
@@ -6239,7 +6240,7 @@ Symbol.cpp:
 	.pdata      start:0x82241E98 end:0x82241F40
 	.pdata      start:0x82261708 end:0x82261710
 	.text       start:0x827BFF58 end:0x827C0DE0
-	.text       start:0x82C40EB0 end:0x82C40F28
+	.text       start:0x82C40EB0 end:0x82C40F08
 
 Cheats.cpp:
 	.pdata      start:0x82241F80 end:0x82241F90
