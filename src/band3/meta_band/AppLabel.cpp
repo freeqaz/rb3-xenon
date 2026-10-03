@@ -26,6 +26,7 @@
 #include "meta_band/ViewSetting.h"
 #include "meta_band/Utl.h"
 #include "obj/Dir.h"
+#include "os/Friend.h"
 #include "obj/Data.h"
 #include "obj/ObjMacros.h"
 #include "os/DateTime.h"
@@ -452,14 +453,10 @@ void AppLabel::SetSetlistDescription(const SavedSetlist *setlist) {
     SetDisplayText(setlist->GetDescription(), true);
 }
 
-// Retail 360-only pair - see AppLabel.h FriendRecord note.
-void AppLabel::SetFriendName(const FriendRecord *record) {
-    SetDisplayText(record->mName.c_str(), true);
-}
+// Retail 360-only pair - see AppLabel.h.
+void AppLabel::SetFriendName(const Friend *f) { SetDisplayText(f->mName.c_str(), true); }
 
-void AppLabel::SetFriendBandName(const FriendRecord *record) {
-    SetDisplayText(record->mBandName.c_str(), true);
-}
+void AppLabel::SetFriendBandName(const Friend *f) { SetDisplayText(f->mGame.c_str(), true); }
 
 void AppLabel::SetSetlistOwner(const SetlistRecord *setlist) {
     SetDisplayText(setlist->GetOwner(), true);

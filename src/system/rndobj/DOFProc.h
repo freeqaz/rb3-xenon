@@ -10,7 +10,11 @@ public:
     virtual ~DOFProc();
     OBJ_CLASSNAME(DOFProc);
     OBJ_SET_TYPE(DOFProc);
+#ifdef HX_NATIVE
+    // DC3's set/unset handlers. RB3 retail's DOFProc table holds
+    // Object::Handle (0x8275BD78) at slot 6 (lane W16-OT).
     virtual DataNode Handle(DataArray *, bool);
+#endif
     virtual void Set(const RndCam *, float, float, float, float) {}
     virtual void UnSet() {}
     virtual bool Enabled() const { return 0; }

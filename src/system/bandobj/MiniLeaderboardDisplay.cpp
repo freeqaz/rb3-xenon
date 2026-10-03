@@ -81,14 +81,14 @@ void MiniLeaderboardDisplay::PostLoad(BinStream &bs) {
     Update();
 }
 
+// Retail slot 5 (0x8231A0D8) is one 96 B body ICF-shared with
+// AppMiniLeaderboardDisplay::DrawShowing: no null test on the resource dir, so
+// the check is an assert (compiled out), not a branch (lane W16-OT).
 void MiniLeaderboardDisplay::DrawShowing() {
     RndDir *dir = mResource->Dir();
-    if (dir) {
-        dir->SetWorldXfm(WorldXfm());
-        dir->Draw();
-    } else {
-        MILO_NOTIFY_ONCE("MiniLeaderboardDisplay: %s missing resource dir", Name());
-    }
+    MILO_ASSERT(dir, 0x5C);
+    dir->SetWorldXfm(WorldXfm());
+    dir->Draw();
 }
 
 void MiniLeaderboardDisplay::OldResourcePreload(BinStream &bs) {

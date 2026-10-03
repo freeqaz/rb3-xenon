@@ -108,7 +108,8 @@ public:
     virtual void CheckForTrills(float ms, int, unsigned int slots);
     virtual void PollHook(float ms);
     virtual void JumpHook(float ms);
-    virtual float HitGemHook(float ms, int gemID, GemHitFlags flags) { return 0.0f; }
+    // Retail slot 35 is a bare `blr`: f1 (ms) comes back unchanged (lane W16-OT).
+    virtual float HitGemHook(float ms, int gemID, GemHitFlags flags) { return ms; }
     virtual bool ShouldAutoplayGem(float ms, int gemID);
     virtual bool GemCanBePassed(int gemID) { return true; }
     virtual int NextGemAfter(int gemID, bool timeout);

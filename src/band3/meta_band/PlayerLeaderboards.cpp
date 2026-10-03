@@ -57,7 +57,9 @@ Symbol PlayerLeaderboard::OnSelectRow(int row, BandUser *user) {
     return gNullStr;
 }
 
-bool PlayerLeaderboard::CanRowsBeSelected() const { return false; }
+// Retail slot 31 is the `li r3,1; blr` fold in PlayerLeaderboard and all three
+// subclasses (lane W16-OT, BODY check).
+bool PlayerLeaderboard::CanRowsBeSelected() const { return true; }
 bool PlayerLeaderboard::IsRowFriend(int idx) const {
     return mLeaderboardRows[idx].mIsFriend;
 }

@@ -59,7 +59,9 @@ void PrefabChar::CachePortraitTex(RndTex *tex) {
 }
 
 bool PrefabChar::IsFinalized() const { return true; }
-bool PrefabChar::IsCustomizable() const { return PrefabMgr::PrefabIsCustomizable(); }
+// Retail slot 5 is the `li r3,0; blr` fold: the PrefabMgr toggle is not
+// consulted on X360 (lane W16-OT, BODY check).
+bool PrefabChar::IsCustomizable() const { return false; }
 
 #pragma push
 #pragma force_active on

@@ -401,9 +401,9 @@ void CheckExtrude() {
     }
 }
 
-u64 RndShaderVelocityCamera::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
-    return (u64)(TheHiResScreen.IsActive() & 1) << 52;
-}
+// Retail slot 3 is the `li r3,0; blr` fold: RB3 X360 has no HiResScreen term
+// here either (lane W16-OT, BODY check).
+u64 RndShaderVelocityCamera::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) { return 0; }
 
 u64 RndShaderVelocity::CalcShaderOpts(NgMat *mat, ShaderType s, bool b) {
     // Retail (0x824A7440) has no HiResScreen term: only the skinned bit.

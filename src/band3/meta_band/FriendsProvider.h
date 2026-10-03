@@ -25,13 +25,16 @@
 // kState_InviteFriends -> kState_InviteFriendsDenial check in
 // OvershellSlot::UpdateState.
 class Friend;
+class PlatformMgrOpCompleteMsg;
 
 class FriendsProvider : public UIListProvider, public Hmx::Object {
 public:
     FriendsProvider();
     virtual ~FriendsProvider();
-    // UIListProvider overrides (bodies not yet decompiled — declarations only
-    // so no COMDATs leak into including TUs)
+    // Hmx::Object. Retail's Object-table slot 6 (0x826664A8) is a real
+    // Handle: HANDLE_MESSAGE(PlatformMgrOpCompleteMsg), then Object (lane W16-OT).
+    virtual DataNode Handle(DataArray *, bool);
+    // UIListProvider. Retail 0x82665FD8 (primary slot 1).
     virtual void Text(int, int, UIListLabel *, UILabel *) const;
     // NO DataSymbol override: retail's primary-table slot 8 is UIListProvider's
     // own 0x822AD878 (lane W16-OP). The overrides retail does have are the
@@ -55,6 +58,8 @@ public:
     // Retail 0x82665DF0 (X360 TU5); called by OvershellSlot::InviteFriend.
     // Name is ours -- the retail row is anonymous.
     void InviteFriend(int);
+    // Retail 0x82666440: re-sorts mFriends (online first, then by name).
+    DataNode OnMsg(const PlatformMgrOpCompleteMsg &);
 
     // 0x2c — OWNED Friend* entries; NumData() = size().
     // ⚠ Was `std::vector<int>`. CORRECTED, lane W16-T, on retail bytes: the

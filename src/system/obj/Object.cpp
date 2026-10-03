@@ -484,14 +484,15 @@ void Hmx::Object::LoadRest(BinStream &bs) {
 #endif
 }
 
+#ifdef HX_NATIVE
+// DC3's body. RB3 retail's Export is empty (see Object.h).
 void Hmx::Object::Export(DataArray *a, bool b) {
     if (b)
         HandleType(a);
-#ifdef HX_NATIVE
     if (mSinks)
         mSinks->Export(a);
-#endif
 }
+#endif
 
 void Hmx::Object::SetTypeDef(DataArray *def) {
     if (mTypeDef != def) {

@@ -35,6 +35,9 @@ public:
     // ContentMgr::Callback
     virtual void ContentMounted(char const *, char const *);
     virtual void ContentFailed(char const *);
+    // Retail's Callback-table slot 11 is the `li r3,0; blr` fold, not
+    // Callback's own "." body (lane W16-OT; BandPreloadPanel inherits it).
+    virtual const char *ContentDir() { return 0; }
 
     NEW_OBJ(PreloadPanel)
     static FileCache *sCache;

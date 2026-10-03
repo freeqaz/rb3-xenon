@@ -237,9 +237,13 @@ DataNode CharacterTest::OnGetFilteredClips(DataArray *arr) {
     return ptr;
 }
 
+// Retail inherits Callback's `return y` (a bare blr) at this slot: the
+// distance-map overlay is native-only (lane W16-OT, BODY check).
 float CharacterTest::UpdateOverlay(RndOverlay *o, float f) {
+#ifdef HX_NATIVE
     if (mDistMap)
         mDistMap->Draw(40.0f, 40.0f, mDriver);
+#endif
     return f;
 }
 

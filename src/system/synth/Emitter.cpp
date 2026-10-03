@@ -107,16 +107,18 @@ BEGIN_LOADS(SynthEmitter)
     delete mInst;
 END_LOADS
 
+// Retail: the empty-body fold at this slot (lane W16-OT, BODY check) -- edit mode is dev-only.
 void SynthEmitter::DrawShowing() {
-    if (TheLoadMgr.EditMode()) {
+    if (LOADMGR_EDITMODE) {
         CheckLoadResources();
         gIconDir->SetLocalXfm(WorldXfm());
         gIconDir->DrawShowing();
     }
 }
 
+// Retail: `li r3,0; blr` (lane W16-OT, BODY check) -- edit mode is dev-only.
 RndDrawable *SynthEmitter::CollideShowing(const Segment &s, float &dist, Plane &plane) {
-    if (TheLoadMgr.EditMode()) {
+    if (LOADMGR_EDITMODE) {
         CheckLoadResources();
         RndDrawable *dirDraw = gIconDir->CollideShowing(s, dist, plane);
         if (dirDraw) {
@@ -126,8 +128,9 @@ RndDrawable *SynthEmitter::CollideShowing(const Segment &s, float &dist, Plane &
     return 0;
 }
 
+// Retail: `li r3,0; blr` (lane W16-OT, BODY check) -- edit mode is dev-only.
 int SynthEmitter::CollidePlane(const Plane &plane) {
-    if (TheLoadMgr.EditMode()) {
+    if (LOADMGR_EDITMODE) {
         CheckLoadResources();
         return gIconDir->CollidePlane(plane);
     } else

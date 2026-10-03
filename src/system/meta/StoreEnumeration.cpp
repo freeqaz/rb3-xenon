@@ -37,19 +37,12 @@ XboxEnumeration::~XboxEnumeration() {
     mEnumBuffer = 0;
 }
 
+// Retail 0x827CA3A8 (vtable slot 3) is `lbz r3, 0x1c(r3); blr`: the flag
+// Start() sets to 1 and the failure paths clear (mEnumerating). The old body
+// read +0x24, inside mOverlapped (lane W16-OT, BODY check).
 bool XboxEnumeration::IsSuccess() const {
-#ifdef HX_NATIVE
-    // Use proper member access instead of hardcoded struct offsets
-    if (mHandle != 0) {
-        MILO_ASSERT(false, 0x208);
-    }
-    return (bool)mOverlapped.InternalHigh;
-#else
-    if (*((u32*)((u8*)this + 0x3c)) != 0) {
-        MILO_ASSERT(false, 0x208);
-    }
-    return *((bool*)((u8*)this + 0x24));
-#endif
+    MILO_ASSERT(mHandle == 0, 0x208);
+    return mEnumerating;
 }
 
 void XboxEnumeration::Start() {

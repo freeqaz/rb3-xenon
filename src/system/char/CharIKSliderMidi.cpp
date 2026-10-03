@@ -182,3 +182,9 @@ void CharIKSliderMidi::Poll() {
         }
     }
 }
+
+// retail 0x823CAB20 (via vtordisp thunk 0x823CB280)
+void CharIKSliderMidi::SetName(const char *name, ObjectDir *dir) {
+    Hmx::Object::SetName(name, dir);
+    mMe = dynamic_cast<Character *>(dir);
+}

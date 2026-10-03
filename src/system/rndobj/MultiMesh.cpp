@@ -343,9 +343,10 @@ DataNode RndMultiMesh::OnAddXfms(const DataArray *da) {
     return 0;
 }
 
+// Retail: RndDrawable's empty CollideList at slot 9 (lane W16-OT, BODY check) -- edit mode is dev-only.
 void RndMultiMesh::CollideList(const Segment &seg, std::list<Collision> &colls) {
     static int stamp = 0;
-    if (TheLoadMgr.EditMode() && CollideSphere(seg)) {
+    if (LOADMGR_EDITMODE && CollideSphere(seg)) {
         stamp++;
         if (mMesh) {
             for (std::list<RndMultiMesh::Instance>::iterator it = mInstances.begin();

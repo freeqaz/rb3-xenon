@@ -28,8 +28,10 @@ public:
     virtual int GetFretButtons() const = 0;
     virtual void EnableShift(bool) {}
     virtual bool IsShifted() const { return false; }
-    virtual int GetVelocityBucket(int slot) const;
-    virtual int GetVirtualSlot(int slot) const;
+    // Retail slots 31 / 32: `li r3,0; blr` and `mr r3,r4; blr`. Both were
+    // declared with no definition anywhere (lane W16-OT, BODY check).
+    virtual int GetVelocityBucket(int slot) const { return 0; }
+    virtual int GetVirtualSlot(int slot) const { return slot; }
     virtual void UseAlternateMapping(bool) {}
     virtual bool IsAlternateMapping() const { return false; }
     virtual void SetSecondPedalHiHat(bool) {}

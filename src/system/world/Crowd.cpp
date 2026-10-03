@@ -498,8 +498,9 @@ void WorldCrowd::ListDrawChildren(std::list<RndDrawable *> &draws) {
     }
 }
 
+// Retail: RndDrawable's empty CollideList at slot 9 (lane W16-OT, BODY check) -- edit mode is dev-only.
 void WorldCrowd::CollideList(const Segment &seg, std::list<Collision> &colls) {
-    if (TheLoadMgr.EditMode() && CollideSphere(seg)) {
+    if (LOADMGR_EDITMODE && CollideSphere(seg)) {
         ObjList<CharData>::iterator end = mCharacters.end();
         ObjList<CharData>::iterator it = mCharacters.begin();
         while (it != end) {

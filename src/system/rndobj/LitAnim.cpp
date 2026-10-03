@@ -171,6 +171,13 @@ void RndLightAnim::SetFrame(float frame, float blend) {
     }
 }
 
+// retail 0x824715A8
+void RndLightAnim::Print() {
+    TheDebug << "   light: " << mLight << "\n";
+    TheDebug << "   keysOwner: " << mKeysOwner << "\n";
+    TheDebug << "   colorKeys: " << mColorKeys << "\n";
+}
+
 float RndLightAnim::EndFrame() { return ColorKeys().LastFrame(); }
 
 void RndLightAnim::SetKey(float frame) {

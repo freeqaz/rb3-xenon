@@ -21,6 +21,13 @@ public:
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
     // RndAnimatable
+    // Retail's RndAnimatable-subobject slots 1-3 are one vtordisp thunk
+    // (0x8234EBC8) onto the empty-body fold: all three are overridden empty
+    // (lane W16-OT). SetFrame being a no-op
+    // is real behaviour -- RndAnimatable's own SetFrame is not empty.
+    virtual void StartAnim() {}
+    virtual void EndAnim() {}
+    virtual void SetFrame(float, float) {}
     virtual float EndFrame();
     virtual void ListAnimChildren(std::list<RndAnimatable *> &) const;
     // RndPollable

@@ -21,6 +21,10 @@ public:
     // RndAnimatable
     virtual void SetFrame(float, float);
     virtual float EndFrame();
+    // Retail slot 6 (0x82471CC8) is the `return ptr ? (Object*)ptr : 0` body
+    // ICF-shared with RndTransAnim::AnimTarget, read off mMesh.mPtr at +0x18
+    // (lane W16-OT).
+    virtual Hmx::Object *AnimTarget() { return mMesh; }
 
     int NumVerts();
     void ShrinkVerts(int);

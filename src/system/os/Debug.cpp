@@ -114,7 +114,10 @@ void Debug::RemoveExitCallback(ExitCallbackFunc *func) {
 
 Debug::~Debug() { StopLog(); }
 
+// Retail's slot 1 (TextStream::Print) is the empty-body fold: retail Debug
+// prints nothing (lane W16-OT, BODY check). The sinks are native-only.
 void Debug::Print(const char *msg) {
+#ifdef HX_NATIVE
     if (mLog) {
         mLog->Print(msg);
         if (mAlwaysFlush) {
@@ -128,6 +131,7 @@ void Debug::Print(const char *msg) {
         HolmesClientPrint(msg);
     }
     OutputDebugStringA(msg);
+#endif
 }
 
 void Debug::Exit(int exitCode, bool call_exit) {

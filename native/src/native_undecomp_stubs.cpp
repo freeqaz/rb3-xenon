@@ -32,9 +32,8 @@ const std::vector<TrackChannels> &SongInfoCopy::GetTracks() const { return mTrac
 // Export/AddSink/RemoveSink/etc. The former no-op shim here is removed: the
 // broadcast now actually reaches sinks. ----
 
-// ---- User (os/User.cpp compiled, but this TU5-discovered virtual has no body) ----
-// Renamed UnkTU5Virtual_beforeUserName -> IsNullUser in cb926469 (os/User.h:51).
-bool User::IsNullUser() const { return false; }
+// ---- User::IsNullUser: now defined inline in os/User.h (retail slot 28 is the
+// `li r3,0; blr` fold, lane W16-OT), so the stub that lived here is gone. ----
 
 // ---- CacheWav (synth/Utl.cpp) ------------------------------------------------
 // os/FileCache.cpp:384 calls CacheWav for .wav entries, but src/system/synth/ is

@@ -13,6 +13,9 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
+    // Retail's Object-table slot 2 is a vtordisp thunk (0x8238FB08) onto
+    // 0x8238F270 (lane W16-OT).
+    virtual void Replace(ObjRef *, Hmx::Object *);
 
     OBJ_MEM_OVERLOAD_INLINE_DEL(0x14);
     NEW_OBJ(CharClipGroup)

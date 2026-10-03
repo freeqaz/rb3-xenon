@@ -17,6 +17,9 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
+    // Retail's Object-table slot 13 is a vtordisp thunk (0x82471D10) onto
+    // 0x824715A8 (lane W16-OT).
+    virtual void Print();
     // RndAnimatable
     virtual void SetFrame(float, float);
     virtual float EndFrame();

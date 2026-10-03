@@ -26,8 +26,10 @@ RndMat *UIListProvider::Mat(int, int, UIListMesh *mesh) const {
     return mesh->DefaultMat();
 }
 
+// Retail slot 1 (0x828012E0) is the bare `label->SetTextToken(gNullStr)` body,
+// ICF-shared with ViewSetting::Text: no edit-mode arm (lane W16-OT).
 void UIListProvider::Text(int, int, UIListLabel *listlabel, UILabel *label) const {
-    if (TheLoadMgr.EditMode()) {
+    if (LOADMGR_EDITMODE) {
         label->SetEditText(listlabel->GetDefaultText());
     } else
         label->SetTextToken(gNullStr);
