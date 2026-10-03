@@ -85,6 +85,12 @@ Behaviour fixes first. Each fix changes what the code does.
 | `SpotlightDrawer::DrawAdditional` | 88 | 61.41 → 100 | `Spotlight::GetAdditionalObjects` returned the `ObjPtrList` **by value** (copy plus destroy on every draw). Retail walks the member list in place, so it now returns a `const&` (its only caller). |
 | `BandCrowdMeter::Reset` (via `InitialCrowdRating`) | 232 | 75.21 → 100 | Retail `InitialCrowdRating` uses a function-local `static Symbol("easy")`. That keeps it out of line, and ours had been inlined into Reset. |
 
+Re-home (coordinator lead, same pattern as W16-OK's 0x826C75E0):
+
+| row | B | before → after | fix |
+|---|---:|---|---|
+| `vector<HeldNote>::_M_fill_insert_aux` (0x826C23A0) | 396 | 0 → 100 | pinned under `system/world/Dir.cpp`, whose obj cannot define it; re-homed to the GemPlayer heading and named in the map (dtk moved the derived `.pdata` line) |
+
 Shape and spelling fixes. Each of these is the same behaviour spelled the way retail's codegen shows:
 
 | row | B | before → after | lever |
@@ -135,6 +141,24 @@ mesh starts with N live (garbage) vertices instead of N reserved.
    NgSpotlightDrawer::RenderScene `sLights.size()`; CharIKFoot `Scale()` in place of `*=`.
 
 ## 6. Leads left (not done)
+
+Three leads came from the coordinator/W16-OK at the end of the lane. One closed (§3 addendum); two are left:
+- **`map<Symbol,Symbol>` islands under Campaign** (0x822EA818 `insert_unique`, 472 B; 0x823D9628
+  `_M_create_node`, 92 B; both read 0%). Each is an ICF-folded body. Retail calls 0x822EA818 from GemTrackDir's
+  `map<unsigned, pair<int,RndMesh*>>::operator[]` and from FileMergerOrganizer's `map<Symbol,CatData>::operator[]`;
+  it calls 0x823D9628 from FileMergerOrganizer's `_M_insert<CatData>` (×3). The 0x822EA814 block sits between two
+  GemTrackDir blocks, and 0x823D9628 sits in FileMergerOrganizer's range. Our GemTrackDir.obj defines the
+  `_Rb_tree<unsigned,…pair<int,RndMesh*>>::insert_unique`, and FileMergerOrganizer.obj defines the CatData
+  `_M_create_node`. Recipe:
+  - re-home each block to that heading;
+  - rename the map entry to that spelling;
+  - swap the survivor of alias groups 337 / 1399 (survivor today is the `<Symbol,Symbol>` spelling, which no obj
+    defines), keeping the old survivor as a folded member.
+  Not done: it restructures two proof-carrying alias groups, which this lane chose not to rush.
+- **`~BandHeadShaper` (32 B, 87.5):** retail's dtor is 0x20 and its trailing dead `blr` at 0x822AFD88 is carved as
+  a separate 4-byte function (`symbols.txt` `fn_822AFD88 size:0x4`), wrongly mapped `??0Vector3@@QAA@XZ`. The row
+  closes only by extending the carve to 0x24. `ab_measure` refuses `symbols.txt` patches, so this needs a jeff
+  carve rule or a coordinator decision. Renaming the label alone would only un-pair a 4-byte row.
 
 - **`MemRealloc` / `MemTruncate` release ABI.** Retail CharClip::Transitions::Resize (200 B, 79.8) calls
   `MemTruncate(ptr, size)` and `MemRealloc(ptr, size, 0)` with no debug strings. That is the same ABI as the
