@@ -85919,11 +85919,43 @@
   {
    "name": "SetFriendName",
    "address": "0x825c62f0",
-   "survivor": "?SetFriendName@AppLabel@@QAAXPBUFriendRecord@1@@Z",
+   "survivor": "?SetFriendName@AppLabel@@QAAXPBVFriend@@@Z",
    "folded": [
     "?SetPrelocalizedString@UILabel@@QAAXAAVString@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "relabelled": {
+    "from": "?SetFriendName@AppLabel@@QAAXPBUFriendRecord@1@@Z",
+    "to": "?SetFriendName@AppLabel@@QAAXPBVFriend@@@Z",
+    "lane": "W16-OT",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here",
+    "held": [
+     {
+      "spelling": "?SetFriendName@AppLabel@@QAAXPBUFriendRecord@1@@Z",
+      "lane": "W16-OT",
+      "verdict": "UNDECIDABLE",
+      "evidence": "tools/icf_pair_adjudicate.chase(?SetFriendName@AppLabel@@QAAXPBVFriend@@@Z @ 0x825c62f0, ?SetFriendName@AppLabel@@QAAXPBUFriendRecord@1@@Z): UNDECIDABLE [MISSING(retail)] depth 0: retail ?SetFriendName@AppLabel@@QAAXPBVFriend@@@Z | ours ?SetFriendName@AppLabel@@QAAXPBUFriendRecord@1@@Z"
+     }
+    ]
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?SetPrelocalizedString@UILabel@@QAAXAAVString@@@Z",
+     "role": "folded",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(retail)",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?SetFriendName@AppLabel@@QAAXPBVFriend@@@Z @ 0x825c62f0, ?SetPrelocalizedString@UILabel@@QAAXAAVString@@@Z): UNDECIDABLE [MISSING(retail)] depth 0: retail ?SetFriendName@AppLabel@@QAAXPBVFriend@@@Z | ours ?SetPrelocalizedString@UILabel@@QAAXAAVString@@@Z"
+    },
+    {
+     "spelling": "?SetFriendName@AppLabel@@QAAXPBUFriendRecord@1@@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(retail)",
+     "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?SetFriendName@AppLabel@@QAAXPBVFriend@@@Z @ 0x825c62f0, ?SetFriendName@AppLabel@@QAAXPBUFriendRecord@1@@Z): UNDECIDABLE [MISSING(retail)] depth 0: retail ?SetFriendName@AppLabel@@QAAXPBVFriend@@@Z | ours ?SetFriendName@AppLabel@@QAAXPBUFriendRecord@1@@Z"
+    }
+   ]
   },
   {
    "name": "$_Copy_Construct",

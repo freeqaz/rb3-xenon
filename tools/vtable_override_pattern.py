@@ -87,6 +87,11 @@ def bare(n):
 # All rows are candidates, adjudicated on retail bytes.
 RETAIL_PURECALL = 0x828299B8
 BLR = 0x4E800020
+# Retail RTTI name -> our class name, where the two trees name one class
+# differently.  Retail's polymorphic ref base (Hmx::Object's only base; 4
+# slots: dtor, 2 pure, IsDirPtr=false) is `.?AVObjRef@@`; ours calls that
+# class ObjRefOwner and uses `ObjRef` for the non-polymorphic ring node.
+OUR_NAME = {'ObjRef': 'ObjRefOwner'}
 #   BODY        retail's slot body is a TINY RELOCATION-FREE LEAF (<= 4 words
 #               ending in blr, no branch, no lis) -- `blr`, `li r3,K; blr`,
 #               `lwz r3,off(r3); blr` -- and our slot's compiled body is not
@@ -166,7 +171,7 @@ def all_tables(a):
     out, stats = [], collections.Counter()
 
     def ours(cls, off):
-        t, why = vos.our_vtable_by_offset(cls, a.project_dir, off)
+        t, why = vos.our_vtable_by_offset(OUR_NAME.get(cls, cls), a.project_dir, off)
         return ([d['symbol'] for d in t] if t else None), why
 
     for cls, offs in sorted(by_cls.items()):

@@ -5265,10 +5265,12 @@ FriendsProvider.cpp:
 	.pdata      start:0x8222E8E0 end:0x8222E8F0
 	.pdata      start:0x8222E8F0 end:0x8222E8F8
 	.pdata      start:0x8222E8F8 end:0x8222E920
+	.pdata      start:0x8222E920 end:0x8222E948
 	.text       start:0x82665DE4 end:0x82666160
 	.text       start:0x826661CC end:0x82666290
 	.text       start:0x82666290 end:0x826662E0
 	.text       start:0x826662E0 end:0x8266643C
+	.text       start:0x8266643C end:0x82666648
 
 band3/meta_band/OvershellProfileProvider.cpp:
 	.pdata      start:0x8222EA78 end:0x8222EAE0
@@ -12521,12 +12523,10 @@ BandLabel.cpp:
 	.pdata      start:0x821FE790 end:0x821FE7A0
 	.pdata      start:0x821FE7A0 end:0x821FE7A8
 	.pdata      start:0x821FE7A8 end:0x821FE918
-	.pdata      start:0x8222E920 end:0x8222E948
 	.text       start:0x82340580 end:0x823405F8
 	.text       start:0x823405F8 end:0x8234066C
 	.text       start:0x82340670 end:0x823421A8
 	.text       start:0x82342220 end:0x82342228
-	.text       start:0x8266643C end:0x82666648
 
 band3/meta_band/PassiveMessenger.cpp:
 	.pdata      start:0x82218A40 end:0x82218A50

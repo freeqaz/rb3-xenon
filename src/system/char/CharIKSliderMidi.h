@@ -20,6 +20,10 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
+    // Retail's Object-table slot 16 is a vtordisp thunk (0x823CB280) onto
+    // 0x823CAB20: Object::SetName, then mMe = dynamic_cast<Character*>(dir)
+    // (lane W16-OT; rb3-Wii has the same override).
+    virtual void SetName(const char *, ObjectDir *);
     // RndHighlightable
     virtual void Highlight();
     // CharPollable

@@ -19,6 +19,12 @@ CharSleeve::CharSleeve()
 
 CharSleeve::~CharSleeve() {}
 
+// retail 0x823CEDE8 (via vtordisp thunk 0x823CFAD0)
+void CharSleeve::SetName(const char *name, ObjectDir *dir) {
+    Hmx::Object::SetName(name, dir);
+    mMe = dynamic_cast<Character *>(dir);
+}
+
 BEGIN_PROPSYNCS(CharSleeve)
     SYNC_PROP(sleeve, mSleeve)
     SYNC_PROP(top_sleeve, mTopSleeve)

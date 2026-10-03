@@ -13,6 +13,7 @@
 // that measurably do NOT work are documented at the gate in obj/Object.h.
 #define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #include "char/CharClipSet.h"
+#include "utl/Loader.h"
 #include "char/CharBoneDir.h"
 #include "char/CharClip.h"
 #include "char/CharClipGroup.h"
@@ -341,8 +342,10 @@ void CharClipSet::DrawShowing() {
     }
 }
 
+// Retail's RndDrawable-table slot 6 is the empty-body fold: the editor preview
+// character is not listed (lane W16-OT, BODY check).
 void CharClipSet::ListDrawChildren(std::list<RndDrawable *> &draws) {
-    if (mPreviewChar) {
+    if (LOADMGR_EDITMODE && mPreviewChar) {
         RndDir *ptr = mPreviewChar;
         draws.insert(draws.end(), ptr);
     }

@@ -2310,11 +2310,15 @@ void VocalPlayer::ToggleOverlay() {
         mVocalOverlay = new VocalOverlay();
 }
 
+// Retail inherits Callback's `return y` (a bare blr) at this slot: the vocal
+// debug overlay is native-only (lane W16-OT, BODY check).
 float VocalPlayer::UpdateOverlay(RndOverlay *o, float f2) {
+#ifdef HX_NATIVE
     o->Clear();
     if (mVocalOverlay) {
         o->Print(mVocalOverlay->mDisplayedString.c_str());
     }
+#endif
     return f2;
 }
 

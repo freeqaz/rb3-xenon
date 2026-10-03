@@ -185,6 +185,28 @@ void CharClipGroup::RandomizeIndex() {
         mWhich = RandomInt(0, n);
 }
 
+// retail 0x8238F270: swap the replaced clip for `to` (or drop it), keeping
+// mWhich on the same clip. As in RndMeshAnim::Replace, the first argument is
+// compared as the object being replaced (retail: entry+8 == r4). Object's own
+// Replace is empty in retail and is not called.
+void CharClipGroup::Replace(ObjRef *from, Hmx::Object *to) {
+    for (int idx = 0; idx < mClips.size(); idx++) {
+        if (mClips[idx] == reinterpret_cast<Hmx::Object *>(from)) {
+            mClips[idx] = dynamic_cast<CharClip *>(to);
+        }
+        if (!mClips[idx]) {
+            mClips.erase(mClips.begin() + idx);
+            int s = mClips.size();
+            if (mWhich > idx) {
+                mWhich--;
+            } else if (mWhich == s) {
+                mWhich = Min<int>(0, s - 1);
+            }
+            return;
+        }
+    }
+}
+
 void CharClipGroup::Sort() { std::sort(mClips.begin(), mClips.end(), Alphabetically()); }
 
 void CharClipGroup::DeleteRemaining(int i1) {

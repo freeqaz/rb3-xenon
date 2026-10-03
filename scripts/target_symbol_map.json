@@ -11939,7 +11939,7 @@
  "0x824710c0": "??1?$ObjPtr@VRndLight@@@@UAA@XZ",
  "0x824712a8": "??_G?$ObjPtr@VRndLight@@@@UAAPAXI@Z",
  "0x824712f8": "??_G?$ObjOwnerPtr@VRndLightAnim@@@@UAAPAXI@Z",
- "0x824715a8": "??6@YAAAVTextStream@@AAV0@PBVObject@Hmx@@@Z",
+ "0x824715a8": "?Print@RndLightAnim@@UAAXXZ",
  "0x82471778": "?SetFrame@RndLightAnim@@UAAXMM@Z",
  "0x82471858": "?OnCopyKeys@RndLightAnim@@IAA?AVDataNode@@PAVDataArray@@@Z",
  "0x82471930": "??0RndLightAnim@@IAA@XZ",
@@ -16848,8 +16848,8 @@
  "0x825c5e40": "?SetViewSettingStatus@AppLabel@@QAAXPBVViewSetting@@@Z",
  "0x825c5ea0": "?SetMusicLibraryStatus@AppLabel@@QAAXXZ",
  "0x825c5fe0": "?SetCreditsText@AppLabel@@UAAXPAVDataArray@@PAVUIListSlot@@@Z",
- "0x825c62f0": "?SetFriendName@AppLabel@@QAAXPBUFriendRecord@1@@Z",
- "0x825c6308": "?SetFriendBandName@AppLabel@@QAAXPBUFriendRecord@1@@Z",
+ "0x825c62f0": "?SetFriendName@AppLabel@@QAAXPBVFriend@@@Z",
+ "0x825c6308": "?SetFriendBandName@AppLabel@@QAAXPBVFriend@@@Z",
  "0x825c6320": "?SetIconAndProfileName@AppLabel@@QAAXW4ScoreType@@PBVBandProfile@@@Z",
  "0x825c6390": "?SetSongAndArtistNameFromSymbol@AppLabel@@QAAXVSymbol@@H@Z",
  "0x825c6680": "?SetSongYear@AppLabel@@QAAXHH@Z",
@@ -34798,7 +34798,7 @@
   "0x82b90790",
   "0x82b9b590"
  ],
- "_icf_arbitrary_comment": "VAs whose name is an ARBITRARY pick among linker-ICF-folded twins. The bytes are true (retail folded them, so our symbol really is byte-identical there) and only one of N names can be expressed by a VA->name map, so each is worth exactly +1 whichever twin is chosen. But the specific NAME is not asserted evidence. Any tool deriving identity, callers, or unit ownership from these entries must treat them as unresolved. ***CORRECTED 2026-08-13 (lane RULER-SWEEP): 'worth exactly +1 whichever twin is chosen' was a statement about the functionRelocDiffs=none ruler and no longer holds on bytes.*** Since name_check shipped 2026-08-12 (d04c83df) a relocation's target NAME is compared, so if the map spells the folded address as twin A while our source calls twin B, the call site is CHARGED. For a GENUINELY fold-proven pair the honest remedy is an entry in scripts/symbol_aliases.json (objdiff forgives it at diff/code.rs via SymbolEquivalences) -- both names really do denote one retail body. ⚠ The remedy is licensed by the PROVEN FOLD, never by this list's own 'the name is arbitrary' doctrine: admitting an alias merely because a name is listed here lifts name_check BY CONSTRUCTION with no byte evidence. tools/comdat_fold_gate.py's CF4 tier did exactly that; it was DELETED 2026-08-13 (lane CF4-FIX) and all 3 aliases it installed were removed after retail-byte adjudication refuted all 3. Alternates: docs/plans/laneAB-icf-tie-alternates-2026-07-26.json. Landed laneAB 46f95e99. ***ADDED 2026-08-17 (lane W21-CARVE): 0x8233bea0 / 0x8233c2c8 / 0x8233c398 / 0x8233c668.*** These four are the map<int,bool> _Rb_tree chain. The FOLD IS PROVEN, not assumed: map<TrackType,bool> (PerfectSectionTracker.obj) and map<int,bool> (BandList.obj, HamNavList.obj) compile to the SAME FIVE SIZES (84/204/232/488/160), and retail has ONE physical address per member reached from BOTH spellings -- HandleEnterExtent@PerfectSectionTracker (0x826db188, ~5 MB away) and four BandList:: reveal/conceal methods all bl 0x8233cb58. TrackType is an enum: a distinct type for mangling, identical code for a 4-byte key. So the <int,bool> spelling is an arbitrary pick in the sense this list means, and no tool may derive tree IDENTITY from it. It is nevertheless SAFE to name these four, because every call site among them is INTERNAL to the fold group; the group's only external entry is operator[] at 0x8233cb58, which is DELIBERATELY LEFT ANONYMOUS so its callers stay forgiven. Naming 0x8233cb58 is REFUSED: see docs/decomp/w21-carve.md.",
+ "_icf_arbitrary_comment": "VAs whose name is an ARBITRARY pick among linker-ICF-folded twins. The bytes are true (retail folded them, so our symbol really is byte-identical there) and only one of N names can be expressed by a VA->name map, so each is worth exactly +1 whichever twin is chosen. But the specific NAME is not asserted evidence. Any tool deriving identity, callers, or unit ownership from these entries must treat them as unresolved. ***CORRECTED 2026-08-13 (lane RULER-SWEEP): 'worth exactly +1 whichever twin is chosen' was a statement about the functionRelocDiffs=none ruler and no longer holds on bytes.*** Since name_check shipped 2026-08-12 (d04c83df) a relocation's target NAME is compared, so if the map spells the folded address as twin A while our source calls twin B, the call site is CHARGED. For a GENUINELY fold-proven pair the honest remedy is an entry in scripts/symbol_aliases.json (objdiff forgives it at diff/code.rs via SymbolEquivalences) -- both names really do denote one retail body. \u26a0 The remedy is licensed by the PROVEN FOLD, never by this list's own 'the name is arbitrary' doctrine: admitting an alias merely because a name is listed here lifts name_check BY CONSTRUCTION with no byte evidence. tools/comdat_fold_gate.py's CF4 tier did exactly that; it was DELETED 2026-08-13 (lane CF4-FIX) and all 3 aliases it installed were removed after retail-byte adjudication refuted all 3. Alternates: docs/plans/laneAB-icf-tie-alternates-2026-07-26.json. Landed laneAB 46f95e99. ***ADDED 2026-08-17 (lane W21-CARVE): 0x8233bea0 / 0x8233c2c8 / 0x8233c398 / 0x8233c668.*** These four are the map<int,bool> _Rb_tree chain. The FOLD IS PROVEN, not assumed: map<TrackType,bool> (PerfectSectionTracker.obj) and map<int,bool> (BandList.obj, HamNavList.obj) compile to the SAME FIVE SIZES (84/204/232/488/160), and retail has ONE physical address per member reached from BOTH spellings -- HandleEnterExtent@PerfectSectionTracker (0x826db188, ~5 MB away) and four BandList:: reveal/conceal methods all bl 0x8233cb58. TrackType is an enum: a distinct type for mangling, identical code for a 4-byte key. So the <int,bool> spelling is an arbitrary pick in the sense this list means, and no tool may derive tree IDENTITY from it. It is nevertheless SAFE to name these four, because every call site among them is INTERNAL to the fold group; the group's only external entry is operator[] at 0x8233cb58, which is DELIBERATELY LEFT ANONYMOUS so its callers stay forgiven. Naming 0x8233cb58 is REFUSED: see docs/decomp/w21-carve.md.",
  "_internal_linkage_allow": [
   "?NodeCmp@@YAHPBX0@Z"
  ],
@@ -36251,5 +36251,18 @@
  "0x82a90c08": "?DeleteUtilitySubsystem@ProductFacade@Quazal@@QAAXXZ",
  "0x82c417e8": "??__E?s_csGlobalLock@ProductFacade@Quazal@@2VCriticalSection@2@A@@YAXXZ",
  "0x82c4a8f8": "??__F?s_csGlobalLock@ProductFacade@Quazal@@2VCriticalSection@2@A@@YAXXZ",
- "_w16ou_interior_rows_comment": "Rows NULLED by lane W16-OU (2026-10-03), tools/alias_locate_home.py --null-interior-rows. Each named a function that scripts/symbol_aliases.json already folds at its real address, and each address is INSIDE another function: no dtk symbol starts there, it is no .pdata BeginAddress, and retail holds no branch, data word or lis/addi pair naming it (icf_pair_adjudicate.retail_refs_to). The fold addresses are called: 0x8245ee08 ??$__uninitialized_copy@PAUBone@CharBones@@PAU12@@stlpmtx_std@@YAPAUBone@CharBones@@PAU12@00ABU__false_type@0@@Z (word 0x4182000c) -> folded at 0x8237f158, 7 branch refs; 0x82333e14 ??3@YAXPAX0@Z (word 0x4e800020) -> folded at 0x826c3888, 1116 branch refs; 0x824f4dc4 ?TrigTableTerminate@@YAXXZ (word 0x4e800020) -> folded at 0x826c3888, 1116 branch refs; 0x8270d7f8 ??3RndLight@@SAXPAX@Z (word 0x4bffecb8) -> folded at 0x8240ddb0, 2308 branch refs. All four rows date to the TU0->TU5 address re-point (a320bc121) or the round-4 scanner stack (13fe51646)."
+ "_w16ou_interior_rows_comment": "Rows NULLED by lane W16-OU (2026-10-03), tools/alias_locate_home.py --null-interior-rows. Each named a function that scripts/symbol_aliases.json already folds at its real address, and each address is INSIDE another function: no dtk symbol starts there, it is no .pdata BeginAddress, and retail holds no branch, data word or lis/addi pair naming it (icf_pair_adjudicate.retail_refs_to). The fold addresses are called: 0x8245ee08 ??$__uninitialized_copy@PAUBone@CharBones@@PAU12@@stlpmtx_std@@YAPAUBone@CharBones@@PAU12@00ABU__false_type@0@@Z (word 0x4182000c) -> folded at 0x8237f158, 7 branch refs; 0x82333e14 ??3@YAXPAX0@Z (word 0x4e800020) -> folded at 0x826c3888, 1116 branch refs; 0x824f4dc4 ?TrigTableTerminate@@YAXXZ (word 0x4e800020) -> folded at 0x826c3888, 1116 branch refs; 0x8270d7f8 ??3RndLight@@SAXPAX@Z (word 0x4bffecb8) -> folded at 0x8240ddb0, 2308 branch refs. All four rows date to the TU0->TU5 address re-point (a320bc121) or the round-4 scanner stack (13fe51646).",
+ "0x82665f00": "?FriendCmp@@YA_NPBVFriend@@0@Z",
+ "0x82665fd8": "?Text@FriendsProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
+ "0x826660f0": "??$__make_heap@PAPAVFriend@@P6A_NPBV1@0@ZPAV1@H@stlpmtx_std@@YAXPAPAVFriend@@0P6A_NPBV1@1@Z0PAH@Z",
+ "0x82666290": "??$__insertion_sort@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@00P6A_NPBV1@1@Z@Z",
+ "0x82666440": "?OnMsg@FriendsProvider@@QAA?AVDataNode@@ABVPlatformMgrOpCompleteMsg@@@Z",
+ "0x826664a8": "?Handle@FriendsProvider@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82b6e138": "?SetSendImpl@SampleInst360@@MAAXPAVFxSend@@@Z",
+ "0x82b6e190": "?SetReverbMixDbImpl@SampleInst360@@MAAXM@Z",
+ "0x82b6e198": "?SetReverbEnableImpl@SampleInst360@@MAAX_N@Z",
+ "0x823cab20": "?SetName@CharIKSliderMidi@@UAAXPBDPAVObjectDir@@@Z",
+ "0x823cb280": "?SetName@CharIKSliderMidi@@$4PPPPPPPM@A@AAXPBDPAVObjectDir@@@Z",
+ "0x8238f270": "?Replace@CharClipGroup@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
+ "0x8238fb08": "?Replace@CharClipGroup@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z"
 }

@@ -19,6 +19,7 @@
 #include "ui/UIPanel.h"
 
 class Node;
+class Friend;
 class StoreMainPanel;
 class ViewSetting;
 class StoreOfferProvider;
@@ -89,20 +90,15 @@ public:
     void SetSongName(const SongSortNode *);
     void SetSetlistName(const SavedSetlist *);
     void SetSetlistDescription(const SavedSetlist *);
-    // Retail 360-only pair (fns 0x825AD298/0x825AD2B0): label setters for a
-    // friend/share list record {String name; bool online; String bandName}.
-    // Sole pinned caller is an unmapped provider at 0x82649280 (vector of
-    // records at this+0x2C, slots "name"/..., status_online/offline.mat) —
-    // the record's real class name is unknown; layout is pinned by the
-    // caller's lbz +0xC (online flag) and these thunks' +0x8/+0x18 c_str
-    // loads. Xbox LIVE friends UI only.
-    struct FriendRecord {
-        String mName; // 0x0
-        bool mOnline; // 0xc
-        String mBandName; // 0x10
-    };
-    void SetFriendName(const FriendRecord *);
-    void SetFriendBandName(const FriendRecord *);
+    // Retail 360-only pair (0x825C62F0 / 0x825C6308): label setters for an
+    // os/Friend. The record is Friend, not a separate struct: the only retail
+    // caller, FriendsProvider::Text (0x82665FD8), passes mFriends[data] --
+    // the same vector<Friend*> its InviteFriend hands to
+    // NetSession::InviteFriend(Friend*) -- for slots "name" (mName, +0x8
+    // c_str) and "game" (mGame, +0x18 c_str). Lane W16-OT; the old
+    // AppLabel::FriendRecord had Friend's layout field for field.
+    void SetFriendName(const Friend *);
+    void SetFriendBandName(const Friend *);
     void SetSetlistOwner(const SetlistRecord *);
     void SetEditSetlistName(const UIPanel *);
     void SetEditSetlistDesc(const UIPanel *);
