@@ -73,16 +73,7 @@ BinStream &operator>>(BinStream &bs, LayerDir::Layer &layer) {
     bs >> layer.mAllowAlpha;
     bs >> layer.mAlphaMin;
     bs >> layer.mAlphaMax;
-    {
-        unsigned int length;
-        bs >> length;
-        layer.mBitmapList.resize(length);
-        for (std::list<FilePath>::iterator it = layer.mBitmapList.begin();
-             it != layer.mBitmapList.end();
-             it++) {
-            bs >> *it;
-        }
-    }
+    bs >> layer.mBitmapList;
     if (gRev == 1) {
         bool b;
         bs >> b;
