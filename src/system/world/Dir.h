@@ -47,7 +47,8 @@ public:
     };
 
     struct MatOverride {
-        MatOverride(Hmx::Object *owner) : mesh(owner), mat(owner), mat2(owner) {}
+        MatOverride(Hmx::Object *owner)
+            : mesh(ObjPtrInlineOwner(), owner), mat(owner), mat2(owner) {}
         void Sync(bool);
 
         /** "Subdir mesh to modify" */
