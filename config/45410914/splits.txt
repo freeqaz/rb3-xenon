@@ -1219,7 +1219,7 @@ BandRetargetVignette.cpp:
 	.text       start:0x822C5EC8 end:0x822C5F94
 	.text       start:0x822C5F98 end:0x822C6080
 	.text       start:0x822C6080 end:0x822C6A3C
-	.text       start:0x822C6A90 end:0x822C70D8
+	.text       start:0x822C6A90 end:0x822C7040
 
 StreakMeter.cpp:
 	.pdata      start:0x821F7D10 end:0x821F7D28
@@ -13892,6 +13892,7 @@ system/bandobj/BandFaceDeform.cpp:
 	.pdata      start:0x821F6F10 end:0x821F6F20
 	.pdata      start:0x821F6F20 end:0x821F6F30
 	.pdata      start:0x821F6F30 end:0x821F6F48
+	.text       start:0x822C7040 end:0x822C70D8
 	.text       start:0x822C70D8 end:0x822C7128
 	.text       start:0x822C7128 end:0x822C7680
 	.text       start:0x822C7680 end:0x822C76E4

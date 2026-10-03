@@ -5780,6 +5780,7 @@
  "0x822c6c30": "?clear@?$_Rb_tree@PAVObject@Hmx@@U?$less@PAVObject@Hmx@@@stlpmtx_std@@U?$pair@QAVObject@Hmx@@UDep@CharPollableSorter@@@4@U?$_Select1st@U?$pair@QAVObject@Hmx@@UDep@CharPollableSorter@@@stlpmtx_std@@@4@U?$_MapTraitsT@U?$pair@QAVObject@Hmx@@UDep@CharPollableSorter@@@stlpmtx_std@@@priv@4@V?$StlNodeAlloc@U?$pair@QAVObject@Hmx@@UDep@CharPollableSorter@@@stlpmtx_std@@@4@@stlpmtx_std@@QAAXXZ",
  "0x822c6c80": "?Enter@BandRetargetVignette@@UAAXXZ",
  "0x822c6c90": "?EnterDir@BandRetargetVignette@@QBAXXZ",
+ "0x822c7040": "?CompressDelta@@YAXPACABVVector3@@1@Z",
  "0x822c70d8": "??4DeltaArray@BandFaceDeform@@QAAAAV01@ABV01@@Z",
  "0x822c7128": "?Load@DeltaArray@BandFaceDeform@@QAAXAAVBinStream@@@Z",
  "0x822c7530": "?PropSync@@YA_NAAVDeltaArray@BandFaceDeform@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",

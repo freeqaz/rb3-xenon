@@ -4,9 +4,21 @@
 #include "os/Debug.h"
 #include "utl/MemMgr.h"
 #include "utl/Symbols.h"
+#include "math/Utl.h"
 #include <cmath>
 
 INIT_REVS(BandFaceDeform);
+
+// Quantizes (pos - base) to three signed bytes: clamped to +-2 units, 63.5 steps per unit.
+inline void CompressDelta(signed char *out, const Vector3 &pos, const Vector3 &base) {
+    Vector3 d;
+    Subtract(pos, base, d);
+    for (int i = 0; i < 3; i++) {
+        out[i] = (unsigned char)(Clamp(-2.0f, 2.0f, d[i]) * 63.5 + 0.5);
+    }
+}
+
+inline bool IsZeroDelta(const signed char *d) { return d[0] == 0 && d[1] == 0 && d[2] == 0; }
 
 BandFaceDeform::DeltaArray::DeltaArray() : mSize(0), mData(0) {}
 BandFaceDeform::DeltaArray::DeltaArray(const BandFaceDeform::DeltaArray &da)
@@ -37,6 +49,8 @@ int BandFaceDeform::DeltaArray::NumVerts() {
 
 extern void *MemResizeElem(void *&, int &, void *, int, int, const char *);
 
+// Appends one record per run of vertices whose compressed delta is nonzero:
+// u16 first vertex, u16 vertex count, then three signed bytes per vertex.
 void BandFaceDeform::DeltaArray::AppendDeltas(
     const std::vector<Vector3> &pos, const std::vector<Vector3> &base
 ) {
@@ -45,185 +59,45 @@ void BandFaceDeform::DeltaArray::AppendDeltas(
             "AppendDeltas pos has %d points, base has %d", pos.size(), base.size()
         );
     }
-
     static int total;
     static int totalRuns;
     static int totalLength;
     static float maxDelta;
-
-    float minClamp = -2.0f;
-    float maxClamp = 2.0f;
-
-    int start = 0;
-    int end = 0;
-
-    float sp24, sp28, sp2C;
-    float sp18, sp1C, sp20;
-    signed char sp8, sp9, spA;
-
-    void *&_ref0 = mData;
-    while ((unsigned short)end < pos.size()) {
-        while ((unsigned short)start < pos.size()) {
-            sp24 = pos[start].x - base[start].x;
-            sp2C = pos[start].z - base[start].z;
-            sp28 = pos[start].y - base[start].y;
-
-            float dx = (float)sp24;
-            if (dx > maxClamp)
-                dx = maxClamp;
-            else if (dx < minClamp)
-                dx = minClamp;
-            sp8 = (signed char)(int)(63.5 * (double)dx + 0.5);
-
-            float dy = sp28;
-            if (dy > maxClamp)
-                dy = maxClamp;
-            else if (dy < minClamp)
-                dy = minClamp;
-            sp9 = (signed char)(int)(63.5 * (double)dy + 0.5);
-
-            float dz = sp2C;
-            if (dz > maxClamp)
-                dz = maxClamp;
-            else if (dz < minClamp)
-                dz = minClamp;
-            spA = (signed char)(int)(63.5 * (double)dz + 0.5);
-
-            int nonZero = 0;
-            if (sp8 != 0 || sp9 != 0 || spA != 0) {
-                nonZero = 1;
-            }
-            if (nonZero == 0) {
-                start++;
-                continue;
-            }
-            break;
+    int first = 0;
+    while (first < pos.size()) {
+        signed char d[3];
+        for (; first < pos.size(); first++) {
+            CompressDelta(d, pos[first], base[first]);
+            if (!IsZeroDelta(d))
+                break;
         }
-
-        end = start + 1;
-        while ((unsigned short)end < pos.size()) {
-            sp18 = pos[end].x - base[end].x;
-            sp20 = pos[end].z - base[end].z;
-            sp1C = pos[end].y - base[end].y;
-
-            float dx = (float)sp18;
-            if (dx > maxClamp)
-                dx = maxClamp;
-            else if (dx < minClamp)
-                dx = minClamp;
-            sp8 = (signed char)(int)(63.5 * (double)dx + 0.5);
-
-            float dy = sp1C;
-            if (dy > maxClamp)
-                dy = maxClamp;
-            else if (dy < minClamp)
-                dy = minClamp;
-            sp9 = (signed char)(int)(63.5 * (double)dy + 0.5);
-
-            float dz = sp20;
-            if (dz > maxClamp)
-                dz = maxClamp;
-            else if (dz < minClamp)
-                dz = minClamp;
-            spA = (signed char)(int)(63.5 * (double)dz + 0.5);
-
-            int nonZero = 0;
-            if (sp8 != 0 || sp9 != 0 || spA != 0) {
-                nonZero = 1;
-            }
-            if (nonZero != 0) {
-                end++;
-                continue;
-            }
-            break;
+        int last = first + 1;
+        for (; last < pos.size(); last++) {
+            CompressDelta(d, pos[last], base[last]);
+            if (IsZeroDelta(d))
+                break;
         }
-
-        if (start < pos.size()) {
-            int count = end - start;
-            char *rec = (char *)MemResizeElem(
-                _ref0, mSize, (char *)_ref0 + mSize, 0, count * 3 + 4, "BandFaceDeform"
+        if (first < pos.size()) {
+            int num = last - first;
+            unsigned short *rec = (unsigned short *)MemResizeElem(
+                mData, mSize, end(), 0, num * 3 + 4, "BandFaceDeform"
             );
-
-            *(unsigned short *)(rec + 0) = start;
-            int vi = start;
-            float md = maxDelta;
-            *(unsigned short *)(rec + 2) = count;
-            if ((int)start < (int)end) {
-                int ctr = count;
-                do {
-                    int recOff = (vi - start) * 3;
-                    float spC = pos[vi].x - base[vi].x;
-                    float sp14 = pos[vi].z - base[vi].z;
-                    float sp10 = pos[vi].y - base[vi].y;
-
-                    float dx = (float)spC;
-                    if (dx > maxClamp)
-                        dx = maxClamp;
-                    else if (dx < minClamp)
-                        dx = minClamp;
-                    rec[recOff + 4] = (signed char)(int)(63.5 * (double)dx + 0.5);
-
-                    float dy = sp10;
-                    if (dy > maxClamp)
-                        dy = maxClamp;
-                    else if (dy < minClamp)
-                        dy = minClamp;
-                    rec[recOff + 5] = (signed char)(int)(63.5 * (double)dy + 0.5);
-
-                    float dz = sp14;
-                    if (dz > maxClamp)
-                        dz = maxClamp;
-                    else if (dz < minClamp)
-                        dz = minClamp;
-                    rec[recOff + 6] = (signed char)(int)(63.5 * (double)dz + 0.5);
-
-                    float ddx = pos[vi].x - base[vi].x;
-                    float ddz = pos[vi].z - base[vi].z;
-                    float ddy = pos[vi].y - base[vi].y;
-                    float absx = (float)fabs(ddx);
-                    if (md < absx) {
-                        md = absx;
-                        maxDelta = absx;
-                    }
-                    float absy = (float)fabs(ddy);
-                    if (md < absy) {
-                        md = absy;
-                        maxDelta = absy;
-                    }
-                    float absz = (float)fabs(ddz);
-                    if (md < absz) {
-                        maxDelta = absz;
-                    }
-
-                    vi++;
-                } while (--ctr);
+            rec[0] = first;
+            rec[1] = num;
+            for (int i = first; i < last; i++) {
+                CompressDelta((signed char *)(rec + 2) + (i - first) * 3, pos[i], base[i]);
+                Vector3 v;
+                Subtract(pos[i], base[i], v);
+                MaxEq(maxDelta, (float)fabs(v.x));
+                MaxEq(maxDelta, (float)fabs(v.y));
+                MaxEq(maxDelta, (float)fabs(v.z));
             }
-
-            unsigned short recCount = *(unsigned short *)(rec + 2);
-            TheDebug << MakeString(
-                "   run from %d to %d waste %g \n",
-                (int)start,
-                (int)end,
-                4.0f / (float)(recCount * 3 + 4)
-            );
-
             totalRuns++;
-            totalLength += count;
+            totalLength += num;
         }
-
-        start = end;
+        first = last;
     }
-
-    int sz = mSize;
-    total += sz;
-    TheDebug << MakeString(
-        "   is size %d total %d av runlength %g totalWaste %d md %g\n",
-        sz,
-        total,
-        (float)totalLength / (float)totalRuns,
-        totalRuns * 4,
-        maxDelta
-    );
+    total += mSize;
 }
 
 void BandFaceDeform::DeltaArray::SetSize(int i) {
