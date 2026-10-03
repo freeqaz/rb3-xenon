@@ -322,10 +322,10 @@ About 25 variants did not move the EventHandler/StepSequenceJob register rows.
 
 ## 7. Native gate
 
-Run last, on the code at the commit before this doc's gate edit.
+Run last, on the code at `36588b2ac` (only this docs edit follows it):
 
 ```
-(filled in by the gate run)
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
 ```
 
 ## 8. Not done
