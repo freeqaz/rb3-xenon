@@ -37,7 +37,7 @@ namespace Quazal {
 
     class InstanceTable : public RootObject {
     public:
-        __declspec(noinline) unsigned int GetInstanceFromVector(unsigned int ui, unsigned int idx) {
+        unsigned int GetInstanceFromVector(unsigned int ui, unsigned int idx) {
             if (idx == 0) {
                 return m_oDefaultContext.GetInstance(ui);
             } else if (idx >= m_pvContextVector->size()) {
@@ -76,10 +76,37 @@ namespace Quazal {
 
     class DOHandle : public RootObject {
     public:
-        DOHandle() { mValue = 0; }
+        DOHandle() : mValue(0) {}
+        DOHandle(const DOHandle &h) : mValue(h.mValue) {}
         ~DOHandle() {}
 
         unsigned int mValue; // 0x0
+    };
+
+    class Scheduler;
+    class Job;
+    class SystemComponents;
+
+    class Core : public RootObject {
+    public:
+        static void AcquireInstance();
+        static void ReleaseInstance();
+
+        static Core *GetInstance() {
+            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
+            InstanceControl *inst =
+                (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(3, uiContext);
+            Core *pCore = inst ? (Core *)inst->m_pDelegatorInstance : 0;
+            return pCore;
+        }
+
+        Scheduler *GetScheduler() { return m_pScheduler; }
+        SystemComponents *GetSystemComponents() { return m_pSystemComponents; }
+
+        char m_pad0[0x8];
+        Scheduler *m_pScheduler; // 0x8
+        void *m_pCallContextRegister; // 0xc
+        SystemComponents *m_pSystemComponents; // 0x10
     };
 
     class SystemComponent : public RootObject {
@@ -104,7 +131,11 @@ namespace Quazal {
 
     class SystemComponents : public SystemComponentGroup {
     public:
-        static SystemComponents *GetInstance();
+        static SystemComponents *GetInstance() {
+            if (Core::GetInstance() == 0)
+                return 0;
+            return Core::GetInstance()->GetSystemComponents();
+        }
 
         // Defined in ../Core/SystemComponents.h, at lines 47 and 48.
         void CreateSessionGroup() {
@@ -123,34 +154,6 @@ namespace Quazal {
         SystemComponentGroup *m_pDOCoreGroup; // 0x28
     };
 
-    class Scheduler;
-    class Job;
-
-    class Core : public RootObject {
-    public:
-        static void AcquireInstance();
-        static void ReleaseInstance();
-
-        static Core *GetInstance() {
-            unsigned int uiContext = PseudoSingleton::GetCurrentContext();
-            InstanceControl *inst =
-                (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(3, uiContext);
-            Core *pCore = inst ? (Core *)inst->m_pDelegatorInstance : 0;
-            return pCore;
-        }
-
-        Scheduler *GetScheduler() { return m_pScheduler; }
-        SystemComponents *GetSystemComponents() { return m_pSystemComponents; }
-
-        char m_pad0[0x8];
-        Scheduler *m_pScheduler; // 0x8
-        void *m_pCallContextRegister; // 0xc
-        SystemComponents *m_pSystemComponents; // 0x10
-    };
-
-    inline SystemComponents *SystemComponents::GetInstance() {
-        return Core::GetInstance() == 0 ? 0 : Core::GetInstance()->GetSystemComponents();
-    }
 
     class Scheduler : public RootObject {
     public:
@@ -188,7 +191,7 @@ namespace Quazal {
 
         char m_pad14[0x8];
         StationConnectionManager *m_pStationConnectionManager; // 0x1c
-        char m_pad20[0x70];
+        char m_pad20[0x38];
     };
 
     class CallContext : public RootObject {
@@ -410,8 +413,7 @@ namespace Quazal {
         CallContext oContext;
         Terminate(&oContext);
         oContext.Wait(-1);
-        bool bResult = oContext.GetState() == CallContext::CallSuccess;
-        return bResult;
+        return oContext.GetState() == CallContext::CallSuccess;
     }
 
     bool ProductFacade::Terminate(CallContext *pContext) {
@@ -441,8 +443,7 @@ namespace Quazal {
 
     bool ProductFacade::DecrementDOCoreRefCount() {
         ScopedCS oCS(s_csGlobalLock);
-        bool bResult = --s_uiDOCoreRefCount == 0;
-        return bResult;
+        return --s_uiDOCoreRefCount == 0;
     }
 
     void ProductFacade::CreateUtilitySubsystem() {
