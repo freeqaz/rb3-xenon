@@ -833,6 +833,7 @@ VocalTrackDir.cpp:
 
 BandCrowdMeter.cpp:
 	.pdata      start:0x821F1F48 end:0x821F1F58
+	.pdata      start:0x821F6268 end:0x821F6278
 	.pdata      start:0x821F6288 end:0x821F62E0
 	.pdata      start:0x821F6360 end:0x821F6398
 	.pdata      start:0x821F6398 end:0x821F63C8
@@ -861,7 +862,7 @@ BandCrowdMeter.cpp:
 	.pdata      start:0x821F6770 end:0x821F6778
 	.pdata      start:0x821F6778 end:0x821F6848
 	.text       start:0x8227A328 end:0x8227A3A8
-	.text       start:0x822BB39C end:0x822BB3BC
+	.text       start:0x822BB2F8 end:0x822BB3BC
 	.text       start:0x822BB3BC end:0x822BB3C8
 	.text       start:0x822BB4E8 end:0x822BB8CC
 	.text       start:0x822BB8CC end:0x822BB8FC
@@ -944,11 +945,11 @@ CrowdAudio.cpp:
 CrowdMeterIcon.cpp:
 	.pdata      start:0x821F1F38 end:0x821F1F48
 	.pdata      start:0x821F5FC0 end:0x821F5FD0
-	.pdata      start:0x821F5FD0 end:0x821F6278
+	.pdata      start:0x821F5FD0 end:0x821F6268
 	.text       start:0x8227A2A8 end:0x8227A328
 	.text       start:0x822B91D0 end:0x822B9308
 	.text       start:0x822B9308 end:0x822B9318
-	.text       start:0x822B9318 end:0x822BB39C
+	.text       start:0x822B9318 end:0x822BB2F8
 
 PatchDir.cpp:
 	.pdata      start:0x821F18D0 end:0x821F18D8
@@ -5779,6 +5780,7 @@ CharMirror.cpp:
 FileMergerOrganizer.cpp:
 	.pdata      start:0x822072B8 end:0x822072E8
 	.pdata      start:0x822072F0 end:0x822072F8
+	.pdata      start:0x822072F8 end:0x82207300
 	.pdata      start:0x82207300 end:0x82207308
 	.pdata      start:0x82207308 end:0x822073A8
 	.pdata      start:0x822073A8 end:0x822073B0
@@ -5787,6 +5789,7 @@ FileMergerOrganizer.cpp:
 	.pdata      start:0x822073E0 end:0x822073E8
 	.text       start:0x823D93C8 end:0x823D9570
 	.text       start:0x823D95C4 end:0x823D9624
+	.text       start:0x823D9628 end:0x823D9684
 	.text       start:0x823D9684 end:0x823D9738
 	.text       start:0x823D9738 end:0x823DA0B8
 	.text       start:0x823DA0B8 end:0x823DA104
@@ -10806,6 +10809,7 @@ GemTrackDir.cpp:
 	.pdata      start:0x821F8E28 end:0x821F8E40
 	.pdata      start:0x821F8E40 end:0x821F8E58
 	.pdata      start:0x821F8E58 end:0x821F9020
+	.pdata      start:0x821F9020 end:0x821F9028
 	.pdata      start:0x821F9028 end:0x821F9038
 	.pdata      start:0x821F9038 end:0x821F9060
 	.pdata      start:0x821F9060 end:0x821F9068
@@ -10853,6 +10857,7 @@ GemTrackDir.cpp:
 	.text       start:0x822E8A78 end:0x822E8CB8
 	.text       start:0x822E8CB8 end:0x822E8D98
 	.text       start:0x822E8D98 end:0x822EA814
+	.text       start:0x822EA814 end:0x822EA9F0
 	.text       start:0x822EA9F0 end:0x822EAA90
 	.text       start:0x822EAA90 end:0x822EAD2C
 	.text       start:0x822EAD30 end:0x822EAD6C
@@ -12667,12 +12672,8 @@ FlowNode.cpp:
 	.text       start:0x82308D5C end:0x82308D60
 
 Campaign.cpp:
-	.pdata      start:0x821F9020 end:0x821F9028
-	.pdata      start:0x822072F8 end:0x82207300
 	.pdata      start:0x82221858 end:0x82221D38
 	.pdata      start:0x82221D38 end:0x82221D78
-	.text       start:0x822EA814 end:0x822EA9F0
-	.text       start:0x823D9628 end:0x823D9684
 	.text       start:0x825A4BC8 end:0x825A92D8
 	.text       start:0x825A92D8 end:0x825A95A0
 

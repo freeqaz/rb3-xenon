@@ -15833,10 +15833,9 @@
   {
    "name": "insert_unique",
    "address": "0x822ea818",
-   "survivor": "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@V1@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBVSymbol@@V1@@2@@Z",
+   "survivor": "?insert_unique@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@U?$_Select1st@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@@Z",
    "folded": [
-    "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBVSymbol@@UCatData@@@2@@Z",
-    "?insert_unique@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@U?$_Select1st@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@@Z"
+    "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBVSymbol@@UCatData@@@2@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "admitted": [
@@ -15844,8 +15843,18 @@
      "spelling": "?insert_unique@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@U?$_Select1st@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@@Z",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 472 B retail / 472 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ??A?$map@IU?$pair@HPAVRndMesh@@@stlpmtx_std@@U?$less@I@2@V?$StlNodeAlloc@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAU?$pair@HPAVRndMesh@@@1@ABI@Z. Overrides earlier withdrawal record(s) for this spelling under other survivors (0x823599e8 FIXPOINT_ROOT_DIFFERS): those refused membership without a per-pair proof against this survivor, and the chase above is one."
+    },
+    {
+     "spelling": "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBVSymbol@@UCatData@@@2@@Z",
+     "lane": "W16-ON 2026-10-03",
+     "evidence": "tools/icf_pair_adjudicate.py --chase against the renamed survivor (after --chasetest passed): FLAT T1 PROVEN and CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 472 B retail / 472 B ours. Retail calls 0x822EA818 from FileMergerOrganizer's map<Symbol,CatData>::operator[], where we call this spelling."
     }
-   ]
+   ],
+   "survivor_renamed": {
+    "from": "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@V1@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBVSymbol@@V1@@2@@Z",
+    "lane": "W16-ON 2026-10-03",
+    "reason": "0x822EA818 re-homed from Campaign.cpp (whose obj defines no map<Symbol,Symbol>::insert_unique) to GemTrackDir.cpp, whose obj defines this spelling; the map entry was renamed to it. The old <Symbol,Symbol> survivor is NOT kept as a folded member: no compiled obj defines or references it, so icf_pair_adjudicate --chase returns UNDECIDABLE (our spelling is in no compiled obj) and the membership could not be proven. It forgave 0 B."
+   }
   },
   {
    "name": "_GRndFlare",
@@ -86394,11 +86403,14 @@
   {
    "name": "_M_create_node",
    "address": "0x823d9628",
-   "survivor": "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@V1@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@V1@@2@@Z",
-   "folded": [
-    "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@UCatData@@@2@@Z"
-   ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "survivor": "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@UCatData@@@2@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
+   "survivor_renamed": {
+    "from": "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@V1@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@V1@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@V1@@2@@Z",
+    "lane": "W16-ON 2026-10-03",
+    "reason": "0x823D9628 re-homed from Campaign.cpp to FileMergerOrganizer.cpp, whose obj defines this spelling (the group's only folded member); the map entry was renamed to it, so the group now has no folded spelling. The old <Symbol,Symbol> survivor is NOT kept as a folded member: no compiled obj defines or references it, so icf_pair_adjudicate --chase returns UNDECIDABLE and the membership could not be proven. It forgave 0 B."
+   }
   },
   {
    "name": "0?$_Vector_base",
@@ -109459,7 +109471,8 @@
      "evidence": "W16-OK 2026-10-03: ~TrackerDesc (implicit; destroys vector<float> at +0x18) is byte-identical, relocation names included, to retail 0x822afd68 (lwz r4,0x18; cmplwi; beqlr; lwz r11,0x20; subf; srawi 2; slwi 2; b MemOrPoolFreeSTL). Ours is 36 B only because MSVC's trailing blr is inside our COMDAT; retail has the same blr at 0x822AFD88, which dtk carved as its own 4-byte function, so the chase's 'masked bodies DIFFER' is that carve. Twin census: exactly 1 retail body image-wide has this masked body and relocation shape. Call sites: all 5 charged retail EH funclets bl 0x822afd68 with r3 = Tracker this+0x1c (fn_826D2248, fn_826D236C; Tracker::mDesc @0x1c), TrackerManager this+0x20 (fn_82694460; TrackerManager::mDesc @0x20), or a stack TrackerDesc (fn_826946AC, fn_8269479C) -- the member offsets are the type witness.",
      "rechase_2026-10-03": "W16-OK re-check 2026-10-03 on a tree built from main 92074833f: icf_pair_adjudicate --chase (after --chasetest PASSED) gives CHASED T1 REFUTED for this pair. That verdict is the instrument declining to decide, not retail disagreeing with our bytes: the chase reports BYTES-DIFFER, retail 32 B vs ours 36 B. The 4-byte difference is the dead blr MSVC emits after the tail branch: retail has it at 0x822AFD88 (words 0x822AFD68..0x822AFD88 = ours exactly, relocation names included), and dtk carves it as its own 4-byte function. That word has no bl reference and 0 big-endian data references in the image; of the 34 retail sites with this exact 'srawi 2; slwi r3,r11,2; b <x>' tail, 28 are followed by such an unnamed, unreferenced blr. (The map label ??0Vector3@@QAA@XZ on 0x822afd88 therefore looks spurious; that span is W16-OL's.) The 5 charged retail funclets call 0x822afd68 with r3 at Tracker::mDesc (+0x1c), TrackerManager::mDesc (+0x20) or a stack TrackerDesc. Re-admitted."
     }
-   ]
+   ],
+   "rechase_w16on_2026-10-03": "W16-ON: symbols.txt now carves 0x822AFD68 as one 0x24 function (the dead trailing blr at 0x822AFD88 is no longer its own 4-byte symbol, and the spurious ??0Vector3@@QAA@XZ map label on it is gone). icf_pair_adjudicate --chase on main e5586e330 + this lane: FLAT T1 PROVEN and CHASED T1 PROVEN, 36 B retail / 36 B ours."
   },
   {
    "name": "GetIdentifyingToken",
@@ -109510,6 +109523,40 @@
      "spelling": "??$__uninitialized_fill_n@PAVHeldNote@@IV1@@stlpmtx_std@@YAPAVHeldNote@@PAV1@IABV1@ABU__false_type@0@@Z",
      "lane": "W16-OK 2026-10-03",
      "evidence": "W16-OK 2026-10-03: flat T1 PROVEN (80 B both sides) and chase PROVEN; 1 retail body has this masked shape. Call site: retail 0x826C32A8 (vector<HeldNote>::_M_insert_overflow_aux, GemPlayer's copy) calls this body where ours calls __uninitialized_fill_n<HeldNote>."
+    }
+   ]
+  },
+  {
+   "name": "_M_insert",
+   "address": "0x823d9970",
+   "survivor": "?_M_insert@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@UCatData@@@2@00@Z",
+   "folded": [
+    "?_M_insert@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@U?$_Select1st@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@00@Z"
+   ],
+   "evidence": "ICF fold proven per pair by tools/icf_pair_adjudicate.py --chase (lane W16-ON). Flat T1 is REFUTED only because the two bodies call different _M_create_node spellings; the chase discharges that slot by the recursive fold _M_create_node<unsigned,pair<int,RndMesh*>> -> 0x823D9628 (_M_create_node<Symbol,CatData>).",
+   "lane": "W16-ON 2026-10-03",
+   "admitted": [
+    {
+     "spelling": "?_M_insert@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@U?$_Select1st@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@00@Z",
+     "lane": "W16-ON 2026-10-03",
+     "evidence": "tools/icf_pair_adjudicate.py --chase (after --chasetest passed): CHASED T1 PROVEN, 0 CYCLE-ASSUMED; FLAT T1 REFUTED (relocation targets differ: the _M_create_node slot, discharged SLOT-FOLD-OK; the allocator slots MemOrPoolAllocSTL->MemOrPoolAlloc and PoolAlloc are existing folds); 204 B retail / 204 B ours. Witness: retail GemTrackDir's insert_unique<unsigned,pair<int,RndMesh*>> (0x822EA818) calls 0x823D9970 at both _M_insert sites where we call this spelling."
+    }
+   ]
+  },
+  {
+   "name": "insert_unique",
+   "address": "0x823d9a40",
+   "survivor": "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBVSymbol@@UCatData@@@2@@Z",
+   "folded": [
+    "?insert_unique@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@U?$_Select1st@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@@Z"
+   ],
+   "evidence": "ICF fold proven per pair by tools/icf_pair_adjudicate.py --chase (lane W16-ON). Flat T1 is REFUTED only because the two bodies call different _M_insert/_M_create_node spellings; the chase discharges those slots by recursive folds into 0x823D9970 and 0x823D9628.",
+   "lane": "W16-ON 2026-10-03",
+   "admitted": [
+    {
+     "spelling": "?insert_unique@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@U?$_Select1st@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@@Z",
+     "lane": "W16-ON 2026-10-03",
+     "evidence": "tools/icf_pair_adjudicate.py --chase (after --chasetest passed): CHASED T1 PROVEN, 0 CYCLE-ASSUMED; FLAT T1 REFUTED (relocation targets differ only at the _M_insert/_M_create_node slots, discharged SLOT-FOLD-OK, plus existing allocator folds); 224 B retail / 224 B ours. Witness: retail insert_unique<unsigned,pair<int,RndMesh*>>(iterator, const value&) at 0x822EA818 calls 0x823D9A40 where we call this spelling."
     }
    ]
   }

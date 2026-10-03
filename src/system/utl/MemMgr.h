@@ -174,6 +174,7 @@ public:
     ~MemTempHeap() { MemPopHeap(); }
 };
 
+#ifdef HX_NATIVE
 void *MemTruncate(
     void *mem,
     int size,
@@ -181,6 +182,15 @@ void *MemTruncate(
     int line = 0,
     const char *name = "unknown"
 );
+#else
+// Retail/match truncate: (mem, size), no debug strings. The retail call site
+// CharClip::Transitions::Resize loads only r3/r4 before `bl 0x827bc520`, and
+// the retail body never reads a third argument. The macro below rewrites any
+// inherited debug spelling `MemTruncate(p, n, file, line, name)` to the 2-arg
+// call; the definition parenthesizes the name.
+void *MemTruncate(void *mem, int size);
+#define MemTruncate(mem, size, ...) (MemTruncate)((mem), (size))
+#endif
 void *_MemAllocTemp(int size, const char *file, int line, const char *name, int align);
 // ⛔ PHANTOMS -- `_MemAlloc` / `_MemFree` are spellings that
 // RETAIL RB3-360 DOES NOT HAVE, and that we never defined either.  Adjudicated
@@ -215,8 +225,21 @@ void *_MemAllocTemp(int size, const char *file, int line, const char *name, int 
 void *_MemAlloc(int size, int align); // two-arg allocator (native only)
 void _MemFree(void *mem);             // free (native only)
 #endif
+#ifdef HX_NATIVE
 void *
 MemRealloc(void *mem, int size, const char *file, int line, const char *name, int align);
+#else
+// Retail/match realloc: (mem, size, align), no debug strings. Two retail
+// callers show it: CharClip::Transitions::Resize sets only r3/r4/r5 (r5 = 0)
+// before `bl 0x827bd080`, and the 8-byte realloc thunk at 0x82C30B58 is
+// `li r5, 0x0; b 0x827bd080`. The retail body passes its third argument to
+// MemAlloc as the alignment. The macro rewrites the inherited 6-arg debug
+// spelling `MemRealloc(p, n, file, line, name, align)` to the 3-arg call and
+// keeps the align; any other arity fails to compile.
+void *MemRealloc(void *mem, int size, int align);
+#define MemRealloc(mem, size, file, line, name, align)                                  \
+    (MemRealloc)((mem), (size), (align))
+#endif
 void *MemAlloc(int size, const char *file, int line, const char *name, int align = 0);
 #ifndef HX_NATIVE
 // Retail/match 2-arg heap allocator (size, align) — no debug strings. See the
