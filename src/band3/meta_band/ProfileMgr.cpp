@@ -314,7 +314,8 @@ void ProfileMgr::CheckProfileWebLinkStatus() {
                 int padnum = cur->GetPadNum();
                 Server *netServer = TheNet.GetServer();
                 MILO_ASSERT(netServer, 0x2A0);
-                if (netServer->GetPlayerID(padnum)) {
+                int playerID = netServer->GetPlayerID(padnum);
+                if (playerID) {
                     static Symbol acc_accountlink("acc_accountlink");
                     const AccomplishmentProgress &prog = cur->GetAccomplishmentProgress();
                     if (!prog.IsAccomplished(acc_accountlink)) {
@@ -337,7 +338,8 @@ void ProfileMgr::CheckProfileWebSetlistStatus() {
                 int padnum = cur->GetPadNum();
                 Server *netServer = TheNet.GetServer();
                 MILO_ASSERT(netServer, 0x2CD);
-                if (netServer->GetPlayerID(padnum)) {
+                int playerID = netServer->GetPlayerID(padnum);
+                if (playerID) {
                     static Symbol acc_createsetlist("acc_createsetlist");
                     const AccomplishmentProgress &prog = cur->GetAccomplishmentProgress();
                     if (!prog.IsAccomplished(acc_createsetlist)) {

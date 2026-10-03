@@ -219,7 +219,7 @@ void HeaderSortNode::FinishSort(NodeSort *sort) {
         switch (cur->GetType()) {
         case kNodeSong: {
             OwnedSongSortNode *song = dynamic_cast<OwnedSongSortNode *>(cur);
-            if (song->mSongRecord->mData->IsDownload()) {
+            if (song->GetSongRecord()->Data()->IsDownload()) {
                 unk3c++;
             } else {
                 unk38++;
@@ -231,7 +231,7 @@ void HeaderSortNode::FinishSort(NodeSort *sort) {
             FOREACH (it2, subh->mChildren) {
                 OwnedSongSortNode *song = dynamic_cast<OwnedSongSortNode *>(*it2);
                 if (song) {
-                    if (song->mSongRecord->mData->IsDownload()) {
+                    if (song->GetSongRecord()->Data()->IsDownload()) {
                         unk3c++;
                         subh->unk3c++;
                     } else {

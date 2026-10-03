@@ -307,11 +307,10 @@ RndAnimatable *AnimController(Hmx::Object *o) {
     // adaptation), so this walks forward via RefPtrOf() instead.
     FOREACH (it, o->Refs()) {
 #ifdef HX_NATIVE
-        Hmx::Object *owner = it->RefOwner();
+        RndAnimatable *a = dynamic_cast<RndAnimatable *>(it->RefOwner());
 #else
-        Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+        RndAnimatable *a = dynamic_cast<RndAnimatable *>(RefPtrOf(it)->RefOwner());
 #endif
-        RndAnimatable *a = dynamic_cast<RndAnimatable *>(owner);
         if (a && a->AnimTarget() == o)
             return a;
     }
