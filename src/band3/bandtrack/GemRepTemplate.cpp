@@ -129,7 +129,7 @@ RndMesh *GemRepTemplate::CreateTail() {
     RndMesh *m = Hmx::Object::New<RndMesh>();
     m->SetMutable(0x3F);
     RndMesh::VertVector &verts = m->Verts();
-    verts.resize(GetRequiredVertCount(count));
+    verts.reserve(GetRequiredVertCount(count));
     std::vector<RndMesh::Face> &faces = m->Faces();
     faces.reserve(GetRequiredFaceCount(count));
     return m;
