@@ -156,7 +156,8 @@ DataNode StoreMenuPanel::OnMsg(const MetadataLoadedMsg &msg) {
         DataArray *arr = msg->Array(2);
         if (arr->FindArray(Symbol("submenus"), false)) {
             String str(msg->Str(4));
-            str = str.substr(0, str.find("/") + 1);
+            // Retail calls rfind("/") (0x827BDA08): keep up to the LAST '/'.
+            str = str.substr(0, str.rfind("/") + 1);
             bool replaceRoot = msg->Int(5);
             AddMenu(arr, str.c_str(), replaceRoot ? 0 : -1);
         }

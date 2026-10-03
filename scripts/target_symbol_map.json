@@ -5543,7 +5543,7 @@
  "0x822b6fb0": "??_GBandCamShot@@UAAPAXI@Z",
  "0x822b7000": "?AddTarget@BandCamShot@@QAA?AVDataNode@@PAVDataArray@@@Z",
  "0x822b70d8": "?Handle@BandCamShot@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x822b7998": null,
+ "0x822b7998": "??4?$list@UTarget@BandCamShot@@V?$StlNodeAlloc@UTarget@BandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
  "0x822b7a50": "??$_Copy_Construct@VKeyFrame@EventAnim@@@stlpmtx_std@@YAXPAVKeyFrame@EventAnim@@ABV12@@Z",
  "0x822b7ab8": "?Handle@BandCamShot@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x822b7ac8": "??4?$ObjList@UTarget@BandCamShot@@@@QAAXABV0@@Z",
@@ -36281,5 +36281,6 @@
  "0x827d1098": "??_GSongInfo@@UAAPAXI@Z",
  "0x8228dbc0": "?ReadyForMidiParsers@BandDirector@@QAA_NXZ",
  "0x82769050": "?DataInit@@YAXXZ",
- "0x822d3850": "??_DUnisonIcon@@QAAXXZ"
+ "0x822d3850": "??_DUnisonIcon@@QAAXXZ",
+ "0x827bda08": "?rfind@String@@QBAIPBD@Z"
 }
