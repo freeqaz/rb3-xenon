@@ -399,11 +399,9 @@ void BandList::ConcealAnimPoll(int i, Transform &tf) {
 }
 
 void BandList::StartFocusAnim(int i, BandList::AnimState astate) {
-    float f8 = TheTaskMgr.UISeconds();
-    ObjPtr<RndTransAnim> &_ref0 = mFocusAnim;
-    float f9 = _ref0->StartFrame();
-    float f10 = _ref0->EndFrame();
-    float curframe = 0;
+    float now = TheTaskMgr.UISeconds();
+    float startFrame = mFocusAnim->StartFrame();
+    float endFrame = mFocusAnim->EndFrame();
     AnimState curastate = mAnimStates[i];
     if (astate != kOut && astate != kIn) {
         MILO_WARN("bad goal parameter to StartAnim()!\n");
@@ -412,22 +410,19 @@ void BandList::StartFocusAnim(int i, BandList::AnimState astate) {
         || (astate == kIn && (curastate == kGoingIn || curastate == kIn))) {
         MILO_WARN("StartAnim() called while already in or going to goal state!\n");
     }
-    bool b = false;
-    if (curastate == kGoingOut || curastate == kOut)
-        b = true;
-    if (!b)
-        f9 = f10;
+    // the frame the anim starts from: the far end of the way we are heading now
+    if (!(curastate == kGoingOut || curastate == kOut))
+        startFrame = endFrame;
+    float frame;
     if (curastate == kOut || curastate == kIn) {
-        f10 = f9;
+        frame = startFrame;
     } else {
-        curframe = mFrames[i];
-        float f11 = Abs(f9 - curframe);
-        f8 = (f8 - (f11 / _ref0->FramesPerUnit()));
-        f10 = curframe;
+        frame = mFrames[i];
+        now -= Abs(startFrame - frame) / mFocusAnim->FramesPerUnit();
     }
     mAnimStates[i] = astate == kIn ? kGoingIn : kGoingOut;
-    mStartTimes[i] = f8;
-    mFrames[i] = f10;
+    mStartTimes[i] = now;
+    mFrames[i] = frame;
 }
 
 void BandList::UpdateFocusAndPulseAnims(int i, Transform &tf) {
