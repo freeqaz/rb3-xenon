@@ -40,9 +40,10 @@ void SetTheWorld(WorldDir *w) {
 WorldDir::WorldDir()
     : mPresetOverrides(this), mBitmapOverrides(this), mMatOverrides(this),
       mHideOverrides(this), mCamShotOverrides(this), mPS3PerPixelShows(this),
-      mPS3PerPixelHides(this), mCrowds(this), mHUDDir(0), mShowHUD(0), mHUD(this),
+      mPS3PerPixelHides(this), mCrowds(this), mHUDDir(0), mShowHUD(0), mHUD(ObjPtrInlineOwner(), this),
       mCameraManager(this), mLightPresetMgr(this), mEchoMsgs(0), mFirstPoll(0),
-      mPollCamera(1), mTestLightPreset1(this), mTestLightPreset2(this),
+      mPollCamera(1), mTestLightPreset1(ObjPtrInlineOwner(), this),
+      mTestLightPreset2(ObjPtrInlineOwner(), this),
       mTestAnimTime(10) {
     // Retail ctor 0x824BC930 tail: per-instance glow mat (New<RndMat> +
     // SetBlend/SetZMode/SetPreLit inlined), then zero deltas.
@@ -372,7 +373,7 @@ BinStream &operator>>(BinStream &bs, WorldDir::BitmapOverride &c) {
                 MILO_ASSERT(c.replacement->File() == bitmap, 0x163);
             }
         } else
-            c.replacement = nullptr;
+            c.replacement.ReleaseObjConcrete(); // retail open-codes the null release
     } else
         bs >> c.replacement;
     return bs;

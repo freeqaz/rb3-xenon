@@ -838,9 +838,13 @@ void Character::CopyBoundingSphere(Character *c) {
     MILO_ASSERT(c, 0x46D);
     SetSphere(c->mSphere);
     mBounding = c->mBounding;
-    // Retail assigns the owner pointer directly; it does not go through
-    // SetSphereBase.
-    mSphereBase = c->mSphereBase;
+    // Retail assigns the owner pointer directly (no SetSphereBase), and tests
+    // the source first: both arms tail-call SetOwnerObj, one with the pointer
+    // and one with a literal 0.
+    if (c->mSphereBase)
+        mSphereBase = c->mSphereBase;
+    else
+        mSphereBase = nullptr;
 }
 
 void Character::RepointSphereBase(ObjectDir *dir) {

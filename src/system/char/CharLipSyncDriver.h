@@ -42,7 +42,7 @@ public:
     void Sync();
     void ClearLipSync();
     void SetClips(ObjectDir *);
-    bool SetLipSync(CharLipSync *);
+    void SetLipSync(CharLipSync *);
     // dc3-only blend API kept as compat shims for hamobj (DC3 game layer);
     // retail RB3 has no override-blend state fields (see layout below).
     void ResetOverrideBlend();

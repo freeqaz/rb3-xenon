@@ -183,16 +183,14 @@ void CharLipSyncDriver::SetClips(ObjectDir *dir) {
     Sync();
 }
 
-bool CharLipSyncDriver::SetLipSync(CharLipSync *sync) {
-    // RB3 body (void return); bool kept for hamobj compat.
+// Retail 0x8238D1C0 returns void: the body sets no r3 on either path.
+void CharLipSyncDriver::SetLipSync(CharLipSync *sync) {
     if (sync != mLipSync) {
         mLipSync = sync;
         mLoop = false;
         mSongOffset = 0;
         Sync();
-        return true;
     }
-    return false;
 }
 
 // dc3-only override-blend API: retail RB3 has no blend state fields, so these
