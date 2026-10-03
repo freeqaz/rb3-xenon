@@ -2494,6 +2494,15 @@
                     "/GR-"
                 ]
             },
+            "network/quazal/Transport/Interface/StationContactInfo.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/Transport/Interface/TransportSignatureGenerator.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [
@@ -2512,7 +2521,25 @@
                 ]
             },
             "network/quazal/Transport/Interface/XboxConnectivityTester.cpp": "NonMatching",
-            "network/quazal/Stack/Core/IOCompletionNotifier.cpp": "NonMatching",
+            "network/quazal/Stack/Core/IOCompletionNotifier.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-",
+                    "/EHs-c-"
+                ]
+            },
+            "network/quazal/Stack/Core/Inet.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/Transport/UDP/QueuingSocket.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

@@ -656,7 +656,7 @@ namespace Quazal {
     class Inet : public RootObject {
     public:
         static bool Initialize();
-        static void Terminate();
+        static bool Terminate();
     };
 
     class RootTransport : public RootObject {
