@@ -180,6 +180,18 @@ set(RB3_STUB_TUS
     ${CMAKE_SOURCE_DIR}/src/m4_save_link_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/native_undecomp_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/native_job_stubs.cpp
+    # W16-PD: the list above omitted every stub TU added after CC-5, so the
+    # instrument could not see them at all. Widened to the whole hand-written
+    # link surface (the .s stubs cannot be instrumented this way).
+    ${CMAKE_SOURCE_DIR}/src/m12_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/milo_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/x7_band_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/x20_bandpatchmesh_link.cpp
+    ${CMAKE_SOURCE_DIR}/src/native_link_glue.cpp
+    ${CMAKE_SOURCE_DIR}/src/thunk_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m8_support.cpp
+    ${CMAKE_SOURCE_DIR}/src/m10_support.cpp
+    ${CMAKE_SOURCE_DIR}/src/xdk_shims.cpp
 )
 if(RB3_STUB_PROBE)
     set_source_files_properties(${RB3_STUB_TUS} PROPERTIES
