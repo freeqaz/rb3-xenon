@@ -61,7 +61,8 @@ public:
 
     NEW_OBJ(TrackWidget)
     NEW_OVERLOAD
-    DELETE_OVERLOAD
+    // Retail ??_GTrackWidget calls MemFree directly: the delete inlines.
+    DELETE_OVERLOAD_INLINE
     static void Register() { REGISTER_OBJ_FACTORY(TrackWidget); }
 
     bool mActive; // 0x24
