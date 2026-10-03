@@ -8,8 +8,11 @@
 #include "obj/Msg.h"
 #include "obj/ObjMacros.h"
 #include "os/Debug.h"
+#include "os/PlatformMgr.h"
+#include "os/System.h"
 #include "ui/UI.h"
 #include "ui/UIPanel.h"
+#include "utl/MakeString.h"
 #include "utl/Std.h"
 #include "utl/Symbols3.h"
 
@@ -24,11 +27,33 @@ void SetlistToStorePanel::Load() {
     MILO_ASSERT(mLoaders.empty(), 0x20);
 }
 
+// "dlc_store/<region>/<language>/songs/<id>/".  The format is a .data
+// const char* (retail 0x82C7468C), not an inline literal.
+void SetlistToStorePanel::GetSongMetadataPath(int songID, String &path) {
+    static const char *pathFmt = "dlc_store/%s/%s/songs/%i/";
+    Symbol region = PlatformRegionToSymbol(ThePlatformMgr.GetRegion());
+    path = MakeString(pathFmt, region, SystemLanguage().Str(), songID);
+}
+
+// Resumes after the songs that already have a loader, and starts at most 20
+// loaders per call; LoadSongMetadata calls it again once those have finished.
+void SetlistToStorePanel::StartMetadataLoaders() {
+    int started = 0;
+    for (std::vector<int>::iterator it = mSongs.begin() + mLoaders.size();
+         it != mSongs.end();
+         ++it) {
+        String path;
+        GetSongMetadataPath(*it, path);
+        mLoaders.push_back(new DataNetLoader(path.c_str()));
+        if (++started >= 20)
+            break;
+    }
+}
+
 // Retail X360 wires `load_song_metadata` to a real method (fn_82642B38); the
-// arm is not a HANDLE_ACTION(load_song_metadata, 0) stub.  The
-// retail body kicks off the metadata net-loaders (fn_826429A0, not yet ported --
-// it is outside this unit's pinned span so it is unscored) and then seeds
-// mAllMetadata with a one-element `offers` array.
+// arm is not a HANDLE_ACTION(load_song_metadata, 0) stub.  The retail body
+// kicks off the metadata net-loaders and then seeds mAllMetadata with a
+// one-element `offers` array.
 void SetlistToStorePanel::LoadSongMetadata() {
     StartMetadataLoaders();
     static Symbol offers("offers");

@@ -310,11 +310,11 @@ int CharacterCreatorPanel::GetEyeColor() {
 // check, like GetGlasses.
 void CharacterCreatorPanel::SetGlasses(Symbol s) {
     static Symbol none_glasses("none_glasses");
-    BandCharDesc *desc = mPreviewDesc;
+    BandCharDesc::Outfit &outfit = mPreviewDesc->mOutfit;
     if (s != none_glasses)
-        desc->mOutfit.mGlasses.mName = s;
+        outfit.mGlasses.mName = s;
     else
-        desc->mOutfit.mGlasses.mName = gNullStr;
+        outfit.mGlasses.mName = gNullStr;
     static Symbol glasses("glasses");
     mClosetMgr->SetCurrentOutfitPiece(glasses);
     mClosetMgr->PreviewCharacter(true, false);
@@ -335,11 +335,11 @@ Symbol CharacterCreatorPanel::GetGlasses() {
 // check, like GetHair.
 void CharacterCreatorPanel::SetHair(Symbol s) {
     static Symbol none_hair("none_hair");
-    BandCharDesc *desc = mPreviewDesc;
+    BandCharDesc::Outfit &outfit = mPreviewDesc->mOutfit;
     if (s != none_hair)
-        desc->mOutfit.mHair.mName = s;
+        outfit.mHair.mName = s;
     else
-        desc->mOutfit.mHair.mName = gNullStr;
+        outfit.mHair.mName = gNullStr;
     static Symbol hair("hair");
     mClosetMgr->SetCurrentOutfitPiece(hair);
     mClosetMgr->PreviewCharacter(true, false);
@@ -357,11 +357,11 @@ Symbol CharacterCreatorPanel::GetHair() {
 
 void CharacterCreatorPanel::SetFaceHair(Symbol s) {
     static Symbol none_facehair("none_facehair");
-    BandCharDesc *desc = mPreviewDesc;
+    BandCharDesc::Outfit &outfit = mPreviewDesc->mOutfit;
     if (s != none_facehair)
-        desc->mOutfit.mFaceHair.mName = s;
+        outfit.mFaceHair.mName = s;
     else
-        desc->mOutfit.mFaceHair.mName = gNullStr;
+        outfit.mFaceHair.mName = gNullStr;
     static Symbol facehair("facehair");
     mClosetMgr->SetCurrentOutfitPiece(facehair);
     mClosetMgr->PreviewCharacter(true, false);
@@ -481,25 +481,25 @@ void CharacterCreatorPanel::SetFaceType(Symbol s) {
     MILO_ASSERT(pPrefabMgr, 0x2EC);
     BandCharDesc *pFaceTypeDesc = pPrefabMgr->GetFaceType(s);
     MILO_ASSERT(pFaceTypeDesc, 0x2EF);
-    BandCharDesc *desc = mPreviewDesc;
-    desc->mHead.mBrowHeight = pFaceTypeDesc->mHead.mBrowHeight;
-    desc->mHead.mBrowSeparation = pFaceTypeDesc->mHead.mBrowSeparation;
-    desc->mHead.mChin = pFaceTypeDesc->mHead.mChin;
-    desc->mHead.mChinHeight = pFaceTypeDesc->mHead.mChinHeight;
-    desc->mHead.mChinWidth = pFaceTypeDesc->mHead.mChinWidth;
-    desc->mHead.mEye = pFaceTypeDesc->mHead.mEye;
-    desc->mHead.mEyeHeight = pFaceTypeDesc->mHead.mEyeHeight;
-    desc->mHead.mEyeRotation = pFaceTypeDesc->mHead.mEyeRotation;
-    desc->mHead.mEyeSeparation = pFaceTypeDesc->mHead.mEyeSeparation;
-    desc->mHead.mJawHeight = pFaceTypeDesc->mHead.mJawHeight;
-    desc->mHead.mJawWidth = pFaceTypeDesc->mHead.mJawWidth;
-    desc->mHead.mMouth = pFaceTypeDesc->mHead.mMouth;
-    desc->mHead.mMouthHeight = pFaceTypeDesc->mHead.mMouthHeight;
-    desc->mHead.mMouthWidth = pFaceTypeDesc->mHead.mMouthWidth;
-    desc->mHead.mNose = pFaceTypeDesc->mHead.mNose;
-    desc->mHead.mNoseHeight = pFaceTypeDesc->mHead.mNoseHeight;
-    desc->mHead.mNoseWidth = pFaceTypeDesc->mHead.mNoseWidth;
-    desc->mHead.mShape = pFaceTypeDesc->mHead.mShape;
+    BandCharDesc::Head &head = mPreviewDesc->mHead;
+    head.mBrowHeight = pFaceTypeDesc->mHead.mBrowHeight;
+    head.mBrowSeparation = pFaceTypeDesc->mHead.mBrowSeparation;
+    head.mChin = pFaceTypeDesc->mHead.mChin;
+    head.mChinHeight = pFaceTypeDesc->mHead.mChinHeight;
+    head.mChinWidth = pFaceTypeDesc->mHead.mChinWidth;
+    head.mEye = pFaceTypeDesc->mHead.mEye;
+    head.mEyeHeight = pFaceTypeDesc->mHead.mEyeHeight;
+    head.mEyeRotation = pFaceTypeDesc->mHead.mEyeRotation;
+    head.mEyeSeparation = pFaceTypeDesc->mHead.mEyeSeparation;
+    head.mJawHeight = pFaceTypeDesc->mHead.mJawHeight;
+    head.mJawWidth = pFaceTypeDesc->mHead.mJawWidth;
+    head.mMouth = pFaceTypeDesc->mHead.mMouth;
+    head.mMouthHeight = pFaceTypeDesc->mHead.mMouthHeight;
+    head.mMouthWidth = pFaceTypeDesc->mHead.mMouthWidth;
+    head.mNose = pFaceTypeDesc->mHead.mNose;
+    head.mNoseHeight = pFaceTypeDesc->mHead.mNoseHeight;
+    head.mNoseWidth = pFaceTypeDesc->mHead.mNoseWidth;
+    head.mShape = pFaceTypeDesc->mHead.mShape;
     BandCharDesc *eyebrowdesc = mPreviewDesc;
     eyebrowdesc->mOutfit.mEyebrows = pFaceTypeDesc->mOutfit.mEyebrows;
     mClosetMgr->PreviewCharacter(true, false);

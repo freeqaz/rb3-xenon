@@ -18,11 +18,11 @@ public:
 
     void GetSongsFromMusicLibrary();
     void LoadSongMetadata();
-    /** Kicks off the per-song metadata net-loaders.  Retail calls this from
-     *  Poll() (fn_826429A0) whenever mSongs and mLoaders have drifted out of
-     *  step, i.e. the loader set no longer covers the song set.  Decl-only:
-     *  its body sits outside this unit's pinned .text span, so it is unscored
-     *  and the match build never links. */
+    /** The store path of one song's metadata (retail fn_82642918). */
+    void GetSongMetadataPath(int songID, String &path);
+    /** Starts a metadata net-loader for each song in mSongs that has none yet,
+     *  at most 20 per call.  Retail calls it from LoadSongMetadata whenever
+     *  mSongs and mLoaders differ in size (fn_826429A0). */
     void StartMetadataLoaders();
 
     std::vector<DataNetLoader *> mLoaders; // 0x3c

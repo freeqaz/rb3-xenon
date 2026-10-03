@@ -20,14 +20,19 @@
 #include "synth/VoiceBeat.h"
 #include <algorithm>
 
-// vector<SingerResultsData> internal element-copy paths (_M_fill_insert_aux's
-// backward element shift, plus the forward copies) need an 8x-unrolled word
-// copy whose load/store pairing schedule matches the target. The generic
-// stlport copy helpers route through SingerResultsData::operator= and emit a
-// pairing that loads each pair's low word first (and the backward shift only
-// unrolls 2x). Routing the copy through a POD word-struct that mirrors
+// vector<SingerResultsData>'s forward element copy (resize()'s erase shift)
+// needs an 8x-unrolled word copy whose load/store pairing schedule matches the
+// target. The generic stlport copy helper routes through
+// SingerResultsData::operator= and emits a pairing that loads each pair's low
+// word first. Routing the copy through a POD word-struct that mirrors
 // SingerResultsData's layout in a count-based loop reproduces the target: the
 // 8x unroll and the high-word-first pairing within each 2-word group.
+//
+// _M_fill_insert_aux's backward shift is NOT specialised: retail
+// (0x826F7CC8, its memcpy(.., 0x20) loop) steps the source and
+// destination pointers down independently, which is what the generic
+// __copy_backward_ptrs emits. A word-struct specialisation of it made MSVC
+// address the source as destination + delta instead.
 #ifndef HX_NATIVE
 // stlpmtx_std-internal copy_ptrs / copy_backward_ptrs specializations are
 // asm-match-only — libstdc++ doesn't expose those templates. Gate the whole
@@ -42,22 +47,6 @@ struct _SingerResultsWords {
     _SingerW2 fg;     // centsVariance, phraseScore               -> words 5,6 (paired)
     unsigned int h;   // scoreFrameCount                          -> word 7  (single)
 };
-
-// _M_fill_insert_aux backward element shift: opens a gap by moving existing
-// elements toward the back (decrementing).
-template <>
-inline SingerResultsData*
-__copy_backward_ptrs<SingerResultsData*, SingerResultsData*>(
-    SingerResultsData* __first, SingerResultsData* __last,
-    SingerResultsData* __result, const __false_type& /*TrivialAssignment*/
-) {
-    _SingerResultsWords* __d = (_SingerResultsWords*)__result;
-    _SingerResultsWords* __l = (_SingerResultsWords*)__last;
-    for (ptrdiff_t __n = __last - __first; __n > 0; --__n) {
-        *--__d = *--__l;
-    }
-    return (SingerResultsData*)__d;
-}
 
 // resize()'s erase shift (copy(__last, end, __first)) is a forward element copy
 // that MWCC unrolls 8x in the target; routing it through the POD word-struct in
@@ -631,8 +620,20 @@ void Singer::Poll(float ms, const SongPos &pos, float f3, float f4) {
     }
 }
 
+// Retail builds the (part1, part2) pair as one 8-byte object before the search
+// loop -- both arguments are stored to adjacent stack words on entry
+// (0x826F9440/48: stw r4,0x50(r1); stw r5,0x54(r1)) -- and copies it into the new
+// entry with a single ld/std pair, so the two parts travel as one aggregate,
+// the same pairing the clear() copy above shows. A plain member-by-member
+// fill stores r4/r5 straight into the entry and has no such object.
+struct AmbiguousPartPair {
+    int part1;
+    int part2;
+};
+
 void Singer::AddAmbiguousPart(int i_iPart1, int i_iPart2) {
     MILO_ASSERT(i_iPart1 < i_iPart2, 0x13E);
+    AmbiguousPartPair parts = { i_iPart1, i_iPart2 };
     bool bFound = false;
     for (std::vector<AmbiguousData>::iterator iter = mAmbiguousData.begin();
          iter != mAmbiguousData.end(); ++iter) {
@@ -643,8 +644,7 @@ void Singer::AddAmbiguousPart(int i_iPart1, int i_iPart2) {
     }
     if (!bFound) {
         AmbiguousData entry;
-        entry.part1 = i_iPart1;
-        entry.part2 = i_iPart2;
+        *reinterpret_cast<AmbiguousPartPair *>(&entry.part1) = parts;
         entry.isResolved = false;
         entry.winningPart = -1;
         entry.ambiguousPoints = -1.0f;

@@ -429,12 +429,10 @@ band3/meta_band/ModifierMgr.cpp:
 	.text       start:0x825895A0 end:0x8258A014
 
 VocalTrack.cpp:
-	.pdata      start:0x82244B98 end:0x82244BA0
 	.pdata      start:0x8225DC58 end:0x8225DC68
 	.pdata      start:0x8225DC68 end:0x8225E270
 	.pdata      start:0x8225E270 end:0x8225E280
 	.text       start:0x826E74A0 end:0x826E74B4
-	.text       start:0x827EFA60 end:0x827EFAC8
 	.text       start:0x82B9F430 end:0x82B9F510
 	.text       start:0x82B9F510 end:0x82BAA1C4
 	.text       start:0x82BAA1D0 end:0x82BAA230
@@ -3890,10 +3888,6 @@ HamRibbon.cpp:
 	.pdata      start:0x821F9710 end:0x821F9718
 	.text       start:0x822F0408 end:0x822F047C
 
-MoveAsyncDetector.cpp:
-	.pdata      start:0x82234690 end:0x82234698
-	.text       start:0x826C75E0 end:0x826C7650
-
 Text.cpp:
 	.pdata      start:0x821FC500 end:0x821FC508
 	.pdata      start:0x82203ED8 end:0x82203EE0
@@ -5530,8 +5524,8 @@ band3/meta_band/SetlistToStorePanel.cpp:
 	.text       start:0x82643310 end:0x826436D8
 
 band3/tour/GigFilter.cpp:
-	.pdata      start:0x82200A60 end:0x82200AB8
-	.text       start:0x82364C2C end:0x82365100
+	.pdata      start:0x82200A68 end:0x82200AB8
+	.text       start:0x82364C80 end:0x82365100
 	.text       start:0x82365108 end:0x82365120
 
 band3/tour/FixedSetlist.cpp:
@@ -7773,8 +7767,8 @@ Chunks.cpp:
 	.text       start:0x827D8BB8 end:0x827D9310
 
 DisplayEvents.cpp:
-	.pdata      start:0x82244BA0 end:0x82244BB8
-	.text       start:0x827EFAC8 end:0x827EFE78
+	.pdata      start:0x82244B98 end:0x82244BB8
+	.text       start:0x827EFA60 end:0x827EFE78
 
 UITransitionHandler.cpp:
 	.pdata      start:0x8222F540 end:0x8222F548
@@ -7904,7 +7898,7 @@ UIEvent.cpp:
 	.pdata      start:0x8222D9E0 end:0x8222D9F0
 	.pdata      start:0x8222D9F0 end:0x8222DAD0
 	.text       start:0x82658D68 end:0x82658E28
-	.text       start:0x82658E28 end:0x82659A2C
+	.text       start:0x82658E28 end:0x82659A38
 
 band3/meta_band/NetSync.cpp:
 	.pdata      start:0x82220CF0 end:0x82221090
@@ -9564,6 +9558,7 @@ band3/game/Game.cpp:
 	.pdata      start:0x82230078 end:0x82230140
 	.pdata      start:0x82230140 end:0x822301A0
 	.pdata      start:0x822301A0 end:0x822303C8
+	.pdata      start:0x822303C8 end:0x822303D0
 	.pdata      start:0x822303E0 end:0x82230430
 	.text       start:0x8235B9F8 end:0x8235BA70
 	.text       start:0x8235BA70 end:0x8235BA78
@@ -9590,6 +9585,7 @@ band3/game/Game.cpp:
 	.text       start:0x8267B478 end:0x8267C738
 	.text       start:0x8267C738 end:0x8267D480
 	.text       start:0x8267D480 end:0x8267F354
+	.text       start:0x8267F358 end:0x8267F3B0
 	.text       start:0x8267F428 end:0x8267FA3C
 
 GemSmasher.cpp:
@@ -9675,6 +9671,7 @@ GemPlayer.cpp:
 	.pdata      start:0x82234428 end:0x82234440
 	.pdata      start:0x82234440 end:0x82234448
 	.pdata      start:0x82234448 end:0x82234690
+	.pdata      start:0x82234690 end:0x82234698
 	.pdata      start:0x82234698 end:0x82234730
 	.text       start:0x826BBC38 end:0x826BBC7C
 	.text       start:0x826BBC7C end:0x826BBCEC
@@ -9728,6 +9725,7 @@ GemPlayer.cpp:
 	.text       start:0x826C3F50 end:0x826C44F8
 	.text       start:0x826C44F8 end:0x826C5AE4
 	.text       start:0x826C5AE4 end:0x826C75DC
+	.text       start:0x826C75E0 end:0x826C7650
 	.text       start:0x826C7650 end:0x826C83E4
 
 TrackerManager.cpp:
@@ -9895,7 +9893,6 @@ Performer.cpp:
 	.pdata      start:0x82232240 end:0x822323C8
 	.pdata      start:0x822323C8 end:0x822323D8
 	.pdata      start:0x822323D8 end:0x822323E8
-	.text       start:0x82365E58 end:0x82365E68
 	.text       start:0x82657C50 end:0x82657CF0
 	.text       start:0x82657CF0 end:0x82657E08
 	.text       start:0x82657FA0 end:0x8265853C
@@ -10294,7 +10291,7 @@ BandMachineMgr.cpp:
 	.text       start:0x825C36D8 end:0x825C3720
 	.text       start:0x825C3720 end:0x825C3748
 	.text       start:0x825C3748 end:0x825C4180
-	.text       start:0x825C4180 end:0x825C4918
+	.text       start:0x825C4180 end:0x825C4908
 
 CustomizePanel.cpp:
 	.pdata      start:0x82229030 end:0x82229270
@@ -12485,7 +12482,7 @@ SongSortByRecent.cpp:
 
 SongSortBySong.cpp:
 	.pdata      start:0x8222DAD0 end:0x8222DB60
-	.text       start:0x82659A30 end:0x8265A130
+	.text       start:0x82659A38 end:0x8265A130
 
 SongSortByStars.cpp:
 	.pdata      start:0x8222DC78 end:0x8222DD38
@@ -12839,10 +12836,8 @@ TexLoadPanel.cpp:
 	.text       start:0x825F2210 end:0x825F32A8
 
 band3/game/PresenceMgr.cpp:
-	.pdata      start:0x822303C8 end:0x822303D0
 	.pdata      start:0x82230430 end:0x82230590
 	.pdata      start:0x82261628 end:0x82261630
-	.text       start:0x8267F358 end:0x8267F3B0
 	.text       start:0x8267F420 end:0x8267F428
 	.text       start:0x8267FA3C end:0x8268117C
 	.text       start:0x82C3FF18 end:0x82C3FFAC
@@ -13234,10 +13229,10 @@ system/obj/Utl.cpp:
 	.text       start:0x8275A384 end:0x8275A460
 
 QuestJournal.cpp:
-	.pdata      start:0x82200A48 end:0x82200A60
+	.pdata      start:0x82200A48 end:0x82200A68
 	.text       start:0x82364AA0 end:0x82364AB4
 	.text       start:0x82364AB4 end:0x82364B00
-	.text       start:0x82364B00 end:0x82364C2C
+	.text       start:0x82364B00 end:0x82364C80
 
 TexProc.cpp:
 	.text       start:0x826DF788 end:0x826DF78C
@@ -13524,8 +13519,7 @@ band3/tour/TourWeightManager.cpp:
 
 band3/tour/TourGameRules.cpp:
 	.pdata      start:0x82200BB0 end:0x82200BD8
-	.text       start:0x82365E40 end:0x82365E58
-	.text       start:0x82365E68 end:0x823660F8
+	.text       start:0x82365E40 end:0x823660F8
 
 band3/tour/TourQuestGameRules.cpp:
 	.pdata      start:0x82200B78 end:0x82200BB0
@@ -13726,7 +13720,7 @@ band3/meta_band/SetlistSortByLocation.cpp:
 	.pdata      start:0x82223B18 end:0x82223B30
 	.pdata      start:0x82223B30 end:0x82223B40
 	.pdata      start:0x82223B40 end:0x82223C00
-	.text       start:0x825C4918 end:0x825C4A90
+	.text       start:0x825C4908 end:0x825C4A90
 	.text       start:0x825C4A90 end:0x825C4B0C
 	.text       start:0x825C4B10 end:0x825C54D8
 
