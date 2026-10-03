@@ -724,11 +724,39 @@ void LightPreset::RemoveSpotlightDrawer(int idx) {
     mSpotlightDrawers.erase(mSpotlightDrawers.begin() + idx);
 }
 
+#ifndef HX_NATIVE
+// StageKit driver entry points (retail 0x82521xxx). They live in an unported
+// TU, so they are declared here and not defined; this path is match-build only.
+// Channels: 0 blue, 1 green, 2 yellow, 3 red.
+void StageKitSetLedPattern(int channel, int pattern); // 0x82521BF0
+void StageKitSetLedState(int channel, int state); // 0x82521B98
+void StageKitSetStrobe(int setting); // 0x82522028
+void StageKitUpdateLeds(); // 0x82521E20
+
+#endif
+
+// Retail 0x824AAE10: push this keyframe's StageKit LED and strobe state.
+void LightPreset::Keyframe::ApplyStageKit() const {
+#ifndef HX_NATIVE
+    StageKitSetLedPattern(0, mLedBluePattern);
+    StageKitSetLedState(0, mLedBlue);
+    StageKitSetLedPattern(1, mLedGreenPattern);
+    StageKitSetLedState(1, mLedGreen);
+    StageKitSetLedPattern(2, mLedYellowPattern);
+    StageKitSetLedState(2, mLedYellow);
+    StageKitSetLedPattern(3, mLedRedPattern);
+    StageKitSetLedState(3, mLedRed);
+    StageKitSetStrobe(mStrobeSetting);
+    StageKitUpdateLeds();
+#endif
+}
+
 void LightPreset::ApplyState(const LightPreset::Keyframe &k) {
     mSpotlightState = k.mSpotlightEntries;
     mEnvironmentState = k.mEnvironmentEntries;
     mLightState = k.mLightEntries;
     mSpotlightDrawerState = k.mSpotlightDrawerEntries;
+    k.ApplyStageKit();
 }
 
 void LightPreset::RemoveSpotlight(int idx) {

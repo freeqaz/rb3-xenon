@@ -12804,6 +12804,7 @@
  "0x824aa8a8": "?NewObject@LightHue@@SAPAVObject@Hmx@@XZ",
  "0x824aaa70": "?NewObject@WorldInstance@@SAPAVObject@Hmx@@XZ",
  "0x824aae00": "??1AutoLoading@@QAA@XZ",
+ "0x824aae10": "?ApplyStageKit@Keyframe@LightPreset@@QBAXXZ",
  "0x824aaea8": "??9SpotlightDrawerEntry@LightPreset@@QBA_NABU01@@Z",
  "0x824aaf00": "?_M_destroy_nodes@?$_Deque_base@U?$pair@W4KeyframeCmd@LightPreset@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@W4KeyframeCmd@LightPreset@@M@stlpmtx_std@@@2@@stlpmtx_std@@IAAXPAPAU?$pair@W4KeyframeCmd@LightPreset@@M@2@0@Z",
  "0x824aaf58": "??9Quat@Hmx@@QBA_NABV01@@Z",
