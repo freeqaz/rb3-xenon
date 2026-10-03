@@ -14189,6 +14189,7 @@
  "0x825166e8": "FileGetBase",
  "0x825167a8": "FileGetName",
  "0x82516840": "FileMatch",
+ "0x825169b0": "FileDiscSpinUp",
  "0x825169c8": "??$MakeString@VString@@V1@V1@@@YAPBDPBDVString@@11@Z",
  "0x82516ac0": "??1File@@UAA@XZ",
  "0x82516ad0": "?Filename@File@@UBA?AVString@@XZ",
