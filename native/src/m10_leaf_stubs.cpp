@@ -45,9 +45,9 @@ void BandTrack::SoloHit(int) {}
 void BandTrack::SoloStart() {}
 
 // ---- crowd / config / game leaves ----
-bool CrowdRating::CantFailYet() const { return false; }
-bool CrowdRating::IsBelowLoseLevel() const { return false; }
-void CrowdRating::UpdatePhrase(float, float) {}
+// CrowdRating: the real TU, src/band3/game/CrowdRating.cpp, now links in every
+// target that used to stub it (W16-PD). The stubs that were here ran on the hot
+// path (CC-5 probe: Poll 25,905x in rb3-score4, 12,401x in rb3-harmony).
 void Game::AddBonusPoints(BandUser *, int, int) {}
 void Game::AdjustForVocalPhrases(float &, float &) const {}
 void GameConfig::GetPracticeSections(int &, int &) const {}

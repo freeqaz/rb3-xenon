@@ -18,9 +18,12 @@
 //          Band bonuses table, Player::Poll / UpdateEnergy(beat-drain) / Perform-
 //          DeployBandEnergy / Deploy / StopDeployingBandEnergy bookkeeping,
 //          CommonPhraseCapturer (the real arbiter, driving real Complete-
-//          CommonPhrase credit), SongData::CalcSongPos clock->SongPos.
-//   SHIM : the audio clock source (no synth/stream — headless), CrowdRating (no
-//          impl anywhere), TrackPanel/BandTrack/OverdriveMeter render leaves,
+//          CommonPhrase credit), SongData::CalcSongPos clock->SongPos,
+//          CrowdRating (real since W16-PD; no driver arbiter feeds Update(), so
+//          the meter only sees Reset/Poll/phrase traffic -- rb3-crowd is the
+//          target that drives it with a note arbiter).
+//   SHIM : the audio clock source (no synth/stream — headless),
+//          TrackPanel/BandTrack/OverdriveMeter render leaves,
 //          net message fan-out, BandPerformer aggregation (multi-player = M9).
 #include "game/Player.h"
 #include "game/Performer.h"
@@ -32,6 +35,8 @@
 #include "game/Game.h"
 #include "game/SongDB.h"
 #include "game/CrowdRating.h"
+#include "crowd_config_dta.h" // W16-PD: real shipped (crowd ...) block
+#include <string>
 #include "game/MultiplayerAnalyzer.h" // PlayerScoreInfo
 
 #include "beatmatch/TrackType.h"
@@ -125,8 +130,11 @@ static const char *kConfigDta =
     "   (bonuses"
     "      (max_bonus 4)(multiplier (1 2 4 6 8))(crowd_boost (1 6 6 6 6)))"
     "   (unison_phrase (reward 2.0)(penalty 2.0)(point_bonus 1000))"
-    "   (crowd"
-    "      (save_level 0.3)(time_to_return_from_brink 2.0)(crowd_loss_per_sec 0.1))"
+    // W16-PD: the REAL shipped (crowd ...) block (crowd_config_dta.h) is spliced
+    // in at @CROWD@ at startup -- the real CrowdRating::Configure reads it. The
+    // three save/brink keys this used to hand-write (0.3 / 2.0 / 0.1) are in that
+    // block with their shipped values (0.8333 / 3.5 / 0.04).
+    "   @CROWD@"
     "   (track_graphics (popup_help_intro_duration_ms 5000.0))"
     // -- REAL star thresholds (config/star_thresholds.dta) so GetNumStars is real
     "   (star_ratings"
@@ -184,7 +192,7 @@ public:
         mBehavior->SetMaxMultiplier(maxMult);
         NativeInitParams();
         unk2b0 = true;                              // overdrive enabled
-        mCrowd = new CrowdRating(nullptr, (Difficulty)kExpertDiff); // headless shim
+        mCrowd = new CrowdRating(nullptr, (Difficulty)kExpertDiff); // REAL CrowdRating (W16-PD)
     }
 
     // Scoring verdicts (real): mirror GemPlayer::Hit / Pass.
@@ -260,7 +268,11 @@ int main(int argc, char **argv) {
     DataInit();
     ObjectDir::PreInit(256, 4096);
 
-    gSystemConfig = DataReadString(kConfigDta);
+    {
+        std::string cfg(kConfigDta);
+        cfg.replace(cfg.find("@CROWD@"), 7, kRealCrowdConfigDta);
+        gSystemConfig = DataReadString(cfg.c_str());
+    }
     DataArray *trackSyms = DataReadString(
         "(drum guitar bass vocals keys real_keys real_guitar "
         "real_guitar_22fret real_bass real_bass_22fret)");

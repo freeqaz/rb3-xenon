@@ -52,16 +52,9 @@ NullLocalBandUser* BandUserMgr::GetNullUser() const { return 0; }
 int BandUserMgr::GetParticipatingBandUsers(std::vector<BandUser*>& a0) const { return 0; }
 BandUser* BandUserMgr::GetUserFromSlot(int a0) const { return 0; }
 bool BandUserMgr::IsMultiplayerGame() const { return false; }
-ExcitementLevel CrowdRating::GetExcitement() const { return (ExcitementLevel)0; }
-void CrowdRating::ChangeDifficulty(BandUser* a0, Difficulty a1)  { }
-float CrowdRating::GetDisplayValue() const { return 0.0f; }
-float CrowdRating::GetThreshold(ExcitementLevel a0) const { return 0.0f; }
-bool CrowdRating::IsInWarning() const { return false; }
-void CrowdRating::Poll(float a0)  { }
-void CrowdRating::Reset()  { }
-void CrowdRating::SetActive(bool a0)  { }
-void CrowdRating::SetDisplayValue(float a0)  { }
-void CrowdRating::SetValue(float a0)  { }
+// CrowdRating: the real TU, src/band3/game/CrowdRating.cpp, now links in every
+// target that used to stub it (W16-PD). The stubs that were here ran on the hot
+// path (CC-5 probe: Poll 25,905x in rb3-score4, 12,401x in rb3-harmony).
 bool GameConfig::CanEndGame() const { return false; }
 void GameConfig::ChangeDifficulty(BandUser* a0, int a1)  { }
 void Game::ForceTrackerStars(int a0)  { }
