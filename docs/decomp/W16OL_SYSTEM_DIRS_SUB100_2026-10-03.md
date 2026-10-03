@@ -141,4 +141,6 @@ mesh starts with N live (garbage) vertices instead of N reserved.
 
 ## 7. Gates
 
-(filled in below; native gate run last)
+- A/B: §2 (`rc=0`, tree restored and verified by the tool).
+- Native gate, run last, on the final source tree (only this doc changed afterwards):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
