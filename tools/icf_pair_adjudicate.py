@@ -687,6 +687,15 @@ def _slots_agree(tgt, ours, rt, ob, survivor, our_name, mapped, depth, stack,
             # ★ W16-GG: the vacuous caller cannot afford this tolerance -- the
             # destination IS the body there.  Refusing keeps the relaxed vacuous
             # branch STRICTER than the general path on this axis.
+            # ★ W16-OM: the ONE exception is a primary-vtable slot that retail's
+            # own RTTI pins to a unique address -- not tolerated, ACCOUNTED FOR.
+            # See vacuous_vtable_slot(); every other placeholder still refuses.
+            st, kind, det = vacuous_vtable_slot(rn, on, ctx)
+            if st is not None:
+                out.append((depth + 1, "VACUOUS-SLOT-%s:%s" % (st, kind), rn[:70],
+                            ("%s | %s" % (on, det))[:160]))
+                if st == "OK":
+                    continue
             out.append((depth, "VACUOUS-PLACEHOLDER-SLOT", rn[:70], on[:70]))
             ok = False
             break
@@ -944,6 +953,284 @@ def tailpad_controls(tgt, ours):
     return [("TAIL-PAD POSITIVE, retail = ours + alignment word (expect PROVEN)", s, o),
             ("TAIL-PAD DECOY, nonzero tail word (expect REFUTED)",
              "__chasetest_tailpad_nop__", o)]
+
+
+# ★★ W16-OM (A).  VACUOUS VTABLE SLOT -- an unnamed retail vtable that RTTI names.
+#
+# THE GAP (W16-OK, 80fc81d14 / scripts/symbol_aliases.json `rechase_2026-10-03`).
+# Five message destructors (~Message x2, ~NetMessage x3) are VACUOUS bodies
+# (`lis/addi/stw` of the vptr, then `blr` or a tail call): every byte and every
+# relocation agrees except the HA/LO pair loading the vptr, which retail spells
+# lbl_82000A18 / lbl_8203D19C (unnamed in the map) and ours ??_7Message@@6B@ /
+# ??_7NetMessage@@6B@.  The vacuous branch refuses EVERY placeholder slot
+# (VACUOUS-PLACEHOLDER-SLOT), correctly by its own rule: in a mostly-masked body
+# a tolerated slot means nothing was compared.  But a vtable slot need not be
+# TOLERATED -- retail's own RTTI pins it.  If the COL at X-4 names exactly our
+# class, with offset 0, and X is the ONLY offset-0 retail vtable of that class,
+# then X is the one address our ??_7C@@6B@ can link to: the masked field is
+# accounted for exactly, which is the invariant the vacuous branch maintains.
+#
+# STRICTER THAN the general path's VTABLE-RTTI discharge, on purpose: only the
+# primary `??_7C@@6B@` spelling (no `6BBase@@@` sub-object vtables), no
+# CLASS_RENAMES, no related-class or template-arity tolerance, uniqueness
+# required, and one of our names may never pair with two retail addresses.
+# Every other placeholder slot in a vacuous body is still refused.
+# --self-break-vtvac accepts ANY retail vtable whose RTTI is readable (name,
+# offset and uniqueness checks removed) and the VTVAC DECOY must go red.
+_SELF_BREAK_VTVAC = False
+
+
+def _col_offset(vt_va):
+    """COL.offset (COL+4) of the vtable at `vt_va`: 0 for a primary vtable."""
+    img = retail_image()
+    col = img.word(vt_va - 4)
+    return None if col is None else img.word(col + 4)
+
+
+def vacuous_vtable_slot(rn, on, ctx):
+    """(status, kind, detail) for one placeholder slot in a VACUOUS body.
+    status None = not a vtable slot (the caller refuses it as before); "OK" =
+    retail RTTI pins it to our primary vtable; "REFUSED" = it does not."""
+    import re
+    X = _ph_addr(rn)
+    if X is None or not rn.startswith(("lbl_", "vftable_")):
+        return None, None, None
+    m = re.match(r"\?\?_7(.+?@@)6B@$", on)
+    if not m:
+        return None, None, None
+    cls = m.group(1)
+    t = retail_rtti_name(X)
+    if t is None:
+        return "REFUSED", "VTABLE-NO-RTTI", "retail %s has no readable COL" % rn
+    if _SELF_BREAK_VTVAC:
+        return "OK", "SELF-BREAK-ANY-RTTI", t
+    if _rtti_norm(t[4:]) != _rtti_norm(cls):
+        return "REFUSED", "VTABLE-RTTI-DIFFERS", "retail RTTI %s, ours %s" % (t, cls)
+    if _col_offset(X) != 0:
+        return "REFUSED", "VTABLE-NOT-PRIMARY", "retail %s COL offset %r" % (rn, _col_offset(X))
+    prim = [v for v in retail_vtables_of(cls) if _col_offset(v) == 0]
+    if prim != [X]:
+        return "REFUSED", "VTABLE-PRIMARY-NOT-UNIQUE", \
+            "offset-0 retail vtables of %s: %s" % (cls, ",".join("%x" % v for v in prim[:4]))
+    by_d = ctx.setdefault("data_by_name", {})
+    px = by_d.setdefault(on, X)
+    if px != X:
+        return "REFUSED", "DATA-NAME-2-ADDRESSES", "%s is both %x and %x" % (on[:50], px, X)
+    return "OK", "VTABLE-RTTI-PRIMARY-UNIQUE", t
+
+
+VTVAC_POS = (0x826908C8, "??1KickPlayerMsg@?A0x3d644e05@@UAA@XZ", 0x8203D19C)
+VTVAC_DECOY_VT = 0x82000A18     # retail Message's vtable (RTTI .?AVMessage@@)
+
+
+def vtvac_controls(tgt, ours):
+    """★ W16-OM controls for vacuous_vtable_slot.  POSITIVE: retail ~NetMessage
+    (0x826908C8, 16 B, vacuous) vs OUR ~KickPlayerMsg, whose only differing slots
+    are the vptr HA/LO pair (retail lbl_8203D19C, RTTI .?AVNetMessage@@): expect
+    PROVEN.  DECOY: the same retail body with ONLY those two slots re-pointed at
+    lbl_82000A18, a real retail vtable whose RTTI names a DIFFERENT class
+    (Message): expect REFUTED.  If the map later names 0x8203D19C, the positive
+    re-spells that one slot back to its placeholder (naming is the only thing
+    simulated; bytes, shape and the retail image stay live).  Refuses if the
+    positive is absent, no longer vacuous, or no longer differs only there."""
+    X, o, vt = VTVAC_POS
+    s = _retail_name_at(X)
+    rt, ob = tgt.get(s), ours.get(o)
+    if rt is None or ob is None or not vacuous(rt):
+        raise SystemExit("REFUSING: vtable-vacuous positive %s/%s absent or not vacuous "
+                         "-- the controls would be VACUOUS." % (s, o))
+    named = _addr_name(vt)
+    ph = "lbl_%08X" % vt
+    rl = [(x, ph if n == named else n, t) for x, n, t in rt[1]]
+    if not any(n == ph for _x, n, _t in rl) or rt[0] != ob[0]:
+        raise SystemExit("REFUSING: vtable-vacuous positive no longer stores %s / its "
+                         "masked body changed -- the controls would be VACUOUS." % ph)
+    diff = [(a, b) for a, b in zip(rl, ob[1]) if a != b]
+    if not diff or any(a[1] != ph for a, _b in diff):
+        raise SystemExit("REFUSING: vtable-vacuous positive differs from ours in a slot "
+                         "other than the vptr -- it would not isolate the rule.")
+    tgt["__chasetest_vtvac_pos__"] = (rt[0], rl, rt[2])
+    tgt["__chasetest_vtvac_decoy__"] = (
+        rt[0], [(x, "lbl_%08X" % VTVAC_DECOY_VT if n == ph else n, t) for x, n, t in rl],
+        rt[2])
+    return [("VTVAC POSITIVE, vacuous dtor, vptr slot named by retail RTTI (expect PROVEN)",
+             "__chasetest_vtvac_pos__", o),
+            ("VTVAC DECOY, vacuous dtor, vptr slot is another class's vtable "
+             "(expect REFUTED)", "__chasetest_vtvac_decoy__", o)]
+
+
+# ★★ W16-OM (B).  DEAD TRAILING BLR -- ours = retail + one unreachable `blr`.
+#
+# THE GAP (W16-OK, same records).  ~TrackerDesc (ours, 36 B) is
+#   lwz r4,0x18; cmplwi; beqlr; lwz r11,0x20; subf; srawi; slwi; b MemOrPoolFreeSTL; blr
+# MSVC emits the `blr` after the tail branch and keeps it inside the COMDAT.
+# Retail has the same nine words at 0x822AFD68, but dtk ends the function at the
+# tail `b` (32 B) and carves the blr at 0x822AFD88 off as its own 4-byte symbol.
+# The chase saw BYTES-DIFFER (32 vs 36) and declined.
+#
+# retail_dead_blr() admits exactly that, decided on RAW retail bytes:
+#   (1) ours = retail's masked body + `blr`, and no relocation on either side
+#       lies in the extra word;
+#   (2) retail's last word is an unconditional, non-linking, relocated `b`
+#       (opcode 18, AA=LK=0, a REL24 relocation at that offset) -- so the blr is
+#       unreachable by fall-through;
+#   (3) the survivor's map address X is anchored: raw retail bytes [X, X+len(ours))
+#       equal OUR body with only our relocated fields masked, i.e. the raw word
+#       at X+len(retail) IS a `blr`;
+#   (4) CENSUS: nothing in retail references that word -- no relative branch in
+#       .text lands on it, no aligned big-endian data word anywhere in the image
+#       equals it, no `lis rD,ha / addi rX,rD,lo` in a code section materialises
+#       it, and no .pdata function begins there.
+# WHY (4) is the discriminator.  MSVC does not fold one COMDAT into the tail of
+# another, so if that `blr` were a separate (referenced) function, retail's COMDAT
+# at X would genuinely lack our trailing blr -- a different 32-B body that cannot
+# be ours.  Unreferenced, it is the dead tail of the body at X.
+# Measured reach: 1 alias membership + 1 same-name pair (~BandHeadShaper) on
+# 80fc81d14; W16-OK counted 28 of 34 retail `srawi;slwi;b` tails followed by such
+# a blr.  Used only on the non-vacuous general path (vacuous and locate_retail
+# stay exact).  --self-break-deadblr drops (4) and the DEADBLR DECOY must go red.
+_SELF_BREAK_DEADBLR = False
+_DATA_REFS = {}
+_CODE_SECS = (".text", "BINK")
+
+
+def _sec_name(nm):
+    nm = nm if isinstance(nm, str) else nm.decode("latin1")
+    return nm.strip("\0")
+
+
+def _va_of_off(off):
+    for _n, sva, _vsz, praw, rsz in retail_image().secs:
+        if praw <= off < praw + rsz:
+            return 0x82000000 + sva + (off - praw)
+    return None
+
+
+def retail_refs_to(T):
+    """Every retail reference to address T, by channel:
+    branch -- relative I-/B-form branches in .text landing on T (live, so a
+              control hook that injects one is seen);
+    data   -- aligned big-endian words anywhere in the image equal to T;
+    halo   -- `lis rD,ha(T)` followed within 16 words by `addi rX,rD,lo(T)` in a
+              code section (how MSVC PPC materialises a function address);
+    pdata  -- T is a .pdata BeginAddress."""
+    import struct
+    tgts, pstarts = _retail_text_branches()
+    if T not in _DATA_REFS:
+        img = retail_image()
+        data = img.data
+        pat, dref, p = struct.pack(">I", T), [], 0
+        while True:
+            p = data.find(pat, p)
+            if p < 0:
+                break
+            if p % 4 == 0:
+                dref.append(_va_of_off(p))
+            p += 1
+        hi, lo = ((T + 0x8000) >> 16) & 0xFFFF, T & 0xFFFF
+        halo = []
+        for nm, _sva, _vsz, praw, rsz in img.secs:
+            if _sec_name(nm) not in _CODE_SECS:
+                continue
+            end = praw + rsz
+            for rd in range(32):
+                pat = struct.pack(">I", 0x3C000000 | (rd << 21) | hi)
+                p = praw
+                while True:
+                    p = data.find(pat, p, end)
+                    if p < 0:
+                        break
+                    if p % 4 == 0:
+                        for k in range(1, 17):
+                            q = p + 4 * k
+                            if q + 4 > end:
+                                break
+                            x = struct.unpack_from(">I", data, q)[0]
+                            if (x >> 26) == 14 and ((x >> 16) & 31) == rd \
+                                    and (x & 0xFFFF) == lo:
+                                halo.append(_va_of_off(p))
+                                break
+                    p += 1
+        _DATA_REFS[T] = (dref, halo)
+    dref, halo = _DATA_REFS[T]
+    return {"branch": list(tgts.get(T, ())), "data": dref, "halo": halo,
+            "pdata": T in pstarts}
+
+
+def retail_dead_blr(survivor, rt, ob):
+    """VA of the dead `blr` when (1)-(4) above hold, else None."""
+    n, L = len(rt[0]), len(ob[0])
+    if L != n + 4 or ob[0][n:] != _BLR or ob[0][:n] != rt[0]:
+        return None
+    if any(o + 4 > n for (o, _x, _y) in ob[1]) or any(o + 4 > n for (o, _x, _y) in rt[1]):
+        return None
+    if not any(o == n - 4 and t == 6 for (o, _x, t) in rt[1]):
+        return None
+    X = _name_addr(survivor)
+    if X is None:
+        return None
+    last = retail_image().word(X + n - 4)
+    if last is None or (last >> 26) != 18 or (last & 3) != 0:
+        return None
+    raw = _retail_bytes(X, L)
+    if raw is None:
+        return None
+    raw = bytearray(raw)
+    for (oo, _x, _y) in ob[1]:
+        raw[oo:oo + 4] = ob[0][oo:oo + 4]
+    if bytes(raw) != ob[0]:
+        return None
+    if not _SELF_BREAK_DEADBLR:
+        r = retail_refs_to(X + n)
+        if r["branch"] or r["data"] or r["halo"] or r["pdata"]:
+            return None
+    return X + n
+
+
+DEADBLR_POS = (0x822AFD68, "??1BandHeadShaper@@QAA@XZ")
+# Census witnesses: retail addresses KNOWN to be referenced through each channel
+# (the retail image never changes, so these are fixed facts, not tree state).
+# Each channel must find >= 1 reference on its witness or the census is vacuous.
+CENSUS_WITNESS = {"branch": 0x822AFD68,     # called by 5 EH funclets + others
+                  "data": 0x826783B0,       # slot 0 of retail NetMessage's vtable
+                  "halo": 0x822703A8}       # materialised by lis/addi at 0x822703E4
+
+
+def deadblr_controls(tgt, ours):
+    """★ W16-OM controls for retail_dead_blr.  POSITIVE: retail ~BandHeadShaper
+    (0x822AFD68, 32 B) vs OUR ~BandHeadShaper (36 B, trailing blr): expect PROVEN.
+    DECOY: the IDENTICAL pair, evaluated while the cached branch census carries
+    ONE extra branch from outside into the dead blr (what a real separate
+    function there looks like): expect REFUTED.  Injected by a setup/teardown
+    hook around that one evaluation, so it isolates clause (4) exactly.  Also
+    refuses unless every census channel finds a reference on its witness."""
+    for ch, w in CENSUS_WITNESS.items():
+        r = retail_refs_to(w)
+        if not r[ch]:
+            raise SystemExit("REFUSING: dead-blr census channel %r finds no reference "
+                             "on its witness 0x%08X -- the census would be VACUOUS."
+                             % (ch, w))
+    X, o = DEADBLR_POS
+    s = _retail_name_at(X)
+    if s not in tgt or o not in ours:
+        raise SystemExit("REFUSING: dead-blr positive %s/%s absent -- the controls "
+                         "would be VACUOUS." % (s, o))
+    T = retail_dead_blr(s, tgt[s], ours[o])
+    if T is None:
+        raise SystemExit("REFUSING: dead-blr positive %s/%s is no longer a dead-blr "
+                         "pair -- the controls would be VACUOUS." % (s, o))
+    fake_src = 0x82000000
+
+    def setup():
+        _retail_text_branches()[0][T].append(fake_src)
+
+    def teardown():
+        _retail_text_branches()[0][T].remove(fake_src)
+
+    dl = "DEADBLR DECOY, trailing blr referenced from outside (expect REFUTED)"
+    _PAIR_HOOKS[dl] = (setup, teardown)
+    return [("DEADBLR POSITIVE, ours = retail + unreferenced blr (expect PROVEN)", s, o),
+            (dl, s, o)]
 
 
 # ★★ W16-NN.  THE SIZE GATE -- one like-for-like comparison, no tolerance.
@@ -1272,9 +1559,17 @@ def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
         return False
     if rt[0] != ob[0]:
         oc = None if retail_tail_pad(rt, ob) else retail_overcarve(survivor, rt, ob)
+        db = None if (oc is not None or retail_tail_pad(rt, ob)) \
+            else retail_dead_blr(survivor, rt, ob)
         if oc is not None:
             out.append((depth, "RETAIL-OVERCARVE", survivor, our_name))
             rt = (ob[0], oc, len(ob[0]))
+        elif db is not None:
+            # ★ W16-OM: ours = retail + an unreachable, unreferenced `blr` that
+            # dtk carved off retail's extent.  Relocations are compared below
+            # unchanged (none lies in the dead word on either side).
+            out.append((depth, "RETAIL-DEAD-BLR", survivor,
+                        "%s | dead blr 0x%08X" % (our_name, db)))
         elif not retail_tail_pad(rt, ob):
             out.append((depth, "BYTES-DIFFER", survivor, our_name))
             return False
@@ -1824,6 +2119,16 @@ def main():
                     help="run --chasetest with retail_overcarve's branch CENSUS "
                          "removed. The OVERCARVE DECOY control MUST go red and every "
                          "other control must stay green; exits 0 only then.")
+    ap.add_argument("--self-break-vtvac", action="store_true",
+                    help="W16-OM: run --chasetest with the vacuous-branch vtable-slot "
+                         "rule accepting ANY retail vtable whose RTTI is readable "
+                         "(class, offset and uniqueness checks removed). The VTVAC "
+                         "DECOY MUST go red and every other control must stay green; "
+                         "exits 0 only then.")
+    ap.add_argument("--self-break-deadblr", action="store_true",
+                    help="W16-OM: run --chasetest with retail_dead_blr's reference "
+                         "CENSUS removed. The DEADBLR DECOY MUST go red and every "
+                         "other control must stay green; exits 0 only then.")
     ap.add_argument("--self-break-size", choices=("eh", "tol", "onesided", "firstdef"),
                     help="run --chasetest with ONE wrong size rule re-introduced "
                          "(eh: ours = COMDAT section length, the W16-NF/NK measure; "
@@ -1879,6 +2184,12 @@ def main():
         a.chasetest = True
     if a.self_break_size:
         globals()["_SELF_BREAK_SIZE"] = a.self_break_size
+        a.chasetest = True
+    if a.self_break_vtvac:
+        globals()["_SELF_BREAK_VTVAC"] = True
+        a.chasetest = True
+    if a.self_break_deadblr:
+        globals()["_SELF_BREAK_DEADBLR"] = True
         a.chasetest = True
 
     mapped = load_mapped()
@@ -1973,6 +2284,8 @@ def main():
         pairs += [p + ("RENAME", (T_rn, M_rn) if s_rn else None)
                   for p in rename_controls(T_rn, ours, M_rn, s_rn)]
         pairs += overcarve_controls(tgt, ours)
+        pairs += vtvac_controls(tgt, ours)
+        pairs += deadblr_controls(tgt, ours)
         a.chase = True
     elif a.pairs:
         pairs = [("", s, o) for s, o in json.load(open(a.pairs))]
@@ -2056,6 +2369,8 @@ def main():
     tp_decoy_red = tp_other_red = n_tp_decoys = 0
     rn_decoy_red = rn_other_red = n_rn_decoys = 0
     oc_decoy_red = oc_other_red = n_oc_decoys = 0
+    # W16-OM: per-rule {decoys, decoys red, other controls red}
+    om = {k: [0, 0, 0] for k in ("VTVAC DECOY", "DEADBLR DECOY")}
     for label, s, o, fid, side in pairs:
         T, M = side if side else (tgt, mapped)
         hook = _PAIR_HOOKS.get(label)
@@ -2105,6 +2420,8 @@ def main():
             n_tp_decoys += "TAIL-PAD DECOY" in label
             n_rn_decoys += "RENAME DECOY" in label
             n_oc_decoys += "OVERCARVE DECOY" in label
+            for k in om:
+                om[k][0] += k in label
             if verdict != want:
                 print("  ** CONTROL FAILED: wanted %s **" % want)
                 rc = 1
@@ -2124,6 +2441,8 @@ def main():
                     oc_decoy_red += 1
                 else:
                     oc_other_red += 1
+                for k in om:
+                    om[k][1 if k in label else 2] += 1
     if a.self_break_size:
         # Exactly the controls this wrong rule should break must go red, and
         # nothing else may move (the T1/chase controls never consult size_gate,
@@ -2139,6 +2458,20 @@ def main():
         return 1
     if a.chasetest and size_other_red:
         rc = 1
+    for flag, k, what in ((a.self_break_vtvac, "VTVAC DECOY",
+                           "the vacuous vtable-slot class/uniqueness checks removed"),
+                          (a.self_break_deadblr, "DEADBLR DECOY",
+                           "the dead-blr reference census removed")):
+        if not flag:
+            continue
+        n_d, red_d, red_o = om[k]
+        if n_d and red_d == n_d and not red_o:
+            print("\nself-break %s OK -- the %s went RED with %s, and no other "
+                  "control moved." % (k.split()[0].lower(), k, what))
+            return 0
+        print("\nself-break %s FAILED -- %d/%d %s controls red, %d other controls red."
+              % (k.split()[0].lower(), red_d, n_d, k, red_o))
+        return 1
     if a.self_break_overcarve:
         if n_oc_decoys and oc_decoy_red == n_oc_decoys and not oc_other_red:
             print("\nself-break-overcarve OK -- the OVERCARVE DECOY went RED with the "
