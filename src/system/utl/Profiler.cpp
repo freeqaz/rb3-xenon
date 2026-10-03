@@ -11,16 +11,10 @@ void Profiler::Start() { mTimer.Start(); }
 
 void Profiler::Stop() {
     mTimer.Stop();
-    // RB3-360 retail: Ms() re-evaluated per use, float compares,
-    // and the elapsed time accumulated into mSum.
-    float ms = mTimer.Ms();
-    if (ms < mMin) {
-        mMin = ms;
-    }
-    ms = mTimer.Ms();
-    if (mMax < ms) {
-        mMax = ms;
-    }
+    // Ms() is re-evaluated per use; MinEq/MaxEq store through a reference, which
+    // is why retail re-reads the timer after each update.
+    MinEq(mMin, mTimer.Ms());
+    MaxEq(mMax, mTimer.Ms());
     mSum += mTimer.Ms();
     mCount++;
     if (mCount == mCountMax) {
