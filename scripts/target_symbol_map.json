@@ -20385,6 +20385,7 @@
  "0x826bc920": "?EnableSwings@GemPlayer@@UAAX_N@Z",
  "0x826bc928": "?PlayDrum@GemPlayer@@QAAXHHMH@Z",
  "0x826bc9a0": "?SetDrumKitBank@GemPlayer@@QAAXPAVObjectDir@@@Z",
+ "0x826bc9a8": "?UnkTU5Virtual@GemPlayer@@UAAXXZ",
  "0x826bc9d8": "?SetAutoplayAccuracy@GemPlayer@@QAAXM@Z",
  "0x826bc9f0": "?GetMaxSlots@GemPlayer@@QBAHXZ",
  "0x826bca08": "?GetNotesHitFraction@GemPlayer@@UBAMPA_N@Z",
