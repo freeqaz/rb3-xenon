@@ -273,7 +273,7 @@ void HamNavList::PreLoad(BinStream &bs) {
 }
 
 void HamNavList::PostLoad(BinStream &bs) {
-    bs.PopRev(this);
+    PopRev(this);
     UIComponent::PostLoad(bs);
     mListDirResource.PostLoad(nullptr);
     mListRibbonResource.PostLoad(nullptr);

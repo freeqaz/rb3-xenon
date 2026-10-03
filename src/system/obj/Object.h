@@ -2750,3 +2750,58 @@ struct ObjVersion {
 #pragma endregion
 
 #include "ObjPtr_p.h"
+
+#pragma region ObjVersion stack
+
+// The object-version stack. A PreLoad pushes the revs it read with PushRev and
+// the matching PostLoad takes them back with PopRev. Both are free inline
+// functions over one process-wide vector, defined in obj/Object.cpp: retail
+// carries a single out-of-line COMDAT body of each (kept from BandLeadMeter's
+// object, 0x822CA890 / 0x822CADD8) that reads `sRevStack` as an object at a
+// fixed address, and every caller passes only (revs, obj) / (obj).
+extern std::vector<ObjVersion> sRevStack;
+
+#ifdef HX_NATIVE
+#include <cstdio>
+#include <cstdlib>
+#endif
+
+inline void PushRev(int revs, Hmx::Object *o) { sRevStack.push_back(ObjVersion(revs, o)); }
+
+inline int PopRev(Hmx::Object *o) {
+#ifdef HX_NATIVE
+    if (sRevStack.empty()) {
+        fprintf(stderr, "PopRev ABORT: empty stack for %s '%s'\n", o->ClassName(), o->Name());
+        abort();
+    }
+#endif
+    ObjVersion *back = &sRevStack.back();
+    while (back->obj == nullptr) {
+        MILO_NOTIFY("hey object got deleted!");
+        sRevStack.pop_back();
+        back = &sRevStack.back();
+    }
+    int revs = back->revs;
+#ifdef HX_NATIVE
+    // Retail's body has no comparison here at all (0x822CA890 goes straight from
+    // the revs load to the pop), so the mismatch report is native-only.
+    if (o != back->obj) {
+        MILO_LOG("rev stack $this mismatch (%08x != %08x\n", o, back->obj);
+        MILO_LOG("curr obj: %s %s\n", o->ClassName(), PathName(o));
+        MILO_LOG("stack obj: %s %s\n", back->obj->ClassName(), PathName(back->obj));
+        MILO_FAIL(
+            "rev stack (%08x %s %s != %08x %s %s)\n",
+            o,
+            o->ClassName(),
+            PathName(o),
+            back->obj,
+            back->obj->ClassName(),
+            PathName(back->obj)
+        );
+    }
+#endif
+    sRevStack.pop_back();
+    return revs;
+}
+
+#pragma endregion

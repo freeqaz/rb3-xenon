@@ -407,7 +407,7 @@ void MoveDir::PreLoad(BinStream &bs) {
 }
 
 void MoveDir::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
+    BinStreamRev d(bs, PopRev(this));
     if (d.rev < 9) {
         RndDir::PostLoad(bs);
     } else {

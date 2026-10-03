@@ -77,6 +77,10 @@ void ObjRef::ReplaceList(Hmx::Object *obj) {
 
 bool gLoadingProxyFromDisk = false;
 bool gMiloTool = false;
+
+// The object-version stack PushRev/PopRev (obj/Object.h) work on. Retail's
+// `~vector<ObjVersion>` (0x8275CDC8) and its atexit thunk come from this TU.
+std::vector<ObjVersion> sRevStack;
 std::map<Symbol, ObjectFunc *> Hmx::Object::sFactories;
 #ifdef HX_NATIVE
 // The 8-slot recursion-safe property-path pool is a DC3-ERA ADDITION that RB3
@@ -423,7 +427,7 @@ void Hmx::Object::LoadType(BinStream &bs) {
     Symbol s;
     bs >> s;
     SetType(s);
-    bs.PushRev(packRevs(d.altRev, d.rev), this);
+    PushRev(packRevs(d.altRev, d.rev), this);
 }
 #else
 // Retail keeps Object's load revisions in a file-static pair (alt at +0, rev at
@@ -442,13 +446,13 @@ void Hmx::Object::LoadType(BinStream &bs) {
     Symbol s;
     bs >> s;
     SetType(s);
-    bs.PushRev(packRevs(gObjectRevs.altRev, gObjectRevs.rev), this);
+    PushRev(packRevs(gObjectRevs.altRev, gObjectRevs.rev), this);
 }
 #endif
 
 void Hmx::Object::LoadRest(BinStream &bs) {
 #ifdef HX_NATIVE
-    BinStreamRev d(bs, bs.PopRev(this));
+    BinStreamRev d(bs, PopRev(this));
     if (!mTypeProps) {
         mTypeProps = new TypeProps(this);
     }
@@ -464,7 +468,7 @@ void Hmx::Object::LoadRest(BinStream &bs) {
     // TypeProps gets the raw stream, and the note is read in place -- the old
     // pool copy is freed, then a length-prefixed string is pool-allocated and
     // read straight into it (an empty note stays gNullStr).
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     gObjectRevs.rev = getHmxRev(revs);
     gObjectRevs.altRev = getAltRev(revs);
     mTypeProps.Load(bs, gObjectRevs.rev < 2);

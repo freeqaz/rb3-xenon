@@ -24,14 +24,6 @@
 
 bool kKeyShifting = true;
 
-// Retail RB3 keeps the object-version stack as FREE functions (the
-// obj/ObjVersion.h pair): the target calls PushRev(packedRevs, this) /
-// PopRev(this) with no BinStream `this`. dc3's newer engine moved them onto
-// BinStream, which is what our in-tree utl/BinStream.h declares. Same lever
-// as OvershellDir.cpp / BandSwatch.cpp / BandWardrobe.cpp / BandDirector.cpp.
-void PushRev(int, Hmx::Object *);
-int PopRev(Hmx::Object *);
-
 // Retail folds both rev words onto ONE base register with offsets 0/4, which
 // only happens for internal-linkage, align(4) file-scope statics (altRev+0,
 // rev+4) -- not for the DECLARE_REVS/INIT_REVS class statics. Same lever as

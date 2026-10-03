@@ -130,14 +130,14 @@ void CharClipSet::PreLoad(BinStream &bs) {
     bs >> rev;
     sPostLoadRev = getHmxRev(rev);
     sPostLoadAltRev = getAltRev(rev);
-    bs.PushRev(packRevs(sPostLoadAltRev, sPostLoadRev), this);
+    PushRev(packRevs(sPostLoadAltRev, sPostLoadRev), this);
     ObjectDir::PreLoad(bs);
 }
 
 void CharClipSet::PostLoad(BinStream &bs) {
     // Retail order: base call first, pop after (see PreLoad).
     ObjectDir::PostLoad(bs);
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     sPostLoadRev = getHmxRev(revs);
     sPostLoadAltRev = getAltRev(revs);
     if (IsProxy())

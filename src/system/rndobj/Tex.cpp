@@ -202,7 +202,7 @@ void RndTex::PreLoad(BinStream &bs) {
             );
         }
     }
-    bs.PushRev(packRevs(gRevs_Tex.altRev, gRevs_Tex.rev), this);
+    PushRev(packRevs(gRevs_Tex.altRev, gRevs_Tex.rev), this);
 }
 #else
 void RndTex::PreLoad(BinStream &bs) {
@@ -251,11 +251,11 @@ void RndTex::PreLoad(BinStream &bs) {
 #endif
 void RndTex::PostLoad(BinStream &bs) {
 #ifndef HX_NATIVE
-    int popped = bs.PopRev(this);
+    int popped = PopRev(this);
     gRevs_Tex.rev = getHmxRev(popped);
     gRevs_Tex.altRev = getAltRev(popped);
 #else
-    BinStreamRev d(bs, bs.PopRev(this));
+    BinStreamRev d(bs, PopRev(this));
 #endif
     if (TEX_POST_REV < 5) {
         int cubemapmask;

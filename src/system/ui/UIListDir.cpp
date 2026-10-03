@@ -127,7 +127,7 @@ void UIListDir::PreLoad(BinStream &bs) {
                 Name(), gRevs_UIListDir.rev, gRevs_UIListDir.altRev);
     }
 #endif
-    BinStream::PushRev(packRevs(gRevs_UIListDir.altRev, gRevs_UIListDir.rev), this);
+    PushRev(packRevs(gRevs_UIListDir.altRev, gRevs_UIListDir.rev), this);
     RndDir::PreLoad(bs);
 }
 
@@ -135,7 +135,7 @@ void UIListDir::PostLoad(BinStream &bs) {
     // RB3 retail (fn_8280CE60): RndDir::PostLoad first, then the popped rev lands
     // in the same TU aggregate PreLoad wrote; fields read through the plain stream.
     RndDir::PostLoad(bs);
-    int revs = BinStream::PopRev(this);
+    int revs = PopRev(this);
     gRevs_UIListDir.rev = getHmxRev(revs);
     gRevs_UIListDir.altRev = getAltRev(revs);
     int orientation, numdisplay, compstate;

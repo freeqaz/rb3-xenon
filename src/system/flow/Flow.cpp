@@ -292,7 +292,7 @@ void Flow::PreLoad(BinStream &bs) {
 }
 
 void Flow::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
+    BinStreamRev d(bs, PopRev(this));
     ObjectDir::PostLoad(d.stream);
     if (IsProxy()) {
         int numDynProps = 0;

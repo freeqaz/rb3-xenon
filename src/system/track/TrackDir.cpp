@@ -134,13 +134,13 @@ END_LOADS
 void TrackDir::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
     ASSERT_REVS(6, 0);
-    bs.PushRev(packRevs(gAltRev, gRev), this);
+    PushRev(packRevs(gAltRev, gRev), this);
     PanelDir::PreLoad(bs);
 }
 
 void TrackDir::PostLoad(BinStream &bs) {
     PanelDir::PostLoad(bs);
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     gRev = getHmxRev(revs);
     gAltRev = getAltRev(revs);
     if (!IsProxy()) {

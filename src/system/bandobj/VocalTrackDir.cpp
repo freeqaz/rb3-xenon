@@ -223,7 +223,7 @@ END_LOADS
 void VocalTrackDir::PreLoad(BinStream &bs) {
     LOAD_REVS(bs)
     ASSERT_REVS(7, 0)
-    bs.PushRev(packRevs(gAltRev, gRev), this);
+    PushRev(packRevs(gAltRev, gRev), this);
     RndDir::PreLoad(bs);
 }
 
@@ -307,7 +307,7 @@ const char *DataToString(const DataNode &node) {
 
 void VocalTrackDir::PostLoad(BinStream &bs) {
     RndDir::PostLoad(bs);
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     gRev = getHmxRev(revs);
     gAltRev = getAltRev(revs);
     if (!IsProxy()) {

@@ -74,14 +74,14 @@ void UIProxy::PreLoad(BinStream &bs) {
     bs >> revs;
     sUIProxyRev = getHmxRev(revs);
     sUIProxyAltRev = getAltRev(revs);
-    bs.PushRev(packRevs(sUIProxyAltRev, sUIProxyRev), this);
+    PushRev(packRevs(sUIProxyAltRev, sUIProxyRev), this);
     UIComponent::PreLoad(bs);
 }
 
 void UIProxy::PostLoad(BinStream &bs) {
     mDir.PostLoad(nullptr);
     UIComponent::PostLoad(bs);
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     sUIProxyRev = getHmxRev(revs);
     sUIProxyAltRev = getAltRev(revs);
     if (sUIProxyRev == 1) {

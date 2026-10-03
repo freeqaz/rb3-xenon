@@ -69,7 +69,7 @@ void StarsDisplay::PreLoad(BinStream &bs) {
 }
 
 void StarsDisplay::PostLoad(BinStream &bs) {
-    bs.PopRev(this);
+    PopRev(this);
     mResourceDir.PostLoad(nullptr);
     UIComponent::PostLoad(bs);
     Update();

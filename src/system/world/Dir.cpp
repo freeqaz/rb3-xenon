@@ -334,7 +334,7 @@ void WorldDir::PreLoad(BinStream &bs) {
             bs >> gOldChars;
         }
     }
-    bs.PushRev(packRevs(gWorldDirRevs.altRev, gWorldDirRevs.rev), this);
+    PushRev(packRevs(gWorldDirRevs.altRev, gWorldDirRevs.rev), this);
     PanelDir::PreLoad(bs);
 }
 
@@ -400,7 +400,7 @@ BinStreamRev &operator>>(BinStreamRev &d, WorldDir::MatOverride &o) {
 // alt-rev reads are newer-engine revisions.
 void WorldDir::PostLoad(BinStream &bs) {
     PanelDir::PostLoad(bs);
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     gWorldDirRevs.rev = getHmxRev(revs);
     gWorldDirRevs.altRev = getAltRev(revs);
     if (gWorldDirRevs.rev > 4 && gWorldDirRevs.rev < 6) {

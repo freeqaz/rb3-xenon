@@ -100,7 +100,7 @@ void HamPhotoDisplay::PreLoad(BinStream &bs) {
 }
 
 void HamPhotoDisplay::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
+    BinStreamRev d(bs, PopRev(this));
     RndDir::PostLoad(d.stream);
     if (!IsProxy() || d.rev < 1) {
         d >> mMesh1;

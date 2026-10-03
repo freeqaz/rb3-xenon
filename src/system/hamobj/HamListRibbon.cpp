@@ -170,7 +170,7 @@ void HamListRibbon::PreLoad(BinStream &bs) {
 }
 
 void HamListRibbon::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
+    BinStreamRev d(bs, PopRev(this));
     RndDir::PostLoad(d.stream);
     d >> mSpacing;
     d >> mSwellAnim;

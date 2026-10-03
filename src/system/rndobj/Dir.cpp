@@ -110,13 +110,13 @@ void RndDir::PreLoad(BinStream &bs) {
     bs >> rev;
     gRevs_RndDir.rev = getHmxRev(rev);
     gRevs_RndDir.altRev = getAltRev(rev);
-    bs.PushRev(packRevs(gRevs_RndDir.altRev, gRevs_RndDir.rev), this);
+    PushRev(packRevs(gRevs_RndDir.altRev, gRevs_RndDir.rev), this);
     ObjectDir::PreLoad(bs);
 }
 
 void RndDir::PostLoad(BinStream &bs) {
     ObjectDir::PostLoad(bs);
-    int rev = bs.PopRev(this);
+    int rev = PopRev(this);
     gRevs_RndDir.rev = getHmxRev(rev);
     gRevs_RndDir.altRev = getAltRev(rev);
     RndAnimatable::Load(bs);

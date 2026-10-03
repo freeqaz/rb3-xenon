@@ -140,13 +140,13 @@ void BandScoreboard::PreLoad(BinStream &bs) {
     ASSERT_REVS(1, 0);
     if (gRev >= 1 && !IsProxy())
         bs >> mStarDisplay;
-    bs.PushRev(packRevs(gAltRev, gRev), this);
+    PushRev(packRevs(gAltRev, gRev), this);
     RndDir::PreLoad(bs);
 }
 
 void BandScoreboard::PostLoad(BinStream &bs) {
     RndDir::PostLoad(bs);
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     gRev = getHmxRev(revs);
     gAltRev = getAltRev(revs);
 }
