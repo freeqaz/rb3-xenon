@@ -52,30 +52,6 @@ static std::map<std::pair<Symbol, Symbol>, bool> sSuperClassMap;
 static unsigned short sObjectDirAltRev = 0;
 static unsigned short sObjectDirRev = 0;
 
-// Retail RB3 keeps the object-version stack as FREE functions (the
-// obj/ObjVersion.h pair `inline int PopRev(Hmx::Object *o)`): the target calls
-// PopRev(this) with NO BinStream receiver at all. dc3's newer engine moved them
-// onto BinStream, which is what our in-tree utl/BinStream.h declares, and that
-// extra `this` is what forces an `mr r3, <bs>` before every call site.
-// Same TU-local redeclaration OvershellDir.cpp already uses for this exact
-// reason -- kept file-local rather than changing utl/BinStream.h, which would
-// cascade to every Load/PostLoad in the tree.
-int PopRev(Hmx::Object *);
-
-#ifdef HX_NATIVE
-// ...but the free function was only ever DECLARED. The X360 decomp build never
-// links, so an undefined-but-referenced symbol is invisible there; natively it
-// is an undefined reference in all 17 linking targets (wave4 f278d4d7 added the
-// declaration + four call sites below, and OvershellDir.cpp / GemTrackDir.cpp
-// carry the same TU-local redeclaration). Supply the one definition here, in
-// the TU whose call sites need it, forwarding to the static member that
-// utl/BinStream.cpp:144 actually defines. Semantically identical -- the rev
-// stack is process-wide, so the member takes no receiver either. Native-only:
-// the X360 object is untouched, and the free-function call sites (the point of
-// the redeclaration, no `mr r3, <bs>`) are unchanged in both arms.
-int PopRev(Hmx::Object *o) { return BinStream::PopRev(o); }
-#endif
-
 #ifdef HX_NATIVE
 namespace {
     void CollectCascadeDirs(ObjectDir *dir, std::vector<ObjectDir *> &out) {
@@ -1575,12 +1551,12 @@ void ObjectDir::PreLoad(BinStream &bs) {
                 inlinedSubDirs[i] = GetSubDirPath(inlinedSubDirs[i], bs);
                 PreLoadInlined(inlinedSubDirs[i], false, dType);
                 if (i20 == 1) {
-                    bs.PushRev(getfileres, this);
+                    PushRev(getfileres, this);
                 }
             }
-            bs.PushRev(numNotInlined, this);
+            PushRev(numNotInlined, this);
             if (!bs.Cached()) {
-                bs.PushRev(i20, this);
+                PushRev(i20, this);
             }
         }
     }
@@ -1644,7 +1620,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
     }
 
     mIsSubDir = false;
-    bs.PushRev(packRevs(sObjectDirAltRev, sObjectDirRev), this);
+    PushRev(packRevs(sObjectDirAltRev, sObjectDirRev), this);
 }
 
 void ObjectDir::PostLoad(BinStream &bs) {

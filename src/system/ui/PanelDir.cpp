@@ -341,13 +341,13 @@ void PanelDir::PreLoad(BinStream &bs) {
     // 99.7% -> 97.4%.  Declaration order is equally inert (byte-identical obj).
     gRevs.rev = getHmxRev(rev);
     gRevs.alt = getAltRev(rev);
-    BinStream::PushRev(packRevs(gRevs.alt, gRevs.rev), this);
+    PushRev(packRevs(gRevs.alt, gRevs.rev), this);
     RndDir::PreLoad(bs);
 }
 
 void PanelDir::PostLoad(BinStream &bs) {
     RndDir::PostLoad(bs);
-    int revs = BinStream::PopRev(this);
+    int revs = PopRev(this);
     gRevs.rev = getHmxRev(revs);
     gRevs.alt = getAltRev(revs);
     if (!IsProxy()) {

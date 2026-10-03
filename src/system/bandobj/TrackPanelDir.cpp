@@ -58,13 +58,13 @@ END_SAVES
 void TrackPanelDir::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
     ASSERT_REVS(1, 0);
-    bs.PushRev(packRevs(gAltRev, gRev), this);
+    PushRev(packRevs(gAltRev, gRev), this);
     TrackPanelDirBase::PreLoad(bs);
 }
 
 void TrackPanelDir::PostLoad(BinStream &bs) {
     TrackPanelDirBase::PostLoad(bs);
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     gRev = getHmxRev(revs);
     gAltRev = getAltRev(revs);
     if (gRev < 1) {

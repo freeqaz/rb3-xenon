@@ -136,12 +136,12 @@ void BandLeadMeter::PreLoad(BinStream &bs) {
             }
         }
         RndDir::PreLoad(bs);
-        bs.PushRev(packRevs(gAltRev, gRev), this);
+        PushRev(packRevs(gAltRev, gRev), this);
     }
 }
 
 void BandLeadMeter::PostLoad(BinStream &bs) {
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     // INT, not unsigned short: retail keeps the popped rev UNMASKED in a
     // callee-saved register across RndDir::PostLoad and re-applies `clrlwi
     // r11,r28,16` before both the restore-store and the `>= 8` compare.  That

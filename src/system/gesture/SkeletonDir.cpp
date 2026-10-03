@@ -61,11 +61,11 @@ void SkeletonDir::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
     ASSERT_REVS(4, 0);
     PanelDir::PreLoad(bs);
-    bs.PushRev(packRevs(d.altRev, d.rev), this);
+    PushRev(packRevs(d.altRev, d.rev), this);
 }
 
 void SkeletonDir::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
+    BinStreamRev d(bs, PopRev(this));
     PanelDir::PostLoad(bs);
     if (!IsProxy()) {
         d >> mTestClip;

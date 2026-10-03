@@ -62,7 +62,7 @@ void HamPhraseMeter::PreLoad(BinStream &bs) {
 }
 
 void HamPhraseMeter::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
+    BinStreamRev d(bs, PopRev(this));
     RndDir::PostLoad(d.stream);
     mAnim.Load(d.stream, false, this);
     d >> mRatingFrac;

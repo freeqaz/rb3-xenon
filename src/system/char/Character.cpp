@@ -256,10 +256,10 @@ void Character::PreLoad(BinStream &bs) {
             RndDrawable::Load(bs);
         }
         ObjectDir::PreLoad(bs);
-        bs.PushRev(revToPush, this);
+        PushRev(revToPush, this);
     }
     unsigned short curRev = gRevs.rev;
-    bs.PushRev(packRevs(gRevs.altRev, curRev), this);
+    PushRev(packRevs(gRevs.altRev, curRev), this);
 }
 
 // Retail reads the revision out of the file-static gRevs aggregate (set by
@@ -294,7 +294,7 @@ void Character::PostLoad(BinStream &bs) {
     // `sth altRev,0x0(r21)` off one base register) and the rev is cached and
     // RE-STORED after each nested super PostLoad, which may clobber gRevs.
     // The ObjVector readers receive the raw stream (`mr r3,r20`).
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     gRevs.rev = getHmxRev(revs);
     gRevs.altRev = getAltRev(revs);
     // A plain alias of the raw stream. Codegen-only: dropping it swaps the
@@ -359,7 +359,7 @@ void Character::PostLoad(BinStream &bs) {
             mTest->Load(bs);
         }
     } else {
-        int otherRev = bs.PopRev(this);
+        int otherRev = PopRev(this);
         int oldOtherRev = gRevs.rev;
         ObjectDir::PostLoad(bs);
         gRevs.rev = oldOtherRev;

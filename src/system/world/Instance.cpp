@@ -230,7 +230,7 @@ void WorldInstance::PreLoad(BinStream &bs) {
     // RB3 pushes
     // the rev BEFORE RndDir::PreLoad; this body (byte-identical to DC3's) used
     // to push it after. X4a already proved the ordering is RUNTIME-equivalent
-    // (BinStream::PushRev/PopRev only touch a process-wide `sRevStack`, never
+    // (PushRev/PopRev only touch the process-wide `sRevStack`, never
     // the byte stream — verified byte-identical venue logs both ways), leaving
     // it as a match-lane call. Ghidra's decompile of retail
     // WorldInstance::PreLoad (@0x824ed2d0) shows the `bl RndDir::PreLoad` call
@@ -240,7 +240,7 @@ void WorldInstance::PreLoad(BinStream &bs) {
     // not a body content change. Switching to the push-before-superclass
     // order collapsed that pair. Measured via run_objdiff in worktree
     // ~/tmp/nc-wave4/f307s: 87.9% -> (see next measurement) normalized.
-    bs.PushRev(packRevs(sLoadAltRev, sLoadRev), this);
+    PushRev(packRevs(sLoadAltRev, sLoadRev), this);
     RndDir::PreLoad(bs);
     if (mProxyFile.length() != 0) {
         MILO_NOTIFY(
@@ -451,7 +451,7 @@ void WorldInstance::PostLoad(BinStream &bs) {
     // RB3 retail (0x824ED000): base PostLoad first, then pop
     // the rev into the TU rev statics.
     RndDir::PostLoad(bs);
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     sLoadRev = getHmxRev(revs);
     sLoadAltRev = getAltRev(revs);
     if (sLoadRev != 0) {

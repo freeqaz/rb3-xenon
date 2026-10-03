@@ -163,7 +163,7 @@ INIT_REVS(UILabelDir)
 void UILabelDir::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
     ASSERT_REVS(9, 0);
-    BinStream::PushRev(packRevs(gAltRev, gRev), this);
+    PushRev(packRevs(gAltRev, gRev), this);
     RndDir::PreLoad(bs);
 }
 
@@ -175,7 +175,7 @@ void UILabelDir::PostLoad(BinStream &bs) {
     // retail 0x82810ED0: superclass first, then PopRev into the
     // file-static gRev/gAltRev pair (no BinStreamRev local).
     RndDir::PostLoad(bs);
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     gRev = getHmxRev(revs);
     gAltRev = getAltRev(revs);
     bs >> mTextObj;

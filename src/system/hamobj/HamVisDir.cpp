@@ -186,7 +186,7 @@ void HamVisDir::PreLoad(BinStream &bs) {
 }
 
 void HamVisDir::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
+    BinStreamRev d(bs, PopRev(this));
     if (d.rev < 1) {
         PanelDir::PostLoad(bs);
     } else {

@@ -127,13 +127,13 @@ void LayerDir::PreLoad(BinStream &bs) {
         bs >> mLayers;
     if (gRev != 0)
         bs >> mUseFreeCam;
-    bs.PushRev(packRevs(gAltRev, gRev), this);
+    PushRev(packRevs(gAltRev, gRev), this);
     RndDir::PreLoad(bs);
 }
 
 void LayerDir::PostLoad(BinStream &bs) {
     RndDir::PostLoad(bs);
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     gRev = getHmxRev(revs);
     gAltRev = getAltRev(revs);
     if (gRev == 5)

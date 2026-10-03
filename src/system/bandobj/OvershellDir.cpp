@@ -12,13 +12,6 @@ static struct {
     __declspec(align(4)) unsigned short rev;
 } gOvershellRevs;
 
-// Retail RB3 keeps the object-version stack as FREE functions (the
-// obj/ObjVersion.h pair): the target calls PushRev(packedRevs, this) /
-// PopRev(this) with no BinStream `this`. dc3's newer engine moved them onto
-// BinStream, which is what our in-tree utl/BinStream.h declares.
-void PushRev(int, Hmx::Object *);
-int PopRev(Hmx::Object *);
-
 OvershellDir::OvershellDir()
     : mSlotView("joined_default"), mInTrackMode(0), mControllerType("guitar"),
       mOnlineEnabled(0), mIsLocal(1), mPadNum(1), mPlatform("xbox"),

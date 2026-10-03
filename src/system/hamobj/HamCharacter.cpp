@@ -167,11 +167,11 @@ void HamCharacter::PreLoad(BinStream &bs) {
     ASSERT_REVS(3, 0)
     Character::PreLoad(bs);
     Reserve((mHashTable.UsedSize() + 20) * 2, mStringTable.UsedSize() + 0x1B8);
-    bs.PushRev(packRevs(d.altRev, d.rev), this);
+    PushRev(packRevs(d.altRev, d.rev), this);
 }
 
 void HamCharacter::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
+    BinStreamRev d(bs, PopRev(this));
     Character::PostLoad(bs);
     if (gLoadingProxyFromDisk) {
         Symbol s;

@@ -115,7 +115,7 @@ float TrackPanelDirBase::GetPulseAnimStartDelay(bool b) const {
 void TrackPanelDirBase::PreLoad(BinStream &bs) {
     LOAD_REVS(bs);
     ASSERT_REVS(0, 0);
-    bs.PushRev(packRevs(gAltRev, gRev), this);
+    PushRev(packRevs(gAltRev, gRev), this);
     PanelDir::PreLoad(bs);
 }
 
@@ -126,7 +126,7 @@ DECOMP_FORCEACTIVE(
 
 void TrackPanelDirBase::PostLoad(BinStream &bs) {
     PanelDir::PostLoad(bs);
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     gRev = getHmxRev(revs);
     gAltRev = getAltRev(revs);
     if (!IsProxy()) {

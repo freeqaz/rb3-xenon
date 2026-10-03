@@ -186,13 +186,13 @@ void BandStarDisplay::PreLoad(BinStream &bs) {
     }
     if (gRev >= 2 && IsProxy())
         bs >> mStarType;
-    bs.PushRev(packRevs(gAltRev, gRev), this);
+    PushRev(packRevs(gAltRev, gRev), this);
     RndDir::PreLoad(bs);
 }
 
 void BandStarDisplay::PostLoad(BinStream &bs) {
     RndDir::PostLoad(bs);
-    int revs = bs.PopRev(this);
+    int revs = PopRev(this);
     gRev = getHmxRev(revs);
     gAltRev = getAltRev(revs);
 }

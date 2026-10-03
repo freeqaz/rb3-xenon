@@ -2466,7 +2466,7 @@ BufStream.cpp:
 	.pdata      start:0x822429E8 end:0x82242A28
 	.pdata      start:0x82242A28 end:0x82242A30
 	.text       start:0x827CC150 end:0x827CC4CC
-	.text       start:0x827CC4D0 end:0x827CC6C4
+	.text       start:0x827CC4D0 end:0x827CC540
 
 Locale.cpp:
 	.pdata      start:0x82242808 end:0x82242868
@@ -7763,7 +7763,7 @@ FilePath.cpp:
 
 UTF8.cpp:
 	.pdata      start:0x82242A30 end:0x82242AB0
-	.text       start:0x827CC6C4 end:0x827CD0FC
+	.text       start:0x827CC540 end:0x827CD0FC
 
 Chunks.cpp:
 	.pdata      start:0x82243588 end:0x82243590

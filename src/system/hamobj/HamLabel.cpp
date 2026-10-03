@@ -62,7 +62,7 @@ void HamLabel::PreLoad(BinStream &bs) {
 }
 
 void HamLabel::PostLoad(BinStream &bs) {
-    BinStreamRev d(bs, bs.PopRev(this));
+    BinStreamRev d(bs, PopRev(this));
     UILabel::PostLoad(d.stream);
     LoadHandlerData(d.stream);
 }

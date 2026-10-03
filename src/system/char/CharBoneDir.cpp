@@ -97,13 +97,13 @@ void CharBoneDir::PreLoad(BinStream &bs) {
     bs >> rev;
     gRevs_CharBoneDir.rev = getHmxRev(rev);
     gRevs_CharBoneDir.altRev = getAltRev(rev);
-    bs.PushRev(packRevs(gRevs_CharBoneDir.altRev, gRevs_CharBoneDir.rev), this);
+    PushRev(packRevs(gRevs_CharBoneDir.altRev, gRevs_CharBoneDir.rev), this);
     ObjectDir::PreLoad(bs);
 }
 
 void CharBoneDir::PostLoad(BinStream &bs) {
     ObjectDir::PostLoad(bs);
-    int rev = bs.PopRev(this);
+    int rev = PopRev(this);
     gRevs_CharBoneDir.rev = getHmxRev(rev);
     gRevs_CharBoneDir.altRev = getAltRev(rev);
     if (gRevs_CharBoneDir.rev < 2) {

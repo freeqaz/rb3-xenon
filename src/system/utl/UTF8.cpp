@@ -196,51 +196,47 @@ const char *UTF8strchr(const char *str, unsigned short us) {
     return 0;
 }
 
-void UTF8ToLower(unsigned short arg0, char *arg1) {
-    int middleByte;
-    int codepoint;
-
-    codepoint = arg0;
-    if (codepoint < 0x80U) {
-        if ((unsigned short)(codepoint + 0xFFBF) <= 0x19U) {
-            arg1[0] = (codepoint + 0x20);
-        } else
-            arg1[0] = codepoint;
-    } else if (codepoint < 0x800U) {
-        if ((unsigned short)(codepoint + 0xFF40) <= 0x1DU) {
-            codepoint = (codepoint + 0x20) & 0xffff;
+void UTF8ToLower(unsigned short us, char *out) {
+    if (us < 0x80) {
+        if (us >= 'A' && us <= 'Z') {
+            out[0] = us + 0x20;
+        } else {
+            out[0] = us;
         }
-        arg1[0] = (((codepoint >> 6) & 0x3FF) + 0xC0);
-        arg1[1] = ((codepoint % 64) + 0x80);
+    } else if (us < 0x800) {
+        // Latin-1 capitals (U+00C0..U+00DD) fold to their lower-case forms.
+        if (us >= 0xC0 && us <= 0xDD) {
+            us += 0x20;
+        }
+        out[0] = (us >> 6) + 0xC0;
+        out[1] = (us % 64) + 0x80;
     } else {
-        middleByte = (codepoint >> 6) & 0x3FF;
-        arg1[0] = (((codepoint >> 0xCU) & 0xF) + 0xE0);
-        arg1[1] = ((middleByte % 64) + 0x80);
-        arg1[2] = ((codepoint % 64) + 0x80);
+        int mid = us >> 6;
+        out[0] = (us >> 12) + 0xE0;
+        out[1] = (mid % 64) + 0x80;
+        out[2] = (us % 64) + 0x80;
     }
 }
 
-void UTF8ToUpper(unsigned short arg0, char *arg1) {
-    int middleByte;
-    int codepoint;
-
-    codepoint = arg0;
-    if (codepoint < 0x80U) {
-        if ((unsigned short)(codepoint + 0xFF9F) <= 0x19U) {
-            arg1[0] = (codepoint - 0x20);
-        } else
-            arg1[0] = codepoint;
-    } else if (codepoint < 0x800U) {
-        if ((unsigned short)(codepoint + 0xFF20) <= 0x1DU) {
-            codepoint = (codepoint - 0x20) & 0xffff;
+void UTF8ToUpper(unsigned short us, char *out) {
+    if (us < 0x80) {
+        if (us >= 'a' && us <= 'z') {
+            out[0] = us - 0x20;
+        } else {
+            out[0] = us;
         }
-        arg1[0] = (((codepoint >> 6) & 0x3FF) + 0xC0);
-        arg1[1] = ((codepoint % 64) + 0x80);
+    } else if (us < 0x800) {
+        // Latin-1 small letters (U+00E0..U+00FD) fold to their capitals.
+        if (us >= 0xE0 && us <= 0xFD) {
+            us += 0xFFE0;
+        }
+        out[0] = (us >> 6) + 0xC0;
+        out[1] = (us % 64) + 0x80;
     } else {
-        middleByte = (codepoint >> 6) & 0x3FF;
-        arg1[0] = (((codepoint >> 0xCU) & 0xF) + 0xE0);
-        arg1[1] = ((middleByte % 64) + 0x80);
-        arg1[2] = ((codepoint % 64) + 0x80);
+        int mid = us >> 6;
+        out[0] = (us >> 12) + 0xE0;
+        out[1] = (mid % 64) + 0x80;
+        out[2] = (us % 64) + 0x80;
     }
 }
 

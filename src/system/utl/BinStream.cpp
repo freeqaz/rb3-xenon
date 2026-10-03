@@ -21,11 +21,6 @@
 #define MILO_LOG_ONCE(...) TheDebugNotifyOncePrinter << MakeString(__VA_ARGS__)
 #endif
 
-// RB3's BinStream has no per-instance rev stack member (sizeof==0xc). The rev
-// stack is process-wide here so PushRev/PopRev still compile while the derived
-// stream classes keep the target member offsets. See BinStream.h note.
-static std::vector<ObjVersion> *sRevStack = nullptr;
-
 const char *BinStream::Name() const { return "<unnamed>"; }
 
 BinStream::BinStream(bool b) : mLittleEndian(b), mCrypto(nullptr) {}
@@ -141,39 +136,6 @@ void BinStream::EnableWriteEncryption() {
     mCrypto = new Rand2(i);
 }
 
-int BinStream::PopRev(Hmx::Object *o) {
-    MILO_ASSERT(sRevStack, 0x34);
-#ifdef HX_NATIVE
-    if (sRevStack->empty()) {
-        fprintf(stderr, "PopRev ABORT: empty stack for %s '%s'\n", o->ClassName(), o->Name());
-        abort();
-    }
-#endif
-    ObjVersion *back = &sRevStack->back();
-    while (back->obj == nullptr) {
-        MILO_NOTIFY("hey object got deleted!");
-        sRevStack->pop_back();
-        back = &sRevStack->back();
-    }
-    int revs = back->revs;
-    if (o != back->obj) {
-        MILO_LOG("rev stack $this mismatch (%08x != %08x\n", o, back->obj);
-        MILO_LOG("curr obj: %s %s\n", o->ClassName(), PathName(o));
-        MILO_LOG("stack obj: %s %s\n", back->obj->ClassName(), PathName(back->obj));
-        MILO_FAIL(
-            "rev stack (%08x %s %s != %08x %s %s)\n",
-            o,
-            o->ClassName(),
-            PathName(o),
-            back->obj,
-            back->obj->ClassName(),
-            PathName(back->obj)
-        );
-    }
-    sRevStack->pop_back();
-    return revs;
-}
-
 void BinStream::Read(void *data, int bytes) {
     if (Fail()) {
         MILO_NOTIFY_ONCE("Stream error: Can't read from %s", Name());
@@ -281,9 +243,3 @@ bool BinStream::WaitUntilReady(int sleepMs) {
 }
 #endif
 
-void BinStream::PushRev(int revs, Hmx::Object *obj) {
-    if (!sRevStack) {
-        sRevStack = new std::vector<ObjVersion>();
-    }
-    sRevStack->push_back(ObjVersion(revs, obj));
-}

@@ -13,6 +13,10 @@ namespace Hmx {
     class Object;
 }
 
+// The object-version stack is free inline functions, defined in obj/Object.h.
+inline void PushRev(int, Hmx::Object *);
+inline int PopRev(Hmx::Object *);
+
 enum EofType {
     NotEof = 0,
     RealEof = 1,
@@ -72,13 +76,13 @@ public:
     bool WaitUntilReady(int sleepMs = 0);
 #endif
 
-    // retail: neither takes an implicit BinStream `this` (call sites never load
-    // it into r3) -- the rev stack is a process-wide static (see BinStream.cpp),
-    // so these are compiled as static member functions, matching retail's ABI
-    // (verified: TrackPanelDirBase::PostLoad/PreLoad's PushRev/PopRev call sites
-    // pass ONLY (revs, obj) / (obj), never `bs` itself).
-    static void PushRev(int, Hmx::Object *);
-    static int PopRev(Hmx::Object *);
+#ifdef HX_NATIVE
+    // Native-only forwarders for milo-native-engine's RndTex_Native.cpp, which
+    // still spells the rev stack as BinStream members. The match build has one
+    // spelling, the free PushRev/PopRev (obj/Object.h).
+    static void PushRev(int revs, Hmx::Object *o) { ::PushRev(revs, o); }
+    static int PopRev(Hmx::Object *o) { return ::PopRev(o); }
+#endif
 
     MEM_OVERLOAD(BinStream, 0x55);
 
@@ -230,7 +234,7 @@ public:
         return *this;
     }
 
-    void PushRev(Hmx::Object *obj) { stream.PushRev(packRevs(altRev, rev), obj); }
+    void PushRev(Hmx::Object *obj) { ::PushRev(packRevs(altRev, rev), obj); }
 
     // ⛔ DO NOT REMOVE OR "NEUTER" THIS TEMPLATE. Lane MATCH-L, 2026-08-10 —
     // settled with a whole-binary A/B; three formulations measured, all cost, none pay.

@@ -575,7 +575,7 @@ void UIList::PostLoad(BinStream &bs) {
     // RB3 retail: mListDir (raw UIListDir*) is recovered from
     // mResource->Dir() during resource load, not via a ResourceDirPtr PostLoad.
     //
-    // RB3 retail does NOT construct a BinStreamRev/call BinStream::PopRev here
+    // RB3 retail does NOT construct a BinStreamRev/call PopRev here
     // (confirmed via objdiff: PopRev, the BinStream base ctor/dtor, and the
     // BinStreamRev vtable are all absent from retail's target code — bs itself
     // stays live in one register across the whole function). It instead reads
