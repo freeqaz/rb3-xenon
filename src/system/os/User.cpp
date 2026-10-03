@@ -55,13 +55,9 @@ void LocalUser::UpdateOnlineID() {
     mOnlineID->SetXUID(xuid);
 }
 
+// Retail has no fake_controllers override here; it asks the pad directly.
 bool LocalUser::IsJoypadConnected() const {
-    static DataNode &n = DataVariable("fake_controllers");
-    if (n.Int()) {
-        return true;
-    } else {
-        return JoypadIsConnectedPadNum(GetPadNum());
-    }
+    return JoypadIsConnectedPadNum(GetPadNum());
 }
 
 bool LocalUser::HasOnlinePrivilege() const {

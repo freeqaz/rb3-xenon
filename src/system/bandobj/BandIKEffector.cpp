@@ -148,7 +148,11 @@ inline void Multiply(const Hmx::Matrix3 &a, const Hmx::Matrix3 &b, Hmx::Matrix3 
 }
 #endif
 
-INIT_REVS(BandIKEffector)
+// Retail addresses both rev statics off ONE base register (+0 gAltRev, +4 gRev),
+// which needs an INTERNAL-linkage adjacent pair rather than DECLARE_REVS's class
+// statics (same as LayerDir.cpp). Explicit `= 0` keeps them out of .bss.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 CharClip *BandIKEffector::sDeformClip;
 
 BandIKEffector::Constraint::Constraint(Hmx::Object *o)
@@ -227,31 +231,20 @@ void BandIKEffector::NeutralLocalXfm(RndTransformable *bone, Transform &tf) {
     if (sDeformClip) {
         bool pelvisMatch = (strcmp(bone->Name(), "bone_pelvis.mesh") == 0);
         if (!pelvisMatch) {
-            void *posChan = sDeformClip->GetChannel(
-                CharBones::ChannelName(bone->Name(), CharBones::TYPE_POS)
-            );
+            Symbol channel = CharBones::ChannelName(bone->Name(), CharBones::TYPE_POS);
+            void *posChan = sDeformClip->GetChannel(channel);
             if (posChan)
                 sDeformClip->EvaluateChannel(&tf.v, posChan, 0.0f);
-            void *scaleChan = sDeformClip->GetChannel(
-                CharBones::ChannelName(bone->Name(), CharBones::TYPE_SCALE)
-            );
+            channel = CharBones::ChannelName(bone->Name(), CharBones::TYPE_SCALE);
+            void *scaleChan = sDeformClip->GetChannel(channel);
             if (scaleChan) {
                 Vector3 targetScale;
                 sDeformClip->EvaluateChannel(&targetScale, scaleChan, 0.0f);
                 Vector3 currScale;
                 MakeScale(tf.m, currScale);
-                float rx = targetScale.x / currScale.x;
-                tf.m.x.x *= rx;
-                tf.m.x.y *= rx;
-                tf.m.x.z *= rx;
-                float ry = targetScale.y / currScale.y;
-                tf.m.y.x *= ry;
-                tf.m.y.y *= ry;
-                tf.m.y.z *= ry;
-                float rz = targetScale.z / currScale.z;
-                tf.m.z.x *= rz;
-                tf.m.z.y *= rz;
-                tf.m.z.z *= rz;
+                tf.m.x *= targetScale.x / currScale.x;
+                tf.m.y *= targetScale.y / currScale.y;
+                tf.m.z *= targetScale.z / currScale.z;
             }
         }
     }
@@ -276,7 +269,7 @@ void BandIKEffector::Highlight() {}
 BinStream &operator>>(BinStream &bs, BandIKEffector::Constraint &c) {
     bs >> c.mTarget;
     bs >> c.mFinger;
-    if (BandIKEffector::gRev > 2)
+    if (gRev > 2)
         bs >> c.mWeight;
     return bs;
 }
@@ -423,199 +416,84 @@ void BandIKEffector::ComputeHandPullAndQuat(
 }
 
 void BandIKEffector::DoFancyElbow(QuatXfm &hand, float handWeight) {
-    Transform neutralElbow;
-    Transform worldShoulder;
-    Transform handLocalElbow;
-    Hmx::Matrix3 m;
-    Transform elbowOut;
-    Transform handOut;
-    QuatXfm accum;
     RndTransformable *elbow;
     RndTransformable *shoulder;
-    float aaPlusbb;
     float inv2ab;
+    float aaPlusbb;
     float aPlusb;
     if (!MeasureLengths(elbow, shoulder, inv2ab, aaPlusbb, aPlusb))
         return;
-
+    Transform neutralElbow;
     NeutralWorldXfm(elbow, neutralElbow);
-
     Vector3 elbowDest;
-    elbowDest.x = 0.0f;
-    elbowDest.y = 0.0f;
-    elbowDest.z = 0.0f;
+    elbowDest.Zero();
     float elbowWeight = mElbow->ApplyPosConstraints(elbowDest, neutralElbow.v, this);
     float totalWeight = elbowWeight + handWeight;
-    if (totalWeight == 0.0f)
+    if (totalWeight == 0)
         return;
-
-    float naturalWeight = 0.0f;
-    accum.v.x = 0.0f;
-    accum.v.y = 0.0f;
-    accum.v.z = 0.0f;
-    accum.q.x = 0.0f;
-    accum.q.y = 0.0f;
-    accum.q.z = 0.0f;
-    accum.q.w = 0.0f;
-    if (totalWeight < 1.0f) {
-        naturalWeight = 1.0f - totalWeight;
-        if (accum.q.w < 0.0f) {
-            accum.q.w -= naturalWeight;
-        } else {
-            accum.q.w += naturalWeight;
-        }
-        totalWeight += naturalWeight;
+    QuatXfm accum;
+    accum.v.Set(0, 0, 0);
+    accum.q.Set(0, 0, 0, 0);
+    // whatever weight the constraints leave unclaimed goes to the natural pose
+    float naturalWeight = 0;
+    if (totalWeight < 1) {
+        naturalWeight = 1 - totalWeight;
+        accum.q.w = naturalWeight;
+        totalWeight = naturalWeight + totalWeight;
     }
-
-    worldShoulder = shoulder->WorldXfm();
-
-    if (elbowWeight > 0.0f) {
-        elbowDest.x /= elbowWeight;
-        elbowDest.y /= elbowWeight;
-        elbowDest.z /= elbowWeight;
-        QuatXfm shoulderXfm;
-        ComputeElbowPullAndQuat(shoulderXfm, worldShoulder, elbowDest);
-
-        float absW = (float)fabs(elbowWeight);
-        Hmx::Quat scaled;
-        scaled.x = shoulderXfm.q.x * absW;
-        scaled.y = shoulderXfm.q.y * absW;
-        scaled.z = shoulderXfm.q.z * absW;
-        scaled.w = shoulderXfm.q.w * elbowWeight;
-
-        accum.v.x += shoulderXfm.v.x * elbowWeight;
-        accum.v.y += shoulderXfm.v.y * elbowWeight;
-        accum.v.z += shoulderXfm.v.z * elbowWeight;
-
-        float dot = scaled.w * accum.q.w + scaled.x * accum.q.x + scaled.y * accum.q.y
-            + scaled.z * accum.q.z;
-        if (dot < 0.0f) {
-            accum.q.x -= scaled.x;
-            accum.q.y -= scaled.y;
-            accum.q.z -= scaled.z;
-            accum.q.w -= scaled.w;
-        } else {
-            accum.q.x += scaled.x;
-            accum.q.y += scaled.y;
-            accum.q.z += scaled.z;
-            accum.q.w += scaled.w;
-        }
+    Transform worldShoulder = shoulder->WorldXfm();
+    if (elbowWeight > 0) {
+        elbowDest.Set(elbowDest.x / elbowWeight, elbowDest.y / elbowWeight, elbowDest.z / elbowWeight);
+        QuatXfm elbowPull;
+        ComputeElbowPullAndQuat(elbowPull, worldShoulder, elbowDest);
+        ScaleAdd(accum.v, elbowPull.v, elbowWeight, accum.v);
+        ScaleAddEq(accum.q, elbowPull.q, elbowWeight);
     }
-
-    if (handWeight > 0.0f) {
-        float invW = 1.0f / handWeight;
-        float hz = hand.v.z;
-        float hy = hand.v.y;
-        float hx = hand.v.x;
-        Vector3 handTarget;
-        handTarget.z = hz * invW;
-        handTarget.x = hx * invW;
-        handTarget.y = hy * invW;
+    Transform handLocalElbow;
+    if (handWeight > 0) {
+        Vector3 handDest;
+        Scale(hand.v, 1 / handWeight, handDest);
         QuatXfm handPull;
         ComputeHandPullAndQuat(
-            handPull, handLocalElbow, worldShoulder, handTarget, inv2ab, aaPlusbb, aPlusb
+            handPull, handLocalElbow, worldShoulder, handDest, inv2ab, aaPlusbb, aPlusb
         );
-
-        float absW = (float)fabs(handWeight);
-        Hmx::Quat scaled;
-        scaled.x = handPull.q.x * absW;
-        scaled.y = handPull.q.y * absW;
-        scaled.z = handPull.q.z * absW;
-        scaled.w = handPull.q.w * handWeight;
-
-        accum.v.x += handPull.v.x * handWeight;
-        accum.v.y += handPull.v.y * handWeight;
-        accum.v.z += handPull.v.z * handWeight;
-
-        float dot = scaled.x * accum.q.x + scaled.y * accum.q.y
-            + scaled.z * accum.q.z + scaled.w * accum.q.w;
-        if (dot < 0.0f) {
-            accum.q.x -= scaled.x;
-            accum.q.y -= scaled.y;
-            accum.q.z -= scaled.z;
-            accum.q.w -= scaled.w;
-        } else {
-            accum.q.x += scaled.x;
-            accum.q.y += scaled.y;
-            accum.q.z += scaled.z;
-            accum.q.w += scaled.w;
-        }
+        ScaleAdd(accum.v, handPull.v, handWeight, accum.v);
+        ScaleAddEq(accum.q, handPull.q, handWeight);
     }
-
     Normalize(accum.q, accum.q);
-    accum.v.x /= totalWeight;
-    accum.v.y /= totalWeight;
-    accum.v.z /= totalWeight;
+    accum.v.Set(accum.v.x / totalWeight, accum.v.y / totalWeight, accum.v.z / totalWeight);
+    Hmx::Matrix3 m;
     MakeRotMatrix(accum.q, m);
     Multiply(m, worldShoulder.m, worldShoulder.m);
-    worldShoulder.v.x += accum.v.x;
-    worldShoulder.v.y += accum.v.y;
-    worldShoulder.v.z += accum.v.z;
+    worldShoulder.v += accum.v;
     shoulder->SetWorldXfm(worldShoulder);
-
-    if (handWeight > 0.0f) {
-        Hmx::Quat elbowQuat;
-        elbowQuat.Set(elbow->LocalXfm().m);
-        float elbowScale = naturalWeight + elbowWeight;
-        elbowQuat.x *= elbowScale;
-        elbowQuat.y *= elbowScale;
-        elbowQuat.z *= elbowScale;
-        elbowQuat.w *= elbowScale;
-
-        Hmx::Quat handPullQ;
-        handPullQ.Set(handLocalElbow.m);
-
-        float absW = (float)fabs(handWeight);
-        Hmx::Quat scaledHand;
-        scaledHand.x = handPullQ.x * absW;
-        scaledHand.y = handPullQ.y * absW;
-        scaledHand.z = handPullQ.z * absW;
-        scaledHand.w = handPullQ.w * handWeight;
-
-        float dot = scaledHand.x * elbowQuat.x + scaledHand.y * elbowQuat.y
-            + scaledHand.z * elbowQuat.z + scaledHand.w * elbowQuat.w;
-        if (dot < 0.0f) {
-            elbowQuat.x -= scaledHand.x;
-            elbowQuat.y -= scaledHand.y;
-            elbowQuat.z -= scaledHand.z;
-            elbowQuat.w -= scaledHand.w;
-        } else {
-            elbowQuat.x += scaledHand.x;
-            elbowQuat.y += scaledHand.y;
-            elbowQuat.z += scaledHand.z;
-            elbowQuat.w += scaledHand.w;
-        }
-        Normalize(elbowQuat, elbowQuat);
-        MakeRotMatrix(elbowQuat, m);
-
+    if (handWeight > 0) {
+        // blend the elbow (and then the hand) between their current
+        // orientation and the one the hand pull solved for
+        Hmx::Quat elbowQ;
+        elbowQ.Set(elbow->LocalXfm().m);
+        float keepWeight = naturalWeight + elbowWeight;
+        elbowQ.Set(
+            keepWeight * elbowQ.x,
+            keepWeight * elbowQ.y,
+            keepWeight * elbowQ.z,
+            keepWeight * elbowQ.w
+        );
+        Hmx::Quat pulledQ;
+        pulledQ.Set(handLocalElbow.m);
+        ScaleAddEq(elbowQ, pulledQ, handWeight);
+        Normalize(elbowQ, elbowQ);
+        MakeRotMatrix(elbowQ, m);
+        Transform elbowOut;
         elbowOut.v = elbow->WorldXfm().v;
         Multiply(m, worldShoulder.m, elbowOut.m);
         elbow->SetWorldXfm(elbowOut);
-
         const Transform &handWorld = mEffector->WorldXfm();
+        Transform handOut;
         handOut.v = handWorld.v;
-        Hmx::Quat finalHandQ;
-        finalHandQ.Set(handWorld.m);
-        float handScale = naturalWeight + elbowWeight;
-        float absH = (float)fabs(handScale);
-        Hmx::Quat scaledFinal;
-        scaledFinal.x = finalHandQ.x * absH;
-        scaledFinal.y = finalHandQ.y * absH;
-        scaledFinal.z = finalHandQ.z * absH;
-        scaledFinal.w = finalHandQ.w * handScale;
-        float fdot = scaledFinal.x * hand.q.x + scaledFinal.y * hand.q.y
-            + scaledFinal.z * hand.q.z + scaledFinal.w * hand.q.w;
-        if (fdot < 0.0f) {
-            hand.q.x -= scaledFinal.x;
-            hand.q.y -= scaledFinal.y;
-            hand.q.z -= scaledFinal.z;
-            hand.q.w -= scaledFinal.w;
-        } else {
-            hand.q.x += scaledFinal.x;
-            hand.q.y += scaledFinal.y;
-            hand.q.z += scaledFinal.z;
-            hand.q.w += scaledFinal.w;
-        }
+        Hmx::Quat handQ;
+        handQ.Set(handWorld.m);
+        ScaleAddEq(hand.q, handQ, keepWeight);
         Normalize(hand.q, hand.q);
         MakeRotMatrix(hand.q, handOut.m);
         mEffector->SetWorldXfm(handOut);

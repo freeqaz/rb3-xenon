@@ -216,13 +216,9 @@ CharWidgetImp::CharWidgetImp(
         mText->SetAlignment(a);
         // retail passes both colours as Hmx::Color by value (r9:r10 + stack)
         mText->SetColor(c1);
+        const RndText::Style &style = mText->GetSingleStyle();
         mText->SetAltStyle(
-            mText->mStyle.mFont,
-            mText->mStyle.mSize,
-            &c2,
-            mText->mStyle.mZOffset,
-            mText->mStyle.mItalics,
-            true
+            style.mFont, style.mSize, &c2, style.mZOffset, style.mItalics, true
         );
         mText->mRotateLineVerts = b7;
         Transform tf60;

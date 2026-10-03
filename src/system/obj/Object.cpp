@@ -140,7 +140,7 @@ void Hmx::Object::AddRef(ObjRefOwner *ref) {
 }
 
 void Hmx::Object::Release(ObjRefOwner *ref) {
-    if (this != sDeleting && ref->RefOwner() != this) {
+    if (sDeleting != this && ref->RefOwner() != this) {
         for (ObjRef *it = mRefs.next; it != &mRefs; it = it->next) {
             if (RefPtrOf(it) == ref) {
                 it->prev->next = it->next;

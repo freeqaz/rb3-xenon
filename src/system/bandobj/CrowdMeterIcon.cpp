@@ -10,7 +10,10 @@
 #include "rndobj/Part.h"
 #include "utl/Symbols.h"
 
-INIT_REVS(CrowdMeterIcon)
+// Retail addresses both rev statics off ONE base register (+0 altRev, +4 rev),
+// i.e. an INTERNAL-linkage adjacent pair, not DECLARE_REVS' two class statics.
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 CrowdMeterIcon::CrowdMeterIcon()
     : mResetTrig(this, 0), mArrowHideTrig(this, 0), mArrowShowTrig(this, 0),

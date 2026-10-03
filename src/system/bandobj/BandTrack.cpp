@@ -735,8 +735,7 @@ void BandTrack::SoloHide() {
     if (mPlayerFeedback) {
         RndPropAnim *hideSoloAnim =
             mPlayerFeedback->Find<RndPropAnim>("hide_solo.anim", true);
-        float endFrame = hideSoloAnim->EndFrame();
-        hideSoloAnim->SetFrame(endFrame, 1.0f);
+        hideSoloAnim->SetFrame(hideSoloAnim->EndFrame(), 1.0f);
     }
 }
 
@@ -758,8 +757,7 @@ void BandTrack::SpotlightFail(bool guilty) {
 void BandTrack::SpotlightPhraseSuccess() {
     if (MyTrackPanelDir()) {
         if (MyTrackPanelDir()->GetEndingBonus()) {
-            int trackIdx = mTrackIdx;
-            MyTrackPanelDir()->GetEndingBonus()->PlayerSuccess(trackIdx);
+            MyTrackPanelDir()->GetEndingBonus()->PlayerSuccess(mTrackIdx);
         }
     }
     if (mUnisonIcon)
@@ -1015,19 +1013,13 @@ void BandTrack::SetTourMomentGoalText(const char *top, const char *bottom) {
         RndDir *goal = mPlayerFeedback->Find<RndDir>("tour_moment_goal", true);
         if (goal) {
             BandLabel *topLabel = goal->Find<BandLabel>("tg_main_text_top.lbl", true);
-            BandLabel **topPtr;
-            if ((topPtr = new BandLabel*) != 0) {
-                *topPtr = topLabel;
-                (*topPtr)->SetDisplayText(top, true);
-                delete topPtr;
-            }
+            BandLabel **topPtr = new BandLabel *(topLabel);
+            (*topPtr)->SetDisplayText(top, true);
+            delete topPtr;
             BandLabel *bottomLabel = goal->Find<BandLabel>("tg_main_text_bottom.lbl", true);
-            BandLabel **bottomPtr;
-            if ((bottomPtr = new BandLabel*) != 0) {
-                *bottomPtr = bottomLabel;
-                (*bottomPtr)->SetDisplayText(bottom, true);
-                delete bottomPtr;
-            }
+            BandLabel **bottomPtr = new BandLabel *(bottomLabel);
+            (*bottomPtr)->SetDisplayText(bottom, true);
+            delete bottomPtr;
         }
     }
 }

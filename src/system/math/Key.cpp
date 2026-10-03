@@ -133,28 +133,31 @@ void QuatSpline(
     if (prev == next) {
         qout = prev->value;
     } else {
-        // Catmull-Rom through the four keys around [prev, next].
-        float t2 = ref * ref;
-        float t3 = t2 * ref;
+        // Catmull-Rom through the four keys around [prev, next], evaluated
+        // per component as a flat cubic + quadratic + linear + constant sum.
         int idx = prev - &keys.front();
+        float fsq = ref * ref;
+        float fcubed = fsq * ref;
+        int idx1 = idx + 1;
         Hmx::Quat q[4];
         q[1] = prev->value;
         q[2] = next->value;
         q[0] = idx == 0 ? q[1] : keys[idx - 1].value;
-        q[3] = idx + 1 == keys.size() - 1 ? q[2] : keys[idx + 2].value;
+        q[3] = idx1 == keys.size() - 1 ? q[2] : keys[idx1 + 1].value;
         NormalizeTo(q[1], q[0]);
         NormalizeTo(q[1], q[2]);
         NormalizeTo(q[1], q[3]);
-        for (int i = 0; i < 4; i++) {
-            float p0 = q[0][i];
-            float p1 = q[1][i];
-            float p2 = q[2][i];
-            float p3 = q[3][i];
-            qout[i] = (p1 * 2.0f
-                       + ((p2 - p0) * ref
-                          + ((((p0 * 2.0f - p1 * 5.0f) + p2 * 4.0f) - p3) * t2
-                             + (((p1 * 3.0f - p0) - p2 * 3.0f) + p3) * t3)))
-                * 0.5f;
+        int i = 0;
+        while (i < 4) {
+            float pp = q[0][i];
+            float n = q[2][i];
+            float p = q[1][i];
+            float nn = q[3][i];
+            qout[i] = 0.5f
+                * (fcubed * (3.0f * p - pp - 3.0f * n + nn)
+                   + fsq * ((4.0f * n + (2.0f * pp - 5.0f * p)) - nn) + ref * (n - pp)
+                   + 2.0f * p);
+            i++;
         }
         Normalize(qout, qout);
     }

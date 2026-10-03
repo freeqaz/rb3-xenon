@@ -761,31 +761,14 @@ void MemInit() {
 }
 #endif
 
-#ifndef HX_NATIVE
-static inline int MemHeapAllocSizeInline(const MemHeap &heap, int *ptr) {
-    if ((ptr >= heap.Start()) && (ptr < heap.Start() + heap.SizeWords())) {
-        unsigned int header = *(unsigned int *)(ptr - 1);
-        unsigned int blockSizeWords = header >> 8;
-        unsigned int blockSizeControl = (header >> 4) & 0xF;
-        return (blockSizeWords - blockSizeControl - 1) * 4;
-    }
-    return 0;
-}
-#endif
-
+// Retail inlines MemHeap::AllocSize here (MemMgr and MemHeap are one TU).
 int MemAllocSize(void *mem) {
     CritSecTracker tracker(gMemLock);
     if (!mem)
         return 0;
     else {
         for (int i = 0; i < gNumHeaps; i++) {
-#ifdef HX_NATIVE
             int size = gHeaps[i].AllocSize((int *)mem);
-#else
-            // retail inlines MemHeap::AllocSize here (MemMgr and MemHeap are one
-            // TU in retail)
-            int size = MemHeapAllocSizeInline(gHeaps[i], (int *)mem);
-#endif
             if (size != 0) {
                 return size;
             }

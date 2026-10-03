@@ -31,7 +31,6 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(DialogDisplay); }
     NEW_OBJ(DialogDisplay);
 
-    DECLARE_REVS;
     OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
 

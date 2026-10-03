@@ -1930,12 +1930,11 @@ void RockCentral::DataPointToQString(const DataPoint &dataPoint, Quazal::String 
     JsonArray *jArr0 = jc.NewArray();
     JsonArray *jArr1 = jc.NewArray();
     FOREACH (it, dataPoint.mNameValPairs) {
-        DataType dTy = it->second.Type();
-        if (dTy == kDataString || dTy == kDataSymbol) {
+        if (it->second.Type() == kDataString || it->second.Type() == kDataSymbol) {
             jArr0->AddMember(jc.NewString(it->first.Str()));
             jArr1->AddMember(jc.NewString(it->second.Str()));
         } else {
-            switch (dTy) {
+            switch (it->second.Type()) {
             case kDataInt:
                 jArr0->AddMember(jc.NewString(it->first.Str()));
                 jArr1->AddMember(jc.NewInt(it->second.Int()));
@@ -1945,7 +1944,10 @@ void RockCentral::DataPointToQString(const DataPoint &dataPoint, Quazal::String 
                 jArr1->AddMember(jc.NewDouble(it->second.Float()));
                 break;
             default:
-                MILO_FAIL("RockCentral::DataPointToQString - Unsupported type %d!", dTy);
+                MILO_FAIL(
+                    "RockCentral::DataPointToQString - Unsupported type %d!",
+                    it->second.Type()
+                );
                 break;
             }
         }

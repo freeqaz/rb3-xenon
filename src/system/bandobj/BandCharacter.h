@@ -218,8 +218,7 @@ public:
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(BandCharacter); }
     static void Terminate();
-    static unsigned short gRev;
-    static unsigned short gAltRev;
+    // No class gRev/gAltRev: retail keeps them as file statics in BandCharacter.cpp.
     NEW_OBJ(BandCharacter);
     OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE; // ??_G calls MemFree directly, as retail

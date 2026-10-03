@@ -26,7 +26,6 @@ public:
     void Fail();
     void SetIcon(const char *);
 
-    DECLARE_REVS;
     // Retail ??_GUnisonIcon (0x822D38B0) calls MemFree directly: the delete inlines.
     OBJ_MEM_OVERLOAD_INLINE_DEL(0x1f);
     NEW_OBJ(UnisonIcon)

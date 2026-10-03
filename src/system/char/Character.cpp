@@ -867,6 +867,8 @@ void Character::SetShadow(RndGroup *shadow) {
     }
 }
 
+void Character::RemoveFromPoll(RndPollable *poll) { VectorRemove(mPolls, poll); }
+
 DataNode Character::OnPlayClip(DataArray *msg) {
     if (mDriver) {
         int playint = msg->Size() > 3 ? msg->Int(3) : 4;

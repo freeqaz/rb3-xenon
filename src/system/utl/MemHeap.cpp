@@ -207,9 +207,9 @@ void MemHeap::Init(
 
 int MemHeap::AllocSize(int *ptr) {
     if ((ptr >= mStart) && (ptr < mStart + mSizeWords)) {
-        unsigned int header = *(unsigned int *)(ptr - 1);
-        unsigned int blockSizeWords = header >> 8;
-        unsigned int blockSizeControl = (header >> 4) & 0xF;
+        unsigned int *hdr = (unsigned int *)(ptr - 1);
+        unsigned int blockSizeControl = (*hdr >> 4) & 0xF;
+        unsigned int blockSizeWords = *hdr >> 8;
         return (blockSizeWords - blockSizeControl - 1) * 4;
     }
     return 0;

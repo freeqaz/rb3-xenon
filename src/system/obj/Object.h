@@ -2343,12 +2343,7 @@ namespace Hmx {
         virtual const char *FindPathName();
 
         /** "script type of the object" */
-        Symbol Type() const {
-            if (mTypeDef)
-                return mTypeDef->Sym(0);
-            else
-                return Symbol();
-        }
+        Symbol Type() const { return mTypeDef ? mTypeDef->Sym(0) : Symbol(); }
         const ObjRef &Refs() const { return mRefs; }
         void SetNote(const char *note);
         DataArray *TypeDef() const { return mTypeDef; }

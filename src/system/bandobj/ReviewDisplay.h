@@ -34,7 +34,6 @@ public:
     static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(ReviewDisplay); }
 
-    DECLARE_REVS
     NEW_OBJ(ReviewDisplay)
     // NewObject inlines the class operator new: retail calls
     // ReviewDisplay::StaticClassName, then MemAlloc(0x184, 0).

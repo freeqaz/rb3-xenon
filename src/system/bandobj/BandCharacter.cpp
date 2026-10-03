@@ -45,17 +45,27 @@
 // (BandTerminate lands at 0x8227AFC0, inside 0x8227AFA0-0x8227C6D0).
 #include "bandobj/Band.cpp"
 
-INIT_REVS(BandCharacter)
+// Retail addresses both rev statics off ONE base register (+0 gAltRev, +4 gRev),
+// directly ahead of the ObjectDir statics below: an INTERNAL-linkage adjacent
+// pair, not DECLARE_REVS's class statics (same as BandIKEffector.cpp).
+static unsigned short gAltRev = 0;
+static unsigned short gRev = 0;
 
 // File statics: retail addresses sOutfitDir / sResourceDir / sToDir off one base
 // (-0x14 / -0x10 / +0), i.e. one internal aggregate in declaration order.
-static ObjectDir *sBoneMergeDir;
-static ObjectDir *sOutfitDir;
-static ObjectDir *sResourceDir;
-static ObjectDir *sCharSharedDir;
-static ObjectDir *sInstrumentDir;
-static ObjectDir *sInstResourceDir;
-static ObjectDir *sToDir;
+static ObjectDir *sBoneMergeDir = 0;
+static ObjectDir *sOutfitDir = 0;
+static ObjectDir *sResourceDir = 0;
+static ObjectDir *sCharSharedDir = 0;
+static ObjectDir *sInstrumentDir = 0;
+static ObjectDir *sInstResourceDir = 0;
+static ObjectDir *sToDir = 0;
+
+// Retail materializes this test as a bool (li 0 / li 1 / clrlwi.) at every use:
+// a small inline predicate, not an open-coded || chain in each caller.
+inline bool IsOutfitResourceDir(ObjectDir *dir) {
+    return dir == sOutfitDir || dir == sResourceDir || dir == sToDir;
+}
 
 const char *BandIntensityString(int num) {
     if (num != 0) {
@@ -671,9 +681,14 @@ bool BandCharacter::SetFocusInterest(CharInterest *ci, int i) {
 }
 
 void BandCharacter::SetInterestFilterFlags(int i) {
-    if (mEyes)
-        mEyes->SetInterestFilterFlags(i);
-    else
+    if (mEyes) {
+        CharEyes *eyes = mEyes;
+        // Same pair as Character::SetInterestFilterFlags: retail stores the
+        // flags and raises the byte at CharEyes+0x168 (the filters-changed flag
+        // CharEyes's look test reads).
+        eyes->SetInterestFilterFlags(i);
+        eyes->SetEnabled(true);
+    } else
         Character::SetInterestFilterFlags(i);
 }
 
@@ -1598,8 +1613,13 @@ BEGIN_LOADS(BandCharacter)
 END_LOADS
 
 void BandCharacter::PreLoad(BinStream &bs) {
-    LOAD_REVS(bs);
-    ASSERT_REVS(8, 0);
+    // LOAD_REVS spelled out with `::`: inside a BandCharacter member an
+    // unqualified gRev finds the BASE class's BandCharDesc::gRev before these
+    // file statics.
+    int rev;
+    bs >> rev;
+    ::gRev = getHmxRev(rev);
+    ::gAltRev = getAltRev(rev);
     Character::PreLoad(bs);
     int hashsize = (mHashTable.UsedSize() + 20) * 2;
     int strsize = mStringTable.UsedSize();
@@ -1615,11 +1635,11 @@ void BandCharacter::PostLoad(BinStream &bs) {
         BandCharDesc::Load(bs);
     bs >> mPlayFlags;
     bs >> mTempo;
-    if (gRev < 6) {
-        if (gRev < 4) {
+    if (::gRev < 6) {
+        if (::gRev < 4) {
             int i;
             bs >> i;
-            if (gRev < 3) {
+            if (::gRev < 3) {
                 Symbol s;
                 bs >> s;
             }
@@ -1627,15 +1647,15 @@ void BandCharacter::PostLoad(BinStream &bs) {
         Symbol s;
         bs >> s;
     }
-    if (gRev > 6)
+    if (::gRev > 6)
         bs >> mDrumVenue;
-    if (gRev != 0)
+    if (::gRev != 0)
         mTestPrefab.Load(bs, true, BandCharDesc::GetPrefabs());
-    if (gRev > 1 && gRev < 5) {
+    if (::gRev > 1 && ::gRev < 5) {
         bool b;
         bs >> b;
     }
-    if (gRev > 7) {
+    if (::gRev > 7) {
         if (gLoadingProxyFromDisk) {
             Symbol s;
             bs >> s;
@@ -1680,6 +1700,11 @@ RndDrawable *BandCharacter::CollideShowing(const Segment &s, float &f, Plane &pl
 
 void BandCharacter::DrawShowing() {
     if (!unk6bd || !IsLoading()) {
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
+        // Debug overlay (sphere + slot labels). Retail compiles it out: its
+        // DrawShowing is the load test + Character::DrawShowing and nothing
+        // else, and neither "bandcharacter.show_spheres" nor "slot%d pos%d"
+        // exists in the retail image.
         auto _tmp0 = DataVariable("bandcharacter.show_spheres").Int();
         if (_tmp0) {
             Sphere debugSphere(Vector3(0.0f, 0.0f, 5.0f), 45.0f);
@@ -1695,7 +1720,9 @@ void BandCharacter::DrawShowing() {
             Hmx::Color blue(0.0f, 0.0f, 1.0f, 1.0f);
             UtilDrawSphere(mBounding.center, mBounding.GetRadius(), blue);
         }
+#endif
         Character::DrawShowing();
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
         static const DataNode &n = DataVariable("bandcharacter.show_slot");
         if (n.Int()) {
             const Transform &headxfm = CharUtlFindBoneTrans("bone_head", this)->WorldXfm();
@@ -1739,6 +1766,7 @@ void BandCharacter::DrawShowing() {
                 TheRnd.DrawString(text, screenPos, white2, true);
             }
         }
+#endif
     }
 }
 
@@ -1812,10 +1840,9 @@ void BandCharacter::DrawLodOrShadow(int i, Character::DrawMode mode) {
 }
 
 float BandCharacter::ComputeScreenSize(RndCam *cam) {
-    if (mOutfitDir)
-        return mOutfitDir->ComputeScreenSize(cam);
-    else
+    if (!mOutfitDir)
         return 0;
+    return mOutfitDir->ComputeScreenSize(cam);
 }
 
 bool BandCharacter::IsLoading() {
@@ -1827,25 +1854,16 @@ bool BandCharacter::IsLoading() {
 }
 
 void BandCharacter::StartLoad(bool b1, bool b2, bool b3) {
-    bool b4 = false;
-    bool &_ref0 = mInCloset;
-    if (!_ref0) {
-        if (b2 || (unk224 & 7))
-            b4 = true;
-    }
+    bool wasInCloset = mInCloset;
+    bool b4 = !wasInCloset && (b2 || (unk224 & 7));
+    mInCloset = b2;
     unk5a1 = b4;
-    bool bvar1 = _ref0;
-    _ref0 = b2;
-    if (bvar1 && !mInCloset)
+    if (wasInCloset && !b2)
         b3 = true;
     if (!IsLoading() || !unk6bd || b3) {
-        b4 = false;
-        if (unk5a1 || b3)
-            b4 = true;
-        unk6bd = b4;
+        unk6bd = b4 || b3;
     }
-
-    if (!mFileMerger->StartLoad(b1) && (_ref0 || (bvar1 && !_ref0))) {
+    if (!mFileMerger->StartLoad(b1) && (mInCloset || wasInCloset)) {
         mFileMerger->Select("blank", FilePath(""), true);
         mFileMerger->StartLoad(b1);
     }
@@ -2123,12 +2141,7 @@ BandCharacter::SetState(const char *cc, int playFlags, int mask, bool b4, bool b
     }
     if (!b4 && unk454) {
         CharClip *clip = unk454->FirstPlayingClip();
-        b4 = true;
-        bool rej = unk454 != oldDriver || !clip;
-        if (!rej) {
-            if ((mPlayFlags & clip->Flags()) == mPlayFlags)
-                b4 = false;
-        }
+        b4 = unk454 != oldDriver || !clip || (mPlayFlags & clip->Flags()) != mPlayFlags;
     }
     if (b4)
         return PlayMainClip(mask, b5);
@@ -2167,11 +2180,7 @@ void BandCharacter::ClearDircuts() { mDircuts.clear(); }
 bool BandCharacter::AddDircut(Symbol s1, Symbol s2, int i) {
     Symbol animinst = BandCharDesc::GetAnimInstrument(mInstrumentType);
     FilePath fp;
-    bool ismale = mGender != "female";
-    int mask = 0x8000;
-    if (!ismale)
-        mask = 0x4000;
-    if (i & mask) {
+    if (i & (mGender == "female" ? 0x4000 : 0x8000)) {
         fp.Set(
             FileRoot(),
             MakeString("char/main/anim/%s/dircut/%s/%s_%s.milo", animinst, mGender, s1, s2)
@@ -2779,17 +2788,22 @@ DECOMP_FORCEACTIVE(
 
 MergeFilter::Action
 BandCharacter::Filter(Hmx::Object *o1, Hmx::Object *o2, ObjectDir *dir) {
-    static Symbol meshName("Mesh");
     static Symbol AmbientOcclusion("AmbientOcclusion");
     static Symbol CharWeightSetter("CharWeightSetter");
+    static Symbol meshName("Mesh");
     if (o2 == mInstDir) {
         Character *character = dynamic_cast<Character *>(o1);
         mInstDir->CopyBoundingSphere(character);
         mInstDir->RepointSphereBase(this);
     }
-    else if (!o2 && o1->ClassName() == AmbientOcclusion)
-        return kIgnore;
-    if (!o2 && o1->ClassName() == CharWeightSetter)
+    // Retail tests o2 once and picks ONE class check per arm: a new object
+    // (no o2) is dropped if it is an AmbientOcclusion; an object merging over
+    // an existing one is kept if it is a CharWeightSetter. Both paths -- the
+    // mInstDir one included -- reach the same o2 test (no else).
+    if (!o2) {
+        if (o1->ClassName() == AmbientOcclusion)
+            return kIgnore;
+    } else if (o1->ClassName() == CharWeightSetter)
         return kKeep;
     if (o1->ClassName() == "OutfitConfig") {
         if (o2) {
@@ -2815,8 +2829,7 @@ BandCharacter::Filter(Hmx::Object *o1, Hmx::Object *o2, ObjectDir *dir) {
                 return kIgnore;
             }
         }
-    }
-    if (!(o1->Dir() == sOutfitDir || o1->Dir() == sResourceDir || o1->Dir() == sToDir)) {
+    } else if (!IsOutfitResourceDir(o1->Dir())) {
         if (o1->Dir() == sBoneMergeDir) {
             RndTransformable *rt = dynamic_cast<RndTransformable *>(o1);
             if (rt) {
@@ -2827,11 +2840,11 @@ BandCharacter::Filter(Hmx::Object *o1, Hmx::Object *o2, ObjectDir *dir) {
         }
         return kIgnore;
     }
-    if (strnicmp(o1->Name(), "bone_", 5) == 0) {
+    if (strnicmp("bone_", o1->Name(), 5) == 0) {
         RndTransformable *rt = dynamic_cast<RndTransformable *>(o1);
         if (rt) {
             if (rt->TransParent()) {
-                if (strnicmp(rt->TransParent()->Name(), "bone_", 5) == 0 || strnicmp(rt->TransParent()->Name(), "exo_", 4) == 0)
+                if (strnicmp("bone_", rt->TransParent()->Name(), 5) == 0 || strnicmp("exo_", rt->TransParent()->Name(), 4) == 0)
                     return kMerge;
             }
             return kKeep;
@@ -2843,7 +2856,7 @@ BandCharacter::Filter(Hmx::Object *o1, Hmx::Object *o2, ObjectDir *dir) {
         if (mesh->GetOrder() == 0.0f)
             mesh->SetOrder(5.0f + sDrawOrder);
     }
-    if (!o2 && dir != this && action <= kReplace) {
+    if (!o2 && dir != this && (action == kMerge || action == kReplace)) {
         AddObject(o1);
     }
     return action;
@@ -2923,11 +2936,11 @@ DataNode BandCharacter::OnInstallFilter(DataArray *da) {
     sToDir = da->Obj<ObjectDir>(3);
     sInstrumentDir = da->Obj<ObjectDir>(4);
     Symbol sym = da->Sym(5);
-    ObjectDir *boneMeshDir;
+    ObjectDir *windDir;
     sResourceDir = 0;
     int inSession = 0;
     sCharSharedDir = 0;
-    boneMeshDir = 0;
+    windDir = 0;
     if (BandCharDesc::GetInstrumentFromSym(sym) < BandCharDesc::kNumInstruments) {
         if (mInstDir) {
             inSession = 1;
@@ -2950,8 +2963,10 @@ DataNode BandCharacter::OnInstallFilter(DataArray *da) {
         }
     }
     mFileMerger->mFilter = this;
-    if (Hmx::Object *pelvis = Find<Hmx::Object>("bone_pelvis.mesh", false)) {
-        boneMeshDir = pelvis->Dir();
+    // Retail looks up "world.wind" here (not bone_pelvis.mesh): the dir that
+    // owns the wind object is the one subdir that is never a resource dir.
+    if (Hmx::Object *wind = Find<Hmx::Object>("world.wind", false)) {
+        windDir = wind->Dir();
     }
     sInstResourceDir = 0;
     if (sInstrumentDir && sInstrumentDir->SubDirs().size() != 0) {
@@ -2960,7 +2975,7 @@ DataNode BandCharacter::OnInstallFilter(DataArray *da) {
                       "resource or colorpalettes.milo");
         }
         ObjectDir *instSubdir = sInstrumentDir->SubDirs()[0];
-        if (instSubdir != boneMeshDir) {
+        if (instSubdir != windDir) {
             sInstResourceDir = instSubdir;
         }
     }
@@ -2979,7 +2994,7 @@ DataNode BandCharacter::OnInstallFilter(DataArray *da) {
                 MILO_WARN("outfits can only have one subdir, which is the resource");
             }
             ObjectDir *outfitSubdir = sOutfitDir->SubDirs()[0];
-            if (outfitSubdir != sBoneMergeDir && outfitSubdir != boneMeshDir) {
+            if (outfitSubdir != sBoneMergeDir && outfitSubdir != windDir) {
                 sResourceDir = outfitSubdir;
             }
         }

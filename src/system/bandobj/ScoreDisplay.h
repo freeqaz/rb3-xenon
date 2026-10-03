@@ -35,7 +35,6 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(ScoreDisplay); }
     NEW_OBJ(ScoreDisplay);
 
-    DECLARE_REVS;
     OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD;
 

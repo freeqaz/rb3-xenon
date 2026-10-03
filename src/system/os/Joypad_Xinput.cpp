@@ -5,6 +5,10 @@
 #include "os/CritSec.h"
 #include "os/Joypad.h"
 #include "os/UserMgr.h"
+#include "os/UsbMidiKeyboard.h"
+#include "math/Utl.h"
+
+extern UsbMidiKeyboard *TheKeyboard;
 #include "xdk/XAPILIB.h"
 #include "xdk/xapilibi/winerror.h"
 
@@ -107,6 +111,12 @@ void JoypadResetXboxPC(int pad) {
     }
 }
 
+// Scales a drum-pad stick reading (27..122 when hit) into the stick range.
+static inline short DrumStickValue(short s) {
+    float t = (Clamp(27.0f, 122.0f, (float)s) - 27.0f) / 95.0f;
+    return -0x8000 - (short)(t * -26539.0f);
+}
+
 JoypadType ReadSingleXinputJoypad(
     int pad,
     int user_idx,
@@ -117,133 +127,82 @@ JoypadType ReadSingleXinputJoypad(
     char *stick_ry,
     char *ltrigger,
     char *rtrigger,
-    float *const pad_float_a,
-    float *const pad_float_b,
-    unsigned char *const out_char_a
+    float *const,
+    float *const,
+    unsigned char *const
 ) {
     XINPUT_STATE state;
     XINPUT_CAPABILITIES caps;
-    unsigned int unused;
-    JoypadType joypad_type = kJoypadAnalog;
-
-    GetXinputSinceLastFrame(user_idx, &state, &unused);
-
-    if (-1 == state.dwPacketNumber) {
+    JoypadType type = kJoypadAnalog;
+    GetXinputSinceLastFrame(user_idx, &state, buttons);
+    if (state.dwPacketNumber == -1)
         return kJoypadNone;
-    }
-    unsigned char setup_flag = 0;
 
-    if (!JoypadGetCachedXInputCaps(user_idx, &caps, false)) {
-        return kJoypadNone;
-    }
-
-    unsigned char caps_type = ((unsigned char *)&caps)[1];
-
-    if (caps_type != 0) {
-        switch (caps_type) {
+    bool guitar = false;
+    if (JoypadGetCachedXInputCaps(user_idx, &caps, false)) {
+        switch (caps.SubType) {
         case 6:
         case 11:
-            joypad_type = SetupHXGuitar(pad, caps);
-            if (joypad_type == kJoypadNone) {
+            type = SetupHXGuitar(pad, caps);
+            if (type == kJoypadNone)
                 return kJoypadNone;
-            }
-            if (joypad_type != kJoypadXboxButtonGuitar) {
-                setup_flag = 1;
-            }
+            if (type != kJoypadXboxMidiBoxKeyboard)
+                guitar = true;
             break;
         case 7:
-            joypad_type = (JoypadType)7;
-            setup_flag = 1;
+            type = kJoypadXboxRoGuitar;
+            guitar = true;
             break;
         case 8:
-            joypad_type = SetupHXDrums(pad, caps);
+            type = SetupHXDrums(pad, caps);
             break;
         case 9:
-            joypad_type = (JoypadType)11;
+            type = kJoypadXboxStageKit;
             break;
         case 15:
-            joypad_type = SetupHXKeytar(pad, caps);
+            type = SetupHXKeytar(pad, caps);
             break;
         case 25:
-            joypad_type = SetupHXRealGuitar(pad, caps);
+            type = SetupHXRealGuitar(pad, caps);
             break;
-        default:
-            return kJoypadNone;
         }
     }
 
-    short lx = state.Gamepad.sThumbLX;
-    TranslateStick(stick_lx, lx, 0, ((setup_flag == 0) ? 1 : 0));
-
-    short ry = state.Gamepad.sThumbRY;
-    if ((joypad_type == kJoypadXboxDrums) && (ry > 0) && (ry < 0x100)) {
-        float f = (float)ry;
-        float f2 = (248.0f - f >= 0.0f) ? 248.0f : f;
-        float f3 = (244.0f - f2 >= 0.0f) ? 244.0f : f2;
-        int scaled = (int)((f3 - 248.0f) * 0.03054f * -55001.0f);
-        short result = (short)(-0x8000 - scaled);
-        TranslateStick(stick_ry, result, 1, 0);
-    } else {
-        TranslateStick(stick_ry, 1, 1, ((setup_flag == 0) ? 1 : 0));
-    }
-
+    TranslateStick(stick_lx, state.Gamepad.sThumbLX, false, !guitar);
     short rx = state.Gamepad.sThumbRX;
-    if (joypad_type == kJoypadXboxDrums && (rx > 0) && (rx < 0x100)) {
-            float f = (float)rx;
-            float f2 = (248.0f - f >= 0.0f) ? 248.0f : f;
-            float f3 = ((int)244.0f - f2 >= 0.0f) ? 244.0f : f2;
-            int scaled = (int)((f3 - 248.0f) * 0.03054f * -55001.0f);
-            short result = (short)(-0x8000 - scaled);
-            TranslateStick(stick_rx, result, 1, 0);
-        } else {
-        TranslateStick(stick_rx, rx, 1, 0);
-    }
-
-        unsigned char deadzone_apply2;
-    if ((setup_flag != 0 || joypad_type == kJoypadXboxDrums)) {
-        deadzone_apply2 = 0;
-    } else {
-        deadzone_apply2 = 1;
-    }
     short ly = state.Gamepad.sThumbLY;
-    TranslateStick(stick_ly, ly, 1, deadzone_apply2);
-
-    if ((joypad_type == kJoypadXboxMidiBoxKeyboard) || (joypad_type == kJoypadXboxMidiBoxDrums)) {
-        void *keyboard = *(void **)0x83099D18;
-        if (keyboard != 0) {
-            void **vtbl = *(void ***)keyboard;
-            unsigned char sustain = ((unsigned char (*)(void *, int))(vtbl[7]))(keyboard, pad);
-            if (sustain != 0) {
-                *buttons |= 4;
-            } else {
-                *buttons &= 0xFFFFFFFB;
-            }
-        } else {
-            *buttons &= 0xFFFFFFFB;
-        }
+    if (type == kJoypadXboxDrums && ly > 0 && ly < 0x100) {
+        TranslateStick(stick_ly, DrumStickValue(ly), true, false);
+    } else {
+        TranslateStick(stick_ly, ly, true, !guitar);
     }
-
-    if (joypad_type == kJoypadAnalog) {
-        unsigned char lt = state.Gamepad.bLeftTrigger;
-        unsigned char rt = state.Gamepad.bRightTrigger;
-
-        if (lt > 0) {
-            *buttons |= 1;
-        } else {
-            *buttons &= 0xFFFFFFFE;
-        }
-
-        if (rt > 0) {
-            *buttons |= 2;
-        } else {
-            *buttons &= 0xFFFFFFFD;
-        }
+    if (type == kJoypadXboxDrums && rx > 0 && rx < 0x100) {
+        TranslateStick(stick_rx, DrumStickValue(rx), true, false);
+    } else {
+        TranslateStick(stick_rx, rx, type == kJoypadXboxDrums && rx > 0x100, !guitar);
     }
+    TranslateStick(stick_ry, state.Gamepad.sThumbRY, true, !guitar && type != kJoypadXboxDrums);
 
+    if (type == kJoypadXboxMidiBoxKeyboard || type == kJoypadXboxKeytar) {
+        bool sustain = TheKeyboard ? TheKeyboard->GetSustain(pad) : false;
+        if (sustain)
+            *buttons |= 4;
+        else
+            *buttons &= ~4;
+    }
     unsigned char lt = state.Gamepad.bLeftTrigger;
     unsigned char rt = state.Gamepad.bRightTrigger;
-    *ltrigger = (lt >> 1) & 0x7F;
-    *rtrigger = (rt >> 1) & 0x7F;
-
-    return joypad_type;
+    if (type == kJoypadAnalog) {
+        if (lt)
+            *buttons |= 1;
+        else
+            *buttons &= ~1;
+        if (rt)
+            *buttons |= 2;
+        else
+            *buttons &= ~2;
+    }
+    *ltrigger = lt >> 1;
+    *rtrigger = rt >> 1;
+    return type;
 }

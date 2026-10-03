@@ -22,7 +22,7 @@ public:
         return mLength + sublen;
     }
 
-    MEM_OVERLOAD(ChunkHeader, 0x6B);
+    // no class operator new/delete: retail deletes through the global one
 
 private:
     ChunkID mID; // 0x0

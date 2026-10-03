@@ -455,53 +455,41 @@ bool Intersect(const Triangle &tri, const Box &box) {
     float cy = box.mMin.y + halfY;
     float cz = box.mMin.z + halfZ;
 
-    // Translate triangle to box center
+    // The untranslated vertices are Vector3 locals built by Add(); each axis
+    // range is a Vector2 (x = min, y = max), so both fsels are computed before
+    // the first compare.
     float v0x = v0.x - cx;
-    float v1x = (tri.frame.x.x + tri.origin.x) - cx;
-    float v2x = (tri.frame.y.x + tri.origin.x) - cx;
+    Vector3 v1, v2;
+    Add(tri.frame.x, tri.origin, v1);
+    Add(tri.frame.y, tri.origin, v2);
+    float v1x = v1.x - cx;
+    float v2x = v2.x - cx;
 
     float v0y = v0.y - cy;
-    float v1y = (tri.frame.x.y + tri.origin.y) - cy;
-    float v2y = (tri.frame.y.y + tri.origin.y) - cy;
+    float v1y = v1.y - cy;
+    float v2y = v2.y - cy;
 
     float v0z = v0.z - cz;
-    float v1z = (tri.frame.x.z + tri.origin.z) - cz;
-    float v2z = (tri.frame.y.z + tri.origin.z) - cz;
+    float v1z = v1.z - cz;
+    float v2z = v2.z - cz;
 
-    // X axis separation test (fsel ternary for min/max)
     {
-        float diff = v0x - v1x;
-        float mn = diff >= 0.0f ? v1x : v0x;
-        float mx = diff >= 0.0f ? v0x : v1x;
-        float sub_mn = mn - v2x;
-        float sub_mx = mx - v2x;
-        mn = sub_mn >= 0.0f ? v2x : mn;
-        mx = sub_mx >= 0.0f ? mx : v2x;
-        if (mn > halfX || mx < -halfX) return false;
+        Vector2 range;
+        range.x = Min(Min(v0x, v1x), v2x);
+        range.y = Max(Max(v0x, v1x), v2x);
+        if (range.x > halfX || range.y < -halfX) return false;
     }
-
-    // Y axis separation test
     {
-        float diff = v0y - v1y;
-        float mn = diff >= 0.0f ? v1y : v0y;
-        float mx = diff >= 0.0f ? v0y : v1y;
-        float sub_mn = mn - v2y;
-        float sub_mx = mx - v2y;
-        mn = sub_mn >= 0.0f ? v2y : mn;
-        mx = sub_mx >= 0.0f ? mx : v2y;
-        if (mn > halfY || mx < -halfY) return false;
+        Vector2 range;
+        range.x = Min(Min(v0y, v1y), v2y);
+        range.y = Max(Max(v0y, v1y), v2y);
+        if (range.x > halfY || range.y < -halfY) return false;
     }
-
-    // Z axis separation test
     {
-        float diff = v0z - v1z;
-        float mn = diff >= 0.0f ? v1z : v0z;
-        float mx = diff >= 0.0f ? v0z : v1z;
-        float sub_mn = mn - v2z;
-        float sub_mx = mx - v2z;
-        mn = sub_mn >= 0.0f ? v2z : mn;
-        mx = sub_mx >= 0.0f ? mx : v2z;
-        if (mn > halfZ || mx < -halfZ) return false;
+        Vector2 range;
+        range.x = Min(Min(v0z, v1z), v2z);
+        range.y = Max(Max(v0z, v1z), v2z);
+        if (range.x > halfZ || range.y < -halfZ) return false;
     }
 
     // Face normal plane test — reuse v0 stack for plane
@@ -520,34 +508,32 @@ bool Intersect(const Triangle &tri, const Box &box) {
     float e1x = v2x - v1x, e1y = v2y - v1y, e1z = v2z - v1z;
     float e2x = v0x - v2x, e2y = v0y - v2y, e2z = v0z - v2z;
 
-    // Cross products with box axes — 4-float stride (ax, ay, az, pad)
-    float axes[9][4] = {
-        { 0, -e0z, e0y, 0 },
-        { e0z, 0, -e0x, 0 },
-        { -e0y, e0x, 0, 0 },
-        { 0, -e1z, e1y, 0 },
-        { e1z, 0, -e1x, 0 },
-        { -e1y, e1x, 0, 0 },
-        { 0, -e2z, e2y, 0 },
-        { e2z, 0, -e2x, 0 },
-        { -e2y, e2x, 0, 0 },
-    };
+    Vector3 axes[9];
+    axes[0].Set(0.0f, -e0z, e0y);
+    axes[1].Set(0.0f, -e1z, e1y);
+    axes[2].Set(0.0f, -e2z, e2y);
+    axes[3].Set(e0z, 0.0f, -e0x);
+    axes[4].Set(e1z, 0.0f, -e1x);
+    axes[5].Set(e2z, 0.0f, -e2x);
+    axes[6].Set(-e0y, e0x, 0.0f);
+    axes[7].Set(-e1y, e1x, 0.0f);
+    axes[8].Set(-e2y, e2x, 0.0f);
 
     float radii[9];
-    float *pfAxis = &axes[0][1];
-    float *pfR = radii;
     unsigned int i = 0;
+    float *pfR = radii;
+    const float *pfAxis = &axes[0].y;
     do {
-        float ax = pfAxis[-1], ay = pfAxis[0], az = pfAxis[1];
-        float absx = ax; if (absx <= 0.0f) absx = -absx;
-        float absy = ay; if (absy <= 0.0f) absy = -absy;
-        float absz = az; if (absz <= 0.0f) absz = -absz;
-        float r = absx * halfX + absy * halfY + absz * halfZ;
+        float absx = pfAxis[-1]; if (absx <= 0.0f) absx = -absx;
+        float absy = pfAxis[0];  if (absy <= 0.0f) absy = -absy;
+        float absz = pfAxis[1];  if (absz <= 0.0f) absz = -absz;
+        float r = absy * halfY + absz * halfZ + absx * halfX;
         *pfR = r;
 
-        float p0 = ax * v0x + ay * v0y + az * v0z;
-        float p1 = ax * v1x + ay * v1y + az * v1z;
-        float p2 = ax * v2x + ay * v2y + az * v2z;
+        const Vector3 &axis = axes[i];
+        float p0 = axis.x * v0x + axis.z * v0z + axis.y * v0y;
+        float p1 = axis.x * v1x + axis.z * v1z + axis.y * v1y;
+        float p2 = axis.x * v2x + axis.z * v2z + axis.y * v2y;
 
         float diff = p1 - p2;
         float mx = diff >= 0.0f ? p1 : p2;
@@ -555,7 +541,7 @@ bool Intersect(const Triangle &tri, const Box &box) {
         mx = p0 - mx >= 0.0f ? p0 : mx;
         if (mx < -r) return false;
         mn = p0 - mn >= 0.0f ? mn : p0;
-        if (r < mn) return false;
+        if (mn > r) return false;
 
         i++;
         pfAxis += 4;
@@ -781,29 +767,18 @@ void Frustum::Set(float near, float far, float fovY, float ratio) {
     }
 }
 
+static inline bool BehindPlane(const Plane &p, const Vector3 &v, float negRadius) {
+    return p.Dot(v) < negRadius;
+}
+
 bool operator>(const Sphere &s, const Frustum &f) {
-    float neg_r = -s.radius;
-    bool r;
-    r = f.front.Dot(s.center) < neg_r;
-    if (r == 0) {
-        r = f.back.Dot(s.center) < neg_r;
-        if (r == 0) {
-            r = f.left.Dot(s.center) < neg_r;
-            if (r == 0) {
-                r = f.right.Dot(s.center) < neg_r;
-                if (r == 0) {
-                    r = f.top.Dot(s.center) < neg_r;
-                    if (r == 0) {
-                        r = f.bottom.Dot(s.center) < neg_r;
-                        if (r == 0) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    return true;
+    float negRadius = -s.radius;
+    return BehindPlane(f.front, s.center, negRadius)
+        || BehindPlane(f.back, s.center, negRadius)
+        || BehindPlane(f.left, s.center, negRadius)
+        || BehindPlane(f.right, s.center, negRadius)
+        || BehindPlane(f.top, s.center, negRadius)
+        || BehindPlane(f.bottom, s.center, negRadius);
 }
 
 bool Intersect(const Segment &seg, const Sphere &sphere) {
@@ -815,9 +790,10 @@ bool Intersect(const Segment &seg, const Sphere &sphere) {
     if (a == 0.0f)
         return false;
     float t = Clamp(0.0f, 1.0f, Dot(toCenter, dir) / a);
-    Vector3 closest;
-    Interp(seg.start, seg.end, t, closest);
-    return !(DistanceSquared(closest, sphere.center) > sphere.radius * sphere.radius);
+    Interp(seg.start, seg.end, t, dir);
+    if (DistanceSquared(dir, sphere.center) > sphere.radius * sphere.radius)
+        return false;
+    return true;
 }
 
 bool Intersect(const Vector3 &v, const BSPNode *n) {
@@ -1042,40 +1018,48 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
     stlpmtx_std::less<BSPFace> _cmp;
     stlpmtx_std::_S_sort<BSPFace, stlpmtx_std::StlNodeAlloc<BSPFace>, stlpmtx_std::less<BSPFace>>(faces, _cmp);
 
-    int totalFaces = 0;
-    for (std::list<BSPFace>::iterator it = faces.begin(); it != faces.end(); ++it)
-        totalFaces++;
+    // size(), not a hand count: distance()'s by-const-ref first parameter homes
+    // the begin() temporary (the stw to 0x60) and walks a copy of it.
+    int totalFaces = faces.size();
 
     int candidateIdx = 0;
     float bestScore = -1.0f;
     float zero = 0.0f;
     double powExp = (double)0.6f;
-    for (std::list<BSPFace>::iterator faceIt = faces.begin(); faceIt != faces.end(); ++faceIt) {
+    std::list<BSPFace>::iterator it;
+    for (it = faces.begin(); it != faces.end(); ++it) {
         if (candidateIdx >= gBSPMaxCandidates) break;
-        for (std::list<Plane>::iterator planeIt = faceIt->planes.begin(); planeIt != faceIt->planes.end(); ++planeIt) {
+        for (std::list<Plane>::iterator planeIt = it->planes.begin(); planeIt != it->planes.end(); ++planeIt) {
+            // Declared above the single-face test: retail zeroes all five
+            // before the totalFaces == 1 compare.
+            float frontArea = zero;
+            int frontCount = 0;
+            float backArea = zero;
+            int backCount = 0;
+            int spanCount = 0;
             if (totalFaces == 1) {
                 node->plane = *planeIt;
                 bestScore = zero;
                 break;
             }
-            int frontCount = 0, backCount = 0, spanCount = 0;
-            float frontArea = zero, backArea = zero;
             std::list<BSPFace>::iterator jt;
             for (jt = faces.begin(); jt != faces.end(); ++jt) {
-                bool front, back;
+                bool back, front;
                 jt->OnSide(*planeIt, front, back);
                 if (!front && !back) {
-                    const Vector3 &n = jt->t.m.z;
-                    if (fabs(planeIt->a * n.x + planeIt->b * n.y + planeIt->c * n.z) < gBSPDirTol)
+                    const Vector3 &faceNormal = jt->t.m.z;
+                    const Plane &plane = *planeIt;
+                    if (fabs(plane.a * faceNormal.x + plane.b * faceNormal.y + plane.c * faceNormal.z) < gBSPDirTol)
                         break;
                 } else {
+                    float area = jt->area;
                     if (back) {
-                        backArea += jt->area;
+                        backArea += area;
                         backCount++;
                         if (!front) continue;
                         spanCount++;
                     }
-                    frontArea += jt->area;
+                    frontArea += area;
                     frontCount++;
                 }
             }
@@ -1083,9 +1067,10 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
                 candidateIdx--;
                 continue;
             }
-            float powBack = (float)pow((double)(spanCount + backCount), powExp);
-            float score = (float)pow((double)(spanCount + frontCount), powExp) * frontArea
-                        + powBack * backArea;
+            // pow takes the counts as float (fcfid; frsp before the promotion).
+            float powFront = pow((float)(spanCount + frontCount), powExp);
+            float powBack = pow((float)(spanCount + backCount), powExp);
+            float score = powFront * frontArea + powBack * backArea;
             if (frontCount < totalFaces && backCount < totalFaces && (bestScore < zero || score < bestScore)) {
                 node->plane = *planeIt;
                 bestScore = score;
@@ -1099,35 +1084,40 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
         return false;
     }
 
-    std::list<BSPFace> backFaces, frontFaces;
-    std::list<BSPFace>::iterator it = faces.begin();
+    // frontFaces (0x68) is constructed first and recursed into node->left.
+    std::list<BSPFace> frontFaces, backFaces;
+    it = faces.begin();
     while (it != faces.end()) {
         bool front, back;
         it->OnSide(node->plane, front, back);
         if (!front && !back) {
             it = faces.erase(it);
         } else if (!back) {
+            // Retail splices at end() (the list's own address), keeping the
+            // child list in the parent's order.
             std::list<BSPFace>::iterator cur = it++;
-            frontFaces.splice(frontFaces.begin(), faces, cur);
+            frontFaces.splice(frontFaces.end(), faces, cur);
         } else if (!front) {
             std::list<BSPFace>::iterator cur = it++;
-            backFaces.splice(backFaces.begin(), faces, cur);
+            backFaces.splice(backFaces.end(), faces, cur);
         } else {
-            std::list<BSPFace>::iterator cur = it++;
+            // The split arm advances `it` only when the back half survives; a
+            // face whose back half clips away stays in `faces` and is examined
+            // again with its polygon already cut to the back side.
             Hmx::Ray ray;
-            Intersect(cur->t, node->plane, ray);
+            Intersect(it->t, node->plane, ray);
             BSPFace frontFace;
-            frontFace.t = cur->t;
-            Clip(cur->p, ray, frontFace.p);
+            frontFace.t = it->t;
+            Clip(it->p, ray, frontFace.p);
             if (frontFace.p.points.size() > 2) {
                 frontFace.Update();
-                frontFaces.insert(frontFaces.begin(), frontFace);
+                frontFaces.insert(frontFaces.end(), frontFace);
             }
             ray.dir.Set(-ray.dir.x, -ray.dir.y);
-            Clip(cur->p, ray, cur->p);
-            if (cur->p.points.size() > 2) {
-                cur->Update();
-                backFaces.splice(backFaces.begin(), faces, cur);
+            Clip(it->p, ray, it->p);
+            if (it->p.points.size() > 2) {
+                it->Update();
+                backFaces.splice(backFaces.end(), faces, it++);
             }
         }
     }

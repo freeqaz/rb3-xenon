@@ -204,13 +204,8 @@ void PitchArrow::SetColorFade(float f) {
 
 
 void PitchArrow::SetVolume(float b) {
-    float lo = mVolume - 0.05f;
-    float clamped;
-    float cur = mVolume;
-    if (b > 1.0f) clamped = 1.0f;
-    else if (b < lo) clamped = lo;
-    else clamped = b;
-    if (clamped != cur) {
+    float clamped = Clamp(mVolume - 0.05f, 1.0f, b);
+    if (clamped != mVolume) {
         if (mVolumeAnim) {
             mVolumeAnim->SetFrame(clamped, 1.0f);
             mVolume = clamped;
