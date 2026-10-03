@@ -59,8 +59,8 @@ void PrefabChar::CachePortraitTex(RndTex *tex) {
 }
 
 bool PrefabChar::IsFinalized() const { return true; }
-// Retail slot 5 is the `li r3,0; blr` fold: the dev-build PrefabMgr toggle
-// (rb3-Wii) is not consulted on X360 (lane W16-OT, BODY check).
+// Retail slot 5 is the `li r3,0; blr` fold: the PrefabMgr toggle is not
+// consulted on X360 (lane W16-OT, BODY check).
 bool PrefabChar::IsCustomizable() const { return false; }
 
 #pragma push

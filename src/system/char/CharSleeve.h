@@ -23,7 +23,7 @@ public:
     virtual void Load(BinStream &);
     // Retail's Object-table slot 16 is a vtordisp thunk (0x823CFAD0) onto
     // 0x823CEDE8: Object::SetName, then mMe = dynamic_cast<Character*>(dir)
-    // (lane W16-OT; rb3-Wii has the same override).
+    // (lane W16-OT).
     virtual void SetName(const char *, ObjectDir *);
 
     // RndPollable

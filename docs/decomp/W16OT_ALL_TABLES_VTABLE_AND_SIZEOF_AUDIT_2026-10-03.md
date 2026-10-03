@@ -67,8 +67,8 @@ NO_COMPARATOR 4, OURS_NOT_EMITTED 19`.
 
 | class:slot | retail | ours (was) | fix |
 |---|---|---|---|
-| `Hmx::Object`:14 `Export` (inherited by **524** tables) | `blr` (empty) | `if (b) HandleType(a)` + sink export, 72 B | empty in the match build; DC3 body `HX_NATIVE`-only. rb3-Wii: `virtual void Export(DataArray *, bool) {}` |
-| `Synth`:25 / `Synth360`:25 | `blr` in both | `bool IsUsingDolby() const` (`li r3,0` / a 44 B `XAudioGetSpeakerConfig` body) | slot 25 is rb3-Wii's `virtual void SetMono(bool) {}`. Synth360's override removed. Retail ProfileMgr calls `SetDolby` at `0x60` (slot 24), so the header's `// 0x64` comment was wrong. Nothing calls slot 25 through `TheSynth` in retail. |
+| `Hmx::Object`:14 `Export` (inherited by **524** tables) | `blr` (empty) | `if (b) HandleType(a)` + sink export, 72 B | empty in the match build; DC3 body `HX_NATIVE`-only. |
+| `Synth`:25 / `Synth360`:25 | `blr` in both | `bool IsUsingDolby() const` (`li r3,0` / a 44 B `XAudioGetSpeakerConfig` body) | slot 25 is `virtual void SetMono(bool) {}`. Synth360's override removed. Retail ProfileMgr calls `SetDolby` at `0x60` (slot 24), so the header's `// 0x64` comment was wrong. Nothing calls slot 25 through `TheSynth` in retail. |
 | `XboxEnumeration`:3 `IsSuccess` | `lbz r3,0x1c(r3)` | read `+0x24` (inside `mOverlapped`) | `return mEnumerating;` (Start sets `0x1c` = 1) |
 | `CamShot`:10 `CurrentShot` | `blr` (= `this`) | `return nullptr` | `return this` |
 | `PlayerLeaderboard`:31 `CanRowsBeSelected` (+3 subclasses) | `li r3,1` | `return false` | `return true` |
@@ -96,9 +96,9 @@ subclass, no `NEW_OBJ` on StorePanel) overrides all six.
 | `FxSendPitchShift360` / `FxSendReverb360` primary:22/26/27 | the FxSend360 forwarders, ICF-shared with Distortion360 / Flanger360 (same base offset) | `Recreate`/`UpdateMix`/`OnParametersChanged` forwarders declared |
 | `SampleInst360`:32/33/34 | `0x82B6E138` `mVoice->SetSend(dynamic_cast<FxSend360*>(s))`; `0x82B6E190`/`198` `lwz r3,0x54; b Voice::SetReverbMixDb/Enable` | defined; named in the map (own pin) → **3 rows at 100** |
 | `RndMeshAnim`:6 `AnimTarget` | `0x82471CC8`, ICF-shared with RndTransAnim's, reads `mMesh.mPtr` | `return mMesh` |
-| `RndPollAnim` RndAnimatable-table:1/2/3 | one vtordisp thunk (`0x8234EBC8`) onto the empty-body fold | `StartAnim`/`EndAnim`/`SetFrame` overridden empty. `SetFrame` being a no-op is real behaviour; RndAnimatable's own is not empty. DC3 and rb3-Wii agree. |
+| `RndPollAnim` RndAnimatable-table:1/2/3 | one vtordisp thunk (`0x8234EBC8`) onto the empty-body fold | `StartAnim`/`EndAnim`/`SetFrame` overridden empty. `SetFrame` being a no-op is real behaviour; RndAnimatable's own is not empty. |
 | `CharClipGroup` Object-table:2 `Replace` | vtordisp `0x8238FB08` → `0x8238F270`: swap the matching clip for `dynamic_cast<CharClip*>(to)`, drop a null, fix `mWhich` with `Min(0, s-1)` | ported, named → **2 rows at 100** (body 288 B + thunk) |
-| `CharIKSliderMidi` / `CharSleeve` Object-table:16 `SetName` | vtordisp → `Object::SetName` then `mMe = dynamic_cast<Character*>(dir)` (`mMe` at 0x90 / 0x64) | ported (rb3-Wii has both). CharIKSliderMidi named → **2 rows at 100**. CharSleeve's body is pinned inside CharDriver.cpp's range, so it was not named (re-home not done). |
+| `CharIKSliderMidi` / `CharSleeve` Object-table:16 `SetName` | vtordisp → `Object::SetName` then `mMe = dynamic_cast<Character*>(dir)` (`mMe` at 0x90 / 0x64) | ported. CharIKSliderMidi named → **2 rows at 100**. CharSleeve's body is pinned inside CharDriver.cpp's range, so it was not named (re-home not done). |
 | `RndLightAnim` Object-table:13 `Print` | vtordisp → `0x824715A8` light / keysOwner / colorKeys | ported. The map named `0x824715A8` `??6@YAAAVTextStream@@AAV0@PBVObject@Hmx@@@Z`, which is wrong: `operator<<(TextStream&, const Object*)` is inline in Object.h and has no out-of-line copy. Renamed → **18.8 → 100** |
 | `FriendsProvider` Object-table:6 `Handle` | `0x826664A8`: `HANDLE_MESSAGE(PlatformMgrOpCompleteMsg)`, `Object::Handle`, `HANDLE_CHECK` tail | §3 |
 
@@ -203,7 +203,7 @@ on bytes:
     the MemStream at `+8`;
   - slot 1 is `??_G`.
 
-  This is TU5 / DX-lineage code with no oracle in either repo, and the crypto
+  This is TU5 / DX-lineage code no other source tree carries, and the crypto
   globals have no owner identified in our tree. Declaring the base without the
   body would make OggMap abstract, so it is deferred whole.
 - **`EnterFlowMsg` / `JoinEntryPointEvent`.** Retail RTTI puts them in
