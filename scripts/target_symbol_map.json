@@ -33362,6 +33362,7 @@
  "0x82c40ba8": "??__EgVarStack@@YAXXZ",
  "0x82c40e38": "??__E?sNull@FilePath@@0V1@A@@YAXXZ",
  "0x82c40eb0": "??__EgHashTable@@YAXXZ",
+ "0x82c40f08": "??__ETheLocale@@YAXXZ",
  "0x82c40f28": "??__EsConditionalTimersEnabled@@YAXXZ",
  "0x82c42da0": "??__E?m_regProps@?$CSampleXAPOBase@VCompressionEffect@@UParams@1@@ATG@@0UXAPO_REGISTRATION_PROPERTIES@@A@@YAXXZ",
  "0x82c42e30": "??__E?m_regProps@?$CSampleXAPOBase@VDistortionEffect@@UParams@1@@ATG@@0UXAPO_REGISTRATION_PROPERTIES@@A@@YAXXZ",

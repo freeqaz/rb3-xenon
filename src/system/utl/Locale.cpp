@@ -147,6 +147,7 @@ void Locale::Terminate() {
     mNumFilesLoaded = 0;
 }
 
+#ifdef HX_NATIVE
 void Locale::SetMagnuStrings(DataArray *da) {
     if (mMagnuStrings) {
         mMagnuStrings->Release();
@@ -154,6 +155,7 @@ void Locale::SetMagnuStrings(DataArray *da) {
     }
     mMagnuStrings = da;
 }
+#endif
 
 void Locale::Init() {
     MILO_ASSERT(!mStrTable, 0x58);

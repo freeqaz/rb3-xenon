@@ -328,13 +328,15 @@ void Archive::Merge(Archive &shadow) {
     for (size_t i = 0; i < mArkfileSizes.size(); i++) {
         totalSize += mArkfileSizes[i];
     }
-    auto& _ref1 = mHashTable;
-    FOREACH (it, shadow.mFileEntries) {
-        const char *name = shadow.mHashTable[it->mHashedName];
-        const char *path = shadow.mHashTable[it->mHashedPath];
+    std::vector<FileEntry> &shadowEntries = shadow.mFileEntries;
+    ArkHash &shadowHash = shadow.mHashTable;
+    ArkHash &ourHash = mHashTable;
+    FOREACH (it, shadowEntries) {
+        const char *name = shadowHash[it->mHashedName];
+        const char *path = shadowHash[it->mHashedPath];
         FileEntry entry;
-        entry.mHashedName = _ref1.AddString(name);
-        entry.mHashedPath = _ref1.AddString(path);
+        entry.mHashedName = ourHash.AddString(name);
+        entry.mHashedPath = ourHash.AddString(path);
         auto fileIt = std::lower_bound(mFileEntries.begin(), mFileEntries.end(), entry);
         if (fileIt != mFileEntries.end() && fileIt->mHashedName == entry.HashedName()
             && fileIt->mHashedPath == entry.HashedPath()) {

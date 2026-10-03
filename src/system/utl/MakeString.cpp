@@ -161,13 +161,11 @@ FormatString &FormatString::operator<<(int i) {
     return *this;
 }
 
-const char *FormatString::Str() {
-    if (mType != kNone) {
-        // for whatever reason, this has the FormatString expanded out
-        FormatString str("FormatString: '%s' doesn't start with kNone.  Format: '%s'");
-        str << mFmt << mFmtBuf;
-        TheDebugNotifier << str.Str();
-    }
+// Retail never inlines Str: every MakeString<> instance calls it out of line.
+// MemHeap.cpp includes this file, so without noinline /Ob2 would inline the
+// short body into the MakeString<> instances compiled there.
+__declspec(noinline) const char *FormatString::Str() {
+    // retail does not check mType here; the copy is the whole body
     if (*mFmt != '\0') {
         MILO_ASSERT(mFmtEnd - mFmt < mBufSize, 0x16F);
         strcpy(mBuf + MAX_BUF_SIZE - mBufSize, mFmt);

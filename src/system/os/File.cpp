@@ -956,14 +956,9 @@ File *NewFile(const char *iFilename, int iMode) {
         }
 
         if ((mode & 0x2) && !(mode & 0x10000)) {
-            void *mem = _MemAllocTemp(sizeof(ArkFile), __FILE__, 0x19, "ArkFile", 0);
-            if (mem != nullptr) {
-                result = new (mem) ArkFile(filename, mode);
-            } else {
-                result = nullptr;
-            }
+            result = new ArkFile(filename, mode);
         } else {
-            mode &= ~0x4000;
+            mode &= ~0x30000;
             result = AsyncFile::New(filename, mode);
         }
 
@@ -975,16 +970,10 @@ File *NewFile(const char *iFilename, int iMode) {
         if ((gOpenCaptureFile != nullptr) && (mode & 0x2)) {
             char path_buf[256];
             // Retail's format literal is lbl_82087CB0 = "'%s'\n" (the "./%s"
-            // we had is not in the binary), and its strlen loop increments
-            // BEFORE the test (`lbz; addi; cmplwi; bne`), so p ends at
-            // buf+strlen+1 and the trailing -1 yields strlen.  Our
-            // test-before-increment form yielded strlen-1 -- one byte short,
-            // a real off-by-one in the capture log, not just a shape diff.
+            // we had is not in the binary); the length is the /Oi strlen
+            // intrinsic (`mr; lbz; addi; cmplwi; bne`).
             sprintf(path_buf, "'%s'\n", FileMakePath(".", filename));
-            const char *ptr = path_buf;
-            while (*ptr++) {
-            }
-            gOpenCaptureFile->Write(path_buf, (ptr - path_buf) - 1);
+            gOpenCaptureFile->Write(path_buf, strlen(path_buf));
             gOpenCaptureFile->Flush();
         }
     }
