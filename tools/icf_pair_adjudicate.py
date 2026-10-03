@@ -1216,6 +1216,29 @@ def deadblr_controls(tgt, ours):
         raise SystemExit("REFUSING: dead-blr positive %s/%s absent -- the controls "
                          "would be VACUOUS." % (s, o))
     T = retail_dead_blr(s, tgt[s], ours[o])
+    side = None
+    if T is None:
+        # ★ W16-OS (2026-10-03).  W16-ON's carve (731b6885a) moved dtk's extent
+        # for 0x822AFD68 from 32 to 36 B, so the LIVE retail body now ends in the
+        # very `blr` this rule is about and the pair is flat-identical -- the
+        # positive went vacuous and --chasetest refused on main.  The rule
+        # reads raw retail bytes, the census and our body, none of which the
+        # carve changed; only the extent did.  So both controls are evaluated in
+        # a PRE-CARVE VIEW: the live tree with this one retail extent shortened
+        # by exactly that trailing `blr` word.  Admitted ONLY when the live body
+        # equals ours byte-for-byte, ends in _BLR, and carries no relocation in
+        # that word -- i.e. the view differs from the live tree by the carve and
+        # nothing else.  Any other shape still refuses.
+        rt, ob = tgt[s], ours[o]
+        n = len(rt[0])
+        if (n >= 8 and rt[0][-4:] == _BLR and rt[0] == ob[0]
+                and not any(off + 4 > n - 4 for (off, _x, _y) in rt[1])):
+            pre = (rt[0][:-4], rt[1], rt[2] - 4)
+            T = retail_dead_blr(s, pre, ob)
+            if T is not None:
+                view = dict(tgt)
+                view[s] = pre
+                side = (view, None)
     if T is None:
         raise SystemExit("REFUSING: dead-blr positive %s/%s is no longer a dead-blr "
                          "pair -- the controls would be VACUOUS." % (s, o))
@@ -1229,8 +1252,11 @@ def deadblr_controls(tgt, ours):
 
     dl = "DEADBLR DECOY, trailing blr referenced from outside (expect REFUTED)"
     _PAIR_HOOKS[dl] = (setup, teardown)
-    return [("DEADBLR POSITIVE, ours = retail + unreferenced blr (expect PROVEN)", s, o),
-            (dl, s, o)]
+    pos = "DEADBLR POSITIVE, ours = retail + unreferenced blr (expect PROVEN)"
+    if side is None:
+        return [(pos, s, o), (dl, s, o)]
+    fid = "DEADBLR PRE-CARVE VIEW (retail extent minus the carved blr)"
+    return [(pos, s, o, fid, side), (dl, s, o, fid, side)]
 
 
 # ★★ W16-NN.  THE SIZE GATE -- one like-for-like comparison, no tolerance.
@@ -2285,7 +2311,8 @@ def main():
                   for p in rename_controls(T_rn, ours, M_rn, s_rn)]
         pairs += overcarve_controls(tgt, ours)
         pairs += vtvac_controls(tgt, ours)
-        pairs += deadblr_controls(tgt, ours)
+        pairs += [p if len(p) == 3 else p[:4] + ((p[4][0], mapped),)
+                  for p in deadblr_controls(tgt, ours)]
         a.chase = True
     elif a.pairs:
         pairs = [("", s, o) for s, o in json.load(open(a.pairs))]
@@ -2320,7 +2347,7 @@ def main():
                        "note in that tool. Controls only -- never an admission.")
         new = {}
         for lb, s, o, fid, side in pairs:
-            if fid is None or (fid in doc["fixtures"] and not a.rerecord):
+            if fid is None or fid.startswith("DEADBLR") or (fid in doc["fixtures"] and not a.rerecord):
                 continue
             T, M = side if side else (tgt, mapped)
             fx = record_fixture(T, ours, M, s, o)
@@ -2384,8 +2411,11 @@ def main():
         det["survivor_map_resident"] = s in M
         print("\n=== %s" % (label or "%s  <->  %s" % (s[:60], o[:60])))
         if side:
-            print("  fixture  : %s  (%d name(s) restored in this view)"
-                  % (fid, len(_VIEWS[fid][2]) if fid in _VIEWS else -1))
+            if fid in _VIEWS:
+                print("  fixture  : %s  (%d name(s) restored in this view)"
+                      % (fid, len(_VIEWS[fid][2])))
+            else:
+                print("  view     : %s" % fid)
         print("  survivor : %s" % s)
         print("  ours     : %s" % o)
         print("  FLAT T1  : %s" % verdict)
