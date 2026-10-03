@@ -721,6 +721,7 @@
  "0x822aca98": "??$?5VBandPatchMesh@@@@YAAAVBinStream@@AAV0@AAV?$ObjVector@VBandPatchMesh@@@@@Z",
  "0x822dfac0": "?clear@?$vector@VEdge@ChordShapeGenerator@@V?$StlNodeAlloc@VEdge@ChordShapeGenerator@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
  "0x822bb8d0": "?Disabled@BandCrowdMeter@@QBA_NXZ",
+ "0x822bb300": "?InitialCrowdRating@BandCrowdMeter@@QBAMXZ",
  "0x822bb3a0": "?Disable@BandCrowdMeter@@QAAXXZ",
  "0x822bb3b0": "?Enable@BandCrowdMeter@@QAAXXZ",
  "0x822cd8f8": "?SetNumStars@BandScoreboard@@QAAXM_N@Z",
