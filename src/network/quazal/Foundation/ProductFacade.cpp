@@ -330,7 +330,11 @@ namespace Quazal {
     };
 
     unsigned int GetLocalStationHandle();
-    const char *GetThreadName();
+    // 0x82AAC608 is ObjectThreadRoot::GetCurrentThreadName (the name ObjectThreadRoot.cpp maps).
+    class ObjectThreadRoot {
+    public:
+        static const char *GetCurrentThreadName();
+    };
     void InitDOClasses();
     // 0x82A8F3D0 (declared the same way in NetSession_Xbox.cpp).
     bool FlushPendingCalls();
@@ -466,7 +470,7 @@ namespace Quazal {
     void ProductFacade::CreateUtilitySubsystem() {
         s_poUtilitySubsystem = new (__FILE__, 0x145) UtilitySubsystem();
         OutputFormat::s_pfStationHandleResolver = GetLocalStationHandle;
-        OutputFormat::s_pfThreadNameResolver = GetThreadName;
+        OutputFormat::s_pfThreadNameResolver = ObjectThreadRoot::GetCurrentThreadName;
         OutputFormat::s_pfCurrentContextResolver = PseudoSingleton::GetCurrentContext;
         TraceLog::GetInstance()->GetOutputFormat()->ShowLocalStationHandle(true);
     }
