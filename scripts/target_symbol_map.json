@@ -36294,5 +36294,7 @@
  "0x822ca900": "??$__uninitialized_fill_n@PAUObjVersion@@IU1@@stlpmtx_std@@YAPAUObjVersion@@PAU1@IABU1@ABU__false_type@0@@Z",
  "0x8275cdc8": "??1?$vector@UObjVersion@@V?$StlNodeAlloc@UObjVersion@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x827cc540": "?UTF8ToLower@@YAXGPAD@Z",
- "0x827cc600": "?UTF8ToUpper@@YAXGPAD@Z"
+ "0x827cc600": "?UTF8ToUpper@@YAXGPAD@Z",
+ "0x827d1100": "?GetDrumSoloSamples@SongInfoCopy@@UBAABV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+ "0x8268ade0": "?IsInSession@BandUser@@UBA_NPAVSessionMgr@@@Z"
 }

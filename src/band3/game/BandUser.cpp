@@ -52,6 +52,16 @@ bool BandUser::UnkTU5Virtual() const {
     return false;
 }
 
+// Retail 0x8268ADE0 (vtable slot 0 of BandUser and every subclass). Was
+// declared and referenced by four vtables but defined nowhere: a null check on
+// the manager, then a tail call to SessionMgr slot 12 (HasUser) with `this`
+// upcast to the User virtual base.
+bool BandUser::IsInSession(SessionMgr *mgr) const {
+    if (mgr)
+        return mgr->HasUser(this);
+    return false;
+}
+
 LocalBandUser *BandUser::NewLocalBandUser() { return new LocalBandUser(); }
 
 RemoteBandUser *BandUser::NewRemoteBandUser() { return new RemoteBandUser(); }

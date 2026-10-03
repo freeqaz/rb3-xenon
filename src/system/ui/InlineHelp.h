@@ -11,6 +11,8 @@
 #include "utl/MemMgr.h"
 #include "utl/Symbol.h"
 
+class BandLabel;
+
 class InlineHelp : public UIComponent {
 public:
     struct ActionElement { // From RB3 decomp
@@ -89,7 +91,11 @@ protected:
     // Offsets relative to this (UIComponent part = 0x140, retail-witnessed):
     std::vector<Symbol> mIconTypes; // 0x140
     std::vector<ActionElement> mConfig; // 0x14c
-    std::vector<UILabel *> mTextLabels; // 0x158
+    // BandLabel, not UILabel (W16-PB): retail creates them with New<BandLabel>
+    // and deletes them through the vfptr at +0x214 -- BandLabel's
+    // UITransitionHandler base, whose slot 0 is its virtual dtor. A UILabel*
+    // element deletes through the Hmx::Object virtual base instead.
+    std::vector<BandLabel *> mTextLabels; // 0x158
     bool mUseConnectedControllers; // 0x164
     bool mHorizontal; // 0x165
     float mSpacing; // 0x168

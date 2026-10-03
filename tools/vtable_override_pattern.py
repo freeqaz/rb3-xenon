@@ -208,7 +208,13 @@ def all_tables(a):
                 stats['body_checked'] += 1
                 ob = bodies.get(oc[i])
                 if ob is None:
+                    # W16-PB: listed, not just counted -- W16-OT found three
+                    # of these were virtuals with NO definition anywhere.
                     stats['body_ours_missing'] += 1
+                    out.append(dict(cls=cls, off=m, slot=i, kind='BODY_OURS_MISSING',
+                                    retail_c=hex(rc[i]),
+                                    retail_words=' '.join('%08x' % w for w in leaf),
+                                    ours_c=oc[i]))
                     continue
                 rb = b''.join(w.to_bytes(4, 'big') for w in leaf)
                 if ob[0] != rb:
