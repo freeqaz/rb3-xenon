@@ -17642,7 +17642,8 @@
    "survivor": "??$__uninitialized_copy@PAVPlayerTrackConfig@@PAV1@@stlpmtx_std@@YAPAVPlayerTrackConfig@@PAV1@00ABU__false_type@0@@Z",
    "folded": [
     "??$__uninitialized_copy@PBVPracticeSection@@PAV1@@stlpmtx_std@@YAPAVPracticeSection@@PBV1@0PAV1@ABU__false_type@0@@Z",
-    "??$__uninitialized_copy@PAVPracticeSection@@PAV1@@stlpmtx_std@@YAPAVPracticeSection@@PAV1@00ABU__false_type@0@@Z"
+    "??$__uninitialized_copy@PAVPracticeSection@@PAV1@@stlpmtx_std@@YAPAVPracticeSection@@PAV1@00ABU__false_type@0@@Z",
+    "??$__uninitialized_copy@PAVHeldNote@@PAV1@@stlpmtx_std@@YAPAVHeldNote@@PAV1@00ABU__false_type@0@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 5, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
    "admitted": [
@@ -17650,6 +17651,11 @@
      "spelling": "??$__uninitialized_copy@PAVPracticeSection@@PAV1@@stlpmtx_std@@YAPAVPracticeSection@@PAV1@00ABU__false_type@0@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 84 B retail / 84 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x826cfb90."
+    },
+    {
+     "spelling": "??$__uninitialized_copy@PAVHeldNote@@PAV1@@stlpmtx_std@@YAPAVHeldNote@@PAV1@00ABU__false_type@0@@Z",
+     "lane": "W16-OK 2026-10-03",
+     "evidence": "W16-OK 2026-10-03: flat T1 PROVEN (84 B both sides) and chase PROVEN; 1 retail body has this masked shape. Call site: retail 0x826C32A8 (vector<HeldNote>::_M_insert_overflow_aux, GemPlayer's copy) calls this body twice where ours calls __uninitialized_copy<HeldNote>."
     }
    ]
   },
@@ -109454,6 +109460,40 @@
      "spelling": "?GetCurrentQuestFilter@TourPerformerImpl@@QBA?AVSymbol@@XZ",
      "lane": "W16-OK 2026-10-03",
      "evidence": "W16-OK 2026-10-03: both are `lwz r11,0x30(r4); stw r11,0(r3); blr` (12 B, no relocations; retail's 16 B extent is that plus one word of alignment padding). Compiler layout: TourPerformerImpl::mQuestFilter and InternalSavedSetlist::mNameSymbol are both Symbol @0x30. Census: exactly 1 retail body image-wide has these bytes, so a relocation-free COMDAT with this body can only live there. Call sites: retail Tour::GetCurrentFilterName and TourChallengeResultsPanel::UpdateSetlistLabel call this body at the site where our source calls TourPerformerImpl::GetCurrentQuestFilter."
+    }
+   ]
+  },
+  {
+   "name": "_M_insert_overflow_aux",
+   "address": "0x826c32a8",
+   "survivor": "?_M_insert_overflow_aux@?$vector@VHeldNote@@V?$StlNodeAlloc@VHeldNote@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVHeldNote@@ABV3@ABU__false_type@2@I_N@Z",
+   "folded": [
+    "?_M_insert_overflow_aux@?$vector@VPlayerTrackConfig@@V?$StlNodeAlloc@VPlayerTrackConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVPlayerTrackConfig@@ABV3@ABU__false_type@2@I_N@Z"
+   ],
+   "evidence": "Created by lane W16-OK: see per-member records in `admitted`.",
+   "lane": "W16-OK 2026-10-03",
+   "admitted": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@VPlayerTrackConfig@@V?$StlNodeAlloc@VPlayerTrackConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVPlayerTrackConfig@@ABV3@ABU__false_type@2@I_N@Z",
+     "lane": "W16-OK 2026-10-03",
+     "evidence": "W16-OK 2026-10-03: retail 0x826C32A8 is the single body for both 0x24-byte instantiations. Both our spellings chase PROVEN against it with 0 CYCLE-ASSUMED leaves, and 1 retail body has the masked shape. The map now names it for vector<HeldNote>, because the body lies inside GemPlayer's .text span (the COMDAT copy the linker kept came from GemPlayer.obj: mHeldNotes.resize(5)). Retail PlayerTrackConfigList::push_back<PlayerTrackConfig> calls it, so this spelling folds here."
+    }
+   ]
+  },
+  {
+   "name": "$__uninitialized_fill_n",
+   "address": "0x8276faf0",
+   "survivor": "??$__uninitialized_fill_n@PAVPlayerTrackConfig@@IV1@@stlpmtx_std@@YAPAVPlayerTrackConfig@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "folded": [
+    "??$__uninitialized_fill_n@PAVHeldNote@@IV1@@stlpmtx_std@@YAPAVHeldNote@@PAV1@IABV1@ABU__false_type@0@@Z"
+   ],
+   "evidence": "Created by lane W16-OK: see per-member records in `admitted`.",
+   "lane": "W16-OK 2026-10-03",
+   "admitted": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAVHeldNote@@IV1@@stlpmtx_std@@YAPAVHeldNote@@PAV1@IABV1@ABU__false_type@0@@Z",
+     "lane": "W16-OK 2026-10-03",
+     "evidence": "W16-OK 2026-10-03: flat T1 PROVEN (80 B both sides) and chase PROVEN; 1 retail body has this masked shape. Call site: retail 0x826C32A8 (vector<HeldNote>::_M_insert_overflow_aux, GemPlayer's copy) calls this body where ours calls __uninitialized_fill_n<HeldNote>."
     }
    ]
   }

@@ -20476,7 +20476,7 @@
  "0x826c2f80": "?FinishHeldNote@GemPlayer@@QAAXMAAVHeldNote@@@Z",
  "0x826c3210": "?FinishAllHeldNotes@GemPlayer@@QAAXM@Z",
  "0x826c3278": "??1?$_Vector_base@VHeldNote@@V?$StlNodeAlloc@VHeldNote@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
- "0x826c32a8": "?_M_insert_overflow_aux@?$vector@VPlayerTrackConfig@@V?$StlNodeAlloc@VPlayerTrackConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVPlayerTrackConfig@@ABV3@ABU__false_type@2@I_N@Z",
+ "0x826c32a8": "?_M_insert_overflow_aux@?$vector@VHeldNote@@V?$StlNodeAlloc@VHeldNote@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVHeldNote@@ABV3@ABU__false_type@2@I_N@Z",
  "0x826c3500": "??1GemPlayer@@UAA@XZ",
  "0x826c3860": "?AreFillsForced@GemPlayer@@UBA_NXZ",
  "0x826c3868": "?GetCodaPoints@GemPlayer@@UAAHXZ",
