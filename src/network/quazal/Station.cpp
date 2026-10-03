@@ -11,6 +11,7 @@
 // their members are defined in other TUs.
 
 #include "ObjDup/Station.h"
+#include "ObjDup/CallRegister.h"
 #include "ObjDup/DOClass.h"
 #include "ObjDup/RMCContext.h"
 #include "Core/Scheduler.h"
@@ -83,12 +84,6 @@ namespace Quazal {
     class JobListenOnWellKnown {
     public:
         static void Activate();
-    };
-
-    class CallRegister {
-    public:
-        static CallRegister *GetInstanceRef();
-        void QueueCancelCallToStation(DOHandle);
     };
 
     class PromotionReferee {
@@ -394,7 +389,7 @@ namespace Quazal {
     }
 
     void Station::ReleaseSystemReferences() {
-        CallRegister::GetInstanceRef()->QueueCancelCallToStation(GetHandle());
+        CallRegister::GetInstanceRef().QueueCancelCallToStation(GetHandle());
         PromotionReferee::ProcessLeavingStation(GetHandle());
         DuplicatedObject::RemoveAllDuplicasOnLeavingStation(GetHandle());
         if (StationManager::GetInstance()->m_hInitialStation == GetHandle()) {
@@ -431,7 +426,7 @@ namespace Quazal {
     unsigned int Station::ConvertDOHandleToID(DOHandle hStation) { return hStation.GetDOID(); }
 
     bool Station::TestAndSetFaultFlag() {
-        CallRegister::GetInstanceRef()->QueueCancelCallToStation(GetHandle());
+        CallRegister::GetInstanceRef().QueueCancelCallToStation(GetHandle());
         PromotionReferee::ProcessLeavingStation(GetHandle());
         return m_oFaultFlag.TestAndSet() != 0;
     }

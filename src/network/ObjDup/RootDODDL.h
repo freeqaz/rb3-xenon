@@ -19,7 +19,7 @@ namespace Quazal {
         bool SpecificRefresh(DataSet *, const Time &);
         void AddDSToDiscoveryMessage(Message *, Station *);
         bool ExtractDSFromDiscoveryMessage(Message *);
-        bool ExtractADataset(Message *, unsigned char);
+        bool SpecificExtractADataset(Message *, unsigned char); // 0x82A99870
         static unsigned int GetClassID() { return s_uiClassID; }
         static unsigned int s_uiClassID;
     };

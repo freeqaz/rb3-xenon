@@ -84,7 +84,7 @@ namespace Quazal {
         }
         virtual bool
         SpecificExtractADataset(DuplicatedObject *pDO, Message *pMsg, unsigned char ucIndex) {
-            return static_cast<DOType *>(pDO)->ExtractADataset(pMsg, ucIndex);
+            return static_cast<DOType *>(pDO)->SpecificExtractADataset(pMsg, ucIndex);
         }
         virtual bool SpecificUpdate(DuplicatedObject *pDO, DataSet *pDataSet, const Time &oTime) {
             return static_cast<DOType *>(pDO)->SpecificUpdate(pDataSet, oTime);

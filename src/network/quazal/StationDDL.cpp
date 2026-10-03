@@ -312,7 +312,7 @@ namespace Quazal {
         return _DO_RootDO::SpecificRefresh(pDataSet, oTime);
     }
 
-    bool _DO_Station::ExtractADataset(Message *pMsg, unsigned char ucIndex) {
+    bool _DO_Station::SpecificExtractADataset(Message *pMsg, unsigned char ucIndex) {
         switch (ucIndex) {
         case 1:
             GetDOClass()
@@ -335,7 +335,7 @@ namespace Quazal {
                 ->ExtractFromUpdateMessage(this, &m_oState, 4, pMsg);
             return true;
         default:
-            return _DO_RootDO::ExtractADataset(pMsg, ucIndex);
+            return _DO_RootDO::SpecificExtractADataset(pMsg, ucIndex);
         }
     }
 

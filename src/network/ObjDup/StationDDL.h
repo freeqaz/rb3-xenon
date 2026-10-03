@@ -57,7 +57,7 @@ namespace Quazal {
         bool SpecificRefresh(DataSet *, const Time &);
         void AddDSToDiscoveryMessage(Message *, Station *);
         bool ExtractDSFromDiscoveryMessage(Message *);
-        bool ExtractADataset(Message *, unsigned char);
+        bool SpecificExtractADataset(Message *, unsigned char);
         bool CallSignalAsFaulty(RMCContext *, const unsigned int &);
         void DispatchSignalAsFaulty(const CallMethodOperation &);
 

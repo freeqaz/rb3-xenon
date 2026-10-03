@@ -87,7 +87,7 @@ namespace Quazal {
         virtual bool FormatVariableValue(const DuplicatedObject *, Variable *, Variable *, String *) const;
         virtual bool DispatchAction(DuplicatedObject *, unsigned short, Message *);
         virtual void DispatchRMCCall(const CallMethodOperation &);
-        virtual void DispatchRMCResult(RMCContext *);
+        virtual bool DispatchRMCResult(RMCContext *);
         virtual bool ValidCastTowards(unsigned int);
         virtual void FillDupSpacesInfo(DupSpace::_Role, unsigned int *, unsigned int *);
 
@@ -166,7 +166,7 @@ namespace Quazal {
         virtual bool FormatVariableValue(const DuplicatedObject *, Variable *, Variable *, String *) const;
         virtual bool DispatchAction(DuplicatedObject *, unsigned short, Message *);
         virtual void DispatchRMCCall(const CallMethodOperation &);
-        virtual void DispatchRMCResult(RMCContext *);
+        virtual bool DispatchRMCResult(RMCContext *);
         virtual void FillDupSpacesInfo(DupSpace::_Role, unsigned int *, unsigned int *);
         virtual const char *GetDatasetNameString(unsigned char) const;
 
@@ -245,7 +245,9 @@ namespace Quazal {
         DOClass::DispatchRMCCall(oOperation);
     }
 
-    void _DOC_RootDO::DispatchRMCResult(RMCContext *pContext) { DOClass::DispatchRMCResult(pContext); }
+    // bool: DOClass's (0x82AB2278) returns false, and _DOC_Station's override
+    // returns 1 or this function's value.
+    bool _DOC_RootDO::DispatchRMCResult(RMCContext *pContext) { return DOClass::DispatchRMCResult(pContext); }
 
     void _DOC_RootDO::FillDupSpacesInfo(DupSpace::_Role eRole, unsigned int *puiA, unsigned int *puiB) {
         DOClass::FillDupSpacesInfo(eRole, puiA, puiB);
