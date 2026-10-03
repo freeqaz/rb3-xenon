@@ -429,12 +429,10 @@ band3/meta_band/ModifierMgr.cpp:
 	.text       start:0x825895A0 end:0x8258A014
 
 VocalTrack.cpp:
-	.pdata      start:0x82244B98 end:0x82244BA0
 	.pdata      start:0x8225DC58 end:0x8225DC68
 	.pdata      start:0x8225DC68 end:0x8225E270
 	.pdata      start:0x8225E270 end:0x8225E280
 	.text       start:0x826E74A0 end:0x826E74B4
-	.text       start:0x827EFA60 end:0x827EFAC8
 	.text       start:0x82B9F430 end:0x82B9F510
 	.text       start:0x82B9F510 end:0x82BAA1C4
 	.text       start:0x82BAA1D0 end:0x82BAA230
@@ -7769,8 +7767,8 @@ Chunks.cpp:
 	.text       start:0x827D8BB8 end:0x827D9310
 
 DisplayEvents.cpp:
-	.pdata      start:0x82244BA0 end:0x82244BB8
-	.text       start:0x827EFAC8 end:0x827EFE78
+	.pdata      start:0x82244B98 end:0x82244BB8
+	.text       start:0x827EFA60 end:0x827EFE78
 
 UITransitionHandler.cpp:
 	.pdata      start:0x8222F540 end:0x8222F548
