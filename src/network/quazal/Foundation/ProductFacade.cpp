@@ -96,7 +96,9 @@ namespace Quazal {
             unsigned int uiContext = PseudoSingleton::GetCurrentContext();
             InstanceControl *inst =
                 (InstanceControl *)InstanceControl::s_oInstanceTable.GetInstanceFromVector(3, uiContext);
-            Core *pCore = inst ? (Core *)inst->m_pDelegatorInstance : 0;
+            Core *pCore = 0;
+            if (inst)
+                pCore = (Core *)inst->m_pDelegatorInstance;
             return pCore;
         }
 
