@@ -5526,8 +5526,8 @@ band3/meta_band/SetlistToStorePanel.cpp:
 	.text       start:0x82643310 end:0x826436D8
 
 band3/tour/GigFilter.cpp:
-	.pdata      start:0x82200A60 end:0x82200AB8
-	.text       start:0x82364C2C end:0x82365100
+	.pdata      start:0x82200A68 end:0x82200AB8
+	.text       start:0x82364C80 end:0x82365100
 	.text       start:0x82365108 end:0x82365120
 
 band3/tour/FixedSetlist.cpp:
@@ -7900,7 +7900,7 @@ UIEvent.cpp:
 	.pdata      start:0x8222D9E0 end:0x8222D9F0
 	.pdata      start:0x8222D9F0 end:0x8222DAD0
 	.text       start:0x82658D68 end:0x82658E28
-	.text       start:0x82658E28 end:0x82659A2C
+	.text       start:0x82658E28 end:0x82659A38
 
 band3/meta_band/NetSync.cpp:
 	.pdata      start:0x82220CF0 end:0x82221090
@@ -9560,6 +9560,7 @@ band3/game/Game.cpp:
 	.pdata      start:0x82230078 end:0x82230140
 	.pdata      start:0x82230140 end:0x822301A0
 	.pdata      start:0x822301A0 end:0x822303C8
+	.pdata      start:0x822303C8 end:0x822303D0
 	.pdata      start:0x822303E0 end:0x82230430
 	.text       start:0x8235B9F8 end:0x8235BA70
 	.text       start:0x8235BA70 end:0x8235BA78
@@ -9586,6 +9587,7 @@ band3/game/Game.cpp:
 	.text       start:0x8267B478 end:0x8267C738
 	.text       start:0x8267C738 end:0x8267D480
 	.text       start:0x8267D480 end:0x8267F354
+	.text       start:0x8267F358 end:0x8267F3B0
 	.text       start:0x8267F428 end:0x8267FA3C
 
 GemSmasher.cpp:
@@ -10292,7 +10294,7 @@ BandMachineMgr.cpp:
 	.text       start:0x825C36D8 end:0x825C3720
 	.text       start:0x825C3720 end:0x825C3748
 	.text       start:0x825C3748 end:0x825C4180
-	.text       start:0x825C4180 end:0x825C4918
+	.text       start:0x825C4180 end:0x825C4908
 
 CustomizePanel.cpp:
 	.pdata      start:0x82229030 end:0x82229270
@@ -12483,7 +12485,7 @@ SongSortByRecent.cpp:
 
 SongSortBySong.cpp:
 	.pdata      start:0x8222DAD0 end:0x8222DB60
-	.text       start:0x82659A30 end:0x8265A130
+	.text       start:0x82659A38 end:0x8265A130
 
 SongSortByStars.cpp:
 	.pdata      start:0x8222DC78 end:0x8222DD38
@@ -12837,10 +12839,8 @@ TexLoadPanel.cpp:
 	.text       start:0x825F2210 end:0x825F32A8
 
 band3/game/PresenceMgr.cpp:
-	.pdata      start:0x822303C8 end:0x822303D0
 	.pdata      start:0x82230430 end:0x82230590
 	.pdata      start:0x82261628 end:0x82261630
-	.text       start:0x8267F358 end:0x8267F3B0
 	.text       start:0x8267F420 end:0x8267F428
 	.text       start:0x8267FA3C end:0x8268117C
 	.text       start:0x82C3FF18 end:0x82C3FFAC
@@ -13232,10 +13232,10 @@ system/obj/Utl.cpp:
 	.text       start:0x8275A384 end:0x8275A460
 
 QuestJournal.cpp:
-	.pdata      start:0x82200A48 end:0x82200A60
+	.pdata      start:0x82200A48 end:0x82200A68
 	.text       start:0x82364AA0 end:0x82364AB4
 	.text       start:0x82364AB4 end:0x82364B00
-	.text       start:0x82364B00 end:0x82364C2C
+	.text       start:0x82364B00 end:0x82364C80
 
 TexProc.cpp:
 	.text       start:0x826DF788 end:0x826DF78C
@@ -13724,7 +13724,7 @@ band3/meta_band/SetlistSortByLocation.cpp:
 	.pdata      start:0x82223B18 end:0x82223B30
 	.pdata      start:0x82223B30 end:0x82223B40
 	.pdata      start:0x82223B40 end:0x82223C00
-	.text       start:0x825C4918 end:0x825C4A90
+	.text       start:0x825C4908 end:0x825C4A90
 	.text       start:0x825C4A90 end:0x825C4B0C
 	.text       start:0x825C4B10 end:0x825C54D8
 
