@@ -33,7 +33,27 @@ worked the population serially. It worked through the rows in this order:
 
 ## 2. Whole-binary A/B
 
-(filled in from the run below)
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-w16ol-ab --patch <git diff main w16-ol>`, run on a fresh
+`scripts/setup_worktree.sh` worktree at main `8bba58005`. Patch kinds: map + source, 19 paths. Forced re-split on
+both legs; both read at a `symbols.txt` fixed point after 0 extra splits. Run dir
+`~/tmp/wt-w16ol-ab/.ab_measure_runs/20261003-021951-branch-1563072/`.
+
+```
+leg A: matched=53165 masked=25127 honest=28038 code%=57.205140  (recompiles: 0, settled)
+leg B: matched=53187 masked=25129 honest=28058 code%=57.243430  (recompiles: 596, split=1, patch_steps=7, settle iterations: 2)
+Δmatched=+22  Δmasked_equal=+2  Δhonest=+20  Δcode%=+0.038290pp  Δcode_bytes=+3924
+Δfuzzy=+0.010243pp   (legA 63.507835 -> legB 63.518078)
+unit net (ALL units) = +22   vs whole-binary Δmatched = +22
+unit REGRESSIONS: default/band3/bandtrack/GemRepTemplate (35->34)
+units at 100% [mpn]: 510 -> 510 (CharIKFoot reached, GemRepTemplate fell off)
+```
+
+**Prediction, written before the run:** the in-tree row diff against main's `report.json`, which read
++22 fns / +3,924 B with one row down. **Measured: +22 / +3,924 B, identical.** Leg A equals main's own
+`report.json` (53,165 / 57.205140). The `none` control does not apply, because the patch carries source.
+
+**Row level** (in-tree row diff, `~/tmp/w16na/rowdiff.py`): **21 rows up**, of which 19 reach fuzzy 100.
+**1 row down** (§4). 3 anonymous rows were renamed to the functions written here (all now 100).
 
 ## 3. What closed, and why (each is one commit)
 
