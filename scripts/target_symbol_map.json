@@ -36152,5 +36152,12 @@
  "0x82b2f190": "??0StationContactInfo@Quazal@@QAA@ABV?$qList@VStationURL@Quazal@@@1@@Z",
  "0x82b2f2a8": "??1StationContactInfo@Quazal@@QAA@XZ",
  "0x82b38818": "?GetOverlappedResult@IOCompletionNotifier@Quazal@@QAAHPAVIOCompletionContext@2@PA_NPAI@Z",
- "0x82b386b8": "?DeleteIOCompletionContext@IOCompletionNotifier@Quazal@@QAAXPAVIOCompletionContext@2@@Z"
+ "0x82b386b8": "?DeleteIOCompletionContext@IOCompletionNotifier@Quazal@@QAAXPAVIOCompletionContext@2@@Z",
+ "0x82b1b660": "QuazalCZlibAlloc",
+ "0x82b1b698": "QuazalCZlibFree",
+ "0x82b1b6d0": "??0ZLibCompression@Quazal@@QAA@XZ",
+ "0x82b1b840": "??1ZLibCompression@Quazal@@UAA@XZ",
+ "0x82b1b920": "?CompressImpl@ZLibCompression@Quazal@@UAA_NABVBuffer@2@PAV32@@Z",
+ "0x82b1bbe0": "?DecompressImpl@ZLibCompression@Quazal@@UAAHABVBuffer@2@PAV32@@Z",
+ "0x82b1be10": "??_GZLibCompression@Quazal@@UAAPAXI@Z"
 }

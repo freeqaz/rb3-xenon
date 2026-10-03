@@ -2533,7 +2533,15 @@
                     "/GR-"
                 ]
             },
-            "network/quazal/Compression/ZLib/ZLibCompression.cpp": "NonMatching",
+            "network/quazal/Compression/ZLib/ZLibCompression.cpp": {
+                "status": "NonMatching",
+                "extra_cflags": [
+                    "/Od",
+                    "/Oi-",
+                    "/Ob1",
+                    "/GR-"
+                ]
+            },
             "network/quazal/SystemComponents.cpp": "NonMatching",
             "network/quazal/Authentication/Client/AuthenticationClient.cpp": "NonMatching",
             "network/quazal/SecureTransport/SecureEndPoint.cpp": "NonMatching",
