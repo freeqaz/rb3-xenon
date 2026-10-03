@@ -14249,8 +14249,12 @@ network/quazal/MatchMaking/Client/MatchMakingClient.cpp:
 	.text       start:0x82A8DDB0 end:0x82A8E148
 
 network/quazal/Foundation/ProductFacade.cpp:
-	.pdata      start:0x82251E00 end:0x82251E48
-	.text       start:0x82A8FDF0 end:0x82A90C08
+	.pdata      start:0x82251E00 end:0x82251E50
+	.pdata      start:0x822617D0 end:0x822617D8
+	.pdata      start:0x82261C40 end:0x82261C48
+	.text       start:0x82A8FDF0 end:0x82A90C88
+	.text       start:0x82C417E8 end:0x82C41820
+	.text       start:0x82C4A8F8 end:0x82C4A920
 
 network/quazal/SessionDDL.cpp:
 	.pdata      start:0x82251E98 end:0x82251EF0

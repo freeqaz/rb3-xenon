@@ -36218,5 +36218,17 @@
  "0x82ace660": "??0JobListenOnWellKnown@Quazal@@QAA@II@Z",
  "0x82ace6c0": "??_GJobListenOnWellKnown@Quazal@@UAAPAXI@Z",
  "0x82ace718": "?Execute@JobListenOnWellKnown@Quazal@@UAAXXZ",
- "0x82ace798": "?SetDefaultPostExecutionState@JobListenOnWellKnown@Quazal@@UAAXXZ"
+ "0x82ace798": "?SetDefaultPostExecutionState@JobListenOnWellKnown@Quazal@@UAAXXZ",
+ "0x82a8fdf0": "??0ProductFacade@Quazal@@QAA@PAVProductSpecifics@1@@Z",
+ "0x82a901a0": "?CreateSessionGroup@SystemComponents@Quazal@@QAAXXZ",
+ "0x82a90268": "?CreateDOCoreGroup@SystemComponents@Quazal@@QAAXXZ",
+ "0x82a90330": "??_GProductFacade@Quazal@@UAAPAXI@Z",
+ "0x82a90378": "??1ProductFacade@Quazal@@UAA@XZ",
+ "0x82a90718": "?Terminate@ProductFacade@Quazal@@QAA_NXZ",
+ "0x82a90788": "?Terminate@ProductFacade@Quazal@@QAA_NPAVCallContext@2@@Z",
+ "0x82a90aa0": "?DecrementDOCoreRefCount@ProductFacade@Quazal@@SA_NXZ",
+ "0x82a90b60": "?CreateUtilitySubsystem@ProductFacade@Quazal@@QAAXXZ",
+ "0x82a90c08": "?DeleteUtilitySubsystem@ProductFacade@Quazal@@QAAXXZ",
+ "0x82c417e8": "??__E?s_csGlobalLock@ProductFacade@Quazal@@2VCriticalSection@2@A@@YAXXZ",
+ "0x82c4a8f8": "??__F?s_csGlobalLock@ProductFacade@Quazal@@2VCriticalSection@2@A@@YAXXZ"
 }
