@@ -5,8 +5,8 @@
 // the run the job either completes (the port is held, or no attempts are
 // left) or waits for the retry delay and runs again.
 //
-// The retail TU is 0x82ACE5B0..0x82ACE828 (five functions): the function that
-// creates and queues the job (the TU's .rdata starts with the file string it
+// The retail TU is 0x82ACE5B0..0x82ACE828 (five functions): Activate, which
+// creates and queues the job (Station calls it; the TU's .rdata starts with the file string it
 // passes to operator new, followed by the job's vtable), the constructor, the
 // scalar deleting destructor, and the two overrides. The code after it is
 // called only from other TUs, and the next .rdata object is another class's
@@ -188,12 +188,12 @@ namespace Quazal {
         virtual bool SkipWaitDelayAtTermination() { return true; }
         virtual void TraceDescription(unsigned int) {}
 
-        static void Launch();
+        static void Activate();
 
         unsigned int m_uiNbAttemptsLeft; // 0x38
     };
 
-    void JobListenOnWellKnown::Launch() {
+    void JobListenOnWellKnown::Activate() {
         Job *pJob = new (__FILE__, 24) JobListenOnWellKnown(10, 500);
         Scheduler::GetInstance()->Queue(pJob, false);
     }

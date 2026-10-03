@@ -36175,7 +36175,7 @@
  "0x82ad2e80": "?CallSyncResponse@_DO_SessionClock@Quazal@@QAA_NPAVRMCContext@2@AB_K1ABI@Z",
  "0x82ad2fb8": "?CalleeSyncResponseStub@_DO_SessionClock@Quazal@@QAAXABVRMCOperation@2@@Z",
  "0x82ad3090": "?SpecificAddDSToDiscoveryMessage@?$DOClassTemplate@V_DO_SessionClock@Quazal@@V_DOC_RootDO@2@@Quazal@@UAAXPAVDuplicatedObject@2@PAVStation@2@PAVMessage@2@@Z",
- "0x82ace5b0": "?Launch@JobListenOnWellKnown@Quazal@@SAXXZ",
+ "0x82ace5b0": "?Activate@JobListenOnWellKnown@Quazal@@SAXXZ",
  "0x82ace660": "??0JobListenOnWellKnown@Quazal@@QAA@II@Z",
  "0x82ace6c0": "??_GJobListenOnWellKnown@Quazal@@UAAPAXI@Z",
  "0x82ace718": "?Execute@JobListenOnWellKnown@Quazal@@UAAXXZ",
