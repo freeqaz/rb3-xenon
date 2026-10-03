@@ -262,3 +262,6 @@ Gates, rebased tip after a full build:
   restores (here `ScoreUtl.cpp`, in the throwaway A/B worktree only).
 
 ## 8. Native gate (run last)
+
+`tools/native_build_gate.sh` on the final code (only this doc line follows it):
+`NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
