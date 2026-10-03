@@ -21,6 +21,11 @@ namespace Quazal {
         ByteStream &operator<<(const Buffer &);
         ByteStream &operator>>(Buffer &);
         ByteStream &operator<<(const bool &);
+        template <class T>
+        ByteStream &operator<<(const T &t) {
+            Append((const unsigned char *)&t, sizeof(T), true);
+            return *this;
+        }
         ByteStream &operator>>(bool &);
 
         bool mErrorHasOccurred; // 0x0

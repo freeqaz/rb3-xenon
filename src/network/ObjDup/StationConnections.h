@@ -1,22 +1,11 @@
 #pragma once
 #include "Platform/RootObject.h"
 #include "ObjDup/DOHandle.h"
+#include "ObjDup/StationManager.h"
 
 // Lane-chosen names: the retail callees these stand for are unnamed.
 namespace Quazal {
     class DOOperation;
-
-    class JobConnectStation : public RootObject {
-    public:
-        void QueueOperation(DOOperation *);
-    };
-
-    class StationConnections : public RootObject {
-    public:
-        static StationConnections *GetInstance();
-        int GetConnectionState(DOHandle);
-        JobConnectStation *GetConnectionJob(DOHandle);
-    };
 
     class OperationValidator : public RootObject {
     public:

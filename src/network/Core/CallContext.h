@@ -24,6 +24,8 @@ namespace Quazal {
 
         void RegisterCompletionCallback(CallbackRoot *, bool, bool);
         void SetFlag(unsigned int);
+        void SetCancelCallback(CallbackRoot *);
+        void ClearFlag(unsigned int);
         void Reset();
         void Trace(unsigned int);
         void SetStateImpl(_State, qResult, bool);

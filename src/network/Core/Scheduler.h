@@ -33,6 +33,7 @@ namespace Quazal {
         bool Cancel(Job *);
 
         static bool CurrentThreadCanWaitForJob();
+        static void GlobalSingleThreadDispatch(unsigned int);
         static CriticalSection s_csGlobalSystemLock;
         static Scheduler *GetInstance() {
             Core *inst = Core::GetInstance();
@@ -56,7 +57,11 @@ namespace Quazal {
         qChain<Job *> unk60;
         qChain<Job *> unk70;
         qChain<Job *> unk80;
-        qMap<Time, Job *> unk90; // multimap?
+        // 0x94, 0x18 bytes: retail's ctor (0x82AC57F0) builds a bare tree here and puts
+        // unka8 at 0xac, so this is not a qMap (whose RootObject base makes it 0x1c,
+        // as StationURL's maps are). map vs multimap is not decidable from the ctor.
+        std::multimap<Time, Job *, std::less<Time>, MemAllocator<std::pair<const Time, Job *> > >
+            unk90;
         bool unka8;
         WaterMark unkac;
         WaterMark unkdc;

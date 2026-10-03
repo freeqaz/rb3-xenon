@@ -140,12 +140,18 @@ OBJ_DIR = PROJECT_ROOT / "build" / "45410914" / "obj"
 SRC_DIR = PROJECT_ROOT / "build" / "45410914" / "src"
 OBJDIFF_CONFIG = PROJECT_ROOT / "objdiff.json"
 
-ANON_NS_PATTERN = re.compile(rb'\?A0x([0-9a-fA-F]{8})@@')
+#: The hash is followed by `@` -- `@@` at global scope, `@Quazal@@` when the
+#: anonymous namespace is nested (JobConnectEndPoint's callbacks).  Matching
+#: only `@@` left the nested spelling unpatched, so those rows paired only while
+#: a cache-served object happened to carry the hash the map was written from.
+ANON_NS_PATTERN = re.compile(rb'\?A0x([0-9a-fA-F]{8})@')
 #: The hashless spelling.  `(?!0x)` keeps it from eating the hashed one.
 HASHLESS_PATTERN = re.compile(rb'\?A(?!0x)@@')
 #: Placeholder a template puts where a hash was.  Same length is not required;
 #: templates are only ever compared to other templates.
-TEMPLATE_MARK = b'?A0x*@@'
+TEMPLATE_MARK = b'?A0x*@'
+#: The hashless `?A@@` is always global scope; it templates as a hashed global.
+HASHLESS_MARK = b'?A0x*@@'
 #: MSVC decorations wrapped around a function's name to make a companion
 #: symbol (`__ehfuncinfo$?Foo@...`).  Retail often has the function but not the
 #: companion, so the companion's hash has to be read off the function's.
@@ -178,7 +184,7 @@ def hashless_names(path):
         start = data.rfind(b'\0', 0, m.start()) + 1
         end = data.find(b'\0', m.end())
         run = data[start:end if end >= 0 else len(data)]
-        out[HASHLESS_PATTERN.sub(TEMPLATE_MARK, ANON_NS_PATTERN.sub(
+        out[HASHLESS_PATTERN.sub(HASHLESS_MARK, ANON_NS_PATTERN.sub(
             TEMPLATE_MARK, run))] = run
     return out
 
@@ -468,7 +474,7 @@ def apply_edits(data: bytes, edits: dict) -> bytes:
     for offset, new in edits.items():
         assert len(new) == 8, new
         assert out[offset - 4:offset] == b'?A0x', offset
-        assert out[offset + 8:offset + 10] == b'@@', offset
+        assert out[offset + 8:offset + 9] == b'@', offset  # `@@` or `@<scope>@@`
         out[offset:offset + 8] = new
     return bytes(out)
 

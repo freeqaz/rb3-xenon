@@ -8,10 +8,13 @@ namespace Quazal {
     public:
         // Callers pass qResult-style codes (0x60001, 0x80010006, ...).
         enum _Outcome {
+            CallCancelled = 0x80060003
         };
 
         DOCallContext(DOHandle, bool);
         virtual ~DOCallContext();
+        // Retail 0x82AA1410 (JobConnectStation::ConnectionFailed passes 4).
+        bool Cancel(unsigned int);
 
         unsigned char unk50[0x58]; // 0x50
     };

@@ -115,7 +115,9 @@ namespace Quazal {
         char m_padBC[0xe0 - 0xbc];
     };
 
-    class InetAddressList : public qList<InetAddress> {
+    // Holds StationURLs: retail's dtor clears it through
+    // _List_base<StationURL>::clear (0x82A79DA8), which runs ~StationURL.
+    class InetAddressList : public qList<StationURL> {
     public:
         InetAddressList() {}
     };

@@ -9,6 +9,7 @@
 #include "Platform/ScopedCS.h"
 #include "Selection.h"
 #include "ObjDup/DOID.h"
+#include "Platform/Time.h"
 #include "Platform/SystemError.h"
 
 namespace Quazal {
@@ -58,6 +59,7 @@ namespace Quazal {
         bool IsAKindOf(unsigned int) const;
         void SetMasterStation(const MasterStationRef &);
         bool UpdateImpl(DataSet *, const Time &);
+        bool Update(DataSet *pDataSet) { return UpdateImpl(pDataSet, Time::GetSessionTime()); }
         bool RefreshImpl(DataSet *, const Time &);
         bool SpecificExtractADataset(Message *, unsigned char);
         bool SpecificRefresh(DataSet *, const Time &);
@@ -213,19 +215,4 @@ namespace Quazal {
         Selection m_setCachedDuplicationSet; // 0x4c
     };
 
-
-    template <class T>
-    bool DORefTemplate<T>::IsValid() const {
-        if (GetDOPtr() == 0) {
-            SystemError::SignalError(0, 0, 0xA0030004, 0);
-            return false;
-        } else {
-            if (!DuplicatedObject::GetDOClass(GetDOPtr()->m_dohMyself.GetDOClassID())
-                     ->IsAKindOf(T::GetClassID())) {
-                SystemError::SignalError(0, 0, 0xE003000C, 0);
-                return false;
-            }
-            return true;
-        }
-    }
 }

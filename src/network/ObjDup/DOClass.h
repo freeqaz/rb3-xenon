@@ -1,5 +1,7 @@
 #pragma once
 #include "Platform/RootObject.h"
+#include "Platform/qStd.h"
+#include "ObjDup/DOHandle.h"
 
 namespace Quazal {
     class DuplicatedObject;
@@ -12,6 +14,13 @@ namespace Quazal {
     class String;
     class CallMethodOperation;
     class RMCContext;
+    class UpdatePolicy;
+
+    class DupSpace {
+    public:
+        enum _Role {
+        };
+    };
 
     class DOClass : public RootObject {
     public:
@@ -37,11 +46,51 @@ namespace Quazal {
         virtual bool FormatVariableValue(const DuplicatedObject *, Variable *, Variable *, String *) const;
         virtual bool DispatchAction(DuplicatedObject *, unsigned short, Message *);
         virtual void DispatchRMCCall(const CallMethodOperation &);
-        virtual void DispatchRMCResult(RMCContext *);
+        virtual bool DispatchRMCResult(RMCContext *);
         virtual bool ValidCastTowards(unsigned int);
+        virtual void FillDupSpacesInfo(DupSpace::_Role, unsigned int *, unsigned int *);
 
         bool GenerateObjectID(unsigned int *, unsigned int);
 
         static DOClass *FindDOClass(unsigned int);
+
+        void CreateUpdatePolicy(unsigned char);
+        UpdatePolicy *GetUpdatePolicy(unsigned char ucIndex) {
+            return m_mapUpdatePolicies.find(ucIndex)->second;
+        }
+        void CompleteInitialisation();
+        DOHandle GetIDGenerator() const;
+        // The class's well-known object handle (retail 0x82A9A038).
+        DOHandle GetWKHandle();
+
+        unsigned char m_pad4[8];
+        // One policy per dataset index (retail's lookups are at +0xc).
+        qMap<unsigned char, UpdatePolicy *> m_mapUpdatePolicies; // 0xc
+    };
+
+    // The DDL's per-DO-class layer: forwards the dataset calls to the DO's own
+    // dispatchers. Its constructor and destructor are inline.
+    template <class DOType, class Parent>
+    class DOClassTemplate : public Parent {
+    public:
+        DOClassTemplate(unsigned int uiClassID) : Parent(uiClassID) {}
+        virtual ~DOClassTemplate() {}
+        virtual void
+        SpecificAddDSToDiscoveryMessage(DuplicatedObject *pDO, Station *pStation, Message *pMsg) {
+            static_cast<DOType *>(pDO)->AddDSToDiscoveryMessage(pMsg, pStation);
+        }
+        virtual bool SpecificExtractDSFromDiscoveryMessage(DuplicatedObject *pDO, Message *pMsg) {
+            return static_cast<DOType *>(pDO)->ExtractDSFromDiscoveryMessage(pMsg);
+        }
+        virtual bool
+        SpecificExtractADataset(DuplicatedObject *pDO, Message *pMsg, unsigned char ucIndex) {
+            return static_cast<DOType *>(pDO)->SpecificExtractADataset(pMsg, ucIndex);
+        }
+        virtual bool SpecificUpdate(DuplicatedObject *pDO, DataSet *pDataSet, const Time &oTime) {
+            return static_cast<DOType *>(pDO)->SpecificUpdate(pDataSet, oTime);
+        }
+        virtual bool SpecificRefresh(DuplicatedObject *pDO, DataSet *pDataSet, const Time &oTime) {
+            return static_cast<DOType *>(pDO)->SpecificRefresh(pDataSet, oTime);
+        }
     };
 }

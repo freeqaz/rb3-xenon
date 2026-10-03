@@ -12,5 +12,8 @@ namespace Quazal {
         static CallRegister &GetInstanceRef();
         void SignalRelevantFetchContextes(DOHandle, DOCallContext::_Outcome);
         bool MigrationInProgress(DOHandle, DOHandle);
+        void QueueCancelCallToStation(DOHandle);
+        // The pending fetch between two stations (retail 0x82ABB820).
+        FetchContext *GetFetchContext(DOHandle, DOHandle);
     };
 }

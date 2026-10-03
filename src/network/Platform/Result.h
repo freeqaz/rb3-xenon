@@ -10,6 +10,7 @@ namespace Quazal {
         qResult(const int &);
         bool Equals(const int &) const;
         bool Equals(const bool &) const;
+        bool operator!=(const int &) const;
 
         operator bool() const;
         qResult &operator=(const int &);

@@ -3,6 +3,7 @@
 #include "ObjDup/DOID.h"
 
 namespace Quazal {
+    class ByteStream;
     class DOHandle : public RootObject {
     public:
         DOHandle(unsigned int val = 0) : mValue(val) {}
@@ -16,6 +17,7 @@ namespace Quazal {
             return *this;
         }
 
+        unsigned int GetValue() const { return mValue; }
         unsigned int GetDOClassID() const { return (mValue & 0xFFC00000) >> 22; }
         unsigned int GetID() const {
             unsigned int uiID = mValue & 0x3FFFFF;
@@ -36,4 +38,6 @@ namespace Quazal {
 
         unsigned int mValue; // 0x0
     };
+
+    ByteStream &operator>>(ByteStream &, DOHandle &);
 }

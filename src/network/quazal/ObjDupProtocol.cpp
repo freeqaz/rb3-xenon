@@ -32,7 +32,8 @@ namespace Quazal {
         char *m_szContent;
     };
 
-    struct qResult {
+    class qResult {
+    public:
         int m_iCode;
         int m_iLine;
         const char *m_szFile;
@@ -209,12 +210,14 @@ namespace Quazal {
         DOProtocolContextList m_oContexts; // 0x48
     };
 
-    class ParticipationManager {
+    // The join job (JobJoinSession.cpp) registers itself here while a join is
+    // in progress; these are its handlers for the join protocol's responses.
+    class JobJoinSession {
     public:
-        void ProcessParticipants(Message *, bool);
-        void ProcessJoinAccepted(unsigned char, DOHandle, DOHandle);
-        void ProcessRedirect(class StationURL &);
-        void ProcessJoinRefused(unsigned char, unsigned int);
+        void ProcessGetParticipantsResponse(Message *, bool);
+        void ProcessPositiveJoinResponse(unsigned char, DOHandle, DOHandle);
+        void SetNewContactPoint(const class StationURL &);
+        void ProcessNegativeJoinResponse(unsigned char, int);
     };
 
     class Protocol;
@@ -255,6 +258,17 @@ namespace Quazal {
         bool HasStartedTermination() const;
     };
 
+    // Session's statics, spelled as Session.cpp maps them (0x82A76D98, 0x82A796C8).
+    class Session {
+    public:
+        static Session *GetInstance();
+        static bool JoinIsAllowed();
+        unsigned int GetHandle() { return m_uiHandle; }
+
+        char m_pad0[0x14];
+        unsigned int m_uiHandle; // 0x14
+    };
+
     // Compiled to nothing in this build; only its address reaches Job's ctor.
     class DebugString {
     public:
@@ -285,7 +299,7 @@ namespace Quazal {
 
     class JobProcessJoinRequest : public Job {
     public:
-        JobProcessJoinRequest(EndPoint *, class StationInfo *, class JoinRequestData *);
+        JobProcessJoinRequest(EndPoint *, class StationInfo *, class _DS_StationIdentification *);
         virtual void Execute();
 
         char m_pad38[0x58];
@@ -382,15 +396,16 @@ namespace Quazal {
 
     class Station {
     public:
-        static bool IsLocalStationMaster();
-        static Station *GetLocalStation();
-        bool IsDisconnected();
-        const char *GetStationURL(unsigned int);
+        // The Station methods below are spelled the way Station.cpp maps them.
+        static DOHandle GetLocalStation();
+        static void InitiateFaultProcessingForStation(DOHandle, unsigned int);
+        bool IsFaulty() const;
+        const char *GetStationURL(int);
         unsigned int GetHandle() { return m_uiHandle; }
-        void ProcessEOS();
-        void SendMessage(Message *, bool);
-        unsigned int GetURLCount();
-        unsigned int GetID();
+        void SetAtEOS();
+        bool Send(Message *, unsigned int);
+        unsigned int GetStationID() const;
+        unsigned int GetMachineUniqueID() const;
         DOHandle GetHandleValue();
 
         char m_pad0[0x14];
@@ -441,17 +456,18 @@ namespace Quazal {
         void AddPretendant(EndPoint *, Message *);
     };
 
-    class PendingStation {
+    class JobConnectStation {
     public:
-        void Queue(Job *);
+        void QueueJob(Job *); // 0x82AB6E78, named by JobConnectStation.cpp
     };
 
-    class StationTable {
+    // .\StationManager.cpp (0x82AB7EF0..0x82ABAB58).
+    class StationManager {
     public:
-        static StationTable *GetInstance();
-        int GetStationState(DOHandle);
-        PendingStation *GetPendingStation(DOHandle);
-        void ExtractStations(Message *);
+        static StationManager *GetInstance();
+        bool ExtractBootstrapStationURLs(Message *);
+        JobConnectStation *GetLatestConnectionJob(DOHandle) const;
+        int ConnectStation(DOHandle);
     };
 
     class CallContext {
@@ -528,14 +544,21 @@ namespace Quazal {
         char m_pad[0x1C];
     };
 
-    class JoinRequestData : public Data {
+    // The joining station's identification: the StationIdentification dataset,
+    // whose constructor and extractor StationDDL.cpp defines.
+    class _DS_StationIdentification : public Data {
     public:
-        JoinRequestData();
-        void Read(Message *);
+        void ExtractFrom(Message *);
 
-        String m_strA;
-        String m_strB;
-        char m_pad8[8];
+        String m_strIdentificationToken; // 0x0
+        String m_strProcessName; // 0x4
+        unsigned int m_uiProcessType; // 0x8
+        unsigned int m_uiProductVersion; // 0xc
+    };
+
+    class StationIdentification : public _DS_StationIdentification {
+    public:
+        StationIdentification();
     };
 
     class MessageSigner {
@@ -765,10 +788,6 @@ namespace Quazal {
         virtual void PeerDisconnected(EndPoint *) = 0;
     };
 
-    namespace StationManager {
-        void FaultDetected(DOHandle, unsigned int);
-        DOHandle GetLocalStationHandle();
-    }
 
     class ObjDupProtocol : public Protocol {
     public:
@@ -800,7 +819,7 @@ namespace Quazal {
         void ProcessGetParticipantsResponse(Message *);
         Message *CreateJoinRequest();
         bool ParseJoinRequestMessage(Message *, bool, bool, String *);
-        void ProcessJoinRequest(EndPoint *, StationInfo *, JoinRequestData *);
+        void ProcessJoinRequest(EndPoint *, StationInfo *, _DS_StationIdentification *);
         Message *CreateJoinResponse(unsigned char);
         bool ParseJoinResponseMessage(Message *, bool, bool, String *);
         void ProcessJoinResponse(Message *, unsigned char &);
@@ -851,7 +870,7 @@ namespace Quazal {
         bool m_bListeningOnAnyPort; // 0x4
         bool m_bListeningOnWellKnown; // 0x5
         CallRegister m_oCallRegister; // 0x8
-        ParticipationManager *m_pParticipationManager; // 0x30
+        JobJoinSession *m_pParticipationManager; // 0x30
         StationProxy m_oStationProxy; // 0x34
         char m_pad35[0xB];
         unsigned int m_uiContext; // 0x40
@@ -937,7 +956,7 @@ namespace Quazal {
         m_oStationProxy.FaultDetection(pEndPoint);
         DOHandle hStation = pEndPoint->GetStationID();
         if (hStation != DOHandle()) {
-            StationManager::FaultDetected(hStation, uiReason);
+            Station::InitiateFaultProcessingForStation(hStation, uiReason);
         }
     }
 
@@ -962,7 +981,7 @@ namespace Quazal {
                 QueueMessage(
                     pMsg,
                     pEndPoint != 0 ? DOHandle(pEndPoint->GetStationID())
-                                   : StationManager::GetLocalStationHandle(),
+                                   : Station::GetLocalStation(),
                     pEndPoint,
                     false
                 );
@@ -1031,7 +1050,7 @@ namespace Quazal {
             DOHandle hStation = pMsg->GetSourceStation();
             StationRef refStation(hStation);
             if (refStation.IsValid()) {
-                if (refStation->IsDisconnected()) {
+                if (refStation->IsFaulty()) {
                     bResult = false;
                 }
             }
@@ -1078,12 +1097,12 @@ namespace Quazal {
         if (pMsg->GetSourceStation() != 0) {
             DOHandle hStation = pMsg->GetSourceStation();
             if (bCheck) {
-                if (StationTable::GetInstance()->GetStationState(hStation) == 2) {
-                    PendingStation *pStation =
-                        StationTable::GetInstance()->GetPendingStation(hStation);
+                if (StationManager::GetInstance()->ConnectStation(hStation) == 2) {
+                    JobConnectStation *pStation =
+                        StationManager::GetInstance()->GetLatestConnectionJob(hStation);
                     pMsg->Rewind();
                     pJob->Postpone();
-                    pStation->Queue(pJob);
+                    pStation->QueueJob(pJob);
                     bResult = false;
                 }
             }
@@ -1124,7 +1143,7 @@ namespace Quazal {
 
     void ObjDupProtocol::ProcessGetParticipantsRequest(EndPoint *pEndPoint, Message *pMsg) {
         Message *pReply = CreateGetParticipantsResponse();
-        if (Station::IsLocalStationMaster()) {
+        if (Session::JoinIsAllowed()) {
             *pReply << true;
             m_oStationProxy.PrepareParticipantsMessage(pReply);
             m_oStationProxy.AddPretendant(pEndPoint, pMsg);
@@ -1158,7 +1177,7 @@ namespace Quazal {
         }
         bool bMaster;
         *pMsg >> bMaster;
-        m_pParticipationManager->ProcessParticipants(pMsg, bMaster);
+        m_pParticipationManager->ProcessGetParticipantsResponse(pMsg, bMaster);
     }
 
     Message *ObjDupProtocol::CreateJoinRequest() {
@@ -1176,8 +1195,8 @@ namespace Quazal {
         String strTrace;
         StationInfo *pInfo = new (__FILE__, 0x1AA) StationInfo(GetStationInfoFactory(1));
         pInfo->Read(pMsg, bTrace, &strTrace);
-        JoinRequestData *pData = new (__FILE__, 0x1AD) JoinRequestData();
-        pData->Read(pMsg);
+        _DS_StationIdentification *pData = new (__FILE__, 0x1AD) StationIdentification();
+        pData->ExtractFrom(pMsg);
         if (bTrace) {
             pTrace->Format("JOIN_REQUEST message. %s", strTrace.CStr());
         }
@@ -1191,7 +1210,7 @@ namespace Quazal {
     }
 
     void ObjDupProtocol::ProcessJoinRequest(
-        EndPoint *pEndPoint, StationInfo *pInfo, JoinRequestData *pData
+        EndPoint *pEndPoint, StationInfo *pInfo, _DS_StationIdentification *pData
     ) {
         JobProcessJoinRequest *pJob =
             new (__FILE__, 0x1BD) JobProcessJoinRequest(pEndPoint, pInfo, pData);
@@ -1202,7 +1221,7 @@ namespace Quazal {
         Message *pMsg = CreateMessage(1);
         pMsg->Append(&ucResponse, 1, true);
         if (ucResponse == 2) {
-            StationRef refStation(Station::GetLocalStation()->GetHandle());
+            StationRef refStation(Session::GetInstance()->GetHandle());
             pMsg->AppendString(refStation->GetStationURL(0), 0x100);
         }
         return pMsg;
@@ -1234,21 +1253,21 @@ namespace Quazal {
             DOHandle hStation;
             *pMsg >> hMaster;
             *pMsg >> hStation;
-            StationTable::GetInstance()->ExtractStations(pMsg);
+            StationManager::GetInstance()->ExtractBootstrapStationURLs(pMsg);
             if ((m_uiFlags & 4) == 4) {
                 GetJoinResponseObserver()->OnJoinResponse(pMsg);
             }
-            m_pParticipationManager->ProcessJoinAccepted(ucResponse, hMaster, hStation);
+            m_pParticipationManager->ProcessPositiveJoinResponse(ucResponse, hMaster, hStation);
         } else {
             if (ucResponse == 2) {
                 char szURL[0x100];
                 pMsg->ExtractString(szURL, 0x100);
                 StationURL oURL(szURL);
-                m_pParticipationManager->ProcessRedirect(oURL);
+                m_pParticipationManager->SetNewContactPoint(oURL);
             }
             unsigned int uiReason;
             pMsg->Extract(&uiReason, 4, true);
-            m_pParticipationManager->ProcessJoinRefused(ucResponse, uiReason);
+            m_pParticipationManager->ProcessNegativeJoinResponse(ucResponse, uiReason);
         }
     }
 
@@ -1469,7 +1488,7 @@ namespace Quazal {
         Message *pMsg = CreateMessage(0xD);
         *pMsg << pContext->GetCallID();
         *pMsg << pContext->GetTargetObject();
-        *pMsg << (unsigned int)StationManager::GetLocalStationHandle();
+        *pMsg << (unsigned int)Station::GetLocalStation();
         return pMsg;
     }
 
@@ -1517,7 +1536,7 @@ namespace Quazal {
         if (iOutcome != 0x60001) {
             StationRef refStation(hStation);
             Message *pOutcome = CreateCallOutcomeMessage(usCallID, iOutcome);
-            refStation->SendMessage(pOutcome, true);
+            refStation->Send(pOutcome, true);
             delete pOutcome;
         }
     }
@@ -1535,7 +1554,7 @@ namespace Quazal {
         oCallContext.CallMigration(
             pMsg,
             &usCallID,
-            StationManager::GetLocalStationHandle(),
+            Station::GetLocalStation(),
             &uiMethod,
             &uiTarget,
             &ucFlags,
@@ -1623,7 +1642,7 @@ namespace Quazal {
         Message *pEOS = CreateEOSMessage(hStation);
         Message *pCopy = new (__FILE__, 0x36E) Message(pEOS->GetBuffer());
         delete pEOS;
-        QueueMessage(pCopy, StationManager::GetLocalStationHandle(), 0, false);
+        QueueMessage(pCopy, Station::GetLocalStation(), 0, false);
     }
 
     bool ObjDupProtocol::ParseEOSMessage(
@@ -1643,7 +1662,7 @@ namespace Quazal {
     void ObjDupProtocol::ProcessEOS(const DOHandle &hStation) {
         StationRef refStation(hStation);
         if (refStation.IsValid()) {
-            refStation->ProcessEOS();
+            refStation->SetAtEOS();
         }
     }
 
@@ -1651,7 +1670,7 @@ namespace Quazal {
         if (m_bListeningOnWellKnown) {
             return false;
         }
-        StationRef refLocal(StationManager::GetLocalStationHandle());
+        StationRef refLocal(Station::GetLocalStation());
         if (!refLocal.IsValid()) {
             return false;
         }
@@ -1659,7 +1678,7 @@ namespace Quazal {
         oStations.GotoStart();
         oStations.Refresh();
         while (!oStations.EndReached()) {
-            bool bLower = oStations.Current()->GetID() == refLocal->GetID()
+            bool bLower = oStations.Current()->GetMachineUniqueID() == refLocal->GetMachineUniqueID()
                 && oStations.Current()->GetHandleValue() < refLocal->GetHandleValue();
             if (bLower) {
                 return false;
@@ -1743,7 +1762,7 @@ namespace Quazal {
     }
 
     bool ObjDupProtocol::AddLocalURLs(Station *pStation) {
-        if (NetZ::GetMode() != 1 || pStation->GetURLCount() == 1) {
+        if (NetZ::GetMode() != 1 || pStation->GetStationID() == 1) {
             StationURLList *pURLs = ((NetZ *)GetInstanceType1Delegator())->GetLocalURLs();
             ScopedCS oCS(pURLs->m_cs);
             if (!pURLs->IsEmpty()) {
