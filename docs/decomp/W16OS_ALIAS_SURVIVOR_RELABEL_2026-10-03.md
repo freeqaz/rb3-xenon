@@ -233,8 +233,8 @@ Every chase verdict in this lane depends on this instrument. On the rebased, bui
   - `--selftest` PASS.
 - `map_name_injectivity.py`: OK, 35,156 applied rows, injective (+1 enumerated exception).
 - `gen_symbol_alias_map.py --check`: OK.
-- `scripts/test_tools.py`: **RESULT: PASS** (new=0, timeout=0, broken=0, script-fail=0). This run was on the
-  pre-rebase branch; it was re-run after the rebase, see §8.
+- `scripts/test_tools.py`: **RESULT: PASS** (new=0, timeout=0, broken=0, script-fail=0) on the pre-rebase branch
+  and again on the rebased branch.
 - Native gate (§8).
 
 ## 7. Found, deliberately not done
