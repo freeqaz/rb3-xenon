@@ -10,6 +10,10 @@
 #include "utl/Std.h"
 #include "utl/Symbols.h"
 #include <functional>
+#ifndef HX_NATIVE
+#include "rnddx9/Rnd.h"
+#include "xdk/d3d9i/d3d9.h"
+#endif
 
 std::vector<Symbol> PatchLayer::sCategoryNames;
 PatchDir *PatchLayer::sStickerOwner;
@@ -670,12 +674,26 @@ void PatchDir::LoadRemote(IntPacker &packer) {
     }
 }
 
+#ifndef HX_NATIVE
+// Retail 0x82C6B648: the sampler-0 mip LOD bias the patch layers draw with.
+static float sPatchLodBias = -1.0f;
+#endif
+
 void PatchDir::DrawShowing() {
     TheUI->GetCam()->Select();
-    for (std::vector<PatchLayer>::iterator it = mLayers.begin(); it != mLayers.end();
-         ++it) {
+#ifndef HX_NATIVE
+    DWORD savedLod = D3DDevice_GetSamplerState_MipMapLodBias(TheDxRnd.Device(), 0);
+    D3DDevice_SetSamplerState_MipMapLodBias(
+        TheDxRnd.Device(), 0, *(DWORD *)&sPatchLodBias
+    );
+#endif
+    std::vector<PatchLayer>::iterator end = mLayers.end();
+    for (std::vector<PatchLayer>::iterator it = mLayers.begin(); it != end; ++it) {
         (*it).Draw();
     }
+#ifndef HX_NATIVE
+    D3DDevice_SetSamplerState_MipMapLodBias(TheDxRnd.Device(), 0, savedLod);
+#endif
 }
 
 RndCam *PatchDir::CamOverride() { return TheUI->GetCam(); }
