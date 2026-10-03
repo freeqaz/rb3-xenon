@@ -751,7 +751,7 @@ bool BandWardrobe::AddDircut(BandCharacter *bchar, BandCamShot *shot, Symbol cat
         return true;
     }
     int genderflags = GetGenreGenderFlags(mGenre, bchar->mGender);
-    if (genderflags != (genderflags & flag)) {
+    if ((genderflags & flag) != genderflags) {
         MILO_WARN(
             "%s can't load %s, group is %s, character is %s",
             PathName(shot),
@@ -1004,20 +1004,10 @@ DataNode BandWardrobe::OnGetMatchingDude(DataArray *da) {
     BandCharacter *target = da->Obj<BandCharacter>(2);
     for (int i = 0; i < 4; i++) {
         BandCharacter *bc = GetCharacter(i);
-        if (bc) {
-            bool found = false;
-            bool check = false;
-            if (bc && bc->Driver() && bc != target)
-                check = true;
-            if (check) {
-                Symbol a = BandCharDesc::GetAnimInstrument(target->mInstrumentType);
-                Symbol b = BandCharDesc::GetAnimInstrument(bc->mInstrumentType);
-                if (b == a)
-                    found = true;
-            }
-            if (found)
-                return DataNode(bc);
-        }
+        if (bc && bc->Driver() && bc != target
+            && BandCharDesc::GetAnimInstrument(bc->mInstrumentType)
+                == BandCharDesc::GetAnimInstrument(target->mInstrumentType))
+            return DataNode(bc);
     }
     return DataNode((Hmx::Object *)0);
 }
@@ -1031,18 +1021,7 @@ void BandWardrobe::InstrumentMatch(
                 BandCharDesc::GetInstrumentFromSym(info[i].inst);
             MILO_ASSERT(it >= 0 && it < BandCharDesc::kNumInstruments, 0x813);
             int score = scores[it];
-            bool nonZero = (unsigned int)(-score | score) >> 31;
-            bool match = nonZero;
-            if (nonZero) {
-                int diff = score - info[i].human;
-                if (diff < bestScore) {
-                    bestScore = diff;
-                    match = true;
-                } else {
-                    match = false;
-                }
-            }
-            if (match) {
+            if (score != 0 && MinEq(bestScore, score - info[i].human)) {
                 bestSlot = i;
                 bestHint = hint;
             }
