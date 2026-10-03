@@ -144,7 +144,7 @@ mesh starts with N live (garbage) vertices instead of N reserved.
 
 1. **ChordShapeGenerator `vertIt`/`faceIt` (+4 vs retail −4).** Neither declaration order nor linkage (static →
    external) moves `.bss` order (measured on scratch compiles). **Renaming does**: `aVertIt` moves to offset 0.
-   So the order follows the symbol-name hash. Retail's names are the oracle's `vertIt`/`faceIt`, so the
+   So the order follows the symbol-name hash. Retail's names are `vertIt`/`faceIt`, so the
    difference comes from a different symbol set in the TU, not the names. Inventing names to hit the layout
    would be fitting, so nothing landed. BuildChordMesh (1,680 B) and BuildContourCap (1,752 B) stay at 99.99.
 2. **SongSectionController revs as one aligned aggregate.** Load reached 100, but
