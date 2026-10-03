@@ -97,7 +97,7 @@ OUR_NAME = {'ObjRef': 'ObjRefOwner'}
 #               `lwz r3,off(r3); blr` -- and our slot's compiled body is not
 #               byte-identical.  Judged on EVERY slot of EVERY table, so it
 #               reaches a base class's OWN new virtuals, which no comparator
-#               covers (W16-OT found Synth slot 25: retail `blr` = rb3-Wii's
+#               covers (W16-OT found Synth slot 25: retail `blr` =
 #               `void SetMono(bool) {}`, ours DC3's `bool IsUsingDolby()`).
 #               A getter's load offset is compared too, so a wrong member
 #               offset behind a one-instruction getter is a BODY row.
