@@ -183,4 +183,9 @@ Two rows did not reach 100: `CharClip::Transitions::Resize` (79.78 → 98.00, on
 
 ## 5. Native gate
 
-NATIVE_GATE_PLACEHOLDER
+Run last, on `22535358d` (the rebased branch tip; only this doc changed afterwards):
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+Log: `~/tmp/w16on/native_gate.log`. The `MemMgr.h` change keeps the debug signatures under `HX_NATIVE`.
