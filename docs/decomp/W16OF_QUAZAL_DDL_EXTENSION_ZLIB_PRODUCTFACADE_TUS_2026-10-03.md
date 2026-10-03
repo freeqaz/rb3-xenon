@@ -197,7 +197,11 @@ retail always returns 0.
 
 ## 8. Native gate
 
-NATIVE_PLACEHOLDER
+Run last, on the code at `ba04bfee6` (only this docs edit follows it):
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
 
 Scratch: `~/tmp/w16of/` (`ab.patch`, `ab_run.log`, the map-merge helper `~/tmp/w16of_mapfix.py`); sub-lane scratch in
 `~/tmp/w16ofb/`, `~/tmp/w16ofc/`, `~/tmp/w16ofd/`, `~/tmp/w16ofe/`; sub-lane worktrees `~/tmp/wt-w16-of-{a,b,c,d,e}`.
