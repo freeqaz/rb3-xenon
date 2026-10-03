@@ -53,9 +53,10 @@ void BandCrowdMeter::IconData::SetUsed(bool used) {
 }
 
 float BandCrowdMeter::InitialCrowdRating() const {
-    if (mTrackPanel)
+    if (mTrackPanel) {
+        static Symbol easy("easy");
         return mTrackPanel->CrowdRatingDefaultVal(easy);
-    else
+    } else
         return 0.5f;
 }
 
