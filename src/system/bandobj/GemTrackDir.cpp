@@ -887,8 +887,8 @@ void GemTrackDir::ResetCoda() {
 }
 
 void GemTrackDir::CrashFill() {
-    static Message drum_fill_complete_msg("drum_fill_complete");
     if (BandTrack::mParent) {
+        static Message drum_fill_complete_msg("drum_fill_complete");
         BandTrack::mParent->GetSmasher(4)->Handle(drum_fill_complete_msg, true);
     }
 }
