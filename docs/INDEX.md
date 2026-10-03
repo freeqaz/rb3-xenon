@@ -223,14 +223,27 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   ~10 found verbatim there. Also the standing reminder that **every numeric
   absolute predating 2026-08-12 is dead on the ruler flip**.
 - ★★★ **START HERE — the single current-state doc.**
-  [decomp/CAMPAIGN_STATE_2026-10-01.md](decomp/CAMPAIGN_STATE_2026-10-01.md) —
-  **fourth edition: numbers + roadmap.** Measured by a full build at main
+  [decomp/CAMPAIGN_STATE_2026-10-03b.md](decomp/CAMPAIGN_STATE_2026-10-03b.md) —
+  **seventh edition (2026-10-03, after W16-OT…PA).** Full build at main
+  `83e92ed07`, `name_check`: **53,349 / 68,909 matched · `matched_code`
+  5,891,704 B = 57.492% · ceiling 64.624%, we stand at 88.96% of it.** Scoped to
+  the native port: **in-scope gap 973 rows / 295,552 B (92.26% matched)**, with
+  one disposition per row (settled, in flight, worked-and-left, untried), what
+  each 10-03 lever returned, and the ranking for the round after the pause.
+- [decomp/CAMPAIGN_STATE_2026-10-03.md](decomp/CAMPAIGN_STATE_2026-10-03.md) —
+  **sixth edition, the method record (W16-OV, main `99ee35830`).** Scope rings
+  (IN-CORE / IN-SOON / IN-RB3ENG; DC3 has no `bandobj`), the class × ring
+  partition and its controls, Quazal stated separately. 10-03b reruns it.
+- [decomp/CAMPAIGN_STATE_2026-10-02.md](decomp/CAMPAIGN_STATE_2026-10-02.md) —
+  **fifth edition (W16-NP, main `2b066acc8`).** Ceiling 61.745%, 88.36% of it;
+  the row-by-row charge-class partition (P/I/M/N/U/S) the later editions reuse.
+- [decomp/CAMPAIGN_STATE_2026-10-01.md](decomp/CAMPAIGN_STATE_2026-10-01.md) —
+  **fourth edition (10-01).** Measured at main
   `a95d5c525` on `name_check`: **46,539 / 69,131 matched · `matched_code`
   4,698,184 / 10,247,072 = 45.849% · fuzzy 54.918 · honest 22,840 · ceiling
-  61.537%, we stand at 74.51% of it.** Carries the priority order (breadth /
+  61.537%, we stood at 74.51% of it.** Carries the priority order (breadth /
   identification first, cleanup-before-grind, vtable/struct, game over engine,
-  native is the goal), the open hard items, and the in-flight Ghidra tooling
-  track. The 08-17 edition below remains the partition-methodology record.
+  native is the goal). The 08-17 edition below remains the partition-methodology record.
 - [decomp/CAMPAIGN_STATE_2026-09-30.md](decomp/CAMPAIGN_STATE_2026-09-30.md) —
   **lever census (09-30).** Measured at main `61bb82227` (`name_check`, objdiff 4.2.9):
   **46,403 matched · `matched_code` 4,677,848 B = 45.650580% · fuzzy 54.578014 ·
