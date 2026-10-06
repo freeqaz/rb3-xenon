@@ -607,7 +607,8 @@ void MasterAudio::Pass(int i1, float f2, int i3, bool b4) {
 
 void MasterAudio::Ignore(int i1, float f2, int i3, const UserGuid &u) {
     AudioTrackNum num = TrackNumAt(i1);
-    if (mTrackData[num]->mUserGuid == u) {
+    TrackData *data = mTrackData[num];
+    if (data->mUserGuid == u) {
         Pass(i1, f2, i3, true);
     }
 }

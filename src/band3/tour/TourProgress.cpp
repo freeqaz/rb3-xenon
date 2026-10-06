@@ -177,7 +177,7 @@ void TourProgress::ClearPeformanceProperties() { mPerformanceProperties.Clear();
 void TourProgress::UpdateMostStars() {
     BandProfile *owner = TheProfileMgr.FindTourProgressOwner(this);
     if (owner) {
-        owner->AccessAccomplishmentProgress();
+        AccomplishmentProgress &progress = owner->AccessAccomplishmentProgress();
         int stars = GetNumStars();
         TheAccomplishmentMgr->UpdateMostStarsForAllParticipants(m_symTourDesc, stars);
         TheTour->UpdateProgressWithCareerData();

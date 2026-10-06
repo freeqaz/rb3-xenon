@@ -109,8 +109,7 @@ void NextSongPanel::FinishLoad() {
         RndDir *rdir = mDir->Find<RndDir>(MakeString("slot%i", i), true);
         mScrollGroups[i] = rdir->Find<RndGroup>(scrollgrpstr, true);
         int hashtablesize = rdir->HashTableSize() + 0x100;
-        int strtablesize = rdir->StrTableSize();
-        rdir->Reserve(hashtablesize, strtablesize + 0x980);
+        rdir->Reserve(hashtablesize, rdir->StrTableSize() + 0x980);
     }
 }
 
