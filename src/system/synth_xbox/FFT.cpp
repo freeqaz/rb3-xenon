@@ -8,6 +8,14 @@
 #include <cstdlib>
 #include "xdk/LIBCMT/vectorintrinsics.h"
 
+// VMX128 intrinsics used by the AltiVec kernels below (not in the shared
+// header; a declaration is all MSVC needs to emit the opcode).
+extern "C" {
+XMVECTOR __vsel(XMVECTOR vSrcA, XMVECTOR vSrcB, XMVECTOR vMask);
+XMVECTOR __vaddfp(XMVECTOR vSrcA, XMVECTOR vSrcB);
+XMVECTOR __vsubfp(XMVECTOR vSrcA, XMVECTOR vSrcB);
+}
+
 // External declarations
 int FFTComplex(float* data, long size, long inverse, float* context);
 
@@ -238,6 +246,880 @@ int fft_square_matrix(float* data, long size, long inverse, float* context) {
         ret = fft_matrix_inverse_columnwise(data, size, context);
     }
     return ret;
+}
+
+// One decimation-in-frequency radix-2 step over the whole array (vectorised,
+// four vectors per iteration from both ends of both halves), then two
+// half-length FFTComplex calls (upper half first) and an even/odd re-interleave
+// through the shared ping-pong scratch. Used by FFTComplex for sizes > 0x8000
+// with an odd log2.
+int fft_recursive(float* data, unsigned long size, long sign, float* context) {
+    XMVECTORU32 perm_sel_fwd = { 0x00010203, 0x10111213, 0x04050607, 0x14151617 };
+    XMVECTORU32 perm_sel_inv = { 0x10111213, 0x00010203, 0x14151617, 0x04050607 };
+
+    int ret = 0;
+    unsigned long half = size >> 1;
+    if (g_fftScratch.size < half) {
+        void* old = g_fftScratch.buf;
+        g_fftScratch.size = half;
+        if (old != 0) {
+            free(old);
+        }
+        void* p = malloc(half << 3);
+        g_fftScratch.buf = p;
+        if (p == 0) {
+            ret = 0xc;
+            g_fftScratch.buf = 0;
+            g_fftScratch.size = 0;
+        }
+    }
+    if (ret != 0) {
+        return ret;
+    }
+
+    // Swaps re/im inside each of the two complex slots of a vector.
+    XMVECTORU32 perm_swap = { 0x04050607, 0x00010203, 0x0C0D0E0F, 0x08090A0B };
+    // {A.x, A.x, B.w, B.w} -- carries the previous cHi's first lane and the
+    // freshly updated c1 into the next iteration's cLo.
+    XMVECTORU32 perm_cdup = { 0x00010203, 0x00010203, 0x1C1D1E1F, 0x1C1D1E1F };
+    XMVECTORU32 sel_hi = { 0x00000000, 0x00000000, 0xFFFFFFFF, 0xFFFFFFFF };
+    XMVECTORU32 merge_lo = { 0x00010203, 0x04050607, 0x10111213, 0x14151617 };
+    XMVECTORU32 merge_hi = { 0x08090A0B, 0x0C0D0E0F, 0x18191A1B, 0x1C1D1E1F };
+
+    XMVECTOR v_zero = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+    double dir;
+    XMVECTOR perm_sel;
+    if (sign == -1) {
+        dir = 1.0;
+        perm_sel = perm_sel_fwd.v;
+    } else {
+        dir = -1.0;
+        perm_sel = perm_sel_inv.v;
+    }
+
+    float inv_n = 1.0f / (float)(double)(long long)(unsigned int)size;
+    float angle1 = inv_n * (float)(2.0 * M_PI);
+    float angle2 = inv_n * (float)(4.0 * M_PI);
+
+    float sin_a = (float)sin(angle1);
+    double cc = (double)sin_a * (double)sin_a;
+    cc = cc * 2.0;
+    double ss = (float)sin(angle2);
+
+    XMVECTORF32 sv;
+    sv.f[0] = 0.0f;
+    sv.f[1] = 0.0f;
+    double s1 = (float)sin(angle1);
+    double t1 = s1 * dir;
+    sv.f[2] = (float)t1;
+    sv.f[3] = (float)(-t1);
+    XMVECTOR sLo = sv.v;
+    double s2 = (float)sin(angle2);
+    double t2 = s2 * dir;
+    sv.f[0] = (float)t2;
+    sv.f[1] = (float)(-t2);
+    XMVECTOR sHi = sv.v;
+
+    sv.f[0] = 1.0f;
+    sv.f[1] = 1.0f;
+    double c1 = (float)cos(angle1);
+    sv.f[2] = (float)c1;
+    sv.f[3] = (float)c1;
+    XMVECTOR cLo = sv.v;
+    double c2 = (float)cos(angle2);
+    sv.f[0] = (float)c2;
+    sv.f[1] = (float)c2;
+    XMVECTOR cHi = sv.v;
+    XMVECTOR negCHi = __vsubfp(v_zero, cHi);
+
+    float* loRead = data;
+    float* hiRead = data + (size / 4) * 4;
+    float* loReadBack = hiRead - 4;
+    float* hiReadBack = data + half * 4 - 4;
+    float* loWrite = data;
+    float* loWriteBack = loReadBack;
+    float* hiWrite = hiRead;
+    float* hiWriteBack = hiReadBack;
+
+    // w8-f: the bound is written INLINE in each condition -- as a local it is a
+    // provable trip count and MSVC converts to CTR (mtctr/bdnz), where the image
+    // keeps `addi r11, r11, 0x1` / `cmplw cr6, r11, r22` / `blt` (0x82E5014C,
+    // 0x82E5015C, 0x82E50190).  Same lever as CalculateSinCosTable above.
+
+    if (sign == -1) {
+        for (unsigned int i = 0; i < (size >> 4); ++i) {
+            XMVECTOR hiA = __lvx(hiRead, 0);
+            XMVECTOR loA = __lvx(loRead, 0);
+            XMVECTOR loB = __lvx(loReadBack, 0);
+            XMVECTOR hiB = __lvx(hiReadBack, 0);
+
+            XMVECTOR diffA = __vsubfp(loA, hiA);
+            XMVECTOR diffB = __vsubfp(loB, hiB);
+            XMVECTOR sumA = __vaddfp(loA, hiA);
+            XMVECTOR sumB = __vaddfp(loB, hiB);
+
+            double uc1 = c1 * cc + s1 * ss;
+            double uc2 = c2 * cc + s2 * ss;
+            double us1 = s1 * cc - c1 * ss;
+            double us2 = s2 * cc - c2 * ss;
+
+            XMVECTOR swapA = __vperm(diffA, diffA, perm_swap.v);
+            XMVECTOR swapB = __vperm(diffB, diffB, perm_swap.v);
+
+            __stvx(sumA, loWrite, 0);
+            __stvx(sumB, loWriteBack, 0);
+
+            c1 = c1 - uc1;
+            c2 = c2 - uc2;
+            s1 = s1 - us1;
+            s2 = s2 - us2;
+
+            XMVECTOR outA = __vmaddfp(sLo, swapA, __vmaddfp(cLo, diffA, v_zero));
+            XMVECTOR outB = __vmaddfp(sHi, swapB, __vmaddfp(negCHi, diffB, v_zero));
+
+            __stvx(outA, hiWrite, 0);
+            __stvx(outB, hiWriteBack, 0);
+
+            sv.f[3] = (float)c1;
+            sv.f[1] = (float)s1;
+            sv.f[2] = (float)c2;
+            sv.f[0] = (float)s2;
+            XMVECTOR trig = sv.v;
+            XMVECTOR negTrig = __vsubfp(v_zero, trig);
+
+            XMVECTOR nextSHi = __vperm(trig, negTrig, perm_sel);
+            XMVECTOR nextCLo = __vsubfp(v_zero, __vperm(negCHi, negTrig, perm_cdup.v));
+            sLo = __vsel(sHi, nextSHi, sel_hi.v);
+            negCHi = __vmrglw(negTrig, negTrig);
+            sHi = nextSHi;
+            cLo = nextCLo;
+
+            loRead += 4;
+            hiRead += 4;
+            loReadBack -= 4;
+            hiReadBack -= 4;
+            loWrite += 4;
+            loWriteBack -= 4;
+            hiWrite += 4;
+            hiWriteBack -= 4;
+
+            XMVECTOR hiA2 = __lvx(hiRead, 0);
+            XMVECTOR loA2 = __lvx(loRead, 0);
+            XMVECTOR loB2 = __lvx(loReadBack, 0);
+            XMVECTOR hiB2 = __lvx(hiReadBack, 0);
+
+            XMVECTOR diffA2 = __vsubfp(loA2, hiA2);
+            XMVECTOR diffB2 = __vsubfp(loB2, hiB2);
+            XMVECTOR sumA2 = __vaddfp(loA2, hiA2);
+            XMVECTOR sumB2 = __vaddfp(loB2, hiB2);
+
+            double uc1b = c1 * cc + s1 * ss;
+            double uc2b = c2 * cc + s2 * ss;
+            double us1b = s1 * cc - c1 * ss;
+            double us2b = s2 * cc - c2 * ss;
+
+            XMVECTOR swapA2 = __vperm(diffA2, diffA2, perm_swap.v);
+            XMVECTOR swapB2 = __vperm(diffB2, diffB2, perm_swap.v);
+
+            __stvx(sumA2, loWrite, 0);
+            __stvx(sumB2, loWriteBack, 0);
+
+            c1 = c1 - uc1b;
+            c2 = c2 - uc2b;
+            s1 = s1 - us1b;
+            s2 = s2 - us2b;
+
+            XMVECTOR outA2 = __vmaddfp(sLo, swapA2, __vmaddfp(cLo, diffA2, v_zero));
+            XMVECTOR outB2 = __vmaddfp(sHi, swapB2, __vmaddfp(negCHi, diffB2, v_zero));
+
+            __stvx(outA2, hiWrite, 0);
+            __stvx(outB2, hiWriteBack, 0);
+
+            sv.f[3] = (float)c1;
+            sv.f[1] = (float)s1;
+            sv.f[2] = (float)c2;
+            sv.f[0] = (float)s2;
+            XMVECTOR trig2 = sv.v;
+            XMVECTOR negTrig2 = __vsubfp(v_zero, trig2);
+
+            XMVECTOR nextSHi2 = __vperm(trig2, negTrig2, perm_sel);
+            XMVECTOR nextCLo2 = __vsubfp(v_zero, __vperm(negCHi, negTrig2, perm_cdup.v));
+            sLo = __vsel(sHi, nextSHi2, sel_hi.v);
+            negCHi = __vmrglw(negTrig2, negTrig2);
+            sHi = nextSHi2;
+            cLo = nextCLo2;
+
+            loRead += 4;
+            hiRead += 4;
+            loReadBack -= 4;
+            hiReadBack -= 4;
+            loWrite += 4;
+            loWriteBack -= 4;
+            hiWrite += 4;
+            hiWriteBack -= 4;
+        }
+    } else {
+        // Inverse: every input vector is halved on the way in, so the whole
+        // recursion contributes the 1/size normalisation one level at a time
+        // (0x82E50198 loads __vmx@3f000000.. and each of the four loads gets a
+        // `vmaddcfp128 vN, v0, v127`).
+        XMVECTOR v_half = { 0.5f, 0.5f, 0.5f, 0.5f };
+        for (unsigned int i = 0; i < (size >> 4); ++i) {
+            XMVECTOR loA = __vmaddfp(v_half, __lvx(loRead, 0), v_zero);
+            XMVECTOR hiA = __vmaddfp(v_half, __lvx(hiRead, 0), v_zero);
+            XMVECTOR loB = __vmaddfp(v_half, __lvx(loReadBack, 0), v_zero);
+            XMVECTOR hiB = __vmaddfp(v_half, __lvx(hiReadBack, 0), v_zero);
+
+            double uc1 = c1 * cc + s1 * ss;
+            double uc2 = c2 * cc + s2 * ss;
+            double us1 = s1 * cc - c1 * ss;
+            double us2 = s2 * cc - c2 * ss;
+
+            XMVECTOR diffA = __vsubfp(loA, hiA);
+            XMVECTOR sumA = __vaddfp(loA, hiA);
+            __stvx(sumA, loWrite, 0);
+            XMVECTOR diffB = __vsubfp(loB, hiB);
+            XMVECTOR sumB = __vaddfp(loB, hiB);
+            __stvx(sumB, loWriteBack, 0);
+
+            c1 = c1 - uc1;
+            s1 = s1 - us1;
+            c2 = c2 - uc2;
+            s2 = s2 - us2;
+
+            XMVECTOR swapA = __vperm(diffA, diffA, perm_swap.v);
+            XMVECTOR swapB = __vperm(diffB, diffB, perm_swap.v);
+
+            XMVECTOR outA = __vmaddfp(sLo, swapA, __vmaddfp(cLo, diffA, v_zero));
+            XMVECTOR outB = __vmaddfp(sHi, swapB, __vmaddfp(negCHi, diffB, v_zero));
+
+            __stvx(outA, hiWrite, 0);
+            __stvx(outB, hiWriteBack, 0);
+
+            sv.f[0] = (float)s2;
+            sv.f[1] = (float)s1;
+            sv.f[2] = (float)c2;
+            sv.f[3] = (float)c1;
+            XMVECTOR trig = sv.v;
+            XMVECTOR negTrig = __vsubfp(v_zero, trig);
+
+            XMVECTOR nextSHi = __vperm(trig, negTrig, perm_sel);
+            XMVECTOR nextCLo = __vsubfp(v_zero, __vperm(negCHi, negTrig, perm_cdup.v));
+            sLo = __vsel(sHi, nextSHi, sel_hi.v);
+            negCHi = __vmrglw(negTrig, negTrig);
+            sHi = nextSHi;
+            cLo = nextCLo;
+
+            loRead += 4;
+            hiRead += 4;
+            loReadBack -= 4;
+            hiReadBack -= 4;
+            loWrite += 4;
+            loWriteBack -= 4;
+            hiWrite += 4;
+            hiWriteBack -= 4;
+
+            XMVECTOR loA2 = __vmaddfp(v_half, __lvx(loRead, 0), v_zero);
+            XMVECTOR hiA2 = __vmaddfp(v_half, __lvx(hiRead, 0), v_zero);
+            XMVECTOR loB2 = __vmaddfp(v_half, __lvx(loReadBack, 0), v_zero);
+            XMVECTOR hiB2 = __vmaddfp(v_half, __lvx(hiReadBack, 0), v_zero);
+
+            double uc1b = c1 * cc + s1 * ss;
+            double uc2b = c2 * cc + s2 * ss;
+            double us1b = s1 * cc - c1 * ss;
+            double us2b = s2 * cc - c2 * ss;
+
+            XMVECTOR diffA2 = __vsubfp(loA2, hiA2);
+            XMVECTOR sumA2 = __vaddfp(loA2, hiA2);
+            __stvx(sumA2, loWrite, 0);
+            XMVECTOR diffB2 = __vsubfp(loB2, hiB2);
+            XMVECTOR sumB2 = __vaddfp(loB2, hiB2);
+            __stvx(sumB2, loWriteBack, 0);
+
+            c1 = c1 - uc1b;
+            s1 = s1 - us1b;
+            c2 = c2 - uc2b;
+            s2 = s2 - us2b;
+
+            XMVECTOR swapA2 = __vperm(diffA2, diffA2, perm_swap.v);
+            XMVECTOR swapB2 = __vperm(diffB2, diffB2, perm_swap.v);
+
+            XMVECTOR outA2 = __vmaddfp(sLo, swapA2, __vmaddfp(cLo, diffA2, v_zero));
+            XMVECTOR outB2 = __vmaddfp(sHi, swapB2, __vmaddfp(negCHi, diffB2, v_zero));
+
+            __stvx(outA2, hiWrite, 0);
+            __stvx(outB2, hiWriteBack, 0);
+
+            sv.f[0] = (float)s2;
+            sv.f[1] = (float)s1;
+            sv.f[2] = (float)c2;
+            sv.f[3] = (float)c1;
+            XMVECTOR trig2 = sv.v;
+            XMVECTOR negTrig2 = __vsubfp(v_zero, trig2);
+
+            XMVECTOR nextSHi2 = __vperm(trig2, negTrig2, perm_sel);
+            XMVECTOR nextCLo2 = __vsubfp(v_zero, __vperm(negCHi, negTrig2, perm_cdup.v));
+            sLo = __vsel(sHi, nextSHi2, sel_hi.v);
+            negCHi = __vmrglw(negTrig2, negTrig2);
+            sHi = nextSHi2;
+            cLo = nextCLo2;
+
+            loRead += 4;
+            hiRead += 4;
+            loReadBack -= 4;
+            hiReadBack -= 4;
+            loWrite += 4;
+            loWriteBack -= 4;
+            hiWrite += 4;
+            hiWriteBack -= 4;
+        }
+    }
+
+    float* upper = data + size;
+    ret = FFTComplex(upper, (long)half, sign, context);
+    if (ret != 0) {
+        return ret;
+    }
+    ret = FFTComplex(data, (long)half, sign, context);
+    if (ret != 0) {
+        return ret;
+    }
+
+    float* scratch = (float*)g_fftScratch.buf;
+    float* copySrc = data;
+    float* copyDst = scratch;
+    for (unsigned int i = 0; i < (size >> 4); ++i) {
+        XMVECTOR c0 = __lvx(copySrc, 0);
+        copySrc += 4;
+        XMVECTOR c1v = __lvx(copySrc, 0);
+        copySrc += 4;
+        XMVECTOR c2v = __lvx(copySrc, 0);
+        copySrc += 4;
+        XMVECTOR c3v = __lvx(copySrc, 0);
+        copySrc += 4;
+        __stvx(c0, copyDst, 0);
+        copyDst += 4;
+        __stvx(c1v, copyDst, 0);
+        copyDst += 4;
+        __stvx(c2v, copyDst, 0);
+        copyDst += 4;
+        __stvx(c3v, copyDst, 0);
+        copyDst += 4;
+    }
+
+    float* evenSrc = scratch;
+    float* oddSrc = upper;
+    float* out = data;
+    for (unsigned int i = 0; i < (size >> 3); ++i) {
+        XMVECTOR e0 = __lvx(evenSrc, 0);
+        evenSrc += 4;
+        XMVECTOR o0 = __lvx(oddSrc, 0);
+        oddSrc += 4;
+        XMVECTOR m0 = __vperm(e0, o0, merge_lo.v);
+        XMVECTOR m1 = __vperm(e0, o0, merge_hi.v);
+        XMVECTOR e1 = __lvx(evenSrc, 0);
+        evenSrc += 4;
+        XMVECTOR o1 = __lvx(oddSrc, 0);
+        oddSrc += 4;
+        XMVECTOR m2 = __vperm(e1, o1, merge_lo.v);
+        XMVECTOR m3 = __vperm(e1, o1, merge_hi.v);
+        __stvx(m0, out, 0);
+        __stvx(m1, out, 0x10);
+        __stvx(m2, out, 0x20);
+        __stvx(m3, out, 0x30);
+        out += 16;
+    }
+
+    return ret;
+}
+
+// Radix-4 AltiVec complex FFT (the vector sibling of fft_scalar). a and b
+// must both be 16-byte aligned; a peeled first pass reads a and writes b, the
+// stage loop ping-pongs, and the tail is a last radix-4 stage (even log2) or
+// one radix-2 stage (odd log2), each with a 1/size-scaled variant for sign > 0.
+int fft_altivec(float* a, float* b, unsigned long size, long sign, float* twiddle) {
+    XMVECTORU32 sel_odd = { 0x00000000, 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF };
+    XMVECTORU32 perm_sin_fwd = { 0x04050607, 0x14151617, 0x0C0D0E0F, 0x1C1D1E1F };
+    XMVECTORU32 sel_even = { 0xFFFFFFFF, 0x00000000, 0xFFFFFFFF, 0x00000000 };
+    XMVECTORU32 perm_sin_inv = { 0x14151617, 0x04050607, 0x1C1D1E1F, 0x0C0D0E0F };
+    XMVECTORU32 perm_swap = { 0x04050607, 0x00010203, 0x0C0D0E0F, 0x08090A0B };
+    XMVECTORU32 merge_lo = { 0x00010203, 0x04050607, 0x10111213, 0x14151617 };
+    XMVECTORU32 merge_hi = { 0x08090A0B, 0x0C0D0E0F, 0x18191A1B, 0x1C1D1E1F };
+    XMVECTORU32 perm_cdup = { 0x00010203, 0x00010203, 0x08090A0B, 0x08090A0B };
+
+    XMVECTOR v_zero = { 0.0f, 0.0f, 0.0f, 0.0f };
+    XMVECTOR v_alt_pos = { 1.0f, -1.0f, 1.0f, -1.0f };
+    XMVECTOR v_alt_neg = { -1.0f, 1.0f, -1.0f, 1.0f };
+
+    int p = 1;
+    int power;
+    if ((long)size == 1) {
+        power = 0;
+    } else {
+        int p2 = 2;
+        if ((long)size > 2) {
+            do {
+                p2 *= 2;
+                p += 1;
+            } while (p2 < (long)size);
+        }
+        power = p;
+    }
+
+    if ((unsigned int)(1 << power) != (unsigned int)size) {
+        return 0x16;
+    }
+    if (((unsigned int)(size_t)a & 0xf) != 0) {
+        return 0x16;
+    }
+    if (((unsigned int)(size_t)b & 0xf) != 0) {
+        return 0x16;
+    }
+
+    XMVECTOR alt;
+    XMVECTOR sel;
+    XMVECTOR perm_sin;
+    if (sign < 0) {
+        alt = v_alt_pos;
+        sel = sel_odd.v;
+        perm_sin = perm_sin_fwd.v;
+    } else {
+        alt = v_alt_neg;
+        sel = sel_even.v;
+        perm_sin = perm_sin_inv.v;
+    }
+
+    unsigned int half = (unsigned int)size >> 1;
+
+    // ---- first pass: a -> b, four inputs size/4 complex apart -------------
+    {
+        float* rd = a;
+        float* wr = b;
+        float* tw1 = twiddle;
+        float* tw2 = twiddle;
+        unsigned int j = 0;
+        do {
+            XMVECTOR x0 = __lvx(rd, 0);
+            XMVECTOR x2 = __lvx(rd + size, 0);
+            XMVECTOR d02 = __vsubfp(x0, x2);
+            XMVECTOR w1 = __lvx(tw1, 0);
+            XMVECTOR wq0 = __lvx(tw2, 0);
+            XMVECTOR s02 = __vaddfp(x0, x2);
+            XMVECTOR w1c = __vperm(w1, w1, perm_cdup.v);
+            XMVECTOR x1 = __lvx(rd + half, 0);
+            XMVECTOR nw1 = __vsubfp(v_zero, w1);
+            XMVECTOR x3 = __lvx(rd + half + size, 0);
+            XMVECTOR q0s = __vspltw(wq0, 1);
+            XMVECTOR d13 = __vsubfp(x1, x3);
+            XMVECTOR q0c = __vspltw(wq0, 0);
+            XMVECTOR s13 = __vaddfp(x1, x3);
+            XMVECTOR wq1 = __lvx(tw2 + 4, 0);
+            XMVECTOR w2 = __lvx(twiddle + half + j, 0);
+
+            XMVECTOR nw2 = __vsubfp(v_zero, w2);
+            XMVECTOR q1s = __vspltw(wq1, 1);
+            XMVECTOR q1c = __vspltw(wq1, 0);
+            j += 4;
+
+            XMVECTOR m0 = __vmaddfp(d02, w1c, v_zero);
+            XMVECTOR sw0 = __vperm(d02, d02, perm_swap.v);
+            XMVECTOR nq0s = __vsubfp(v_zero, q0s);
+            XMVECTOR nq1s = __vsubfp(v_zero, q1s);
+            XMVECTOR w2c = __vperm(w2, w2, perm_cdup.v);
+            XMVECTOR s1v = __vperm(w1, nw1, perm_sin);
+            rd += 4;
+            tw1 += 4;
+            tw2 += 8;
+
+            XMVECTOR m1 = __vmaddfp(d13, w2c, v_zero);
+            XMVECTOR sw1 = __vperm(d13, d13, perm_swap.v);
+            XMVECTOR s2v = __vperm(w2, nw2, perm_sin);
+            XMVECTOR t0 = __vmaddfp(sw0, s1v, m0);
+            XMVECTOR g0 = __vsel(q0s, nq0s, sel);
+            XMVECTOR g1 = __vsel(q1s, nq1s, sel);
+            XMVECTOR t1 = __vmaddfp(sw1, s2v, m1);
+
+            XMVECTOR u0 = __vperm(s02, t0, merge_lo.v);
+            XMVECTOR u1 = __vperm(s02, t0, merge_hi.v);
+            XMVECTOR u2 = __vperm(s13, t1, merge_lo.v);
+            XMVECTOR u3 = __vperm(s13, t1, merge_hi.v);
+
+            XMVECTOR q0 = __vsubfp(u0, u2);
+            XMVECTOR q1 = __vsubfp(u1, u3);
+            XMVECTOR p0 = __vaddfp(u0, u2);
+            XMVECTOR p1 = __vaddfp(u1, u3);
+
+            XMVECTOR n0 = __vmaddfp(q0c, q0, v_zero);
+            XMVECTOR sq0 = __vperm(q0, q0, perm_swap.v);
+            XMVECTOR n1 = __vmaddfp(q1c, q1, v_zero);
+            XMVECTOR sq1 = __vperm(q1, q1, perm_swap.v);
+
+            __stvx(p0, wr, 0);
+            __stvx(p1, wr, 0x20);
+            XMVECTOR r0 = __vmaddfp(g0, sq0, n0);
+            XMVECTOR r1 = __vmaddfp(g1, sq1, n1);
+            __stvx(r0, wr, 0x10);
+            __stvx(r1, wr, 0x30);
+            wr += 16;
+        } while (j < half);
+    }
+
+    // ---- stage loop -------------------------------------------------------
+    int stages = (power - 2) / 2;
+    float* rd = b;
+    float* wr = a;
+    int blk = 4;
+
+    while (stages > 0) {
+        unsigned int step = (unsigned int)blk >> 2;
+        float* q0p = rd;
+        float* q1p = rd + half;
+        float* q2p = rd + size;
+        float* q3p = rd + half + size;
+
+        if (stages == 1 && (power & 1) == 0) {
+            break;
+        }
+
+        {
+            // group 0: twiddle is (1, 0)
+            XMVECTOR w = __lvx(twiddle, 0);
+            XMVECTOR ws = __vspltw(w, 1);
+            XMVECTOR wc = __vspltw(w, 0);
+            XMVECTOR wsa = __vmaddfp(ws, alt, v_zero);
+            XMVECTOR wca = __vmaddfp(wc, alt, v_zero);
+            XMVECTOR nws = __vsubfp(v_zero, ws);
+
+            float* o0 = wr;
+            float* o1 = wr + blk * 2;
+            float* o2 = wr + blk * 4;
+            float* o3 = wr + blk * 6;
+            for (unsigned int k = 0; k < step; ++k) {
+                XMVECTOR x0 = __lvx(q0p, 0);
+                q0p += 4;
+                XMVECTOR x1 = __lvx(q1p, 0);
+                q1p += 4;
+                XMVECTOR x2 = __lvx(q2p, 0);
+                q2p += 4;
+                XMVECTOR x3 = __lvx(q3p, 0);
+                q3p += 4;
+
+                XMVECTOR d02 = __vsubfp(x2, x0);
+                XMVECTOR d13 = __vsubfp(x3, x1);
+                XMVECTOR s02 = __vaddfp(x2, x0);
+                XMVECTOR s13 = __vaddfp(x3, x1);
+
+                XMVECTOR m0 = __vmaddfp(d02, wc, v_zero);
+                XMVECTOR m1 = __vmaddfp(d13, nws, v_zero);
+                XMVECTOR c0 = __vmaddfp(__vperm(d02, d02, perm_swap.v), wsa, m0);
+                XMVECTOR c1 = __vmaddfp(__vperm(d13, d13, perm_swap.v), wca, m1);
+
+                XMVECTOR e0 = __vsubfp(s02, s13);
+                XMVECTOR f0 = __vaddfp(s02, s13);
+                XMVECTOR e1 = __vsubfp(c0, c1);
+                XMVECTOR f1 = __vaddfp(c0, c1);
+
+                XMVECTOR g0 = __vmaddfp(wc, e0, v_zero);
+                XMVECTOR g1 = __vmaddfp(wc, e1, v_zero);
+                __stvx(f0, o0, 0);
+                o0 += 4;
+                __stvx(f1, o1, 0);
+                o1 += 4;
+                __stvx(__vmaddfp(wsa, __vperm(e0, e0, perm_swap.v), g0), o2, 0);
+                o2 += 4;
+                __stvx(__vmaddfp(wsa, __vperm(e1, e1, perm_swap.v), g1), o3, 0);
+                o3 += 4;
+            }
+        }
+
+        {
+            float* t1p = twiddle + blk * 2;
+            float* t2p = twiddle + blk;
+            float* o0 = wr + blk * 8;
+            float* o1 = wr + blk * 10;
+            float* o2 = wr + blk * 12;
+            float* o3 = wr + blk * 14;
+            for (unsigned int g = (unsigned int)blk * 2; g < half; g += (unsigned int)blk * 2) {
+                XMVECTOR w1 = __lvx(t1p, 0);
+                XMVECTOR w2 = __lvx(t2p, 0);
+                XMVECTOR s1 = __vspltw(w1, 1);
+                XMVECTOR s2 = __vspltw(w2, 1);
+                XMVECTOR c2 = __vspltw(w2, 0);
+                XMVECTOR c1 = __vspltw(w1, 0);
+                XMVECTOR ns1 = __vsubfp(v_zero, s1);
+                XMVECTOR s2a = __vmaddfp(s2, alt, v_zero);
+                XMVECTOR ns2 = __vsubfp(v_zero, s2);
+                XMVECTOR c2a = __vmaddfp(c2, alt, v_zero);
+                XMVECTOR s1sel = __vsel(s1, ns1, sel);
+
+                for (unsigned int k = 0; k < step; ++k) {
+                    XMVECTOR x0 = __lvx(q0p, 0);
+                    q0p += 4;
+                    XMVECTOR x1 = __lvx(q1p, 0);
+                    q1p += 4;
+                    XMVECTOR x2 = __lvx(q2p, 0);
+                    q2p += 4;
+                    XMVECTOR x3 = __lvx(q3p, 0);
+                    q3p += 4;
+
+                    XMVECTOR d02 = __vsubfp(x2, x0);
+                    XMVECTOR d13 = __vsubfp(x3, x1);
+                    XMVECTOR s02 = __vaddfp(x2, x0);
+                    XMVECTOR s13 = __vaddfp(x3, x1);
+
+                    XMVECTOR m0 = __vmaddfp(d02, c2, v_zero);
+                    XMVECTOR m1 = __vmaddfp(d13, ns2, v_zero);
+                    XMVECTOR b0 = __vmaddfp(__vperm(d02, d02, perm_swap.v), s2a, m0);
+                    XMVECTOR b1 = __vmaddfp(__vperm(d13, d13, perm_swap.v), c2a, m1);
+
+                    XMVECTOR e0 = __vsubfp(s02, s13);
+                    XMVECTOR f0 = __vaddfp(s02, s13);
+                    XMVECTOR e1 = __vsubfp(b0, b1);
+                    XMVECTOR f1 = __vaddfp(b0, b1);
+
+                    XMVECTOR g0 = __vmaddfp(c1, e0, v_zero);
+                    XMVECTOR g1 = __vmaddfp(c1, e1, v_zero);
+                    __stvx(f0, o0, 0);
+                    o0 += 4;
+                    __stvx(f1, o1, 0);
+                    o1 += 4;
+                    __stvx(__vmaddfp(s1sel, __vperm(e0, e0, perm_swap.v), g0), o2, 0);
+                    o2 += 4;
+                    __stvx(__vmaddfp(s1sel, __vperm(e1, e1, perm_swap.v), g1), o3, 0);
+                    o3 += 4;
+                }
+
+                t1p += blk * 4;
+                t2p += blk * 2;
+                o0 += blk * 8;
+                o1 += blk * 8;
+                o2 += blk * 8;
+                o3 += blk * 8;
+            }
+        }
+
+        {
+            float* t = wr;
+            wr = rd;
+            rd = t;
+        }
+        stages -= 1;
+        blk *= 4;
+    }
+
+    // ---- last radix-4 stage (power even) ----------------------------------
+    if (stages == 1 && (power & 1) == 0) {
+        float* q0p = rd;
+        float* q1p = rd + half;
+        float* q2p = rd + size;
+        float* q3p = rd + half + size;
+        if ((power & 3) == 2) {
+            wr = rd;
+        }
+        XMVECTOR w = __lvx(twiddle, 0);
+        XMVECTOR ws = __vspltw(w, 1);
+        XMVECTOR wc = __vspltw(w, 0);
+        XMVECTOR wsa = __vmaddfp(ws, alt, v_zero);
+        XMVECTOR wca = __vmaddfp(wc, alt, v_zero);
+        XMVECTOR nws = __vsubfp(v_zero, ws);
+
+        float* o0 = wr;
+        float* o1 = wr + blk * 4;
+        float* o2 = wr + blk * 2;
+        float* o3 = wr + blk * 6;
+        unsigned int step = (unsigned int)blk >> 2;
+
+        if (sign > 0) {
+            float inv_n = 1.0f / (float)(double)(long long)(unsigned int)size;
+            XMVECTORF32 sv;
+            sv.f[0] = inv_n;
+            XMVECTOR scale = __vspltw(sv.v, 0);
+            for (unsigned int k = 0; k < step; ++k) {
+                XMVECTOR x0 = __lvx(q0p, 0);
+                q0p += 4;
+                XMVECTOR x1 = __lvx(q1p, 0);
+                q1p += 4;
+                XMVECTOR x2 = __lvx(q2p, 0);
+                q2p += 4;
+                XMVECTOR x3 = __lvx(q3p, 0);
+                q3p += 4;
+
+                XMVECTOR d02 = __vsubfp(x1, x0);
+                XMVECTOR s02 = __vaddfp(x1, x0);
+                XMVECTOR d13 = __vsubfp(x2, x3);
+                XMVECTOR s13 = __vaddfp(x2, x3);
+
+                XMVECTOR m0 = __vmaddfp(d02, wc, v_zero);
+                XMVECTOR m1 = __vmaddfp(d13, nws, v_zero);
+                XMVECTOR c0 = __vmaddfp(__vperm(d02, d02, perm_swap.v), wsa, m0);
+                XMVECTOR c1 = __vmaddfp(__vperm(d13, d13, perm_swap.v), wca, m1);
+
+                XMVECTOR f0 = __vaddfp(s02, s13);
+                XMVECTOR e0 = __vsubfp(s02, s13);
+                XMVECTOR f1 = __vaddfp(c0, c1);
+                XMVECTOR e1 = __vsubfp(c0, c1);
+
+                __stvx(__vmaddfp(f0, scale, v_zero), o0, 0);
+                o0 += 4;
+                __stvx(__vmaddfp(f1, scale, v_zero), o1, 0);
+                o1 += 4;
+                XMVECTOR g0 = __vmaddfp(wc, e0, v_zero);
+                XMVECTOR g1 = __vmaddfp(wc, e1, v_zero);
+                __stvx(__vmaddfp(__vmaddfp(wsa, __vperm(e0, e0, perm_swap.v), g0), scale, v_zero), o2, 0);
+                o2 += 4;
+                __stvx(__vmaddfp(__vmaddfp(wsa, __vperm(e1, e1, perm_swap.v), g1), scale, v_zero), o3, 0);
+                o3 += 4;
+            }
+        } else {
+            for (unsigned int k = 0; k < step; ++k) {
+                XMVECTOR x0 = __lvx(q0p, 0);
+                q0p += 4;
+                XMVECTOR x1 = __lvx(q1p, 0);
+                q1p += 4;
+                XMVECTOR x2 = __lvx(q2p, 0);
+                q2p += 4;
+                XMVECTOR x3 = __lvx(q3p, 0);
+                q3p += 4;
+
+                XMVECTOR d02 = __vsubfp(x1, x0);
+                XMVECTOR s02 = __vaddfp(x1, x0);
+                XMVECTOR d13 = __vsubfp(x2, x3);
+                XMVECTOR s13 = __vaddfp(x2, x3);
+
+                XMVECTOR m0 = __vmaddfp(d02, wc, v_zero);
+                XMVECTOR m1 = __vmaddfp(d13, nws, v_zero);
+                XMVECTOR c0 = __vmaddfp(__vperm(d02, d02, perm_swap.v), wsa, m0);
+                XMVECTOR c1 = __vmaddfp(__vperm(d13, d13, perm_swap.v), wca, m1);
+
+                XMVECTOR f0 = __vaddfp(s02, s13);
+                XMVECTOR e0 = __vsubfp(s02, s13);
+                XMVECTOR f1 = __vaddfp(c0, c1);
+                XMVECTOR e1 = __vsubfp(c0, c1);
+
+                __stvx(f0, o0, 0);
+                o0 += 4;
+                __stvx(f1, o1, 0);
+                o1 += 4;
+                XMVECTOR g0 = __vmaddfp(wc, e0, v_zero);
+                XMVECTOR g1 = __vmaddfp(wc, e1, v_zero);
+                __stvx(__vmaddfp(wsa, __vperm(e0, e0, perm_swap.v), g0), o2, 0);
+                o2 += 4;
+                __stvx(__vmaddfp(wsa, __vperm(e1, e1, perm_swap.v), g1), o3, 0);
+                o3 += 4;
+            }
+        }
+        return 0;
+    }
+
+    // ---- odd power: one extra RADIX-2 stage -------------------------------
+    if ((power & 1) == 0) {
+        return 0;
+    }
+
+    {
+        float* lo = b;
+        if ((power & 2) == 0) {
+            lo = a;
+        }
+        float* hi = lo + size;
+        float* out = a;
+        float* outHi = a + size;
+
+        if (sign > 0) {
+            float inv_n = 1.0f / (float)(double)(long long)(unsigned int)size;
+            XMVECTORF32 sv;
+            sv.f[0] = inv_n;
+            XMVECTOR scale = __vspltw(sv.v, 0);
+            unsigned int step = (unsigned int)blk >> 3;
+            for (unsigned int k = 0; k < step; ++k) {
+                XMVECTOR x0 = __lvx(lo, 0);
+                lo += 4;
+                XMVECTOR s0 = __vmaddfp(x0, scale, v_zero);
+                XMVECTOR y0 = __lvx(hi, 0);
+                hi += 4;
+                XMVECTOR x1 = __lvx(lo, 0);
+                lo += 4;
+                XMVECTOR s1 = __vmaddfp(x1, scale, v_zero);
+                XMVECTOR y1 = __lvx(hi, 0);
+                hi += 4;
+                XMVECTOR x2 = __lvx(lo, 0);
+                lo += 4;
+                XMVECTOR s2 = __vmaddfp(x2, scale, v_zero);
+                XMVECTOR y2 = __lvx(hi, 0);
+                hi += 4;
+                XMVECTOR x3 = __lvx(lo, 0);
+                lo += 4;
+                XMVECTOR s3 = __vmaddfp(x3, scale, v_zero);
+                XMVECTOR y3 = __lvx(hi, 0);
+                hi += 4;
+
+                __stvx(__vmaddfp(y0, scale, s0), out, 0);
+                out += 4;
+                __stvx(__vnmsubfp(y0, scale, s0), outHi, 0);
+                outHi += 4;
+                __stvx(__vmaddfp(y1, scale, s1), out, 0);
+                out += 4;
+                __stvx(__vnmsubfp(y1, scale, s1), outHi, 0);
+                outHi += 4;
+                __stvx(__vmaddfp(y2, scale, s2), out, 0);
+                out += 4;
+                __stvx(__vnmsubfp(y2, scale, s2), outHi, 0);
+                outHi += 4;
+                __stvx(__vmaddfp(y3, scale, s3), out, 0);
+                out += 4;
+                __stvx(__vnmsubfp(y3, scale, s3), outHi, 0);
+                outHi += 4;
+            }
+        } else {
+            unsigned int step = (unsigned int)blk >> 3;
+            for (unsigned int k = 0; k < step; ++k) {
+                XMVECTOR y0 = __lvx(hi, 0);
+                hi += 4;
+                XMVECTOR x0 = __lvx(lo, 0);
+                lo += 4;
+                XMVECTOR a0 = __vaddfp(x0, y0);
+                XMVECTOR b0 = __vsubfp(x0, y0);
+                XMVECTOR y1 = __lvx(hi, 0);
+                hi += 4;
+                XMVECTOR x1 = __lvx(lo, 0);
+                lo += 4;
+                XMVECTOR a1 = __vaddfp(x1, y1);
+                XMVECTOR b1 = __vsubfp(x1, y1);
+                XMVECTOR y2 = __lvx(hi, 0);
+                hi += 4;
+                XMVECTOR x2 = __lvx(lo, 0);
+                lo += 4;
+                XMVECTOR a2 = __vaddfp(x2, y2);
+                XMVECTOR b2 = __vsubfp(x2, y2);
+                XMVECTOR y3 = __lvx(hi, 0);
+                hi += 4;
+                XMVECTOR x3 = __lvx(lo, 0);
+                lo += 4;
+
+                __stvx(a0, out, 0);
+                out += 4;
+                __stvx(b0, outHi, 0);
+                outHi += 4;
+                XMVECTOR a3 = __vaddfp(x3, y3);
+                XMVECTOR b3 = __vsubfp(x3, y3);
+                __stvx(a1, out, 0);
+                out += 4;
+                __stvx(b1, outHi, 0);
+                outHi += 4;
+                __stvx(a2, out, 0);
+                out += 4;
+                __stvx(b2, outHi, 0);
+                outHi += 4;
+                __stvx(a3, out, 0);
+                out += 4;
+                __stvx(b3, outHi, 0);
+                outHi += 4;
+            }
+        }
+    }
+
+    return 0;
 }
 
 int fft_scalar(float* a, float* b, unsigned long size, long sign, float* twiddle) {
@@ -960,6 +1842,128 @@ cleanup:
 }
 #pragma float_control(pop)
 
+
+// Real-input forward FFT (AltiVec): a half-length complex FFT, then the
+// real-spectrum recombination two bins per vector from both ends, with the
+// twiddles carried in a double-precision trig recurrence.
+int fft_real_forward_altivec(float* data, long size, float* context) {
+    int ret = FFTComplex(data, size / 2, -1, context);
+    if (ret == 0) {
+        XMVECTORU32 sel_hi = { 0xFFFFFFFF, 0xFFFFFFFF, 0x00000000, 0x00000000 };
+        XMVECTORU32 perm_a = { 0x00010203, 0x14151617, 0x08090A0B, 0x1C1D1E1F };
+        XMVECTORU32 perm_b = { 0x04050607, 0x10111213, 0x0C0D0E0F, 0x18191A1B };
+        XMVECTORU32 perm_c = { 0x10111213, 0x04050607, 0x18191A1B, 0x0C0D0E0F };
+        XMVECTORU32 perm_d = { 0x04050607, 0x04050607, 0x14151617, 0x14151617 };
+        XMVECTORU32 perm_e = { 0x00010203, 0x00010203, 0x1C1D1E1F, 0x1C1D1E1F };
+
+        XMVECTOR v_zero = { 0.0f, 0.0f, 0.0f, 0.0f };
+        XMVECTOR v_half = { 0.5f, 0.5f, 0.5f, 0.5f };
+        XMVECTOR v_sign_lo = { 1.0f, -1.0f, 1.0f, -1.0f };
+        XMVECTOR v_sign_hi = { -1.0f, 1.0f, -1.0f, 1.0f };
+
+        float inv_n = 1.0f / (float)(long long)size;
+        float angle1 = inv_n * (float)(2.0 * M_PI);
+        float sin_a = (float)sin(angle1);
+        float angle2 = inv_n * (float)(4.0 * M_PI);
+        double cc = (double)sin_a * (double)sin_a;
+        cc = cc * 2.0;
+        double ss = (float)sin(angle2);
+
+        XMVECTORF32 sv;
+        sv.f[0] = 1.0f;
+        sv.f[1] = 1.0f;
+        double c1 = (float)cos(angle1);
+        sv.f[2] = (float)c1;
+        sv.f[3] = (float)c1;
+        XMVECTOR cLo = sv.v;
+        double c2 = (float)cos(angle2);
+        sv.f[0] = (float)c2;
+        sv.f[1] = (float)c2;
+        XMVECTOR cHi = sv.v;
+
+        sv.f[0] = 0.0f;
+        sv.f[1] = 0.0f;
+        double s1 = (float)sin(angle1);
+        sv.f[2] = (float)s1;
+        sv.f[3] = (float)s1;
+        XMVECTOR sLo = sv.v;
+        double s2 = (float)sin(angle2);
+        sv.f[0] = (float)s2;
+        sv.f[1] = (float)s2;
+        XMVECTOR sHi = sv.v;
+
+        XMVECTOR loCur = __lvx(data, 0);
+        XMVECTOR hiPrev = loCur;
+        float dc_re = data[0];
+        float dc_im = data[1];
+
+        float* loWrite = data;
+        float* loRead = data + 4;
+        float* hiRead = data + (size / 4) * 4 - 4;
+        float* hiWrite = hiRead;
+
+        for (long i = 0; i < size / 8; i++) {
+            XMVECTOR hiNew = __lvx(hiRead, 0);
+            XMVECTOR loNext = __lvx(loRead, 0);
+            XMVECTOR hiPair = __vsel(hiNew, hiPrev, *(XMVECTOR*)&sel_hi);
+            hiPrev = hiNew;
+            XMVECTOR loPair = __vsel(loCur, loNext, *(XMVECTOR*)&sel_hi);
+
+            XMVECTOR cLoSigned = __vmaddfp(cLo, v_sign_lo, v_zero);
+            XMVECTOR sumLo = __vaddfp(loCur, hiPair);
+            XMVECTOR diffLo = __vsubfp(loCur, hiPair);
+            XMVECTOR cHiSigned = __vmaddfp(cHi, v_sign_hi, v_zero);
+            XMVECTOR sumHi = __vaddfp(hiNew, loPair);
+            XMVECTOR diffHi = __vsubfp(hiNew, loPair);
+            loCur = loNext;
+
+            double uc1 = s1 * ss + c1 * cc;
+            double uc2 = s2 * ss + c2 * cc;
+            double us1 = s1 * cc - c1 * ss;
+            double us2 = s2 * cc - c2 * ss;
+
+            XMVECTOR loAdd = __vperm(sumLo, diffLo, *(XMVECTOR*)&perm_a);
+            XMVECTOR loMulC = __vperm(sumLo, diffLo, *(XMVECTOR*)&perm_b);
+            XMVECTOR loMulS = __vperm(sumLo, diffLo, *(XMVECTOR*)&perm_c);
+            XMVECTOR hiAdd = __vperm(sumHi, diffHi, *(XMVECTOR*)&perm_a);
+            XMVECTOR hiMulC = __vperm(sumHi, diffHi, *(XMVECTOR*)&perm_b);
+            XMVECTOR hiMulS = __vperm(sumHi, diffHi, *(XMVECTOR*)&perm_c);
+
+            XMVECTOR outLo = __vmaddfp(cLoSigned, loMulC, loAdd);
+            XMVECTOR outHi = __vmaddfp(cHiSigned, hiMulC, hiAdd);
+
+            c1 = c1 - uc1;
+            c2 = c2 - uc2;
+            s1 = s1 - us1;
+            s2 = s2 - us2;
+
+            outLo = __vnmsubfp(sLo, loMulS, outLo);
+            outHi = __vnmsubfp(sHi, hiMulS, outHi);
+
+            sv.f[1] = (float)c1;
+            sv.f[0] = (float)c2;
+            sv.f[3] = (float)s1;
+            sv.f[2] = (float)s2;
+            XMVECTOR trig = sv.v;
+
+            __stvx(__vmaddfp(outLo, v_half, v_zero), loWrite, 0);
+            loWrite += 4;
+            __stvx(__vmaddfp(v_half, outHi, v_zero), hiWrite, 0);
+            hiWrite -= 4;
+
+            cHi = __vmrghw(trig, trig);
+            sLo = __vperm(sHi, trig, *(XMVECTOR*)&perm_e);
+            cLo = __vperm(cHiSigned, trig, *(XMVECTOR*)&perm_d);
+            sHi = __vmrglw(trig, trig);
+
+            loRead += 4;
+            hiRead -= 4;
+        }
+
+        data[1] = dc_re - dc_im;
+    }
+    return ret;
+}
 
 // Real-input forward FFT dispatcher: small transforms (< 32) use the scalar
 // kernel, larger ones the AltiVec kernel.

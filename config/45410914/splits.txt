@@ -7532,11 +7532,7 @@ CharGuitarString.cpp:
 
 HAQManager.cpp:
 	.pdata      start:0x8225E780 end:0x8225E790
-	.pdata      start:0x8225E790 end:0x8225E7A0
-	.pdata      start:0x8225E7A0 end:0x8225E7B0
 	.text       start:0x82BB153C end:0x82BB15E8
-	.text       start:0x82BB15F8 end:0x82BB1708
-	.text       start:0x82BB177C end:0x82BB197C
 
 LocaleOrdinal.cpp:
 	.pdata      start:0x82242D00 end:0x82242D38
@@ -13713,9 +13709,8 @@ Main.cpp:
 	.text       start:0x82272E68 end:0x82272EDC
 
 system/synth/OggMap.cpp:
-	.pdata      start:0x8225E7B0 end:0x8225E818
-	.text       start:0x82BB1708 end:0x82BB177C
-	.text       start:0x82BB197C end:0x82BB24D0
+	.pdata      start:0x8225E790 end:0x8225E818
+	.text       start:0x82BB15F8 end:0x82BB24D0
 
 system/synth/MidiChannel.cpp:
 	.text       start:0x8272AF68 end:0x8272AFB8
