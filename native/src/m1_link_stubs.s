@@ -1,35 +1,30 @@
-// M1 off-path link stubs (native only). AUTO-GENERATED from the rb3-song
-// link's undefined C++ references. NONE are reached by the driver's
-// load+query path (SongMgr::Init -> AddSongData -> BandSongMetadata parse
-// -> GetShortNameFromSongID / Data / GetSongIDFromShortName / Title / Artist).
-// They are pulled in only as vtable slots or as bodies of unexercised
-// accessors (upgrade/license/session/profile/rockcentral/saveload paths).
-// Functions return 0; the TheXxx manager globals are null pointers, which
-// the exercised code null-checks before use.
+// M1 off-path link stubs (native only, rb3-song). Originally AUTO-GENERATED
+// from the rb3-song link's undefined C++ references.
+//
+// W16-PL: re-derived by deleting this file from the link and reading the
+// --gc-sections linker's undefined list. 24 stubs -> 14:
+//   * 7 LicenseMgr members are gone -- rb3-song links the real
+//     src/band3/meta_band/LicenseMgr.cpp. (The stub ctor never constructed the
+//     object's std::set / hash_map, so BandSongMgr::Init's `new LicenseMgr()`
+//     handed back uninitialised containers.)
+//   * BandUserMgr::GetParticipatingBandUsers, BandMachineMgr::IsSongShared and
+//     BandUser::GetControllerSym are no longer referenced at all under gc.
+// What remains is referenced only from BandSongMgr::ContentDone /
+// AllowContentToBeAdded / GetRankedSongs / SyncSharedSongs and
+// BandSongMetadata::HasPart, i.e. virtual slots and unexercised accessors.
+// Measured with gdb breakpoints on all five over the native_health ark run:
+// none is ever entered. Their real TUs (SessionMgr, ProfileMgr, RockCentral,
+// SaveLoadManager, UIEventMgr, GameMode) pull the session / profile / net / UI
+// graph.
+//
+// Functions return 0. TheGameMode / TheSaveLoadMgr / TheSessionMgr /
+// TheUIEventMgr are null pointers, which the code null-checks before use.
+// NB TheProfileMgr and TheRockCentral are OBJECTS in real code
+// (meta_band/ProfileMgr.h, net_band/RockCentral.h), not pointers; the 8 zero
+// bytes here are NOT a valid object. ContentDone is the only reader
+// (TheRockCentral.IsOnline()), and it is never entered (above).
 
 .text
-// TrackTypeToSym(TrackType)
-
-// LicenseMgr::ClearCachedContent()
-.weak _ZN10LicenseMgr18ClearCachedContentEv
-.type _ZN10LicenseMgr18ClearCachedContentEv,@function
-_ZN10LicenseMgr18ClearCachedContentEv:
-    xorq %rax, %rax
-    ret
-
-// LicenseMgr::ReadCachedMetadataFromStream(BinStream&, int)
-.weak _ZN10LicenseMgr28ReadCachedMetadataFromStreamER9BinStreami
-.type _ZN10LicenseMgr28ReadCachedMetadataFromStreamER9BinStreami,@function
-_ZN10LicenseMgr28ReadCachedMetadataFromStreamER9BinStreami:
-    xorq %rax, %rax
-    ret
-
-// LicenseMgr::LicenseMgr()
-.weak _ZN10LicenseMgrC1Ev
-.type _ZN10LicenseMgrC1Ev,@function
-_ZN10LicenseMgrC1Ev:
-    xorq %rax, %rax
-    ret
 
 // ProfileMgr::GetSignedInProfiles()
 .weak _ZN10ProfileMgr19GetSignedInProfilesEv
@@ -73,48 +68,6 @@ _ZN16LocalBandMachine23SetProGuitarOrBassSongsERKSt3setIiSt4lessIiESaIiEE:
     xorq %rax, %rax
     ret
 
-// LicenseMgr::HasLicense(Symbol) const
-.weak _ZNK10LicenseMgr10HasLicenseE6Symbol
-.type _ZNK10LicenseMgr10HasLicenseE6Symbol,@function
-_ZNK10LicenseMgr10HasLicenseE6Symbol:
-    xorq %rax, %rax
-    ret
-
-// LicenseMgr::LicenseCacheNeedsWrite() const
-.weak _ZNK10LicenseMgr22LicenseCacheNeedsWriteEv
-.type _ZNK10LicenseMgr22LicenseCacheNeedsWriteEv,@function
-_ZNK10LicenseMgr22LicenseCacheNeedsWriteEv:
-    xorq %rax, %rax
-    ret
-
-// LicenseMgr::ClearLicenseCacheNeedsWrite()
-.weak _ZN10LicenseMgr27ClearLicenseCacheNeedsWriteEv
-.type _ZN10LicenseMgr27ClearLicenseCacheNeedsWriteEv,@function
-_ZN10LicenseMgr27ClearLicenseCacheNeedsWriteEv:
-    xorq %rax, %rax
-    ret
-
-// LicenseMgr::WriteCachedMetadataToStream(BinStream&) const
-.weak _ZNK10LicenseMgr27WriteCachedMetadataToStreamER9BinStream
-.type _ZNK10LicenseMgr27WriteCachedMetadataToStreamER9BinStream,@function
-_ZNK10LicenseMgr27WriteCachedMetadataToStreamER9BinStream:
-    xorq %rax, %rax
-    ret
-
-// BandUserMgr::GetParticipatingBandUsers(std::vector<BandUser*, std::allocator<BandUser*> >&) const
-.weak _ZNK11BandUserMgr25GetParticipatingBandUsersERSt6vectorIP8BandUserSaIS2_EE
-.type _ZNK11BandUserMgr25GetParticipatingBandUsersERSt6vectorIP8BandUserSaIS2_EE,@function
-_ZNK11BandUserMgr25GetParticipatingBandUsersERSt6vectorIP8BandUserSaIS2_EE:
-    xorq %rax, %rax
-    ret
-
-// BandMachineMgr::IsSongShared(int) const
-.weak _ZNK14BandMachineMgr12IsSongSharedEi
-.type _ZNK14BandMachineMgr12IsSongSharedEi,@function
-_ZNK14BandMachineMgr12IsSongSharedEi:
-    xorq %rax, %rax
-    ret
-
 // BandMachineMgr::GetLocalMachine() const
 .weak _ZNK14BandMachineMgr15GetLocalMachineEv
 .type _ZNK14BandMachineMgr15GetLocalMachineEv,@function
@@ -126,13 +79,6 @@ _ZNK14BandMachineMgr15GetLocalMachineEv:
 .weak _ZNK14BandMachineMgr23IsSongAllowedToHavePartEi6Symbol
 .type _ZNK14BandMachineMgr23IsSongAllowedToHavePartEi6Symbol,@function
 _ZNK14BandMachineMgr23IsSongAllowedToHavePartEi6Symbol:
-    xorq %rax, %rax
-    ret
-
-// BandUser::GetControllerSym() const
-.weak _ZNK8BandUser16GetControllerSymEv
-.type _ZNK8BandUser16GetControllerSymEv,@function
-_ZNK8BandUser16GetControllerSymEv:
     xorq %rax, %rax
     ret
 

@@ -6,8 +6,10 @@
 // them: SongDB (src/band3/game/SongDB.cpp, W16-PJ), CommonPhraseCapturer
 // (src/band3/game/CommonPhraseCapturer.cpp), Game::GetActivePlayers /
 // GetPlayerFromTrack / NumActivePlayers / GetScoringTracks (real bodies in
-// m8_support.cpp, W16-PJ). The TrackPanel unison render leaves are only reached
-// on the multiplayer/unison path.
+// m8_support.cpp, W16-PJ). The TrackPanel unison render leaves below are still
+// referenced by CommonPhraseCapturer, but since W16-PL every call to them is
+// skipped natively when GetTrackPanel() is null (which it always is here), so
+// they are never entered with a null `this`.
 #include "game/Game.h"
 #include "game/SongDB.h"
 #include "game/Band.h"
@@ -43,7 +45,11 @@ void BandTrack::SetControllerType(Symbol const& a0)  { }
 void BandTrack::SetNetTalking(bool a0)  { }
 void BandTrack::SetQuarantined(bool a0)  { }
 Symbol BandUser::GetControllerSym() const { return Symbol(); }
-Difficulty BandUser::GetDifficulty() const { return (Difficulty)0; }
+// W16-PL: REAL body, src/band3/game/BandUser.cpp:88 (keep in step). This was a
+// stub returning 0 (Easy) for every user. No BandUser is constructed headless
+// (BandUser.cpp's vtable pulls 31 profile/prefab/session/tour symbols and 40
+// handler Symbols), so every caller here null-checks first and never reaches it.
+Difficulty BandUser::GetDifficulty() const { return mDifficulty; }
 int BandUser::GetSlot() const { return 0; }
 Symbol BandUser::GetTrackSym() const { return Symbol(); }
 NullLocalBandUser* BandUserMgr::GetNullUser() const { return 0; }
@@ -80,7 +86,7 @@ bool Player::InFreestyleSection() const { return false; }
 bool Player::InTambourinePhrase() const { return false; }
 void TrackPanel::PlaySequence(char const* a0, float a1, float a2, float a3)  { }
 
-// ---- capturer unison render leaves (multiplayer/unison path only) ----
+// ---- capturer unison render leaves: link-only, never called (W16-PL) ----
 void TrackPanel::UnisonStart(int a0)  { }
 void TrackPanel::UnisonPlayerSuccess(Player* a0)  { }
 void TrackPanel::UnisonPlayerFailure(Player* a0)  { }

@@ -816,7 +816,13 @@ bool Player::ShouldDrainEnergy() const { return true; }
 
 void Player::CheckCrowdFailure() {
     if (mCrowd->IsBelowLoseLevel() && mEnabledState == kPlayerEnabled) {
-        if (mCrowd->CantFailYet() || mUser->GetDifficulty() == kDifficultyEasy
+        if (mCrowd->CantFailYet()
+#ifdef HX_NATIVE
+            // Headless has no BandUser: take the branch retail's NullLocalBandUser
+            // takes (IsNullUser() below). X360 unchanged.
+            || !mUser
+#endif
+            || mUser->GetDifficulty() == kDifficultyEasy
             || mUser->IsNullUser() || MetaPerformer::Current()->IsNoFailActive()
             || mQuarantined || mBand->MainPerformer()->mGameOver) {
             mCrowd->SetDisplayValue(0);

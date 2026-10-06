@@ -33,6 +33,12 @@
 //   the driver's expectation (credit iff no gem of the phrase was dropped) is now
 //   CHECKED against the real arbiter's decision instead of standing in for it.
 //
+// W16-PL: an optional third argument names a BAND chart. After Stage 4 the
+//   driver seats one Expert player per instrument track of that chart and runs
+//   every phrase gem through the same real capturer, which is the only way to
+//   reach its unison path (see RunBandUnisonStage). native_health passes
+//   centerfold, which has four drums/guitar/keys unison phrases.
+//
 // SCOPE LINE (what stays shimmed, and why):
 //   * Deploy()/StopDeployingBandEnergy() also do overdrive-DURATION Stats
 //     bookkeeping via Player::GetSongMs()==mBeatMaster->mAudio->GetTime() and play
@@ -77,8 +83,11 @@
 #include "utl/Symbol.h"
 
 #include <cstdio>
+#include <map>
 #include <string>
 #include <vector>
+
+#include "crowd_config_dta.h" // W16-PL: real shipped (crowd ...) block
 
 extern void InitMakeString();
 extern DataArray *gSystemConfig; // src/system/os/System.cpp
@@ -153,10 +162,12 @@ static const char *kConfigDta =
     "      (crowd_boost (1 6 6 6 6)))"
     // -- unison_phrase.point_bonus + crowd.* are read by PlayerParams too --
     "   (unison_phrase (reward 2.0)(penalty 2.0)(point_bonus 1000))"
-    "   (crowd"
-    "      (save_level 0.3)"
-    "      (time_to_return_from_brink 2.0)"
-    "      (crowd_loss_per_sec 0.1))"
+    // W16-PL: the REAL shipped (crowd ...) block (crowd_config_dta.h) is spliced
+    // in at @CROWD@ at startup, as rb3-score4 does. PlayerParams::PlayerParams
+    // reads save_level / time_to_return_from_brink / crowd_loss_per_sec from it.
+    // This driver used to hand-write those three as 0.3 / 2.0 / 0.1; the shipped
+    // values are 0.8333 / 3.5 / 0.04.
+    "   @CROWD@"
     ")";
 
 // -------------------------------------------------------------- SongInfo ----
@@ -237,6 +248,8 @@ public:
     // CommonPhraseCapturer decides it (Stage 2). This reads the real Stats counter
     // Player::CompleteCommonPhrase(false, false) increments.
     int OverdrivePhrasesCompleted() const { return mStats.mOverdrivePhrasesCompleted; }
+    // W16-PL: the real counter Player::CompleteCommonPhrase(true, true) bumps.
+    int UnisonPhrasesCompleted() const { return mStats.mUnisonPhraseCompleted; }
 
     // ---- M7: REAL deploy state transition ---------------------------------
     // == Player::PerformDeployBandEnergy(0, true) minus Deploy()'s clock-gated
@@ -301,8 +314,314 @@ static const char *TrackName(TrackType t) {
     case kTrackDrum: return "drum";
     case kTrackGuitar: return "guitar";
     case kTrackBass: return "bass";
+    case kTrackKeys: return "keys";
     default: return "?";
     }
+}
+
+// ======================================================= band unison stage ==
+// W16-PL. The single-track stages above can never reach a unison: the REAL
+// SongDB::GetCommonPhraseTracks masks the analyzer's phrase tracks with
+// Game::GetScoringTracks, so with one player every phrase is one track wide.
+// This stage seats one Expert player per instrument track the chart has (PART
+// DRUMS / GUITAR / BASS / KEYS) and hands every phrase gem of every track, in
+// tick order, to the REAL CommonPhraseCapturer: UnisonStart / UnisonEnd
+// bookkeeping, LocalHitLastGem -> AllTracksCompletedPhrase ->
+// Player::CompleteCommonPhrase(true, multi), and LocalFail -> UnisonMiss.
+// One gem of one track is dropped in one multi-track unison phrase.
+//
+// The driver's own expectation is computed from the chart alone (which tracks
+// have gems in which phrase, which gem was dropped) and CHECKED against the real
+// Stats counters and capturer phrase states; any disagreement prints MISMATCH
+// and returns 1.
+extern std::map<const void *, std::vector<bool> > gM8DealtByPlayer; // m8_support.cpp
+
+static int RunBandUnisonStage(const char *midPath, Game *game) {
+    printf("\n=== W16-PL band stage: unison overdrive phrases through the REAL "
+           "CommonPhraseCapturer ===\n");
+    printf("mid : %s\n", midPath);
+
+    SongDB *songDB = new SongDB();
+    TheSongDB = songDB;
+    NativeSongInfo *songInfo = new NativeSongInfo();
+    SongData &songData = *songDB->GetData();
+    songData.mNumDifficulties = kNDiff;
+    songData.mHopoThreshold = songInfo->GetHopoThreshold();
+    songData.mSongInfo = songInfo;
+    songData.mDetailedGrid = false;
+    songData.mBeatMap = new BeatMap();
+    SetTheBeatMap(songData.mBeatMap);
+    songData.mPhraseAnalyzer = new PhraseAnalyzer(&songData);
+    songData.mTuningOffsetList = new TuningOffsetList();
+    songData.mKeyboardRangeSections.resize(kNDiff);
+    TempoMap *tempoMap = nullptr;
+    MeasureMap *measureMap = nullptr;
+    {
+        FileStream fs(midPath, FileStream::kRead, false);
+        SongParser parser(songData, kNDiff, tempoMap, measureMap, 2);
+        parser.ReadMidiFile(fs, midPath, songInfo);
+        int pumps = 0;
+        while (!parser.NoMidiReader() && pumps < 2000000) {
+            parser.Poll();
+            pumps++;
+        }
+        printf("--- REAL SongParser -> SongData (%d Poll pumps) ---\n", pumps);
+    }
+    songData.mTempoMap = tempoMap;
+    songData.mMeasureMap = measureMap;
+    for (size_t i = 0; i < songData.mGemDBs.size(); i++)
+        songData.mGemDBs[i]->MergeChordGems();
+
+    // --- one Expert player config per instrument track the chart carries ---
+    static const char *kParts[] = { "PART DRUMS", "PART GUITAR", "PART BASS", "PART KEYS" };
+    struct Member {
+        const char *part;
+        int track;
+        TrackType ty;
+        UserGuid guid;
+        NativeScorePlayer *player;
+        int nGems;
+    };
+    std::vector<Member> members;
+    PlayerTrackConfigList *list = new PlayerTrackConfigList(4);
+    list->mDefaultDifficulty = kExpertDiff;
+    for (int i = 0; i < 4; i++) {
+        int track = songData.TrackNamed(Symbol(kParts[i]));
+        if (track == -1)
+            continue;
+        Member m;
+        m.part = kParts[i];
+        m.track = track;
+        m.ty = songData.TrackTypeAt(track);
+        m.guid.Generate();
+        m.player = nullptr;
+        m.nGems = 0;
+        list->AddConfig(m.guid, m.ty, kExpertDiff, 0, false);
+        members.push_back(m);
+    }
+    if (members.size() < 2) {
+        printf("  only %d instrument track(s) -- a unison needs two; aborting.\n",
+               (int)members.size());
+        return 1;
+    }
+    songData.mPlayerTrackConfigList = list;
+    NativeMakeGameConfig(list, 0.0f);
+    songData.PostLoad(list); // REAL: SetNumTracks/AddTrack/AddPhrase + Analyze
+    for (size_t i = 0; i < members.size(); i++) {
+        if (list->GetTrackNumByUserGuid(members[i].guid) != members[i].track) {
+            printf("  %s: config resolved track %d, expected %d; aborting.\n",
+                   members[i].part, list->GetTrackNumByUserGuid(members[i].guid),
+                   members[i].track);
+            return 1;
+        }
+        members[i].nGems = songData.GetGemList(members[i].track)->NumGems();
+    }
+    {
+        float lastMs = 0.0f;
+        for (size_t i = 0; i < members.size(); i++) {
+            GameGemList *gl = songData.GetGemList(members[i].track);
+            for (int g = 0; g < gl->NumGems(); g++) {
+                float ms = songData.GetTempoMap()->TickToTime(gl->GetGem(g).GetTick());
+                if (ms > lastMs) lastMs = ms;
+            }
+        }
+        NativeSongDBSetupPhrases(songDB, lastMs + 3000.0f); // REAL SetupPhrases
+    }
+
+    // --- the band: one REAL Player per member, all seen by the REAL Game hooks
+    Band *band = new Band(/*native*/ true, /*mult*/ 1, /*disambig*/ true);
+    band->NativeLoadBonuses();
+    game->mAllActivePlayers.clear();
+    for (size_t i = 0; i < members.size(); i++) {
+        Member &m = members[i];
+        int maxMult = (m.ty == kTrackBass || m.ty == kTrackRealBass) ? 6 : 4;
+        m.player = new NativeScorePlayer(m.ty, Symbol(TrackName(m.ty)), maxMult, band);
+        m.player->SetTrackNum(m.track);
+        band->mActivePlayers.push_back(m.player);
+        game->mAllActivePlayers.push_back(m.player);
+        gM8DealtByPlayer[(const void *)m.player].assign(m.nGems, false);
+        printf("  player %d: %-11s track %d (%s), %d Expert gems\n", (int)i, m.part,
+               m.track, TrackName(m.ty), m.nGems);
+    }
+    // After the players exist: the REAL ctor's Reset() reads Game::GetActivePlayers.
+    band->mCommonPhraseCapturer = new CommonPhraseCapturer();
+    CommonPhraseCapturer *cpc = band->mCommonPhraseCapturer;
+
+    // --- phrase census: REAL PhraseAnalyzer + REAL SongDB --------------------
+    PhraseAnalyzer *pa = songData.GetPhraseAnalyzer();
+    int nPh = songDB->NumCommonPhrases();
+    int scoring = game->GetScoringTracks();
+    // Which members have gems in which phrase (the driver's own view).
+    std::vector<int> gemTracks(nPh, 0);
+    for (size_t i = 0; i < members.size(); i++) {
+        for (int g = 0; g < members[i].nGems; g++) {
+            int id = songDB->GetPhraseID(members[i].track, g);
+            if (id >= 0 && id < nPh)
+                gemTracks[id] |= 1 << members[i].track;
+        }
+    }
+    int nMulti = 0;
+    int sabotage = -1, firstMulti = -1;
+    printf("\n--- REAL phrase census (%d phrase id(s); scoring tracks 0x%x) ---\n", nPh,
+           scoring);
+    printf("  %-4s %12s %12s %12s %8s\n", "id", "analyzerTrks", "commonTrks",
+           "gemTracks", "unison");
+    for (int p = 0; p < nPh; p++) {
+        int common = songDB->GetCommonPhraseTracks(p);
+        bool uni = songDB->IsUnisonPhrase(p);
+        bool multi = uni && (common & (common - 1));
+        if (multi) {
+            nMulti++;
+            if (firstMulti == -1)
+                firstMulti = p;
+            else if (sabotage == -1)
+                sabotage = p; // the second multi-track unison
+        }
+        printf("  %-4d 0x%-10x 0x%-10x 0x%-10x %8s\n", p, pa->GetPhraseTracks(p),
+               common, gemTracks[p], multi ? "UNISON" : (uni ? "uni(1)" : "-"));
+    }
+    if (sabotage == -1)
+        sabotage = firstMulti;
+    if (nMulti == 0) {
+        printf("  no multi-track unison phrase on this chart; aborting.\n");
+        return 1;
+    }
+    // The dropping member: the lowest-numbered track in the sabotaged phrase.
+    int dropTrack = -1;
+    for (int t = 0; t < 32; t++) {
+        if (gemTracks[sabotage] & (1 << t)) {
+            dropTrack = t;
+            break;
+        }
+    }
+    int dropGem = -1;
+    {
+        std::vector<int> gs;
+        for (size_t i = 0; i < members.size(); i++) {
+            if (members[i].track != dropTrack)
+                continue;
+            for (int g = 0; g < members[i].nGems; g++) {
+                if (songDB->GetPhraseID(dropTrack, g) == sabotage)
+                    gs.push_back(g);
+            }
+        }
+        dropGem = gs[gs.size() / 2];
+    }
+    printf("\n  %d multi-track unison phrase(s); dropping gem %d of track %d in "
+           "unison %d\n", nMulti, dropGem, dropTrack, sabotage);
+
+    // --- the driver's expectation, from the chart alone ----------------------
+    // own credit: every phrase with gems on the member's track, minus the
+    //   dropped one;
+    // all-tracks-completed (capturer state 1): every unison phrase whose common
+    //   tracks all have gems and none dropped -- INCLUDING a unison whose other
+    //   instrument has no player (centerfold's keys+vocals phrase: common mask =
+    //   keys only). AllTracksCompletedPhrase still runs, with b4 = false;
+    // unison credit (Stats::mUnisonPhraseCompleted): only when b4, i.e. the
+    //   common mask has two or more tracks.
+    std::vector<int> expOwn(members.size(), 0), expUni(members.size(), 0);
+    int expSucceeded = 0;
+    for (int p = 0; p < nPh; p++) {
+        int common = songDB->GetCommonPhraseTracks(p);
+        bool uni = songDB->IsUnisonPhrase(p);
+        bool multi = uni && (common & (common - 1));
+        bool allHaveGems = (gemTracks[p] & common) == common;
+        bool dropped = (p == sabotage);
+        bool unisonOk = multi && allHaveGems && !dropped;
+        if (uni && common != 0 && allHaveGems && !dropped)
+            expSucceeded++;
+        for (size_t i = 0; i < members.size(); i++) {
+            int bit = 1 << members[i].track;
+            if (!(gemTracks[p] & bit))
+                continue;
+            if (!(dropped && members[i].track == dropTrack))
+                expOwn[i]++;
+            if (unisonOk && (common & bit))
+                expUni[i]++;
+        }
+    }
+
+    // --- drive every phrase gem of every track, in tick order ----------------
+    struct Ev {
+        int tick, member, gem;
+    };
+    std::vector<Ev> evs;
+    for (size_t i = 0; i < members.size(); i++) {
+        GameGemList *gl = songData.GetGemList(members[i].track);
+        for (int g = 0; g < members[i].nGems; g++) {
+            Ev e = { gl->GetGem(g).GetTick(), (int)i, g };
+            evs.push_back(e);
+        }
+    }
+    for (size_t a = 1; a < evs.size(); a++) { // stable insertion sort by tick
+        Ev e = evs[a];
+        size_t b = a;
+        while (b > 0 && evs[b - 1].tick > e.tick) {
+            evs[b] = evs[b - 1];
+            b--;
+        }
+        evs[b] = e;
+    }
+    int starts = 0, ends = 0;
+    bool wasIn = false;
+    for (size_t k = 0; k < evs.size(); k++) {
+        Member &m = members[evs[k].member];
+        int g = evs[k].gem;
+        bool hit = !(m.track == dropTrack && g == dropGem);
+        if (hit)
+            m.player->OnHit(1);
+        else
+            m.player->OnPass();
+        gM8DealtByPlayer[(const void *)m.player][g] = true;
+        if (songDB->GetPhraseID(m.track, g) != -1) {
+            cpc->HandlePhraseNote((GemPlayer *)m.player, m.track, g, hit); // REAL
+            if (cpc->mInUnisonPhrase && !wasIn)
+                starts++;
+            if (!cpc->mInUnisonPhrase && wasIn)
+                ends++;
+            wasIn = cpc->mInUnisonPhrase;
+        }
+    }
+
+    // --- check the REAL arbiter against the expectation -----------------------
+    printf("\n--- REAL Stats per player (driver expectation in brackets) ---\n");
+    printf("  %-11s %10s %10s %8s\n", "player", "odPhrases", "unisons", "energy");
+    bool ok = true;
+    for (size_t i = 0; i < members.size(); i++) {
+        int own = members[i].player->OverdrivePhrasesCompleted();
+        int uni = members[i].player->UnisonPhrasesCompleted();
+        printf("  %-11s %4d [%3d] %4d [%3d] %8.3f\n", members[i].part, own, expOwn[i],
+               uni, expUni[i], members[i].player->Energy());
+        if (own != expOwn[i] || uni != expUni[i])
+            ok = false;
+    }
+    int succeeded = 0, failed = 0;
+    for (int p = 0; p < nPh && p < (int)cpc->mPhraseStates.size(); p++) {
+        if (cpc->mPhraseStates[p].unk0 == 1)
+            succeeded++;
+        else if (cpc->mPhraseStates[p].unk0 == 2)
+            failed++;
+    }
+    bool sabFailed = sabotage < (int)cpc->mPhraseStates.size()
+        && cpc->mPhraseStates[sabotage].unk0 == 2
+        && cpc->DidTrackFail(sabotage, dropTrack);
+    printf("  capturer: %d phrase(s) all-tracks-completed [%d], %d failed [1]; "
+           "unison %d DidTrackFail(track %d)=%s\n",
+           succeeded, expSucceeded, failed, sabotage, dropTrack,
+           sabFailed ? "true" : "false");
+    printf("  unison windows opened/closed: %d/%d; inUnison at end=%s finishedTracks=0x%x\n",
+           starts, ends, cpc->mInUnisonPhrase ? "true" : "false", cpc->mFinishedTracks);
+    if (succeeded != expSucceeded || failed != 1 || !sabFailed || starts != ends
+        || cpc->mInUnisonPhrase || cpc->mFinishedTracks != 0)
+        ok = false;
+    if (!ok) {
+        printf("  REAL CommonPhraseCapturer disagrees with the driver -- MISMATCH; "
+               "aborting.\n");
+        return 1;
+    }
+    printf("  REAL CommonPhraseCapturer agrees with the driver on every player and "
+           "phrase.\n");
+    return 0;
 }
 
 int main(int argc, char **argv) {
@@ -313,13 +632,19 @@ int main(int argc, char **argv) {
     // DRUMS (15), HARM1 and PART VOCALS; PART GUITAR/BASS have none. Default to
     // the real instrumental OD track: drums.
     const char *partName = (argc >= 3) ? argv[2] : "PART DRUMS";
+    // W16-PL: optional band chart for the unison stage (native_health: centerfold).
+    const char *bandMid = (argc >= 4) ? argv[3] : nullptr;
 
     InitMakeString();
     Symbol::Init();
     DataInit();
     ObjectDir::PreInit(256, 4096);
 
-    gSystemConfig = DataReadString(kConfigDta);
+    {
+        std::string cfg(kConfigDta);
+        cfg.replace(cfg.find("@CROWD@"), 7, kRealCrowdConfigDta);
+        gSystemConfig = DataReadString(cfg.c_str());
+    }
     // Scoring::Scoring() resolves the points-block symbols through TRACK_SYMBOLS.
     DataArray *trackSyms = DataReadString(
         "(drum guitar bass vocals keys real_keys real_guitar "
@@ -461,9 +786,14 @@ int main(int argc, char **argv) {
     printf("--- graph: NativeScorePlayer(%s) over real Player/Band/Scoring, "
            "PlayerParams parsed ---\n", TrackName(trackTy));
     printf("  PlayerParams: spotlightPhrase=%.3f deployThreshold=%.3f "
-           "deployBeats(1/32/beat)=%.5f\n\n",
+           "deployBeats(1/32/beat)=%.5f\n",
            player.mParams->mSpotlightPhrase, player.mParams->mDeployThreshold,
            player.mParams->mDeployBeats);
+    // W16-PL: the three keys PlayerParams reads from the shipped (crowd ...) block.
+    printf("  PlayerParams (crowd): saveLevel=%.4f msToReturnFromBrink=%.0f "
+           "crowdLossPerMs=%.6f\n\n",
+           player.mParams->mCrowdSaveLevel, player.mParams->mMsToReturnFromBrink,
+           player.mParams->mCrowdLossPerMs);
 
     // === Stage 2: credit energy by completing real overdrive phrases ========
     // Every phrase gem is judged and handed to the REAL CommonPhraseCapturer
@@ -591,6 +921,12 @@ int main(int argc, char **argv) {
                "bonusLevel=%d) -> reset to unk68[0]=%d\n",
                i3, player.TotalMult(), band->mMultiplier, band->mBonusLevel,
                band->unk68[0]);
+    }
+
+    if (bandMid) {
+        int rc = RunBandUnisonStage(bandMid, game);
+        if (rc != 0)
+            return rc;
     }
 
     printf("\nDone.\n");

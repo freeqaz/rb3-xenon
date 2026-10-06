@@ -316,6 +316,7 @@ set(M1_SOURCES
     ${REPO_ROOT}/src/band3/meta_band/Utl.cpp
     # W16-PJ: real ControllerType/ScoreType <-> TrackType tables Utl.cpp calls.
     ${REPO_ROOT}/src/band3/game/Defines.cpp
+    ${REPO_ROOT}/src/band3/meta_band/LicenseMgr.cpp
 )
 
 rb3_add_executable(rb3-song

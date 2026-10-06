@@ -44,6 +44,7 @@
 #include "os/Debug.h"
 
 #include <cstdlib>
+#include <map>
 #include <vector>
 
 // ----------------------------------------------------------------- clock ----
@@ -100,10 +101,21 @@ BandUser *BandUserMgr::GetBandUser(const UserGuid &guid, bool fail) const {
 // CommonPhraseCapturer::HasPlayedWholePhrase calls this (through a GemPlayer*
 // alias of the driver's Player). It reads driver state only (never GemPlayer
 // members), so the alias is layout-safe.
+//
+// W16-PL: a band driver (rb3-score3's band stage) has one player per track, and
+// gem indices are per track, so it registers a per-player vector here. A player
+// with no entry reads gM8Dealt (the single-player drivers).
+std::map<const void *, std::vector<bool> > gM8DealtByPlayer;
+
 bool GemPlayer::HasDealtWithGem(int idx) {
-    if (idx < 0 || (unsigned)idx >= gM8Dealt.size())
+    const std::vector<bool> *dealt = &gM8Dealt;
+    std::map<const void *, std::vector<bool> >::const_iterator it =
+        gM8DealtByPlayer.find(this);
+    if (it != gM8DealtByPlayer.end())
+        dealt = &it->second;
+    if (idx < 0 || (unsigned)idx >= dealt->size())
         return false;
-    return gM8Dealt[idx];
+    return (*dealt)[idx];
 }
 
 // ============================================= headless bring-up helpers ====
