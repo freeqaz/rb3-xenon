@@ -113,7 +113,7 @@ Hmx::Object *Track::GetObj(Symbol s) {
     if (!dir)
         return nullptr;
     else
-        dir->FindObject(s.Str(), false);
+        return dir->FindObject(s.Str(), false);
 }
 
 Symbol Track::GetType() const { return mTrackConfig.Type(); }
