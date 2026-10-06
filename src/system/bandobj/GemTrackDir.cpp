@@ -418,9 +418,8 @@ void GemTrackDir::SetFade(float f1, float f2) {
 }
 
 void GemTrackDir::SetFOV(float fov) {
-    RndCam *cam = Cam();
-    if (cam) {
-        cam->SetFrustum(cam->NearPlane(), cam->FarPlane(), fov * DEG2RAD, 1.0f);
+    if (Cam()) {
+        Cam()->SetFrustum(Cam()->NearPlane(), Cam()->FarPlane(), fov * DEG2RAD, 1.0f);
     }
 }
 
