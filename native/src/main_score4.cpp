@@ -36,6 +36,8 @@
 #include "game/SongDB.h"
 #include "game/CrowdRating.h"
 #include "crowd_config_dta.h" // W16-PD: real shipped (crowd ...) block
+#include "scoring_config_dta.h" // W16-PJ: real shipped (solo ...) + (coda ...)
+#include "game/GameConfig.h"
 #include <string>
 #include "game/MultiplayerAnalyzer.h" // PlayerScoreInfo
 
@@ -73,16 +75,12 @@ extern void InitMakeString();
 extern DataArray *gSystemConfig;
 void DataInit();
 
-// ---- M8 support globals (native/src/m8_support.cpp) ----
+// ---- M8 support (native/src/m8_support.cpp) ----
 extern float gNativeSongMs;
-extern SongData *gM8SongData;
-extern Player *gM8Player;
-extern int gM8TrackNum;
-extern float gM8DurationMs;
-extern std::vector<int> gM8GemPhrase;
 extern std::vector<bool> gM8Dealt;
-extern std::vector<Player *> gM8ActivePlayers;
-extern std::vector<PlayerScoreInfo> gM8BaseScores;
+Game *NativeMakeGame();
+GameConfig *NativeMakeGameConfig(PlayerTrackConfigList *, float);
+void NativeSongDBPostLoad(SongDB *, float);
 
 static const int kNDiff = 4;
 static const int kExpertDiff = 3;
@@ -270,7 +268,9 @@ int main(int argc, char **argv) {
 
     {
         std::string cfg(kConfigDta);
-        cfg.replace(cfg.find("@CROWD@"), 7, kRealCrowdConfigDta);
+        cfg.replace(cfg.find("@CROWD@"), 7,
+                    std::string(kRealCrowdConfigDta) + kRealSoloConfigDta
+                        + kRealCodaConfigDta);
         gSystemConfig = DataReadString(cfg.c_str());
     }
     DataArray *trackSyms = DataReadString(
@@ -283,9 +283,18 @@ int main(int argc, char **argv) {
 
     Scoring *scoring = new Scoring();
 
-    // --- Stage 1: parse the .mid into the REAL SongData ---------------------
+    // TheGame first: the REAL SongDB sink (AddPhrase) consults it during
+    // SongData::PostLoad below.
+    Game *game = NativeMakeGame();
+
+    // --- Stage 1: parse the .mid into the REAL SongDB's SongData ------------
+    // W16-PJ: the real SongDB ctor news its SongData, registers itself as that
+    // SongData's parser sink and builds its MultiplayerAnalyzer over it; the
+    // chart is parsed INTO it (as BeatMaster does for TheSongDB in the game).
+    SongDB *songDB = new SongDB();
+    TheSongDB = songDB;
     NativeSongInfo songInfo;
-    SongData songData;
+    SongData &songData = *songDB->GetData();
     songData.mNumDifficulties = kNDiff;
     songData.mHopoThreshold = songInfo.GetHopoThreshold();
     songData.mSongInfo = &songInfo;
@@ -311,19 +320,35 @@ int main(int argc, char **argv) {
     }
     songData.mTempoMap = tempoMap;
     songData.mMeasureMap = measureMap;
-    for (size_t i = 0; i < songData.mGemDBs.size(); i++) {
+    for (size_t i = 0; i < songData.mGemDBs.size(); i++)
         songData.mGemDBs[i]->MergeChordGems();
-        songData.mGemDBs[i]->Finalize();
-    }
-    PlayerTrackConfigList expertList(1);
-    expertList.mDefaultDifficulty = kExpertDiff;
-    songData.mPlayerTrackConfigList = &expertList;
-    songData.FixUpTrackConfig(&expertList);
-    songData.SetUpTrackDifficulties(&expertList);
 
     int track = songData.TrackNamed(Symbol(partName));
     if (track == -1) { printf("  track '%s' not found; abort.\n", partName); return 1; }
     TrackType trackTy = songData.TrackTypeAt(track);
+
+    // W16-PJ: one REAL player config (a generated UserGuid on this track's type at
+    // Expert), so PlayerTrackConfigList::TrackUsed / TrackPlayer answer as they
+    // do for a one-player game -- the real SongDB::AddPhrase keeps a track's
+    // overdrive phrases only if TrackUsed(track), and the real
+    // MultiplayerAnalyzer keys every per-player total on that UserGuid.
+    PlayerTrackConfigList expertList(1);
+    expertList.mDefaultDifficulty = kExpertDiff;
+    UserGuid playerGuid;
+    playerGuid.Generate();
+    expertList.AddConfig(playerGuid, trackTy, kExpertDiff, 0, false);
+    songData.mPlayerTrackConfigList = &expertList;
+    NativeMakeGameConfig(&expertList, 0.0f);
+    // The REAL SongData::PostLoad (FixUpTrackConfig + SetUpTrackDifficulties +
+    // gem Finalize + backup tracks + per-track PostLoadTrack -> SongDB sink +
+    // PhraseAnalyzer::Analyze + PostLoadVocals) -- what SongData::Poll runs when
+    // the parse completes. Replaces the driver's hand-picked subset.
+    songData.PostLoad(&expertList);
+    if (expertList.GetTrackNumByUserGuid(playerGuid) != track) {
+        printf("  config resolved track %d, expected %d; abort.\n",
+               expertList.GetTrackNumByUserGuid(playerGuid), track);
+        return 1;
+    }
     GameGemList *gems = songData.GetGemList(track);
     int nGems = gems->NumGems();
     const PhraseList &odPhrases = songData.GetPhraseList(track, kCommonPhrase);
@@ -340,15 +365,10 @@ int main(int argc, char **argv) {
         gemMs[g] = songData.GetTempoMap()->TickToTime(gm.GetTick());
         if (gemMs[g] > lastMs) lastMs = gemMs[g];
     }
-    gM8GemPhrase.assign(nGems, -1);
-    for (int p = 0; p < nPhrases; p++) {
-        const Phrase &ph = odPhrases.mPhrases[p];
-        int s = ph.GetTick(), e = ph.GetTick() + ph.GetDurationTicks();
-        for (int g = 0; g < nGems; g++)
-            if (gemTick[g] >= s && gemTick[g] < e) gM8GemPhrase[g] = p;
-    }
     gM8Dealt.assign(nGems, false);
-    gM8DurationMs = lastMs + 3000.0f; // song end = last note + tail
+    // Song end = last note + tail. (The real SongDB::ParseEvents takes it from
+    // the chart's [end] text event, which needs BeatMaster's MIDI event list.)
+    float gM8DurationMs = lastMs + 3000.0f;
 
     printf("  track %d '%s' (type %d): %d Expert gems, %d OD phrase(s), "
            "duration ~%.1f s\n\n", track, songData.TrackName(track).Str(),
@@ -361,38 +381,23 @@ int main(int argc, char **argv) {
 
     int maxMult = (trackTy == kTrackBass || trackTy == kTrackRealBass) ? 6 : 4;
     NativeScorePlayer player(trackTy, Symbol(TrackName(trackTy)), maxMult, band);
+    player.SetTrackNum(track);
     band->mActivePlayers.push_back(&player);
-
-    // TheGame: a minimal instance (no heavy ctor) with just the properties the
-    // Poll path reads. No Game virtual/method-with-members is called on our path
-    // (GetPlayerFromTrack/GetActivePlayers are promoted to real driver hooks in
-    // m8_support.cpp), so a zeroed object with fields set is safe & documented.
-    Game *game = (Game *)std::calloc(1, sizeof(Game));
-    game->mProperties.mEnableStreak = true;
-    game->mProperties.mEnableOverdrive = true;
-    game->mProperties.mAllowOverdrivePhrases = true;
-    game->mProperties.mEndWithSong = false; // we detect end from the clock ourselves
-    game->unkdc = -1.0f;                     // normal play (not rollback/practice)
-    TheGame = game;
-
-    // TheSongDB: a real SongDB whose queries resolve against our parsed chart.
-    SongDB *songDB = new SongDB();
-    songDB->mSongData = &songData;
-    songDB->mSongDurationMs = gM8DurationMs;
-    TheSongDB = songDB;
-
-    gM8SongData = &songData;
-    gM8Player = &player;
-    gM8TrackNum = track;
-    gM8ActivePlayers.push_back(&player);
+    // The real Game::GetPlayerFromTrack / GetScoringTracks read this.
+    game->mAllActivePlayers.push_back(&player);
 
     // The REAL, ported overdrive-phrase arbiter (drives energy credit).
     band->mCommonPhraseCapturer = new CommonPhraseCapturer();
 
-    // --- ideal max score (100% hits, no deploy) -> REAL star thresholds -----
-    // Scoring::ComputeStarThresholds reads SongDB::GetBaseScores(); we populate
-    // it with the track's ideal max, then GetNumStars is the genuine engine
-    // computation against the real config/star_thresholds.dta fractions.
+    // --- REAL base scores -> REAL star thresholds ---------------------------
+    // W16-PJ: the event-independent half of the real SongDB::PostLoad
+    // (SetupPhrases / DisableCodaGems / RunMultiplayerAnalyzer). The real
+    // MultiplayerAnalyzer computes the per-player base scores from the gems and
+    // its PostLoad runs Scoring::ComputeStarThresholds over them -- this replaces
+    // the driver's own ideal-max that used to be pushed into a synthetic
+    // GetBaseScores(). The driver ideal (100% hits, no deploy, through the real
+    // scoring path) is still computed below, as a cross-check only.
+    NativeSongDBPostLoad(songDB, gM8DurationMs);
     int idealMax = 0;
     {
         Band *ib = new Band(true, 1, true);
@@ -402,10 +407,28 @@ int main(int argc, char **argv) {
             ideal.ApplyHit(gemSlots[g] > 0 ? gemSlots[g] : 1);
         idealMax = ideal.ScoreI();
     }
-    gM8BaseScores.clear();
-    gM8BaseScores.push_back(
-        PlayerScoreInfo(trackTy, (Difficulty)kExpertDiff, idealMax, idealMax, 0));
-    scoring->ComputeStarThresholds(false);
+    {
+        const std::vector<PlayerScoreInfo> &bs = songDB->GetBaseScores();
+        int nUnisonIds = 0, nTrackUnisonIds = 0;
+        for (int id = 0; id < songDB->NumCommonPhrases(); id++) {
+            if (!songDB->IsUnisonPhrase(id)) continue;
+            nUnisonIds++;
+            if (songDB->GetData()->GetPhraseAnalyzer()->GetPhraseTracks(id) & (1 << track))
+                nTrackUnisonIds++;
+        }
+        printf("--- REAL SongDB: %d common phrase(s) on this track (%d unison with "
+               "another scoring track); analyzer: %d phrase id(s) song-wide, %d "
+               "unison, %d of them on this track ---\n",
+               songDB->GetNumOverdrivePhrases(track),
+               songDB->GetNumUnisonPhrases(track), songDB->NumCommonPhrases(),
+               nUnisonIds, nTrackUnisonIds);
+        for (size_t i = 0; i < bs.size(); i++)
+            printf("  MultiplayerAnalyzer base: type %d diff %d maxStreakPts %d "
+                   "maxPts %d bonusPts %d  (driver ideal %d)\n",
+                   (int)bs[i].mTrackType, (int)bs[i].mDifficulty,
+                   bs[i].mMaxStreakPts, bs[i].mMaxPts, bs[i].mBonusPts, idealMax);
+        printf("\n");
+    }
 
     printf("--- graph: NativeScorePlayer(%s) over real Player/Band/Scoring + ported "
            "CommonPhraseCapturer ---\n", TrackName(trackTy));
@@ -453,7 +476,7 @@ int main(int argc, char **argv) {
             }
             // 2) drive the REAL capturer for OD-phrase gems (credits energy on the
             //    last gem of a completed phrase, exactly as GemPlayer does).
-            if (gM8GemPhrase[g] != -1) {
+            if (songDB->GetPhraseID(track, g) != -1) {
                 band->mCommonPhraseCapturer->HandlePhraseNote(
                     (GemPlayer *)&player, track, g, !miss);
             }

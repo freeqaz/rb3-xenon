@@ -34,8 +34,8 @@ NINJA = os.path.join(BD, "build.ninja")
 
 STUB_RE = re.compile(
     r"/src/(dta_link_stubs\.s|m1_link_stubs\.s|m2_link_stubs\.s|m3_link_stubs\.s|"
-    r"m3b_link_stubs\.s|m4_save_link_stubs\.cpp|m6_link_stubs\.cpp|m8_link_stubs\.cpp|"
-    r"m10_link_stubs\.cpp|m10_leaf_stubs\.cpp|m12_link_stubs\.cpp|milo_link_stubs\.cpp|"
+    r"m3b_link_stubs\.s|m4_save_link_stubs\.cpp|m8_link_stubs\.cpp|"
+    r"m10_leaf_stubs\.cpp|m12_link_stubs\.cpp|milo_link_stubs\.cpp|"
     r"native_undecomp_stubs\.cpp|native_job_stubs\.cpp|thunk_stubs\.cpp|x7_band_stubs\.cpp|"
     r"x20_bandpatchmesh_link\.cpp|native_link_glue\.cpp|xdk_shims\.cpp|"
     r"m1_symbols\.cpp|m3_symbols\.cpp|m6_symbols\.cpp|m8_support\.cpp|m10_support\.cpp|"

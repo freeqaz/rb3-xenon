@@ -103,12 +103,6 @@ XInputGetCapabilities:
     xorq %rax, %rax
     ret
 
-.weak XNetRandom
-.type XNetRandom,@function
-XNetRandom:
-    xorq %rax, %rax
-    ret
-
 .weak _Z11CloseHandlei
 .type _Z11CloseHandlei,@function
 _Z11CloseHandlei:

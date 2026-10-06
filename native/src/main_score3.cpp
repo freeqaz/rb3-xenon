@@ -25,14 +25,15 @@
 //   expiry  : at 0 energy the deploy state clears and the REAL Band::
 //             UpdateBonusLevel resets mMultiplier = unk68[0] = 1.
 //
+// W16-PJ: phrase credit is decided by the REAL CommonPhraseCapturer
+//   (src/band3/game/CommonPhraseCapturer.cpp) over the REAL SongDB, driven per gem
+//   exactly as rb3-score4 drives it (HandlePhraseNote -> HasPlayedWholePhrase ->
+//   HitLastGem -> OneTrackCompletedPhrase -> Player::CompleteCommonPhrase). It
+//   replaces the driver's own "faithful single-player reduction" of the arbiter;
+//   the driver's expectation (credit iff no gem of the phrase was dropped) is now
+//   CHECKED against the real arbiter's decision instead of standing in for it.
+//
 // SCOPE LINE (what stays shimmed, and why):
-//   * CommonPhraseCapturer — the retail arbiter that *calls* CompleteCommonPhrase
-//     is TheGame/SongDB/GemPlayer/TrackPanel-bound multi-track unison machinery
-//     (its .cpp is not built here). For a single player its
-//     decision reduces exactly to HasPlayedWholePhrase -> OneTrackCompletedPhrase
-//     -> Player::CompleteCommonPhrase(false,false); we run that real credit method
-//     directly and drive the "whole phrase played" test from the real SongData
-//     phrase/gem query API. Documented, not hidden.
 //   * Deploy()/StopDeployingBandEnergy() also do overdrive-DURATION Stats
 //     bookkeeping via Player::GetSongMs()==mBeatMaster->mAudio->GetTime() and play
 //     rp_*.cue audio, and the teammate-save fan-out (Band::DeployBandEnergy ->
@@ -46,6 +47,11 @@
 #include "game/Stats.h"
 #include "game/Band.h"
 #include "game/PlayerBehavior.h"
+#include "game/CommonPhraseCapturer.h"
+#include "game/Game.h"
+#include "game/GameConfig.h"
+#include "game/GemPlayer.h"
+#include "game/SongDB.h"
 
 #include "beatmatch/TrackType.h"
 #include "beatmatch/SongParser.h"
@@ -77,6 +83,12 @@
 extern void InitMakeString();
 extern DataArray *gSystemConfig; // src/system/os/System.cpp
 void DataInit();                 // src/system/obj/Data.cpp
+
+// m8_support.cpp (W16-PJ: real SongDB bring-up + driver gem state)
+extern std::vector<bool> gM8Dealt;
+Game *NativeMakeGame();
+GameConfig *NativeMakeGameConfig(PlayerTrackConfigList *, float);
+void NativeSongDBSetupPhrases(SongDB *, float);
 
 static const int kNDiff = 4;
 static const int kExpertDiff = 3;
@@ -220,12 +232,11 @@ public:
         BuildMissStreak(mGemCounter);
     }
 
-    // ---- M7: REAL overdrive-phrase credit ---------------------------------
-    // Exactly what CommonPhraseCapturer::OneTrackCompletedPhrase runs for one
-    // player once a phrase is fully played: Player::CompleteCommonPhrase(false,
-    // false) -> AddEnergy(mParams->mSpotlightPhrase). (UnisonHit(), which the
-    // capturer also calls, is a TrackPanel audio cue = render leaf.)
-    void CreditOverdrivePhrase() { CompleteCommonPhrase(false, false); }
+    // ---- M7: overdrive-phrase credit ---------------------------------------
+    // W16-PJ: credit is no longer called by the driver -- the REAL
+    // CommonPhraseCapturer decides it (Stage 2). This reads the real Stats counter
+    // Player::CompleteCommonPhrase(false, false) increments.
+    int OverdrivePhrasesCompleted() const { return mStats.mOverdrivePhrasesCompleted; }
 
     // ---- M7: REAL deploy state transition ---------------------------------
     // == Player::PerformDeployBandEnergy(0, true) minus Deploy()'s clock-gated
@@ -322,9 +333,16 @@ int main(int argc, char **argv) {
     // --- REAL Scoring singleton --------------------------------------------
     Scoring *scoring = new Scoring(); // sets TheScoring
 
-    // --- Parse the .mid into the REAL SongData (note 116 -> kCommonPhrase) --
+    // TheGame first: the REAL SongDB sink (AddPhrase) consults it during
+    // SongData::PostLoad below.
+    Game *game = NativeMakeGame();
+    // --- Parse the .mid into the REAL SongDB's SongData (note 116 -> kCommonPhrase)
+    // W16-PJ: the real SongDB ctor news its SongData and registers itself as that
+    // SongData's parser sink; the chart is parsed INTO it.
+    SongDB *songDB = new SongDB();
+    TheSongDB = songDB;
     NativeSongInfo songInfo;
-    SongData songData;
+    SongData &songData = *songDB->GetData();
     songData.mNumDifficulties = kNDiff;
     songData.mHopoThreshold = songInfo.GetHopoThreshold();
     songData.mSongInfo = &songInfo;
@@ -350,24 +368,44 @@ int main(int argc, char **argv) {
     }
     songData.mTempoMap = tempoMap;
     songData.mMeasureMap = measureMap;
-    for (size_t i = 0; i < songData.mGemDBs.size(); i++) {
+    for (size_t i = 0; i < songData.mGemDBs.size(); i++)
         songData.mGemDBs[i]->MergeChordGems();
-        songData.mGemDBs[i]->Finalize();
-    }
-    PlayerTrackConfigList expertList(1);
-    expertList.mDefaultDifficulty = kExpertDiff;
-    songData.mPlayerTrackConfigList = &expertList;
-    songData.FixUpTrackConfig(&expertList);
-    songData.SetUpTrackDifficulties(&expertList);
 
     int track = songData.TrackNamed(Symbol(partName));
     if (track == -1) {
         printf("  track '%s' not found in chart; aborting.\n", partName);
         return 1;
     }
+
+    // W16-PJ: one REAL player config + the REAL SongData::PostLoad (feeds the
+    // SongDB sink, runs PhraseAnalyzer::Analyze); see main_score4.cpp.
+    PlayerTrackConfigList expertList(1);
+    expertList.mDefaultDifficulty = kExpertDiff;
+    UserGuid playerGuid;
+    playerGuid.Generate();
+    expertList.AddConfig(playerGuid, songData.TrackTypeAt(track), kExpertDiff, 0, false);
+    songData.mPlayerTrackConfigList = &expertList;
+    NativeMakeGameConfig(&expertList, 0.0f);
+    songData.PostLoad(&expertList);
+    if (expertList.GetTrackNumByUserGuid(playerGuid) != track) {
+        printf("  config resolved track %d, expected %d; aborting.\n",
+               expertList.GetTrackNumByUserGuid(playerGuid), track);
+        return 1;
+    }
     TrackType trackTy = songData.TrackTypeAt(track);
     GameGemList *gems = songData.GetGemList(track);
     int nGems = gems->NumGems();
+    // The phrase half of the REAL SongDB::PostLoad (SetupPhrases fills the per-gem
+    // phrase ids the capturer reads). No analyzer: this driver reports no stars.
+    {
+        float lastMs = 0.0f;
+        for (int g = 0; g < nGems; g++) {
+            float ms = songData.GetTempoMap()->TickToTime(gems->GetGem(g).GetTick());
+            if (ms > lastMs) lastMs = ms;
+        }
+        NativeSongDBSetupPhrases(songDB, lastMs + 3000.0f);
+    }
+    gM8Dealt.assign(nGems, false);
 
     // --- REAL overdrive phrase table (SongData::GetPhraseList kCommonPhrase) -
     // GetPhraseList(track, type) -> mPhraseDBs[track]->GetPhraseList(
@@ -416,6 +454,10 @@ int main(int argc, char **argv) {
     int maxMult = (trackTy == kTrackBass || trackTy == kTrackRealBass) ? 6 : 4;
     NativeScorePlayer player(trackTy, Symbol(TrackName(trackTy)), maxMult, band);
     band->mActivePlayers.push_back(&player); // so UpdateBonusLevel counts it
+    player.SetTrackNum(track);
+    game->mAllActivePlayers.push_back(&player); // real Game::GetPlayerFromTrack reads it
+    // The REAL overdrive-phrase arbiter (W16-PJ).
+    band->mCommonPhraseCapturer = new CommonPhraseCapturer();
     printf("--- graph: NativeScorePlayer(%s) over real Player/Band/Scoring, "
            "PlayerParams parsed ---\n", TrackName(trackTy));
     printf("  PlayerParams: spotlightPhrase=%.3f deployThreshold=%.3f "
@@ -424,11 +466,13 @@ int main(int argc, char **argv) {
            player.mParams->mDeployBeats);
 
     // === Stage 2: credit energy by completing real overdrive phrases ========
-    // Faithful single-player reduction of CommonPhraseCapturer: a phrase is
-    // credited only when EVERY gem in it is hit (HasPlayedWholePhrase); then the
-    // REAL Player::CompleteCommonPhrase awards mSpotlightPhrase via AddEnergy.
-    // We fully hit every phrase except one (phrase index `missIdx`) where we drop
-    // a gem, to show the gate: a missed phrase credits nothing.
+    // Every phrase gem is judged and handed to the REAL CommonPhraseCapturer
+    // (HandlePhraseNote), which decides the credit: HasPlayedWholePhrase ->
+    // OneTrackCompletedPhrase -> Player::CompleteCommonPhrase -> AddEnergy. We
+    // fully hit every phrase except one (phrase index `missIdx`) where we drop a
+    // gem, to show the gate: a missed phrase credits nothing. The driver's
+    // expectation is checked against the arbiter's decision (real
+    // Stats::mOverdrivePhrasesCompleted delta); a disagreement aborts.
     printf("--- Stage 2: complete overdrive phrases -> REAL AddEnergy ---\n");
     int missIdx = (nPhrases >= 3) ? 1 : -1; // drop one gem in phrase 1
     bool deployed = false;
@@ -439,17 +483,30 @@ int main(int argc, char **argv) {
             continue;
         }
         bool wholePhrase = true;
+        float before = player.Energy();
+        int completedBefore = player.OverdrivePhrasesCompleted();
         for (size_t k = 0; k < gs.size(); k++) {
+            int g = gs[k];
+            bool hit = true;
             if ((int)p == missIdx && k == gs.size() / 2) {
                 wholePhrase = false; // simulate a dropped gem
+                hit = false;
                 player.OnPass();     // real streak break
-                continue;
+            } else {
+                player.OnHit(1); // real scoring
             }
-            player.OnHit(1); // real scoring
+            gM8Dealt[g] = true;
+            band->mCommonPhraseCapturer->HandlePhraseNote(
+                (GemPlayer *)&player, track, g, hit); // REAL arbiter
         }
-        float before = player.Energy();
-        if (wholePhrase) {
-            player.CreditOverdrivePhrase(); // REAL CompleteCommonPhrase -> AddEnergy
+        bool credited = player.OverdrivePhrasesCompleted() != completedBefore;
+        if (credited != wholePhrase) {
+            printf("  phrase %d: REAL CommonPhraseCapturer %s, driver expected %s "
+                   "-- MISMATCH; aborting.\n", p, credited ? "credited" : "withheld",
+                   wholePhrase ? "credit" : "no credit");
+            return 1;
+        }
+        if (credited) {
             printf("  phrase %d: %d/%d gems hit -> CompleteCommonPhrase  energy "
                    "%.3f -> %.3f  (+%.3f)  canDeploy=%s\n",
                    p, (int)gs.size(), (int)gs.size(), before, player.Energy(),

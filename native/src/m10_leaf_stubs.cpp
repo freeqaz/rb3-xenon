@@ -48,7 +48,6 @@ void Game::AddBonusPoints(BandUser *, int, int) {}
 void Game::AdjustForVocalPhrases(float &, float &) const {}
 void GameConfig::GetPracticeSections(int &, int &) const {}
 void GameConfig::GetSectionBounds(int, float &, float &) const {}
-void SongDB::ChangeDifficulty(int, Difficulty) {}
 
 // ---- VocalPlayer::InTambourinePhrase -- the REAL body, not a stub (W16-PD) ----
 // Hot path: the probe counted 37,203 calls in one rb3-harmony run. It used to

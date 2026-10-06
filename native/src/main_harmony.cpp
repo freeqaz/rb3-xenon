@@ -35,6 +35,9 @@
 #include "game/Scoring.h"
 #include "game/CrowdRating.h"
 #include "crowd_config_dta.h" // W16-PD: real shipped (crowd ...) block
+#include "scoring_config_dta.h" // W16-PJ: real shipped (coda ...)
+#include "game/GameConfig.h"
+#include "game/SongDB.h"
 #include <string>
 #include "game/SongDB.h"
 #include "game/Game.h"
@@ -71,6 +74,10 @@ extern DataArray *gSystemConfig;
 void DataInit();
 void SetTheBeatMap(BeatMap *);
 
+// m8_support.cpp (W16-PJ: real SongDB bring-up)
+Game *NativeMakeGame();
+GameConfig *NativeMakeGameConfig(PlayerTrackConfigList *, float);
+void NativeSongDBPostLoad(SongDB *, float);
 // m10_support.cpp
 GameMicManager *NativeMakeGameMicManager(int nSingers);
 void NativeSetMicFrame(int i, float pitch, float energy);
@@ -244,7 +251,10 @@ int main(int argc, char **argv) {
     ObjectDir::PreInit(256, 4096);
     {
         std::string cfg(kConfigDta);
-        cfg.replace(cfg.find("@CROWD@"), 7, kRealCrowdConfigDta);
+        // W16-PJ: + the real (coda ...) block the real MultiplayerAnalyzer reads.
+        // (This config already carries the shipped (solo default/tambourine).)
+        cfg.replace(cfg.find("@CROWD@"), 7,
+                    std::string(kRealCrowdConfigDta) + kRealCodaConfigDta);
         gSystemConfig = DataReadString(cfg.c_str());
     }
 
@@ -259,8 +269,15 @@ int main(int argc, char **argv) {
     new Scoring();
 
     // --- Stage 1: REAL SongParser -> SongData (harmony via the sink) ----------
+    // TheGame first: the REAL SongDB sink (AddPhrase) consults it during
+    // SongData::PostLoad below.
+    Game *game = NativeMakeGame();
+    // W16-PJ: parse INTO the real SongDB's own SongData (its ctor registers the
+    // SongDB as that SongData's parser sink and builds its MultiplayerAnalyzer).
+    SongDB *songDB = new SongDB();
+    TheSongDB = songDB;
     NativeSongInfo songInfo;
-    SongData songData;
+    SongData &songData = *songDB->GetData();
     songData.mNumDifficulties = kNDiff;
     songData.mHopoThreshold = songInfo.GetHopoThreshold();
     songData.mSongInfo = &songInfo;
@@ -290,13 +307,17 @@ int main(int argc, char **argv) {
         printf("--- Stage 1: REAL SongParser -> SongData (%d Poll pumps) ---\n", pumps);
     }
     if (songData.mTempoMap) songData.mTempoMap->Finalize();
-    for (size_t i = 0; i < songData.mGemDBs.size(); i++) {
+    for (size_t i = 0; i < songData.mGemDBs.size(); i++)
         songData.mGemDBs[i]->MergeChordGems();
-        songData.mGemDBs[i]->Finalize();
-    }
-    songData.FixUpTrackConfig(&expertList);
-    songData.SetUpTrackDifficulties(&expertList);
-    songData.PostLoadVocals(); // real harmony phrase-copy + freestyle intersection
+    // W16-PJ: one REAL player config (a generated UserGuid on the vocals track at
+    // Expert) + the REAL SongData::PostLoad, which runs PostLoadVocals itself
+    // (see main_score4.cpp for the full rationale).
+    UserGuid playerGuid;
+    playerGuid.Generate();
+    expertList.AddConfig(playerGuid, kTrackVocals, kExpertDiff, 0, false);
+    songData.mPlayerTrackConfigList = &expertList;
+    NativeMakeGameConfig(&expertList, 0.0f);
+    songData.PostLoad(&expertList);
 
     int nLists = songData.GetVocalNoteListCount();
     printf("--- vocal harmony parts parsed: %d (UseVocalHarmony=%d) ---\n",
@@ -328,23 +349,16 @@ int main(int argc, char **argv) {
     printf("  song ~%.1fs\n\n", durationMs / 1000.0f);
 
     // --- singletons the REAL VocalPlayer::Poll path resolves through ----------
-    SongDB *songDB = new SongDB();
-    songDB->mSongData = &songData;
-    songDB->mSongDurationMs = durationMs;
-    TheSongDB = songDB;
+    // W16-PJ: the event-independent half of the REAL SongDB::PostLoad (see
+    // m8_support.cpp). Runs before the VocalPlayer exists, as in the game (the
+    // SongDB loads before the players are built).
+    NativeSongDBPostLoad(songDB, durationMs);
 
     const int kNSingers = 2;
     TheGameMicManager = NativeMakeGameMicManager(kNSingers); // two synthetic mics
     TheNetSession = NativeMakeNetSession();
 
-    Game *game = (Game *)std::calloc(1, sizeof(Game));
-    game->mProperties.mEnableStreak = true;
-    game->mProperties.mEnableOverdrive = true;
-    game->mProperties.mAllowOverdrivePhrases = true;
-    game->mProperties.mEndWithSong = false;
-    game->unkdc = -1.0f;
-    game->mIsPaused = false;
-    TheGame = game;
+    game->mIsPaused = false; // (TheGame itself is made before the parse)
 
     Band *band = new Band(true, 1, true);
     band->NativeLoadBonuses();
@@ -597,19 +611,32 @@ int main(int argc, char **argv) {
     printf("\n  combined player score: %d  (REAL Player::GetScore via per-part AddScore/AddPoints)\n",
            vp->GetScore());
 
-    // --- stars baseline: REAL Scoring::ComputeStarThresholds over a defined base --
-    // Populate SongDB::GetBaseScores() with the vocal base score (= the raw phrase-
-    // point pool offered across all parts/phrases), then run the genuine engine
-    // star pipeline (ComputeStarThresholds -> GetSoloNumStars). The base is the
-    // pre-streak-multiplier point pool, so the multiplied achieved score can cross
-    // the lower thresholds -> a conservative but REAL star rating.
+    // --- stars baseline: the REAL vocal base-point override --------------------
+    // W16-PJ: in the game, VocalPlayer::BuildPhrases ends with
+    //   if (NeedsToOverrideBasePoints()) TheSongDB->OverrideBasePoints(mTrackNum,
+    //       mTrackType, GetUserGuid(), GetBaseMaxPoints(), GetBaseMaxStreakPoints(),
+    //       GetBaseBonusPoints());
+    // NeedsToOverrideBasePoints / GetUserGuid dereference the BandUser, which the
+    // headless player does not have, so that one call is made here with the
+    // player's config UserGuid -- everything else is the real chain (the real
+    // VocalPlayer base-point formulas -> the real SongDB -> the real
+    // MultiplayerAnalyzer::OverrideBasePoints -> Scoring::ComputeStarThresholds).
+    // This replaces the driver-defined base (the raw phrase-point pool, pushed
+    // straight into GetBaseScores), which is still printed as a cross-check.
     int idealBase = (int)idealPhrasePool;
-    std::vector<PlayerScoreInfo> &baseScores = songDB->GetBaseScores();
-    baseScores.clear();
-    baseScores.push_back(
-        PlayerScoreInfo(kTrackVocals, kDifficultyExpert, idealBase, idealBase, 0));
-    TheScoring->ComputeStarThresholds(false);
-    printf("  base score pool      : %d  (Σ every part's every phrase max)\n", idealBase);
+    songDB->OverrideBasePoints(expertList.GetTrackNumByUserGuid(playerGuid),
+                               kTrackVocals, playerGuid, vp->GetBaseMaxPoints(),
+                               vp->GetBaseMaxStreakPoints(), vp->GetBaseBonusPoints());
+    {
+        const std::vector<PlayerScoreInfo> &bs = songDB->GetBaseScores();
+        for (size_t i = 0; i < bs.size(); i++)
+            printf("  REAL base (VocalPlayer::GetBaseMax*): type %d diff %d "
+                   "maxStreakPts %d maxPts %d bonusPts %d\n",
+                   (int)bs[i].mTrackType, (int)bs[i].mDifficulty,
+                   bs[i].mMaxStreakPts, bs[i].mMaxPts, bs[i].mBonusPts);
+    }
+    printf("  driver phrase pool   : %d  (Σ every part's every phrase max; "
+           "cross-check only)\n", idealBase);
     printf("  solo-star thresholds : ");
     for (int s = 1; s <= 5; s++) printf("%d* @%d  ", s, vp->GetScoreForStars(s));
     printf("\n  stars                : %d  (%.2f)  (REAL Scoring::GetSoloNumStars)\n",

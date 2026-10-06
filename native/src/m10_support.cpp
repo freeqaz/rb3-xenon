@@ -17,10 +17,7 @@
 //     real-mic branch (mic->mLastPitch/mLastEnergy) instead of the silent branch.
 #include "game/GameMic.h"
 #include "game/GameMicManager.h"
-#include "game/SongDB.h"
 #include "game/GameConfig.h"
-#include "beatmatch/SongData.h"
-#include "beatmatch/VocalNote.h"
 #include "net/NetSession.h"
 #include "synth/Mic.h"
 #include "synth/MicManagerInterface.h"
@@ -153,19 +150,9 @@ void NativeSetMicSamples(int i, const short *buf, int count) {
     m->mNumSamplesContinuous = count;
 }
 
-// ============================================= SongDB vocal query overrides ===
-// The vocal Poll path resolves note lists / pitch offsets through TheSongDB. These
-// delegate to the real parsed SongData (the base m8_support.cpp provides the SongDB
-// ctor + mSongData wiring). NOTE: m8_link_stubs.cpp's GetVocalNoteListCount()->0
-// stub is intentionally NOT linked into rb3-vocal2 (see m10_link_stubs.cpp).
-int SongDB::GetVocalNoteListCount() const {
-    return mSongData ? mSongData->GetVocalNoteListCount() : 0;
-}
-VocalNoteList *SongDB::GetVocalNoteList(int i) const {
-    return mSongData ? mSongData->GetVocalNoteList(i) : 0;
-}
-float SongDB::GetPitchOffsetForTick(int) const { return 0.0f; }
-void SongDB::OverrideBasePoints(int, TrackType, const UserGuid &, int, int, int) {}
+// (The SongDB vocal query overrides that lived here -- GetVocalNoteListCount /
+// GetVocalNoteList / GetPitchOffsetForTick->0 / OverrideBasePoints no-op -- are
+// gone: these targets link the real src/band3/game/SongDB.cpp. W16-PJ.)
 
 // ==================================================== other singletons =========
 // TheNetSession / TheGameConfig globals live in m6_symbols.cpp (both null). The

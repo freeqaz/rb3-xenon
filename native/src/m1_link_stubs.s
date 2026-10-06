@@ -9,12 +9,6 @@
 
 .text
 // TrackTypeToSym(TrackType)
-// AllowedToAccessContent(int)
-.weak _Z22AllowedToAccessContenti
-.type _Z22AllowedToAccessContenti,@function
-_Z22AllowedToAccessContenti:
-    xorq %rax, %rax
-    ret
 
 // LicenseMgr::ClearCachedContent()
 .weak _ZN10LicenseMgr18ClearCachedContentEv

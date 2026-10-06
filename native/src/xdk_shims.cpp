@@ -863,3 +863,27 @@ unsigned int XGSurfaceSize(int width, int height, int, unsigned int) {
 
 // Forward declare the rest as needed - these will be added as compilation
 // reveals which ones are actually referenced
+
+// ============================================================================
+// XNetRandom (xdk/xnet/xnetapi.h) -- W16-PJ
+// The XDK's cryptographically-random byte source. It used to be a weak no-op in
+// dta_link_stubs.s that returned 0 WITHOUT filling the buffer, so the real
+// HxGuid::Generate (utl/HxGuid.cpp) -- which retries until the GUID is non-null --
+// spun forever on any native path that generates a UserGuid. Backed by the
+// kernel CSPRNG, as XNetRandom is on the console.
+// ============================================================================
+#include <sys/random.h>
+
+extern "C" int XNetRandom(unsigned char *pb, unsigned int cb) {
+    unsigned int done = 0;
+    while (done < cb) {
+        ssize_t n = getrandom(pb + done, cb - done, 0);
+        if (n < 0) {
+            if (errno == EINTR)
+                continue;
+            return -1;
+        }
+        done += (unsigned int)n;
+    }
+    return 0;
+}
