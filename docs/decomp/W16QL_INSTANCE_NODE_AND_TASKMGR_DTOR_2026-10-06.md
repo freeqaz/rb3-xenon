@@ -80,14 +80,13 @@ So retail's TaskMgr destructor does nothing of its own. Its members are a
 pointer, `SongPos`, `bool`, `int`, `Timer` and `float`, and none has a
 non-trivial destructor. The timelines are freed by `TaskMgr::Terminate`
 (`0x8274A8F8`, already 100%), which `SystemTerminate` calls. DC3 moved
-`delete[] mTimelines; mTimelines = nullptr;` into `~TaskMgr`. rb3-Wii has
-`virtual ~TaskMgr() {}`.
+`delete[] mTimelines; mTimelines = nullptr;` into `~TaskMgr`.
 
 **Why the declaration matters, and a failed first attempt.** With DC3's
 out-of-line `~TaskMgr` (which does the `delete[]`), the stub called
 `??1TaskMgr` and scored 98.33. That was the "fold-named callee" W16-QI
-reported. My first fix used the rb3-Wii spelling, `virtual ~TaskMgr() {}`
-inline. It dropped the stub to **0 / 3.3 canonical**. The inlined
+reported. My first fix was an empty inline
+`virtual ~TaskMgr() {}`. It dropped the stub to **0 / 3.3 canonical**. The inlined
 user-declared dtor makes MSVC store `??_7TaskMgr@@6B@` into `this` before it
 branches to `~Object` (three inserted instructions, 24 B against retail's
 12 B). With the user-declared destructor removed entirely, MSVC's implicit
