@@ -377,9 +377,8 @@ void ObjectDir::Save(BinStream &bs) {
     if (SaveSubdirs()) {
         for (int i = 0; i < mSubDirs.size(); i++) {
             ObjDirPtr<ObjectDir> &curSubDir = mSubDirs[i];
-            ObjectDir *subDir = curSubDir;
-            if (subDir) {
-                if (subDir->InlineSubDirType() != kInlineNever) {
+            if (curSubDir) {
+                if (curSubDir->InlineSubDirType() != kInlineNever) {
                     inlinedSubDirs.push_back(curSubDir);
                 } else {
                     notInlinedSubDirs.push_back(curSubDir);
