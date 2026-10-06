@@ -35,6 +35,15 @@ under its new one (A: 34 gone / 34 new, B: 5/5, C: 7/7).
 five RndDir `$4` thunks that moved to PatchDir, so it moved with them, and it
 reads 100/100 in PatchDir. It is a reattribution, not a regression.
 
+**Re-measured after rebasing onto main `9fd8de7b1`** (W16-QF and W16-QH
+had landed and conflicted in the map; resolved as a three-way key merge with
+0 key clashes). The whole lane's map/splits/alias diff was run as a single
+`ab_measure --patch` (run `20261006-125248-w16qg-lane-on-9fd8de7b1`):
+predicted +46 / +2,796 B, **measured +46 fns / +2,796 B** (leg A 53,608 /
+58.093216% → leg B 53,654 / 58.120502%). Units at 100% (mpn) went
+571 → 578 with 0 falling off. The row check again found 0 same-key and 0
+name-level drops, with 46 keys gone (all at 0%) and 46 new.
+
 ## 1. Population
 
 - Category 1: the 36 addresses from W16-QB's `flankmatch` list that were
