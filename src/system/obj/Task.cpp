@@ -412,11 +412,6 @@ TaskMgr::TaskMgr() {
 #endif
 }
 
-TaskMgr::~TaskMgr() {
-    delete[] mTimelines;
-    mTimelines = nullptr;
-}
-
 BEGIN_HANDLERS(TaskMgr)
     HANDLE_ACTION(clear_tasks, ClearTasks())
     HANDLE_EXPR(seconds, Seconds(kRealTime))
