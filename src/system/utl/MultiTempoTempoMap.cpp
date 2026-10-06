@@ -45,11 +45,7 @@ int MultiTempoTempoMap::GetLoopTick(int tick, int &loopOffset) const {
     int startTick = static_cast<int>(mStartLoopTick);
     int endTick = static_cast<int>(mEndLoopTick);
 
-    if (tick >= mEndLoopTick) {
-        if (mStartLoopTick == mEndLoopTick) {
-            return tick;
-        }
-
+    if (tick >= mEndLoopTick && mStartLoopTick != mEndLoopTick) {
         int loopTick = tick - startTick;
         int loopLength = endTick - startTick;
         int newTick = (loopTick % loopLength) + startTick;

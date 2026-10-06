@@ -234,15 +234,21 @@ void Locale::Init() {
             numChunks = 0;
             for (int j = cfg->Size() - 2; j >= 0; j--) {
                 DataArray *curArr = arrVec[j];
+                // LiteralArray's error-context argument is the PREVIOUS chunk
+                // array from the second entry on: retail moves curArr into r4
+                // once before the k loop and then the last LiteralArray result
+                // at the bottom of each pass. Only the file/line reported by a
+                // "Data %s is not Array" failure depends on it. The size test
+                // re-reads Size() rather than naming it.
+                DataArray *chunkArr = curArr;
                 for (int k = curArr->Size() - 1; k >= 0; k--, numChunks++) {
-                    DataArray *chunkArr = curArr->Node(k).LiteralArray(curArr);
-                    int size = chunkArr->Size();
-                    if (size < 2) {
+                    chunkArr = curArr->Node(k).LiteralArray(chunkArr);
+                    if (chunkArr->Size() < 2) {
                         MILO_FAIL(
                             "%s line %d should have 2 entries, has %d, mismatched quotes?",
                             chunkArr->File(),
                             chunkArr->Line(),
-                            size
+                            chunkArr->Size()
                         );
                     }
                     chunks[numChunks].node1 = chunkArr->LiteralSym(0);

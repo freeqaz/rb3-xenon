@@ -33,22 +33,23 @@ void FftIpp::FftReal(
 
     FFTRealForward(&mBuf3[0], (unsigned long)mSize, &mSinCos[0]);
 
+    // Deinterleave FFTRealForward's packed complex output into separate real
+    // and imaginary arrays. Retail's single running pointer with a byte bias and
+    // +8 stride is MSVC's own induction-variable reduction of these two
+    // subscripts; spelling it out by hand produces different code. Three details
+    // are load-bearing (DC3 lane): `i` is declared BEFORE `half`, so its `li` is
+    // scheduled ahead of the `srawi`; an explicit `if` + `do/while` keeps MSVC
+    // from turning a `for` into `mtctr`/`bdnz`; and unsigned `i` and bound give
+    // the `cmplwi`/`cmplw` compares.
     int n = mSize;
-    int i = 1;
-    unsigned int half = (unsigned int)(n >> 1);
-    if (half > 1) {
-        char *packed = (char *)&mBuf3[0];
-        int byteOff = 8;
-        float *im = outIm + 1;
-        long reBias = (char *)outRe - (char *)outIm;
+    unsigned int i = 1;
+    int half = n >> 1;
+    if ((unsigned int)half > 1) {
         do {
-            // Even slot -> real out, odd slot -> imag out.
-            *(float *)((char *)im + reBias) = *(float *)(packed + byteOff);
+            outRe[i] = mBuf3[i * 2];
+            outIm[i] = mBuf3[i * 2 + 1];
             ++i;
-            byteOff += 8;
-            im[0] = *(float *)(packed + byteOff - 4);
-            im += 1;
-        } while ((unsigned int)i < half);
+        } while (i < (unsigned int)half);
     }
 
     outIm[0] = 0.0f;

@@ -174,25 +174,26 @@ void MidiReader::ReadMidiEvent(
         QueueChannelMsg(tick, status, data1, data2);
 }
 
-// Retail copies `base` into its own register first (`fmr f13,f1`) and keeps
-// the 1.0f constant live for the final `one / result` (`fdivs f0,f12,f0` then a
-// single `fmr f1,f0` at the join). Residual: retail schedules `cmpwi r4,0` above
-// the `mr r11,r4` copy.
-float pow(float base, int exponent) {
-    float b = base;
-    unsigned int exp = exponent;
-    if (exponent < 0)
-        exp = -exponent;
-    float result = 1.0f;
-    for (;;) {
-        if (exp & 1)
-            result *= b;
-        exp >>= 1;
-        if (!exp) break;
-        b *= b;
+// `pow(float, int)` is the XDK math.h overload, which forwards to the CRT's
+// `_Pow_int<float>` template; both are written here the way the header writes
+// them (the helper name is ours). The forwarding level is what gives retail's
+// `fmr f13, f1` copy of x (from DC3 lane w18-d).
+template <class T>
+inline T PowInt(T x, int y) {
+    unsigned int n;
+    if (y >= 0)
+        n = (unsigned int)y;
+    else
+        n = (unsigned int)(-y);
+    for (T z = T(1);; x *= x) {
+        if ((n & 1) != 0)
+            z *= x;
+        if ((n >>= 1) == 0)
+            return (y < 0 ? T(1) / z : z);
     }
-    return exponent < 0 ? 1.0f / result : result;
 }
+
+float pow(float x, int y) { return PowInt(x, y); }
 
 // MILO_WARN (not MILO_NOTIFY) throughout this file -- lane W27-FRAMEQ, 2026-08-17.
 // dc3-decomp spells every site in this TU MILO_NOTIFY and we inherited that, but DC3

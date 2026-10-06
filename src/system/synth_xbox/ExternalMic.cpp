@@ -84,12 +84,16 @@ namespace {
 void ExternalMic::dataReady(unsigned long, unsigned long, _XOVERLAPPED *pOverlapped) {
     XMicData *data = (XMicData *)pOverlapped->dwCompletionContext;
     if (data) {
+        // `i` and `total` both live outside the `0 < numFrames` guard: retail
+        // zeroes the loop counter with the same register as the buf[0] store
+        // and copies it into `total` before the memset (from DC3).
+        unsigned int i = 0;
+        unsigned int total = 0;
         unsigned char buf[2048] = {0};
         unsigned char *pSrc = data->pData;
-        unsigned int total = 0;
-        if (data->numFrames > 0) {
+        if (0 < data->numFrames) {
             unsigned short *pFrameSize = data->aFrameSizes;
-            for (unsigned int i = 0; i < data->numFrames; i++) {
+            for (; i < data->numFrames; i++) {
                 if (*pFrameSize != 0) {
                     unsigned short frameSize = *pFrameSize;
                     if (frameSize & 1) {

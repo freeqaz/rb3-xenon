@@ -27,6 +27,10 @@ class FileEntry {
     friend class Archive;
 
 public:
+    FileEntry() {}
+    FileEntry(u64 offset, int hashedName, int hashedPath, int size, int ucSize)
+        : mOffset(offset), mHashedName(hashedName), mHashedPath(hashedPath),
+          mSize(size), mUCSize(ucSize) {}
     int HashedPath() const { return mHashedPath; }
     int Size() const { return mSize; }
     int HashedName() const { return mHashedName; }

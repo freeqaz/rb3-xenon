@@ -104,25 +104,29 @@ void UsbMidiKeyboard::Poll() {
             || gForceDetectKeytar) {
             ProKeysData *proData =
                 (ProKeysData *)&JoypadGetPadData(i)->mProGuitarData;
-
+            // Residual (DC3 lane w7-r): retail emits slotCounter's `li 1` between
+            // `bl JoypadGetPadData` and the proData `addi`; we emit it after the addi.
+            // Declaring slotCounter first hoists the `li` above the call instead, so no
+            // declaration order lands it in retail's slot.
             int slotCounter = 1;
-            for (int keyIndex = 0; keyIndex < 25; keyIndex++) {
-                int note = keyIndex + 0x30;
-                bool pressed = (proData->unk0[keyIndex / 8] >> (7 - keyIndex % 8)) & 1;
+
+            for (int note = 0x30; note - 0x30 < 25; note++) {
+                bool pressed = (proData->unk0[(note - 0x30) / 8]
+                                >> (7 - (note - 0x30) % 8))
+                    & 1;
 
                 bool storedPressed = TheKeyboard->GetKeyPressed(i, note);
 
                 if (pressed != storedPressed) {
                     if (pressed) {
-                        TheKeyboard->SetKeyVelocity(
-                            i,
-                            note,
-                            TheKeyboard->GetSlottedKeyVelocityFromExtended(
-                                slotCounter, proData->unk0
-                            )
+                        int extVel = TheKeyboard->GetSlottedKeyVelocityFromExtended(
+                            slotCounter, proData->unk0
                         );
+                        TheKeyboard->SetKeyVelocity(i, note, extVel);
                         slotCounter++;
-                        KeyboardKeyPressedMsg msg(note, TheKeyboard->GetKeyVelocity(i, note), i);
+                        KeyboardKeyPressedMsg msg(
+                            note, TheKeyboard->GetKeyVelocity(i, note), i
+                        );
                         SendMessage(msg);
                     } else {
                         TheKeyboard->SetKeyVelocity(i, note, 0);
@@ -178,11 +182,15 @@ void UsbMidiKeyboard::Poll() {
                 SendMessage(msg);
             }
 
-            int b = proData->unkbbool;
-            int c = proData->unkcbool * 2;
-            int d = proData->unkdbool * 4;
-            int e = proData->unkemiddle * 8;
-            int highhand = c + d + e + b;
+            // Retail: four fused rlwinm extractions and a flat add chain
+            // (d<<2) + (c<<1) + (e<<3) + b, which this spelling reproduces. The
+            // residual is load scheduling only: retail issues the +0xe load
+            // after the first rlwinm, we issue it before, shifting r5-r9 by one.
+            int hhB = proData->unkbbool;
+            int hhE = proData->unkemiddle << 3;
+            int hhD = proData->unkdbool << 2;
+            int hhC = proData->unkcbool << 1;
+            int highhand = hhD + hhC + hhE + hhB;
             if (highhand != TheKeyboard->GetHighHandPlacement(i)) {
                 TheKeyboard->SetHighHandPlacement(i, highhand);
                 KeyboardHighHandPlacementMsg msg(highhand, i);
@@ -196,7 +204,9 @@ void UsbMidiKeyboard::Poll() {
                 || accelAxisVal1 != TheKeyboard->GetAccelAxisVal(i, 1)
                 || accelAxisVal2 != TheKeyboard->GetAccelAxisVal(i, 2)) {
                 TheKeyboard->SetAccelerometer(i, accelAxisVal0, accelAxisVal1, accelAxisVal2);
-                KeysAccelerometerMsg msg(accelAxisVal0, accelAxisVal1, accelAxisVal2, i);
+                KeysAccelerometerMsg msg(
+                    accelAxisVal0, accelAxisVal1, accelAxisVal2, i
+                );
                 SendMessage(msg);
             }
         }

@@ -70,24 +70,14 @@ void StreamReceiver360::SetADSR(const ADSRImpl &adsr) {
 
 void StreamReceiver360::Tag() {
     mTagged = true;
-    Voice **pVoice = &mVoice;
-    if (mSlipVoice) {
-        int val;
-        Voice *target;
-        if (mVoice != 0) {
-            mSlipVoice->mTagState = 1;
-            val = 2;
-            target = *pVoice;
-        } else {
-            if (mSlipVoice == 0) return;
-            val = 3;
-            target = mSlipVoice;
-        }
-        target->mTagState = val;
-        return;
+    if (mSlipVoice && mVoice) {
+        mSlipVoice->mTagState = 1;
+        mVoice->mTagState = 2;
+    } else if (mSlipVoice) {
+        mSlipVoice->mTagState = 3;
+    } else if (mVoice) {
+        mVoice->mTagState = 4;
     }
-    if (*pVoice == 0) return;
-    (*pVoice)->mTagState = 4;
 }
 
 void StreamReceiver360::Poll() {

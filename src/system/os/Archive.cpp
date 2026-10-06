@@ -234,40 +234,39 @@ bool Archive::GetFileInfo(
     int &fileSize,
     int &fileUCSize
 ) {
-    if (file && *file) {
-        String name(FileGetName(file));
-        String path(FileGetPath(file));
-        int nameValue = mHashTable.GetHashValue(name.c_str());
-        int pathValue = mHashTable.GetHashValue(path.c_str());
-        if (nameValue != -1 && pathValue != -1) {
-            FileEntry entry;
-            entry.mHashedName = nameValue;
-            entry.mHashedPath = pathValue;
-            auto it = std::lower_bound(mFileEntries.begin(), mFileEntries.end(), entry);
-            if (it != mFileEntries.end() && it->HashedName() == nameValue
-                && it->HashedPath() == pathValue) {
-                arkfileNum = 0;
-                unsigned long long u7 = 0;
-                for (; arkfileNum < mNumArkfiles; arkfileNum++) {
-                    unsigned long long u6 = mArkfileSizes[arkfileNum] + u7;
-                    if (it->mOffset < u6)
-                        break;
-                    u7 = u6;
-                }
-                MILO_ASSERT(arkfileNum < mNumArkfiles, 0x183);
-                byteOffset = it->mOffset - u7;
-                fileSize = it->mSize;
-                fileUCSize = it->mUCSize;
-                return true;
-            }
-            arkfileNum = 0;
-            byteOffset = 0;
-            fileSize = 0;
-            fileUCSize = 0;
-            return false;
-        }
+    if (!file || !*file)
+        return false;
+    String name(FileGetName(file));
+    String path(FileGetPath(file));
+    int nameValue = mHashTable.GetHashValue(name.c_str());
+    int pathValue = mHashTable.GetHashValue(path.c_str());
+    if (nameValue == -1 || pathValue == -1)
+        return false;
+    FileEntry entry;
+    entry.mHashedName = nameValue;
+    entry.mHashedPath = pathValue;
+    auto it = std::lower_bound(mFileEntries.begin(), mFileEntries.end(), entry);
+    if (it == mFileEntries.end() || it->HashedName() != nameValue
+        || it->HashedPath() != pathValue) {
+        arkfileNum = 0;
+        byteOffset = 0;
+        fileSize = 0;
+        fileUCSize = 0;
+        return false;
     }
-    return false;
+    arkfileNum = 0;
+    unsigned long long u7 = 0;
+    for (; arkfileNum < mNumArkfiles; arkfileNum++) {
+        unsigned long long u6 = mArkfileSizes[arkfileNum] + u7;
+        if (it->mOffset < u6)
+            break;
+        u7 = u6;
+    }
+    MILO_ASSERT(arkfileNum < mNumArkfiles, 0x183);
+    byteOffset = it->mOffset - u7;
+    fileSize = it->mSize;
+    fileUCSize = it->mUCSize;
+    return true;
 }
 
 // Local override, TU-scoped only: retail's stripped MILO_FAIL residue here
@@ -329,14 +328,15 @@ void Archive::Merge(Archive &shadow) {
         totalSize += mArkfileSizes[i];
     }
     std::vector<FileEntry> &shadowEntries = shadow.mFileEntries;
+    // Both of shadow's members are hoisted into references before the loop;
+    // this->mHashTable is recomputed inside it (from DC3).
     ArkHash &shadowHash = shadow.mHashTable;
-    ArkHash &ourHash = mHashTable;
     FOREACH (it, shadowEntries) {
         const char *name = shadowHash[it->mHashedName];
         const char *path = shadowHash[it->mHashedPath];
         FileEntry entry;
-        entry.mHashedName = ourHash.AddString(name);
-        entry.mHashedPath = ourHash.AddString(path);
+        entry.mHashedName = mHashTable.AddString(name);
+        entry.mHashedPath = mHashTable.AddString(path);
         auto fileIt = std::lower_bound(mFileEntries.begin(), mFileEntries.end(), entry);
         if (fileIt != mFileEntries.end() && fileIt->mHashedName == entry.HashedName()
             && fileIt->mHashedPath == entry.HashedPath()) {
@@ -344,12 +344,16 @@ void Archive::Merge(Archive &shadow) {
             fileIt->mSize = it->mSize;
             fileIt->mUCSize = it->mUCSize;
         } else {
-            FileEntry toAdd;
-            toAdd.mOffset = it->mOffset + totalSize;
-            toAdd.mHashedName = entry.HashedName();
-            toAdd.mHashedPath = entry.HashedPath();
-            toAdd.mUCSize = it->mUCSize;
-            toAdd.mSize = it->mSize;
+            // A 5-argument ctor: right-to-left argument evaluation loads
+            // UCSize, Size and only then the 64-bit offset, as retail does
+            // (DC3 lane w14-d).
+            FileEntry toAdd(
+                it->mOffset + totalSize,
+                entry.HashedName(),
+                entry.HashedPath(),
+                it->mSize,
+                it->mUCSize
+            );
             extraFileEntries.push_back(toAdd);
         }
     }

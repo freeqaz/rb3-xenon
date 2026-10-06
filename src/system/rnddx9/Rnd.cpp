@@ -280,19 +280,19 @@ void DxRnd::DrawLine(const Vector3 &v1, const Vector3 &v2, const Hmx::Color &c, 
     // Vertex buffer layout: 2 vertices (xyz + color each) + Transform matrix
     // Total: 8 floats + 48 bytes = 96 bytes (24 floats)
     float vertices[24];
-    unsigned long colorVal = MakeColor(c);
 
     // First vertex
     vertices[0] = v1.x;
     vertices[1] = v1.y;
     vertices[2] = v1.z;
-    *(unsigned long *)&vertices[3] = colorVal;
 
     // Second vertex
     vertices[4] = v2.x;
     vertices[5] = v2.y;
     vertices[6] = v2.z;
-    *(unsigned long *)&vertices[7] = colorVal;
+    // One chained store of the colour, second vertex first: MakeColor is
+    // computed once, after both positions.
+    *(unsigned long *)&vertices[7] = *(unsigned long *)&vertices[3] = MakeColor(c);
 
     // Initialize identity transform in-place (vertices[8..19])
     Transform &xfm = reinterpret_cast<Transform &>(vertices[8]);
@@ -336,7 +336,7 @@ void DxRnd::SetViewport(const Viewport &v) {
 
 bool DxRnd::Offscreen() const {
     D3DSurface *back = BackBuffer();
-    D3DSurface *target = D3DDevice_GetRenderTarget(mD3DDevice, 0);
+    D3DSurface *target = D3DDevice_GetRenderTarget(Device(), 0);
     bool ret = target != back;
     if (target) {
         D3DResource_Release(target);

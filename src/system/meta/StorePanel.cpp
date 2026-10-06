@@ -3,6 +3,8 @@
 #include "meta/Profile.h"
 #include "meta/StoreEnumeration.h"
 #include "meta/StoreOffer.h"
+#include "net/NetCore.h"
+#include "net/Server.h"
 #include "obj/Data.h"
 #include "obj/Msg.h"
 #include "obj/Object.h"
@@ -307,8 +309,16 @@ void StorePanel::CheckOut(StorePurchaseable *p) {
     MILO_ASSERT(!mPurchaser, 0x2c1);
     LocalUser *user = StoreUser();
     MILO_ASSERT(user, 0x2c4);
+    // Retail tags the purchase with the online player ID when the server is
+    // connected (TheNet.mServer slots IsConnected / GetPlayerID), the same as
+    // MusicLibraryStore and AssetStore.
+    unsigned int flags = 0;
+    Server *server = TheNet.GetServer();
+    if (server && server->IsConnected()) {
+        flags = server->GetPlayerID(user->GetPadNum());
+    }
     mPurchaser =
-        new XboxPurchaser(user->GetPadNum(), p->songID, 0, 0, mPurchaseSource, 0);
+        new XboxPurchaser(user->GetPadNum(), p->songID, 0, 0, mPurchaseSource, flags);
     mPurchaser->Initiate();
 }
 

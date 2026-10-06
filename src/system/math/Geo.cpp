@@ -719,10 +719,10 @@ void Sphere::GrowToContain(const Sphere &s) {
         radius = s.radius;
         return;
     }
-    float dx = s.center.x - center.x;
     float dy = s.center.y - center.y;
+    float dx = s.center.x - center.x;
     float dz = s.center.z - center.z;
-    float dist = std::sqrt((dy * dy + (dz * dz + dx * dx)));
+    float dist = std::sqrt(dx * dx + dz * dz + dy * dy);
     if (s.radius + dist > radius) {
         if (radius + dist < s.radius) {
             center = s.center;
@@ -732,16 +732,15 @@ void Sphere::GrowToContain(const Sphere &s) {
         if (dist == 0.0f)
             return;
         float invDist = 1.0f / dist;
-        Vector3 a, b;
-        Vector3 dir;
-        dir.y = invDist * dy;
-        dir.x = dx * invDist;
-        dir.z = dz * invDist;
-        Vector3 offA, offB;
-        Scale(dir, radius, offA);
-        Scale(dir, s.radius, offB);
-        Subtract(center, offA, a);
-        Add(s.center, offB, b);
+        // Each scaled offset is its own fmuls and the six adds/subs follow; routing
+        // the products through Vector3 aggregates keeps /fp:fast from contracting them
+        // into fmadds/fnmsubs (spelling from DC3).
+        Vector3 dir, p, q, a, b;
+        dir.Set(dx * invDist, dy * invDist, dz * invDist);
+        Scale(dir, radius, p);
+        Scale(dir, s.radius, q);
+        Subtract(center, p, a);
+        Add(s.center, q, b);
         Interp(a, b, 0.5f, center);
         radius = (dist + s.radius + radius) * 0.5f;
         return;
@@ -963,11 +962,12 @@ void BSPFace::Update() {
 
     planes.clear();
 
+    const Vector3 &zAxis = t.m.z;
     Plane facePlane;
-    facePlane.a = t.m.z.x;
-    facePlane.b = t.m.z.y;
-    facePlane.c = t.m.z.z;
-    facePlane.d = -(t.m.z.x * t.v.x + t.m.z.y * t.v.y + t.m.z.z * t.v.z);
+    facePlane.a = zAxis.x;
+    facePlane.b = zAxis.y;
+    facePlane.c = zAxis.z;
+    facePlane.d = -(zAxis.x * t.v.x + zAxis.y * t.v.y + zAxis.z * t.v.z);
     planes.insert(planes.end(), facePlane);
 
     Vector3 prevPt(p.points.back().x, p.points.back().y, 0.0f);
@@ -977,17 +977,18 @@ void BSPFace::Update() {
         Vector3 curPt(it->x, it->y, 0.0f);
         Multiply(curPt, t, curPt);
 
-        Vector3 d;
-        d.x = curPt.x - prevPt.x;
-        d.y = curPt.y - prevPt.y;
-        d.z = curPt.z - prevPt.z;
+        float dx = curPt.x - prevPt.x;
+        float dy = curPt.y - prevPt.y;
+        float dz = curPt.z - prevPt.z;
 
-        bool noChange = d.x == 0.0f && d.y == 0.0f && d.z == 0.0f;
-        if (!noChange) {
+        bool degenerate = dx == 0.0f && dy == 0.0f && dz == 0.0f;
+        if (!degenerate) {
             Vector3 normal;
-            normal.z = t.m.z.y * d.x - t.m.z.x * d.y;
-            normal.x = t.m.z.z * d.y - t.m.z.y * d.z;
-            normal.y = t.m.z.x * d.z - t.m.z.z * d.x;
+            // Statement order y, z, x sets the load order of the zAxis triple and the
+            // store order of `normal` (DC3 lane w9-e built all six orders).
+            normal.y = zAxis.x * dz - zAxis.z * dx;
+            normal.z = zAxis.y * dx - zAxis.x * dy;
+            normal.x = zAxis.z * dy - zAxis.y * dz;
             Normalize(normal, normal);
 
             Plane edgePlane;
@@ -1123,16 +1124,21 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
         }
     }
 
-    bool ok = MakeBSPTree(node->left, frontFaces, nextDepth);
-    if (!ok) {
+    // Retail has three return paths here, each ending in the two lists'
+    // clears: false after the left recursion, false after the right one, and
+    // true; the last two share one frontFaces clear with the result parked in
+    // r30 (`mr r30, r18` / `li r30, 1`), which only the early-return form
+    // produces -- a `bool ok` carried to a single exit does not. The explicit
+    // clears on the left-failure path stay: without them the frame comes out
+    // 0x10 short of retail's 0x1b0 and every slot after 0x58 shifts.
+    if (!MakeBSPTree(node->left, frontFaces, nextDepth)) {
         backFaces.clear();
         frontFaces.clear();
         return false;
     }
-    ok = MakeBSPTree(node->right, backFaces, nextDepth);
-    backFaces.clear();
-    frontFaces.clear();
-    return ok;
+    if (!MakeBSPTree(node->right, backFaces, nextDepth))
+        return false;
+    return true;
 }
 #else
 bool MakeBSPTree(BSPNode *&, std::list<BSPFace> &, int) { return false; }

@@ -256,11 +256,16 @@ DataNode op8(DataArray *msg) {
     return u8(msg->Int(2) + bop) ^ bop;
 }
 
-DataNode op9(DataArray *msg) {
-    unsigned long b = msg->Int(1);
-    unsigned long a = u8(msg->Int(2));
-    return DataNode(kDataInt, (int)(((a ^ b) + b) & 0xFF));
+// op9 goes through a two-argument byte helper: the Int(1) result is truncated
+// to u8 only after the second call's arguments are set up (the inliner's
+// parameter copy, arguments evaluated right to left). Writing the truncation
+// inline coalesces it straight out of r3 instead (helper from DC3).
+static inline int ByteOp9(unsigned long w, u8 bar) {
+    unsigned long foo = u8(w);
+    return ((foo ^ bar) + bar) & 0xFF;
 }
+
+DataNode op9(DataArray *msg) { return DataNode(kDataInt, ByteOp9(msg->Int(2), msg->Int(1))); }
 
 DataNode op10(DataArray *msg) {
     unsigned long operand = msg->Int(1);
@@ -706,14 +711,16 @@ DataNode op58(DataArray *msg) {
 }
 
 DataNode op59(DataArray *msg) {
-    u32 operand = msg->Int(1);
-    u8 w = msg->Int(2);
-
-    u32 w_extended = w;
-    u32 working2 = (w_extended ^ 0x3Cu);
-    u32 working3 = (w_extended << 8) ^ 0x65u;
-    u32 tmp = ((working2 | working3) >> 2);
-    return DataNode(kDataInt, u8(tmp ^ operand));
+    // Retail (0x82726EE8) computes ((w >> 2) ^ 0x0F) | (((w & 3) << 6) ^ 0x19):
+    // `extrwi; xori 0xf` and `clrlslwi; xori 0x19`. Spelling from DC3 lane w11-d;
+    // the value equals the old ((w ^ 0x3C) | ((w << 8) ^ 0x65)) >> 2 form for
+    // every byte.
+    unsigned long operand = msg->Int(1);
+    unsigned long w = u8(msg->Int(2));
+    unsigned long a = (w >> 2) ^ 0xF;
+    unsigned long b = ((w & 3) << 6) ^ 0x19;
+    unsigned long tmp = a | b;
+    return DataNode(kDataInt, (int)((tmp ^ operand) & 0xFF));
 }
 
 DataNode op60(DataArray *msg) {

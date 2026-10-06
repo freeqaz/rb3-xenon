@@ -18,29 +18,37 @@ void SpectralAnalysis::Analyze(const float *in, float *out) {
     mFft1.FftReal(&mData0[0], &mData4[0], &mData5[0]);
 
     // Magnitude spectrum back into mData0.
+    // Retail's magnitude loop (0x82B759D8) is ONE induction pointer on mData5
+    // (im) plus two byte biases, with the zero-trip guard and `mtctr` before the
+    // biases. Index-based re[k] / im[k] / mag[k] reproduces it; named char*
+    // biases and walking pointers do not (DC3 lanes w7-ap / w7-bx). Under
+    // /fp:fast retail squares im first and fmadds re*re onto it; the source
+    // order that lands there is the opposite, re*re then im*im + acc.
     unsigned int bins = (unsigned int)mHalfPlusOne;
+    float *mag = &mData0[0];
     float *im = &mData5[0];
-    if (bins != 0) {
-        float *mag = &mData0[0];
-        float *re = &mData4[0];
-        long reBias = (char *)re - (char *)im;
-        long magBias = (char *)mag - (char *)im;
-        do {
-            float rp = *(float *)((char *)im + reBias);
-            *(float *)((char *)im + magBias) = sqrtf(rp * rp + im[0] * im[0]);
-            im += 1;
-        } while (--bins != 0);
+    float *re = &mData4[0];
+    for (unsigned int k = 0; k < bins; k++) {
+        float acc = re[k] * re[k];
+        acc = im[k] * im[k] + acc;
+        mag[k] = sqrtf(acc);
     }
 
     // Spectral window recombination over the first half, using the sin/cos
     // table, accumulating the cosine term into mAccum.
-    // Retail sets up i and both table pointers before the quarter > 1 test
-    // and walks them with BYTE biases off `lo` (no srawi/slwi pair).
+    // The table pointers are named locals declared BEFORE the `data[0] = ...`
+    // store; otherwise MSVC keeps the member loads below the (possibly aliasing)
+    // stfs through `data`. Residual (DC3 lanes w7-bx / w20-e): retail biases
+    // BOTH tables off the data walker, while we chain the second table off the
+    // first (sin - cos), which shifts the register assignment. Tried and
+    // refuted: cosT first, int vs unsigned i, walking lo/hi pointers, reading
+    // mSinTable/mCosTable in the loop, a `for` loop (becomes bdnz), hoisted or
+    // swapped table loads, const tables, a separate decrementing hi index.
     float *data = &mData0[0];
-    unsigned int i = 1;
     int half = (unsigned int)mFftSize >> 1;
     float *sinT = &mSinTable[0];
     float *cosT = &mCosTable[0];
+    int i = 1;
     float a0 = data[0];
     float aN = data[half];
     float diff0 = a0 - aN;
@@ -50,46 +58,40 @@ void SpectralAnalysis::Analyze(const float *in, float *out) {
 
     unsigned int quarter = (unsigned int)half >> 1;
     if (quarter > 1) {
-        float *lo = data + 1;
-        float *hi = data + half;
-        long sinBias = (char *)sinT - (char *)data;
-        long cosBias = (char *)cosT - (char *)data;
-        for (; i < quarter; ++i) {
-            float a = lo[0];
-            float b = hi[-1];
+        do {
+            float a = data[i];
+            float b = data[half - i];
             float diff = a - b;
-            float s = *(float *)((char *)lo + sinBias);
+            float c = cosT[i];
             float sum = b + a;
-            float c = *(float *)((char *)lo + cosBias);
+            float s = sinT[i];
             double acc = mAccum;
-            float ps = s * diff;
-            sum = sum * 0.5f;
             float pc = c * diff;
-            lo[0] = sum - ps;
-            --hi;
-            hi[0] = ps + sum;
+            sum = sum * 0.5f;
+            float ps = s * diff;
+            data[i] = sum - ps;
+            data[half - i] = ps + sum;
             mAccum = (double)pc + acc;
-            ++lo;
-        }
+            ++i;
+        } while (i < quarter);
     }
 
     // Inverse-CCS transform of the recombined spectrum into mData1.
-    mFft2.FftRealCcs(&mData0[0], &mData1[0]);
+    // `data` (r4) still holds &mData0[0] from the top of the function, so the
+    // second argument is the only pointer reloaded for this call.
+    mFft2.FftRealCcs(data, &mData1[0]);
 
     // Emit the result: real parts directly, imaginary derivative from mAccum.
-    if (mWindowSize > 0) {
-        int j = 0;
-        for (int k = 0; k < mWindowSize; k += 2) {
-            float *d1 = &mData1[0];
-            out[j] = d1[j];
-            double acc = mAccum;
-            float imag = d1[j + 1];
-            mAccum = acc - (double)imag;
-            if (k + 1 < mWindowSize) {
-                out[j + 1] = (float)mAccum;
-            }
-            j += 2;
+    int j = 0;
+    for (unsigned int k = 0; k < (unsigned int)mWindowSize; k += 2) {
+        out[j] = mData1[j];
+        double acc = mAccum;
+        float imag = mData1[j + 1];
+        mAccum = acc - (double)imag;
+        if (k + 1 < (unsigned int)mWindowSize) {
+            out[j + 1] = (float)mAccum;
         }
+        j += 2;
     }
 }
 

@@ -8,7 +8,7 @@ short *MicNull::GetRecentBuf(int &size) {
     size = sz;
     short *src = mBuf;
     short *dst = mRecentBuf;
-    memcpy(dst, src, 0xc00);
+    memcpy(dst, src, sz << 1);
     return dst;
 }
 

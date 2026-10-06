@@ -1140,8 +1140,13 @@ MemHeapStack &ThreadMemStack(bool createIfMissing) {
                 int cur = 0;
                 int activeCount = gNumThreads;
                 if (gNumThreads > 0) {
+                    // The walking pointer is a FRESH copy taken here, not `threadIdSlot`
+                    // itself, which stays as the base for the `gThreadIds[cur] = ...` stores
+                    // further down. Incrementing threadIdSlot keeps a second copy live across
+                    // the assert block and costs one more callee-saved register.
+                    unsigned long *validateSlot = threadIdSlot;
                     do {
-                        if (!ValidateThreadId(*threadIdSlot)) {
+                        if (!ValidateThreadId(*validateSlot)) {
                             MILO_ASSERT(gThreadBuf[cur].mSize == 0, 0x12e);
                             MILO_ASSERT(gThreadBuf[cur].mTempRefs == 0, 0x12f);
                             gThreadIds[cur] = GetCurrentThreadId();
@@ -1149,7 +1154,7 @@ MemHeapStack &ThreadMemStack(bool createIfMissing) {
                             break;
                         }
                         cur++;
-                        threadIdSlot++;
+                        validateSlot++;
                         activeCount = gNumThreads;
                     } while (cur < gNumThreads);
                 }
@@ -1162,8 +1167,17 @@ MemHeapStack &ThreadMemStack(bool createIfMissing) {
             }
         }
     }
+    // Residual (DC3 lane w9-d, on DC3's image): the write-back of gThreadBufCurrentIndex is
+    // CONDITIONAL. The gNumThreads == 0 arm and the cache hit branch past the
+    // store; both had just read idx from it, so the value is the same either way,
+    // but an unconditional store cannot be branched over and MSVC hoists the
+    // following `addi` above it. Moving the store into the
+    // `gThreadIds[idx] != currentThreadId` block fixes that ordering and lets
+    // MSVC cross-jump the two CritSecTracker exits instead, a net loss.
+    // Declaring `idx` after the CritSecTracker is byte-identical.
     gThreadBufCurrentIndex = idx;
-    return gThreadBuf[gThreadBufCurrentIndex];
+    MemHeapStack &result = gThreadBuf[gThreadBufCurrentIndex];
+    return result;
 }
 int GetCurrentHeapNum() {
     MemHeapStack &stack = ThreadMemStack(false);

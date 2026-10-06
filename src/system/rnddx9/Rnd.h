@@ -77,7 +77,7 @@ public:
     RND_DC3_VIRTUAL void SetVertShaderTex(RndTex *, int);
     virtual void UpdateScalerParams();
 
-    D3DDevice *Device() { return mD3DDevice; }
+    D3DDevice *Device() const { return mD3DDevice; }
     XVIDEO_MODE *VideoMode() { return &mVideoMode; }
     void AutoRelease(D3DResource *r) {
         if (r) {

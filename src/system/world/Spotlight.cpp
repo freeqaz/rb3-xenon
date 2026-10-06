@@ -1545,11 +1545,10 @@ void Spotlight::BuildNGSheet(BeamDef &def) {
                 (1.0f - absSegFrac) * kSheetFade
             );
 
-            Vector3 &p = verts[iVert].pos;
-            float px = p.x, pz = p.z, py = p.y;
-            p.z = pz * orientMtx.z.z + px * orientMtx.x.z + py * orientMtx.y.z;
-            p.y = pz * orientMtx.z.y + px * orientMtx.x.y + py * orientMtx.y.y;
-            p.x = pz * orientMtx.z.x + px * orientMtx.x.x + py * orientMtx.y.x;
+            // The position goes through the same inline Multiply as the normal (DC3 lane
+            // w21-bi); a hand-expanded sum schedules x, y, z where the Multiply loads
+            // z, x, y.
+            Multiply(verts[iVert].pos, orientMtx, verts[iVert].pos);
 
             verts[iVert].norm.Set(0.0f, 0.0f, 1.0f);
 
@@ -1563,55 +1562,31 @@ void Spotlight::BuildNGSheet(BeamDef &def) {
     }
     MILO_ASSERT(iVert == kNumVerts, 0x526);
 
-    // NEGATIVE RESULT (w7-bw, 96.30232 canonical, no change).  Three more
-    // spellings refuted, each measured whole-function under name_check:
-    // (1) `int base` with the four indices as unsigned short locals derived
-    //     from it and from `int baseNext` (what 8282CD40..8282CD5C looks like:
-    //     untruncated adds, clrlwi at the use) plus faces[iFace + 1] and a
-    //     single iFace += 2: 93.6, and the prologue grows to __savegprlr_18.
-    // (2) reordering the hand-inlined p.x sum to py*yx + pz*zx + px*xx (the
-    //     image's x' at 8282CBFC..8282CC18 is x*xx + (z*zx + y*yx)): inert,
-    //     byte-for-byte the same block -- /fp:fast canonicalises the three
-    //     sums regardless of source order, so the 24 fmadds rows of the pos
-    //     and norm blocks are a lowering floor from this TU.
-    // (3) The two MakeString rows (MILO_ASSERT at 0x526 / 0x53F) are charged
-    //     because the target's whole-TU ICF representative is
-    //     MakeString<char[19], int, char[5]> and our <char[14], int, char[19]>
-    //     is not in scripts/symbol_aliases.json's accepted classes; the same
-    //     representative is uncharged in this TU's Handle/Load/BuildBoard.
-    //     Instrument gap, not source.
+    // The two MakeString rows (MILO_ASSERT 0x526 / 0x53F) are charged because
+    // retail's whole-TU ICF representative is MakeString<char[19], int, char[5]>
+    // and ours is <char[14], int, char[19]>.
     int iFace = 0;
-    int rowStart = 0;
     for (int row = 0; row < numSections; row++) {
         for (int col = 0; col < numSegments; col++) {
-            // `base` really is a u16 here: measured, spelling all four indices as
-            // plain ints -- which is what 8282CD40's untruncated `add r9, r4, r3`
-            // looks like in isolation -- drops the function from 96.3 to 94.4 and
-            // adds 35 rows of GPR renumbering across the whole body.
-            unsigned short base = (unsigned short)(rowStart + col);
+            // The vertex index is `row * numCols + col`, all four indices plain ints
+            // (DC3 lane w21-bi). Retail keeps row*numCols as its own induction variable
+            // and re-adds col every column; a hand-carried `rowStart` lets MSVC merge the
+            // two into one IV. The u16 `clrlwi` in the arms comes from Set()'s
+            // parameters, not from casts here.
+            int base = row * numCols + col;
             int next = base + 1;
             int baseNext = base + numCols;
             int nextNext = baseNext + 1;
+            // One faces[iFace++] per Set: MSVC folds the four increments into a single
+            // `addi ..., 0x2` ahead of the branch.
             if (iFace & 2) {
-                faces[iFace].Set(
-                    (unsigned short)baseNext, (unsigned short)base, (unsigned short)nextNext
-                );
-                iFace++;
-                faces[iFace].Set(
-                    (unsigned short)nextNext, (unsigned short)base, (unsigned short)next
-                );
+                faces[iFace++].Set(baseNext, base, nextNext);
+                faces[iFace++].Set(nextNext, base, next);
             } else {
-                faces[iFace].Set(
-                    (unsigned short)base, (unsigned short)next, (unsigned short)baseNext
-                );
-                iFace++;
-                faces[iFace].Set(
-                    (unsigned short)baseNext, (unsigned short)next, (unsigned short)nextNext
-                );
+                faces[iFace++].Set(base, next, baseNext);
+                faces[iFace++].Set(baseNext, next, nextNext);
             }
-            iFace++;
         }
-        rowStart += numCols;
     }
     MILO_ASSERT(iFace == kNumFaces, 0x53F);
 
