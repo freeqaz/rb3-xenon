@@ -33,6 +33,15 @@ categories carry no native value beyond the identification itself.
 | 7 | **DC3 map as fold witness for name charges** (DC3 places our name and retail's name at one VA) | 6 pairs / 7 rows / 796 B | not measured: W16-PH's rule needs a *retail* type witness; DC3's map cannot type an RB3 call | mixed | **Do not fund.** List kept for alias lanes (§3.7) |
 | 8 | **STLport** | no drift vs dc3-decomp's `stlport/` | Δ0 by construction (identical files) | — | closed |
 
+**Whole lane re-measured on top of main `a0003899e`** (after W16-QA and
+W16-PU landed), one `ab_measure --patch` of the lane's map/splits/alias diff:
+prediction +8 / +796 B, **measured +8 fns / +796 B** (leg A 53,569 /
+58.065230% → leg B 53,577 / 58.072998%). Two rows moved down, both named in
+this doc: TrackWidget's 4 B `list<CharClip*>::sort` thunk (100 → 95, §3.2) and
+`Locale::Init` (96.84 → 96.81, §3.3). GuitarFx, WaveFile, MidiParser and
+MusicLibraryNetSetlists reach 100% on `mpn` because a wrongly attributed row
+left each one.
+
 Ordered by measured bytes per category: #2 +428 B, #1 +368 B, #3 0 B,
 #4 Δ0 (header control), the rest unmeasured by design. The whole lane bought
 **+8 fns / +796 B** (sum of the four kept A/Bs; FastSort is Δ0).
@@ -240,7 +249,10 @@ body hash (2,836 B). They split:
 (72 B retail vs 68 B ours). Prediction: pairs, stays below 100, Δ0 / Δ0.
 **Measured Δ0 fns / Δ0 B, Δfuzzy +0.000587 pp; the row reads 79.7 / mpn
 83.3.** Kept: the name is right and turns a placeholder into a row a body
-lane can work.
+lane can work. The one cost is a newly checked name: `Locale::Init` (already
+below 100) moves 96.84 → 96.81, 0 B. Its reference to this address is now
+compared by name instead of being forgiven as a placeholder, so whatever it
+calls there is worth a look by the Locale body lane.
 
 Anonymous rows whose unique DC3 twin DC3-decomp matches at 100% (17 rows /
 956 B). `0x827C9540` is now named; `0x827E6178` was measured as fold bait
@@ -596,6 +608,7 @@ adds only §3.7's six pairs to this.
 | FastSort<3> name | Δ0 / Δ0, fuzzy up | **Δ0 / Δ0**, +0.000587 pp fuzzy | yes `c828ef19b` |
 | flank batch 3, all names | +3 / +264 B | **−1 / −648 B** | no |
 | flank batch 3, SyncMeshCB name withdrawn | +1 / +176 B | **+1 / +176 B** | yes `dc27de352` |
+| whole lane on main `a0003899e` | +8 / +796 B | **+8 / +796 B**, 2 rows down (4 B thunk, Locale::Init 0 B) | landing |
 | DC3 inline `DataArray::Release` (control) | negative | **Δ0 / Δ0 B, 1,034 recompiles** | no, reverted |
 
 ## 5. Not done
