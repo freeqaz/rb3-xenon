@@ -460,9 +460,10 @@ BEGIN_HANDLERS(SongSectionController)
     HANDLE_ACTION(toggle_overlay, OnToggleOverlay())
     HANDLE(add_trigger_pool, OnAddTriggerPool)
     HANDLE(wait_for_event_received, OnWaitForEventReceived)
-    if (strlen(sym.Str()) >= 4 && strncmp(sym.Str(), "prc_", 4) == 0) {
+    const char *symStr = sym.Str();
+    if (strlen(symStr) >= 4 && strncmp(symStr, "prc_", 4) == 0) {
         static Message msg("section", "");
-        msg[0] = Symbol(sym.Str());
+        msg[0] = Symbol(symStr);
         Handle(msg, true);
         return 0;
     }

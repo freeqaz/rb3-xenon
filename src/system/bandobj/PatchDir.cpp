@@ -227,7 +227,7 @@ void PatchLayer::Draw() {
         sMat->SetColor(sColorPalette->GetColor(mColorIdx));
         Transform tf50;
         tf50.Reset();
-        tf50.v.Set((float)mPosX, 0, (float)mPosZ);
+        tf50.v = Vector3((float)mPosX, 0, (float)mPosZ);
         // Retail multiplies mRot by ONE folded constant, 360/511 * DEG2RAD
         // (0x3c497495 @ 0x8200F4B0), not by 360/511 and then DEG2RAD.
         Vector3 vb4(0, (float)mRot * (360.0f / 511.0f * DEG2RAD), 0);
@@ -256,7 +256,7 @@ void PatchLayer::Draw() {
         else
             sTransAnim->SetFrame(0, blend);
         float deform = (float)mDeformFrame * (1 / 20.46f);
-        if (deform != sGrpAnim->GetFrame()) {
+        if (sGrpAnim->GetFrame() != deform) {
             sGrpAnim->SetFrame(deform, blend);
         }
         sResource->SetLocalXfm(tf50);
