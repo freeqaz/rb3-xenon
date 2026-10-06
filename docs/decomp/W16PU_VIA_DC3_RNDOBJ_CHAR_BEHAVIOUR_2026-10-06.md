@@ -1,7 +1,7 @@
 # W16-PU — VIA-DC3 ring, rndobj + char: where retail RB3 behaves differently from our DC3-derived source (2026-10-06)
 
-Branch `w16-pu`, worktree `~/tmp/wt-w16pu`, rebased onto main `68ea81224` (clean retail TU5 image,
-W16-PY's `.bss` fixes and W16-PZ in the base). Ruler `name_check`, read from `report.json`.
+Branch `w16-pu`, worktree `~/tmp/wt-w16pu`, rebased onto main `60c34cf1a` (clean retail TU5 image,
+W16-PY's `.bss` fixes, W16-PZ and W16-PW in the base). Ruler `name_check`, read from `report.json`.
 
 ## What this lane set out to do
 
@@ -12,9 +12,10 @@ behind a DC3 gate.
 
 ## Result in one paragraph
 
-Five functions behaved differently from retail and are fixed (§2). Three of them reach 100
-(`Rnd::DrawPreClear`, `Rnd::UpdateRate`, `CharacterTest::Handle`); two stay below 100 with the behaviour fixed
-and a codegen residue left (`RndText::WrapText`, `RndSoftParticleBuffer::BlurSurface`). Every other row opened in
+Five functions behaved differently from retail (§2). Four fixes are on this branch: two reach 100
+(`Rnd::DrawPreClear`, `CharacterTest::Handle`), and two stay below 100 with the behaviour fixed and a codegen residue
+left (`RndText::WrapText`, `RndSoftParticleBuffer::BlurSurface`). The fifth, `Rnd::UpdateRate`, was found and fixed here
+too, but W16-PW landed the identical fix first, so the rebase dropped my commit as already upstream. Every other row opened in
 the rndobj+char gap turned out to be codegen: scheduling, FMA contraction form, register naming, struct-copy form,
 block layout, or an ICF-folded callee name (§3). A whole-ring scan of string literals against retail (§4) found
 the only string defect was `UpdateRate`'s, now fixed. No engine change was needed: the engine carries no copy of
@@ -47,25 +48,31 @@ layout, scheduling or FMA form (§3).
 
 ## 2. Fixes (behaviour)
 
-Predicted before the A/B: the three rows that reach 100 move bytes (640 + 424 + 112 = **+1,176 B, +3 functions**);
-`WrapText` and `BlurSurface` improve but stay below 100 and move no bytes; no other row moves.
-
-**Measured** — `tools/ab_measure.py --patch` of the combined diff (main `68ea81224` → the five commits), run dir
-`~/tmp/w16pu/abruns/20261006-110318-w16pu-all-1423154`, both legs settled, `name_check`:
+**Measured on the landing base** — `tools/ab_measure.py --patch` of `git diff main w16-pu -- src` (main `60c34cf1a`,
+four files), run dir `~/tmp/w16pu/abruns/20261006-111042-w16pu-src-on-60c34cf1a-1503307`, both legs settled,
+`name_check`. Predicted beforehand: +2 functions / +752 B (DrawPreClear 640 + CharacterTest 112); `WrapText` and
+`BlurSurface` improve but stay below 100 and move no bytes; no other row moves.
 
 ```
-leg A: matched=53528 masked=25193 honest=28335 code%=57.967995  (recompiles: 0, settled)
+leg A: matched=53529 masked=25193 honest=28336 code%=57.972137  (recompiles: 0, settled)
 leg B: matched=53531 masked=25193 honest=28338 code%=57.979477  (recompiles: 11, split=0, patch_steps=6, settle iterations: 2)
-Δmatched=+3  Δmasked_equal=+0  Δhonest=+3  Δcode%=+0.011482pp  Δcode_bytes=+1176
+Δmatched=+2  Δmasked_equal=+0  Δhonest=+2  Δcode%=+0.007340pp  Δcode_bytes=+752
 ```
 
 The prediction held exactly. **No row goes down**: comparing the two archived leg reports row by row
-(68,909 rows on each side, none added or dropped), 0 rows fall on `fuzzy` or `mpn`, and exactly these five rise:
+(68,909 rows on each side, none added or dropped), 0 rows fall on `fuzzy` or `mpn`, and exactly the four code rows
+below rise (`DrawPreClear`, `CharacterTest::Handle`, `BlurSurface`, `WrapText`).
 
-| row (retail VA) | size | fuzzy A → B | what retail does that ours did not |
+Earlier record, on the previous base `68ea81224` with my `UpdateRate` commit still present (run
+`20261006-110318-w16pu-all-1423154`): predicted +3 / +1,176 B, measured **Δmatched +3, Δcode_bytes +1,176**, 0 rows
+down, five rows up. The difference between the two runs is exactly `UpdateRate`'s 424 B, which W16-PW now owns.
+Deltas only; the two runs' absolutes are on different bases and are not compared.
+
+| row (retail VA) | size | fuzzy before → after | what retail does that ours did not |
+
 |---|---:|---|---|
 | `Rnd::DrawPreClear` (0x824158B8) | 640 | 80.78 → **100** | The texture-compress hand-off: when `sCompressDone`, finish into `sCompressData`, swap the compressed `DxTex` in for the queued `RndTex` (`ReplaceObject`), pop and delete the request and the old texture. Then, when no job is in flight, drop requests whose `tex` **or `callback`** is null (ours pruned on `alpha > 0`) and start the next one on the thread (`StartCompress`, `SetEvent(gRndTextureEvent)`). Ours was a garbled port that read and wrote `gRndTextureEvent` as data. Also: X360 draws `mReleaseImmediate ? mPreClearDraws : mDraws`, sets the flag at 0x108 (not `mWorldCamCopied` at 0x107) around the dispatch, and null-checks each entry. DC3's current tree already had this; our copy predates it. The HX_NATIVE draw-list default and its X21 env gate are unchanged. The `.bss` residue I had left (99.9625) was closed by W16-PY's zero-initialised statics, already in the base. |
-| `Rnd::UpdateRate` (0x82410B88) | 424 | 85.42 → **100** | The rate-overlay gate labels are `" gs "` (.rdata 0x8205EA04) and `" cpu"` (0x8205E9FC), and the reset is `"    "` (0x8205E9EC). Ours printed `"gs"`/`"cpu"` and reset to `""`. DC3 has the retail strings; the constructor already used `"    "`. |
+| `Rnd::UpdateRate` (0x82410B88) — **landed by W16-PW**; my identical commit was dropped on rebase | 424 | 85.42 → **100** (first run) | The rate-overlay gate labels are `" gs "` (.rdata 0x8205EA04) and `" cpu"` (0x8205E9FC), and the reset is `"    "` (0x8205E9EC). Ours printed `"gs"`/`"cpu"` and reset to `""`. DC3 has the retail strings; the constructor already used `"    "`. |
 | `CharacterTest::Handle` (0x823DD690) | 112 | 0.00 → **100** | Retail's handler dispatches nothing. The five handlers (`add_defaults`, `test_walk`, `recenter`, `get_filtered_clips`, `sync`) are now `#ifdef HX_NATIVE`, so native keeps them. |
 | `RndSoftParticleBuffer::BlurSurface` (0x824A8490) | 660 | 66.11 → 85.96 | (a) Retail's tap table is (weight, offset) = (0.1,−1.5) (0.25,−0.5) (0.3,0.5) (0.25,1.5) (0.1,2.5), with weights summing to 1 (.data 0x82C70EC8 holds the leading 0.1). Ours had lost the leading 0.1, so each tap read its offset as a weight. (b) Source and target are swapped: retail samples `mSurfaces[pass&1]` and draws into `mSurfaces[(pass-1)&1]`, so the vertical pass lands in `mSurfaces[0]`, which `DoPost` binds. (c) PS constants are 0x1F+i (UV scale) and 0x2F+i (weight); 0x8A/0x9A are DC3's. Residue: retail keeps tap 0's weight in `.data` and stores nine floats where we store ten, plus FPR/GPR allocation (DC3 records the same residue for its copy). |
 | `RndText::WrapText` (0x82457F70) | 3016 | 79.41 → 83.40 | (a) An unwrapped text (`mWrapWidth == 0`) returned before the alignment pass, so centred, right-aligned and vertically aligned text without a wrap width was never offset; retail stores the width and falls into the shared alignment tail (`li r28, 0x78` = sizeof(Line), then `b` to it). (b) `charCount` did not advance over markup tags, but `ComputeCharWidths` gives every markup byte a zero-width slot, so every width after a tag was read from the wrong slot (retail `r22 += parsed - cur`). (c) The break test read `text[byteIdx-1]`; retail reads the previously processed character's byte index, so a space before a tag still allows a break after it. (d) An overflowing candidate that is not the newest wrap point costs 2010 (`li r7, 0x7da`), not 10, in both break loops. (e) The wrap-point buffer is sized by `strlen`, not by the UTF-8 char count. Our body went 2928 → 2972 B against retail's 3016; the rest is loop rotation (retail tests `'<'` at the head of a rotated loop) and register allocation. `ComputeCharWidths` (360 B, 83.39) was read against retail at the same time and does the same steps (zero-fill over markup, negative width clamped to 0, per-font display count), so it is codegen. |
@@ -158,7 +165,8 @@ So there is nothing to gate for DC3 and no `MILO_ENGINE_PIN` to touch.
 
 ## 7. Native checks
 
-Run in the lane worktree on the five fixes rebased onto `68ea81224`. Each check was run once before this doc was committed,
+Run in the lane worktree on the five fixes rebased onto `68ea81224`; re-run on the landing base `60c34cf1a` as the
+last actions. Each check was run once before this doc was committed,
 and both were run again as the lane's last actions (results in the lane report). The summary lines, verbatim:
 
 ```
