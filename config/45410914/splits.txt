@@ -3036,6 +3036,7 @@ Part.cpp:
 	.pdata      start:0x8220DAE8 end:0x8220DB90
 	.pdata      start:0x8220FF10 end:0x8220FF18
 	.text       start:0x82446148 end:0x82449930
+	.text       start:0x82449930 end:0x82449998
 	.text       start:0x82449998 end:0x824499F8
 	.text       start:0x824499F8 end:0x8244D18C
 	.text       start:0x8244D190 end:0x8244D220
@@ -7834,7 +7835,6 @@ Accomplishment.cpp:
 	.text       start:0x82275808 end:0x8227587C
 	.text       start:0x82276A28 end:0x82276C78
 	.text       start:0x82276F98 end:0x82277014
-	.text       start:0x82449930 end:0x82449998
 	.text       start:0x82593F8C end:0x82593F9C
 	.text       start:0x82593F9C end:0x82594084
 	.text       start:0x82594084 end:0x82594538
