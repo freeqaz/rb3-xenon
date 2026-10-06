@@ -5,6 +5,7 @@
 #include "os/CritSec.h"
 #include "os/Debug.h"
 #include "os/File.h"
+#include "os/HolmesKeyboard.h"
 #include "os/HolmesUtl.h"
 #include "os/NetStream.h"
 #include "os/NetworkSocket.h"
@@ -28,12 +29,10 @@
 String gLastCachedResource;
 CacheResourceResult gLastCacheResult;
 
-class HolmesInput {
-public:
-    void LoadKeyboard(BinStream &bs);
-    void LoadJoypad(BinStream &bs);
-    void SendKeyboardMessages();
-};
+// HolmesInput comes from os/HolmesKeyboard.h.  A member-less local declaration
+// used to stand in for it here, so this TU saw a 1-byte HolmesInput while
+// HolmesKeyboard.cpp's methods address mJoypadStream/mKeyboardStream past
+// the end of it -- one class, two layouts (tools/layout_odr.py).
 
 namespace {
     struct HolmesProfileData {
@@ -63,7 +62,7 @@ namespace {
     std::list<ReadRequest> gRequests;
     String gServerName;
 
-    HolmesInput gInput;
+    HolmesInput gInput(nullptr);
 
     String gHolmesTarget;
     bool gPollStreamEof;
