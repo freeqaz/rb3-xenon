@@ -393,7 +393,7 @@ void WorldInstance::DeleteTransientObjects() {
                     MemDoTempAllocations m;
                     ObjRef refs;
                     refs.Clear();
-                    for (ObjRef::iterator it = obj->Refs().begin();
+                    for (ObjRefList::const_iterator it = obj->Refs().begin();
                          it != obj->Refs().end(); ++it) {
                         if (RefPtrOf(it)->RefOwner()
                             && RefPtrOf(it)->RefOwner()->Dir() == this) {
@@ -405,15 +405,13 @@ void WorldInstance::DeleteTransientObjects() {
                 delete obj;
 #else
                 // The target is found, and its class checked, before the refs are
-                // snapshotted. The X360 ring is a std::list<ObjRefOwner *> in all but
-                // name (pool nodes {next, prev, refPtr}), and retail copies it as one:
+                // snapshotted. The X360 refs are a std::list<ObjRefOwner *>
+                // (Hmx::Object::mRefs), and retail copies it:
                 // the walk runs over the detached copy, so Replace may unlink the live
                 // ring freely.
                 Hmx::Object *to = mDir->Find<Hmx::Object>(obj->Name(), true);
                 MILO_ASSERT(obj->ClassName() == to->ClassName(), 0x1CB);
-                std::list<ObjRefOwner *> refs(
-                    reinterpret_cast<const std::list<ObjRefOwner *> &>(obj->Refs())
-                );
+                ObjRefList refs(obj->Refs());
                 for (std::list<ObjRefOwner *>::iterator it = refs.begin(); it != refs.end();
                      ++it) {
                     if ((*it)->RefOwner() && (*it)->RefOwner()->Dir() == this) {
@@ -529,7 +527,7 @@ void WorldInstance::SyncDir() {
                 ObjRef refs;
                 refs.Clear();
                 Hmx::Object *pFrom = p->from;
-                for (ObjRef::iterator it = pFrom->Refs().begin(); it != pFrom->Refs().end(); ++it) {
+                for (ObjRefList::const_iterator it = pFrom->Refs().begin(); it != pFrom->Refs().end(); ++it) {
                     if (RefPtrOf(it)->RefOwner() && !RefPtrOf(it)->RefOwner()->Dir()) {
                         it = it->MoveBefore(&refs);
                     }
@@ -542,9 +540,7 @@ void WorldInstance::SyncDir() {
                 // snapshots it by copy-construction, then dispatches Replace on
                 // each entry whose owner lives outside any dir. RefOwner() is
                 // deliberately re-called (retail does not cache it).
-                std::list<ObjRefOwner *> fromRefs(
-                    *reinterpret_cast<const std::list<ObjRefOwner *> *>(&p->from->Refs())
-                );
+                ObjRefList fromRefs(p->from->Refs());
                 for (std::list<ObjRefOwner *>::const_iterator it = fromRefs.begin();
                      it != fromRefs.end();
                      ++it) {

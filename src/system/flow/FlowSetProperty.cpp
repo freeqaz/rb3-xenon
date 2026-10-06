@@ -31,11 +31,11 @@ PropertyTask::PropertyTask(Hmx::Object *obj, DataNode &prop, DataNode &val, Task
     MILO_ASSERT(t >= kEaseLinear && t <= kEaseQuarterHalfStairstep, 0x16B);
 
     // Loop through target's refs to find existing PropertyTasks with same property
-    for (ObjRef::iterator it = obj->Refs().begin(); it != refsEnd; ++it) {
+    for (ObjRefList::const_iterator it = obj->Refs().begin(); it != refsEnd; ++it) {
 #ifdef HX_NATIVE
         Hmx::Object *refOwner = it->RefOwner();
 #else
-        // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+        // X360: mRefs entries are the ring-refs; each carries RefOwner().
         Hmx::Object *refOwner = RefPtrOf(it)->RefOwner();
 #endif
         if (refOwner != nullptr && refOwner->ClassName() == PropertyTask::StaticClassName()) {

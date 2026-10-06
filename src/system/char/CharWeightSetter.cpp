@@ -167,7 +167,7 @@ void CharWeightSetter::PollDeps(
         CharWeightable *weightowner =
             dynamic_cast<CharWeightable *>(it->RefOwner());
 #else
-        // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+        // X360: mRefs entries are the ring-refs; each carries RefOwner().
         CharWeightable *weightowner =
             dynamic_cast<CharWeightable *>(RefPtrOf(it)->RefOwner());
 #endif

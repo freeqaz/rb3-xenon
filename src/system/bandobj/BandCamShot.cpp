@@ -604,7 +604,7 @@ void BandCamShot::CheckNextShots() {
 
 BandCamShot *BandCamShot::InitialShot() {
     BandCamShot *initialShot = this;
-    ObjRef::iterator it = initialShot->Refs().begin();
+    ObjRefList::const_iterator it = initialShot->Refs().begin();
     while (it != initialShot->Refs().end()) {
         BandCamShot *cur = dynamic_cast<BandCamShot *>(RefPtrOf(it)->RefOwner());
         if (cur) {

@@ -55,8 +55,8 @@ void ObjRefRelinkRing(ObjRef *ref);
 // ----------------------------------------------------------------------------
 // In retail, the standalone smart pointers (ObjPtr/ObjOwnerPtr) are NOT ring
 // nodes. They are polymorphic objects {vtable@0, mOwner@4, mObject@8} = 0xc.
-// The ring is a separate pool of {next@0, prev@4, refPtr@8} nodes owned by
-// Hmx::Object; each node's refPtr@8 points back at the ring-ref. Ring-walks
+// The refs live in Hmx::Object::mRefs, a std::list<ObjRefOwner *> whose
+// entries point back at the ring-refs. Ring-walks
 // (dtor, HasDirPtrs, ...) dispatch through node->refPtr's vtable.
 //
 // The ring-ref is the SAME shape as ObjRefOwner (slot +4 RefOwner, slot +8
@@ -93,11 +93,6 @@ class ObjRef {
     friend class Hmx::Object;
     friend void ::MergeObjectsRecurse(ObjectDir *, ObjectDir *, MergeFilter &, bool);
     friend void ::ObjRefRelinkRing(ObjRef *);
-#ifndef HX_NATIVE
-    // X360 ring machinery (Object.cpp) needs to splice/free pool nodes.
-    friend void ObjRingInsert(ObjRef *, ObjRefOwner *);
-    friend void ObjRingFree(ObjRef *);
-#endif
 
 protected:
     ObjRef *next; // 0x0 (retail) / 0x4 (native, after vptr)
@@ -203,6 +198,9 @@ public:
         bool operator!() { return curRef == nullptr; }
     };
 
+    // Lets shared ring walks spell `ObjRefList::const_iterator` on both builds.
+    typedef iterator const_iterator;
+
     iterator begin() const { return iterator(next); }
     iterator end() const { return iterator((ObjRef *)this); }
     bool empty() const { return next == this; }
@@ -239,41 +237,29 @@ public:
         return oldPrev;
     }
 
-    // per ObjectDir::HasDirPtrs, this is the way to iterate across refs
-    // for (ObjRef *it = mRefs.next; it != &mRefs; it = it->next) {
-
 #ifdef HX_NATIVE
-    void ReplaceList(Hmx::Object *obj);
-#else
-    // X360 retail: ring entries are separate pool nodes (ObjRefNode), so the
-    // node's refPtr@8 carries the ObjRefBase to dispatch Replace on. Used by
-    // the ObjRefRelinkRing swap path (Key<ObjectStage>) which manipulates a
-    // single detached ring directly.
     void ReplaceList(Hmx::Object *obj);
 #endif
 };
 
 #ifndef HX_NATIVE
-// RB3 retail X360 ring node: a separate 0xc PoolAlloc allocation spliced into
-// Hmx::Object::mRefs. Layout-compatible with ObjRef at {next@0, prev@4}; adds
-// refPtr@8 pointing back at the referencing ObjRefBase. Allocated/freed only
-// inside Hmx::Object::AddRef/Release/~Object (Object.cpp). Ring-walkers in
-// headers read RefPtrOf(it) to recover the ObjRefBase.
-class ObjRefNode : public ObjRef {
-public:
-    // The ring-ref this node tracks: for ObjOwnerPtr it's the mOwner, for
-    // ObjPtr/ObjDirPtr it's the smart pointer itself. Typed ObjRefOwner because
-    // that is the interface the ring dispatches on (RefOwner@4, Replace@8).
-    ObjRefOwner *refPtr; // 0x8
-};
+// RB3 retail X360: Hmx::Object::mRefs is a std::list<ObjRefOwner *>. Each entry
+// is a 0xc StlNodeAlloc node {next@0, prev@4, value@8}, and the value is the
+// ring-ref that Replace / RefOwner dispatch through (for ObjOwnerPtr that is
+// its mOwner; for ObjPtr / ObjDirPtr it is the smart pointer itself).
+// Retail evidence: AddRef calls list::insert(begin(), ref) out of line,
+// Release finds the entry and calls list::erase, the ctor runs the STLport
+// list constructor at +0x20, and the implicit Object::operator= calls the
+// list's operator= there (both erase / insert / operator= fold onto other
+// pointer-sized list instantiations).
+typedef std::list<ObjRefOwner *> ObjRefList;
 
-// Recover the ring-ref (ObjRefOwner) from a ring entry (which is an ObjRefNode).
-inline ObjRefOwner *RefPtrOf(const ObjRef *node) {
-    return static_cast<const ObjRefNode *>(node)->refPtr;
-}
+// The ring-ref an mRefs entry tracks.
+inline ObjRefOwner *RefPtrOf(ObjRefList::const_iterator it) { return *it; }
 #else
 // Native (DC3 model): ObjRef is itself polymorphic and carries RefOwner(), so
-// the ring entry IS the ref — no ObjRefNode indirection. RefPtrOf is identity.
+// the ring entry IS the ref and mRefs is an intrusive ring head.
+typedef ObjRef ObjRefList;
 inline const ObjRef *RefPtrOf(const ObjRef *node) { return node; }
 #endif
 
@@ -316,7 +302,7 @@ public:
 // RTTI has only ObjRef under every smart pointer). Its one remaining X360 user
 // is ObjPtrVec::Node, a DC3 container; ObjPtr and ObjOwnerPtr derive
 // ObjRefOwner directly and restate these members. Polymorphic, vtable-first:
-// {vtable@0, mOwner@4, mObject@8} = 0xc. The ring is separate (pool nodes), so
+// {vtable@0, mOwner@4, mObject@8} = 0xc. The refs list is separate (Hmx::Object::mRefs), so
 // there is NO inline next/prev here. RefOwner() returns mOwner@4 (vtable slot
 // +4). Replace(from,to) is left pure (overridden by ObjPtr/ObjOwnerPtr). The
 // ctor/SetObj/CopyRef/Load are non-trivial and use mOwner so MSVC /O1 /Ob2
@@ -2166,13 +2152,12 @@ namespace Hmx {
         //   0x14: mNote (const char*)
         //   0x18: mName (const char*)
         //   0x1c: mDir*
-        //   0x20: mRefs.next (ring head, 8 bytes)
-        //   0x24: mRefs.prev
+        //   0x20: mRefs (std::list<ObjRefOwner *>, 8 bytes)
         // HX_NATIVE uses a larger TypeProps (with mObjects + vtable = 0x20 bytes)
         // and replaces mNote with String, so layout diverges from retail there.
 #ifdef HX_NATIVE
         /** A collection of object instances which reference this Object. */
-        ObjRef mRefs; // 0x4 (native)
+        ObjRefList mRefs; // 0x4 (native)
         /** An array of properties this Object can have. */
         TypeProps *mTypeProps; // 0xc+0x10 (native, pointer)
 #else
@@ -2208,8 +2193,8 @@ namespace Hmx {
 #endif
     protected:
 #ifndef HX_NATIVE
-        /** Retail X360: ring head at 0x20 (after mDir), non-polymorphic (8 bytes). */
-        ObjRef mRefs; // 0x20 (X360)
+        /** The ring-refs that point at this Object (std::list on X360). */
+        ObjRefList mRefs; // 0x20 (X360)
 #endif
         /** An Object in the process of being deleted. */
         static Object *sDeleting;
@@ -2344,7 +2329,7 @@ namespace Hmx {
 
         /** "script type of the object" */
         Symbol Type() const { return mTypeDef ? mTypeDef->Sym(0) : Symbol(); }
-        const ObjRef &Refs() const { return mRefs; }
+        const ObjRefList &Refs() const { return mRefs; }
         void SetNote(const char *note);
         DataArray *TypeDef() const { return mTypeDef; }
         ObjectDir *Dir() const { return mDir; }
@@ -2378,10 +2363,8 @@ namespace Hmx {
             ref->Release(nullptr);
         }
 #else
-        // Retail X360: the ring holds separate pool nodes {next,prev,refPtr}.
-        // AddRef allocates a node tracking `ref` and splices it into mRefs (if
-        // ref->RefOwner() != this); Release finds and frees the node. Both are
-        // out-of-line (fn_82737168 / fn_827367D8).
+        // Retail X360: AddRef pushes `ref` onto the front of mRefs unless it
+        // is owned by this Object; Release finds its entry and erases it.
         void AddRef(ObjRefOwner *ref);
         void Release(ObjRefOwner *ref);
 #endif

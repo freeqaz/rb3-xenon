@@ -109,26 +109,26 @@ BEGIN_CUSTOM_PROPSYNC(WorldDir::PresetOverride)
 END_CUSTOM_PROPSYNC
 
 #ifndef HX_NATIVE
-// Retail (0x824CC038): walk the target texture's ref ring directly (next saved
+// Retail (0x824CC038): walk the target texture's refs directly (advancing
 // before the call) and Replace each foreign-dir ref through ObjRefOwner.
 void WorldDir::BitmapOverride::Sync(bool b) {
     if (!original || !replacement)
         return;
     if (!b) {
-        for (ObjRef::iterator it = replacement->Refs().begin();
+        for (ObjRefList::const_iterator it = replacement->Refs().begin();
              it != replacement->Refs().end();) {
-            ObjRef *cur = it;
+            ObjRefList::const_iterator cur = it;
             ++it;
-            ObjRefOwner *ref = RefPtrOf(cur);
+            ObjRefOwner *ref = *cur;
             if (ref->RefOwner()->Dir() != replacement->Dir())
                 ref->Replace(reinterpret_cast<ObjRef *>((RndTex *)replacement), original);
         }
     } else {
-        for (ObjRef::iterator it = original->Refs().begin();
+        for (ObjRefList::const_iterator it = original->Refs().begin();
              it != original->Refs().end();) {
-            ObjRef *cur = it;
+            ObjRefList::const_iterator cur = it;
             ++it;
-            ObjRefOwner *ref = RefPtrOf(cur);
+            ObjRefOwner *ref = *cur;
             if (ref->RefOwner() && ref->RefOwner()->Dir() != replacement->Dir())
                 ref->Replace(reinterpret_cast<ObjRef *>((RndTex *)original), replacement);
         }
@@ -143,7 +143,7 @@ void WorldDir::BitmapOverride::Sync(bool b) {
     if (!b) {
         ObjRef localRing;
         localRing.Clear();
-        ObjRef::iterator it = replacement->Refs().begin();
+        ObjRefList::const_iterator it = replacement->Refs().begin();
         while (it != replacement->Refs().end()) {
             ObjRef *ref = it;
             if (RefPtrOf(ref)->RefOwner()->Dir() != replacement->Dir()) {
@@ -156,7 +156,7 @@ void WorldDir::BitmapOverride::Sync(bool b) {
     } else {
         ObjRef localRing;
         localRing.Clear();
-        ObjRef::iterator it = original->Refs().begin();
+        ObjRefList::const_iterator it = original->Refs().begin();
         while (it != original->Refs().end()) {
             ObjRef *ref = it;
             if (RefPtrOf(ref)->RefOwner() && RefPtrOf(ref)->RefOwner()->Dir() != replacement->Dir()) {

@@ -2737,7 +2737,7 @@ void ReplaceRefs(Hmx::Object *theirs, Hmx::Object *mine) {
     bool changed = true;
     for (int pass = 0; changed && pass < kMaxPasses; pass++) {
         changed = false;
-        for (ObjRef::iterator it = theirs->Refs().begin();
+        for (ObjRefList::const_iterator it = theirs->Refs().begin();
              it != theirs->Refs().end();
              ++it) {
             ObjRef *ref = it;
@@ -2755,7 +2755,7 @@ void ReplaceRefs(Hmx::Object *theirs, Hmx::Object *mine) {
 #else
     // Walk theirs' ref ring; after each repoint restart from the head, since the
     // ring is spliced under us.
-    for (ObjRef::iterator it = theirs->Refs().begin(); it != theirs->Refs().end();) {
+    for (ObjRefList::const_iterator it = theirs->Refs().begin(); it != theirs->Refs().end();) {
         ObjRefOwner *owner = RefPtrOf(it);
         MILO_ASSERT(owner->RefOwner(), 0xA7A);
         if (owner->RefOwner()) {

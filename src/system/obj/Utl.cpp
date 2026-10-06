@@ -406,18 +406,18 @@ void MergeObjectsRecurse(ObjectDir *fromDir, ObjectDir *toDir, MergeFilter &filt
         }
         tempRefs.ReplaceList(toDir);
 #else
-        // RB3 retail 0x827586A0 (on the X360 pool-node ring):
-        // replace each ref owned by an object of fromDir in place and restart
-        // from the head; no temporary ring.
-        for (ObjRef *it = fromDir->mRefs.next; it != &fromDir->mRefs;) {
-            Hmx::Object *owner = RefPtrOf(it)->RefOwner();
+        // RB3 retail 0x827586A0: replace each ref owned by an object of
+        // fromDir in place and restart from the head; no temporary list.
+        for (ObjRefList::const_iterator it = fromDir->Refs().begin();
+             it != fromDir->Refs().end();) {
+            Hmx::Object *owner = (*it)->RefOwner();
             if (owner && owner->Dir() == fromDir) {
-                RefPtrOf(it)->Replace(
+                (*it)->Replace(
                     reinterpret_cast<ObjRef *>(static_cast<Hmx::Object *>(fromDir)), toDir
                 );
-                it = fromDir->mRefs.next;
+                it = fromDir->Refs().begin();
             } else {
-                it = it->next;
+                ++it;
             }
         }
 #endif

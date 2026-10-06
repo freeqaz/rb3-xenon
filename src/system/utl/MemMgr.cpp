@@ -17,60 +17,87 @@
 #include <cstdlib>
 #include <cstring>
 
-#ifndef HX_NATIVE
-// Retail compiled MemHeap and this file as ONE translation unit (their .text
-// interleaves; see the reunification note in MemHeap.cpp). With MemHeap's
-// method bodies visible, MemFree/MemTruncate/MemAllocSize keep gNumHeaps in a
-// register across MemHeap::Free/Truncate/AllocSize, as retail does.
-#define RB3_MEMHEAP_METHODS_ONLY
-#include "utl/MemHeap.cpp"
-#undef RB3_MEMHEAP_METHODS_ONLY
-#endif
-
 extern MemTracker *gMemTracker;
-CriticalSection *gMemLock;
 
 #define MAX_HEAPS 16
 // Retail holds 6: gThreadIds is 6 words at 0x82C78E0C (sDefaultHeap follows at
 // 0x82C78E24) and gThreadBuf fits 6 x 0x48 between the null stack and gHeaps.
 #define MAX_BUF_THREADS 6
 
+#ifdef HX_NATIVE
+CriticalSection *gMemLock;
+#else
+// RB3 retail X360 .bss for this unit (MemHeap.cpp is compiled into it, see the
+// reunification note in MemHeap.cpp), anchored at 0x82E069A8:
+//   +0x000 gNullMemStack        +0x440 gThreadBufCurrentIndex
+//   +0x048 gThreadBuf[6]        +0x444 gNumThreads
+//   +0x1F8 gSingleHeap          +0x448 gTimeStamp (MemHeap.cpp)
+//   +0x200 gHeaps[16]           +0x454 gNumHeaps
+//   +0x458 gCheckConsistency    +0x45C gInsideMemFunc
+//   +0x460 gMemLock             +0x464 gMemStackLock
+// ThreadMemStack addresses the first four internal statics off ONE base, and
+// MemFree/MemAlloc/AddHeap/MemFindHeap address gNumHeaps as gHeaps + 0x254, so
+// the internal statics must sit at exactly these distances. This compiler lays
+// uninitialized definitions out in REVERSE declaration order (an alignment hole
+// is filled by the next object that fits), so they are declared top-down from
+// the highest address. dc3-decomp's MemMgr.cpp measured the same rule.
+//
+// The words at +0x1FC, +0x44C and +0x450 are not referenced by any retail code
+// (no label, no anchor displacement reaches them), so their names are lost.
+// The gMemMgrUnknown* stand-ins only reproduce the layout; they have external
+// linkage on purpose, since an unreferenced static is dropped and holds no
+// space. Without the +0x1FC one, gNumThreads drops into gHeaps' alignment hole.
+//
+// gNewOperatorAlign and gInitted are not part of this block: retail never reads
+// gNewOperatorAlign (operator new is `li r4,0; b MemAlloc`), and no retail
+// label in the block is touched only by MemInit's gInitted store. Declared
+// first, they land after gMemStackLock.
+int gNewOperatorAlign;
+bool gInitted;
+CriticalSection *gMemStackLock;
+CriticalSection *gMemLock;
+bool gInsideMemFunc;
+static int gCheckConsistency;
+static int gNumHeaps;
+int gMemMgrUnknown450;
+int gMemMgrUnknown44C;
+#define RB3_MEMHEAP_METHODS_ONLY
+#include "utl/MemHeap.cpp"
+#undef RB3_MEMHEAP_METHODS_ONLY
+static int gNumThreads;
+static int gThreadBufCurrentIndex;
+static MemHeap gHeaps[MAX_HEAPS];
+int gMemMgrUnknown1FC;
+int gSingleHeap;
+static MemHeapStack gThreadBuf[MAX_BUF_THREADS];
+static MemHeapStack gNullMemStack;
+#endif
+
 const char *gStlAllocName = "StlAlloc";
 bool gStlAllocNameLookup = false;
 
 bool gbUseLowestMip = false;
+#ifdef HX_NATIVE
 bool gInsideMemFunc = false;
+#endif
 extern bool gMemoryUsageTest;
 #ifdef HX_NATIVE
 int gCheckConsistency;
-#endif
 int gNewOperatorAlign;
 int gSingleHeap;
+#endif
 extern String gMemLogType;
 std::vector<String> gUseLowestMipExceptions;
-// Internal statics: retail ThreadMemStack addresses the null stack, gThreadBuf,
-// gThreadBufCurrentIndex and gNumThreads off ONE .bss anchor (0x82E069A8: +0,
-// +0x48, +0x440, +0x444), which MSVC only does for internal linkage.
 // gThreadIds sits in .data (0x82C78E0C) initialised { -1, 0, 0, 0, 0, 0 },
 // the same shape as MakeString.cpp's per-thread table.
-static MemHeapStack gNullMemStack;
-static int gNumThreads;
 static int gThreadIds[MAX_BUF_THREADS] = { -1 };
 
-bool gInitted;
-
 #ifdef HX_NATIVE
+static MemHeapStack gNullMemStack;
+static int gNumThreads;
+bool gInitted;
 MemHeap gHeaps[MAX_HEAPS];
 int gNumHeaps;
-#else
-// Retail addresses both off ONE anchor (lbl_82E06BA8: gHeaps at +0, gNumHeaps
-// at +0x254) in MemAllocSize/MemFree/MemTruncate/MemFindHeap -- the signature of
-// internal-linkage statics co-addressed by MSVC, not two externals.
-// gCheckConsistency is the word after gNumHeaps (0x82e06e00); MemInit
-// addresses it as gNumHeaps' base + 4, so it is an internal static too.
-static int gCheckConsistency;
-static MemHeap gHeaps[MAX_HEAPS];
-static int gNumHeaps;
 #endif
 
 #ifdef HX_NATIVE
@@ -176,9 +203,8 @@ void(MemFree)(void *mem) {
         // MemTrackFree is called unconditionally after the heap walk.
         CritSecTracker tracker(gMemLock);
         int i;
-        MemHeap *heap = gHeaps;
-        for (i = 0; i < gNumHeaps; i++, heap++) {
-            if (heap->Free((int *)mem))
+        for (i = 0; i < gNumHeaps; i++) {
+            if (gHeaps[i].Free((int *)mem))
                 break;
         }
         if (i == gNumHeaps) {
@@ -1077,8 +1103,10 @@ void MemFreeBlockStats(int heapNum, int &a, int &b, int &c, int &d) {
     gHeaps[heapNum].FreeBlockStats(a, b, c, d);
 }
 
+#ifdef HX_NATIVE
 static MemHeapStack gThreadBuf[MAX_BUF_THREADS];
 static int gThreadBufCurrentIndex;
+#endif
 
 // Retail 0x827BB890 holds the lock with a CritSecTracker: it has an EH frame
 // and an unwind funclet (0x827BB9F4), and every return shares one Exit tail.

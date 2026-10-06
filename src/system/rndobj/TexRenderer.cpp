@@ -361,14 +361,14 @@ void RndTexRenderer::DrawToTexture() {
         RndMesh *mesh5 = nullptr;
         if (mMirrorCam) {
             RndMat *mat4 = nullptr;
-            for (ObjRef::iterator it = mOutputTexture->Refs().begin();
+            for (ObjRefList::const_iterator it = mOutputTexture->Refs().begin();
                  it != mOutputTexture->Refs().end(); ++it) {
                 mat4 = dynamic_cast<RndMat *>(RefPtrOf(it)->RefOwner());
                 if (mat4)
                     break;
             }
             if (mat4) {
-                for (ObjRef::iterator it = mat4->Refs().begin();
+                for (ObjRefList::const_iterator it = mat4->Refs().begin();
                      it != mat4->Refs().end(); ++it) {
                     mesh5 = dynamic_cast<RndMesh *>(RefPtrOf(it)->RefOwner());
                     if (mesh5)
