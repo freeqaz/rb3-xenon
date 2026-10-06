@@ -1044,7 +1044,7 @@ set(MILO_ENGINE_PATH "${_rb3x_milo_default}"
     CACHE PATH "Path to milo-native-engine checkout")
 # Soft SHA pin (warn, never fail) — mirrors rb3/native/CMakeLists.txt:88-102.
 # Seeded from the engine HEAD SPIKE-X0 measured against.
-set(MILO_ENGINE_PIN "1e47d3e1e267294f03735230d50e06921df24289"
+set(MILO_ENGINE_PIN "3cb54e5ae849a4e0f70fea4c13a34d481ebf61bf"
     CACHE STRING "Engine commit SHA verified against")
 
 # Dawn (WebGPU) lives in the shared dc3 deps tree; glfw3 is system-installed.
