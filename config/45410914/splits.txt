@@ -8921,6 +8921,7 @@ band3/meta_band/TokenRedemptionPanel.cpp:
 	.text       start:0x8263FD60 end:0x8263FDE8
 	.text       start:0x8263FDE8 end:0x8264160C
 	.text       start:0x82641610 end:0x82641664
+	.text       start:0x82C48048 end:0x82C480E8
 	.text       start:0x82C480E8 end:0x82C48128
 
 band3/meta_band/StoreMenuPanel.cpp:

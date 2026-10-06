@@ -37268,5 +37268,10 @@
  "0x82c3f4f8": "??__EgOldChars@@YAXXZ",
  "0x82c454e0": "??__FgOldChars@@YAXXZ",
  "0x82c3f2b8": "??__EgTransListAlloc@@YAXXZ",
- "0x82c451a8": "??__FgTransListAlloc@@YAXXZ"
+ "0x82c451a8": "??__FgTransListAlloc@@YAXXZ",
+ "0x82c48068": "??__Fcheckout_msg@?BP@??Poll@TokenRedemptionPanel@@UAAXXZ@YAXXZ",
+ "0x82c48048": "??__Ftoken_msg@?CB@??Poll@TokenRedemptionPanel@@UAAXXZ@YAXXZ",
+ "0x82c480c8": "??__Ftoken_msg@?BA@??Poll@TokenRedemptionPanel@@UAAXXZ@YAXXZ",
+ "0x82c480a8": "??__FoffersReadyMsg@?BC@??Poll@TokenRedemptionPanel@@UAAXXZ@YAXXZ",
+ "0x82c48088": "??__Ftoken_msg@?BE@??Poll@TokenRedemptionPanel@@UAAXXZ@YAXXZ"
 }
