@@ -301,16 +301,17 @@ void CharIKHand::PollDeps(
 void CharIKHand::Poll() {
     float charWeight = Weight();
     static const float kHalfPi = 1.570796370506287f;
-    static const float kMinWeight = 0.001f;
 
     static const float kMaxWeight = 144.0f;
     RndTransformable *hand = mHand;
     if (!hand || mTargets.empty())
         return;
+    // Retail reads both flags through `self`; reading mScalable off the
+    // adjusted `this` schedules `li r28, 0` ahead of `subi r27, r3, 0x20`.
+    CharIKHand *self = this;
     Vector3 destPos(0.0f, 0.0f, 0.0f);
     Hmx::Quat destQuat(0.0f, 0.0f, 0.0f, 0.0f);
-    CharIKHand *self = this;
-    if (mScalable || self->mHandChanged) {
+    if (self->mScalable || self->mHandChanged) {
         self->MeasureLengths();
         self->mHandChanged = false;
     }
@@ -326,11 +327,14 @@ void CharIKHand::Poll() {
         }
     } else {
         float totalWeight = 0.0f;
+        // Indexed weights with end() re-read in each loop condition: retail
+        // reloads begin in this branch, copies end for the first loop and
+        // forms the weight pointer inside each loop guard.  The 0.001f stays
+        // a literal so its pool load is scheduled before kMaxWeight's.
         float localWeights[16];
-        float *weightPtr = localWeights;
-        auto endIt = mTargets.end();
-        for (ObjVector<IKTarget>::iterator it = mTargets.begin(); it != endIt;
-             ++it, weightPtr++) {
+        int i = 0;
+        for (ObjVector<IKTarget>::iterator it = mTargets.begin(); it != mTargets.end();
+             ++it, i++) {
             RndTransformable *targetTrans = it->mTarget;
             float extent = it->mExtent;
             if (targetTrans) {
@@ -338,26 +342,26 @@ void CharIKHand::Poll() {
                 if (extent > 0.0f) {
                     if (-targetVec.z <= extent) {
                         targetVec.z = 0.0f;
-                        *weightPtr =
-                            kMaxWeight / Max(kMinWeight, LengthSquared(targetVec));
+                        localWeights[i] =
+                            kMaxWeight / Max(0.001f, LengthSquared(targetVec));
                     } else {
-                        *weightPtr = kMinWeight;
+                        localWeights[i] = 0.001f;
                     }
                 } else {
-                    *weightPtr = kMaxWeight / Max(kMinWeight, LengthSquared(targetVec));
+                    localWeights[i] = kMaxWeight / Max(0.001f, LengthSquared(targetVec));
                 }
-                totalWeight += *weightPtr;
+                totalWeight += localWeights[i];
             }
         }
         if (totalWeight < 1.0f) {
             charWeight = charWeight - (charWeight * (1.0f - totalWeight));
         }
-        weightPtr = localWeights;
+        i = 0;
         for (ObjVector<IKTarget>::iterator it = mTargets.begin(); it != mTargets.end();
-             ++it) {
+             ++it, i++) {
             RndTransformable *targetTrans = it->mTarget;
             if (targetTrans) {
-                float curWeight = *weightPtr / totalWeight;
+                float curWeight = localWeights[i] / totalWeight;
                 const Transform &worldXfm = targetTrans->WorldXfm();
                 ScaleAdd(destPos, worldXfm.v, curWeight, destPos);
                 if (mOrientation) {
@@ -367,7 +371,6 @@ void CharIKHand::Poll() {
                     ScaleAddEq(destQuat, q, curWeight);
                 }
             }
-            weightPtr++;
         }
         if (mOrientation)
             Normalize(destQuat, destQuat);
