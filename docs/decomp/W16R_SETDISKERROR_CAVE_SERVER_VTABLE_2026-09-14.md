@@ -18,6 +18,10 @@ Probe helper: `tools/w16r_pe_probe.py` (all probes were heredocs over it; output
 
 ## 1. [VERIFIED] SetDiskError cave — mechanism settled: RB3DX in-place patch, not a TU5 cave
 
+> **Follow-up (2026-10-06, W16-PT):** the decomp now targets clean TU5. Measured on that image, `DataSet`,
+> `SetDiskError`, `IsDemo`, `AddSongData` and `main` are at 100 (+5 functions / +1,240 B); `IsDemo` and
+> `HvDecrypt` needed source fixes. `docs/decomp/W16PT_CLEAN_TU5_RETARGET_2026-10-06.md`.
+
 **Comparands (all hashes measured in this lane, worktree paths):**
 
 | image | sha1 | what it is |

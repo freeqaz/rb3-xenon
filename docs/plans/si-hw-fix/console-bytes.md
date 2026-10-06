@@ -1,5 +1,8 @@
 # Console default.xex byte verification — Same-Instrument TU5 patch
 
+> **STATUS (2026-10-06, W16-PT):** sha256 `6639ce25…` below is labelled "CLEAN TU5"; it is the RB3 Deluxe release
+> xex (sha1 `c5a17091`). See `docs/decomp/W16PT_CLEAN_TU5_RETARGET_2026-10-06.md` §1.
+
 **Session date:** 2026-07-09
 **Console:** 192.168.8.180:21 (FtpDll, user xboxftp) — **UNREACHABLE this session** (see Task 1/4 status below).
 All conclusions below rely on a local copy (`/tmp/xbxpull/verify_default.xex`) that was pulled from the

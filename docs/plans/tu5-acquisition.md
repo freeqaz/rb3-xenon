@@ -1,5 +1,10 @@
 # TU5 acquisition + validation (Lane A) — 2026-07-07
 
+> **STATUS (2026-10-06, W16-PT):** the verdict below is WRONG about lineage. `c5a17091` / sha256 `6639ce25` is the
+> RB3 Deluxe release xex (clean TU5 + 53 patched words), not clean retail TU5. Clean TU5 is
+> `_tu5probe/clean/clean_tu5.xex` (sha1 `d56e7f31`, PE `5f3f667a`), the decomp target since W16-PT:
+> `docs/decomp/W16PT_CLEAN_TU5_RETARGET_2026-10-06.md`.
+
 Read-only investigation. No decomp config / decomp.db / Ghidra program mutated.
 Scratch + machine checkpoint under `_tu5probe/` (`lane_a_findings.json`).
 

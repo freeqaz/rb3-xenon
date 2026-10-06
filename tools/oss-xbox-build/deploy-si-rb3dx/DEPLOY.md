@@ -42,8 +42,9 @@ them.
 
 ## The full stack (all three required)
 1. **default.xex** = **RB3DX** `rock-band-3-deluxe/platform/xbox/default.xex`
-   (sha1 `c5a17091cb44c0119424390a1738d161995e430e`). *(Clean TU5 xex `6639ce25`
-   is equally valid per the divergence study — same DLL either way.)*
+   (sha1 `c5a17091cb44c0119424390a1738d161995e430e`). *(`6639ce25` is this same file's sha256, not a clean
+   TU5 hash. Clean TU5 is xex sha1 `d56e7f31` / PE `5f3f667a`; the divergence study found the same DLL serves
+   both. See `docs/decomp/W16PT_CLEAN_TU5_RETARGET_2026-10-06.md` §1.)*
 2. **RB3DX ARK** with the `dx_check_for_dupe → TRUE` DTA edit:
    `rock-band-3-deluxe/out/xbox/gen/{patch_xbox.hdr (6a5b174a…), patch_xbox_0.ark (aacfbb9d…)}`.
    On RB3DX the dupe *selection* gate lives in DTA (`dx_check_for_dupe`), so this
