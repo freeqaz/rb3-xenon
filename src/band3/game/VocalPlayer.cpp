@@ -445,9 +445,9 @@ float VocalPlayer::RemoteVocalVolume() const {
 // docs/decomp/W16_NEXT_WAVE_TARGETING_2026-09-16.md (lane X3, 3,388 B,
 // fuzzy ~93.84%). Re-examined block by block via objdiff's auto-diagnosis;
 // verified findings (each also commented at its own site below):
-//   - Several residuals are the same systemic MSVC instruction-selection
-//     choice (record-form `clrrwi.` vs retail's separate compare+branch for
-//     `vector::size() != 0`-shaped conditions), not logic bugs.
+//   - The `clrrwi.` vs retail `srawi`/`cmpwi` size test at the end of the
+//     greedy-matching loop was a source shape after all (W16-RK: both sizes
+//     taken into int locals before the test; see that site).
 //   - One residual (singer-score-loop energy read) is a confirmed benign
 //     register-allocation/scheduling artifact: retail spills a live value to
 //     the stack at this point, we don't need to -- verified against
@@ -707,6 +707,8 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     // Greedy matching: repeatedly assign singers to parts until no more matches
     {
         bool bAnyAssigned;
+        int numParts;
+        int numSingers;
         do {
             bAnyAssigned = false;
             // For each singer in singersArray, find best part
@@ -781,14 +783,12 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 ),
                 singersArray.end()
             );
-        // W17: this loop condition is one of several confirmed sites in Poll
-        // (also the two vector-size checks feeding the octave-offset loop below)
-        // where retail emits a plain compare (`srawi`/`srawi.` + `cmpwi cr6` +
-        // branch) but our compiled code folds the comparison into a record-form
-        // instruction (`clrrwi.`) that sets CR0 implicitly. This is a systemic
-        // MSVC instruction-selection choice for "vector::size() != 0"-shaped
-        // comparisons, not a logic difference -- do not chase it as a source bug.
-        } while (partsArray.size() != 0 && singersArray.size() != 0);
+            // Both sizes are taken into ints before the test: retail computes
+            // them unconditionally (srawi, then cmpwi on the singer count), where
+            // `partsArray.size() != 0 && ...` lowers to clrrwi. masks.
+            numParts = partsArray.size();
+            numSingers = singersArray.size();
+        } while (numParts != 0 && numSingers != 0);
     }
 
 #ifdef HX_NATIVE
