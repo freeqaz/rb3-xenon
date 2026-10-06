@@ -87,7 +87,7 @@ moving unrelated rows. `.pdata` was re-derived by the split.
 ### 2.1 Source added
 
 - `src/system/synth/Faders.cpp`: `static std::vector<Fader *> sFaderList;`
-  before `FaderTask::sTasks`, as in rb3-Wii. Retail's initializer for it is
+  before `FaderTask::sTasks`. Retail's initializer for it is
   `0x82C3FFC0` (a 12 B `atexit` of a `MemOrPoolFreeSTL` vector dtor),
   directly ahead of `sTasks`' at `0x82C3FFD0`, and no retail code reads it.
   DC3's copy dropped it.
@@ -122,9 +122,9 @@ ctor/dtor, at the matching link position.
 | `fn_82C3F8F0` | 12 | IN-CORE | system/os/UsbMidiGuitar 98.3 | File.cpp | File (3) | `??__EgDirList@@YAXXZ` 100.0 |
 | `fn_82C3F900` | 84 | IN-CORE | system/os/UsbMidiGuitar 0.0 | FileCache.cpp | FileCache (4), system/os/UsbMidiGuitar (4) | `??__EgCaches@@YAXXZ` 100.0 |
 | `fn_82C3F9D8` | 72 | IN-CORE | system/os/UsbMidiGuitar 0.0 | ContentMgr_Xbox.cpp | none outside the init (ctor/vtable unique) | `??__EgContentMgr@@YAXXZ` 100.0 |
-| `fn_82C3FA20` | 12 | IN-CORE | system/os/UsbMidiGuitar 98.3 | StageKit TU (unpinned, `auto_03_825219A0`) | Timer used by the `stagekit_set_*` handlers at 0x82521ED0/0x82522608 | no source in rb3-Wii or DC3; left in place |
+| `fn_82C3FA20` | 12 | IN-CORE | system/os/UsbMidiGuitar 98.3 | StageKit TU (unpinned, `auto_03_825219A0`) | Timer used by the `stagekit_set_*` handlers at 0x82521ED0/0x82522608 | no surviving source; left in place |
 | `fn_82C3FA30` | 40 | IN-CORE | system/os/UsbMidiGuitar 0.0 | StageKit TU (unpinned, `auto_03_825219A0`) | 64-byte array zeroed; used at 0x82521B30/0x82521ED0 | no source; left in place |
-| `fn_82C3FA60` | 52 | IN-CORE | system/os/UsbMidiGuitar 0.0 | Joypad.cpp | registers atexit for a constant-initialized `ObjPtr<Hmx::Object>` at .data 0x82C71AF0, 12 B ahead of `gKeepaliveThresholdMs` (0x82C71AFC) | variable unnamed in both oracles and unused; left in place |
+| `fn_82C3FA60` | 52 | IN-CORE | system/os/UsbMidiGuitar 0.0 | Joypad.cpp | registers atexit for a constant-initialized `ObjPtr<Hmx::Object>` at .data 0x82C71AF0, 12 B ahead of `gKeepaliveThresholdMs` (0x82C71AFC) | variable unnamed in any surviving source and unused; left in place |
 | `fn_82C3FA94` | 40 | IN-CORE | system/os/UsbMidiGuitar 78.5 | Joypad.cpp | EH unwind funclet of the row above (`~ObjRefOwner` on 0x82C71AF0) | as above |
 | `fn_82C3FAC0` | 56 | IN-CORE | system/os/UsbMidiGuitar 0.0 | Joypad.cpp | Joypad (23), OnlineID (2) | `??__EgJoypadData@?A0x47b254f1@@YAXXZ` 100.0 |
 | `fn_82C3FAF8` | 52 | IN-CORE | system/os/UsbMidiGuitar 99.6 | VirtualKeyboard.cpp | System (3) | `??__ETheVirtualKeyboard@@YAXXZ` 100.0 |
@@ -192,13 +192,13 @@ afterwards.
 - **StageKit** (`0x82C3FA20` Timer, `0x82C3FA30` 64-byte array): their
   globals are read only by an unpinned block at `0x825219A0` (between
   ContentMgr_Xbox and DateTime) that registers `stagekit_set_fog`,
-  `set_stagekit_strobe`, … and calls `JoypadStageKitSetRaw`. Neither rb3-Wii
-  nor DC3 has this TU. Pairing them means writing it from nothing.
+  `set_stagekit_strobe`, … and calls `JoypadStageKitSetRaw`. No surviving
+  source tree has this TU. Pairing them means writing it from nothing.
 - **Joypad's ObjPtr** (`0x82C3FA60` + its funclet `0x82C3FA94`): a
   constant-initialized `ObjPtr<Hmx::Object>` at `.data 0x82C71AF0`,
   immediately before `gKeepaliveThresholdMs` (`0x82C71AFC`). The ctor folded
   into static data; the initializer only registers `atexit` inside an EH
-  frame. No retail code reads it and neither oracle names it, so adding it
+  frame. No retail code reads it and no surviving source names it, so adding it
   would mean inventing a variable name; not done.
 - **AuditionMgr** (`0x82C3FD60`, 172 B): `Hmx::Object` ctor plus two
   AuditionMgr vtables, positioned between UIStats and ContextChecker.
@@ -206,8 +206,8 @@ afterwards.
 - **UGC song-data validator** (`0x82C40098`, 1,372 B): ~340 `Symbol()`
   default inits (stores of `0x82C71838`) into `.data 0x82C76408`, read only
   by `0x8272C8E8` (`"Validating Song Data (songs.dta)..."`,
-  `ValidateRawSymbol(...)`), an unpinned TU after SampleData. No source in
-  either oracle.
+  `ValidateRawSymbol(...)`), an unpinned TU after SampleData. No surviving
+  source.
 - **`0x82C42910`** (tiered IN-CORE under `System`): its global `0x82E11C90` is
   read only from `0x82B1CD70`, inside the Quazal block. Quazal, not funded.
 
