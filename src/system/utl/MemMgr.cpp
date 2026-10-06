@@ -1140,14 +1140,10 @@ MemHeapStack &ThreadMemStack(bool createIfMissing) {
                 int cur = 0;
                 int activeCount = gNumThreads;
                 if (gNumThreads > 0) {
-                    // The walking pointer is a FRESH copy taken here, not
-                    // `threadIdSlot` itself: the image re-materialises it with
-                    // `mr r28, r24` immediately before this loop (exactly as it
-                    // does before the search loop above) and leaves the base in
-                    // r24 for the `gThreadIds[cur] = ...` stores further down.
-                    // Incrementing threadIdSlot instead keeps a second copy live
-                    // across the whole assert block and costs one extra
-                    // callee-saved register (__savegprlr_22 vs the image's _23).
+                    // The walking pointer is a FRESH copy taken here, not `threadIdSlot`
+                    // itself, which stays as the base for the `gThreadIds[cur] = ...` stores
+                    // further down. Incrementing threadIdSlot keeps a second copy live across
+                    // the assert block and costs one more callee-saved register.
                     unsigned long *validateSlot = threadIdSlot;
                     do {
                         if (!ValidateThreadId(*validateSlot)) {
@@ -1171,33 +1167,14 @@ MemHeapStack &ThreadMemStack(bool createIfMissing) {
             }
         }
     }
-    // MEASURED NEGATIVE (w9-d, 2026-09-30): 98.63946 -> 98.60545, reverted.
-    //
-    // The image's write-back is genuinely CONDITIONAL and this spelling is not:
-    // two paths branch straight past `.L_827CB878` (`stw r30, 0xbd4(r29)`) to
-    // the `addi r11, r29, 0x48` at .L_827CB87C -- the gNumThreads == 0 arm
-    // (`b .L_827CB87C` at 0x827CB6B4) and the cache hit (`beq cr6, .L_827CB87C`
-    // at 0x827CB6D4, after `cmplw cr6, r11, r3` compares gThreadIds[idx]
-    // against the current thread id).  Only 0x827CB734 and 0x827CB824 reach the
-    // store.  Both skipped paths had just READ idx out of
-    // gThreadBufCurrentIndex, so the store is a self-assignment there and the
-    // VALUE is identical either way; the difference is that an unconditional
-    // store cannot be branched over, so MSVC hoists the `addi` above it and we
-    // carry one extra instruction (base 588 B, 1 insert + 1 delete).
-    //
-    // Moving the store inside the `gThreadIds[idx] != currentThreadId` block
-    // and returning `gThreadBuf[idx]` DOES fix that ordering exactly -- and
-    // costs two instructions elsewhere, for a net loss.  With the two return
-    // paths no longer separated by the store, MSVC cross-jumps the two
-    // CritSecTracker `bl Exit` sites (0x827CB724 and 0x827CB894 in the image)
-    // into one and lets `return gNullMemStack` fall into the shared
-    // `mr r3, r30`: base drops to 580 B with 1 diff_op (`bl` vs `b`) and 2
-    // deletes.  That merge is only available because our r30 holds the .bss
-    // anchor where the image's holds idx -- the r29<->r30 swap this function
-    // carries -- and `add r30, r10, r11` then kills the anchor.  Declaring
-    // `idx` after the CritSecTracker to shift that allocation is BYTE-IDENTICAL
-    // (measured), as docs/decomp/patterns/fixable-declarations.md says decl
-    // reorder is for stack slots, not register-only swaps.
+    // Residual (DC3 lane w9-d, on DC3's image): the write-back of gThreadBufCurrentIndex is
+    // CONDITIONAL. The gNumThreads == 0 arm and the cache hit branch past the
+    // store; both had just read idx from it, so the value is the same either way,
+    // but an unconditional store cannot be branched over and MSVC hoists the
+    // following `addi` above it. Moving the store into the
+    // `gThreadIds[idx] != currentThreadId` block fixes that ordering and lets
+    // MSVC cross-jump the two CritSecTracker exits instead, a net loss.
+    // Declaring `idx` after the CritSecTracker is byte-identical.
     gThreadBufCurrentIndex = idx;
     MemHeapStack &result = gThreadBuf[gThreadBufCurrentIndex];
     return result;

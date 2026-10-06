@@ -104,14 +104,10 @@ void UsbMidiKeyboard::Poll() {
             || gForceDetectKeytar) {
             ProKeysData *proData =
                 (ProKeysData *)&JoypadGetPadData(i)->mProGuitarData;
-            // REFUTED (w7-r, 2026-09-14): the image emits `li r26, 1`
-            // (slotCounter) BETWEEN the `bl JoypadGetPadData` and
-            // `addi r29, r3, 0x34` (proData), while we emit it after the addi --
-            // a 2-row adjacent swap. Declaring slotCounter FIRST does not buy it:
-            // MSVC then hoists the `li` to BEFORE the call (idx 38 vs the image's
-            // 40) and the function drops 98.05 -> 97.7. The `li` is an
-            // independent constant the scheduler places freely; there is no
-            // declaration order that lands it in the image's slot.
+            // Residual (DC3 lane w7-r): retail emits slotCounter's `li 1` between
+            // `bl JoypadGetPadData` and the proData `addi`; we emit it after the addi.
+            // Declaring slotCounter first hoists the `li` above the call instead, so no
+            // declaration order lands it in retail's slot.
             int slotCounter = 1;
 
             for (int note = 0x30; note - 0x30 < 25; note++) {

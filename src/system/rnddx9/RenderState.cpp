@@ -113,9 +113,9 @@ void RndRenderState::SetTextureFilter(uint sampler, FilterMode filter, bool) {
 
 void RndRenderState::SetTextureClamp(uint sampler, ClampMode clamp) {
     UINT64 mask = 0x8000000000000000ull >> (sampler + 0x20);
-    // Three groups, one device read each (the image has three `lwz 0x224(r9)` and
-    // three `mr` copies, not six loads): the fetch-constant store and the mask
-    // store in a group go through the SAME pointer.
+    // Three groups, one device read each (not one per statement): the
+    // fetch-constant store and the mask store in a group go through the SAME
+    // pointer.
     D3DDevice *dev = TheDxRnd.Device();
     DWORD *pWord = &dev->m_Constants.TextureFetch[sampler].dword[0];
     *pWord = (*pWord & ~0x00001C00) | ((clamp & 7) << 10);

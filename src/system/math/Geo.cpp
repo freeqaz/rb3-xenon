@@ -732,11 +732,9 @@ void Sphere::GrowToContain(const Sphere &s) {
         if (dist == 0.0f)
             return;
         float invDist = 1.0f / dist;
-        // The image computes all six scaled offsets as their own fmuls and only
-        // then does the six adds/subs -- it never contracts them into fmadds /
-        // fnmsubs the way a single `center.x - radius * (invDist * dx)`
-        // expression does under /fp:fast. Routing the products through Vector3
-        // aggregates is what reproduces that.
+        // Each scaled offset is its own fmuls and the six adds/subs follow; routing
+        // the products through Vector3 aggregates keeps /fp:fast from contracting them
+        // into fmadds/fnmsubs (spelling from DC3).
         Vector3 dir, p, q, a, b;
         dir.Set(dx * invDist, dy * invDist, dz * invDist);
         Scale(dir, radius, p);
@@ -986,14 +984,8 @@ void BSPFace::Update() {
         bool degenerate = dx == 0.0f && dy == 0.0f && dz == 0.0f;
         if (!degenerate) {
             Vector3 normal;
-            // Statement order y, z, x is MEASURED, not stylistic: all six
-            // permutations were built and scored (w9-e 2026-09-30), norm/fuzzy --
-            //   YZX 99.9655 / 99.4483   YXZ 99.9655 / 99.4483
-            //   ZYX 99.9425 / 98.9655   ZXY 99.9425 / 98.9655
-            //   XZY 99.9310 / 99.1264   XYZ 99.9310 / 99.1264
-            // It sets the load order of the zAxis triple (the image loads
-            // 0x0(r30), 0x8(r30), 0x4(r30) -- x, z, y) and the store order of
-            // `normal`.
+            // Statement order y, z, x sets the load order of the zAxis triple and the
+            // store order of `normal` (DC3 lane w9-e built all six orders).
             normal.y = zAxis.x * dz - zAxis.z * dx;
             normal.z = zAxis.y * dx - zAxis.x * dy;
             normal.x = zAxis.z * dy - zAxis.y * dz;

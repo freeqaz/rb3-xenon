@@ -1524,7 +1524,7 @@ void Spotlight::BuildNGSheet(BeamDef &def) {
     float topRadius = radii.x;
     float bottomRadius = radii.y;
 
-    static float kSheetFade = 1.0f; // lbl_82F1987C
+    static float kSheetFade = 1.0f; // RB3 retail 0x82C7120C = 1.0f
 
     int iVert = 0;
     for (int row = 0; row < numRows; row++) {
@@ -1545,11 +1545,9 @@ void Spotlight::BuildNGSheet(BeamDef &def) {
                 (1.0f - absSegFrac) * kSheetFade
             );
 
-            // w21-bi: the position goes through the same inline Multiply as
-            // the normal. The image's pos and norm blocks (0x8282CBE4..,
-            // 0x8282CC48..) are the same 15 instructions, loads z, x, y; the
-            // hand-expanded sum this replaced scheduled x, y, z and kept both
-            // blocks off by 15 rows each.
+            // The position goes through the same inline Multiply as the normal (DC3 lane
+            // w21-bi); a hand-expanded sum schedules x, y, z where the Multiply loads
+            // z, x, y.
             Multiply(verts[iVert].pos, orientMtx, verts[iVert].pos);
 
             verts[iVert].norm.Set(0.0f, 0.0f, 1.0f);
@@ -1564,33 +1562,23 @@ void Spotlight::BuildNGSheet(BeamDef &def) {
     }
     MILO_ASSERT(iVert == kNumVerts, 0x526);
 
-    // w21-bi (96.30 -> 100 normalized, 1 register-only row left: the
-    // commutative `add r9, r4, r3` forming base, operand order inert to
-    // spelling). The w7-bw negative results recorded here were refuted:
-    // (1) plain-int indices DO match once base is `row * numCols + col`
-    //     rather than a hand-carried rowStart; (2) the pos/norm sums are not
-    //     a lowering floor -- the pos transform is the same inline Multiply
-    //     as the normal (above). (3) still stands: the two MakeString rows
-    //     are the target's whole-TU ICF representative
-    //     MakeString<char[19], int, char[5]> vs our <char[14], int, char[19]>.
+    // The two MakeString rows (MILO_ASSERT 0x526 / 0x53F) are charged because
+    // retail's whole-TU ICF representative is MakeString<char[19], int, char[5]>
+    // and ours is <char[14], int, char[19]>.
     int iFace = 0;
     for (int row = 0; row < numSections; row++) {
         for (int col = 0; col < numSegments; col++) {
-            // w21-bi: the vertex index is `row * numCols + col`, all four
-            // indices plain ints (as in RB3). The image keeps row*numCols as
-            // its own induction variable (seeded AFTER the numSections guard,
-            // `add r4, r4, r27` per row) and re-adds col every column
-            // (`add r9, r4, r3`); a hand-carried `rowStart` let MSVC merge the
-            // two into one IV (the 94.4 an earlier lane measured), which the
-            // old `unsigned short base` cast only papered over. The u16 clrlwi
-            // pattern in the arms comes from Set()'s int parameters, not from
-            // casts here (inert either way, measured).
+            // The vertex index is `row * numCols + col`, all four indices plain ints
+            // (DC3 lane w21-bi). Retail keeps row*numCols as its own induction variable
+            // and re-adds col every column; a hand-carried `rowStart` lets MSVC merge the
+            // two into one IV. The u16 `clrlwi` in the arms comes from Set()'s
+            // parameters, not from casts here.
             int base = row * numCols + col;
             int next = base + 1;
             int baseNext = base + numCols;
             int nextNext = baseNext + 1;
-            // One faces[iFace++] per Set: MSVC folds the four increments into
-            // the image's single `addi r10, r10, 0x2` ahead of the branch.
+            // One faces[iFace++] per Set: MSVC folds the four increments into a single
+            // `addi ..., 0x2` ahead of the branch.
             if (iFace & 2) {
                 faces[iFace++].Set(baseNext, base, nextNext);
                 faces[iFace++].Set(nextNext, base, next);

@@ -706,12 +706,10 @@ DataNode op58(DataArray *msg) {
 }
 
 DataNode op59(DataArray *msg) {
-    // BEHAVIOUR FIX (w11-d): the image computes ((w >> 2) ^ 0x0F) |
-    // (((w & 3) << 6) ^ 0x19) -- `extrwi r9,r11,8,22; xori r9,r9,0xf` and
-    // `clrlslwi r11,r11,30,6; xori r11,r11,0x19` at 0x8276C938.  The previous
-    // spelling had the two xor constants swapped between the halves
-    // ((w ^ 0x65) | ((w << 8) ^ 0x3C)) >> 2, which differs on 224 of 256 byte
-    // values; this form also agrees with the native nop59 for all 256.
+    // Retail (0x82726EE8) computes ((w >> 2) ^ 0x0F) | (((w & 3) << 6) ^ 0x19):
+    // `extrwi; xori 0xf` and `clrlslwi; xori 0x19`. Spelling from DC3 lane w11-d;
+    // the value equals the old ((w ^ 0x3C) | ((w << 8) ^ 0x65)) >> 2 form for
+    // every byte.
     unsigned long operand = msg->Int(1);
     unsigned long w = u8(msg->Int(2));
     unsigned long a = (w >> 2) ^ 0xF;

@@ -34,21 +34,13 @@ void FftIpp::FftReal(
     FFTRealForward(&mBuf3[0], (unsigned long)mSize, &mSinCos[0]);
 
     // Deinterleave FFTRealForward's packed complex output into separate real
-    // and imaginary arrays.  Everything the target's inner loop does beyond
-    // this -- the single running `outIm + i` pointer with `outRe` reached
-    // through a byte bias, the +8 byte stride, the `add`/`lfs 0x4()` pair for
-    // the odd slot -- is MSVC's own induction-variable reduction of exactly
-    // these two subscripts; spelling any of it out by hand produces DIFFERENT
-    // code, not the same code.  Three details are load-bearing and each is
-    // worth a measured amount:
-    //
-    //   * `i` is declared BEFORE `half`, so its `li r8, 0x1` is scheduled
-    //     ahead of the `srawi` that computes `half` (94.4% -> 100%).
-    //   * explicit `if` + `do/while` rather than a `for`: MSVC recognises a
-    //     `for` here as a counted loop and rewrites it into `mtctr`/`bdnz`,
-    //     losing the target's explicit `addi`/`cmplw` counter (88.1% -> 94.4%).
-    //   * unsigned `i` and an unsigned bound, which is what makes the guard
-    //     `cmplwi` and the latch `cmplw` rather than their signed forms.
+    // and imaginary arrays. Retail's single running pointer with a byte bias and
+    // +8 stride is MSVC's own induction-variable reduction of these two
+    // subscripts; spelling it out by hand produces different code. Three details
+    // are load-bearing (DC3 lane): `i` is declared BEFORE `half`, so its `li` is
+    // scheduled ahead of the `srawi`; an explicit `if` + `do/while` keeps MSVC
+    // from turning a `for` into `mtctr`/`bdnz`; and unsigned `i` and bound give
+    // the `cmplwi`/`cmplw` compares.
     int n = mSize;
     unsigned int i = 1;
     int half = n >> 1;

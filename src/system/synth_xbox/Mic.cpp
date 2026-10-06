@@ -126,10 +126,9 @@ void ChatReceiver::ProcessChatData(void *data, unsigned int size, int *flag) {
     float z2 = unk10;
     unsigned int samps = size >> 1;
     short *samples = (short *)data;
-    // Both loops index samples[i] off a hand-rotated counter: the indexing is
-    // what gives the image's biased-pointer `lha 0x2(rN)` / `sthu 0x2(rN)`
-    // pair (a `*++p` walk emits addi + sth), and the hand rotation keeps the
-    // compare-against-samps loop out of a CTR loop (97.6 -> 100).
+    // Both loops index samples[i] off a hand-rotated counter: the indexing gives
+    // the biased-pointer `lha 0x2(rN)` / `sthu 0x2(rN)` pair (a `*++p` walk emits
+    // addi + sth), and the hand rotation keeps the loop out of a CTR loop.
     unsigned int i = 0;
     if (samps != 0) {
         do {

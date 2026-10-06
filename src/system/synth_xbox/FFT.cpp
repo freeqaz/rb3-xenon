@@ -49,21 +49,11 @@ int fft_real_forward_scalar(float* data, unsigned long size, float* context) {
             double sin_2a = sin(inv_n * (float)(2.0 * M_PI));
 
             double cc = (double)sin_a * (double)sin_a;
-            // ss, c and s are declared BEFORE the DC/Nyquist bins, and the two
-            // bin stores are ADJACENT, sum first (w7-br, 85.6 -> 88.0
-            // canonical).  With the three declarations between the stores,
-            // MSVC emits the SECOND store first and defers the first bin's
-            // arithmetic to just before its store; adjacent, the stores keep
-            // source order.  Diff-first adjacent is 86.7; pre-computing both
-            // bins into named temps changes nothing either way.
-            // w8-r: moving ONLY `c`/`s` between the two bin stores (leaving
-            // `ss` above them), to reproduce the image's `lfd c` / `lfd s` pair
-            // sitting BETWEEN `stfs f9, 0x4(r31)` and `stfs f8, 0x0(r31)`, is
-            // byte-identical at 88.048.  The image's residual shape is: diff
-            // computed, sum computed, store DIFF, c/s loaded, store SUM -- it
-            // stores the second bin first WITHOUT deferring the first bin's
-            // arithmetic, which is the half w7-br's declarations-between
-            // variant could not get.
+            // ss, c and s are declared BEFORE the DC/Nyquist bins, and the two bin
+            // stores are ADJACENT, sum first (DC3 lanes w7-br / w8-r). With declarations
+            // between the stores MSVC emits the second store first and defers the first
+            // bin's arithmetic. Residual: retail stores the second bin first WITHOUT
+            // deferring the first bin's arithmetic, which no spelling tried reproduces.
             float ss = (float)sin_2a;
             double c = 1.0;
             double s = 0.0;
@@ -422,9 +412,8 @@ void SquareComplexTransposeVector(float* data, long size) {
         char* colLo = col;
         char* colHi = col + halfStep;
         for (long j = 0; j < i; j++) {
-            // w17-e: cLo before cHi -- MSVC issues the two lvx in the reverse
-            // order, which is the image's (`lvx128 v62, r0, r6` colHi first):
-            // removes 4 register rows (raw 96.62 -> 96.96; canonical unchanged).
+            // cLo before cHi: MSVC then issues the two lvx in retail's order (colHi
+            // first) (DC3 lane w17-e).
             XMVECTOR cLo = __lvx(colLo, 0);
             XMVECTOR cHi = __lvx(colHi, 0);
             XMVECTOR rLo = __lvx(rowLo, 0);
@@ -438,10 +427,8 @@ void SquareComplexTransposeVector(float* data, long size) {
             __stvx(outRowHi, rowHi, 0);
             rowHi += 16;
             __stvx(outColLo, colLo, 0);
-            // MEASURED INERT (w8-r): spelling these `colLo = rowStep + colLo`
-            // to flip the image's `add r7, r4, r7` / `add r6, r4, r6` operand
-            // order is byte-identical at 97.297.  Confirms the commutative
-            // operand-order floor for `add` as well as `fmuls`.
+            // The operand order of the two `add`s here is inert to spelling, like
+            // `fmuls` (DC3 lane w8-r).
             colLo += rowStep;
             __stvx(outColHi, colHi, 0);
             colHi += rowStep;
@@ -642,44 +629,15 @@ int fft_matrix_forward_columnwise(float* data, long size, float* context) {
 
             // Twiddle-multiply the transformed rows and scatter them back.
             {
-                // NEGATIVE RESULT on the twiddle loop's two source pointers.
-                // The image walks THREE pointers into this loop -- `mr r10, r29`
-                // (temp), `mr r9, r26` (temp2), `mr r8, r30` (data_ptr) -- and
-                // loads both halves with a zero index: `lvx128 v63, r0, r10` /
-                // `lvx128 v62, r0, r9`, advancing each with its own
-                // `addi rN, rN, 0x10` (FFT.s, the block at 0x45c-0x558).  We
-                // emit only TWO `mr`, plus `subf r7, r29, r26`, and load the
-                // second half indexed off the first: `lvx128 v62, r7, r11`.
-                // That is MSVC folding src2 into src1 + (temp2 - temp) --
-                // induction-variable elimination, and it cascades into the
-                // whole loop's vector-register assignment (61 of this
-                // function's 102 mismatch rows are in this one loop).
-                //
-                // Two variants tried, both BYTE-FOR-BYTE INERT (86.8 canonical /
-                // 84.9 raw, 319 instructions, 60/6/19/17 row split, identical
-                // before and after):
-                //   1. `float*` walked with `+= 4` instead of `char*` walked
-                //      with `+= 0x10` -- i.e. spelled exactly like the gather
-                //      loop 30 lines above, which does NOT get merged even
-                //      though its dst1/dst2 stand in the same temp/temp2
-                //      relationship.
-                //   2. the two increments separated in source order to match
-                //      the image's schedule (src1 right after `k += 1`, src2
-                //      down inside the recurrence after the last use of `b`).
-                // The gather loop's pointers survive because they are STORE
-                // destinations; the merge here is a load-side decision the
-                // pointer's spelling and its increment's position do not reach.
-                //   3. (w7-ay) indexing both loads off temp/temp2 by k
-                //      (`__lvx(temp + k * 4, 0)`, no source pointers at all):
-                //      WORSE, 86.6 -- strength reduction rebuilds the same
-                //      merged pair.
-                //   4. (w7-ay) outside the loop: assigning sv.f[] / w_re1 /
-                //      w_re2 / w_im2 straight from the sin()/__vspltw/__vmrglw
-                //      expressions instead of via the sin2_1/v_cos_splat/
-                //      v_cos_merged/v_sin_merged locals: byte-for-byte inert
-                //      (the `vor128 v62, v63, v63` copy of v_cos_vec and the
-                //      `fmul f0, f1, f1` square-before-copy at the first sin
-                //      return are scheduling, not spelling).
+                // Residual: retail walks THREE pointers into this loop (temp, temp2,
+                // data_ptr), loads both halves with a zero index and advances each by 0x10.
+                // MSVC folds src2 into src1 + (temp2 - temp) (induction-variable elimination)
+                // and loads the second half indexed off the first, which cascades into the
+                // loop's vector-register assignment. DC3 lanes tried, all inert or worse:
+                // `float *` walked by 4; increments split to retail's schedule; indexing both
+                // loads off temp/temp2 by k; assigning the twiddle vectors directly from the
+                // sin()/__vspltw/__vmrglw expressions. The gather loop's pointers survive
+                // because they are store destinations.
                 char* src1 = (char*)temp;
                 char* src2 = (char*)temp2;
                 char* out = (char*)data_ptr;
@@ -874,13 +832,10 @@ int fft_matrix_inverse_columnwise(float *data, long size, float *scratch) {
 
             XMVECTOR v_cos_vec = __lvx(&sv, 0);
 
-            // Initialize running twiddle factors.  w_re1/w_re2 are formed
-            // from v_cos_vec around the two sv stores, in the image's order
-            // (0x82E4E97C / 0x82E4E984 straddle the `stfs 0x68(r1)`).  MSVC
-            // still sinks the w_re2 merge below the sin-vector load and pays
-            // a `vor128` copy of v_cos_vec for it, exactly as in the forward
-            // transform; spelling it through v_cos_merged, or after the sin
-            // load, is inert or worse.
+            // Initialize running twiddle factors. w_re1/w_re2 are formed from v_cos_vec
+            // around the two sv stores; MSVC still sinks the w_re2 merge below the
+            // sin-vector load and pays a `vor128` copy of v_cos_vec, as in the forward
+            // transform.
             XMVECTOR w_im2 = v_sign;
             XMVECTOR w_im1 = v_zero;
             XMVECTOR w_re1 = __vspltw(v_cos_vec, 0);
@@ -894,17 +849,10 @@ int fft_matrix_inverse_columnwise(float *data, long size, float *scratch) {
             XMVECTOR v_sin_merged = __vmrglw(v_sin_vec, v_sin_vec);
             w_im2 = __vmaddfp(w_im2, v_sin_merged, v_zero);
 
-            // BEHAVIOURAL FIX (w7-ay): the gather loop below walks COPIES of
-            // temp/temp2 -- the image's `mr r9, r28` / `mr r8, r27` at
-            // 0x82E4E970-74 -- and r28 (temp) is what the two FFTComplex
-            // calls, the deinterleave and free() then use (0x82E4EA78,
-            // 0x82E4EAA8, 0x82E4EB1C).  The permuter harvest fb98fec2e had
-            // replaced them with `temp += 4` / `temp2 += 4`, which scored
-            // 3pp higher (89.0 vs 86.0) and handed FFTComplex, the second
-            // loop and free() a pointer half_cols*16 bytes past the malloc.
-            // Keep the copies; the score is not the point.  Declared here,
-            // before src_data, like the forward transform; scoping them
-            // inside the guard is worse (85.6).
+            // The gather loop walks COPIES of temp/temp2; temp itself is what the two
+            // FFTComplex calls, the deinterleave and free() use. Advancing temp/temp2
+            // directly (a DC3 permuter result that scored higher) hands them a pointer
+            // half_cols*16 bytes past the malloc. Keep the copies.
             float *dst1 = temp;
             float *dst2 = temp2;
             char *src_data = (char *)data_ptr;
@@ -975,12 +923,9 @@ int fft_matrix_inverse_columnwise(float *data, long size, float *scratch) {
 
             // Deinterleave from temp back to data
             {
-                // Same induction-variable merge as the forward transform's
-                // twiddle loop -- see the NEGATIVE RESULT block in
-                // fft_matrix_forward_columnwise.  The image walks three
-                // pointers in (`mr r9, r28` / `mr r8, r27` / `mr r10, r30`,
-                // FFT.s 0x890-0x8ac); we emit one `mr` and index the second
-                // half off the first.  Both spellings tried there are inert.
+                // Same induction-variable merge as the forward transform's twiddle loop:
+                // retail walks three pointers in, we emit one `mr` and index the second half
+                // off the first.
                 char *src1 = (char *)temp;
                 char *src2 = (char *)temp2;
                 char *out = (char *)data_ptr;

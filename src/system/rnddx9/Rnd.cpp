@@ -290,8 +290,8 @@ void DxRnd::DrawLine(const Vector3 &v1, const Vector3 &v2, const Hmx::Color &c, 
     vertices[4] = v2.x;
     vertices[5] = v2.y;
     vertices[6] = v2.z;
-    // One chained store of the colour, second vertex first: the image computes
-    // MakeColor once, after both positions, and stores it to 0x7c then 0x6c.
+    // One chained store of the colour, second vertex first: MakeColor is
+    // computed once, after both positions.
     *(unsigned long *)&vertices[7] = *(unsigned long *)&vertices[3] = MakeColor(c);
 
     // Initialize identity transform in-place (vertices[8..19])
