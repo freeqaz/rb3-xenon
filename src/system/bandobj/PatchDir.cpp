@@ -228,16 +228,20 @@ void PatchLayer::Draw() {
         Transform tf50;
         tf50.Reset();
         tf50.v.Set((float)mPosX, 0, (float)mPosZ);
-        Vector3 vb4(0, ((float)mRot * 360.0f / 511.0f) * DEG2RAD, 0);
+        // Retail multiplies mRot by ONE folded constant, 360/511 * DEG2RAD
+        // (0x3c497495 @ 0x8200F4B0), not by 360/511 and then DEG2RAD.
+        Vector3 vb4(0, (float)mRot * (360.0f / 511.0f * DEG2RAD), 0);
         MakeRotMatrix(vb4, tf50.m, true);
+        // Retail stores no hackyScaleValue here.
         float scale = (float)mScaleX * (1 / 1638.3f) - 5.0f;
-        hackyScaleValue = scale;
         if (0 > scale) {
             scale = ((float)mScaleX * (1 / 1638.3f) - 5.0f) * -1.0f;
         }
         float scaleX = sticker->unk18 * scale * 7.5f;
         float scaleZ = sticker->unk1c * ((float)mScaleY * (1 / 1638.3f) - 5.0f) * 7.5f;
-        Scale(Vector3(scaleX, 1.0f, scaleZ), tf50.m, tf50.m);
+        // Retail scales the y row by 0.0f (fmuls by the zero constant in f31 on
+        // m.y.x/y/z), flattening the sticker.
+        Scale(Vector3(scaleX, 0.0f, scaleZ), tf50.m, tf50.m);
         float blend = 1.0f;
         Transform tfa8;
         tfa8.Reset();
@@ -399,7 +403,10 @@ void PatchLayer::LoadPacked(IntPacker &packer) {
         int y = packer.ExtractU(14);
         SetScaleX(x * 0.00030517578125f);
         SetScaleY(y * 0.00030517578125f);
-        SetDeformFrame((int)packer.ExtractU(10) * 0.048828125f);
+        // Retail multiplies by ONE folded constant, 0.048828125f * 20.46f
+        // (0x3f7fbfff @ 0x8200EDB0), and stores the int directly: no separate
+        // SetDeformFrame scale by 20.46f after the 1/20.48 step.
+        mDeformFrame = (int)packer.ExtractU(10) * (0.048828125f * 20.46f);
     } else {
         mPosX = packer.ExtractS(9);
         mPosZ = packer.ExtractS(9);

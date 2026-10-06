@@ -450,7 +450,10 @@ void GemTrack::DrawFill(FillInfo *info, int i2, int i3) {
                 if (mGemManager->GetWidgetName(s16c, 4, s168)) {
                     TrackWidget *w = mGemManager->GetWidgetByName(s16c);
                     w->AddInstance(tf88, 0);
-                    if (isDrum) {
+                    // Retail tests the !DrumFillsMod() value here (held in r17 from
+                    // the `cntlzw/extrwi` of Game+0x145), not isDrum, which b1
+                    // already implies: no crash FillHit while the drum-fills mod is on.
+                    if (bi2) {
                         mTrackDir->FillHit(3);
                     }
                 }
@@ -540,17 +543,19 @@ void GemTrack::DrawBeatLine(Symbol s1, int i2, int i3, bool b4) {
                 Symbol sfc;
                 int startKey;
                 const char *shiftWid;
-                // Retail: a down shift (endKey < 0) shows the LEFT arrow when
-                // flip_shift_arrows is set and the right one otherwise; an up shift
-                // the reverse (`bne` to the "key_shift_left.wid" load, 0x8269...9a4).
+                // Retail (0x82B94674..0x82B946C4): a down shift (endKey < 0) shows
+                // the LEFT arrow (lbl_8219E06C "key_shift_left.wid") and, with
+                // flip_shift_arrows set, the RIGHT one (lbl_8219E058); an up shift
+                // the reverse. The labels are placeholders, so name_check cannot
+                // see a swap here -- read the .rdata bytes.
                 if (endKey < 0) {
                     startKey = 0;
                     endKey = 3;
-                    shiftWid = !flip_shift_arrows.Int() ? "key_shift_right.wid" : "key_shift_left.wid";
+                    shiftWid = !flip_shift_arrows.Int() ? "key_shift_left.wid" : "key_shift_right.wid";
                 } else {
                     endKey = mRange;
                     startKey = endKey - 3;
-                    shiftWid = !flip_shift_arrows.Int() ? "key_shift_left.wid" : "key_shift_right.wid";
+                    shiftWid = !flip_shift_arrows.Int() ? "key_shift_right.wid" : "key_shift_left.wid";
                 }
                 sfc = shiftWid;
                 MILO_ASSERT(startKey <= endKey, 0x297);
