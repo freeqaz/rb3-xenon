@@ -876,17 +876,14 @@ int StandardStream::ConsumeData(void **v, int numSamples, int startSamp) {
     void *pcm[0x1E];
     MILO_ASSERT(numChannels < DIM(pcm), 0x1B3);
 
-    int i;
-    for (i = 0; i < numChannels; i++) {
+    for (int i = 0; i < numChannels; i++) {
         if (i < realChannels)
             pcm[i] = v[i];
         else
             pcm[i] = mVirtBufs[i - realChannels];
     }
 
-    int samplesToConsume = numSamples;
-    if (samplesToConsume >= 0x800)
-        samplesToConsume = 0x800;
+    int samplesToConsume = numSamples < 0x800 ? numSamples : 0x800;
 
     if (mJumpFromSamples > 0) {
         if (mJumpFromSamples < mJumpToSamples) {
@@ -916,10 +913,9 @@ int StandardStream::ConsumeData(void **v, int numSamples, int startSamp) {
 
     if ((unsigned int)samplesToConsume != 0) {
         int bytesPerSample = mInfoFloatSamples ? 4 : 2;
-        int copySize = bytesPerSample * samplesToConsume;
         for (std::vector<std::pair<int, int> >::iterator mapIt = mChanMaps.begin();
              mapIt != mChanMaps.end(); ++mapIt) {
-            memcpy(pcm[mapIt->second], pcm[mapIt->first], copySize);
+            memcpy(pcm[mapIt->second], pcm[mapIt->first], bytesPerSample * samplesToConsume);
         }
 
         short convBuf[0x800];
