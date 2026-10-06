@@ -491,10 +491,11 @@ void MusicLibrary::ResetFilter(FilterType ty) {
 
 void MusicLibrary::ToggleFilter(FilterType ty, Symbol s) {
     if (!mTask.filterLocked) {
-        if (mTask.GetFilter().HasFilter(ty, s)) {
+        SongSortMgr::SongFilter &filter = mTask.filter;
+        if (filter.HasFilter(ty, s)) {
             mTask.filter.RemoveFilter(ty, s);
         } else {
-            mTask.filter.AddFilter(ty, s);
+            filter.AddFilter(ty, s);
         }
         TheSongSortMgr->BuildFilteredSongList(&mTask.filter, PartForFilter());
         TheSongSortMgr->BuildSortTree(unkdc);
