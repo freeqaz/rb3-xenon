@@ -357,6 +357,16 @@ void CharBonesSamples::Print() {
     }
 }
 
+// RESIDUAL (W16-RF fork F, 96.47 fuzzy / 96.68 mpn): the body matches; what is left is
+// one block-merging decision. In ours, all three rotation arms open with the same
+// registers (mStart in r11, mOffsets[TYPE_QUAT]/[TYPE_ROTX] in r10/r9), so the
+// mOffsets loads are hoisted above `cmpwi 3` and the ShortQuat and uncompressed
+// arm entries merge above the `beq`. Retail hoists only the mStart load above the
+// `beq`; its uncompressed arm loads TYPE_QUAT/TYPE_ROTX into r9/r10 and jumps into the
+// quat loop's end test (`add r11,r11,r10`). Inert or worse, measured: the inline
+// accessors QuatOffset()/RotXOffset()/EndOffset() at the arm entries and loop
+// tests (byte-identical), and, from earlier lanes, `off + mStart` operand order
+// (byte-identical) and the nested `if (< kCompressQuats)` arm shape (85.9).
 void CharBonesSamples::Relativize(CharClip *clip) {
     auto& bones = mBones;
     if (bones.empty())
