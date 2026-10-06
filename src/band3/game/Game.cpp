@@ -22,6 +22,7 @@
 #include "game/VocalPlayer.h"
 #include "game/RealGuitarGemPlayer.h"
 #include "game/NetGameMsgs.h"
+#include "game/MusicLibraryTaskMsg.h"
 #include "game/Player.h"
 #include "game/Scoring.h"
 #include "game/Shuttle.h"
@@ -101,19 +102,6 @@ NetMessage *TourHideShowFiltersMsg::NewNetMessage() {
 }
 NetMessage *SongResultsScrollMsg::NewNetMessage() { return new SongResultsScrollMsg(); }
 NetMessage *SetUpMicsMsg::NewNetMessage() { return new SetUpMicsMsg(); }
-
-class MusicLibraryTaskMsg : public NetMessage {
-public:
-    MusicLibraryTaskMsg() {}
-    virtual ~MusicLibraryTaskMsg() {}
-    virtual void Save(BinStream &) const;
-    virtual void Load(BinStream &);
-    virtual void Dispatch();
-    NETMSG_BYTECODE(MusicLibraryTaskMsg);
-    NETMSG_NAME(MusicLibraryTaskMsg);
-    NETMSG_NEWNETMSG(MusicLibraryTaskMsg);
-    MusicLibrary::MusicLibraryTask mTask; // 0x4
-};
 
 NetMessage *MusicLibraryTaskMsg::NewNetMessage() { return new MusicLibraryTaskMsg(); }
 

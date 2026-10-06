@@ -14,6 +14,7 @@
 #include "os/Debug.h"
 #include "os/System.h"
 #include "tour/TourDesc.h"
+#include "game/MusicLibraryTaskMsg.h"
 #include "tour/TourProgress.h"
 #include "meta_band/UIEventMgr.h"
 #include "net/NetSession.h"
@@ -32,19 +33,6 @@
 #include "decomp.h"
 
 #pragma pool_data off
-
-class MusicLibraryTaskMsg : public NetMessage {
-public:
-    MusicLibraryTaskMsg(MusicLibrary::MusicLibraryTask &);
-    // W16-HX: implicit dtor (retail ??1 does not re-store the derived vptr)
-    virtual void Save(BinStream &) const;
-    virtual void Load(BinStream &);
-    virtual void Dispatch();
-    NETMSG_BYTECODE(MusicLibraryTaskMsg);
-    NETMSG_NAME(MusicLibraryTaskMsg);
-    NETMSG_NEWNETMSG(MusicLibraryTaskMsg);
-    MusicLibrary::MusicLibraryTask mTask; // 0x4
-};
 
 #ifndef RB3_STRIP_CHEAT_HANDLERS
 // Data re-read by CheatReloadTourData. Retail has neither: "config/tour.dta"
