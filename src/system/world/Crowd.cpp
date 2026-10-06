@@ -1371,9 +1371,12 @@ void WorldCrowd::DrawShowing() {
                 dist = (float)__fsel(dist - minDist, dist, minDist);
                 float negDist = -dist;
                 // NOTE: 0.0f multiplications are dead math required for codegen match (fmul)
-                camXfmCopy.v.x = camXfmCopy.m.x.x * 0.0f + (camXfmCopy.m.y.x * negDist + camXfmCopy.m.z.x * 0.0f);
-                camXfmCopy.v.y = camXfmCopy.m.z.y * 0.0f + (camXfmCopy.m.y.y * negDist + camXfmCopy.m.x.y * 0.0f);
-                camXfmCopy.v.z = (camXfmCopy.m.z.z * 0.0f + (camXfmCopy.m.y.z * negDist + camXfmCopy.m.x.z * 0.0f)) + halfHeight;
+                // One Set(): its arguments evaluate right to left.
+                camXfmCopy.v.Set(
+                    camXfmCopy.m.x.x * 0.0f + (camXfmCopy.m.y.x * negDist + camXfmCopy.m.z.x * 0.0f),
+                    camXfmCopy.m.z.y * 0.0f + (camXfmCopy.m.y.y * negDist + camXfmCopy.m.x.y * 0.0f),
+                    (camXfmCopy.m.z.z * 0.0f + (camXfmCopy.m.y.z * negDist + camXfmCopy.m.x.z * 0.0f)) + halfHeight
+                );
                 gImpostorCamera->SetLocalXfm(camXfmCopy);
                 float yFov = (float)std::atan((double)(halfHeight / dist)) * 2.0f;
                 gImpostorCamera->SetFrustum(
@@ -1393,10 +1396,14 @@ void WorldCrowd::DrawShowing() {
                     // from m.z at +0x20, vs our lfs/stfs x3).
                     charXfm.m.z = meshXfm2.m.z;
 
+                    // The camera reference is declared inside each arm: retail
+                    // tests mCrowdRotate first and expands WorldXfm() twice.
                     if (mCrowdRotate == kCrowdRotateFace) {
-                        Cross(charXfm.m.z, curCam->WorldXfm().m.y, charXfm.m.x);
+                        const Transform &camWXfm = curCam->WorldXfm();
+                        Cross(charXfm.m.z, camWXfm.m.y, charXfm.m.x);
                     } else {
-                        Cross(curCam->WorldXfm().m.y, charXfm.m.z, charXfm.m.x);
+                        const Transform &camWXfm = curCam->WorldXfm();
+                        Cross(camWXfm.m.y, charXfm.m.z, charXfm.m.x);
                     }
                     Normalize(charXfm.m.x, charXfm.m.x);
                     Cross(charXfm.m.z, charXfm.m.x, charXfm.m.y);
@@ -1439,32 +1446,32 @@ void WorldCrowd::DrawShowing() {
                 }
 
                 // --- Compute bounding rect (branchless fsel min/max) ---
+                // Declared minX, maxX, ri, minY, maxY: retail zeroes the index
+                // between the second and third fmr.
                 float minX = FLT_MAX;
                 float maxX = -FLT_MAX;
-                float maxY = -FLT_MAX;
+                unsigned int ri = 0;
                 float minY = FLT_MAX;
+                float maxY = -FLT_MAX;
                 int numRects = (int)rects.size();
                 if (numRects != 0) {
-                    unsigned int ri = 0;
                     do {
-                        float ry = rects[ri].y;
-                        float rx = rects[ri].x;
-                        ry = (float)__fsel(minX - ry, ry, minX);
-                        rx = (float)__fsel(minY - rx, rx, minY);
-                        float ryh = ry + rects[ri].h;
-                        maxX = (float)__fsel(maxX - ryh, maxX, ryh);
-                        float rxw = rx + rects[ri].w;
-                        maxY = (float)__fsel(maxY - rxw, maxY, rxw);
-                        minX = ry;
-                        minY = rx;
+                        // The maxima take the rect's own y/x, and `rects[ri].y` /
+                        // `.x` are written at both uses: the CSE'd re-read is what
+                        // homes each loaded value into the temp slot (retail's
+                        // `stfs f9, 0x50(r31)` / `stfs f8, 0x50(r31)`).
+                        minX = Min(minX, rects[ri].y);
+                        minY = Min(minY, rects[ri].x);
+                        maxX = Max(maxX, rects[ri].y + rects[ri].h);
+                        maxY = Max(maxY, rects[ri].w + rects[ri].x);
                         ri++;
                     } while (ri != numRects);
                 }
-                // Clamp bounds to [0,1] screen space
-                float clampedMinY = (float)__fsel(-minY, 0.0f, minY);
-                float clampedMaxY = (float)__fsel(maxY - 1.0f, 1.0f, maxY);
-                float clampedMinX = (float)__fsel(-minX, 0.0f, minX);
-                float clampedMaxX = (float)__fsel(maxX - 1.0f, 1.0f, maxX);
+                // Clamp bounds to [0,1] screen space; constant first on the Min side.
+                float clampedMinY = Max(0.0f, minY);
+                float clampedMaxY = Min(1.0f, maxY);
+                float clampedMinX = Max(0.0f, minX);
+                float clampedMaxX = Min(1.0f, maxX);
 
                 // --- Render character to impostor texture ---
                 if (TheRnd.DrawMode() == Rnd::kDrawNormal) {
@@ -1478,16 +1485,17 @@ void WorldCrowd::DrawShowing() {
                             "Rendering 2D crowd character texture without an environment, set the environ property on the WorldCrowd object."
                         );
                     }
-                    RndEnviron *env = mEnviron;
+                    // No cached `RndEnviron *env`: retail re-reads mEnviron at
+                    // every use, each with the `clrrwi` + `stw ..., 0x50(r31)`
+                    // inlined-`this` homes, and passes the reloaded member to the
+                    // tracker ctor (lwz r4, 0x74(r25)).
                     bool savedApprox = true;
-                    if (env) {
-                        savedApprox = env->UsesApproxGlobal();
-                        env->SetUseApproxGlobal(false);
+                    if (mEnviron) {
+                        savedApprox = mEnviron->UsesApproxGlobal();
+                        mEnviron->SetUseApproxGlobal(false);
                     }
                     {
                         const Transform &charWorldXfm = curChar->WorldXfm();
-                        // retail re-loads the member here (lwz r4, 0x74, r25);
-                        // it does not pass the cached 'env' local
                         RndEnvironTracker tracker(mEnviron, &charWorldXfm.v);
                         gImpostorCamera->Select();
                         curChar->SetShowing(true);
@@ -1504,11 +1512,9 @@ void WorldCrowd::DrawShowing() {
 #endif
                         // Retail restores the environ and re-selects the camera
                         // INSIDE the tracker scope (~RndEnvironTracker runs
-                        // last), and re-reads the mEnviron member for the test
-                        // rather than the cached local. Both adjudicated on
-                        // retail bytes.
+                        // last). Adjudicated on retail bytes.
                         if (mEnviron) {
-                            env->SetUseApproxGlobal(savedApprox);
+                            mEnviron->SetUseApproxGlobal(savedApprox);
                         }
                         curCam->Select();
                     }
@@ -1520,38 +1526,37 @@ void WorldCrowd::DrawShowing() {
                 float uvBottom = -(clampedMaxX * charIt->mDef.mHeight - halfHeight);
                 float posRight = clampedMaxY * halfHeight - halfWidth;
 
-                RndMesh *billboardMesh = mmesh->Mesh();
-                RndMesh::Vert *verts = billboardMesh->Verts().begin();
-                verts[0].pos.x = posLeft;
-                verts[0].pos.y = 0;
-                verts[0].pos.z = uvLeft;
-                verts[1].pos.x = posLeft;
-                verts[1].pos.y = 0;
-                verts[1].pos.z = uvBottom;
-                verts[2].pos.x = posRight;
-                verts[2].pos.y = 0;
-                verts[2].pos.z = uvLeft;
-                verts[3].pos.x = posRight;
-                verts[3].pos.y = 0;
-                verts[3].pos.z = uvBottom;
-                verts[0].tex.x = clampedMinY;
-                verts[0].tex.y = clampedMinX;
-                verts[1].tex.x = clampedMinY;
-                verts[1].tex.y = clampedMaxX;
-                verts[2].tex.x = clampedMaxY;
-                verts[2].tex.y = clampedMinX;
-                verts[3].tex.x = clampedMaxY;
-                verts[3].tex.y = clampedMaxX;
-                // NOTE: retail re-derives the mesh here (lwz 0x38 -> lwz 0x2c)
-                // rather than reusing the cached pointer. Spelling it as
-                // mmesh->Mesh()->Sync(0x1F) is INERT -- MSVC CSEs it straight
-                // back to the cached value, idx 495/496 stay deleted. The
-                // re-derivation is a rematerialization under register
-                // pressure, not a source-level construct. Do not re-try.
-                billboardMesh->Sync(0x1F);
+                // Through Verts() and Vector3::Set / Vector2::Set, with the mesh
+                // re-read rather than cached. Each inlined Set() homes its `this`
+                // (`addi`+`stw ..., 0x50(r31)` at vert+0x00 and vert+0x40) and
+                // Verts() goes through mGeomOwner; both are in the retail body.
+                RndMesh::VertVector &verts = charIt->mMMesh->Mesh()->Verts();
+                verts[0].pos.Set(posLeft, 0.0f, uvLeft);
+                verts[1].pos.Set(posLeft, 0.0f, uvBottom);
+                verts[2].pos.Set(posRight, 0.0f, uvLeft);
+                verts[3].pos.Set(posRight, 0.0f, uvBottom);
+                verts[0].tex.Set(clampedMinY, clampedMinX);
+                verts[1].tex.Set(clampedMinY, clampedMaxX);
+                verts[2].tex.Set(clampedMaxY, clampedMinX);
+                verts[3].tex.Set(clampedMaxY, clampedMaxX);
+                charIt->mMMesh->Mesh()->Sync(0x1F);
 
                 // --- Draw billboarded multimesh instances ---
-                DrawMultiMeshWithEnviron(mmesh);
+                // Written out at this scope, not through DrawMultiMeshWithEnviron:
+                // retail gives this tracker its own slot (0x150) beside the
+                // DrawNormal tracker's 0x130. An inlined helper's tracker lands in
+                // a nested sibling scope and MSVC packs both onto one slot.
+                RndEnviron *curEnv = RndEnviron::Current();
+                bool savedApprox2 = true;
+                if (curEnv) {
+                    savedApprox2 = curEnv->UsesApproxGlobal();
+                    curEnv->SetUseApproxGlobal(false);
+                }
+                RndEnvironTracker tracker(curEnv, nullptr);
+                mmesh->DrawShowing();
+                if (curEnv) {
+                    curEnv->SetUseApproxGlobal(savedApprox2);
+                }
             }
         }
     }
