@@ -322,7 +322,8 @@ void TrackPanelDir::UpdateTimeInfo() {
             dir->SetProxyFile(FilePath("ui/track/time_info.milo"), false);
             dir->SetName("time_info", this);
             SyncObjects();
-            mTimeGrp = Find<RndGroup>("time.grp", true);
+            // The readout group and labels live in the time_info dir just loaded.
+            mTimeGrp = dir->Find<RndGroup>("time.grp", true);
             SetLocalScale(mTimeGrp, Vector3(0.6f, 0.6f, 0.6f));
             static Symbol aspect("aspect");
             Symbol asp = mConfiguration->Property(aspect, true)->Sym();
@@ -330,10 +331,10 @@ void TrackPanelDir::UpdateTimeInfo() {
             float x = asp == widescreen ? 10.15f : 7.125f;
             float z = mVocalTrack->Showing() ? 1.5f : 4.5f;
             mTimeGrp->SetLocalPos(Vector3(x, 25.0f, z));
-            mTimeMbt = Find<BandLabel>("time_mbt.lbl", true);
-            mTimeElapsed = Find<BandLabel>("time_elapsed.lbl", true);
-            mTimeRemaining = Find<BandLabel>("time_remaining.lbl", true);
-            mTimeSection = Find<BandLabel>("time_section.lbl", true);
+            mTimeMbt = dir->Find<BandLabel>("time_mbt.lbl", true);
+            mTimeElapsed = dir->Find<BandLabel>("time_elapsed.lbl", true);
+            mTimeRemaining = dir->Find<BandLabel>("time_remaining.lbl", true);
+            mTimeSection = dir->Find<BandLabel>("time_section.lbl", true);
         }
         mTimeGrp->SetShowing(true);
     } else if (mTimeGrp) {
