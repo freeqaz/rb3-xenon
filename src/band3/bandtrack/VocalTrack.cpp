@@ -1932,9 +1932,8 @@ void VocalTrack::UpdateScrolling(float ms) {
                                 height = mDir->mHarmLyricHeight * 0.5f;
                             }
                             mNoteTube->SetPointPos(0, Vector3(0.0f, 0.0f, z));
-                            mNoteTube->SetPointPos(
-                                1, Vector3(tubeEndX - tubeX, 0.0f, z)
-                            );
+                            float tubeLen = tubeEndX - tubeX;
+                            mNoteTube->SetPointPos(1, Vector3(tubeLen, 0.0f, z));
                             mNoteTube->unk_0x30 = height;
                             mNoteTube->SetBackParent(parent);
                             mNoteTube->SetXPos(tubeX);
