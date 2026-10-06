@@ -64,7 +64,7 @@ no portable fallback.
   slot 1. The base declares **no** destructor: a base virtual dtor added an
   unwind state to `OggMap`'s ctor/dtor that retail does not have (~OggMap fell
   to 88% with one).
-* **What TU5 added.** A mogg validator, with no oracle in rb3-Wii (pre-TU5) or
+* **What TU5 added.** A mogg validator, with no source in either reference tree (the RB3 game source predates TU5) or
   DC3. The rows were written from the retail listing, using `VorbisReader`'s
   member-based copy of the same mogg logic as the template:
   * `SetKey`: hex key into file-static AES state. It is called from outside the
