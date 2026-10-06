@@ -731,7 +731,11 @@ BEGIN_LOADS(RndParticleSys)
             // extra `stfs` and 16 bytes of frame.
             Vector3 v1;
             bs >> v1 >> p150.a >> p150.b >> p150.c;
-            p150.d = -(v1.x * p150.a + v1.y * p150.b + v1.z * p150.c);
+            // Retail seeds the sum with b*y (`fmuls`), folds in x*a (`fmadds`)
+            // and then c*z together with the negation (`fnmadds`).  The
+            // parentheses are a reassociation barrier /fp:fast respects: the
+            // innermost sum's left product seeds the chain.
+            p150.d = -(v1.z * p150.c + (v1.y * p150.b + p150.a * v1.x));
         }
         if (ba7) {
             // Retail does NOT save/restore the edit mode: there is no
@@ -760,19 +764,22 @@ BEGIN_LOADS(RndParticleSys)
             //                            retail copies FOUR words, dragging
             //                            p150.d into m.z's pad. Component
             //                            writes would only emit three.
+            //   v   = p150.On()       -- the point on the plane, built in a
+            //                            scratch Vector3 (stored z,y,x) and
+            //                            16-byte-copied into tf140.v.
+            // Statement order is retail's: the m.z copy and the v copy are
+            // emitted before the m.x/m.y stores, with m.z's copy through r8 and
+            // v's through r9.  Assigning m.z before v swaps those two registers.
+            // Left (W16-RF): b*0 and c*0 for the first Cross land in f10/f9
+            // where retail has f9/f10, which renames the rest of the block.
+            // Inert: a named `up` vector, Cross() fed p150 through a Vector3
+            // copy (v128) instead of tf140.m.z, and On() written out at the
+            // call site with either operand order.
             Transform tf140;
-            float a = p150.a;
-            float b = p150.b;
-            float c = p150.c;
-            Vector3 up(0.0f, 1.0f, 0.0f);
-            Cross(up, (Vector3 &)p150, tf140.m.x);
-            Cross((Vector3 &)p150, tf140.m.x, tf140.m.y);
-            tf140.m.z = (Vector3 &)p150;
-            float inv = -(p150.d / (a * a + b * b + c * c));
-            // Assigned as a whole temporary: retail materialises the vector in
-            // a scratch slot (ctor args stored z,y,x -- right-to-left) and then
-            // 16-byte-copies it into tf140.v.
-            tf140.v = Vector3(a * inv, b * inv, c * inv);
+            tf140.v = p150.On();
+            tf140.m.z = reinterpret_cast<Vector3 &>(p150);
+            Cross(Vector3(0, 1, 0), tf140.m.z, tf140.m.x);
+            Cross(tf140.m.z, tf140.m.x, tf140.m.y);
             Normalize(tf140.m.x, tf140.m.x);
             Normalize(tf140.m.y, tf140.m.y);
             mBounce->SetWorldXfm(tf140);
