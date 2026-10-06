@@ -16,13 +16,13 @@ public:
     public:
         class PatchPair {
         public:
-            PatchPair(Hmx::Object *o) : mPatch(o, 0), mTex(o, 0) {}
+            PatchPair(Hmx::Object *o) : mPatch(ObjPtrInlineOwner(), o), mTex(o, 0) {}
 
             ObjPtr<RndMesh> mPatch; // 0x0
             ObjPtr<RndTex> mTex; // 0xc
         };
 
-        MeshPair(Hmx::Object *o) : mesh(o, 0), patches(o) {}
+        MeshPair(Hmx::Object *o) : mesh(ObjPtrInlineOwner(), o), patches(o) {}
         void AddMappingPatch(RndMesh *);
         PatchPair &AddPatch(bool);
         RndTex *OutputTex() const;
