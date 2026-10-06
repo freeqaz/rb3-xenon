@@ -1475,7 +1475,8 @@ void VocalTrack::UpdateScrolling(float ms) {
                     : &mDir->mHarmonyLyricScroller);
         RndTransformable *scroller = scrollerPtr->Ptr();
 
-        int *itPPtr = lead ? &unkf4 : (part == 1 ? &unkf8 : &unkfc);
+        int &itPRef = lead ? unkf4 : (part == 1 ? unkf8 : unkfc);
+        int *itPPtr = &itPRef;
         const VocalNote *itT = &noteVec[*itPPtr];
         const VocalNote *altIt =
             altNotes ? &altNotes->mNotes[unkfc] : noteVec.end();
