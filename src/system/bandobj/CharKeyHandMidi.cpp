@@ -250,7 +250,7 @@ void CharKeyHandMidi::Poll() {
         // tip vectors -- each copied whole into the key arrays. The helper
         // calls (Scale/Add, which evaluate z,y,x) versus the per-component
         // products below are what fix retail's instruction order; the
-        // -0.4*up offset is NOT contracted into an fnmsubs.
+        // -0.4*up offset is added per component, NOT contracted into an fnmsubs.
         Vector3 cur = mFirstSpot->WorldXfm().v;
         Vector3 keyDir;
         Subtract(mSecondSpot->WorldXfm().v, cur, keyDir);
@@ -262,12 +262,11 @@ void CharKeyHandMidi::Poll() {
 
         Vector3 tipOff;
         Scale(forward, -1.0f, tipOff);
-        float downX = up.x * -0.4f;
-        float downY = up.y * -0.4f;
-        float downZ = up.z * -0.4f;
-        cur.x = downX + cur.x;
-        cur.y = cur.y + downY;
-        cur.z = cur.z + downZ;
+        Vector3 down;
+        Scale(up, -0.4f, down);
+        cur.x = down.x + cur.x;
+        cur.y = cur.y + down.y;
+        cur.z = cur.z + down.z;
         float whiteX = keyDir.x * (keyDist / 14.0f);
         float whiteY = keyDir.y * (keyDist / 14.0f);
         float whiteZ = keyDir.z * (keyDist / 14.0f);
