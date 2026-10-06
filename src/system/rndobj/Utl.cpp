@@ -1754,6 +1754,13 @@ void MakeNormals(RndMesh *m) {
     m->Sync(0x1F);
 }
 
+// ResetNormals reads the three vertex indices BY VALUE.  Retail copies each
+// loaded index before the `mulli 0x60` (`lhzx r7` / `mr r9, r7` / `mulli r9,
+// r9, 0x60`), the shape of an rvalue unsigned short converted to the int
+// index.  Face::operator[] returns a reference, and with it the copies vanish.
+// A (short) cast reproduces the copies too, but loads with lhax.
+static inline unsigned short RNFaceIdx(const RndMesh::Face &f, int i) { return (&f.v1)[i]; }
+
 void ResetNormals(RndMesh *m) {
     if (!m || m->GetGeomOwner() != m || m->Verts().size() == 0)
         return;
@@ -1794,7 +1801,8 @@ void ResetNormals(RndMesh *m) {
     for (int i = 0; i < m->Verts().size(); i++) {
         Vector4 *pTangent = &m->Verts()[i].tangent;
         m->Verts()[i].norm.Zero();
-        ((Vector3 *)pTangent)->Zero();
+        // Retail stores the tangent zeros y, z, x (the norm's are z, y, x).
+        pTangent->x = pTangent->z = pTangent->y = 0;
 
         for (int f = 0; f < m->Faces().size(); f++) {
             RndMesh::Face &face = m->Faces()[f];
@@ -1802,9 +1810,9 @@ void ResetNormals(RndMesh *m) {
                 if (repVerts[face[k]] != repVerts[i])
                     continue;
 
-                const RndMesh::Vert &v0 = m->Verts()[face[k % 3]];
-                const RndMesh::Vert &v1 = m->Verts()[face[(k + 1) % 3]];
-                const RndMesh::Vert &v2 = m->Verts()[face[(k + 2) % 3]];
+                const RndMesh::Vert &v0 = m->Verts()[RNFaceIdx(face, k % 3)];
+                const RndMesh::Vert &v1 = m->Verts()[RNFaceIdx(face, (k + 1) % 3)];
+                const RndMesh::Vert &v2 = m->Verts()[RNFaceIdx(face, (k + 2) % 3)];
 
                 Vector3 d1(v1.pos.x - v0.pos.x, v1.pos.y - v0.pos.y, v1.pos.z - v0.pos.z);
                 Vector3 d2(v2.pos.x - v0.pos.x, v2.pos.y - v0.pos.y, v2.pos.z - v0.pos.z);
@@ -1828,11 +1836,14 @@ void ResetNormals(RndMesh *m) {
                 Normalize(d1, d1);
                 Normalize(d2, d2);
                 float angle = (float)acos(
-                    (double)(d2.x * d1.x + d2.y * d1.y + d2.z * d1.z)
+                    (double)(d2.y * d1.y + (d2.z * d1.z + d2.x * d1.x))
                 );
 
+                // x, y, z statements: Scale()'s Set() emits this block x, z, y.
                 Vector3 weighted;
-                Scale(crossProd, angle, weighted);
+                weighted.x = crossProd.x * angle;
+                weighted.y = crossProd.y * angle;
+                weighted.z = crossProd.z * angle;
                 Add(m->Verts()[i].norm, weighted, m->Verts()[i].norm);
 
                 Vector4 ft = faceTangents[f];
