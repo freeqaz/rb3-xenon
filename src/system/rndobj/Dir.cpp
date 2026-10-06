@@ -423,7 +423,10 @@ float RndDir::EndFrame() {
     float frame = 0.0f;
     for (std::vector<RndAnimatable *>::iterator it = mAnims.begin(); it != mAnims.end();
          ++it) {
-        frame = Max(frame, (*it)->EndFrame());
+        // Retail compares and branches (fcmpu/bge), not Max()'s fsel.
+        float end = (*it)->EndFrame();
+        if (frame < end)
+            frame = end;
     }
     return frame;
 }
