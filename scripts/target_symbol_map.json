@@ -37287,5 +37287,9 @@
  "0x8258a190": "?GetUploadFriendsToken@BandProfile@@QBAHXZ",
  "0x827a4fb0": "?MakeDirty@Profile@@QAAXXZ",
  "0x82bd4eb8": "?GetMachineID@RemoteBandMachine@@QBAIXZ",
- "0x82c295a0": "?SetShowing@TubePlate@@QAAX_N@Z"
+ "0x82c295a0": "?SetShowing@TubePlate@@QAAX_N@Z",
+ "0x82c294c8": "?SetGlowLevel@NoteTube@@QAAXH@Z",
+ "0x82c294d8": "?LookupPitchedUVCoordinates@NoteTube@@QAAXAAM000_N@Z",
+ "0x82c29d88": "?AllocateFaces@TubePlate@@QAAXH_N@Z",
+ "0x82c29e98": "?DrawToPlate@NoteTube@@QAAXPAVTubePlate@@@Z"
 }
