@@ -31,7 +31,8 @@ USAGE
     same defaults and meaning as tools/native_health.sh.
 
 SELF-VALIDATION (exit 3 when any fails -- the vacuous-join traps):
-    * the target table here equals native_health.sh's run_target list
+    * the targets parsed from native_health.sh's run_target lines are exactly
+      native_build_gate.sh's KNOWN_TARGETS
     * every target ran rc=0 and printed its completion marker
     * Symbol::Symbol(char const*) (a function every target calls) was counted
       AND joins to its report row ??0Symbol@@QAA@PBD@Z on the sig tier
@@ -42,28 +43,38 @@ EXIT: 0 ok; 1 a target failed to run; 2 could not run (no build/tools);
 """
 import argparse, collections, json, os, re, subprocess, sys
 
-# name, completion marker, argv (format keys filled from inputs below).
-# MUST mirror tools/native_health.sh's run_target lines; checked at runtime.
-TARGETS = [
-    ("rb3-dta",     r"^Done\. Showed [0-9]+ song", ["{SONGS_DTA}"]),
-    ("rb3-song",    r"^RESULT: ALL GATES PASSED",  ["{ASSETS}"]),
-    ("rb3-midi",    r"^RESULT: ALL GATES PASSED",  ["{ASSETS}"]),
-    ("rb3-gem",     r"^Done\.$",                   ["{MID_PILLS}"]),
-    ("rb3-hit",     r"^Done\.$",                   ["{MID_PILLS}"]),
-    ("rb3-score",   r"^Done\.$",                   ["{MID_PILLS}"]),
-    ("rb3-score2",  r"^RESULT: OK",                []),
-    ("rb3-score3",  r"^Done\.$",                   ["{MID_VICARIOUS}"]),
-    ("rb3-score4",  r"^Done\.$",                   ["{MID_VICARIOUS}"]),
-    ("rb3-vocal",   r"^  all-off \(\+6\) ",        ["{MID_VICARIOUS}"]),
-    ("rb3-vocal2",  r"^Done\.$",                   ["{MID_VICARIOUS}"]),
-    ("rb3-harmony", r"^Done\.$",                   ["{MID_CENTERFOLD}"]),
-    ("rb3-crowd",   r"^=== M12 complete",          ["{MID_VICARIOUS}"]),
-    ("rb3-save",    r"^=== ALL ROUND-TRIPS OK",    []),
-    ("rb3-ark",     r"^RESULT: ALL GATES PASSED",  ["{ASSETS}", "{ARK_REF}"]),
-    ("rb3-frame",   r"^rb3-frame: OK ",            ["{OUT}/frame.png"]),
-    ("rb3-milo",    r"^RESULT: ALL GATES PASSED",  ["{ASSETS}", "ui/track/gen/tracksystem_meshes.milo_xbox"]),
-    ("rb3-render",  r"^RESULT: ALL GATES PASSED",  ["{ASSETS}", "{OUT}/render_out"]),
-]
+# Targets, completion markers and argv are READ FROM tools/native_health.sh's
+# run_target lines, so this tool runs exactly what the health check runs (a
+# hardcoded copy drifted the day it was written: W16-PL gave rb3-score3 a band
+# chart). Shell variables are substituted from inputs() below.
+SHELL_VARS = ("ASSETS", "ARK_REF", "MID_VICARIOUS", "MID_PILLS", "MID_CENTERFOLD",
+              "SONGS_DTA", "LOGDIR", "SLUG")
+
+
+def health_targets(repo):
+    """[(name, marker_regex, argv_template)] from native_health.sh, in order."""
+    import shlex
+    out = []
+    for ln in open(os.path.join(repo, "tools/native_health.sh")):
+        if not ln.startswith("run_target "):
+            continue
+        tok = shlex.split(ln)[1:]
+        if tok and tok[0] == "--gated":
+            tok = tok[1:]
+        name, marker, rest = tok[0], tok[1], tok[2:]
+        argv = rest[rest.index("--") + 1:] if "--" in rest else []
+        out.append((name, marker, argv))
+    return out
+
+
+def subst(arg, inp):
+    def rep(m):
+        k = m.group(1) or m.group(2)
+        if k not in inp:
+            raise KeyError("native_health.sh uses $%s, which this tool does not define" % k)
+        return inp[k]
+    return re.sub(r"\$\{(\w+)\}|\$(\w+)", rep, arg)
+
 
 PROF_FLAGS = "-fprofile-instr-generate -fcoverage-mapping"
 SELFCHECK_MSVC = "??0Symbol@@QAA@PBD@Z"
@@ -87,10 +98,12 @@ def inputs():
 
 
 def check_target_table(repo):
-    txt = open(os.path.join(repo, "tools/native_health.sh")).read()
-    names = re.findall(r"^run_target\s+(?:--gated\s+)?(rb3-[a-z0-9]+)", txt, re.M)
-    mine = [t[0] for t in TARGETS]
-    return names == mine, names
+    """The parsed table must cover every target the link gate expects."""
+    names = [t[0] for t in health_targets(repo)]
+    txt = open(os.path.join(repo, "tools/native_build_gate.sh")).read()
+    m = re.search(r"KNOWN_TARGETS=\(([^)]*)\)", txt)
+    gate = m.group(1).split() if m else []
+    return bool(names) and sorted(names) == sorted(gate), names
 
 
 # ---------------------------------------------------------------- build ----
@@ -110,15 +123,15 @@ def build(repo, bdir):
 
 
 # ------------------------------------------------------------------ run ----
-def run_all(bdir):
+def run_all(repo, bdir):
     inp = inputs()
     pdir = os.path.join(bdir, "prof")
     os.makedirs(pdir, exist_ok=True)
-    inp["OUT"] = pdir
+    inp["LOGDIR"], inp["SLUG"] = pdir, "prof"
     status = {}
-    for name, marker, argv in TARGETS:
+    for name, marker, argv in health_targets(repo):
         exe = os.path.join(bdir, name)
-        args = [a.format(**inp) for a in argv]
+        args = [subst(a, inp) for a in argv]
         for f in os.listdir(pdir):
             if f.startswith(name + "-") and f.endswith(".profraw"):
                 os.unlink(os.path.join(pdir, f))
@@ -147,7 +160,7 @@ def export_counts(repo, bdir):
     pdir = os.path.join(bdir, "prof")
     srcroot = os.path.realpath(os.path.join(repo, "src")) + os.sep
     out = {}
-    for name, _, _ in TARGETS:
+    for name in json.load(open(os.path.join(pdir, "status.json"))):
         pd = os.path.join(pdir, name + ".profdata")
         exe = os.path.join(bdir, name)
         if not os.path.exists(pd):
@@ -336,7 +349,7 @@ def main():
     if not a.no_build:
         build(repo, bdir)
     if not a.no_run:
-        status = run_all(bdir)
+        status = run_all(repo, bdir)
     else:
         status = json.load(open(os.path.join(bdir, "prof", "status.json")))
     bad = [t for t, s in status.items() if not s["ok"]]
