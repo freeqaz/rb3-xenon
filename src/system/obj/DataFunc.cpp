@@ -1299,7 +1299,11 @@ DEF_DATA_FUNC(DataStringFlags) {
             s += arr->Str(i);
         }
     }
-    return s;
+    // A named result (DC3 lane w21-s) gives retail's prologue order, where
+    // `return s;` scheduled the return-slot home after the zero; same
+    // construction into the return slot, same behaviour.
+    DataNode ret(s);
+    return ret;
 }
 
 DEF_DATA_FUNC(DataStrToLower) {
