@@ -37296,5 +37296,11 @@
  "0x82c294c8": "?SetGlowLevel@NoteTube@@QAAXH@Z",
  "0x82c294d8": "?LookupPitchedUVCoordinates@NoteTube@@QAAXAAM000_N@Z",
  "0x82c29d88": "?AllocateFaces@TubePlate@@QAAXH_N@Z",
- "0x82c29e98": "?DrawToPlate@NoteTube@@QAAXPAVTubePlate@@@Z"
+ "0x82c29e98": "?DrawToPlate@NoteTube@@QAAXPAVTubePlate@@@Z",
+ "0x82bb1600": "?SetKey@OggMap@@SAXPBD@Z",
+ "0x82bb1788": "?SetupCypher@@YAXH@Z",
+ "0x82bb1980": "?ReadData@OggMap@@UAAHH@Z",
+ "0x82bb1dc8": "?ReadMap@OggMap@@AAA_NAAVBinStream@@@Z",
+ "0x82bb1fd8": "?OpenMogg@OggMap@@AAA_NPBD@Z",
+ "0x82bb2418": "?Validate@OggMap@@QAA_NPBDAA_N@Z"
 }
