@@ -197,4 +197,10 @@ Run dir: `~/tmp/wt-w16-pm-ab/.ab_measure_runs/20261006-090844-w16-pm-branch-3962
 
 ## 6. Native checks
 
-See the end of this section. Both checks run last, on the final commit.
+Both checks were run on the final code. Only this section of the doc changed afterwards, and both checks were
+run again after that commit, as the lane's last actions. The match build is unaffected: this lane changed no source.
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+NATIVE_HEALTH_RESULT verdict=PASS link=PASS link_verified=18 link_expected=18 link_skipped=0 runtime=PASS runtime_ran=18 runtime_total=18 gates_pass=57 gates_fail=0 unrunnable=none selftest=SKIPPED scatter_unlinked=17 scatter_dirb=0 scatter_multihost=20 rc=0 handpose_controls=- handpose_baseline_fail=- runtime_crashed=0 runtime_failed=none
+```
