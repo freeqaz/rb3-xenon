@@ -21,6 +21,9 @@ MoggClipMap::MoggClipMap(const MoggClipMap &mogg)
       mVolume(mogg.mVolume), mIsStereo(mogg.mIsStereo) {}
 
 MoggClipMap &MoggClipMap::operator=(const MoggClipMap &mogg) {
+    // RB3 retail assigns the Hmx::Object base first (out-of-line
+    // `Hmx::Object::operator=` call before the members).
+    Hmx::Object::operator=(mogg);
     mMoggClip = mogg.mMoggClip;
     mPan = mogg.mPan;
     mPanWidth = mogg.mPanWidth;
