@@ -44,12 +44,12 @@ TheRockCentral.Poll(); TheEntityUploader.Poll(); TheAuditionMgr->Poll(); TheUI->
 TheTaskMgr.Poll(); DrawRegular();
 ```
 
-This order matches the Wii retail loop's order once its timers and its Wii-only calls are
+This order matches the RB3 game source's loop order once its timers and its platform-only calls are
 removed (`CheckForPassivePlatformErrors`, `UpdateStoreOverlay`, the hang detector and
 `PollTriFrame`). `TheAuditionMgr->Poll()` has no counterpart there; it is 360-only. The loop
 calls `DrawRegular` directly, not `Draw()`. `DrawRegular` is
 `TheRnd.BeginDrawing(); TheUI->Draw(); TheRnd.EndDrawing();` (slots `0x80`, `0xC`, `0x84`):
-the DC3 shape, with no Wii home-menu branch.
+the DC3 shape, with no home-menu branch.
 
 ## 2. Three source details that retail bytes decided
 
@@ -85,7 +85,7 @@ branches to `0x826C3888`, the shared empty-body survivor
 - `tools/icf_pair_adjudicate.py --chase`: **CHASED T1 PROVEN (VACUOUS-BUT-IDENTICAL)**.
   Flat T1 is undecidable on a one-word body, as it is for every member of this FT-EMPTY group.
 - Call-site witness: the loop loads `TheUIStats` into r3 and branches to the survivor right
-  after `SystemPoll` and before `Achievements::Poll`. That is the Wii retail position of
+  after `SystemPoll` and before `Achievements::Poll`. That is where the RB3 game source calls
   `TheUIStats->Poll()`.
 - `UIStats::Poll` has no map row anywhere else.
 
