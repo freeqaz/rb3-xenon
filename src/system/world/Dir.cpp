@@ -529,15 +529,21 @@ void WorldDir::SyncObjects() {
     }
 }
 
+// Retail inlines this lookup into SetCrowds and keeps no standalone copy. Its
+// `return vec.end()` is what puts the extra `mr r11,r10` on the not-found path;
+// a break out of an in-place loop reuses the exhausted iterator and drops it.
+static CamShotCrowd *FindCrowd(ObjVector<CamShotCrowd> &vec, WorldCrowd *crowd) {
+    FOREACH (it, vec) {
+        if (crowd == it->mCrowd)
+            return it;
+    }
+    return vec.end();
+}
+
 void WorldDir::SetCrowds(ObjVector<CamShotCrowd> &crowds) {
     FOREACH (it, mCrowds) {
         WorldCrowd *curCrowd = *it;
-        CamShotCrowd *cit = crowds.begin();
-        for (; cit != crowds.end(); cit++) {
-            if (curCrowd == cit->mCrowd) {
-                break;
-            }
-        }
+        CamShotCrowd *cit = FindCrowd(crowds, curCrowd);
         if (cit != crowds.end()) {
             curCrowd->SetShowing(true);
             curCrowd->mCrowdRotate = cit->mCrowdRotate;
