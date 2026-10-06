@@ -513,8 +513,9 @@ done
 # check off cannot read as full coverage. A layout FAIL is a gate FAIL (rc=1).
 # Cost: cached by content in ~/.cache/rb3-layout-odr, keyed on every header a
 # TU includes, so a warm run re-lays-out only the TUs whose inputs changed. A
-# change to a header included everywhere (obj/Object.h) re-runs all ~1,264
-# X360 TUs: measured ~25 min at -j16 under fleet load.
+# change to a header included everywhere (obj/Object.h) re-runs all ~1,265
+# X360 TUs: measured cold 1,262 TUs in 2,081 s (~35 min) at -j16 under fleet
+# load; native cold 1,711 TUs in 137 s; a warm run with nothing changed, seconds.
 LAYOUT_ODR="${NATIVE_GATE_LAYOUT_ODR:-all}"
 LAYOUT_LOG="${LOG%.log}.layout_odr.log"
 layout_line=""
