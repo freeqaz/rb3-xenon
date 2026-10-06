@@ -652,7 +652,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                     iRating,
                     fDev
                 );
-                if (kInvalidPitch != fDev && fabs(fDev) < fabsf(fBestPitchDeviation)) {
+                if (kInvalidPitch != fDev && fabsf(fDev) < fabsf(fBestPitchDeviation)) {
                     fBestPitchDeviation = fDev;
                 }
 
