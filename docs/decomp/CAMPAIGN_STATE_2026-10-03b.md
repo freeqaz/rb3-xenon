@@ -1,5 +1,7 @@
 # Campaign state — 2026-10-03, second edition (after W16-OT…PA)
 
+> **SUPERSEDED** for numbers and priorities by [CAMPAIGN_STATE_2026-10-06.md](CAMPAIGN_STATE_2026-10-06.md) (main `7e5a99800`: in-scope gap 263,644 B, 93.10% matched; 89.48% of the ceiling). Kept as a method record; 10-06 reruns this method and its disposition buckets.
+
 Seventh edition of the single current-state doc. Supersedes `CAMPAIGN_STATE_2026-10-03.md` (W16-OV, measured at
 `99ee35830`) for numbers and priorities; that doc stays the method record, and this one reruns its method unchanged.
 Six lanes landed in between (W16-OT, OW, OX, OY, OZ, PA), and each took one of OV's §6 levers, so this edition prices
