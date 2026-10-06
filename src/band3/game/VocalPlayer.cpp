@@ -52,9 +52,9 @@
 
 const float VocalPlayer::kInvalidPitch = -1000.0f;
 
-// native: each retail TU owns its own copy (they differ: some are (-1,-1)).
-// Natively several of these TUs link into one target, so give each internal
-// linkage instead of letting one TU's definition win.
+// native: each retail TU defines its own sNullMicClientID (all equal to
+// MicClientID's default (-1,-1)). Natively several of these TUs link into one
+// target, so each copy gets internal linkage instead of a duplicate symbol.
 #ifdef HX_NATIVE
 static
 #endif
