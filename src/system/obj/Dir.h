@@ -574,20 +574,7 @@ public:
     /** Depth-first subdir walk used by ObjDirItr (retail shape).
      * which==0 returns this; otherwise recurses into
      * mSubDirs, decrementing which at each visited dir. */
-    ObjectDir *NextSubDir(int &which) {
-        if (which == 0)
-            return this;
-        which--;
-        ObjectDir *ret = nullptr;
-        for (int i = 0; i < mSubDirs.size(); i++) {
-            if (mSubDirs[i]) {
-                ret = mSubDirs[i]->NextSubDir(which);
-                if (ret)
-                    return ret;
-            }
-        }
-        return ret;
-    }
+    ObjectDir *NextSubDir(int &which);
     const char *GetPathName() const { return mPathName; }
     const std::vector<ObjDirPtr<ObjectDir> > &SubDirs() const { return mSubDirs; }
 #ifdef HX_NATIVE
