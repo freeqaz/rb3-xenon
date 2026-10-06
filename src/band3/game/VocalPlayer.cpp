@@ -709,7 +709,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 float fBestTargetPitch;
                 float fBestScore;
                 bool bFoundPart = FindBestPart(
-                        pSinger->mFrameMicPitch,
+                        pSinger->GetFrameMicPitch(),
                         fCompMS,
                         partsArray,
                         pSinger,
