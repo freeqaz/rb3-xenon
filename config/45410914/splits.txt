@@ -3702,7 +3702,7 @@ Mesh.cpp:
 	.text       start:0x8241F310 end:0x82421400
 	.text       start:0x824215D4 end:0x824215E0
 	.text       start:0x82737688 end:0x827378B4
-	.text       start:0x82766EF8 end:0x82766FA8
+	.text       start:0x82766EF8 end:0x82766F98
 	.text       start:0x827674E8 end:0x82767518
 	.text       start:0x82BB3510 end:0x82BB3578
 	.text       start:0x82BB3750 end:0x82BB37C4
@@ -3728,7 +3728,6 @@ CharMeshHide.cpp:
 	.pdata      start:0x822376E8 end:0x822376F8
 	.pdata      start:0x82237730 end:0x82237760
 	.pdata      start:0x822377A8 end:0x822377B8
-	.text       start:0x822D4088 end:0x822D408C
 	.text       start:0x823A0680 end:0x823A0848
 	.text       start:0x823A0848 end:0x823A08C0
 	.text       start:0x823A08C0 end:0x823A0914
@@ -4594,7 +4593,6 @@ UIComponent.cpp:
 	.pdata      start:0x82245940 end:0x82245AC0
 	.pdata      start:0x82245AC0 end:0x82245C10
 	.text       start:0x8230BE48 end:0x8230BE4C
-	.text       start:0x82343940 end:0x82343944
 	.text       start:0x82626E50 end:0x82626FB8
 	.text       start:0x827FE250 end:0x827FE2D0
 	.text       start:0x827FE2D0 end:0x827FFAD8
@@ -6049,6 +6047,7 @@ Msg.cpp:
 	.text       start:0x82766B68 end:0x82766CC0
 	.text       start:0x82766CC0 end:0x82766E88
 	.text       start:0x82766E88 end:0x82766EF8
+	.text       start:0x82766F98 end:0x82766FA8
 	.text       start:0x82766FA8 end:0x827672C0
 	.text       start:0x827672C0 end:0x82767418
 	.text       start:0x82767418 end:0x82767494
@@ -11193,6 +11192,7 @@ StreakTracker.cpp:
 	.pdata      start:0x82235D70 end:0x82235E40
 	.pdata      start:0x82235E40 end:0x82235EA0
 	.text       start:0x826DEAD0 end:0x826DF788
+	.text       start:0x826DF788 end:0x826DF78C
 	.text       start:0x826DF78C end:0x826E0060
 	.text       start:0x826E03D4 end:0x826E03D8
 
@@ -11688,6 +11688,7 @@ EndingBonus.cpp:
 	.text       start:0x822D3970 end:0x822D39E8
 	.text       start:0x822D39E8 end:0x822D3FB8
 	.text       start:0x822D3FB8 end:0x822D4088
+	.text       start:0x822D4088 end:0x822D408C
 	.text       start:0x822D4090 end:0x822D40E0
 	.text       start:0x822D40E0 end:0x822D4178
 	.text       start:0x822D4178 end:0x822D4188
@@ -13352,9 +13353,6 @@ QuestJournal.cpp:
 	.text       start:0x82364AB4 end:0x82364B00
 	.text       start:0x82364B00 end:0x82364C80
 
-TexProc.cpp:
-	.text       start:0x826DF788 end:0x826DF78C
-
 TambourineDetector.cpp:
 	.pdata      start:0x82237210 end:0x82237218
 	.pdata      start:0x82237218 end:0x82237220
@@ -13748,7 +13746,7 @@ band3/game/RealGuitarGemPlayer.cpp:
 
 band3/game/BandPerformer.cpp:
 	.pdata      start:0x82236938 end:0x82236A20
-	.text       start:0x826ED658 end:0x826EE4E0
+	.text       start:0x826ED658 end:0x826EE4D8
 
 band3/game/UISyncNetMsgs.cpp:
 	.pdata      start:0x822323E8 end:0x82232580
@@ -13762,6 +13760,7 @@ band3/game/CrowdRating.cpp:
 	.pdata      start:0x82236A20 end:0x82236A40
 	.pdata      start:0x82236A40 end:0x82236A48
 	.pdata      start:0x82236A48 end:0x82236A50
+	.text       start:0x826EE4D8 end:0x826EE4E0
 	.text       start:0x826EE4E0 end:0x826EE598
 	.text       start:0x826EE598 end:0x826EEB08
 	.text       start:0x826EEB08 end:0x826EEB9C
@@ -13779,6 +13778,7 @@ system/bandobj/BandButton.cpp:
 	.pdata      start:0x821FEA70 end:0x821FEA80
 	.pdata      start:0x821FEA80 end:0x821FEB78
 	.text       start:0x823438C8 end:0x82343940
+	.text       start:0x82343940 end:0x82343944
 	.text       start:0x82343944 end:0x82345030
 	.text       start:0x82345034 end:0x82345040
 

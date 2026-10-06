@@ -101663,9 +101663,9 @@
   {
    "name": "SetReleaseSmoothing",
    "address": "0x826ee4d8",
-   "survivor": "?SetReleaseSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z",
+   "survivor": "?Poll@CrowdRating@@QAAXM@Z",
    "folded": [
-    "?Poll@CrowdRating@@QAAXM@Z"
+    "?SetReleaseSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -101674,6 +101674,22 @@
      "spelling": "?Poll@CrowdRating@@QAAXM@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 UNDECIDABLE: VACUOUS: body under 4 words or over half the words masked --); 8 B retail / 8 B ours; retail body-twins 1. Vacuous body (VACUOUS-BUT-IDENTICAL) -- admitted on the retail call-site witness: retail branches to this survivor at 0x8269d5ec, the exact sites where our compiled caller calls this spelling (row otherwise instruction-identical). "
+    }
+   ],
+   "relabelled": {
+    "from": "?SetReleaseSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z",
+    "to": "?Poll@CrowdRating@@QAAXM@Z",
+    "lane": "W16-OS 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?SetReleaseSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?Poll@CrowdRating@@QAAXM@Z @ 0x826ee4d8, ?SetReleaseSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z): UNDECIDABLE [MISSING(ours)] depth 0: retail ?Poll@CrowdRating@@QAAXM@Z | ours ?SetReleaseSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z"
     }
    ]
   },
@@ -109161,10 +109177,10 @@
   {
    "name": "1?$_Rb_tree",
    "address": "0x8256aef8",
-   "survivor": "??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVString@@@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+   "survivor": "??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
    "folded": [
     "??1?$hash_map@VSymbol@@VString@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
-    "??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ"
+    "??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVString@@@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
@@ -109177,6 +109193,30 @@
      "spelling": "??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 UNDECIDABLE); 4 B retail / 4 B ours. Retail calls the survivor where we call this spelling in 2 row(s), e.g. fn_8256B000, fn_8256B800."
+    }
+   ],
+   "relabelled": {
+    "from": "??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVString@@@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    "to": "??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
+    "lane": "W16-OS 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??1?$hash_map@VSymbol@@VString@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlN @ 0x8256aef8, ??1?$hash_map@VSymbol@@VString@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equa): PROVEN [CHASED] retail 4 B / ours 4 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVString@@@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlN @ 0x8256aef8, ??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVString@@@2@U?$_Sel): UNDECIDABLE [MISSING(ours)] depth 0: retail ??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$C | ours ??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVString@@@2@U?$_Select1st@U?$pair@$$CBH"
     }
    ]
   },
@@ -109215,9 +109255,9 @@
   {
    "name": "CurrentThreadId",
    "address": "0x8238b7e8",
-   "survivor": "?CurrentThreadId@@YAKXZ",
+   "survivor": "??1Weight@PlayBack@CharLipSync@@QAA@XZ",
    "folded": [
-    "??1Weight@PlayBack@CharLipSync@@QAA@XZ"
+    "?CurrentThreadId@@YAKXZ"
    ],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
@@ -109225,6 +109265,22 @@
      "spelling": "??1Weight@PlayBack@CharLipSync@@QAA@XZ",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 UNDECIDABLE); 4 B retail / 4 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. fn_823D4C68."
+    }
+   ],
+   "relabelled": {
+    "from": "?CurrentThreadId@@YAKXZ",
+    "to": "??1Weight@PlayBack@CharLipSync@@QAA@XZ",
+    "lane": "W16-OS 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?CurrentThreadId@@YAKXZ",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1Weight@PlayBack@CharLipSync@@QAA@XZ @ 0x8238b7e8, ?CurrentThreadId@@YAKXZ): UNDECIDABLE [MISSING(ours)] depth 1: retail ??1?$ObjPtr@VCharClip@@@@UAA@XZ | ours GetCurrentThreadId"
     }
    ]
   },
