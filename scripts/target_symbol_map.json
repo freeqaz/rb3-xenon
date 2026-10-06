@@ -14365,7 +14365,7 @@
  "0x82520050": "?FileName@RootContent@@UAA?AVSymbol@@XZ",
  "0x82520088": "??_GRootContent@@UAAPAXI@Z",
  "0x825200d8": "?Init@XboxContentMgr@@UAAXXZ",
- "0x82520150": "?_M_create_node@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAUDep@CharPollableSorter@@@Z",
+ "0x82520150": "?_M_create_node@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVContent@@@Z",
  "0x82520190": "??_GXboxContent@@UAAPAXI@Z",
  "0x825201e0": "?OnMsg@XboxContentMgr@@AAA?AVDataNode@@ABVSigninChangedMsg@@@Z",
  "0x82520260": "?OnMsg@XboxContentMgr@@AAA?AVDataNode@@ABVContentInstalledMsg@@@Z",
