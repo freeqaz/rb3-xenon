@@ -49,8 +49,8 @@ void SetMeshAnim(ObjectDir *dir, std::vector<int> &vec) {
                         vec[i] = i;
                     }
                     for (int i = 0; i < vec.size(); i++) {
-                        float f19 = 1.0E+30f;
                         int i16 = -1;
+                        float f19 = 1.0E+30f;
                         const Vector3 &v = vertkeys[i];
                         for (int j = i; j < vec.size(); j++) {
                             float distsq =
