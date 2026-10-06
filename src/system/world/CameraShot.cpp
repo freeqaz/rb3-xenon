@@ -964,11 +964,11 @@ CamShot::CamShot()
 #ifdef HX_NATIVE
       mNearPlane(RndCam::DefaultNearPlane()),
       mFarPlane(mNearPlane * RndCam::MaxFarNearPlaneRatio()), mUseDepthOfField(true),
-      mFilter(0.9), mClampHeight(-1), mCrowdStateOverride(gNullStr), mAnims(this),
+      mFilter(0.9), mClampHeight(-1), mAnims(this),
 #else
-      // RB3 retail: constant planes (1 / 1000) and a default Symbol
+      // RB3 retail: constant planes (1 / 1000); unk40 is left unconstructed
       mNearPlane(1.0f), mFarPlane(1000.0f), mUseDepthOfField(true),
-      mFilter(0.9), mClampHeight(-1), mCrowdStateOverride(), mAnims(this),
+      mFilter(0.9), mClampHeight(-1), mAnims(this),
 #endif
       mPath(this), mPathFrame(-1),
       mPlatform(kPlatformNone), mHideList(this), mShowList(this), mGenHideList(this),
@@ -1057,13 +1057,8 @@ BEGIN_PROPSYNCS(CamShot)
     SYNC_PROP(postproc_overrides, mPostProcOverrides)
     SYNC_PROP(glow_spot, mGlowSpot)
     SYNC_PROP(crowds, mCrowds)
-#ifdef RB3_KEEP_DC3_ONLY_HANDLERS
-    // Retail fn_824C6D80 builds exactly 25 Symbols and "crowd_state_override"
-    // is not one of them (both instruments agree; the literal is absent from every
-    // non-executable section of band.exe). The member itself IS real -- it is
-    // still saved/copied/loaded below -- only the propsync arm is DC3-only.
-    SYNC_PROP(crowd_state_override, mCrowdStateOverride)
-#endif
+    // No crowd_state_override arm: retail fn_824C6D80 builds exactly 25 Symbols
+    // and that literal is absent from band.exe (DC3-only property).
     SYNC_PROP(ps3_per_pixel, mPS3PerPixel)
     SYNC_PROP_BITFIELD(flags, mFlags, 0xB94)
     SYNC_PROP_SET(disabled, mDisabled, )
