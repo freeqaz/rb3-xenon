@@ -76,8 +76,9 @@ void DataPoint::AddPair(const char *name, DataNode value) {
 
 void DataPoint::AddPair(Symbol name, DataNode value) {
     // retail: the insert is spelled out here, not a call to the
-    // const char* overload
-    auto it = mNameValPairs.insert(std::make_pair(name.Str(), value));
+    // const char* overload, and the key is the Symbol itself (copied, no
+    // Symbol(const char *) re-intern)
+    auto it = mNameValPairs.insert(std::make_pair(name, value));
     if (!it.second) {
         MILO_FAIL("Duplicate name [%s] in DP %s.", name, mType);
     }
