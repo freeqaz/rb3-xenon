@@ -758,22 +758,18 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                and it was measurably backwards: the hand-inlining produced two
                59-instruction blocks (118 instructions) that appear in our object
                and nowhere in retail. */
-            partsArray.erase(
-                std::remove_if(
-                    partsArray.begin(),
-                    partsArray.end(),
-                    std::mem_fun_t<bool, VocalPart>(&VocalPart::HasBestSingerCandidate)
-                ),
-                partsArray.end()
+            VocalPart **newPartsEnd = std::remove_if(
+                partsArray.begin(),
+                partsArray.end(),
+                std::mem_fun_t<bool, VocalPart>(&VocalPart::HasBestSingerCandidate)
             );
-            singersArray.erase(
-                std::remove_if(
-                    singersArray.begin(),
-                    singersArray.end(),
-                    std::const_mem_fun_t<bool, Singer>(&Singer::HasAssignedPart)
-                ),
-                singersArray.end()
+            partsArray.erase(newPartsEnd, partsArray.end());
+            Singer **newSingersEnd = std::remove_if(
+                singersArray.begin(),
+                singersArray.end(),
+                std::const_mem_fun_t<bool, Singer>(&Singer::HasAssignedPart)
             );
+            singersArray.erase(newSingersEnd, singersArray.end());
             // Both sizes are taken into ints before the test: retail computes
             // them unconditionally (srawi, then cmpwi on the singer count), where
             // `partsArray.size() != 0 && ...` lowers to clrrwi. masks.
@@ -845,8 +841,8 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                     }
                 }
             }
-            pSinger->mFrameBestHitScore = 0.0f;
             pSinger->mFrameTargetPitch = 0.0f;
+            pSinger->mFrameBestHitScore = 0.0f;
 
             if (!IsNet() && InFreestyleSection()) {
                 float fDeployAmt = pSinger->AddToFreestyleDeployment(fCompMS);
