@@ -1195,36 +1195,37 @@ void RndParticleSys::UpdateRelativeXfm() {
 
 // TODO: 69.3% match (AT_LIMIT). 2340-byte function, implemented from 0.1% stub.
 //
-// Remaining diff breakdown (614 instructions total):
-//   - r29<->r30 register swap: 117 instructions. Target uses r30 for 'this',
-//     our compiler picks r29. Unfixable compiler register allocation choice.
-//   - 111 deletes: target has dead stores to stack slots 0x60/0x64 where it
-//     caches intermediate pointers (addi rX, rBase, offset; stw rX, 0x60, r31).
-//     Our compiler optimizes these away. Also target caches &p->pos in r25 and
-//     &p->vel in r26 as dedicated pointer registers throughout the inner loop.
-//   - 2 diff_ops remaining:
-//     (1) idx 126: bounce WorldXfm call uses bl (call) in target vs b (branch)
-//         in ours. Target reuses a shared branch point for the two WorldXfm calls.
-//     (2) idx 340: attractor strength==0.015625 check uses beq (branch-if-equal
-//         to special case) in target vs bne (skip special case) in ours. Target
-//         also has dead code after (li 0; clrlwi. 0; beq - always-taken branch),
-//         suggesting original code had a boolean variable for the condition.
-//   - fmadds vs fmuls+fadds: our compiler fuses multiply-add in position update,
-//     bounce reflection (fnmsubs vs fmuls+fsubs), and basic particle color/size.
-//     Target uses separate instructions. Hard to prevent without volatile temps.
-//   - Stack frame: target 0x1c0, ours larger. Target saves from r14 (savegprlr_14),
-//     ours from r17 (3 fewer callee-saved GPRs).
+namespace {
+// Matrix-times-column-vector, out.i = Dot(m.i, v).  MoveParticles rotates the
+// scaled force this way: retail seeds each row from the m.i.y product and folds
+// in z then x (fmuls m.z.y*fy, fmadds m.z.z*fz, fmadds m.z.x*fx).
+inline void MultiplyColumn(const Hmx::Matrix3 &m, const Vector3 &v, Vector3 &out) {
+    out.Set(Dot(v, m.x), Dot(m.y, v), Dot(v, m.z));
+}
+
+// Fills a plane from a point on it and its normal; the bounce plane is declared
+// before the `if (bounce)` that populates it (retail reads the unpopulated frame
+// slots 0x50-0x5c on the else path).
+inline void SetPlane(Plane &pl, const Vector3 &point, const Vector3 &normal) {
+    pl.a = normal.x;
+    pl.b = normal.y;
+    pl.c = normal.z;
+    pl.d = -(normal.x * point.x + normal.y * point.y + normal.z * point.z);
+}
+
+// `v <= pl` (v on or above the plane), with retail's term order.
+inline bool OnOrAbove(const Vector3 &v, const Plane &pl) {
+    return pl.b * v.y + v.z * pl.c + v.x * pl.a + pl.d >= 0.0f;
+}
+}
+
+// Integrates every live particle by one step: position, bounce-plane
+// reflection, force, drag and (for fancy particles) bubble wobble, spin,
+// two-phase colour and three-phase size.
 //
-// Potential improvements to investigate:
-//   - Restructure bounce WorldXfm calls to match target's shared-branch pattern
-//   - Try a bool variable for the attractor strength check to match dead code
-//   - Volatile or separate-statement tricks to prevent fmadds fusion
-//   - Declaration order changes to shift r14-r16 register assignment
-//
-// RndFancyParticle offset note: header comments are wrong by -8 bytes.
-// RndParticle is 0x68 bytes (not 0x60), so RndFancyParticle fields start at 0x68.
-// E.g. growFrame comment says 0x60 but actual compiled offset is 0x68,
-// midcolFrame comment says 0x80 but actual is 0x88, etc.
+// Field offsets are retail's (RndParticle is 0x60 there): the bubble reads
+// bubbleFreq/bubblePhase (0xa0/0xa4) and bubbleDir.xyz (0x90-0x98); the
+// second colour phase scales by bubbleDir.w (0x9c).
 void RndParticleSys::MoveParticles(float dt, float frameSpan) {
     START_AUTO_TIMER("psysmove");
 
@@ -1232,73 +1233,48 @@ void RndParticleSys::MoveParticles(float dt, float frameSpan) {
         return;
 
     float dragFactor;
-
-    float oneOverThirty = 1.0f / 30.0f;
     if (mDrag > 0.0f) {
-        float powResult = std::pow(1.0f - mDrag, frameSpan * oneOverThirty);
-        dragFactor = powResult;
+        dragFactor = std::pow(1.0f - mDrag, frameSpan * (1.0f / 30.0f));
     } else {
         dragFactor = 1.0f;
     }
 
     float rpmDragFactor;
     if (mRotate && mRPMDrag > 0.0f) {
-        rpmDragFactor = std::pow(1.0f - mRPMDrag, frameSpan * oneOverThirty);
+        float rpmBase = 1.0f - mRPMDrag;
+        rpmDragFactor = std::pow(rpmBase, frameSpan * (1.0f / 30.0f));
     } else {
         rpmDragFactor = 1.0f;
     }
 
-    // Force direction scaled by frameSpan
-    float forceX_dt = mForceDir.x * frameSpan;
-    float forceZ_dt = mForceDir.z * frameSpan;
-    float forceY_dt = mForceDir.y * frameSpan;
-
-    // Individual matrix components needed for fmadds sequence in pre-computation.
-    // Removing these and using mRelativeXfm.m.x.x etc. directly drops match by ~0.4%.
-    float m_yx = mRelativeXfm.m.y.x;
-    bool isRotate = mRotate;
-    float m_yy = mRelativeXfm.m.y.y;
     bool isFancy = (mType == kFancy);
-    float m_yz = mRelativeXfm.m.y.z;
-    float m_xx = mRelativeXfm.m.x.x;
-    float m_xz = mRelativeXfm.m.x.z;
-    float m_xy = mRelativeXfm.m.x.y;
     bool isBubble = mBubble;
+    bool isRotate = mRotate;
 
-    // Pre-compute all 3 transformed force rows (target does this before bounce check).
-    // Row 2 uses mRelativeXfm.m.z directly (not cached into locals) to match target.
-    float relForceRow0 =
-        (m_xx * forceX_dt + (m_xy * forceY_dt + m_xz * forceZ_dt));
-    float relForceRow1 =
-        m_yx * forceX_dt + m_yy * forceY_dt + m_yz * forceZ_dt;
-    float relForceRow2 =
-        mRelativeXfm.m.z.x * forceX_dt + mRelativeXfm.m.z.y * forceY_dt
-        + mRelativeXfm.m.z.z * forceZ_dt;
+    Vector3 relForce;
+    Scale(mForceDir, frameSpan, relForce);
+    MultiplyColumn(mRelativeXfm.m, relForce, relForce);
 
-    // TODO: target calls WorldXfm twice via a shared branch point (bl+b pattern).
-    // Our compiler generates a different call sequence (diff_op at idx 126).
-    float planeNx, planeNy, planeNz, planeD;
-    if (mBounce != NULL) {
-        const Transform &bxf = mBounce->WorldXfm();
-        planeNy = bxf.m.z.y;
-        planeNz = bxf.m.z.z;
-        planeNx = bxf.m.z.x;
-        const Transform &bxf2 = mBounce->WorldXfm();
-        planeD = -(bxf2.v.x * planeNx + bxf2.v.z * planeNz + bxf2.v.y * planeNy);
+    Plane bouncePlane;
+    bool bounce = (mBounce != NULL);
+    if (bounce) {
+        SetPlane(bouncePlane, mBounce->WorldXfm().v, mBounce->WorldXfm().m.z);
     }
 
-    RndParticle *p = mActiveParticles;
 #ifdef HX_NATIVE
     // DC3-era UV-tile-animation bound (absent in retail RB3).
     int endTile = mNumTilesTotal + mStartingTile;
 #endif
+    RndParticle *p = mActiveParticles;
 
     if (p != NULL) {
         float sixf = 6.0f;
         float halfPi = 1.5707963705062866f;
+        float two = 2.0f;
+#ifdef HX_NATIVE
         float epsilon = 1.1920928955078125e-07f;
         float magicStrength = 0.015625f;
-        float two = 2.0f;
+#endif
 
         do {
             bool dead;
@@ -1330,187 +1306,129 @@ void RndParticleSys::MoveParticles(float dt, float frameSpan) {
                     }
                 }
 
-                // Birth momentum (fancy only; DC3-era feature, absent in retail RB3)
+                // Birth momentum (fancy only; DC3-era feature, absent in retail RB3).
+                // The memcpy'd delta lands in the FIRST three floats of the block.
                 if (isFancy && mBirthMomentum) {
                     RndFancyParticle *fp = (RndFancyParticle *)p;
-                    float momentumScale = mBirthMomentumAmount * frameSpan * oneOverThirty;
-                    // The memcpy'd delta lands in the FIRST three floats of the
-                    // block (mRPMVelocity/mPitchAngularVel/mBirthVelocityX).
-                    // Reading mBirthVelocityX/Y/Z started two slots late and ran
-                    // one slot past the copy, so .z was never initialised.
+                    float momentumScale = mBirthMomentumAmount * frameSpan * (1.0f / 30.0f);
                     p->pos.x += momentumScale * fp->mRPMVelocity;
                     p->pos.z += fp->mBirthVelocityX * momentumScale;
                     p->pos.y += fp->mPitchAngularVel * momentumScale;
                 }
 #endif
-
-                // Position integration
-                // TODO: target uses fmuls+fadds (separate multiply then add) here,
-                // our compiler generates fmadds (fused multiply-add). This accounts
-                // for ~6 instruction differences in the inner loop.
-                p->pos.x += frameSpan * p->vel.x;
-                p->pos.y += p->vel.y * frameSpan;
-                p->pos.z += frameSpan * p->vel.z;
+                Vector3 &pos = reinterpret_cast<Vector3 &>(p->pos);
+                Vector3 &vel = reinterpret_cast<Vector3 &>(p->vel);
+                pos.x += vel.x * frameSpan;
+                pos.y += vel.y * frameSpan;
+                pos.z += frameSpan * vel.z;
 
                 // Bounce plane reflection
-                if (mBounce != NULL) {
-                    float dist = planeNx * p->pos.x + planeNy * p->pos.y + planeNz * p->pos.z
-                        + planeD;
-                    if (dist < 0.0f) {
-                        float velDotN =
-                            planeNy * p->vel.y + p->vel.x * planeNx + planeNz * p->vel.z;
+                if (bounce) {
+                    if (!OnOrAbove(pos, bouncePlane)) {
+                        float velDotN = vel.z * bouncePlane.c + vel.x * bouncePlane.a
+                            + vel.y * bouncePlane.b;
                         if (velDotN < 0.0f) {
-                            // TODO: target uses fmuls+fsubs (separate), our compiler
-                            // generates fnmsubs (fused negate-multiply-subtract).
-                            float reflect = velDotN * two;
-                            p->vel.z -= planeNz * reflect;
-                            p->vel.x -= reflect * planeNx;
-                            p->vel.y -= planeNy * reflect;
+                            Vector3 refl;
+                            Scale(
+                                reinterpret_cast<const Vector3 &>(bouncePlane),
+                                velDotN * two,
+                                refl
+                            );
+                            Subtract(vel, refl, vel);
                         }
                     }
                 }
 
 #ifdef HX_NATIVE
                 // Attractors (DC3-era feature; absent in retail RB3).
-                unsigned int numAttractors = mAttractors.size();
-                for (unsigned int i = 0; i < numAttractors; i++) {
+                for (unsigned int i = 0; i != mAttractors.size(); i++) {
                     Attractor &a = mAttractors[i];
                     if (a.mAttractor != NULL) {
                         const Transform &axf = a.mAttractor->WorldXfm();
-                        float dz = axf.v.z - p->pos.z;
-                        float dy = axf.v.y - p->pos.y;
+                        Vector3 d;
+                        Subtract(axf.v, pos, d);
                         float strength = a.mStrength;
-                        float dx = axf.v.x - p->pos.x;
-
-                        // TODO: target uses beq (to special case) + dead code after,
-                        // ours uses bne (skip special case). diff_op at idx 340.
-                        // Target dead code: li r11,0; clrlwi. r11,r11,24; beq (always taken).
-                        // Suggests original may have used a bool for this condition.
                         if (strength == magicStrength) {
-                            dz = 0.0f;
+                            d.z = 0.0f;
                             auto _tmp0 = a.mAttractor.Owner();
-                            RndParticleSys *ps =
-                                dynamic_cast<RndParticleSys *>(_tmp0);
+                            RndParticleSys *ps = dynamic_cast<RndParticleSys *>(_tmp0);
                             if (ps != NULL) {
                                 const Transform &t1xf = a.mAttractor->WorldXfm();
                                 const Transform &t2xf = ps->WorldXfm();
-                                float relY = t2xf.v.y - t1xf.v.y;
-                                float relX = t2xf.v.x - t1xf.v.x;
-                                strength *= (relX * relX + relY * relY) + epsilon;
+                                Vector3 rel;
+                                Subtract(t2xf.v, t1xf.v, rel);
+                                strength *= (rel.x * rel.x + rel.y * rel.y) + epsilon;
                             }
                         }
-
-                        float distSq =
-                            dy * dy + (dx * dx + dz * dz) + epsilon;
+                        float distSq = d.y * d.y + (d.x * d.x + d.z * d.z) + epsilon;
                         float scale = (strength * frameSpan) / distSq;
-                        p->vel.z += scale * dz;
-                        p->vel.x += scale * dx;
-                        p->vel.y += scale * dy;
+                        ScaleAddEq(vel, d, scale);
                     }
                 }
 #endif
 
-                p->vel.y += relForceRow1;
-                p->vel.x += relForceRow0;
-                p->vel.z += relForceRow2;
+                float vfz = vel.z;
+                float vfy = vel.y;
+                float vfx = vel.x;
+                vel.x = vfx + relForce.x;
+                vel.y = vfy + relForce.y;
+                vel.z = relForce.z + vfz;
 
                 if (isFancy) {
-                    p->vel.y *= dragFactor;
-                    p->vel.z *= dragFactor;
-                    p->vel.x *= dragFactor;
+                    vel.y *= dragFactor;
+                    vel.z *= dragFactor;
+                    vel.x *= dragFactor;
 
                     RndFancyParticle *fp = (RndFancyParticle *)p;
 
-                    // Bubble oscillation effect
                     if (isBubble) {
                         float sinVal =
-                            FastSin(fp->RPF * dt + fp->swingArmVel + halfPi);
-                        float bubbleScale = fp->RPF * sinVal * frameSpan;
-                        p->pos.x += fp->bubbleDir.z * bubbleScale;
-                        p->pos.y += fp->bubbleDir.w * bubbleScale;
-                        p->pos.z += fp->bubbleFreq * bubbleScale;
+                            FastSin(dt * fp->bubbleFreq + fp->bubblePhase + halfPi);
+                        float bubbleScale = sinVal * frameSpan * fp->bubbleFreq;
+                        ScaleAddEq(pos, reinterpret_cast<Vector3 &>(fp->bubbleDir), bubbleScale);
                     }
 
-                    // RPM rotation and swing arm
-                    // RPM rotation reads RPF / swingArmVel on BOTH paths. The old
-                    // HX_NATIVE arm here read mRPMVelocity / mPitchAngularVel --
-                    // the stale pre-d938521bc DC3 body this file forked from. Those
-                    // two floats only ever hold the motion-parent POSITIONAL delta
-                    // (InitParticle's memcpy is their sole writer), so on native a
-                    // spinning fancy emitter took its angular velocity from how far
-                    // its motion parent had moved. DC3 fixed this in d938521bc and
-                    // now runs this body unguarded; so do we.
                     if (isRotate) {
                         p->angle += fp->RPF * frameSpan;
                         fp->RPF *= rpmDragFactor;
                         p->swingArm += fp->swingArmVel * frameSpan;
                     }
 
-                    // Fancy color: 2-phase Hermite-like blend (before/after midcolFrame).
-                    // Blend formula: colorScale = (1-t)*t*frameSpan*6 where t is normalized
-                    // time within the current phase. Phase 1 uses midcolVel, phase 2 uses colVel.
-                    float colorScale;
-                    float cr, cg, cb, ca;
+                    // Two-phase colour: before / after midcolFrame.
+                    Hmx::Color colorDelta;
                     if (dt < fp->midcolFrame) {
                         float t = (dt - p->birthFrame) * p->vel.w;
-                        colorScale = (1.0f - t) * t * frameSpan * sixf;
-                        ca = fp->midcolVel.alpha * colorScale;
-                        cb = fp->midcolVel.blue * colorScale;
-                        cg = fp->midcolVel.green * colorScale;
-                        cr = colorScale * fp->midcolVel.red;
+                        float colorScale = (1.0f - t) * t * frameSpan * sixf;
+                        Multiply(fp->midcolVel, colorScale, colorDelta);
                     } else {
-                        float t = (dt - fp->midcolFrame) * fp->bubblePhase;
-                        colorScale = (1.0f - t) * t * frameSpan * sixf;
-                        ca = p->colVel.alpha * colorScale;
-                        cb = p->colVel.blue * colorScale;
-                        cg = p->colVel.green * colorScale;
-                        cr = p->colVel.red * colorScale;
+                        float t = (dt - fp->midcolFrame) * fp->bubbleDir.w;
+                        float colorScale = (1.0f - t) * t * frameSpan * sixf;
+                        Multiply(p->colVel, colorScale, colorDelta);
                     }
+                    p->col.red = Clamp(0.0f, 1.0f, p->col.red + colorDelta.red);
+                    p->col.green = Clamp(0.0f, 1.0f, p->col.green + colorDelta.green);
+                    p->col.blue = Clamp(0.0f, 1.0f, p->col.blue + colorDelta.blue);
+                    p->col.alpha = Clamp(0.0f, 1.0f, p->col.alpha + colorDelta.alpha);
 
-                    // Clamp color channels to [0, 1] using fneg+fsel pattern
-                    float newR = cr + p->col.red;
-                    float newA = ca + p->col.alpha;
-                    float newB = cb + p->col.blue;
-                    float newG = cg + p->col.green;
-
-                    newR = (-newR >= 0.0f) ? 0.0f : newR;
-                    newA = (-newA >= 0.0f) ? 0.0f : newA;
-                    newB = (-newB >= 0.0f) ? 0.0f : newB;
-                    newG = (-newG >= 0.0f) ? 0.0f : newG;
-
-                    p->col.red = (newR - 1.0f >= 0.0f) ? 1.0f : newR;
-                    p->col.alpha = (newA - 1.0f >= 0.0f) ? 1.0f : newA;
-                    p->col.blue = (newB - 1.0f >= 0.0f) ? 1.0f : newB;
-                    p->col.green = (newG - 1.0f >= 0.0f) ? 1.0f : newG;
-
-                    // Fancy size: 3-phase (grow / sustain / shrink)
-                    float sizeVelRate, timeSince, invDuration;
+                    // Three-phase size: grow / sustain / shrink.
                     if (dt < fp->growFrame) {
-                        invDuration = fp->beginGrow;
-                        timeSince = dt - p->birthFrame;
-                        sizeVelRate = fp->growVel;
+                        float st = (dt - p->birthFrame) * fp->beginGrow;
+                        p->size += fp->growVel * ((1.0f - st) * st * frameSpan * sixf);
                     } else if (dt < fp->shrinkFrame) {
-                        invDuration = fp->midGrow;
-                        timeSince = dt - fp->growFrame;
-                        sizeVelRate = p->sizeVel;
+                        float st = (dt - fp->growFrame) * fp->midGrow;
+                        p->size += p->sizeVel * ((1.0f - st) * st * frameSpan * sixf);
                     } else {
-                        timeSince = dt - fp->shrinkFrame;
-                        invDuration = fp->endGrow;
-                        sizeVelRate = fp->shrinkVel;
+                        float st = (dt - fp->shrinkFrame) * fp->endGrow;
+                        p->size += fp->shrinkVel * ((1.0f - st) * st * frameSpan * sixf);
                     }
-                    float st = timeSince * invDuration;
-                    p->size +=
-                        sizeVelRate * ((1.0f - st) * st * frameSpan * sixf);
                 } else {
-                    // Basic particle: single-phase color/size update
-                    // TODO: same fmadds vs fmuls+fadds issue as position update
+                    // Basic particle: single-phase colour/size update.
                     float t = (dt - p->birthFrame) * p->pos.w;
                     float scale = (1.0f - t) * t * frameSpan * sixf;
+                    Hmx::Color colorDelta;
+                    Multiply(p->colVel, scale, colorDelta);
+                    Add(p->col, colorDelta, p->col);
                     p->size += p->sizeVel * scale;
-                    p->col.red += p->colVel.red * scale;
-                    p->col.alpha += p->colVel.alpha * scale;
-                    p->col.blue += p->colVel.blue * scale;
-                    p->col.green += p->colVel.green * scale;
                 }
                 p = p->next;
             }

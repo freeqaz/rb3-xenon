@@ -32,9 +32,7 @@ class WorldCrowd : public RndDrawable, public RndPollable {
 public:
     class CharDef {
     public:
-        CharDef(Hmx::Object *owner)
-            : mChar(owner), mHeight(75), mDensity(1), mRadius(10), mUseRandomColor(false),
-              mMats(owner) {}
+        CharDef(Hmx::Object *owner);
         void Save(BinStream &) const;
         void Load(BinStream &);
 
@@ -60,7 +58,7 @@ public:
             int mIdx; // 0x40
             std::vector<Hmx::Color> mColors; // 0x44
         };
-        CharData(Hmx::Object *owner) : mDef(owner), mMMesh(nullptr) {}
+        CharData(Hmx::Object *owner);
         void Save(BinStream &) const;
         void Load(BinStream &);
 
