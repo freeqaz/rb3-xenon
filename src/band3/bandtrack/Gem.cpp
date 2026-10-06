@@ -518,7 +518,7 @@ void Gem::Hit() {
 void Gem::PartialHit(unsigned int ui) {
     if (!mInvisible) {
         mBeard = false;
-        float f1 = mGameGem.mMs / 1000.0f;
+        float f1 = mGameGem.GetMs() / 1000.0f;
         int slots = mGemManager->GetMaxSlots();
         FOREACH (it, mWidgets) {
             TrackWidget *cur = *it;

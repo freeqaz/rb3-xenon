@@ -366,7 +366,10 @@ void FastInterp(const Hmx::Quat &q1, const Hmx::Quat &q2, float f, Hmx::Quat &qo
         qout = q2;
         return;
     }
-    float dot = q1.x * q2.x;
+    // q1.x through a local: it fixes the operand order of the dot-product fmadds
+    // and of the qout.x fadds below against retail.
+    float x = q1.x;
+    float dot = x * q2.x;
     dot = dot + q1.w * q2.w;
     dot = dot + q1.z * q2.z;
     dot = dot + q1.y * q2.y;
