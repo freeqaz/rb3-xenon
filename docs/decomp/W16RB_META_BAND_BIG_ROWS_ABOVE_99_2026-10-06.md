@@ -166,7 +166,7 @@ since:
 
 ## 4. Measurement
 
-`tools/ab_measure.py --patch` was run with the combined source diff `7410935ea..b8231047c+UIStats`
+`tools/ab_measure.py --patch` was run with the combined source diff `7410935ea..5e62f5f7b`
 (3 files, `src/` only) in a fresh `setup_worktree.sh` worktree off `7410935ea`. Both legs were settled,
 leg B recompiled 13 objects, and the run is labelled `w16-rb`.
 
