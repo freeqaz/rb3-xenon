@@ -304,6 +304,14 @@ jobs:
     # direction for a gate, but it is the most likely first-run failure mode here.
     # Fix the container; do NOT add `|| true`, which silently restores zero
     # coverage while leaving a green check that looks like evidence.
+    #
+    # Since lane W16-QD the gate also runs tools/layout_odr.py check (cross-TU
+    # class-layout ODR splits, both the X360 TUs and every native program;
+    # docs/decomp/W16QD_LAYOUT_ODR_CHECK_2026-10-06.md). An unexplained split is
+    # a gate FAIL here like any other. A check that cannot answer (no warm
+    # layout cache and a timeout, or fewer native TUs than the allowlist floor
+    # because the engine is absent) is INCOMPLETE and is forced to rc=0 by the
+    # variable below -- the same "skipped, not passed" treatment as a target.
     - name: Native link gate
       env:
         NATIVE_GATE_ALLOW_INCOMPLETE: "1"
