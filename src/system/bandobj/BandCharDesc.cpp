@@ -1096,50 +1096,41 @@ DataNode BandCharDesc::ListOutfits(Symbol s) {
     return MakeFileList(str, true, s == "drum" ? DrumCallback : 0);
 }
 
-// Custom PropSync whose every arm runs the SAME modify hook.  Retail emits these with
-// ONE shared tail after the last arm (each arm stores its PropSync result and jumps
-// there), not with the hook inlined into every arm the way SYNC_PROP_MODIFY spells it:
-// cross-jumping then keeps the tail after the FIRST arm instead of the last.
-#define BEGIN_CUSTOM_PROPSYNC_SHARED_MODIFY(objType)                                     \
-    BEGIN_CUSTOM_PROPSYNC(objType)                                                       \
-    bool _synced;
-
-#define SYNC_PROP_SHARED_MODIFY(symbol, member)                                          \
+// Patch/OutfitPiece PropSync arms.  Every arm runs the same modify hook, and retail spells
+// the arm as a tested call: `if (PropSync(...)) { hook; return true; } return false;`.
+// SYNC_PROP_MODIFY / SYNC_PROP_MODIFY_ALT name the result in a `bool synced` local first;
+// that local is one more IR temporary, and with it the callee-saved numbering of the
+// parameters comes out o > _val > _op instead of retail's _op > o > _val.  The tested-call
+// form also lets cross-jumping keep the one copy of the hook after the last arm.
+#define SYNC_PROP_MODIFY_TESTED(symbol, member, func)                                    \
     {                                                                                    \
         static Symbol _ps(#symbol);                                                      \
         if (sym == _ps) {                                                                \
-            _synced = PropSync(member, _val, _prop, _i + 1, _op);                        \
-            goto _modified;                                                              \
+            if (PropSync(member, _val, _prop, _i + 1, _op)) {                            \
+                if (!(_op & (kPropSize | kPropGet))) {                                   \
+                    func;                                                                \
+                }                                                                        \
+                return true;                                                             \
+            }                                                                            \
+            return false;                                                                \
         }                                                                                \
     }
 
-#define END_CUSTOM_PROPSYNC_SHARED_MODIFY(func)                                          \
-    return false;                                                                        \
-    _modified:                                                                           \
-    if (!_synced)                                                                        \
-        return false;                                                                    \
-    if (!(_op & (kPropSize | kPropGet))) {                                               \
-        func;                                                                            \
-    }                                                                                    \
-    return true;                                                                         \
-    }                                                                                    \
-    }
+BEGIN_CUSTOM_PROPSYNC(BandCharDesc::Patch)
+    SYNC_PROP_MODIFY_TESTED(category, (int &)o.mCategory, gBandCharDescMe->SetChanged(1))
+    SYNC_PROP_MODIFY_TESTED(texture, o.mTexture, gBandCharDescMe->SetChanged(1))
+    SYNC_PROP_MODIFY_TESTED(mesh_name, o.mMeshName, gBandCharDescMe->SetChanged(1))
+    SYNC_PROP_MODIFY_TESTED(rotation, o.mRotation, gBandCharDescMe->SetChanged(1))
+    SYNC_PROP_MODIFY_TESTED(uv, o.mUV, gBandCharDescMe->SetChanged(1))
+    SYNC_PROP_MODIFY_TESTED(scale, o.mScale, gBandCharDescMe->SetChanged(1))
+END_CUSTOM_PROPSYNC
 
-BEGIN_CUSTOM_PROPSYNC_SHARED_MODIFY(BandCharDesc::Patch)
-    SYNC_PROP_SHARED_MODIFY(category, (int &)o.mCategory)
-    SYNC_PROP_SHARED_MODIFY(texture, o.mTexture)
-    SYNC_PROP_SHARED_MODIFY(mesh_name, o.mMeshName)
-    SYNC_PROP_SHARED_MODIFY(rotation, o.mRotation)
-    SYNC_PROP_SHARED_MODIFY(uv, o.mUV)
-    SYNC_PROP_SHARED_MODIFY(scale, o.mScale)
-END_CUSTOM_PROPSYNC_SHARED_MODIFY(gBandCharDescMe->SetChanged(1))
-
-BEGIN_CUSTOM_PROPSYNC_SHARED_MODIFY(BandCharDesc::OutfitPiece)
-    SYNC_PROP_SHARED_MODIFY(name, o.mName)
-    SYNC_PROP_SHARED_MODIFY(color0, o.mColors[0])
-    SYNC_PROP_SHARED_MODIFY(color1, o.mColors[1])
-    SYNC_PROP_SHARED_MODIFY(color2, o.mColors[2])
-END_CUSTOM_PROPSYNC_SHARED_MODIFY(gBandCharDescMe->SetChanged(1))
+BEGIN_CUSTOM_PROPSYNC(BandCharDesc::OutfitPiece)
+    SYNC_PROP_MODIFY_TESTED(name, o.mName, gBandCharDescMe->SetChanged(1))
+    SYNC_PROP_MODIFY_TESTED(color0, o.mColors[0], gBandCharDescMe->SetChanged(1))
+    SYNC_PROP_MODIFY_TESTED(color1, o.mColors[1], gBandCharDescMe->SetChanged(1))
+    SYNC_PROP_MODIFY_TESTED(color2, o.mColors[2], gBandCharDescMe->SetChanged(1))
+END_CUSTOM_PROPSYNC
 
 BEGIN_CUSTOM_PROPSYNC(BandCharDesc::Outfit)
     SYNC_PROP(eyebrows, o.mEyebrows)

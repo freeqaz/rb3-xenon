@@ -54,8 +54,7 @@ END_COPYS
 
 BEGIN_SAVES(PlayerDiffIcon)
     SAVE_REVS(0, 0)
-    bs << mNumPlayers;
-    bs << mDiff;
+    bs << mNumPlayers << mDiff;
     SAVE_SUPERCLASS(UIComponent)
 END_SAVES
 

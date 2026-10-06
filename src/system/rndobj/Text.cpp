@@ -208,15 +208,13 @@ BEGIN_SAVES(RndText)
     // {red,green,blue,alpha} and Vector4 {x,y,z,w} are identical 4-float POD
     // layouts, so this is a safe reinterpret to match retail's call target.
     bs << (const Vector4 &)mStyle.mTextColor;
-    // Tried chaining these trailing scalar writes into one expression (like
-    // the font/align/text group above) to reproduce retail's second stack
-    // temp slot (stack-layout diff showed TGT_ONLY slot at 0x58, live insns
-    // 45..78, alongside the reused 0x54 slot). That regressed instead: frame
-    // size grew +0x10 and a stwu/prologue mismatch appeared, so chaining adds
-    // an extra temp rather than reproducing retail's specific two-slot
-    // allocation. Left as separate statements -- this is the 99.9% form.
-    bs << mWrapWidth;
-    bs << mLeading;
+    // Retail's second stack temp slot (0x58, alongside the reused 0x54) comes from
+    // exactly ONE chained pair: mWrapWidth << mLeading in one full-expression keeps
+    // the first operator<<'s temporary live while the second is formed.  Chaining
+    // ALL the trailing writes regressed (frame +0x10); chaining any other single
+    // adjacent pair is only partial (10 -> 2..6 charges); this pair is 10 -> 0
+    // (lane W16-PS chained-pair sweep).
+    bs << mWrapWidth << mLeading;
     bs << mFixedLength;
     bs << mStyle.mItalics;
     bs << mStyle.mSize;

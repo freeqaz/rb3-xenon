@@ -537,6 +537,13 @@ bool MemHeap::Free(int *ptr) {
 // layout puts gHeaps at the lower address. Canonical defs live in MemMgr.cpp;
 // matching build has no final link (native excludes this reunification block).
 static int gNumHeaps;
+// Retail keeps five words between the end of gHeaps and gNumHeaps (gHeaps +0x240
+// .. +0x253: gThreadBufCurrentIndex, gNumThreads, gTimeStamp and two unnamed words,
+// see MemMgr.cpp's layout note), so MemFindAddrHeap reads gNumHeaps at gHeaps+0x254.
+// None of them is referenced in this half of the split TU, so this layout-only
+// stand-in holds their space (external linkage: an unreferenced static is dropped).
+// Uninitialised statics are laid out in reverse declaration order.
+int gMemHeapLayout440[5];
 static MemHeap gHeaps[16];
 
 int MemNumHeaps() { return gNumHeaps; }
