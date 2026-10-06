@@ -230,22 +230,27 @@ void BandList::UpdateConcealState(int i, Transform &tf) {
     if (!SupportsRevealConcealAnim()) {
         mRevealStates[i] = kConcealed;
         UpdateShowingState();
-    } else if (mBandListState == kImmediateConceal) {
-        ForceConcealed(i, tf);
-    } else if (ConcealTimedOut()) {
-        ForceConcealed(i, tf);
-    } else {
-        RevealState rstate = mRevealStates[i];
-        if (rstate == kConcealed) {
-            ForceConcealed(i, tf);
-        } else {
-            if (rstate != kConcealing) {
-                StartConcealAnim(i, tf);
-            }
-            ConcealAnimPoll(i, tf);
-        }
+        return;
     }
+    if (mBandListState == kImmediateConceal) {
+        ForceConcealed(i, tf);
+        return;
+    }
+    if (ConcealTimedOut()) {
+        ForceConcealed(i, tf);
+        return;
+    }
+    RevealState rstate = mRevealStates[i];
+    if (rstate == kConcealed) {
+        ForceConcealed(i, tf);
+        return;
+    }
+    if (rstate != kConcealing) {
+        StartConcealAnim(i, tf);
+    }
+    ConcealAnimPoll(i, tf);
 }
+
 
 void BandList::ForceConcealedStateOnAllEntries() {
     for (std::map<int, RevealState>::iterator it = mRevealStates.begin();
