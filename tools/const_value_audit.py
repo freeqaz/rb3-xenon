@@ -552,7 +552,9 @@ def analyze_function(res, d, base_path, tobj, bobj):
     for site in set(tsites) & set(bsites):
         if not same_op(site):
             continue
-        if tsites[site] != bsites[site]:
+        # Compare the VALUES reaching the site, not how often: a stack slot
+        # stored on two paths in one build and three in the other is not a swap.
+        if set(tsites[site]) != set(bsites[site]):
             use_mm.append({"site": list(site),
                            "retail": sorted(k.hex() for k in tsites[site]),
                            "ours": sorted(k.hex() for k in bsites[site])})
