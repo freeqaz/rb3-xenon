@@ -1180,7 +1180,8 @@ void SaveLoadManager::SetState(State newState) {
     case 0x3d:
     {
         UpdateStatus((SaveLoadMgrStatus)1);
-        if (!TheCacheMgr->MountAsync(mCacheID, &mCache, NULL)) {
+        CacheID *id = mCacheID;
+        if (!TheCacheMgr->MountAsync(id, &mCache, NULL)) {
 #pragma dont_inline on
             MILO_FAIL("TheCacheMgr->MountAsync failed with CacheResult %d\n", (int)TheCacheMgr->GetLastResult());
 #pragma dont_inline reset
