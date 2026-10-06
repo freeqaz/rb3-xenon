@@ -241,18 +241,24 @@ def analyse(d, layout, symtab):
 
 
 def subclass(sites):
-    """LAYOUT if our order differs from retail's, ANCHOR_CHOICE if only the anchor symbol differs.
+    """LAYOUT / FIELD / ANCHOR_CHOICE for one row's anchored sites (charged and uncharged).
 
-    For every site, retail_address - our_section_offset is the slide between the two layouts. One slide
-    for every site (per our section) means the statics sit in the same relative order and spacing on
-    both sides, so the charge comes from WHICH static the compiler chose as anchor. More than one slide
-    means our layout differs from retail's -- the class the `= 0` + declaration-order knob can reach."""
-    slides = collections.defaultdict(set)
+    slide = retail_address - our_section_offset. Grouped by OUR symbol:
+      FIELD          some symbol is reached at more than one slide: retail reads a different offset INSIDE one
+                     object (a member/component difference), which no static order can fix.
+      LAYOUT         every symbol has one slide but symbols disagree: our statics sit in a different order or
+                     spacing than retail's -- the class W16-PG §2.1's declaration-order knob can reach.
+      ANCHOR_CHOICE  one slide for all: same layout, the compiler chose a different static as anchor.
+    Charged sites alone cannot separate these (an unmoved neighbour is uncharged), which is why uncharged
+    anchored accesses are collected as witnesses."""
+    per = collections.defaultdict(set); secs = collections.defaultdict(set)
     for s in sites:
         o = s['ours']
-        if not o or s['retail'] is None: return 'UNRESOLVED'
-        slides[o['section']].add(s['retail'] - o['sec_off'])
-    return 'ANCHOR_CHOICE' if all(len(v) == 1 for v in slides.values()) else 'LAYOUT'
+        if not o or not o['sym'] or s['retail'] is None: return 'UNRESOLVED'
+        slide = s['retail'] - o['sec_off']
+        per[(o['section'], o['sym'])].add(slide); secs[o['section']].add(slide)
+    if any(len(v) > 1 for v in per.values()): return 'FIELD'
+    return 'ANCHOR_CHOICE' if all(len(v) == 1 for v in secs.values()) else 'LAYOUT'
 
 
 def diff_row(W, r):
@@ -315,8 +321,11 @@ def selftest():
     assert rc == 'PURE', rc
     assert subclass(sites) == 'LAYOUT', subclass(sites)
     # same layout, different anchor (PreInitSystem shape): ours +8 -> retail +0 for one symbol only = slide const
-    assert subclass([dict(retail=0x100, ours=dict(section='.bss', sec_off=8)),
-                     dict(retail=0xf8, ours=dict(section='.bss', sec_off=0))]) == 'ANCHOR_CHOICE'
+    assert subclass([dict(retail=0x100, ours=dict(section='.bss', sec_off=8, sym='b')),
+                     dict(retail=0xf8, ours=dict(section='.bss', sec_off=0, sym='a'))]) == 'ANCHOR_CHOICE'
+    # XfmSort shape: one Vector3, retail reads +8 where we read +4 -> FIELD, not LAYOUT
+    assert subclass([dict(retail=0x108, ours=dict(section='.bss', sec_off=4, sym='v')),
+                     dict(retail=0x104, ours=dict(section='.bss', sec_off=8, sym='v'))]) == 'FIELD'
     assert sites[0]['ours']['sym'] == '?vertIt@@3HA' and sites[0]['retail'] == 0x82CC0000, sites
     assert subclass([x for x in sites if x['charged']]) == 'ANCHOR_CHOICE'  # charged sites alone cannot tell
     # Negative 1: same load but the base register is a parameter (no anchor) -> must NOT fire.
@@ -355,7 +364,7 @@ def main():
     print(f'population: {len(pop)} rows / {sum(g["size"] for g in pop)} B (scope={a.scope}; gap {len(gap)} rows, '
           f'reach {reach}, matched-in-reach {matched}, report matched_code {mc})')
     for rc in ('PURE', 'MIXED'):
-        for sub in ('LAYOUT', 'ANCHOR_CHOICE', 'UNRESOLVED'):
+        for sub in ('LAYOUT', 'ANCHOR_CHOICE', 'FIELD', 'UNRESOLVED'):
             xs = [f for f in found if f['rclass'] == rc and f['sub'] == sub]
             print(f'{rc:5s} {sub:13s} {len(xs):4d} rows {sum(f["size"] for f in xs):8d} B')
     print()

@@ -70,8 +70,11 @@ public:
 ResourceFileCacheHelper gResourceFileCacheHelper;
 float gLimitUVRange;
 int gDxtCacher;
-static ObjectDir *sSphereDir;
-static RndMesh *sSphereMesh;
+// Retail keeps sSphereDir in the word below sSphereMesh (0x82CC2AD0/0x82CC2AD4):
+// RndUtlTerminate reaches it at -4 off sSphereMesh. The explicit zero-init makes
+// declaration order the .bss order; uninitialised, the code generator places them.
+static ObjectDir *sSphereDir = nullptr;
+static RndMesh *sSphereMesh = nullptr;
 static ObjectDir *sCylinderDir;
 static RndMesh *sCylinderMesh;
 std::list<BuildPoly> gChildPolys;
