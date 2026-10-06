@@ -101488,7 +101488,7 @@
     {
      "spelling": "?_M_fill_insert@?$vector@VRGTrill@@V?$StlNodeAlloc@VRGTrill@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVRGTrill@@IABV3@@Z",
      "lane": "W16-QK 2026-10-06",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat T1 REFUTED only on relocation targets); 112 B retail / 112 B ours; retail body-twins 24. Only CYCLE-ASSUMED leaf is the self-recursive _M_fill_insert_aux, whose masked body + relocation shape is image-unique (census = 1, the survivor's leaf at group 0x827ea060). Type witness (retail bytes): both charged retail callers, SongParser::Reset and SongParser::HandleRGTrillStop, resize the 12-byte-element vector at this+0xd4 (li r9,0xc), the member our layout and the rb3-Wii oracle declare std::vector<RGTrill> mRGTrillArray. Retail call sites: Reset idx 209, HandleRGTrillStop idx 65."
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat T1 REFUTED only on relocation targets); 112 B retail / 112 B ours; retail body-twins 24. Only CYCLE-ASSUMED leaf is the self-recursive _M_fill_insert_aux, whose masked body + relocation shape is image-unique (census = 1, the survivor's leaf at group 0x827ea060). Type witness (retail bytes): both charged retail callers, SongParser::Reset and SongParser::HandleRGTrillStop, resize the 12-byte-element vector at this+0xd4 (li r9,0xc), the member our layout and the inherited RB3 game source declare std::vector<RGTrill> mRGTrillArray. Retail call sites: Reset idx 209, HandleRGTrillStop idx 65."
     }
    ]
   },
