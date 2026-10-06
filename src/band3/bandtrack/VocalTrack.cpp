@@ -888,21 +888,18 @@ void VocalTrack::RebuildHUD() {
             std::deque<RangeShift>::iterator it = mRangeShifts.begin();
             std::deque<RangeShift>::iterator end = mRangeShifts.end();
             for (; it != end; ++it) {
-                float maxFrom = it->unk8;
-                float minFrom = it->unk4;
-                float diffFrom = (maxRange - maxFrom) + minFrom;
+                RangeShift &rs = *it;
+                float diffFrom = rs.unk4 + (maxRange - rs.unk8);
                 if (diffFrom > 0) {
                     diffFrom *= 0.5f;
-                    it->unk4 = minFrom - diffFrom;
-                    it->unk8 = maxFrom + diffFrom;
+                    rs.unk4 -= diffFrom;
+                    rs.unk8 += diffFrom;
                 }
-                float maxTo = it->unk10;
-                float minTo = it->unkc;
-                float diffTo = (maxRange - maxTo) + minTo;
+                float diffTo = rs.unkc + (maxRange - rs.unk10);
                 if (diffTo > 0) {
                     diffTo *= 0.5f;
-                    it->unkc = minTo - diffTo;
-                    it->unk10 = maxTo + diffTo;
+                    rs.unkc -= diffTo;
+                    rs.unk10 += diffTo;
                 }
                 if (sDump) {
                     MILO_LOG(

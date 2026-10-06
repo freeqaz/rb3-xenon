@@ -117541,6 +117541,52 @@
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN; 216 B / 216 B; retail body-twins 1. Only CYCLE-ASSUMED leaf is the self-recursive _M_fill_insert_aux<Key<float>>, image-unique (census = 1). Type witness (retail bytes): AddDircut passes this+0xec to the survivor (addi r3,r28,0xec; idx 64-65), and another retail BandDirector function passes the same this+0xec to fn_82295880, which the map names Keys<DircutEntry,DircutEntry>::Cross (stride-8 evidence recorded in BandDirector.h). DircutEntry and Symbol are both one-pointer wrappers, so the two Add instantiations are byte-identical."
     }
    ]
+  },
+  {
+   "name": "_M_erase",
+   "address": "0x82768f98",
+   "survivor": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@M@3@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+   "folded": [
+    "?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z"
+   ],
+   "evidence": "Created by lane W16-QX: see per-member records in `admitted`.",
+   "lane": "W16-QX 2026-10-06",
+   "admitted": [
+    {
+     "spelling": "?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+     "lane": "W16-QX 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN; 92 B / 92 B; retail body-twins 1 (only this one body of the shape in the image, while our build has 30 identical _M_erase instantiations). Only CYCLE-ASSUMED leaf is the self-recursive call. Witness on retail bytes: the catch funclet fn_822FA7B8 of _Rb_tree<int,pair<const int,float>>::_M_copy (retail 0x822FA6E8, map-named, our VocalTrackDir.obj spells the <int,float> callee) calls bl 0x82768F98, so retail's <int,float>::_M_erase IS this body."
+    }
+   ]
+  },
+  {
+   "name": "~map",
+   "address": "0x822fc4f8",
+   "survivor": "??1?$map@HVColor@Hmx@@U?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$map@GUCharInfo@RndFont@@U?$less@G@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
+    "??1?$map@UTrackerPlayerID@@HU?$less@UTrackerPlayerID@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
+    "??1?$map@UTrackerPlayerID@@VDeployData@OverdriveTracker@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@5@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "Created by lane W16-QX: see per-member records in `admitted`.",
+   "lane": "W16-QX 2026-10-06",
+   "admitted": [
+    {
+     "spelling": "??1?$map@GUCharInfo@RndFont@@U?$less@G@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-QX 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat T1 VACUOUS: 4 B / 4 B tail-branch thunk, retail body-twins 392); destination chain clear -> _M_erase SLOT-FOLD-OK onto the map<int,Color> tree, only CYCLE-ASSUMED leaf is _M_erase's self-recursion. Witness on retail bytes: the Font funclets fn_82473C54 / fn_8247423C call bl 0x822FC4F8 in retail where our objs spell this instantiation's destructor."
+    },
+    {
+     "spelling": "??1?$map@UTrackerPlayerID@@HU?$less@UTrackerPlayerID@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-QX 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat T1 VACUOUS: 4 B / 4 B tail-branch thunk, retail body-twins 392); destination chain clear -> _M_erase SLOT-FOLD-OK onto the map<int,Color> tree, only CYCLE-ASSUMED leaf is _M_erase's self-recursion. Witness on retail bytes: the FocusTracker funclets fn_826D87A4 / fn_826D8980 call bl 0x822FC4F8 in retail where our objs spell this instantiation's destructor."
+    },
+    {
+     "spelling": "??1?$map@UTrackerPlayerID@@VDeployData@OverdriveTracker@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@5@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-QX 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat T1 VACUOUS: 4 B / 4 B tail-branch thunk, retail body-twins 392); destination chain clear -> _M_erase SLOT-FOLD-OK onto the map<int,Color> tree, only CYCLE-ASSUMED leaf is _M_erase's self-recursion. Witness on retail bytes: the OverdriveTracker funclets fn_826DE21C / fn_826DE30C call bl 0x822FC4F8 in retail where our objs spell this instantiation's destructor."
+    }
+   ]
   }
  ]
 }

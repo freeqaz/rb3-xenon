@@ -879,8 +879,6 @@ VocalTrackDir.cpp:
 	.text       start:0x82300030 end:0x823000D0
 	.text       start:0x823000D0 end:0x823028E8
 	.text       start:0x823028E8 end:0x823038A0
-	.text       start:0x827F4298 end:0x827F42A8
-	.text       start:0x827F42C4 end:0x827F42E0
 	.text       start:0x827F446C end:0x827F4478
 	.text       start:0x82C44380 end:0x82C44440
 
@@ -4303,7 +4301,9 @@ UILabel.cpp:
 	.text       start:0x827F3568 end:0x827F4278
 	.text       start:0x827F4278 end:0x827F4288
 	.text       start:0x827F4288 end:0x827F4298
+	.text       start:0x827F4298 end:0x827F42A8
 	.text       start:0x827F42B8 end:0x827F42C4
+	.text       start:0x827F42C4 end:0x827F42E0
 	.text       start:0x827F42E0 end:0x827F443C
 	.text       start:0x827F443C end:0x827F4450
 	.text       start:0x827F4450 end:0x827F446C
