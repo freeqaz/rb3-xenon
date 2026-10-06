@@ -93828,7 +93828,9 @@
     "?MiloCamera@CameraManager@@QAAPAVCamShot@@XZ",
     "?HasSolo@StoreOffer@@QBA_NXZ",
     "?PlatformDebugBreak@@YA_NXZ",
-    "?GetLocalUser@RemoteUser@@UAAPAVLocalUser@@XZ"
+    "?GetLocalUser@RemoteUser@@UAAPAVLocalUser@@XZ",
+    "?GetLocalBandUser@RemoteBandUser@@UBAPAVLocalBandUser@@XZ",
+    "?GetLocalBandUser@RemoteBandUser@@UAAPAVLocalBandUser@@XZ"
    ],
    "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x823591e8 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 38 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies.",
    "admitted": [
@@ -93876,6 +93878,16 @@
      "spelling": "?GetLocalUser@RemoteUser@@UAAPAVLocalUser@@XZ",
      "lane": "W16-NK 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (VACUOUS-BUT-IDENTICAL), 0 CYCLE-ASSUMED; retail carries 8 bodies of this shape. Retail site 0x8268B920 (the tail branch of the this-adjusting thunk ?GetLocalUser@RemoteUser@@$R4BI@M@PPPPPPPM@BI@AAPAVLocalUser@@XZ at 0x8268B908) branches to the survivor address, and our thunk branches to this spelling."
+    },
+    {
+     "spelling": "?GetLocalBandUser@RemoteBandUser@@UBAPAVLocalBandUser@@XZ",
+     "lane": "W16-PI 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (VACUOUS-BUT-IDENTICAL), 0 CYCLE-ASSUMED; return-0 body. Admitted on the retail witness (house rule for vacuous bodies): The vtordisp thunk 0x8268B8A8 fills RemoteBandUser vtable 0x820E023C (BandUser subobject, +0x5c) slots 6 and 7 -- GetLocalBandUser() and GetLocalBandUser() const per cl.exe /d1reportSingleClassLayout -- and its tail branch at 0x8268B8B0 reaches the survivor 0x823591E8, where our compiled thunks for those two slots branch to this spelling. The map used to place this spelling at 0x8268EF78, which is really ??_GAutoplayAuditionUser@@UAAPAXI@Z (renamed by W16-PI)."
+    },
+    {
+     "spelling": "?GetLocalBandUser@RemoteBandUser@@UAAPAVLocalBandUser@@XZ",
+     "lane": "W16-PI 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (VACUOUS-BUT-IDENTICAL), 0 CYCLE-ASSUMED; return-0 body. Admitted on the retail witness (house rule for vacuous bodies): The vtordisp thunk 0x8268B8A8 fills RemoteBandUser vtable 0x820E023C (BandUser subobject, +0x5c) slots 6 and 7 -- GetLocalBandUser() and GetLocalBandUser() const per cl.exe /d1reportSingleClassLayout -- and its tail branch at 0x8268B8B0 reaches the survivor 0x823591E8, where our compiled thunks for those two slots branch to this spelling."
     }
    ]
   },
@@ -97417,9 +97429,17 @@
     "?GetRemoteUser@LocalUser@@$4PPPPPPPM@A@BAPBVRemoteUser@@XZ",
     "?IsJoypadConnected@NullLocalBandUser@@$4PPPPPPPM@A@BA_NXZ",
     "?IsLocal@RemoteUser@@$4PPPPPPPM@A@BA_NXZ",
-    "?IsNullUser@BandUser@@$4PPPPPPPM@A@BA_NXZ"
+    "?IsNullUser@BandUser@@$4PPPPPPPM@A@BA_NXZ",
+    "?GetLocalBandUser@RemoteBandUser@@$4PPPPPPPM@A@BAPAVLocalBandUser@@XZ"
    ],
-   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['AutoplayAuditionUser', 264, 2], ['AutoplayAuditionUser', 264, 3], ['AutoplayAuditionUser', 264, 4], ['AutoplayAuditionUser', 264, 5], ['BandUser', 152, 28], ['LocalBandUser', 108, 8], ['LocalBandUser', 108, 9], ['LocalUser', 16, 26], ['LocalUser', 16, 27], ['NullLocalBandUser', 108, 8], ['NullLocalBandUser', 108, 9], ['NullLocalBandUser', 260, 1], ['NullLocalBandUser', 260, 6], ['RemoteBandUser', 92, 6], ['RemoteBandUser', 92, 7], ['RemoteUser', 24, 23], ['RemoteUser', 24, 24], ['RemoteUser', 24, 25]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x823591e8 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition). [W15-D: `?GetLocalBandUser@RemoteBandUser@@$4PPPPPPPM@A@BAPAVLocalBandUser@@XZ` withheld -- the map places that spelling at a second address; validator refuses a two-homed member, adjudicate that row first.]"
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['AutoplayAuditionUser', 264, 2], ['AutoplayAuditionUser', 264, 3], ['AutoplayAuditionUser', 264, 4], ['AutoplayAuditionUser', 264, 5], ['BandUser', 152, 28], ['LocalBandUser', 108, 8], ['LocalBandUser', 108, 9], ['LocalUser', 16, 26], ['LocalUser', 16, 27], ['NullLocalBandUser', 108, 8], ['NullLocalBandUser', 108, 9], ['NullLocalBandUser', 260, 1], ['NullLocalBandUser', 260, 6], ['RemoteBandUser', 92, 6], ['RemoteBandUser', 92, 7], ['RemoteUser', 24, 23], ['RemoteUser', 24, 24], ['RemoteUser', 24, 25]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x823591e8 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition). [W15-D: `?GetLocalBandUser@RemoteBandUser@@$4PPPPPPPM@A@BAPAVLocalBandUser@@XZ` withheld -- the map places that spelling at a second address; validator refuses a two-homed member, adjudicate that row first.]",
+   "admitted": [
+    {
+     "spelling": "?GetLocalBandUser@RemoteBandUser@@$4PPPPPPPM@A@BAPAVLocalBandUser@@XZ",
+     "lane": "W16-PI 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (VACUOUS-DESTINATION-FOLD-PROVEN), 0 CYCLE-ASSUMED. Retail vtable geometry: RemoteBandUser vtable 0x820E023C (BandUser subobject, +0x5c) slot 7 holds 0x8268B8A8. Was withheld by W15-D only because the map ALSO placed this spelling at 0x8268ED70; lane W16-PI re-identified 0x8268ED70 as ??_EAutoplayAuditionUser@@$4PPPPPPPM@A@AAPAXI@Z (it is slot 0 of the AutoplayAuditionUser vtable 0x820E0E14, COL 0x821E6FA0) and renamed it, so the spelling is now map-free."
+    }
+   ]
   },
   {
    "name": "thunk-fold 0x8268b928",

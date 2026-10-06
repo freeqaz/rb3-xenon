@@ -82,10 +82,11 @@ public:
     // body.  See docs/decomp/VTABLE_SLOT_COUNT_FIXES_2026-08-20.md §16.
     //
     // The method itself is NOT deleted -- "not virtual" is what the vtable
-    // proves, "does not exist" is a separate claim, and RemoteBandUser really
-    // does carry `mFriendsConsoleCodes` plus a WiiFriendsListChangedMsg handler.
-    // It survives as a non-virtual member on each derived class.  Our tree has
-    // zero call sites, so nothing could have reached it through a BandUser*.
+    // proves, "does not exist" is a separate claim.  It survives as a
+    // non-virtual member on each derived class.  Our tree has zero call sites,
+    // so nothing could have reached it through a BandUser*.  (RemoteBandUser
+    // has neither `mFriendsConsoleCodes` nor a WiiFriendsListChangedMsg
+    // handler on 360 -- see the RemoteBandUser layout block below.)
     virtual void Reset();
     virtual void SyncSave(BinStream &, unsigned int) const;
 
@@ -235,7 +236,7 @@ public:
 class RemoteBandUser : public virtual BandUser, public virtual RemoteUser {
 public:
     RemoteBandUser();
-    virtual DataNode Handle(DataArray *, bool);
+    // No Handle override: retail's vtable sends the slot to BandUser::Handle.
     virtual ~RemoteBandUser();
     virtual LocalBandUser *GetLocalBandUser();
     virtual LocalBandUser *GetLocalBandUser() const;
@@ -252,9 +253,6 @@ public:
     virtual void Reset();
     virtual void SyncLoad(BinStream &, unsigned int);
 
-    void ShowCustomCharacter();
-
-    DataNode OnMsg(const WiiFriendsListChangedMsg &);
 
     // ★ RETAIL 360 LAYOUT, WITNESSED INSTRUCTION-BY-INSTRUCTION, NOT INFERRED.
     // Source: retail `RemoteBandUser::RemoteBandUser` @ 0x8268B4E8 and

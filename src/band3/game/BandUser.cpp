@@ -676,30 +676,10 @@ void RemoteBandUser::SyncLoad(BinStream &bs, unsigned int mask) {
     // vector it wrote into is gone from the class for the same reason.
 }
 
-DataNode RemoteBandUser::OnMsg(const WiiFriendsListChangedMsg &msg) {
-    if (!msg->Int(2))
-        ShowCustomCharacter();
-    return 1;
-}
-
-// A `bool unk18` member guard would need a member retail 360 does not have
-// (see the layout block in BandUser.h), so the guard is dropped rather than
-// invented.  Nothing reaches this function on 360 or on native anyway: the
-// only caller is OnMsg(WiiFriendsListChangedMsg), and retail's ctor registers
-// no WiiFriendMgr sink.  Unmeasured -- no target-side pairing exists.
-void RemoteBandUser::ShowCustomCharacter() {
-    if (mChar != mRemoteChar && mOnlineID->GetIsValid()) {
-        int id = 0;
-        WiiFriendList wfl;
-        TheWiiFriendMgr.GetCachedFriends(&wfl);
-        WiiFriendProfile *wfp = wfl.GetProfile(id);
-        if (wfp != NULL)
-            mChar = mRemoteChar;
-    }
-}
-
-BEGIN_HANDLERS(RemoteBandUser)
-    HANDLE_MESSAGE(WiiFriendsListChangedMsg)
-    HANDLE_SUPERCLASS(BandUser)
-    HANDLE_CHECK(0x4AB)
-END_HANDLERS
+// RemoteBandUser has no Handle override, no OnMsg(WiiFriendsListChangedMsg)
+// and no ShowCustomCharacter on 360.  Retail's RemoteBandUser vtable
+// (0x820E026C, COL 0x821E6CAC = `.?AVRemoteBandUser@@` at +0x18) puts in the
+// Handle slot the 16-byte vtordisp thunk 0x8268E2B0, which branches straight
+// into BandUser::Handle (0x8268CE18) -- an override would make it branch to a
+// RemoteBandUser body instead.  The message's type string
+// "wii_friends_list_changed" does not occur anywhere in the retail image.
