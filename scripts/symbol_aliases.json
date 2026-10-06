@@ -17209,8 +17209,7 @@
    "survivor": "??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemDiffEntry@@PAU1@IABU1@ABU__false_type@0@@Z",
    "folded": [
     "??$__uninitialized_fill_n@PAVExtraTail@TrainerGemTab@@IV12@@stlpmtx_std@@YAPAVExtraTail@TrainerGemTab@@PAV12@IABV12@ABU__false_type@0@@Z",
-    "??$__uninitialized_fill_n@PAVPoint@RndLine@@IV12@@stlpmtx_std@@YAPAVPoint@RndLine@@PAV12@IABV12@ABU__false_type@0@@Z",
-    "fn_827D5BB0"
+    "??$__uninitialized_fill_n@PAVPoint@RndLine@@IV12@@stlpmtx_std@@YAPAVPoint@RndLine@@PAV12@IABV12@ABU__false_type@0@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions.",
    "admitted": [
