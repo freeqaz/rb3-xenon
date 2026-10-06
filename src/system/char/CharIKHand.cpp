@@ -451,30 +451,33 @@ void CharIKHand::Poll() {
     }
 }
 
-// RB3-360 residual note (lane RESIDUAL-1, 2026-08-14).  IKElbow sits at 94.0%
-// normalized / fuzzy 96.4 with 128 mismatches.  Two facts for whoever opens it:
-//
-//  1. The base-only `fneg` cluster is NOT at the `sinAngle` computation below —
-//     rows 89/97/149/169 (`-std::sqrt(...)`, `-(cosAngle*cosAngle - 1.0f)`,
-//     `-sinAngle`) ALL MATCH retail already.  A lane predicted that site and was
-//     wrong.  The 8+ base-only `fneg`s live in the mElbowCollide matrix block,
-//     rows ~538-580, and the shape there is uniform:
-//         retail   fsubs f5, f21, f5          ;  a - b
-//         ours     fsubs f9, f2, f4 ; fneg f9 ; -(b - a)
-//     i.e. our source spells the subtraction in the OPPOSITE ORDER and negates.
-//     (`-(b-a)` vs `a-b` is exact in IEEE, so this is a source-spelling defect,
-//     not an /fp:fast reassociation question.)
-//
-//  2. ⚠ It is NOT a pure operand-order job: the row also carries a STRUCTURAL
-//     stack-frame delta of -0x10 (our frame is 16 B larger ⇒ extra locals) and
-//     108 register-swap instructions across 23 pairs.  Fix the frame/locals and
-//     the operand order together; per the "REGISTER_SWAP is a symptom" rule,
-//     expect most of the 108 to dissolve rather than needing individual work.
-//     Budget it as a real project, and note it pays 0 bytes unless it reaches
-//     fuzzy == 100 (matched_code is all-or-nothing per row).
+// IKElbow: fuzzy 97.92, frame 0x280 == retail.  Every float expression below
+// that is written out by hand (cosAngle, elbowAxisDot, elbowLen, IKDistance,
+// `d`, the four quaternion products) is the same value as the math/Vec.h /
+// math/Mtx.h helper it replaces; the helpers are canonicalised by MSVC in a
+// different term order at these call sites, and the image's order is the one
+// spelled here.  The quaternion block is Multiply(quatDir, quatRot) then
+// Multiply(q, quatRot), and Multiply(quatRot, quatDir) then
+// Multiply(quatRot, q), expanded in the image's association (no fneg; the
+// `-(a - (b + c + d))` spelling in Mtx.h costs the frame 0x10 and a save).
+// Remaining residual: the 16 products of the two quatDir*quatRot expansions
+// are scheduled in a different order (register-only, ~60 rows), plus four
+// commutative fadds/fmuls operand orders (swapping the source operands is
+// inert).  sphereToAxisDist keeps Vec.h's Distance(): the image's z,x,y
+// spelling there (as IKDistance) reschedules the quaternion block and nets
+// lower (97.18 vs 97.92).
 //
 // (FileMerger.cpp unity-build-includes this file; that is deliberate, so the
 // unit reads `default/FileMerger` in objdiff — not a mis-pin.)
+// The distances in IKElbow subtract z, x, y and sum `dy*dy + (dx*dx + dz*dz)`;
+// math/Vec.h's Distance() is emitted x, y, z at these call sites.
+inline float IKDistance(const Vector3 &a, const Vector3 &b) {
+    float dz = a.z - b.z;
+    float dx = a.x - b.x;
+    float dy = a.y - b.y;
+    return std::sqrt(dy * dy + (dx * dx + dz * dz));
+}
+
 void CharIKHand::IKElbow(RndTransformable *elbow, RndTransformable *shoulder) {
     if (!elbow || !shoulder)
         return;
@@ -485,7 +488,10 @@ void CharIKHand::IKElbow(RndTransformable *elbow, RndTransformable *shoulder) {
     shoulder->SetWorldXfm(shoulderXfm);
     Vector3 shoulderToWrist;
     Subtract(shoulder->WorldXfm().v, mWorldDst, shoulderToWrist);
-    float cosAngle = mInv2ab * (LengthSquared(shoulderToWrist) - mAABB);
+    float cosAngle = mInv2ab
+        * ((shoulderToWrist.y * shoulderToWrist.y
+            + (shoulderToWrist.z * shoulderToWrist.z + shoulderToWrist.x * shoulderToWrist.x))
+           - mAABB);
     ClampEq(cosAngle, -1.0f, 1.0f);
     float sinAngle = -std::sqrt(-(cosAngle * cosAngle - 1.0f));
     elbow->DirtyLocalXfm().m.Set(cosAngle, sinAngle, 0, -sinAngle, cosAngle, 0, 0, 0, 1);
@@ -521,7 +527,7 @@ void CharIKHand::IKElbow(RndTransformable *elbow, RndTransformable *shoulder) {
         else {
             Vector3 sphereCenter(mElbowCollide->WorldXfm().v);
             float sphereRadius = mElbowCollide->GetCurRadius();
-            if (Distance(sphereCenter, elbow->WorldXfm().v) < sphereRadius) {
+            if (IKDistance(sphereCenter, elbow->WorldXfm().v) < sphereRadius) {
                 Vector3 shoulderPos(shoulder->WorldXfm().v);
                 shoulderPos -= mWorldDst;
                 Vector3 unitAxis;
@@ -529,12 +535,15 @@ void CharIKHand::IKElbow(RndTransformable *elbow, RndTransformable *shoulder) {
                 Vector3 elbowToTarget;
                 Subtract(elbow->WorldXfm().v, mWorldDst, elbowToTarget);
                 Vector3 axisProj;
-                float elbowAxisDot = Dot(elbowToTarget, unitAxis);
+                float elbowAxisDot = elbowToTarget.z * unitAxis.z
+                    + (elbowToTarget.y * unitAxis.y + elbowToTarget.x * unitAxis.x);
                 Scale(unitAxis, elbowAxisDot, axisProj);
                 Add(axisProj, mWorldDst, axisProj);
                 Vector3 elbowDir(elbow->WorldXfm().v);
                 elbowDir -= axisProj;
-                float elbowLen = Length(elbowDir);
+                float elbowLen = std::sqrt(
+                    elbowDir.y * elbowDir.y + (elbowDir.z * elbowDir.z + elbowDir.x * elbowDir.x)
+                );
                 Vector3 axisDir(shoulder->WorldXfm().v);
                 axisDir -= axisProj;
                 Normalize(axisDir, axisDir);
@@ -545,12 +554,12 @@ void CharIKHand::IKElbow(RndTransformable *elbow, RndTransformable *shoulder) {
                 float midAxisDot = Dot(axisDir, sphereToMid);
                 Scale(axisDir, midAxisDot, sphereToMid);
                 Add(sphereCenter, sphereToMid, sphereToMid);
-                float sDistToAxis = Distance(sphereToMid, sphereCenter);
+                float sDistToAxis = IKDistance(sphereToMid, sphereCenter);
                 MILO_ASSERT(sDistToAxis <= sphereRadius, 0x1A1);
                 float sPerpDist = std::sqrt(sphereRadius * sphereRadius - sDistToAxis * sDistToAxis);
                 sphereCenter.Set(sphereToMid.x, sphereToMid.y, sphereToMid.z);
                 float sphereToAxisDist = Distance(sphereCenter, axisProj);
-                float d = (sPerpDist * sPerpDist - elbowLen * elbowLen + sphereToAxisDist * sphereToAxisDist) / (sphereToAxisDist * 2.0f);
+                float d = (sphereToAxisDist * sphereToAxisDist + (sPerpDist * sPerpDist - elbowLen * elbowLen)) / (sphereToAxisDist * 2.0f);
                 float sqrtTerm = std::sqrt(-(d * d - sPerpDist * sPerpDist));
                 float tiltAngle = std::asin(sqrtTerm / elbowLen);
                 if (IsNaN(tiltAngle))
@@ -564,12 +573,35 @@ void CharIKHand::IKElbow(RndTransformable *elbow, RndTransformable *shoulder) {
                 Hmx::Quat quatDir(tiltDir.x, tiltDir.y, tiltDir.z, 0.0f);
                 Hmx::Quat quatRot(axisDir.x * sinHalf, axisDir.y * sinHalf, axisDir.z * sinHalf, cosHalf);
                 Hmx::Quat quatResult;
-                Multiply(quatDir, quatRot, quatResult);
-                Multiply(quatResult, quatRot, quatResult);
+                const Hmx::Quat &qd = quatDir;
+                const Hmx::Quat &qr = quatRot;
+                Hmx::Quat &q = quatResult;
+                q.Set(
+                    ((qr.z * qd.y + qr.w * qd.x) + qr.x * qd.w) - qr.y * qd.z,
+                    ((qr.w * qd.y + qr.y * qd.w) + qr.x * qd.z) - qr.z * qd.x,
+                    ((qr.w * qd.z + qr.z * qd.w) + qr.y * qd.x) - qr.x * qd.y,
+                    ((qr.w * qd.w - qr.x * qd.x) - qr.y * qd.y) - qr.z * qd.z
+                );
+                q.Set(
+                    ((qr.w * q.x + q.w * qr.x) + qr.z * q.y) - qr.y * q.z,
+                    ((q.w * qr.y + qr.w * q.y) + qr.x * q.z) - qr.z * q.x,
+                    ((qr.w * q.z + qr.y * q.x) + q.w * qr.z) - qr.x * q.y,
+                    ((q.w * qr.w - q.x * qr.x) - q.y * qr.y) - q.z * qr.z
+                );
                 Vector3 v1(quatResult.x, quatResult.y, quatResult.z);
                 Add(v1, axisProj, v1);
-                Multiply(quatRot, quatDir, quatResult);
-                Multiply(quatRot, quatResult, quatResult);
+                q.Set(
+                    ((qr.y * qd.z + qr.w * qd.x) + qr.x * qd.w) - qr.z * qd.y,
+                    ((qr.z * qd.x + qr.w * qd.y) + qr.y * qd.w) - qr.x * qd.z,
+                    ((qr.x * qd.y + qr.w * qd.z) + qr.z * qd.w) - qr.y * qd.x,
+                    (-(qr.x * qd.x) + qr.w * qd.w) - qr.y * qd.y - qr.z * qd.z
+                );
+                q.Set(
+                    ((qr.w * q.x + q.w * qr.x) + qr.y * q.z) - qr.z * q.y,
+                    ((qr.w * q.y + qr.z * q.x) + q.w * qr.y) - qr.x * q.z,
+                    ((q.w * qr.z + qr.w * q.z) + qr.x * q.y) - qr.y * q.x,
+                    ((qr.w * q.w - qr.x * q.x) - qr.y * q.y) - qr.z * q.z
+                );
                 Vector3 v2(quatResult.x, quatResult.y, quatResult.z);
                 Add(v2, axisProj, v2);
                 Vector3 elbowLocal, targetLocal;
