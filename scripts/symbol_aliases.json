@@ -117184,6 +117184,51 @@
     "??$make_pair@VSymbol@@VDataNode@@@stlpmtx_std@@YA?AU?$pair@VSymbol@@VDataNode@@@0@VSymbol@@VDataNode@@@Z"
    ],
    "evidence": "W16-PO 2026-10-06. T1: tools/icf_pair_adjudicate.py FLAT T1 PROVEN (retail 96 B == ours 96 B, 4 relocs, retail_bodytwins 1, our_bodytwins 2: the two instantiations are byte-identical including relocations). Type witness from the caller's own retail bytes: ?AddPair@DataPoint@@QAAXVSymbol@@VDataNode@@@Z builds its pair<const Symbol,DataNode> by copying one word out of the make_pair result (lwz/stw, no ??0Symbol@@QAA@PBD@Z), which only a pair<Symbol,DataNode> result allows; the const char* spelling needs the Symbol(const char*) call our previous source emitted."
+  },
+  {
+   "name": "_GTrainerPanel",
+   "address": "0x826cb610",
+   "survivor": "??_GTrainerPanel@@UAAPAXI@Z",
+   "folded": [
+    "??_ETrainerPanel@@UAAPAXI@Z"
+   ],
+   "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/band3/game/TrainerPanel.obj the symbol ??_ETrainerPanel@@UAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GTrainerPanel@@UAAPAXI@Z (Characteristics=2) -- MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration on RETAIL BYTES: tools/icf_pair_adjudicate.py --chase reads PROVEN for ??_GTrainerPanel@@UAAPAXI@Z at 0x826CB610; our ??_GTrainerPanel@@UAAPAXI@Z COMDAT (68 B) carries relocations to ??1TrainerPanel@@UAA@XZ (retail 0x826CB340, name-equal), ??1Object@Hmx@@UAA@XZ (retail 0x8275CBF0, name-equal) and ??3@YAXPAX@Z (retail 0x8240DDB0, folded under survivor ??3BinStream@@SAXPAX@Z, group 0x8240ddb0), matching retail's at every site. Retail's only references to 0x826CB610 are its own .pdata entry and one branch from TrainerPanel's adjustor thunk ??_ETrainerPanel@@$4PPPPPPPM@A@AAPAXI@Z at 0x826CB1B0; the word at 0x826CB1B8 is 0x48000458 = b to 0x826CB610 ; in OUR object that thunk relocates against ??_ETrainerPanel@@UAAPAXI@Z. Referenced by no vtable. The map previously read ??_ETrainerPanel@@UAAPAXI@Z here (a 0% row: in our objects that spelling is only a weak external, which defines no body for objdiff to pair), and the .text pin sat in band3/game/Stats.cpp; both corrected by lane W16-QG 2026-10-06 (W16-QB audit category 1)."
+  },
+  {
+   "name": "_GCharUpperTwist",
+   "address": "0x823c75d8",
+   "survivor": "??_GCharUpperTwist@@MAAPAXI@Z",
+   "folded": [
+    "??_ECharUpperTwist@@MAAPAXI@Z"
+   ],
+   "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/system/char/CharUpperTwist.obj the symbol ??_ECharUpperTwist@@MAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GCharUpperTwist@@MAAPAXI@Z (Characteristics=2) -- MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration on RETAIL BYTES: tools/icf_pair_adjudicate.py --chase reads PROVEN for ??_GCharUpperTwist@@MAAPAXI@Z at 0x823C75D8; our ??_GCharUpperTwist@@MAAPAXI@Z COMDAT (68 B) carries relocations to ??1CharUpperTwist@@MAA@XZ (retail 0x823C7000, unnamed in our map -- placeholder, forgiven), ??1Object@Hmx@@UAA@XZ (retail 0x8275CBF0, name-equal) and ?MemFree@@YAXPAX@Z (retail 0x827BC430, name-equal), matching retail's at every site. Retail's only references to 0x823C75D8 are its own .pdata entry and one branch from CharUpperTwist's adjustor thunk ??_ECharUpperTwist@@$2PPPPPPPM@A@AAPAXI@Z at 0x823C6E70; the word at 0x823C6E78 is 0x48000760 = b to 0x823C75D8 ; in OUR object that thunk relocates against ??_ECharUpperTwist@@MAAPAXI@Z. Referenced by no vtable. The map previously read fn_823C75D8 here (a 0% placeholder row), and the .text pin sat in FlowIf.cpp; both corrected by lane W16-QG 2026-10-06 (W16-QB audit category 1)."
+  },
+  {
+   "name": "_GNetSession",
+   "address": "0x823e46d0",
+   "survivor": "??_GNetSession@@UAAPAXI@Z",
+   "folded": [
+    "??_ENetSession@@UAAPAXI@Z"
+   ],
+   "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/network/net/NetSession.obj the symbol ??_ENetSession@@UAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GNetSession@@UAAPAXI@Z (Characteristics=2) -- MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration on RETAIL BYTES: tools/icf_pair_adjudicate.py --chase reads PROVEN for ??_GNetSession@@UAAPAXI@Z at 0x823E46D0; our ??_GNetSession@@UAAPAXI@Z COMDAT (68 B) carries relocations to ??1NetSession@@UAA@XZ (retail 0x823E32F0, name-equal), ??1Object@Hmx@@UAA@XZ (retail 0x8275CBF0, name-equal) and ??3@YAXPAX@Z (retail 0x8240DDB0, folded under survivor ??3BinStream@@SAXPAX@Z, group 0x8240ddb0), matching retail's at every site. Retail's only references to 0x823E46D0 are its own .pdata entry and one branch from NetSession's adjustor thunk ??_ENetSession@@$4PPPPPPPM@A@AAPAXI@Z at 0x823E3528; the word at 0x823E3530 is 0x480011A0 = b to 0x823E46D0 ; in OUR object that thunk relocates against ??_ENetSession@@UAAPAXI@Z. Referenced by no vtable. The map previously read ??_ENetSession@@UAAPAXI@Z here (a 0% row: in our objects that spelling is only a weak external, which defines no body for objdiff to pair), and the .text pin sat in MeshAnim.cpp; both corrected by lane W16-QG 2026-10-06 (W16-QB audit category 1)."
+  },
+  {
+   "name": "_GPracticePanel",
+   "address": "0x826b2918",
+   "survivor": "??_GPracticePanel@@UAAPAXI@Z",
+   "folded": [
+    "??_EPracticePanel@@UAAPAXI@Z"
+   ],
+   "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/band3/game/PracticePanel.obj the symbol ??_EPracticePanel@@UAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GPracticePanel@@UAAPAXI@Z (Characteristics=2) -- MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration on RETAIL BYTES: tools/icf_pair_adjudicate.py --chase reads PROVEN for ??_GPracticePanel@@UAAPAXI@Z at 0x826B2918; our ??_GPracticePanel@@UAAPAXI@Z COMDAT (68 B) carries relocations to ??1PracticePanel@@UAA@XZ (retail 0x826B1D08, name-equal), ??1Object@Hmx@@UAA@XZ (retail 0x8275CBF0, name-equal) and ??3@YAXPAX@Z (retail 0x8240DDB0, folded under survivor ??3BinStream@@SAXPAX@Z, group 0x8240ddb0), matching retail's at every site. Retail's only references to 0x826B2918 are its own .pdata entry and one branch from PracticePanel's adjustor thunk ??_EPracticePanel@@$4PPPPPPPM@A@AAPAXI@Z at 0x826B2538; the word at 0x826B2540 is 0x480003D8 = b to 0x826B2918 ; in OUR object that thunk relocates against ??_EPracticePanel@@UAAPAXI@Z. Referenced by no vtable. The map previously read fn_826B2918 here (a 0% placeholder row), and the .text pin sat in FlowOnStop.cpp; both corrected by lane W16-QG 2026-10-06 (W16-QB audit category 1)."
+  },
+  {
+   "name": "_GStorePreviewMgr",
+   "address": "0x827b2770",
+   "survivor": "??_GStorePreviewMgr@@UAAPAXI@Z",
+   "folded": [
+    "??_EStorePreviewMgr@@UAAPAXI@Z"
+   ],
+   "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/system/meta/StorePreviewMgr.obj the symbol ??_EStorePreviewMgr@@UAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GStorePreviewMgr@@UAAPAXI@Z (Characteristics=2) -- MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration on RETAIL BYTES: tools/icf_pair_adjudicate.py --chase reads PROVEN for ??_GStorePreviewMgr@@UAAPAXI@Z at 0x827B2770; our ??_GStorePreviewMgr@@UAAPAXI@Z COMDAT (68 B) carries relocations to ??1StorePreviewMgr@@UAA@XZ (retail 0x827B2218, name-equal), ??1Object@Hmx@@UAA@XZ (retail 0x8275CBF0, name-equal) and ??3@YAXPAX@Z (retail 0x8240DDB0, folded under survivor ??3BinStream@@SAXPAX@Z, group 0x8240ddb0), matching retail's at every site. Retail's only references to 0x827B2770 are its own .pdata entry and one branch from StorePreviewMgr's adjustor thunk ??_EStorePreviewMgr@@$4PPPPPPPM@A@AAPAXI@Z at 0x827B21E0; the word at 0x827B21E8 is 0x48000588 = b to 0x827B2770 ; in OUR object that thunk relocates against ??_EStorePreviewMgr@@UAAPAXI@Z. Referenced by no vtable. The map previously read ??_EStorePreviewMgr@@UAAPAXI@Z here (a 0% row: in our objects that spelling is only a weak external, which defines no body for objdiff to pair), and the .text pin sat in StorePreviewMgr.cpp already (rename only); both corrected by lane W16-QG 2026-10-06 (W16-QB audit category 2)."
   }
  ]
 }

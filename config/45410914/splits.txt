@@ -2302,6 +2302,7 @@ CharUpperTwist.cpp:
 	.pdata      start:0x82206138 end:0x82206198
 	.pdata      start:0x822061B0 end:0x822061C0
 	.pdata      start:0x822061D0 end:0x822061F8
+	.pdata      start:0x822061F8 end:0x82206200
 	.pdata      start:0x82206200 end:0x82206208
 	.text       start:0x823C69B0 end:0x823C6FF4
 	.text       start:0x823C70E8 end:0x823C7204
@@ -2309,20 +2310,19 @@ CharUpperTwist.cpp:
 	.text       start:0x823C7318 end:0x823C7324
 	.text       start:0x823C7334 end:0x823C75C4
 	.text       start:0x823C75C8 end:0x823C75D4
+	.text       start:0x823C75D4 end:0x823C761C
 	.text       start:0x823C7620 end:0x823C76FC
 	.text       start:0x823C7760 end:0x823C7768
 
 FlowIf.cpp:
 	.pdata      start:0x82206198 end:0x822061B0
 	.pdata      start:0x822061C8 end:0x822061D0
-	.pdata      start:0x822061F8 end:0x82206200
 	.text       start:0x823C6FF4 end:0x823C7000
 	.text       start:0x823C7000 end:0x823C70E8
 	.text       start:0x823C72DC end:0x823C7308
 	.text       start:0x823C7314 end:0x823C7318
 	.text       start:0x823C7324 end:0x823C7328
 	.text       start:0x823C75C4 end:0x823C75C8
-	.text       start:0x823C75D4 end:0x823C761C
 
 bitrate.c:
 	.pdata      start:0x822610F0 end:0x822610F8
@@ -2995,7 +2995,7 @@ MeshAnim.cpp:
 	.pdata      start:0x821F1E28 end:0x821F1E30
 	.pdata      start:0x821F44C8 end:0x821F44D0
 	.pdata      start:0x821F6E80 end:0x821F6E88
-	.pdata      start:0x82207E50 end:0x82207E68
+	.pdata      start:0x82207E50 end:0x82207E60
 	.pdata      start:0x82207E70 end:0x82207E78
 	.pdata      start:0x82207E80 end:0x82207E98
 	.pdata      start:0x8220B530 end:0x8220B538
@@ -3024,7 +3024,7 @@ MeshAnim.cpp:
 	.text       start:0x822C812C end:0x822C8130
 	.text       start:0x822C8284 end:0x822C8290
 	.text       start:0x823E3C40 end:0x823E3C80
-	.text       start:0x823E4630 end:0x823E4718
+	.text       start:0x823E4630 end:0x823E46D0
 	.text       start:0x823E47D4 end:0x823E4800
 	.text       start:0x823E4A28 end:0x823E4A98
 	.text       start:0x8241AAC8 end:0x8241AB94
@@ -7311,9 +7311,7 @@ MovieSys.cpp:
 
 FlowOnStop.cpp:
 	.pdata      start:0x821F8480 end:0x821F8488
-	.pdata      start:0x82233500 end:0x82233508
 	.text       start:0x822DC828 end:0x822DC878
-	.text       start:0x826B2918 end:0x826B295C
 
 BinkReader.cpp:
 	.text       start:0x82BBAB0C end:0x82BBAB18
@@ -8090,12 +8088,14 @@ band3/game/TrainerPanel.cpp:
 	.pdata      start:0x822349C8 end:0x822349D0
 	.pdata      start:0x822349D0 end:0x822349D8
 	.pdata      start:0x822349D8 end:0x822349E0
+	.pdata      start:0x822349E0 end:0x822349E8
 	.pdata      start:0x822349E8 end:0x82234AF0
 	.text       start:0x826C9780 end:0x826C97AC
 	.text       start:0x826C97B0 end:0x826CB4A0
 	.text       start:0x826CB4A0 end:0x826CB4E4
 	.text       start:0x826CB4E4 end:0x826CB590
 	.text       start:0x826CB590 end:0x826CB610
+	.text       start:0x826CB610 end:0x826CB654
 	.text       start:0x826CB654 end:0x826CCA88
 
 band3/game/DirectInstrument.cpp:
@@ -8395,7 +8395,6 @@ band3/game/Stats.cpp:
 	.pdata      start:0x82231D30 end:0x82231D78
 	.pdata      start:0x82231D78 end:0x82231D80
 	.pdata      start:0x82231D90 end:0x82231EA8
-	.pdata      start:0x822349E0 end:0x822349E8
 	.text       start:0x82657660 end:0x82657798
 	.text       start:0x82697538 end:0x826985C8
 	.text       start:0x826985C8 end:0x82698648
@@ -8403,7 +8402,6 @@ band3/game/Stats.cpp:
 	.text       start:0x82698A50 end:0x82698B1C
 	.text       start:0x82698B1C end:0x82698B20
 	.text       start:0x82698C08 end:0x82699FE0
-	.text       start:0x826CB610 end:0x826CB654
 	.text       start:0x826DD568 end:0x826DD570
 
 band3/game/UITransitionNetMsgs.cpp:
@@ -9453,6 +9451,7 @@ network/net/NetSession.cpp:
 	.pdata      start:0x82207DF8 end:0x82207E10
 	.pdata      start:0x82207E10 end:0x82207E48
 	.pdata      start:0x82207E48 end:0x82207E50
+	.pdata      start:0x82207E60 end:0x82207E68
 	.pdata      start:0x82207E68 end:0x82207E70
 	.pdata      start:0x82207E78 end:0x82207E80
 	.pdata      start:0x82207E98 end:0x82207F28
@@ -9521,6 +9520,7 @@ network/net/NetSession.cpp:
 	.text       start:0x823E4020 end:0x823E4180
 	.text       start:0x823E4180 end:0x823E45D8
 	.text       start:0x823E45D8 end:0x823E4630
+	.text       start:0x823E46D0 end:0x823E4718
 	.text       start:0x823E4718 end:0x823E47D4
 	.text       start:0x823E4800 end:0x823E4A28
 	.text       start:0x823E4A98 end:0x823E5410
@@ -9678,6 +9678,7 @@ PracticePanel.cpp:
 	.pdata      start:0x82233450 end:0x82233468
 	.pdata      start:0x82233468 end:0x82233470
 	.pdata      start:0x82233470 end:0x82233500
+	.pdata      start:0x82233500 end:0x82233508
 	.pdata      start:0x82233508 end:0x82233760
 	.text       start:0x826B1C88 end:0x826B1D08
 	.text       start:0x826B1D08 end:0x826B1DE8
@@ -9685,6 +9686,7 @@ PracticePanel.cpp:
 	.text       start:0x826B1F18 end:0x826B1FD8
 	.text       start:0x826B1FD8 end:0x826B2040
 	.text       start:0x826B2040 end:0x826B2918
+	.text       start:0x826B2918 end:0x826B295C
 	.text       start:0x826B295C end:0x826B4FF0
 	.text       start:0x826CCAF0 end:0x826CCB00
 
