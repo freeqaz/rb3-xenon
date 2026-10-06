@@ -84408,7 +84408,7 @@
   {
    "name": "$__destroy_range_aux",
    "address": "0x827d3340",
-   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x9335ac2a@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0x9335ac2a@@@0@0ABU__false_type@0@@Z",
+   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0x81ddebd1@@@0@0ABU__false_type@0@@Z",
    "folded": [
     "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0xe9afadec@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0xe9afadec@@@0@0ABU__false_type@0@@Z",
     "??$__destroy_range_aux@V?$reverse_iterator@PAVSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSampleMarker@@@0@0ABU__false_type@0@@Z",
@@ -84427,6 +84427,54 @@
      "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAUTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUTypeCreatorPair@NetMessageFactory@@@0@0ABU__false_type@0@@Z",
      "lane": "W16-NE-F2 2026-10-02",
      "evidence": "--chase CHASED T1 PROVEN"
+    }
+   ],
+   "relabelled": {
+    "from": "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x9335ac2a@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0x9335ac2a@@@0@0ABU__false_type@0@@Z",
+    "to": "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0x81ddebd1@@@0@0ABU__false_type@0@@Z",
+    "lane": "W16-PI 2026-10-06",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here",
+    "held": [
+     {
+      "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x9335ac2a@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0x9335ac2a@@@0@0ABU__false_type@0@@Z",
+      "lane": "W16-PI 2026-10-06",
+      "verdict": "UNDECIDABLE",
+      "evidence": "tools/icf_pair_adjudicate.chase(??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stl @ 0x827d3340, ??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x9335ac2a@@@stl): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_s | ours ??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x9335ac2a@@@stlpmtx_std@@@stlpmtx_s"
+     }
+    ]
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0xe9afadec@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0xe9afadec@@@0@0ABU__false_type@0@@Z",
+     "role": "folded",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stl @ 0x827d3340, ??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0xe9afadec@@@stl): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_s | ours ??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0xe9afadec@@@stlpmtx_std@@@stlpmtx_s"
+    },
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAVSampleMarker@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVSampleMarker@@@0@0ABU__false_type@0@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stl @ 0x827d3340, ??$__destroy_range_aux@V?$reverse_iterator@PAVSampleMarker@@@stlpmtx_s): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAUTypeCreatorPair@NetMessageFactory@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUTypeCreatorPair@NetMessageFactory@@@0@0ABU__false_type@0@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stl @ 0x827d3340, ??$__destroy_range_aux@V?$reverse_iterator@PAUTypeCreatorPair@NetMessa): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x9335ac2a@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0x9335ac2a@@@0@0ABU__false_type@0@@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stl @ 0x827d3340, ??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x9335ac2a@@@stl): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_s | ours ??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x9335ac2a@@@stlpmtx_std@@@stlpmtx_s"
     }
    ]
   },
@@ -91611,20 +91659,84 @@
   {
    "name": "$__final_insertion_sort",
    "address": "0x827d3900",
-   "survivor": "??$__final_insertion_sort@PAUCuePoint@?A0x9ea89d7a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9ea89d7a@@0P6A_NABU12@1@Z@Z",
+   "survivor": "??$__final_insertion_sort@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@0P6A_NABU12@1@Z@Z",
    "folded": [
     "??$__final_insertion_sort@PAUFilter@FilterViewSetting@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUFilter@FilterViewSetting@@0P6A_NABU12@1@Z@Z"
    ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
+   "relabelled": {
+    "from": "??$__final_insertion_sort@PAUCuePoint@?A0x9ea89d7a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9ea89d7a@@0P6A_NABU12@1@Z@Z",
+    "to": "??$__final_insertion_sort@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@0P6A_NABU12@1@Z@Z",
+    "lane": "W16-PI 2026-10-06",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here",
+    "held": [
+     {
+      "spelling": "??$__final_insertion_sort@PAUCuePoint@?A0x9ea89d7a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9ea89d7a@@0P6A_NABU12@1@Z@Z",
+      "lane": "W16-PI 2026-10-06",
+      "verdict": "UNDECIDABLE",
+      "evidence": "tools/icf_pair_adjudicate.chase(??$__final_insertion_sort@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stl @ 0x827d3900, ??$__final_insertion_sort@PAUCuePoint@?A0x9ea89d7a@@P6A_NABU12@0@Z@stl): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$__final_insertion_sort@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCueP | ours ??$__final_insertion_sort@PAUCuePoint@?A0x9ea89d7a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCueP"
+     }
+    ]
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__final_insertion_sort@PAUFilter@FilterViewSetting@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUFilter@FilterViewSetting@@0P6A_NABU12@1@Z@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__final_insertion_sort@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stl @ 0x827d3900, ??$__final_insertion_sort@PAUFilter@FilterViewSetting@@P6A_NABU12@0@Z@): PROVEN [CHASED] retail 108 B / ours 108 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$__final_insertion_sort@PAUCuePoint@?A0x9ea89d7a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9ea89d7a@@0P6A_NABU12@1@Z@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__final_insertion_sort@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stl @ 0x827d3900, ??$__final_insertion_sort@PAUCuePoint@?A0x9ea89d7a@@P6A_NABU12@0@Z@stl): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$__final_insertion_sort@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCueP | ours ??$__final_insertion_sort@PAUCuePoint@?A0x9ea89d7a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCueP"
+    }
+   ]
   },
   {
    "name": "$sort_heap",
    "address": "0x827d3488",
-   "survivor": "??$sort_heap@PAUCuePoint@?A0x9335ac2a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9335ac2a@@0P6A_NABU12@1@Z@Z",
+   "survivor": "??$sort_heap@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@0P6A_NABU12@1@Z@Z",
    "folded": [
     "??$sort_heap@PAUGroupDrawDist@@P6A_NABU1@0@Z@stlpmtx_std@@YAXPAUGroupDrawDist@@0P6A_NABU1@1@Z@Z"
    ],
-   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. "
+   "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
+   "relabelled": {
+    "from": "??$sort_heap@PAUCuePoint@?A0x9335ac2a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9335ac2a@@0P6A_NABU12@1@Z@Z",
+    "to": "??$sort_heap@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@0P6A_NABU12@1@Z@Z",
+    "lane": "W16-PI 2026-10-06",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here",
+    "held": [
+     {
+      "spelling": "??$sort_heap@PAUCuePoint@?A0x9335ac2a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9335ac2a@@0P6A_NABU12@1@Z@Z",
+      "lane": "W16-PI 2026-10-06",
+      "verdict": "UNDECIDABLE",
+      "evidence": "tools/icf_pair_adjudicate.chase(??$sort_heap@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAX @ 0x827d3488, ??$sort_heap@PAUCuePoint@?A0x9335ac2a@@P6A_NABU12@0@Z@stlpmtx_std@@YAX): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$sort_heap@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81dd | ours ??$sort_heap@PAUCuePoint@?A0x9335ac2a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9335"
+     }
+    ]
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$sort_heap@PAUGroupDrawDist@@P6A_NABU1@0@Z@stlpmtx_std@@YAXPAUGroupDrawDist@@0P6A_NABU1@1@Z@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$sort_heap@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAX @ 0x827d3488, ??$sort_heap@PAUGroupDrawDist@@P6A_NABU1@0@Z@stlpmtx_std@@YAXPAUGroupD): PROVEN [CHASED] retail 116 B / ours 116 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$sort_heap@PAUCuePoint@?A0x9335ac2a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9335ac2a@@0P6A_NABU12@1@Z@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$sort_heap@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAX @ 0x827d3488, ??$sort_heap@PAUCuePoint@?A0x9335ac2a@@P6A_NABU12@0@Z@stlpmtx_std@@YAX): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$sort_heap@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81dd | ours ??$sort_heap@PAUCuePoint@?A0x9335ac2a@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x9335"
+    }
+   ]
   },
   {
    "name": "0?$_Vector_base",
@@ -100468,10 +100580,8 @@
   {
    "name": "$_Destroy_Range",
    "address": "0x827d33f8",
-   "survivor": "??$_Destroy_Range@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@YAXPAULabel@?A0x81ddebd1@@0@Z",
-   "folded": [
-    "??$__uninitialized_copy@PAVWaveFileMarker@@PAV1@@stlpmtx_std@@YAPAVWaveFileMarker@@PAV1@00ABU__false_type@0@@Z"
-   ],
+   "survivor": "??$__uninitialized_copy@PAVWaveFileMarker@@PAV1@@stlpmtx_std@@YAPAVWaveFileMarker@@PAV1@00ABU__false_type@0@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -100479,6 +100589,30 @@
      "spelling": "??$__uninitialized_copy@PAVWaveFileMarker@@PAV1@@stlpmtx_std@@YAPAVWaveFileMarker@@PAV1@00ABU__false_type@0@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 96 B retail / 96 B ours; retail body-twins 10. Retail call site(s) reaching the survivor where we call this spelling: 0x827d3814, 0x827d388c."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$_Destroy_Range@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@YAXPAULabel@?A0x81ddebd1@@0@Z",
+     "lane": "W16-PI 2026-10-06",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__uninitialized_copy@PAVWaveFileMarker@@PAV1@@stlpmtx_std@@YAPAVWav @ 0x827d33f8, ??$_Destroy_Range@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@YAXPAULabel@?A0): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$__uninitialized_copy@PAVWaveFileMarker@@PAV1@@stlpmtx_std@@YAPAVWaveFileMarker@@PAV1@00 | ours ??$_Destroy_Range@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@YAXPAULabel@?A0x81ddebd1@@0@Z; anchor ??$__uninitialized_copy@PAVWaveFileMarker@@PAV1@@stlpmtx_std@@YAPAVWaveFileMarker@@PAV1@00 PROVEN here"
+    }
+   ],
+   "relabelled": {
+    "from": "??$_Destroy_Range@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@YAXPAULabel@?A0x81ddebd1@@0@Z",
+    "to": "??$__uninitialized_copy@PAVWaveFileMarker@@PAV1@@stlpmtx_std@@YAPAVWaveFileMarker@@PAV1@00ABU__false_type@0@@Z",
+    "lane": "W16-PI 2026-10-06",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$_Destroy_Range@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@YAXPAULabel@?A0x81ddebd1@@0@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "BODY:BYTES-DIFFER",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__uninitialized_copy@PAVWaveFileMarker@@PAV1@@stlpmtx_std@@YAPAVWav @ 0x827d33f8, ??$_Destroy_Range@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@YAXPAULabel@?A0): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$__uninitialized_copy@PAVWaveFileMarker@@PAV1@@stlpmtx_std@@YAPAVWaveFileMarker@@PAV1@00 | ours ??$_Destroy_Range@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@YAXPAULabel@?A0x81ddebd1@@0@Z; anchor ??$__uninitialized_copy@PAVWaveFileMarker@@PAV1@@stlpmtx_std@@YAPAVWaveFileMarker@@PAV1@00 PROVEN here"
     }
    ]
   },
@@ -111037,10 +111171,8 @@
   {
    "name": "$__destroy_range_aux",
    "address": "0x822a2648",
-   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0x81ddebd1@@@0@0ABU__false_type@0@@Z",
-   "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAVOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVOverlay@OutfitConfig@@@0@0ABU__false_type@0@@Z"
-   ],
+   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAVOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVOverlay@OutfitConfig@@@0@0ABU__false_type@0@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-NH: see per-member records in `admitted`.",
    "lane": "W16-NH 2026-10-02",
    "admitted": [
@@ -111048,6 +111180,30 @@
      "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAVOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVOverlay@OutfitConfig@@@0@0ABU__false_type@0@@Z",
      "lane": "W16-NH 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 96 B retail / 96 B ours; retail body-twins 3. Retail call site(s) reaching the survivor where we call this spelling: 0x822a3110."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0x81ddebd1@@@0@0ABU__false_type@0@@Z",
+     "lane": "W16-PI 2026-10-06",
+     "class": "FORMER_SURVIVOR_LABEL_NOT_A_FOLD",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__destroy_range_aux@V?$reverse_iterator@PAVOverlay@OutfitConfig@@@s @ 0x822a2648, ??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stl): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$__destroy_range_aux@V?$reverse_iterator@PAVOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx | ours ??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_s; anchor ??$__destroy_range_aux@V?$reverse_iterator@PAVOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx PROVEN here"
+    }
+   ],
+   "relabelled": {
+    "from": "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0x81ddebd1@@@0@0ABU__false_type@0@@Z",
+    "to": "??$__destroy_range_aux@V?$reverse_iterator@PAVOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVOverlay@OutfitConfig@@@0@0ABU__false_type@0@@Z",
+    "lane": "W16-PI 2026-10-06",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAULabel@?A0x81ddebd1@@@0@0ABU__false_type@0@@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "BODY:BYTES-DIFFER",
+     "disposition": "map name at 0x827d3340 (not a member here)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__destroy_range_aux@V?$reverse_iterator@PAVOverlay@OutfitConfig@@@s @ 0x822a2648, ??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stl): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$__destroy_range_aux@V?$reverse_iterator@PAVOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx | ours ??$__destroy_range_aux@V?$reverse_iterator@PAULabel@?A0x81ddebd1@@@stlpmtx_std@@@stlpmtx_s; anchor ??$__destroy_range_aux@V?$reverse_iterator@PAVOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx PROVEN here"
     }
    ]
   },
