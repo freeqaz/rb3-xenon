@@ -103944,22 +103944,16 @@
   {
    "name": "$remove_if",
    "address": "0x826e6070",
-   "survivor": "??$remove_if@PAVFilePath@@P6A_NABV1@@Z@stlpmtx_std@@YAPAVFilePath@@PAV1@0P6A_NABV1@@Z@Z",
+   "survivor": "??$remove_if@PAPAVVocalPart@@V?$mem_fun_t@_NVVocalPart@@@stlpmtx_std@@@stlpmtx_std@@YAPAPAVVocalPart@@PAPAV1@0V?$mem_fun_t@_NVVocalPart@@@0@@Z",
    "folded": [
-    "??$remove_if@PAPAVSinger@@V?$const_mem_fun_t@_NVSinger@@@stlpmtx_std@@@stlpmtx_std@@YAPAPAVSinger@@PAPAV1@0V?$const_mem_fun_t@_NVSinger@@@0@@Z",
-    "??$remove_if@PAPAVVocalPart@@V?$mem_fun_t@_NVVocalPart@@@stlpmtx_std@@@stlpmtx_std@@YAPAPAVVocalPart@@PAPAV1@0V?$mem_fun_t@_NVVocalPart@@@0@@Z"
+    "??$remove_if@PAPAVSinger@@V?$const_mem_fun_t@_NVSinger@@@stlpmtx_std@@@stlpmtx_std@@YAPAPAVSinger@@PAPAV1@0V?$const_mem_fun_t@_NVSinger@@@0@@Z"
    ],
-   "evidence": "W16-KD 2026-10-01: group created for an ICF fold proven on retail bytes; the survivor is the map name at 0x826e6070.",
+   "evidence": "W16-KD 2026-10-01: group created for an ICF fold proven on retail bytes; the survivor is the map name at 0x826e6070. W16-QB 2026-10-06: the map name at 0x826e6070 was the FilePath spelling (Dir.cpp), a phantom: retail Dir never calls remove_if (W16-JD), the address sits inside VocalPlayer.cpp .text, and W16-KD proved both of our VocalPlayer spellings CHASED T1 against it. Survivor renamed to the VocalPart spelling (retail call site 0x826eb79c), the pin re-homed to VocalPlayer.cpp; Singer stays folded.",
    "admitted": [
     {
      "spelling": "??$remove_if@PAPAVSinger@@V?$const_mem_fun_t@_NVSinger@@@stlpmtx_std@@@stlpmtx_std@@YAPAPAVSinger@@PAPAV1@0V?$const_mem_fun_t@_NVSinger@@@0@@Z",
      "lane": "W16-KD 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- template-twin, ); 88 B retail / 88 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x826eb7c4."
-    },
-    {
-     "spelling": "??$remove_if@PAPAVVocalPart@@V?$mem_fun_t@_NVVocalPart@@@stlpmtx_std@@@stlpmtx_std@@YAPAPAVVocalPart@@PAPAV1@0V?$mem_fun_t@_NVVocalPart@@@0@@Z",
-     "lane": "W16-KD 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- template-twin, ); 88 B retail / 88 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x826eb79c."
     }
    ]
   },

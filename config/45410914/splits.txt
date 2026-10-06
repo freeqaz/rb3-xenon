@@ -3198,14 +3198,8 @@ RenderState.cpp:
 	.text       start:0x82736EE8 end:0x827372E8
 
 system/obj/Dir.cpp:
-	.pdata      start:0x82236238 end:0x82236240
-	.pdata      start:0x82236328 end:0x82236330
-	.pdata      start:0x82236378 end:0x82236380
 	.pdata      start:0x8223BA48 end:0x8223BA68
 	.pdata      start:0x8223BA88 end:0x8223BFE8
-	.text       start:0x826E4348 end:0x826E4444
-	.text       start:0x826E58D0 end:0x826E5928
-	.text       start:0x826E6070 end:0x826E60C8
 	.text       start:0x8274DD58 end:0x8274DF40
 	.text       start:0x8274DFC8 end:0x8274DFD0
 	.text       start:0x8274E054 end:0x82754A00
@@ -12649,11 +12643,14 @@ VocalPlayer.cpp:
 	.pdata      start:0x82236208 end:0x82236210
 	.pdata      start:0x82236210 end:0x82236218
 	.pdata      start:0x82236218 end:0x82236238
+	.pdata      start:0x82236238 end:0x82236240
 	.pdata      start:0x82236240 end:0x82236258
 	.pdata      start:0x82236258 end:0x82236260
 	.pdata      start:0x82236260 end:0x82236288
 	.pdata      start:0x82236288 end:0x82236328
+	.pdata      start:0x82236328 end:0x82236330
 	.pdata      start:0x82236330 end:0x82236378
+	.pdata      start:0x82236378 end:0x82236380
 	.pdata      start:0x82236380 end:0x82236478
 	.pdata      start:0x82236478 end:0x822367C8
 	.text       start:0x8269CCA8 end:0x8269CCFC
@@ -12671,11 +12668,14 @@ VocalPlayer.cpp:
 	.text       start:0x826E4160 end:0x826E4310
 	.text       start:0x826E4310 end:0x826E4324
 	.text       start:0x826E4328 end:0x826E4348
+	.text       start:0x826E4348 end:0x826E4444
 	.text       start:0x826E4448 end:0x826E4798
 	.text       start:0x826E4798 end:0x826E4828
 	.text       start:0x826E4828 end:0x826E4BD0
 	.text       start:0x826E4BD0 end:0x826E58D0
+	.text       start:0x826E58D0 end:0x826E5928
 	.text       start:0x826E5928 end:0x826E6070
+	.text       start:0x826E6070 end:0x826E60C8
 	.text       start:0x826E60C8 end:0x826E7498
 	.text       start:0x826E74B4 end:0x826EBE10
 	.text       start:0x826EEB9C end:0x826EEBA0
