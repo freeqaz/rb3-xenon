@@ -221,8 +221,12 @@ void Synapse::ProcessInPlace(unsigned int arg1, float *arg2) {
                     // NOTE: the cast form (not mVoices[i]) keeps the address add as
                     // (begin, offset); one residual commutative swap remains on the
                     // GetCorrection receiver add (add r3, off, begin vs begin, off).
-                    gs->mVoices[i].mRate =
+                    // The correction is computed before the store's address:
+                    // retail reads gs->mVoices' buffer AFTER the call, and an
+                    // operator[] on the left of `=` is evaluated first.
+                    float correction =
                         ((PitchCorrectedVoice *)((char *)mVoices.begin() + i * 56))->GetCorrection();
+                    gs->mVoices[i].mRate = correction;
                 }
             }
 
