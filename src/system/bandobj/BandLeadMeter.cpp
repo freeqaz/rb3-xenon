@@ -61,9 +61,7 @@ void BandLeadMeter::SyncScores() {
     }
     int neg = -mScoreDiff;
     float frac = Min(fabsf(neg) / unk204, 1.0f);
-    int dir = 1;
-    if (neg <= 0)
-        dir = -1;
+    int dir = neg > 0 ? 1 : -1;
     if (mScoreDiff >= -unk204 && mScoreDiff <= unk204 && mNeedleAnim) {
         float scaled = frac * 50.0f;
         mNeedleAnim->SetFrame(scaled * dir + 50.0f, 1.0f);

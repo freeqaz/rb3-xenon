@@ -80,13 +80,15 @@ void NoteTube::CreateMeshes() {
             } else {
                 float segmentLength = mPoints[1].x - mPoints[0].x;
                 MILO_ASSERT(segmentLength > 0.0f, 0x75);
+                Vector3 &first = mPoints[0];
                 segmentLength = Min(segmentLength, unk_0x34);
-                mPoints[0].x += segmentLength;
+                first.x += segmentLength;
 
                 segmentLength = mPoints[numpoints - 1].x - mPoints[numpoints - 2].x;
                 MILO_ASSERT(segmentLength > 0.0f, 0x79);
+                Vector3 &last = mPoints[numpoints - 1];
                 segmentLength = Min(segmentLength, unk_0x34);
-                mPoints[numpoints - 1].x -= segmentLength;
+                last.x -= segmentLength;
             }
         }
         if (mFrontPlate && mFrontMat) {

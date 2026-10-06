@@ -440,32 +440,12 @@ float VocalPlayer::RemoteVocalVolume() const {
         return 1.0f - ret / 0.33f;
 }
 
-// W17-CLEAN-VP (2026-09-30): cleanup-only pass, no codegen changes. This
-// function was called "too diffuse to price as a single-defect row" in
-// docs/decomp/W16_NEXT_WAVE_TARGETING_2026-09-16.md (lane X3, 3,388 B,
-// fuzzy ~93.84%). Re-examined block by block via objdiff's auto-diagnosis;
-// verified findings (each also commented at its own site below):
-//   - Several residuals are the same systemic MSVC instruction-selection
-//     choice (record-form `clrrwi.` vs retail's separate compare+branch for
-//     `vector::size() != 0`-shaped conditions), not logic bugs.
-//   - One residual (singer-score-loop energy read) is a confirmed benign
-//     register-allocation/scheduling artifact: retail spills a live value to
-//     the stack at this point, we don't need to -- verified against
-//     Singer.h's own 0x5c/0x60/0x64 offset comments, not a member-confusion
-//     bug.
-//   - One residual (solo pitch-correction target) is an unresolved, flagged
-//     compiler CSE/scheduling question -- see the TODO(W17) comment at its
-//     site. Not fixed here; left for a future matching lane.
-//   - Register-swap and prologue/register-save-helper (__savegprlr_14 vs
-//     __savegprlr_15) residuals are permuter-class noise, out of scope per
-//     standing project directive (permuter OFF).
-//   - Several retail callees at this row's Function Call Diff are ICF-folded
-//     template instantiations (objdiff shows an arbitrary survivor spelling,
-//     not a wrong callee) or genuinely unidentified fn_XXXXXXXX addresses;
-//     one candidate (SongSectionOnly) was identified and named this pass --
-//     see scripts/target_symbol_map.json and the W17-CLEAN-VP report for the
-//     COFF evidence. The remaining ~19 target-only addresses are unverified
-//     and left for a future identification pass.
+// Matches retail 0x826EB030 byte for byte (W16-RK). The register-swap and
+// frame-size residue earlier lanes filed as permuter-class all came from source
+// shape: inline by-value accessors at the sites where retail stores the
+// accessor's return temporary to a stack slot (Singer::GetFrameMicPitch /
+// GetBestTargetPitch / GetLastFrameMicEnergy, VocalPart::GetFrameMatchType /
+// PartIndex), declaration placement, and the shapes noted at each site below.
 void VocalPlayer::Poll(float ms, const SongPos &pos) {
     if (mGameOver)
         return;
@@ -524,12 +504,14 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     float frameMaxPitch = 0.0f;
     bool bWasInFreestyleSection = InFreestyleSection();
 
-    // scoredPartIndices initialized before SongSectionOnly, reserve mVocalParts.size()
-    std::vector<int> scoredPartIndices;
-
     float fBestFreestyleDeployAmt = 0.0f;
     int iMaximumFreestyleDeploymentSinger = -1;
+
+    // scoredPartIndices initialized before SongSectionOnly, reserve mVocalParts.size()
+    std::vector<int> scoredPartIndices;
     scoredPartIndices.reserve(mVocalParts.size());
+
+    VocalPart *pUnpitchedPart = 0;
 
     // Determine section scoring state
     float fSectionBeginMs = 0.0f;
@@ -547,8 +529,6 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     std::vector<Singer *> singersArray;
     singersArray.reserve(mSingers.size());
 
-    VocalPart *pUnpitchedPart = 0;
-
     // Poll tambourine manager
     mTambourineManager.Poll(fCompMS);
 
@@ -560,14 +540,11 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         pPart->Poll(fCompMS, pos);
         pPart->ClearSingerCandidates();
 
-        // pPart->unk98 is an un-named VocalPart field (no verified member name or
-        // offset comment in VocalPart.h) that appears to hold a per-part pitch
-        // mode: usage below implies 0 == pitched, 1 == unpitched. Inferred from
-        // context only -- not confirmed against retail or the class layout, so
-        // the field itself is left as unk98 rather than guessed at.
-        int partPitchMode = pPart->unk98;
-        bSomePitched = bSomePitched | (partPitchMode == 0);
-        bSomeUnpitched = bSomeUnpitched | ((partPitchMode - 1) == 0);
+        // The frame match type is read through the inline by-value accessor
+        // twice: retail loads 0x9c once and stores the accessor's return
+        // temporary to the same stack slot after each read.
+        bSomePitched = bSomePitched | (pPart->GetFrameMatchType() == 0);
+        bSomeUnpitched = bSomeUnpitched | ((pPart->GetFrameMatchType() - 1) == 0);
 
         VocalNote *pNote = (VocalNote *)pPart->mVocalNoteList->NoteAt(fCompMS);
         if (pNote && pNote->mUnpitchedNote && !pUnpitchedPart) {
@@ -642,29 +619,23 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
 
             if (bScoringAllowed && pPart->ScoringEnabled()) {
                 VocalScoreCache &cache = pSinger->AccessScoreCache(pPart->mPartIndex);
-                // W17: objdiff flags a mismatch here (retail spills a live value to
-                // a stack slot with `stfs`, ours instead loads straight from
-                // pSinger->mLastFrameMicEnergy at the same positional index) --
-                // confirmed benign register-allocation/scheduling noise, not a
-                // member-confusion bug: mFrameMicPitch/mLastFrameMicEnergy/
-                // mSmoothedMicEnergy below are read at 0x5c/0x60/0x64 respectively,
-                // an exact match for Singer.h's own `// 0xHEX` comments on those
-                // three members. No source change indicated.
-                float fEnergy = pSinger->mLastFrameMicEnergy;
+                // The energy goes through Singer's inline by-value accessor
+                // twice: retail stores the accessor's return temporary to a
+                // stack slot (stfs f3,0x68) before the fsubs.
                 int iRating;
                 float fDev;
                 pPart->ScoreSinger(
                     fCompMS,
                     pSinger->mFrameMicPitch,
-                    fEnergy,
-                    fEnergy - pSinger->mSmoothedMicEnergy,
+                    pSinger->mLastFrameMicEnergy,
+                    pSinger->GetLastFrameMicEnergy() - pSinger->mSmoothedMicEnergy,
                     pSinger->mOctaveOffset,
                     pSinger->mTalkyMatcher,
                     cache,
                     iRating,
                     fDev
                 );
-                if (kInvalidPitch != fDev && fabs(fDev) < fabsf(fBestPitchDeviation)) {
+                if (kInvalidPitch != fDev && fabsf(fDev) < fabsf(fBestPitchDeviation)) {
                     fBestPitchDeviation = fDev;
                 }
 
@@ -672,7 +643,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 if (cache.unk20) {
                     fScore *= mNonpitchStickiness;
                 }
-                pSinger->AppendToScoreHistory(fCompMS, pPart->mPartIndex, fScore, iRating);
+                pSinger->AppendToScoreHistory(fCompMS, pPart->PartIndex(), fScore, iRating);
             }
         }
         if (kInvalidPitch != fBestPitchDeviation) {
@@ -710,6 +681,8 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     // Greedy matching: repeatedly assign singers to parts until no more matches
     {
         bool bAnyAssigned;
+        int numParts;
+        int numSingers;
         do {
             bAnyAssigned = false;
             // For each singer in singersArray, find best part
@@ -719,7 +692,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 float fBestTargetPitch;
                 float fBestScore;
                 bool bFoundPart = FindBestPart(
-                        pSinger->mFrameMicPitch,
+                        pSinger->GetFrameMicPitch(),
                         fCompMS,
                         partsArray,
                         pSinger,
@@ -728,9 +701,9 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                         fBestScore
                     );
                 if (bFoundPart) {
+                    bAnyAssigned = true;
                     pBestPart->AddSingerCandidate(pSinger, fBestScore);
                     pSinger->mBestTargetPitch = fBestTargetPitch;
-                    bAnyAssigned = true;
                 }
 #ifdef HX_NATIVE
                 if (mVocalOverlay) {
@@ -745,7 +718,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 VocalPart *pPart = *pIt2;
                 Singer *pBestSinger = pPart->GetBestSingerCandidate();
                 if (pBestSinger) {
-                    pBestSinger->SetAssignedPart(pPart->mPartIndex, mVocalPartBias);
+                    pBestSinger->SetAssignedPart(pPart->PartIndex(), mVocalPartBias);
                     pBestSinger->mFrameTargetPitch = pBestSinger->mBestTargetPitch;
                     int partIndex = pPart->mPartIndex;
                     scoredPartIndices.push_back(partIndex);
@@ -768,30 +741,24 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                and it was measurably backwards: the hand-inlining produced two
                59-instruction blocks (118 instructions) that appear in our object
                and nowhere in retail. */
-            partsArray.erase(
-                std::remove_if(
-                    partsArray.begin(),
-                    partsArray.end(),
-                    std::mem_fun_t<bool, VocalPart>(&VocalPart::HasBestSingerCandidate)
-                ),
-                partsArray.end()
+            std::vector<VocalPart *>::iterator newPartsEnd = std::remove_if(
+                partsArray.begin(),
+                partsArray.end(),
+                std::mem_fun_t<bool, VocalPart>(&VocalPart::HasBestSingerCandidate)
             );
-            singersArray.erase(
-                std::remove_if(
-                    singersArray.begin(),
-                    singersArray.end(),
-                    std::const_mem_fun_t<bool, Singer>(&Singer::HasAssignedPart)
-                ),
-                singersArray.end()
+            partsArray.erase(newPartsEnd, partsArray.end());
+            std::vector<Singer *>::iterator newSingersEnd = std::remove_if(
+                singersArray.begin(),
+                singersArray.end(),
+                std::const_mem_fun_t<bool, Singer>(&Singer::HasAssignedPart)
             );
-        // W17: this loop condition is one of several confirmed sites in Poll
-        // (also the two vector-size checks feeding the octave-offset loop below)
-        // where retail emits a plain compare (`srawi`/`srawi.` + `cmpwi cr6` +
-        // branch) but our compiled code folds the comparison into a record-form
-        // instruction (`clrrwi.`) that sets CR0 implicitly. This is a systemic
-        // MSVC instruction-selection choice for "vector::size() != 0"-shaped
-        // comparisons, not a logic difference -- do not chase it as a source bug.
-        } while (partsArray.size() != 0 && singersArray.size() != 0);
+            singersArray.erase(newSingersEnd, singersArray.end());
+            // Both sizes are taken into ints before the test: retail computes
+            // them unconditionally (srawi, then cmpwi on the singer count), where
+            // `partsArray.size() != 0 && ...` lowers to clrrwi. masks.
+            numParts = partsArray.size();
+            numSingers = singersArray.size();
+        } while (numParts != 0 && numSingers != 0);
     }
 
 #ifdef HX_NATIVE
@@ -811,8 +778,8 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         pSinger->AllScoresAreIn(scoredPartIndices);
         pSinger->ResolveAmbiguity();
         int iOctaveOffset = 0;
-        bool bHasBestTarget = (0.0f != pSinger->mBestTargetPitch);
         float fFramePitch = pSinger->mFrameMicPitch;
+        bool bHasBestTarget = (0.0f != pSinger->mBestTargetPitch);
 
         if (bHasBestTarget) {
             pSinger->ClearFreestyleDeployment();
@@ -836,20 +803,20 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                     pSinger->AccessScoreHistory(pPart->mPartIndex).GetOctaveOffset();
             }
         } else {
-            float fOld = pSinger->GetFrameMicPitch();
             iOctaveOffset = pSinger->mOctaveOffset;
-            if (0.0f != fOld) {
-                float fPrev = pSinger->mBestTargetPitch;
-                bool bHasPrev = (0.0f != fPrev);
+            if (0.0f != pSinger->GetFrameMicPitch()) {
+                bool bHasPrev = (0.0f != pSinger->GetBestTargetPitch());
                 if (bHasPrev) {
-                    float diff = fPrev - fOld;
+                    float diff = pSinger->GetBestTargetPitch() - pSinger->mFrameMicPitch;
                     float absDiff = fabsf(diff);
                     float mod = (float)fmod(absDiff, 12.0);
                     float alt = kSemitone - mod;
                     mod = ((alt - mod) >= 0.0f) ? mod : alt;
                     if (mod <= kMaxOctaveDistance) {
-                        int sign = 1;
-                        if (diff <= 0.0f) {
+                        int sign;
+                        if (diff > 0.0f) {
+                            sign = 1;
+                        } else {
                             sign = -1;
                         }
                         int octaveAdjust = (int)(kHalfSemitone + absDiff / kSemitone);
@@ -857,8 +824,8 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                     }
                 }
             }
-            pSinger->mFrameBestHitScore = 0.0f;
             pSinger->mFrameTargetPitch = 0.0f;
+            pSinger->mFrameBestHitScore = 0.0f;
 
             if (!IsNet() && InFreestyleSection()) {
                 float fDeployAmt = pSinger->AddToFreestyleDeployment(fCompMS);
@@ -1000,12 +967,14 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         if (0.0f == fHitPct) {
             fAdjusted = 0.0f;
         }
-        /* Retail 0x826EB030: `fcmpu f3,f29; mr r4,r17(=0); beq; li r4,1` --
-           the flag starts false and is set only on the not-equal arm. A bare
-           `fAdjusted != 0.0f` argument emits the opposite shape
-           (`li r4,1; bne; mr r4,0`). */
-        bool bCorrect = false;
-        if (fAdjusted != 0.0f) {
+        /* Retail 0x826EB030: `fcmpu f3,f29; mr r4,r17(=0); beq; li r4,1`.
+           An if/else on `== 0.0f` puts the false copy after the compare;
+           `bool b = false; if (x != 0) b = true;` hoists it above the fcmpu,
+           and a bare `x != 0.0f` emits `li r4,1; bne; mr r4,0`. */
+        bool bCorrect;
+        if (fAdjusted == 0.0f) {
+            bCorrect = false;
+        } else {
             bCorrect = true;
         }
         TheGameMicManager->SetPitchCorrectionTarget(

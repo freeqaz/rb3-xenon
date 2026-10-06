@@ -63,9 +63,12 @@ static const size_t kMVSlotBase = 0x40;
 // symbol survives; the name is ours, the signature is fixed by the retail body. It
 // refuses (and leaves `out` untouched) when |det| < eps, else writes adj/det.
 // All four inputs are read before the first store, so `out` may alias `m`
-// (ExtendTwin inverts in place). It must be external, not static or inline:
-// under /O1 a once-called static/inline body is inlined, and retail calls it.
-bool Invert(const Hmx::Matrix2 &m, Hmx::Matrix2 &out, float eps) {
+// (ExtendTwin inverts in place). Retail calls it out of line, and ExtendTwin
+// keeps mv/outDir/outUv in r26-r31 across the call, i.e. the caller is compiled
+// without this body's register usage. A plain external lets /O1 use that
+// knowledge (outDir/outUv stay in r5/r6 across the call, ExtendTwin 84.96); an
+// inline COMDAT kept out of line does not (85.24, SetVertsAndFaces 99.00 -> 99.96).
+inline __declspec(noinline) bool Invert(const Hmx::Matrix2 &m, Hmx::Matrix2 &out, float eps) {
     if (std::fabs(m.x.x * m.y.y - m.x.y * m.y.x) < eps)
         return false;
     float inv = 1.0f / (m.y.y * m.x.x - m.x.y * m.y.x);
@@ -766,15 +769,22 @@ int BandPatchMesh::WorkVerts::TryAddFace(int faceidx, int b) {
     if (!reject && b != 3) {
         int prev = (b == 0) ? 2 : b - 1;
         int next = (b == 2) ? 0 : b + 1;
-        const Vector2 &pb = verts[b]->unk1c;
-        const Vector2 &pn = verts[next]->unk1c;
-        const Vector2 &pp = verts[prev]->unk1c;
-        float ex = pn.x - pb.x;
-        float ey = pn.y - pb.y;
-        float t = Clamp(0.0f, 1.0f, ((pp.x - pb.x) * ex + (pp.y - pb.y) * ey) / (ex * ex + ey * ey));
+        MeshVert *vb = verts[b];
+        MeshVert *vn = verts[next];
+        MeshVert *vp = verts[prev];
+        float ex = vn->unk1c.x - vb->unk1c.x;
+        float ey = vn->unk1c.y - vb->unk1c.y;
+        float t = Clamp(
+            0.0f,
+            1.0f,
+            ((vp->unk1c.x - vb->unk1c.x) * ex + (vp->unk1c.y - vb->unk1c.y) * ey)
+                / (ex * ex + ey * ey)
+        );
         Vector2 proj;
-        Interp(pb, pn, t, proj);
-        reject = (pp.x - 0.5f) * (pp.x - proj.x) + (pp.y - 0.5f) * (pp.y - proj.y) < 0;
+        Interp(vb->unk1c, vn->unk1c, t, proj);
+        reject = (vp->unk1c.x - 0.5f) * (vp->unk1c.x - proj.x)
+                + (vp->unk1c.y - 0.5f) * (vp->unk1c.y - proj.y)
+            < 0;
     }
     if (reject) {
         for (int i = unk10.size() - prevVertCount; i != 0; i--) {
@@ -1107,29 +1117,32 @@ bool BandPatchMesh::FindXfm(RndMesh *mesh, const Vector2 &uv, Transform &xfm) {
     for (int i = 0; i < 3; i++) {
         tri[i] = &mesh->Verts((*found)[i]);
     }
-    Hmx::Matrix3 uvMat;
-    Hmx::Matrix3 posMat;
-    Hmx::Matrix3 normMat;
-    Vector3 *uvRows = &uvMat.x;
-    Vector3 *posRows = &posMat.x;
-    Vector3 *normRows = &normMat.x;
-    for (int i = 0; i < 3; i++) {
-        uvRows[i].Set(tri[i]->tex.x, tri[i]->tex.y, 1.0f);
-        posRows[i] = tri[i]->pos;
-        normRows[i] = tri[i]->norm;
-    }
-    Invert(uvMat, uvMat);
     Hmx::Matrix3 posOut;
-    Multiply(uvMat, posMat, posOut);
-    Multiply(uvMat, normMat, posMat);
-    Vector3 uvw(uv.x, uv.y, 1.0f);
-    Multiply(uvw, posOut, xfm.v);
-    // Retail reads the two gradient rows once, here, and keeps all six floats
-    // in f26-f31 across the calls below for the closing lengths; Length(posOut.x)
-    // after the calls reloads them from the stack instead (frame 0x1f0, one
-    // saved FPR, 75.2%).
+    Hmx::Matrix3 posMat;
+    // Retail's normal rows sit at 0x50 and share that slot with centerMV
+    // (frame 0x220). A Matrix3 normMat never shares (frame 0x240, with or
+    // without a block, an inline helper, or operator[]); a scoped Vector3[3]
+    // does, which moves centerVert to retail's 0x130.
+    {
+        Hmx::Matrix3 uvMat;
+        Vector3 normRows[3];
+        for (int i = 0; i < 3; i++) {
+            uvMat[i].Set(tri[i]->tex.x, tri[i]->tex.y, 1.0f);
+            normRows[i] = tri[i]->norm;
+            posMat[i] = tri[i]->pos;
+        }
+        Invert(uvMat, uvMat);
+        Multiply(uvMat, posMat, posOut);
+        Multiply(uvMat, *(Hmx::Matrix3 *)normRows, posMat);
+    }
+    // Retail keeps posOut.x/.y in f26-f31 across the three calls below for the
+    // closing lengths. Length(posOut.x) after the calls reloads them instead
+    // (75.18); Vector3 axisX = posOut.x copies through GPRs (67.73). Ours still
+    // loads each into a scratch FPR and fmr's it across.
     Vector3 axisX(posOut.x.x, posOut.x.y, posOut.x.z);
     Vector3 axisY(posOut.y.x, posOut.y.y, posOut.y.z);
+    Vector3 uvw(uv.x, uv.y, 1.0f);
+    Multiply(uvw, posOut, xfm.v);
     Multiply(uvw, posMat, xfm.m.z);
     ::Normalize(xfm.m.z, xfm.m.z);
     RndMesh::Vert centerVert;
@@ -1137,7 +1150,7 @@ bool BandPatchMesh::FindXfm(RndMesh *mesh, const Vector2 &uv, Transform &xfm) {
     centerMV.SetVert(&centerVert);
     centerMV.unk4 = posOut.x;
     centerMV.unk10 = posOut.y;
-    centerMV.unk10.x *= -1.0f;
+    centerMV.unk10.x = axisY.x * -1.0f; // retail negates the held f31, not a reload
     centerMV.unk10.y *= -1.0f;
     centerMV.unk10.z *= -1.0f;
     centerVert.norm = xfm.m.z;
