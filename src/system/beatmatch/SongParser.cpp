@@ -2090,18 +2090,17 @@ bool SongParser::HandleRGGemStop(
             return true;
         }
         info.mRGGemsInfo[stringnum].unk18 = tick;
-        SongParser::RGGemInfo *gems = info.mRGGemsInfo;
         for (int i = 0; i < 6; i++) {
-            if (gems[i].mGem.mTick != -1 && gems[i].unk18 == -1)
+            if (info.mRGGemsInfo[i].mGem.mTick != -1 && info.mRGGemsInfo[i].unk18 == -1)
                 allStringsEnded = false;
         }
         if (allStringsEnded) {
             int firstEndTick = -1;
             for (unsigned int i = 0; i < 6; i++) {
-                SongParser::RGGemInfo &cur = gems[i];
-                if (firstEndTick == -1 && cur.mGem.mTick != -1)
-                    firstEndTick = cur.unk18;
-                else if (cur.mGem.mTick != -1 && firstEndTick != cur.unk18) {
+                if (firstEndTick == -1 && info.mRGGemsInfo[i].mGem.mTick != -1)
+                    firstEndTick = info.mRGGemsInfo[i].unk18;
+                else if (info.mRGGemsInfo[i].mGem.mTick != -1
+                         && firstEndTick != info.mRGGemsInfo[i].unk18) {
                     MILO_WARN(
                         "%s (%s): Real Guitar Chord does not end on the same note at %s",
                         mFilename,
@@ -2128,14 +2127,10 @@ bool SongParser::HandleRGGemStop(
             geminfo.track = mTrack;
             float on_time = GetTempoMap()->TickToTime((float)on_tick);
             geminfo.ms = on_time;
-            int duration_ticks = tick - on_tick;
-            geminfo.duration_ms = off_time - on_time;
-            geminfo.duration_ticks = duration_ticks;
-            bool ignDur = false;
-            if (mIgnoreGemDurations || duration_ticks <= 160)
-                ignDur = true;
-            geminfo.ignore_duration = ignDur;
             geminfo.tick = on_tick;
+            geminfo.duration_ms = off_time - on_time;
+            geminfo.duration_ticks = tick - on_tick;
+            geminfo.ignore_duration = mIgnoreGemDurations || geminfo.duration_ticks <= 160;
             geminfo.no_strum = GetNoStrumState(on_tick, info);
 
             bool inChordNaming =
@@ -2164,9 +2159,7 @@ bool SongParser::HandleRGGemStop(
 
             geminfo.reverse_slide = info.mRGFlipSlideDirection;
 
-            int distFromChordText = on_tick - info.mRGChordTextTick;
-            int distSign = distFromChordText >> 31;
-            if ((distSign ^ distFromChordText) - distSign < 10) {
+            if (abs(on_tick - info.mRGChordTextTick) < 10) {
                 strcpy(geminfo.chord_name, info.mRGChordText);
             } else {
                 geminfo.chord_name[0] = 0;
@@ -2188,12 +2181,11 @@ bool SongParser::HandleRGGemStop(
 
             // Fill frets and note_types per string
             {
-                SongParser::RGGemInfo *src = &info.mRGGemsInfo[0];
                 unsigned int si = 0;
                 do {
-                    if (src->mGem.mTick != -1) {
-                        geminfo.frets[si] = (char)src->mFret;
-                        geminfo.note_types[si] = (RGNoteType)src->mChannel;
+                    if (info.mRGGemsInfo[si].mGem.mTick != -1) {
+                        geminfo.frets[si] = (char)info.mRGGemsInfo[si].mFret;
+                        geminfo.note_types[si] = (RGNoteType)info.mRGGemsInfo[si].mChannel;
                         char fret = geminfo.frets[si];
                         int handPos = mRGHandPos;
                         if ((signed char)fret - handPos > 15) {
@@ -2213,7 +2205,7 @@ bool SongParser::HandleRGGemStop(
                             );
                             geminfo.frets[si] = (char)mRGHandPos;
                         }
-                        if (src->mChannel == 4) {
+                        if (info.mRGGemsInfo[si].mChannel == 4) {
                             geminfo.no_strum = kStrumForceOn;
                         }
                     } else {
@@ -2221,7 +2213,6 @@ bool SongParser::HandleRGGemStop(
                         geminfo.note_types[si] = kRGNormal;
                     }
                     si++;
-                    src++;
                 } while (si < 6U);
             }
 
@@ -2264,15 +2255,16 @@ bool SongParser::HandleRGGemStop(
             }
 
             if (numActive > 1) {
-                if (mRGRootNote < 0) {
-                    if (geminfo.show_chord_names) {
-                        MILO_WARN(
-                            "%s (%s): No root note set for gem at %s",
-                            mFilename,
-                            mTrackName,
-                            PrintTick(tick)
-                        );
-                    }
+                // Only a chord that shows its name needs a root: without one it
+                // warns and uses 0; otherwise mRGRootNote is stored as-is, even
+                // when it is still unset (-1).
+                if (mRGRootNote < 0 && geminfo.show_chord_names) {
+                    MILO_WARN(
+                        "%s (%s): No root note set for gem at %s",
+                        mFilename,
+                        mTrackName,
+                        PrintTick(tick)
+                    );
                     geminfo.root_note = 0;
                 } else {
                     geminfo.root_note = (unsigned char)mRGRootNote;

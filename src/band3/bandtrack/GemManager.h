@@ -168,7 +168,7 @@ public:
     std::vector<ArpeggioPhrase *> mActiveArpeggios; // 0x130
     std::vector<ArpeggioPhrase *> mExpiredArpeggios; // 0x13c
     float unk12c;
-    int unk130;
+    unsigned int unk130;
     int unk134;
 };
 
