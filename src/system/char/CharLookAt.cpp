@@ -289,7 +289,17 @@ void CharLookAt::Poll() {
                     MultiplyVM(pivotXfm.m.y, rotMat, lookDir);
                 } else
                     Normalize(lookDir, lookDir);
-                Multiply(mPivot->TransParent()->WorldXfm().m, lookDir, lookDir);
+                // The parentMat / filterMat / xAxis references below (here, in the
+                // sourceFilter block and before the first Cross) generate no
+                // code of their own; together they move MSVC's commutative FP
+                // operand order to retail's in the lookDir Multiply and in the
+                // second Cross (99.84 -> 99.93, W16-RF). The four rows left are
+                // the operand order of sourceFilter's *= and of its Multiply;
+                // ~2,400 screened spellings (filterSq temporaries, the
+                // Subtract, the scale, the declaration's position, dead locals)
+                // did not move them.
+                const Hmx::Matrix3 &parentMat = mPivot->TransParent()->WorldXfm().m;
+                Multiply(parentMat, lookDir, lookDir);
                 Normalize(lookDir, lookDir);
                 mDisableRoll = mLookLimits.Clamp(lookDir);
                 Normalize(lookDir, lookDir);
@@ -312,7 +322,8 @@ void CharLookAt::Poll() {
                     lookDir.z += yawJitter * DEG2RAD;
                 }
                 if (mSourceRadius > 0.0f) {
-                    Multiply(mPivot->TransParent()->WorldXfm().m, sourceFilter, sourceFilter);
+                    const Hmx::Matrix3 &filterMat = mPivot->TransParent()->WorldXfm().m;
+                    Multiply(filterMat, sourceFilter, sourceFilter);
                     lookDir -= sourceFilter;
                 }
                 if (mAllowRoll) {
@@ -335,7 +346,8 @@ void CharLookAt::Poll() {
                     Interp(dirtyMat.y, lookDir, charWeight, dirtyMat.y);
                     dirtyMat.z.Set(-1.0f, 0.0f, 0.0f);
                     Normalize(dirtyMat.y, dirtyMat.y);
-                    Cross(dirtyMat.y, dirtyMat.z, dirtyMat.x);
+                    Vector3 &xAxis = dirtyMat.x;
+                    Cross(dirtyMat.y, dirtyMat.z, xAxis);
                     Normalize(dirtyMat.x, dirtyMat.x);
                     Cross(dirtyMat.x, dirtyMat.y, dirtyMat.z);
                     if (dirtyMat.x.x < -2.0f || dirtyMat.x.x > 2.0f) {
