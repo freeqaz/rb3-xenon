@@ -7832,6 +7832,10 @@ MultiTempoTempoMap.cpp:
 	.text       start:0x82BBAAC0 end:0x82BBAB0C
 	.text       start:0x82BBAB18 end:0x82BBABEC
 
+system/utl/SuperFormatString.cpp:
+	.pdata      start:0x8225EB60 end:0x8225EB80
+	.text       start:0x82BBABEC end:0x82BBB2E8
+
 ContentMgr.cpp:
 	.pdata      start:0x82218AD0 end:0x82218B50
 	.pdata      start:0x82218B80 end:0x82218B88

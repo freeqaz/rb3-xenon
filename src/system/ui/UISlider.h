@@ -25,7 +25,8 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
-    virtual void SetTypeDef(DataArray *);
+    // No SetTypeDef override: RB3 retail's UISlider slot is the vtordisp thunk
+    // 0x82809BD8 (this -= 0x18) into UIComponent::SetTypeDef (0x827FE658).
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &);
     // RndDrawable

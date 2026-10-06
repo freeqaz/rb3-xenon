@@ -69,11 +69,6 @@ BEGIN_LOADS(UISlider)
     PostLoad(bs);
 END_LOADS
 
-void UISlider::SetTypeDef(DataArray *def) {
-    Hmx::Object::SetTypeDef(def);
-    Update();
-}
-
 // RB3 retail PreLoad (0x82809E98) / PostLoad (0x82809F08) keep no BinStreamRev:
 // the packed rev is split into two mutable TU shorts (alt at +0, rev at +4), no
 // guard, no Push/PopRev, and PostLoad reads mSelectToScroll iff rev != 0. There is

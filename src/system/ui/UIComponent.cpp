@@ -260,7 +260,13 @@ void UIComponent::UpdateMeshes(State s) {
 void UIComponent::UpdateResource() {
     if (mResource)
         mResource->Release();
+#ifdef HX_NATIVE
+    // Native drivers that load UI milos without booting a UIManager (TheUI
+    // null) get no shared resource instead of a null dereference.
+    mResource = TheUI ? TheUI->Resource(this) : nullptr;
+#else
     mResource = TheUI->Resource(this);
+#endif
     if (mResource) {
         mResource->Load(mLoading);
     }
