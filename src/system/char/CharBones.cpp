@@ -820,6 +820,15 @@ void CharBones::ScaleAdd(CharBones &bones, float f2) const {
                     // uncompressed arm below both match with the header form --
                     // their components are ready in one instruction, so the
                     // scheduler has nothing to reorder around.)
+                    //
+                    // RESIDUAL (W16-RF fork F, 99.95 fuzzy / mpn 100): two operand-order
+                    // rows, both on x. The image has q.x as the first operand of
+                    // the dot's x term and of the else arm's x add; ours has
+                    // otherQuatItr->x first. Byte-identical: swapping the operands in
+                    // either place, assigning q.x after y/z/w, a Quat ctor in place of
+                    // Set, and a `const Quat &o` alias for *otherQuatItr. Worse: one
+                    // expression (98.15), z,y,w,x accumulation (98.17), paired sums
+                    // (95.74), and `*otherQuatItr * q` (98.4).
                     float quatDot = q.y * otherQuatItr->y;
                     quatDot += q.z * otherQuatItr->z;
                     quatDot += q.w * otherQuatItr->w;
@@ -1015,6 +1024,11 @@ static void RotateByMultiplyUncompressed(
 }
 
 // MARK: RotateBy
+// RESIDUAL (W16-RF fork F, 99.94 fuzzy / mpn 100): two `fadds` operand-order rows,
+// the x add of the ShortVector3 arm and the z add of the Vector3 arm. Byte-identical:
+// `Add(*otherVecItr, v, *otherVecItr)` and per-component `a = b + a` spellings. Worse:
+// `Add(*myVecItr, *otherVecItr, ...)` (96.83), and ToVector3 after the name search
+// or a Vector3(short *) temporary (87.72).
 void CharBones::RotateBy(CharBones &bones) const {
     if (!mBones.empty()) {
         Bone *myBonesItr = (Bone *)mBones.data();
@@ -1313,6 +1327,10 @@ static void RotateToMultiplyUncompressed(
 }
 
 // MARK: RotateTo
+// RESIDUAL (W16-RF fork F, 99.76 fuzzy / mpn 100): FPR operand-order and f2<->f4 rows
+// in the ShortQuat and uncompressed arms (RotateToMultiply's operands). Tried in the
+// uncompressed arm's q.Set: `f2 * x` / `f2 * z` (byte-identical) and per-component
+// assignments in w,x,y,z order (99.73).
 void CharBones::RotateTo(CharBones &bones, float f2) const {
     if (!mBones.empty()) {
         Bone *myBonesItr = (Bone *)mBones.data();
