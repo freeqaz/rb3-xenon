@@ -223,13 +223,16 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
   ~10 found verbatim there. Also the standing reminder that **every numeric
   absolute predating 2026-08-12 is dead on the ruler flip**.
 - ★★★ **START HERE — the single current-state doc.**
-  [decomp/CAMPAIGN_STATE_2026-10-03b.md](decomp/CAMPAIGN_STATE_2026-10-03b.md) —
-  **seventh edition (2026-10-03, after W16-OT…PA).** Full build at main
-  `83e92ed07`, `name_check`: **53,349 / 68,909 matched · `matched_code`
-  5,891,704 B = 57.492% · ceiling 64.624%, we stand at 88.96% of it.** Scoped to
-  the native port: **in-scope gap 973 rows / 295,552 B (92.26% matched)**, with
-  one disposition per row (settled, in flight, worked-and-left, untried), what
-  each 10-03 lever returned, and the ranking for the round after the pause.
+  [decomp/CAMPAIGN_STATE_2026-10-06.md](decomp/CAMPAIGN_STATE_2026-10-06.md) —
+  **eighth edition (2026-10-06, after W16-PB…PL; W16-PG landed after it).** Full build at main
+  `7e5a99800`, `name_check`: **53,484 / 68,909 matched · `matched_code`
+  5,925,876 B = 57.826% · ceiling 64.624% (unchanged), we stand at 89.48% of it.** Scoped to the
+  native port: **in-scope gap 843 rows / 263,644 B (93.10% matched)**, each lane's Δ split by ring from
+  its archived A/B legs, one disposition per row with a native-compiled column (41% of the gap is in
+  files native builds today), and levers ranked by native relevance, then size.
+- [decomp/CAMPAIGN_STATE_2026-10-03b.md](decomp/CAMPAIGN_STATE_2026-10-03b.md) —
+  **seventh edition (W16-OT…PA, main `83e92ed07`), superseded by 10-06.** In-scope gap 295,552 B
+  (92.26%); introduced the one-disposition-per-row table 10-06 reruns.
 - [decomp/CAMPAIGN_STATE_2026-10-03.md](decomp/CAMPAIGN_STATE_2026-10-03.md) —
   **sixth edition, the method record (W16-OV, main `99ee35830`).** Scope rings
   (IN-CORE / IN-SOON / IN-RB3ENG; DC3 has no `bandobj`), the class × ring
