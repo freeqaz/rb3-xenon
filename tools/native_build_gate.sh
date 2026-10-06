@@ -498,6 +498,50 @@ for t in "${expected[@]}"; do
     if [ "$BUILD/$t" -nt "$MARKER" ]; then relinked+=("$t"); else ok+=("$t"); fi
 done
 
+# ------------------------------------------------- class-layout ODR check --
+# (lane W16-QD, 2026-10-06; tools/layout_odr.py, docs/decomp/W16QD_*.md)
+# A class laid out differently in two TUs of one program is an ODR split. The
+# native LINK cannot see it (no layout comparison without LTO/modules) and the
+# X360 build never links, so a green build says nothing about it. W16-PZ found
+# four by hand. This runs the check over every class in every TU of BOTH
+# builds: x360 = one program; native = one ODR domain per linked executable.
+#
+#   NATIVE_GATE_LAYOUT_ODR=all     (default) both domains
+#   NATIVE_GATE_LAYOUT_ODR=native  native only; x360 is reported SKIPPED
+#   NATIVE_GATE_LAYOUT_ODR=off     neither; reported SKIPPED
+# A skipped domain makes the run INCOMPLETE (rc=3), never PASS, so turning the
+# check off cannot read as full coverage. A layout FAIL is a gate FAIL (rc=1).
+# Cost: cached by content in ~/.cache/rb3-layout-odr, keyed on every header a
+# TU includes, so a warm run re-lays-out only the TUs whose inputs changed. A
+# change to a header included everywhere (obj/Object.h) re-runs all ~1,264
+# X360 TUs: measured ~25 min at -j16 under fleet load.
+LAYOUT_ODR="${NATIVE_GATE_LAYOUT_ODR:-all}"
+LAYOUT_LOG="${LOG%.log}.layout_odr.log"
+layout_line=""
+if [ $build_rc -eq 0 ]; then
+    case "$LAYOUT_ODR" in
+        all)    lo_doms="all" ;;
+        native) lo_doms="native"
+                skipped_lines+=("  SKIPPED   layout-odr[x360] -- NATIVE_GATE_LAYOUT_ODR=native") ;;
+        off)    lo_doms=""
+                skipped_lines+=("  SKIPPED   layout-odr -- NATIVE_GATE_LAYOUT_ODR=off") ;;
+        *)      lo_doms=""
+                fail_lines+=("  LAYOUTODR bad NATIVE_GATE_LAYOUT_ODR='$LAYOUT_ODR' (all|native|off)") ;;
+    esac
+    if [ -n "$lo_doms" ]; then
+        python3 "$DIR/tools/layout_odr.py" --project-dir "$DIR" check --domain "$lo_doms" \
+            -j "${NATIVE_GATE_LAYOUT_JOBS:-16}" > "$LAYOUT_LOG" 2>&1
+        lo_rc=$?
+        layout_line="$(G '^LAYOUT_ODR_RESULT ' "$LAYOUT_LOG" | tail -1)"
+        case $lo_rc in
+            0) ;;
+            1) fail_lines+=("  LAYOUTODR class-layout ODR split(s) -- see $LAYOUT_LOG") ;;
+            *) skipped_lines+=("  SKIPPED   layout-odr -- check could not answer (rc=$lo_rc) -- see $LAYOUT_LOG") ;;
+        esac
+        [ -z "$layout_line" ] && fail_lines+=("  LAYOUTODR no LAYOUT_ODR_RESULT line (rc=$lo_rc) -- see $LAYOUT_LOG")
+    fi
+fi
+
 # ------------------------------------------------------------- report ------
 echo "=== NATIVE BUILD GATE ==="
 echo "tree:      $DIR"
@@ -513,6 +557,10 @@ for t in ${ok[@]+"${ok[@]}"};             do echo "  OK        $t -- up to date 
 for l in ${skipped_lines[@]+"${skipped_lines[@]}"}; do echo "$l"; done
 for l in ${fail_lines[@]+"${fail_lines[@]}"};       do echo "$l"; done
 [ $partial -eq 1 ] && [ ${#omitted[@]} -gt 0 ] && echo "  OMITTED   ${omitted[*]}"
+if [ -n "$layout_line" ]; then
+    echo "layout:    $layout_line"
+    G -E '^  (SPLIT|UNRESOLVED|UNANSWERED|STALE|VACUOUS) ' "$LAYOUT_LOG" | head -20 | sed 's/^/  /'
+fi
 echo
 
 n_ok=$(( ${#ok[@]} + ${#relinked[@]} ))
