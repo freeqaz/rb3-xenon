@@ -19649,7 +19649,6 @@
  "0x8268e858": "??_GLocalBandUser@@UAAPAXI@Z",
  "0x8268e8b0": "??0NullLocalBandUser@@QAA@XZ",
  "0x8268eab8": "??_GNullLocalBandUser@@UAAPAXI@Z",
- "0x8268ed50": "?SyncProperty@BandUser@@$4PPPPPPPM@PPPPPPCE@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x8268ed70": "??_EAutoplayAuditionUser@@$4PPPPPPPM@A@AAPAXI@Z",
  "0x8268efd0": "?NewLocalBandUser@BandUser@@SAPAVLocalBandUser@@XZ",
  "0x8268f050": "?NewNullLocalBandUser@BandUser@@SAPAVNullLocalBandUser@@XZ",
@@ -36301,5 +36300,11 @@
  "0x8275cdc8": "??1?$vector@UObjVersion@@V?$StlNodeAlloc@UObjVersion@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
  "0x827cc540": "?UTF8ToLower@@YAXGPAD@Z",
  "0x827cc600": "?UTF8ToUpper@@YAXGPAD@Z",
- "0x8268ade0": "?IsInSession@BandUser@@UBA_NPAVSessionMgr@@@Z"
+ "0x8268ade0": "?IsInSession@BandUser@@UBA_NPAVSessionMgr@@@Z",
+ "0x827dced8": "?NewObject@TrackDir@@SAPAVObject@Hmx@@XZ",
+ "0x827dcf78": "?NewObject@TrackWidget@@SAPAVObject@Hmx@@XZ",
+ "0x827dd010": "?TrackInit@@YAXXZ",
+ "0x822e3730": "?SetCamPos@GemTrackDir@@QAAXMMM@Z",
+ "0x822e3878": "?SetTrackOffset@GemTrackDir@@QAAXM@Z",
+ "0x8268c978": "?SyncProperty@BandUser@@$4PPPPPPPM@PPPPPPCE@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
 }

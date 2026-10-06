@@ -426,7 +426,7 @@ void GemTrackDir::SetFOV(float fov) {
 
 void GemTrackDir::SetCamPos(float x, float y, float z) {
     if (Cam()) {
-        Cam()->SetLocalPos(x, y, z);
+        Cam()->SetLocalPos(Vector3(x, y, z));
     }
 }
 
@@ -1085,7 +1085,9 @@ void GemTrackDir::SetScreenRectX(float f) {
 void GemTrackDir::SetTrackOffset(float f) {
     if (unk488 >= 0 && unk488 < mNumTracks) {
         RndGroup *rot = mRotater.Ptr();
-        rot->DirtyLocalXfm().v.x = -f * (unk488 - 0.5f * (mNumTracks - 1));
+        Vector3 pos = rot->LocalXfm().v;
+        pos.x = -f * (unk488 - 0.5f * (mNumTracks - 1));
+        rot->SetLocalPos(pos);
     }
 }
 

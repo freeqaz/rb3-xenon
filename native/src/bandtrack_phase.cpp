@@ -32,6 +32,7 @@
 #include "bandobj/GemTrackDir.h"
 #include "bandobj/NoteTube.h"
 #include "bandobj/TrackPanelDir.h"
+#include "bandobj/BandLabel.h"
 #include "bandobj/VocalTrackDir.h"
 #include "bandtrack/VocalTrack.h"
 #include "beatmatch/PlayerTrackConfig.h"
@@ -42,9 +43,13 @@
 #include "obj/Dir.h"
 #include "obj/DirLoader.h"
 #include "os/System.h"
+#include "rndobj/Cam.h"
+#include "rndobj/Dir.h"
 #include "rndobj/Group.h"
 #include "rndobj/Mesh.h"
 #include "utl/FilePath.h"
+#include "track/TrackDir.h"
+#include "track/TrackWidget.h"
 #include "utl/HxGuid.h"
 
 #include <cmath>
@@ -109,6 +114,162 @@ ObjectDir *LoadMilo(ObjDirPtr<ObjectDir> &ptr, const char *path) {
     return ptr;
 }
 
+// ------------------------------------------------------------ W16-QC gates --
+// The track factories are registered by TrackInit() (milo_object_factories.cpp),
+// which registers TrackDir and then TrackWidget, as retail's App::App does. Each
+// factory must build its own class through the class's own operator new.
+void TrackInitChecks() {
+    Hmx::Object *d = Hmx::Object::NewObject(TrackDir::StaticClassName());
+    Hmx::Object *w = Hmx::Object::NewObject(TrackWidget::StaticClassName());
+    TrackDir *td = dynamic_cast<TrackDir *>(d);
+    TrackWidget *tw = dynamic_cast<TrackWidget *>(w);
+    Gate("bt-trackinit", td && tw && td->ClassName() == TrackDir::StaticClassName()
+             && tw->ClassName() == TrackWidget::StaticClassName(),
+         "TrackDir factory -> [%s], TrackWidget factory -> [%s]",
+         d ? d->ClassName().Str() : "(null)", w ? w->ClassName().Str() : "(null)");
+    delete d;
+    delete w;
+}
+
+bool NearV(const Vector3 &a, const Vector3 &b, float eps = 1e-4f) {
+    return Near(a.x, b.x, eps) && Near(a.y, b.y, eps) && Near(a.z, b.z, eps);
+}
+
+// The world position a transformable must report after a local change: the
+// parent's world transform applied to the new local one.
+Vector3 ExpectedWorldPos(RndTransformable *t) {
+    RndTransformable *p = t->TransParent();
+    if (!p)
+        return t->LocalXfm().v;
+    Transform out;
+    Multiply(t->LocalXfm(), p->WorldXfm(), out);
+    return out.v;
+}
+
+// GemTrackDir::SetTrackOffset moves only the rotater's local x, to
+// -f * (slot - (numTracks - 1) / 2), keeping y and z, and the change must reach
+// the rotater's world transform. SetCamPos replaces the camera's local position
+// and likewise must reach its world transform. Each track is put in a 5-track
+// layout at its own slot; every value is restored afterwards.
+void GemTrackOffsetChecks(TrackPanelDir *tp) {
+    int n = 0, offOk = 0, camN = 0, camOk = 0;
+    const float f = 2.5f;
+    for (ObjDirItr<GemTrackDir> it(tp, true); it != nullptr; ++it) {
+        GemTrackDir *g = it;
+        RndGroup *rot = g->mRotater.Ptr();
+        if (!rot)
+            continue;
+        int slot = n++;
+        int oldNum = g->mNumTracks, oldSlot = g->unk488;
+        Transform oldLocal = rot->LocalXfm();
+        (void)rot->WorldXfm(); // clean, so a missing dirty mark would show
+        g->mNumTracks = 5;
+        g->unk488 = slot;
+        g->SetTrackOffset(f);
+        Vector3 want = oldLocal.v;
+        want.x = -f * (slot - 0.5f * (5 - 1));
+        if (NearV(rot->LocalXfm().v, want) && NearV(rot->WorldXfm().v, ExpectedWorldPos(rot)))
+            offOk++;
+        else
+            printf("  %s: rotater local (%g %g %g) want (%g %g %g)\n", g->Name(),
+                   rot->LocalXfm().v.x, rot->LocalXfm().v.y, rot->LocalXfm().v.z, want.x,
+                   want.y, want.z);
+        rot->SetLocalXfm(oldLocal);
+        g->mNumTracks = oldNum;
+        g->unk488 = oldSlot;
+
+        RndCam *cam = g->Cam();
+        if (cam) {
+            camN++;
+            Vector3 oldPos = cam->LocalXfm().v;
+            (void)cam->WorldXfm();
+            Vector3 p(1.25f + slot, -3.5f, 7.0f);
+            g->SetCamPos(p.x, p.y, p.z);
+            if (NearV(cam->LocalXfm().v, p) && NearV(cam->WorldXfm().v, ExpectedWorldPos(cam)))
+                camOk++;
+            cam->SetLocalPos(oldPos);
+        }
+    }
+    Gate("bt-gemtrack-offset", n == 4 && offOk == n,
+         "%d/%d GemTrackDir rotaters at x = -f*(slot-2), y/z kept, world updated", offOk, n);
+    Gate("bt-gemtrack-campos", camN > 0 && camOk == camN,
+         "%d/%d GemTrackDir cameras at the set position, world updated", camOk, camN);
+}
+
+// TrackPanelDir::UpdateTimeInfo in audition mode loads ui/track/time_info.milo
+// as a child dir named time_info and binds the readout group and its four
+// labels from THAT dir. The panel itself holds none of them, so binding them
+// from the panel finds nothing.
+class AuditionGameMode : public Hmx::Object {
+public:
+    virtual DataNode Handle(DataArray *msg, bool warn) {
+        static Symbol in_mode("in_mode");
+        static Symbol audition("audition");
+        if (msg->Sym(1) == in_mode)
+            return DataNode(msg->Size() > 2 && msg->Sym(2) == audition);
+        return Hmx::Object::Handle(msg, warn);
+    }
+};
+
+// The panel's configuration object is set by the game at runtime, so a loaded
+// panel has none; this one answers the only property UpdateTimeInfo reads.
+class WidescreenConfig : public Hmx::Object {
+public:
+    virtual bool SyncProperty(DataNode &n, DataArray *prop, int i, PropOp op) {
+        static Symbol aspect("aspect");
+        if (op == kPropGet && i == prop->Size() - 1 && prop->Sym(i) == aspect) {
+            n = Symbol("widescreen");
+            return true;
+        }
+        return Hmx::Object::SyncProperty(n, prop, i, op);
+    }
+};
+
+void TimeInfoChecks(TrackPanelDir *tp) {
+    bool panelHas = tp->FindObject("time.grp", false) != nullptr;
+    if (!tp->mVocalTrack) {
+        Gate("bt-timeinfo", false, "panel lacks its vocal track");
+        return;
+    }
+    WidescreenConfig *cfg = new WidescreenConfig;
+    tp->mConfiguration = cfg;
+    AuditionGameMode *gm = new AuditionGameMode;
+    gm->SetName("gamemode", ObjectDir::Main());
+    bool oldOver = tp->unk378;
+    tp->unk378 = false;
+    tp->UpdateTimeInfo();
+    tp->unk378 = oldOver;
+    RndDir *ti = dynamic_cast<RndDir *>(tp->FindObject("time_info", false));
+    RndGroup *grp = tp->mTimeGrp;
+    // The shipped time_info.milo has no time_section.lbl (it holds time.grp and
+    // the mbt/elapsed/remaining labels), so that one binding may be null, but
+    // only while the dir itself lacks the label.
+    bool sectionShipped = ti && ti->FindObject("time_section.lbl", false) != nullptr;
+    bool sectionOk = sectionShipped ? (tp->mTimeSection && tp->mTimeSection->Dir() == ti)
+                                    : !tp->mTimeSection;
+    bool labelsFromDir = ti && tp->mTimeMbt && tp->mTimeElapsed && tp->mTimeRemaining
+        && tp->mTimeMbt->Dir() == ti && tp->mTimeElapsed->Dir() == ti
+        && tp->mTimeRemaining->Dir() == ti && sectionOk;
+    // widescreen x 10.15; z 1.5 with the vocal track showing, else 4.5.
+    Vector3 wantPos(10.15f, 25.0f, tp->mVocalTrack->Showing() ? 1.5f : 4.5f);
+    bool placed = grp && grp->Dir() == ti && grp->Showing()
+        && NearV(grp->LocalXfm().v, wantPos);
+    Gate("bt-timeinfo", !panelHas && ti && labelsFromDir && placed,
+         "time_info dir %s; time.grp %s at (%.3g %.3g %.3g) (panel has its own: %s); "
+         "mbt/elapsed/remaining bound from it: %s; time_section.lbl %s",
+         ti ? "loaded" : "MISSING", grp ? (grp->Dir() == ti ? "from time_info" : "elsewhere") : "unbound",
+         grp ? grp->LocalXfm().v.x : 0.f, grp ? grp->LocalXfm().v.y : 0.f,
+         grp ? grp->LocalXfm().v.z : 0.f, panelHas ? "yes" : "no", labelsFromDir ? "yes" : "no",
+         sectionShipped ? "shipped and bound" : "not in the shipped dir, binding null");
+    if (grp && !placed)
+        printf("  time.grp local (%g %g %g) want (%g %g %g), showing %d\n",
+               grp->LocalXfm().v.x, grp->LocalXfm().v.y, grp->LocalXfm().v.z, wantPos.x,
+               wantPos.y, wantPos.z, (int)grp->Showing());
+    tp->mConfiguration = nullptr;
+    delete cfg;
+    delete gm;
+}
+
 // ---------------------------------------------------------------- layer 1 --
 void TrackPanelChecks(ObjDirPtr<ObjectDir> &tpPtr) {
     printf("\n=== bandtrack: ui/track/gen/trackpanel.milo_xbox ===\n");
@@ -123,6 +284,8 @@ void TrackPanelChecks(ObjDirPtr<ObjectDir> &tpPtr) {
     int gems = CountClass<GemTrackDir>(tp), vox = CountClass<VocalTrackDir>(tp);
     Gate("bt-trackpanel-tracks", gems == 4 && vox == 1,
          "%d GemTrackDir (header: 4), %d VocalTrackDir (header: 1)", gems, vox);
+    GemTrackOffsetChecks(tp);
+    TimeInfoChecks(tp);
 }
 
 void VocalTrackDirChecks(VocalTrackDir *vd) {
@@ -325,6 +488,7 @@ int RunBandTrackPhase(GateFn gate) {
     if (!dd)
         return 1;
 
+    TrackInitChecks();
     ObjDirPtr<ObjectDir> tpPtr;
     TrackPanelChecks(tpPtr);
 
