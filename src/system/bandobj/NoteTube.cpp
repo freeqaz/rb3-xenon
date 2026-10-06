@@ -450,18 +450,14 @@ void TubePlate::AllocateVerts(int num, bool warn) {
 
 void TubePlate::AllocateFaces(int num, bool warn) {
     std::vector<RndMesh::Face> &faces = mMesh->Faces();
-    int newsize = num + faces.size();
     int cap = faces.capacity();
+    int newsize = faces.size() + num;
     if (newsize > cap) {
-        int count = mAllocationCount;
-        float ceiled = std::ceil((float)(newsize - cap) / (float)count);
-        faces.reserve((int)ceiled * count + cap);
-        if (warn)
-            MILO_WARN(
-                "TubePlate: Reallocating faces from %d to %d; please alert HUD/Track owner",
-                cap,
-                faces.capacity()
-            );
+        // Grow in whole mAllocationCount steps; retail emits no warning here and
+        // re-reads both the capacity and mAllocationCount after the ceil call.
+        float ceiled = std::ceil((float)(newsize - cap) / (float)mAllocationCount);
+        int steps = ceiled;
+        faces.reserve(mAllocationCount * steps + faces.capacity());
     }
     faces.resize(newsize);
 }
