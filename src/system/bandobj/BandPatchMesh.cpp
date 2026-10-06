@@ -1,8 +1,11 @@
-// Retail inlines the two-arg ObjPtr ctor at this TU's owner-only sites: the
-// MeshPair(Hmx::Object *) temporaries built by PropSync<MeshPair> (0x8234CB30) and
-// ObjVector<MeshPair>::resize (0x8234CF80) store {mOwner, mObject = 0, vtable}
-// inline with no `bl ??0?$ObjPtr@...`. Documented per-TU lever, obj/Object.h.
-#define RB3_TU_OBJPTR_FORCEINLINE_CTOR
+// Retail's ObjPtr ctor policy in this TU is per-site, so it is spelled per site
+// (obj/Object.h, ObjPtrInlineOwner) instead of with the per-TU
+// RB3_TU_OBJPTR_FORCEINLINE_CTOR switch. Inline three-store form:
+// BandPatchMesh::mSrc, MeshPair::mesh (the MeshPair(Hmx::Object *) temporaries
+// in PropSync<MeshPair> 0x8234CB30 and ObjVector<MeshPair>::resize 0x8234CF80)
+// and PatchPair::mPatch. Out of line: PatchPair::mTex, which retail's
+// PatchPair(Hmx::Object *) ctor constructs with `bl ??0?$ObjPtr@VRndTex@@@@`.
+// The per-TU switch inlined mTex too (PatchPair ctor 45.0).
 #include "bandobj/BandPatchMesh.h"
 #include "bandobj/BandCharDesc.h"
 #include "math/Rot.h"
@@ -284,7 +287,7 @@ const char *BandPatchMesh::MeshPair::PatchName() const {
 }
 
 BandPatchMesh::BandPatchMesh(Hmx::Object *o)
-    : mMeshes(o), mRenderTo(true), mSrc(o, 0), mCategory(0) {}
+    : mMeshes(o), mRenderTo(true), mSrc(ObjPtrInlineOwner(), o), mCategory(0) {}
 
 BandPatchMesh::BandPatchMesh(const BandPatchMesh &mesh)
     : mMeshes(mesh.mMeshes), mRenderTo(mesh.mRenderTo), mSrc(mesh.mSrc),
@@ -1121,6 +1124,12 @@ bool BandPatchMesh::FindXfm(RndMesh *mesh, const Vector2 &uv, Transform &xfm) {
     Multiply(uvMat, normMat, posMat);
     Vector3 uvw(uv.x, uv.y, 1.0f);
     Multiply(uvw, posOut, xfm.v);
+    // Retail reads the two gradient rows once, here, and keeps all six floats
+    // in f26-f31 across the calls below for the closing lengths; Length(posOut.x)
+    // after the calls reloads them from the stack instead (frame 0x1f0, one
+    // saved FPR, 75.2%).
+    Vector3 axisX(posOut.x.x, posOut.x.y, posOut.x.z);
+    Vector3 axisY(posOut.y.x, posOut.y.y, posOut.y.z);
     Multiply(uvw, posMat, xfm.m.z);
     ::Normalize(xfm.m.z, xfm.m.z);
     RndMesh::Vert centerVert;
@@ -1133,8 +1142,8 @@ bool BandPatchMesh::FindXfm(RndMesh *mesh, const Vector2 &uv, Transform &xfm) {
     centerMV.unk10.z *= -1.0f;
     centerVert.norm = xfm.m.z;
     centerMV.Normalize(1);
-    float scaleX = Length(posOut.x) * 0.5f;
-    float scaleY = Length(posOut.y) * 0.5f;
+    float scaleX = Length(axisX) * 0.5f;
+    float scaleY = Length(axisY) * 0.5f;
     xfm.m.x.x = centerMV.unk4.x * scaleX;
     xfm.m.x.y = centerMV.unk4.y * scaleX;
     xfm.m.x.z = centerMV.unk4.z * scaleX;
