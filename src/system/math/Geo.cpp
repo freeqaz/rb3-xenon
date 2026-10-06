@@ -1124,16 +1124,21 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
         }
     }
 
-    bool ok = MakeBSPTree(node->left, frontFaces, nextDepth);
-    if (!ok) {
+    // Retail has three return paths here, each ending in the two lists'
+    // clears: false after the left recursion, false after the right one, and
+    // true; the last two share one frontFaces clear with the result parked in
+    // r30 (`mr r30, r18` / `li r30, 1`), which only the early-return form
+    // produces -- a `bool ok` carried to a single exit does not. The explicit
+    // clears on the left-failure path stay: without them the frame comes out
+    // 0x10 short of retail's 0x1b0 and every slot after 0x58 shifts.
+    if (!MakeBSPTree(node->left, frontFaces, nextDepth)) {
         backFaces.clear();
         frontFaces.clear();
         return false;
     }
-    ok = MakeBSPTree(node->right, backFaces, nextDepth);
-    backFaces.clear();
-    frontFaces.clear();
-    return ok;
+    if (!MakeBSPTree(node->right, backFaces, nextDepth))
+        return false;
+    return true;
 }
 #else
 bool MakeBSPTree(BSPNode *&, std::list<BSPFace> &, int) { return false; }
