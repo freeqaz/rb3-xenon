@@ -1,5 +1,10 @@
 # Native health — collected measurement and its committed baseline
 
+**Latest baseline: lane W16-PE, 2026-10-06, off `6f1d1d794` — now RUNS ALL 18
+targets; see [the W16-PE section at the end](#w16-pe-2026-10-06--every-native-target-is-now-run).**
+The sections below are dated records; the "Only 3 of 18 targets" runtime table is
+superseded by it.
+
 **Baseline refreshed by lane N1-GPUGATES, 2026-09-10, worktree off `5aa1cb7a`.**
 Tool: `tools/native_health.sh`. This file is the **committed baseline**; re-run
 the tool and diff against the tables below. A gitignored artifact is invisible
@@ -801,3 +806,35 @@ patch to an uncompiled file would have produced. All three files are in
   so the "1 false positive" figure is **not** re-validated.
 - **Did not touch `MILO_ENGINE_PIN`**, and filed no engine change request — nothing
   this lane found needs one.
+
+---
+
+# W16-PE (2026-10-06) — every native target is now RUN
+
+Branch `w16-pe`, worktree `~/tmp/wt-w16-pe`, off main `6f1d1d794`. Full record:
+[`W16PE_NATIVE_RUNTIME_ALL_TARGETS_2026-10-06.md`](W16PE_NATIVE_RUNTIME_ALL_TARGETS_2026-10-06.md).
+
+`native_health.sh` used to run 4 of the 18 targets. `rb3-vocal2` and `rb3-harmony`
+segfaulted on their first frame for two months with this script and the link gate
+both green (W16-PD §2.1). It now runs **all 18** on real data and FAILs on a
+crash, a hang, a nonzero exit, a `[FAIL]` line, or an rc-0 run that never prints
+its completion line. A crash used to be able to land in `UNRUNNABLE`
+("novgates", rc=3) if it happened before the first `[PASS]` line; it is now a FAIL.
+
+## The baseline line
+
+```
+NATIVE_HEALTH_RESULT verdict=PASS link=PASS link_verified=18 link_expected=18 link_skipped=0 runtime=PASS runtime_ran=18 runtime_total=18 gates_pass=56 gates_fail=0 unrunnable=none selftest=PASS scatter_unlinked=17 scatter_dirb=0 scatter_multihost=20 rc=0 handpose_controls=3/3 handpose_baseline_fail=1 runtime_crashed=0 runtime_failed=none
+```
+
+Two fields appended at the end (`runtime_crashed`, `runtime_failed`), per the
+contract. 14 s wall for the whole `--selftest` run on a warm tree.
+
+| measure | 2026-09-11 (W3-G) | **2026-10-06 (W16-PE)** | note |
+|---|---:|---:|---|
+| runtime targets run | 4 / 4 | **18 / 18** | every target in `KNOWN_TARGETS` |
+| runtime gates passed | 40 | **56** | +7 `rb3-song`, +9 `rb3-midi` (already printed the contract; were never run) |
+| negative controls RED | 5 (+1 inert) | **8** (+1 inert) | + `crash-segv`, `exit-nonzero`, `nocomplete` |
+| scatter guests reaching NO target | 14 | 17 | ⚠ **not this lane** — drift since 09-11, not investigated |
+| scatter multi-host guests | 21 | 20 | ⚠ same |
+
