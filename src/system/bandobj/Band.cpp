@@ -83,7 +83,10 @@
 // here too. Factory-only shim over the real base (Song, already ported).
 class BandSong : public Song {
 public:
-    OBJ_CLASSNAME(BandSong);
+    // Retail names the class "Song" (0x82010000; no "BandSong" string exists in
+    // band.exe), so the factory below replaces Song's: NewObject("Song") builds a
+    // BandSong.
+    OBJ_CLASSNAME(Song);
     OBJ_SET_TYPE(BandSong);
     NEW_OBJ(BandSong)
     static void Init() { Register(); }

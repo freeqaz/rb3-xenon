@@ -2133,7 +2133,8 @@ BandCharacter::SetState(const char *cc, int playFlags, int mask, bool b4, bool b
     }
     CharDriver *oldDriver = unk454;
     mPlayFlags = playFlags;
-    if (AddDriverClipDir() && streq(mGroupName, "realtime_idle")
+    // Retail 0x82010E18 = "sit": the add driver plays only for seated groups.
+    if (AddDriverClipDir() && streq(mGroupName, "sit")
         && (mPlayFlags & 0x38000)) {
         unk454 = mAddDriver;
     } else {
