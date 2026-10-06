@@ -17206,11 +17206,11 @@
   {
    "name": "$_M_allocate_and_copy",
    "address": "0x827d5bb0",
-   "survivor": "fn_827D5BB0",
+   "survivor": "??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemDiffEntry@@PAU1@IABU1@ABU__false_type@0@@Z",
    "folded": [
-    "??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemDiffEntry@@PAU1@IABU1@ABU__false_type@0@@Z",
     "??$__uninitialized_fill_n@PAVExtraTail@TrainerGemTab@@IV12@@stlpmtx_std@@YAPAVExtraTail@TrainerGemTab@@PAV12@IABV12@ABU__false_type@0@@Z",
-    "??$__uninitialized_fill_n@PAVPoint@RndLine@@IV12@@stlpmtx_std@@YAPAVPoint@RndLine@@PAV12@IABV12@ABU__false_type@0@@Z"
+    "??$__uninitialized_fill_n@PAVPoint@RndLine@@IV12@@stlpmtx_std@@YAPAVPoint@RndLine@@PAV12@IABV12@ABU__false_type@0@@Z",
+    "fn_827D5BB0"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions.",
    "admitted": [
@@ -17234,28 +17234,14 @@
      "evidence": "tools/icf_pair_adjudicate.chase(fn_827D5BB0 @ 0x827d5bb0, ??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAllo): REFUTED [BODY:BYTES-DIFFER] depth 0: retail fn_827D5BB0 | ours ??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx; anchor ??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemDiffEntry@@PAU1@IABU1 PROVEN here"
     }
    ],
-   "relabelled": {
-    "from": "??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector2@@IPAV2@0@Z",
-    "to": "fn_827D5BB0",
-    "lane": "W16-OS 2026-10-03",
-    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
-   },
    "rechase_w16os": [
-    {
-     "spelling": "??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemDiffEntry@@PAU1@IABU1@ABU__false_type@0@@Z",
-     "role": "folded",
-     "verdict": "PROVEN",
-     "kind": "CHASED",
-     "disposition": "kept",
-     "evidence": "tools/icf_pair_adjudicate.chase(fn_827D5BB0 @ 0x827d5bb0, ??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemD): PROVEN [CHASED] retail 80 B / ours 80 B, 0 cycle-assumed"
-    },
     {
      "spelling": "??$__uninitialized_fill_n@PAVExtraTail@TrainerGemTab@@IV12@@stlpmtx_std@@YAPAVExtraTail@TrainerGemTab@@PAV12@IABV12@ABU__false_type@0@@Z",
      "role": "folded",
      "verdict": "PROVEN",
      "kind": "CHASED",
      "disposition": "kept",
-     "evidence": "tools/icf_pair_adjudicate.chase(fn_827D5BB0 @ 0x827d5bb0, ??$__uninitialized_fill_n@PAVExtraTail@TrainerGemTab@@IV12@@stlpmtx_st): PROVEN [CHASED] retail 80 B / ours 80 B, 0 cycle-assumed"
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemD @ 0x827d5bb0, ??$__uninitialized_fill_n@PAVExtraTail@TrainerGemTab@@IV12@@stlpmtx_st): PROVEN [CHASED] retail 80 B / ours 80 B, 0 cycle-assumed"
     },
     {
      "spelling": "??$__uninitialized_fill_n@PAVPoint@RndLine@@IV12@@stlpmtx_std@@YAPAVPoint@RndLine@@PAV12@IABV12@ABU__false_type@0@@Z",
@@ -17263,25 +17249,31 @@
      "verdict": "PROVEN",
      "kind": "CHASED",
      "disposition": "kept",
-     "evidence": "tools/icf_pair_adjudicate.chase(fn_827D5BB0 @ 0x827d5bb0, ??$__uninitialized_fill_n@PAVPoint@RndLine@@IV12@@stlpmtx_std@@YAPAVPo): PROVEN [CHASED] retail 80 B / ours 80 B, 0 cycle-assumed"
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemD @ 0x827d5bb0, ??$__uninitialized_fill_n@PAVPoint@RndLine@@IV12@@stlpmtx_std@@YAPAVPo): PROVEN [CHASED] retail 80 B / ours 80 B, 0 cycle-assumed"
     },
     {
-     "spelling": "??$_M_allocate_and_copy@PBVStreakInfo@Stats@@@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVStreakInfo@Stats@@IPBV23@0@Z",
-     "role": "folded",
-     "verdict": "REFUTED",
-     "kind": "BODY:BYTES-DIFFER",
-     "disposition": "rehomed to 0x824f18c8",
-     "evidence": "tools/icf_pair_adjudicate.chase(fn_827D5BB0 @ 0x827d5bb0, ??$_M_allocate_and_copy@PBVStreakInfo@Stats@@@?$vector@VStreakInfo@Sta): REFUTED [BODY:BYTES-DIFFER] depth 0: retail fn_827D5BB0 | ours ??$_M_allocate_and_copy@PBVStreakInfo@Stats@@@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@; anchor ??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemDiffEntry@@PAU1@IABU1 PROVEN here"
-    },
-    {
-     "spelling": "??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector2@@IPAV2@0@Z",
+     "spelling": "fn_827D5BB0",
      "role": "old-label",
-     "verdict": "REFUTED",
-     "kind": "BODY:BYTES-DIFFER",
-     "disposition": "map name at 0x824f18c8 (not a member here)",
-     "evidence": "tools/icf_pair_adjudicate.chase(fn_827D5BB0 @ 0x827d5bb0, ??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAllo): REFUTED [BODY:BYTES-DIFFER] depth 0: retail fn_827D5BB0 | ours ??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx; anchor ??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemDiffEntry@@PAU1@IABU1 PROVEN here"
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemD @ 0x827d5bb0, fn_827D5BB0): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemDiffEntry@@PAU1@IABU1 | ours fn_827D5BB0"
     }
-   ]
+   ],
+   "relabelled_history": [
+    {
+     "from": "??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector2@@IPAV2@0@Z",
+     "to": "fn_827D5BB0",
+     "lane": "W16-OS 2026-10-03",
+     "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+    }
+   ],
+   "relabelled": {
+    "from": "fn_827D5BB0",
+    "to": "??$__uninitialized_fill_n@PAUMemDiffEntry@@IU1@@stlpmtx_std@@YAPAUMemDiffEntry@@PAU1@IABU1@ABU__false_type@0@@Z",
+    "lane": "W16-QB 2026-10-06",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   }
   },
   {
    "name": "_GRndLight",
