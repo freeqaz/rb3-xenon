@@ -34,8 +34,8 @@ predictions (+1/+160, +1/+104, +2/+12, +2/+164).
 Leg A is the branch's own base (merge-base `6f1d1d794`), not today's main. The
 coordinator's rebase will re-measure against current main.
 
-Every row I opened is either fixed (§2) or recorded with the reason it stops (§3). Each fix is its own
-carries the per-row before/after for the rows it moves.
+Every row I opened is either fixed (§2) or recorded with the reason it stops (§3). Every commit
+message carries the per-row before/after for the rows it moves.
 
 ## 2. Fixed
 
