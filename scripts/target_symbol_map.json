@@ -37273,5 +37273,19 @@
  "0x82c48048": "??__Ftoken_msg@?CB@??Poll@TokenRedemptionPanel@@UAAXXZ@YAXXZ",
  "0x82c480c8": "??__Ftoken_msg@?BA@??Poll@TokenRedemptionPanel@@UAAXXZ@YAXXZ",
  "0x82c480a8": "??__FoffersReadyMsg@?BC@??Poll@TokenRedemptionPanel@@UAAXXZ@YAXXZ",
- "0x82c48088": "??__Ftoken_msg@?BE@??Poll@TokenRedemptionPanel@@UAAXXZ@YAXXZ"
+ "0x82c48088": "??__Ftoken_msg@?BE@??Poll@TokenRedemptionPanel@@UAAXXZ@YAXXZ",
+ "0x822750a8": "?NumLoadingStickers@PatchDir@@QBAHXZ",
+ "0x822d6690": "??0?$ObjPtr@VRndPartLauncher@@@@QAA@PAVObject@Hmx@@PAVRndPartLauncher@@@Z",
+ "0x822d6a58": "??$Find@VRndPartLauncher@@@ObjectDir@@QAAPAVRndPartLauncher@@PBD_N@Z",
+ "0x822d6be8": "?Load@?$ObjPtr@VBandLabel@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
+ "0x822d6ea0": "?Load@?$ObjPtr@VRndMatAnim@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
+ "0x822ebcb0": "?Handle@GemTrackDir@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
+ "0x82429c38": "?ForeachKeyframe@RndPropAnim@@QAA?AVDataNode@@PBVDataArray@@@Z",
+ "0x82459fc8": "?OnSetFont@RndText@@QAA?AVDataNode@@PAVDataArray@@@Z",
+ "0x824f6ea8": "?CancelOutstandingCalls@RockCentral@@QAAXPAVObject@Hmx@@@Z",
+ "0x824f6eb8": "?FailAllOutstandingCalls@RockCentral@@QAAXXZ",
+ "0x8258a190": "?GetUploadFriendsToken@BandProfile@@QBAHXZ",
+ "0x827a4fb0": "?MakeDirty@Profile@@QAAXXZ",
+ "0x82bd4eb8": "?GetMachineID@RemoteBandMachine@@QBAIXZ",
+ "0x82c295a0": "?SetShowing@TubePlate@@QAAX_N@Z"
 }

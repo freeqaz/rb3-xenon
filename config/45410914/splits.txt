@@ -221,7 +221,9 @@ RockCentral.cpp:
 	.text       start:0x824F6680 end:0x824F6C10
 	.text       start:0x824F6C10 end:0x824F6CD0
 	.text       start:0x824F6D98 end:0x824F6EA8
+	.text       start:0x824F6EA8 end:0x824F6EB4
 	.text       start:0x824F6EB4 end:0x824F6EB8
+	.text       start:0x824F6EB8 end:0x824F6EC4
 	.text       start:0x824F6EC4 end:0x824F70B0
 	.text       start:0x824F70B0 end:0x824F710C
 	.text       start:0x824F710C end:0x824F742C
@@ -1062,6 +1064,7 @@ PatchDir.cpp:
 	.text       start:0x82274210 end:0x82274290
 	.text       start:0x822745A0 end:0x8227500C
 	.text       start:0x82275010 end:0x822750A8
+	.text       start:0x822750A8 end:0x822750BC
 	.text       start:0x822750C0 end:0x822750D0
 	.text       start:0x822750D0 end:0x82275114
 	.text       start:0x82275260 end:0x82275500
@@ -1264,6 +1267,10 @@ BandRetargetVignette.cpp:
 StreakMeter.cpp:
 	.pdata      start:0x821F7D10 end:0x821F7D28
 	.pdata      start:0x821F7D28 end:0x821F7D30
+	.pdata      start:0x821F7D48 end:0x821F7D50
+	.pdata      start:0x821F7DA0 end:0x821F7DA8
+	.pdata      start:0x821F7DB0 end:0x821F7DB8
+	.pdata      start:0x821F7DC8 end:0x821F7DD0
 	.pdata      start:0x821F7DD0 end:0x821F7DF0
 	.pdata      start:0x821F7DF0 end:0x821F7E00
 	.pdata      start:0x821F7E00 end:0x821F7E10
@@ -1288,6 +1295,10 @@ StreakMeter.cpp:
 	.text       start:0x822CC2D4 end:0x822CC2D8
 	.text       start:0x822D6270 end:0x822D63FC
 	.text       start:0x822D6400 end:0x822D6568
+	.text       start:0x822D6688 end:0x822D6700
+	.text       start:0x822D6A58 end:0x822D6B00
+	.text       start:0x822D6BE8 end:0x822D6CD0
+	.text       start:0x822D6EA0 end:0x822D6F88
 	.text       start:0x822D6F88 end:0x822D70D8
 	.text       start:0x822D70D8 end:0x822D7148
 	.text       start:0x822D7148 end:0x822D71B8
@@ -4032,6 +4043,7 @@ Text.cpp:
 	.pdata      start:0x8220E228 end:0x8220E2E8
 	.pdata      start:0x8220E2E8 end:0x8220E2F8
 	.pdata      start:0x8220E2F8 end:0x8220E318
+	.pdata      start:0x8220E318 end:0x8220E320
 	.pdata      start:0x8220E320 end:0x8220E4E8
 	.pdata      start:0x822224F0 end:0x822224F8
 	.text       start:0x8231D02C end:0x8231D060
@@ -4045,6 +4057,7 @@ Text.cpp:
 	.text       start:0x824575D0 end:0x82459B80
 	.text       start:0x82459B80 end:0x82459EA0
 	.text       start:0x82459EA0 end:0x82459FC8
+	.text       start:0x82459FC8 end:0x8245A02C
 	.text       start:0x8245A02C end:0x8245C068
 	.text       start:0x8245C2E4 end:0x8245C2E8
 	.text       start:0x8245C47C end:0x8245C480
@@ -4179,6 +4192,7 @@ PropAnim.cpp:
 	.pdata      start:0x8220BF20 end:0x8220BFE8
 	.pdata      start:0x8220BFE8 end:0x8220C0A0
 	.pdata      start:0x8220C0A0 end:0x8220C0A8
+	.pdata      start:0x8220C0A8 end:0x8220C0B0
 	.pdata      start:0x8220C158 end:0x8220C168
 	.pdata      start:0x8220C168 end:0x8220C238
 	.pdata      start:0x8220C238 end:0x8220C320
@@ -4194,6 +4208,7 @@ PropAnim.cpp:
 	.text       start:0x82428450 end:0x8242916C
 	.text       start:0x82429170 end:0x82429BE0
 	.text       start:0x82429BE8 end:0x82429C2C
+	.text       start:0x82429C30 end:0x8242A508
 	.text       start:0x8242A870 end:0x8242A958
 	.text       start:0x8242A958 end:0x8242B404
 	.text       start:0x8242B408 end:0x8242C070
@@ -6584,6 +6599,7 @@ Profile.cpp:
 	.pdata      start:0x822402B8 end:0x822402D0
 	.pdata      start:0x822402D0 end:0x82240308
 	.text       start:0x827A4E10 end:0x827A4FB0
+	.text       start:0x827A4FB0 end:0x827A4FBC
 	.text       start:0x827A4FBC end:0x827A5334
 
 InlineHelp.cpp:
@@ -9299,6 +9315,7 @@ band3/meta_band/BandProfile.cpp:
 	.text       start:0x8258A108 end:0x8258A14C
 	.text       start:0x8258A150 end:0x8258A180
 	.text       start:0x8258A180 end:0x8258A190
+	.text       start:0x8258A190 end:0x8258A198
 	.text       start:0x8258A198 end:0x8258A2C8
 	.text       start:0x8258A2C8 end:0x8258A338
 	.text       start:0x8258A338 end:0x8258A3A0
@@ -10282,6 +10299,7 @@ BandMachine.cpp:
 	.text       start:0x825C1D40 end:0x825C1D8C
 	.text       start:0x825C1D90 end:0x825C1DDC
 	.text       start:0x825C1DE0 end:0x825C1E30
+	.text       start:0x82BD4EB8 end:0x82BD4EC0
 
 BandSongMetadata.cpp:
 	.pdata      start:0x821FAF20 end:0x821FAF28
@@ -11127,6 +11145,7 @@ GemTrackDir.cpp:
 	.pdata      start:0x821F90B0 end:0x821F90C0
 	.pdata      start:0x821F90C0 end:0x821F90D0
 	.pdata      start:0x821F90D0 end:0x821F90E8
+	.pdata      start:0x821F90E8 end:0x821F90F0
 	.pdata      start:0x821F90F0 end:0x821F91A8
 	.pdata      start:0x821F91A8 end:0x821F91C8
 	.pdata      start:0x821F91C8 end:0x821F91E0
@@ -11175,6 +11194,7 @@ GemTrackDir.cpp:
 	.text       start:0x822EB620 end:0x822EB6B0
 	.text       start:0x822EB6B0 end:0x822EB9B8
 	.text       start:0x822EB9B8 end:0x822EBCA8
+	.text       start:0x822EBCA8 end:0x822EC56C
 	.text       start:0x822EC56C end:0x822EC868
 	.text       start:0x822EC868 end:0x822EC9B8
 	.text       start:0x822EC9B8 end:0x822ECBC4
@@ -11952,6 +11972,7 @@ NoteTube.cpp:
 	.pdata      start:0x82260CB8 end:0x82260CC0
 	.pdata      start:0x82260CC0 end:0x82260CC8
 	.pdata      start:0x82260CD8 end:0x82260CE0
+	.text       start:0x82C295A0 end:0x82C295C8
 	.text       start:0x82C295C8 end:0x82C29998
 	.text       start:0x82C29998 end:0x82C29B50
 	.text       start:0x82C29B50 end:0x82C29C78
