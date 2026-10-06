@@ -968,23 +968,32 @@ void Spotlight::Poll() {
         return;
     Hmx::Matrix3 m;
     if (!mUpdating) {
+        // Poll() is entered through the RndPollable sub-object (r3 = this +
+        // 0xd8).  Naming the full object once makes the compiler materialise
+        // `subi r29, r3, 0xd8` a single time, load mTarget through it, and
+        // pass it to the member calls below; without it the pointer is
+        // re-derived at each call, one fewer callee-save is used and the
+        // frame is 0xa0 instead of 0xb0.  The `(int)` on the null test gives
+        // the signed `cmpwi cr6, r30, 0x0`.  The trailing UpdateTransforms
+        // stays on `this` (re-derived there with its own `subi`).
+        Spotlight *self = this;
         RndTransformable *target = nullptr;
         if (mTargetLoaded)
-            target = mTarget;
-        if (!target
+            target = self->mTarget;
+        if (!(int)target
             || (!mSnapToTarget
                 && target->WorldXfm().v == mLastTargetPos)) {
-            if (!target && !mAnimateOrientationFromPreset && !DoFloorSpot()) {
-                UpdateTransforms();
+            if (!target && !mAnimateOrientationFromPreset && !self->DoFloorSpot()) {
+                self->UpdateTransforms();
                 return;
             }
-            CheckFloorSpotTransform();
+            self->CheckFloorSpotTransform();
             mOrientMatrix = WorldXfm().m;
-            UpdateSlaves();
+            self->UpdateSlaves();
             return;
         }
         mLastTargetPos = target->WorldXfm().v;
-        CalculateDirection(target, m);
+        self->CalculateDirection(target, m);
         if (!mSnapToTarget && mDampingConstant != 1.0f) {
             Interp(mOrientMatrix, m, TheTaskMgr.DeltaSeconds() * mDampingConstant, m);
         } else {
