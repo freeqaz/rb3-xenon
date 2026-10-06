@@ -407,23 +407,22 @@ void UIListDir::ListEntered() {
 void UIListDir::BuildDrawState(
     UIListWidgetDrawState &drawState, UIListState const &state, UIComponent::State compState, float subListOffset
 ) const {
-    auto& _ref0 = mFadeOffset;
     int numDisplay = state.NumDisplay();
     int numDisplayWithData = state.NumDisplayWithData();
 
-    int fadeCountStart = numDisplay / 2;
-    if ((int)(unsigned long)(unsigned int)fadeCountStart >= _ref0) {
-        fadeCountStart = _ref0;
-    }
+    int halfDisplay = numDisplay / 2;
+    int fadeCountStart = halfDisplay < mFadeOffset ? halfDisplay : mFadeOffset;
     int fadeCountEnd = fadeCountStart;
-    if (_ref0 != 0) {
-        int fadeEndCalc;
+    if (mFadeOffset != 0) {
         if (state.Circular()) {
             int selectedDisp = state.SelectedDisplay();
             if (selectedDisp < fadeCountStart) {
                 fadeCountStart = selectedDisp;
             }
-            fadeEndCalc = numDisplay - state.SelectedDisplay() - 1;
+            int fadeEndCalc = numDisplay - state.SelectedDisplay() - 1;
+            if (fadeEndCalc < fadeCountEnd) {
+                fadeCountEnd = fadeEndCalc;
+            }
         } else {
             int firstShowing = state.FirstShowing();
             int adjustedFirstShowing = firstShowing;
@@ -435,10 +434,10 @@ void UIListDir::BuildDrawState(
                 fadeCountStart = adjustedFirstShowing;
             }
             auto _tmp0 = state.Provider()->NumData();
-            fadeEndCalc = _tmp0 - adjustedFirstShowing - numDisplay;
-        }
-        if (fadeEndCalc < fadeCountEnd) {
-            fadeCountEnd = fadeEndCalc;
+            int fadeEndCalc = _tmp0 - adjustedFirstShowing - numDisplay;
+            if (fadeEndCalc < fadeCountEnd) {
+                fadeCountEnd = fadeEndCalc;
+            }
         }
     }
     float fadeStartDist = (float)fadeCountStart * mElementSpacing;
@@ -468,14 +467,14 @@ void UIListDir::BuildDrawState(
     drawState.mElements.reserve(numDisplayWithData);
     drawState.mHighlightElementState = kUIListWidgetActive;
 
-    int prevData = 0;
-    float lastPosBase = 0.0f;
-    float highlightBase = 0.0f;
+    Vector3 elemPos;
     float firstGap = 0.0f;
     float totalGap = 0.0f;
-    Vector3 elemPos;
+    float lastPosBase = 0.0f;
+    float highlightBase = 0.0f;
 
     float scrollOffset = (float)direction * state.StepPercent();
+    int prevData = 0;
 
     for (int i = 0; i < numDisplayWithData; i++) {
         int dispIndex = i;
@@ -484,13 +483,13 @@ void UIListDir::BuildDrawState(
         }
 
         int data = state.Display2Data(dispIndex);
+        UIListElementDrawState emptyElem;
         if (data == -1) {
-            UIListElementDrawState elem;
 #ifdef HX_NATIVE
-            memset(&elem, 0, sizeof(elem));
+            memset(&emptyElem, 0, sizeof(emptyElem));
 #endif
-            elem.mActive = false;
-            drawState.mElements.push_back(elem);
+            emptyElem.mActive = false;
+            drawState.mElements.push_back(emptyElem);
             continue;
         }
 
@@ -499,31 +498,34 @@ void UIListDir::BuildDrawState(
         }
 
         int showing = state.Display2Showing(dispIndex);
+        prevData = data;
         int snapped = state.SnappedDataForDisplay(dispIndex);
         if (snapped >= 0) {
-            data = snapped;
+            prevData = snapped;
         }
-        prevData = data;
 
-        float gap = state.Provider()->GapSize(showing, data, selectedData, direction);
+        float gap = state.Provider()->GapSize(showing, prevData, selectedData, direction);
         if (i == 0) {
             firstGap = gap;
         }
-        float position;
-        float primaryBase;
+        float pos;
         if (state.ShouldHoldDisplayInPlace(dispIndex)) {
-            primaryBase = totalGap;
             if (direction == -1) {
-                position = (float)dispIndex + 1.0f;
+                pos = SetElementPos(
+                    elemPos, (float)dispIndex + 1.0f, state.GridSpan(), totalGap, 0.0f
+                );
             } else {
-                position = (float)dispIndex;
+                pos = SetElementPos(elemPos, (float)dispIndex, state.GridSpan(), totalGap, 0.0f);
             }
         } else {
-            primaryBase = -((scrollOffset * firstGap) - totalGap);
-            position = (float)dispIndex - scrollOffset;
+            pos = SetElementPos(
+                elemPos,
+                (float)dispIndex - scrollOffset,
+                state.GridSpan(),
+                -((scrollOffset * firstGap) - totalGap),
+                0.0f
+            );
         }
-
-        float pos = SetElementPos(elemPos, position, state.GridSpan(), primaryBase, 0.0f);
 
         float alpha = 1.0f;
         if (!state.ShouldHoldDisplayInPlace(dispIndex)) {
@@ -540,7 +542,7 @@ void UIListDir::BuildDrawState(
         }
 
         UIListWidgetState elemState;
-        if (!state.Provider()->IsActive(data)) {
+        if (!state.Provider()->IsActive(prevData)) {
             elemState = kUIListWidgetInactive;
         } else if (showing == selected) {
             elemState = kUIListWidgetHighlight;
@@ -548,7 +550,7 @@ void UIListDir::BuildDrawState(
             elemState = kUIListWidgetActive;
         }
 
-        UIListWidgetState widgetState = state.Provider()->ElementStateOverride(showing, data, elemState);
+        UIListWidgetState widgetState = state.Provider()->ElementStateOverride(showing, prevData, elemState);
         if (showing == selected) {
             drawState.mHighlightElementState = widgetState;
         }
@@ -562,10 +564,10 @@ void UIListDir::BuildDrawState(
         *(Vector3 *)&elem.mPosX = elemPos;
         elem.mAlpha = alpha;
         elem.mElementState = widgetState;
-        elem.mComponentState = prov->ComponentStateOverride(showing, data, compState);
+        elem.mComponentState = prov->ComponentStateOverride(showing, prevData, compState);
         elem.mDisplay = dispIndex;
         elem.mShowing = showing;
-        elem.mData = data;
+        elem.mData = prevData;
         drawState.mElements.push_back(elem);
 
         totalGap += gap;

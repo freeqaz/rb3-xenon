@@ -769,21 +769,20 @@ RndMat *RndFont::Mat(int) const { return mMat; }
 RndTex *RndFont::ValidTexture(int) const { return ValidTexture(); }
 
 void RndFont::SetCharInfo(CharInfo *info, RndBitmap &bmap, const Vector2 &pos) {
-    if (!(!(!(!(mMonospace))))) {
+    if (mMonospace) {
         int width = bmap.Width();
-        info->mAdvance = 1.0f;
-        info->mCharWidth = 1.0f;
+        info->mAdvance = info->mCharWidth = 1.0f;
         info->mU = pos.x / (float)width;
     } else {
         int left = (int)pos.x;
         int top = (int)pos.y;
         int right = (int)(mCellSize.x + pos.x);
         int bottom = (int)(mCellSize.y + pos.y);
-        int dummy;
         // Retail (0x824723F8) re-tests the column on every step of both scans:
         // inward from the left edge, then inward from the right edge.
         int leftCol = left;
         while (leftCol != right) {
+            int dummy;
             if (bmap.ColumnNonTransparent(leftCol, top, bottom, &dummy))
                 break;
             if (right > left) {
@@ -797,6 +796,7 @@ void RndFont::SetCharInfo(CharInfo *info, RndBitmap &bmap, const Vector2 &pos) {
         left--;
         int rightCol = right;
         while (rightCol != left) {
+            int dummy;
             if (bmap.ColumnNonTransparent(rightCol, top, bottom, &dummy))
                 break;
             if (left > right) {
@@ -805,17 +805,14 @@ void RndFont::SetCharInfo(CharInfo *info, RndBitmap &bmap, const Vector2 &pos) {
                 rightCol--;
             }
         }
-        int width = bmap.Width();
         float charW = (float)(long long)rightCol + 1.0f - leftColF;
-        if (0.0f < charW) {
-            info->mU = leftColF / (float)width;
-            float widthFrac = charW / mCellSize.x;
-            info->mAdvance = widthFrac;
-            info->mCharWidth = widthFrac;
-        } else {
+        int width = bmap.Width();
+        if (charW <= 0.0f) {
+            info->mAdvance = info->mCharWidth = 0.25f;
             info->mU = pos.x / (float)width;
-            info->mAdvance = 0.25f;
-            info->mCharWidth = 0.25f;
+        } else {
+            info->mU = leftColF / (float)width;
+            info->mAdvance = info->mCharWidth = charW / mCellSize.x;
         }
     }
     info->mV = pos.y / (float)bmap.Height();

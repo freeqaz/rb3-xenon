@@ -617,8 +617,13 @@ void operator>>(BinStream &d, CharHair::Point &pt) {
     pt.lastZ.Zero();
 }
 
-CharHair::Point::Point(Hmx::Object *owner)
-    : bone(owner), length(0.0f), collides(owner), radius(0.0f), outerRadius(0.0f),
+// `inline` (deferred) on purpose: retail compiles this ctor and Strand's
+// after ObjVector<Point/Strand>::resize and their PropSyncs, which therefore
+// save `this`/size in r29/r30 across the call.  A non-inline definition here
+// is compiled first, and MSVC X360's same-TU callee-clobber tracking then
+// keeps them in volatile registers (resize 100 -> 56, PropSync 100 -> 96.5).
+inline CharHair::Point::Point(Hmx::Object *owner)
+    : bone(ObjPtrInlineOwner(), owner), length(0.0f), collides(owner), radius(0.0f), outerRadius(0.0f),
       sideLength(-1.0f) {
     pos.Zero();
     force.Zero();
@@ -644,8 +649,8 @@ CharHair::Point::Point(const Point &p) : bone(p.bone), collides(p.collides) {
 #pragma endregion CharHair::Point
 #pragma region CharHair::Strand
 
-CharHair::Strand::Strand(Hmx::Object *o)
-    : mShowSpheres(0), mShowCollide(0), mShowPose(0), mRoot(o, 0), mAngle(0.0f),
+inline CharHair::Strand::Strand(Hmx::Object *o)
+    : mShowSpheres(0), mShowCollide(0), mShowPose(0), mRoot(ObjPtrInlineOwner(), o), mAngle(0.0f),
       mPoints(o), mHookupFlags(0) {
     mBaseMat.Identity();
     mRootMat.Identity();

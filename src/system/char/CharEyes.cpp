@@ -84,6 +84,16 @@ static unsigned short gRev = 0;
 float pow(float base, float exp) { return std::pow(base, exp); }
 #endif
 
+// Out of line and ahead of every user, as in retail: MSVC X360 tracks the
+// registers an already-compiled callee in the same TU clobbers, and
+// ObjVector<EyeDesc>::resize keeps `this` and the size in r8/r7 across this
+// call only when the ctor has been compiled first.  Defined inline in the
+// class (or `inline` here) it is generated after resize, which then saves
+// both in r29/r30 (frame 0xb0 vs retail 0xa0).
+CharEyes::EyeDesc::EyeDesc(Hmx::Object *owner)
+    : mEye(owner), mUpperLid(owner), mLowerLid(owner), mLowerLidBlink(owner),
+      mUpperLidBlink(owner) {}
+
 CharEyes::CharEyes()
     : mEyes(this), mInterests(this), mFaceServo(this), mCamWeight(this), mTarget(0, 0, 0),
       mDefaultFilterFlags(0), mViewDirection(this), mHeadLookAt(this),

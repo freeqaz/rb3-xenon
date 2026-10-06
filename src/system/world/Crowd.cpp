@@ -111,6 +111,15 @@ void WorldCrowd::CharDef::Load(BinStream &d) {
 #pragma endregion
 #pragma region CharData
 
+// Both constructors are out of line, CharData's first: with CharDef's body
+// not yet seen, the CharData constructor takes `this` back from the
+// CharDef constructor's return value (r3) instead of holding it in r31.
+WorldCrowd::CharData::CharData(Hmx::Object *owner) : mDef(owner), mMMesh(nullptr) {}
+
+WorldCrowd::CharDef::CharDef(Hmx::Object *owner)
+    : mChar(owner), mHeight(75), mDensity(1), mRadius(10), mUseRandomColor(false),
+      mMats(owner) {}
+
 void WorldCrowd::CharData::Save(BinStream &bs) const { mDef.Save(bs); }
 
 BinStream &operator<<(BinStream &bs, const WorldCrowd::CharData &cd) {

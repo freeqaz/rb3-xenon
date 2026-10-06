@@ -19,9 +19,7 @@ class CharEyes : public RndHighlightable, public CharWeightable, public CharPoll
     friend class Character;
 public:
     struct EyeDesc {
-        EyeDesc(Hmx::Object *owner)
-            : mEye(owner), mUpperLid(owner), mLowerLid(owner), mLowerLidBlink(owner),
-              mUpperLidBlink(owner) {}
+        EyeDesc(Hmx::Object *owner);
         EyeDesc &operator=(const EyeDesc &desc) {
             mEye = desc.mEye.Ptr();
             mUpperLid = desc.mUpperLid;
