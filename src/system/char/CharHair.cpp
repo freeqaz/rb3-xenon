@@ -618,7 +618,7 @@ void operator>>(BinStream &d, CharHair::Point &pt) {
 }
 
 CharHair::Point::Point(Hmx::Object *owner)
-    : bone(owner), length(0.0f), collides(owner), radius(0.0f), outerRadius(0.0f),
+    : bone(ObjPtrInlineOwner(), owner), length(0.0f), collides(owner), radius(0.0f), outerRadius(0.0f),
       sideLength(-1.0f) {
     pos.Zero();
     force.Zero();
@@ -645,7 +645,7 @@ CharHair::Point::Point(const Point &p) : bone(p.bone), collides(p.collides) {
 #pragma region CharHair::Strand
 
 CharHair::Strand::Strand(Hmx::Object *o)
-    : mShowSpheres(0), mShowCollide(0), mShowPose(0), mRoot(o, 0), mAngle(0.0f),
+    : mShowSpheres(0), mShowCollide(0), mShowPose(0), mRoot(ObjPtrInlineOwner(), o), mAngle(0.0f),
       mPoints(o), mHookupFlags(0) {
     mBaseMat.Identity();
     mRootMat.Identity();
