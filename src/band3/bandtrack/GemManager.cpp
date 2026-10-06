@@ -731,7 +731,7 @@ void GemManager::SetupGems(int startTick) {
                             int adjustedEnd =
                                 TheTrainerPanel->GetLoopTicks(TheTrainerPanel->GetCurrSection())
                                 + (phraseStart - offset);
-                            phraseEnd = Min(adjustedEnd, phraseEnd);
+                            phraseEnd = Min(phraseEnd, adjustedEnd);
                         }
                         ArpeggioPhrase phrase(phraseStart, phraseEnd, i);
                         mArpeggioPhrases.push_back(phrase);
