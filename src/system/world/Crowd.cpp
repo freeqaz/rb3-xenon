@@ -1371,9 +1371,12 @@ void WorldCrowd::DrawShowing() {
                 dist = (float)__fsel(dist - minDist, dist, minDist);
                 float negDist = -dist;
                 // NOTE: 0.0f multiplications are dead math required for codegen match (fmul)
-                camXfmCopy.v.x = camXfmCopy.m.x.x * 0.0f + (camXfmCopy.m.y.x * negDist + camXfmCopy.m.z.x * 0.0f);
-                camXfmCopy.v.y = camXfmCopy.m.z.y * 0.0f + (camXfmCopy.m.y.y * negDist + camXfmCopy.m.x.y * 0.0f);
-                camXfmCopy.v.z = (camXfmCopy.m.z.z * 0.0f + (camXfmCopy.m.y.z * negDist + camXfmCopy.m.x.z * 0.0f)) + halfHeight;
+                // One Set(): its arguments evaluate right to left.
+                camXfmCopy.v.Set(
+                    camXfmCopy.m.x.x * 0.0f + (camXfmCopy.m.y.x * negDist + camXfmCopy.m.z.x * 0.0f),
+                    camXfmCopy.m.z.y * 0.0f + (camXfmCopy.m.y.y * negDist + camXfmCopy.m.x.y * 0.0f),
+                    (camXfmCopy.m.z.z * 0.0f + (camXfmCopy.m.y.z * negDist + camXfmCopy.m.x.z * 0.0f)) + halfHeight
+                );
                 gImpostorCamera->SetLocalXfm(camXfmCopy);
                 float yFov = (float)std::atan((double)(halfHeight / dist)) * 2.0f;
                 gImpostorCamera->SetFrustum(
@@ -1393,10 +1396,14 @@ void WorldCrowd::DrawShowing() {
                     // from m.z at +0x20, vs our lfs/stfs x3).
                     charXfm.m.z = meshXfm2.m.z;
 
+                    // The camera reference is declared inside each arm: retail
+                    // tests mCrowdRotate first and expands WorldXfm() twice.
                     if (mCrowdRotate == kCrowdRotateFace) {
-                        Cross(charXfm.m.z, curCam->WorldXfm().m.y, charXfm.m.x);
+                        const Transform &camWXfm = curCam->WorldXfm();
+                        Cross(charXfm.m.z, camWXfm.m.y, charXfm.m.x);
                     } else {
-                        Cross(curCam->WorldXfm().m.y, charXfm.m.z, charXfm.m.x);
+                        const Transform &camWXfm = curCam->WorldXfm();
+                        Cross(camWXfm.m.y, charXfm.m.z, charXfm.m.x);
                     }
                     Normalize(charXfm.m.x, charXfm.m.x);
                     Cross(charXfm.m.z, charXfm.m.x, charXfm.m.y);
@@ -1535,7 +1542,21 @@ void WorldCrowd::DrawShowing() {
                 charIt->mMMesh->Mesh()->Sync(0x1F);
 
                 // --- Draw billboarded multimesh instances ---
-                DrawMultiMeshWithEnviron(mmesh);
+                // Written out at this scope, not through DrawMultiMeshWithEnviron:
+                // retail gives this tracker its own slot (0x150) beside the
+                // DrawNormal tracker's 0x130. An inlined helper's tracker lands in
+                // a nested sibling scope and MSVC packs both onto one slot.
+                RndEnviron *curEnv = RndEnviron::Current();
+                bool savedApprox2 = true;
+                if (curEnv) {
+                    savedApprox2 = curEnv->UsesApproxGlobal();
+                    curEnv->SetUseApproxGlobal(false);
+                }
+                RndEnvironTracker tracker(curEnv, nullptr);
+                mmesh->DrawShowing();
+                if (curEnv) {
+                    curEnv->SetUseApproxGlobal(savedApprox2);
+                }
             }
         }
     }
