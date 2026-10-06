@@ -221,17 +221,17 @@ void MultiplayerAnalyzer::AddGems() {
         GetCodaExtents(userGuid, codaStart, codaEnd);
         Data *pData = GetData(userGuid);
         MILO_ASSERT(pData, 0x15C);
-        for (int j = 0; j < pData->mGemScores.size(); j++) {
-            const GemScore &score = pData->mGemScores[j];
-            int tick = score.unk0;
+        std::vector<GemScore> &scores = pData->mGemScores;
+        for (int j = 0; j < scores.size(); j++) {
+            int tick = scores[j].unk0;
             if (codaStart > tick || tick >= codaEnd) {
                 gemCount++;
                 int mult = (gemCount / 10) + 1;
                 int maxMult = pData->mMaxMultiplier;
                 int *pMult = (mult < maxMult) ? &mult : &pData->mMaxMultiplier;
                 int multiplier = *pMult;
-                pData->mMaxPts += score.unk4;
-                pData->mMaxStreakPts += pData->mGemScores[j].unk4 * (float)multiplier;
+                pData->mMaxPts += scores[j].unk4;
+                pData->mMaxStreakPts += scores[j].unk4 * (float)multiplier;
             }
         }
     }
