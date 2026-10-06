@@ -1546,6 +1546,47 @@ set_source_files_properties(${BANDTRACK_DRAW_SOURCES}
     ${REPO_ROOT}/src/system/bandobj/BandCrowdMeter.cpp
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
 
+# W16-PX: the gameplay layer a live VocalTrack controller reaches through its
+# vtable (VocalPlayer/Singer/VocalPart, SongDB, the M6 scoring graph, BandUser,
+# GameConfig, MetaPerformer, ProfileMgr, ...). rb3-render only: it is what
+# native/src/bandtrack_phase.cpp needs to construct a real VocalTrack.
+set(VOCALTRACK_GAME_SOURCES
+    ${REPO_ROOT}/src/band3/game/VocalPlayer.cpp
+    ${REPO_ROOT}/src/band3/game/Singer.cpp
+    ${REPO_ROOT}/src/band3/game/VocalPart.cpp
+    ${REPO_ROOT}/src/band3/game/VocalScoreHistory.cpp
+    ${REPO_ROOT}/src/band3/game/TambourineDetector.cpp
+    ${REPO_ROOT}/src/system/dsp/VibratoDetector.cpp
+    ${REPO_ROOT}/src/system/synth/VoiceBeat.cpp
+    ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
+    ${REPO_ROOT}/src/band3/game/BandUser.cpp
+    ${REPO_ROOT}/src/band3/game/GameConfig.cpp
+    ${REPO_ROOT}/src/band3/game/GameMode.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandSongMetadata.cpp
+    ${REPO_ROOT}/src/band3/game/Defines.cpp
+    ${REPO_ROOT}/src/band3/meta_band/GameplayOptions.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CharData.cpp
+    ${REPO_ROOT}/src/band3/tour/TourChar.cpp
+    ${REPO_ROOT}/src/band3/tour/TourCharLocal.cpp
+    ${REPO_ROOT}/src/band3/tour/TourSavable.cpp
+    ${SONGDB_SOURCES}
+    ${M6_GAME_SOURCES}
+    ${M3_SOURCES}
+    ${M3B_SOURCES}
+)
+set_source_files_properties(
+    ${REPO_ROOT}/src/band3/game/BandUser.cpp
+    ${REPO_ROOT}/src/band3/game/GameConfig.cpp
+    ${REPO_ROOT}/src/band3/game/GameMode.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandSongMetadata.cpp
+    ${REPO_ROOT}/src/band3/game/Defines.cpp
+    ${REPO_ROOT}/src/band3/meta_band/GameplayOptions.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CharData.cpp
+    ${REPO_ROOT}/src/band3/tour/TourChar.cpp
+    ${REPO_ROOT}/src/band3/tour/TourCharLocal.cpp
+    ${REPO_ROOT}/src/band3/tour/TourSavable.cpp
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+
 set(MILO_TARGET_COMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/milo_object_factories.cpp
     ${ENGINE_SOURCES}
@@ -1644,6 +1685,10 @@ if(RB3X_BUILD_ENGINE)
         # header-declared, deliberately undefined in libmilo-engine.a. See the
         # file for why RB3's answers differ from DC3's.
         ${CMAKE_SOURCE_DIR}/src/rb3_render_glue.cpp
+        # W16-PX: drives the track/vocal highway over the loaded ui/track milos.
+        ${CMAKE_SOURCE_DIR}/src/bandtrack_phase.cpp
+        ${CMAKE_SOURCE_DIR}/src/bandtrack_link_stubs.cpp
+        ${VOCALTRACK_GAME_SOURCES}
         ${MILO_TARGET_COMMON_SOURCES}
     )
     list(APPEND MILO_TARGETS rb3-render)

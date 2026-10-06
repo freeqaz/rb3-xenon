@@ -4912,6 +4912,10 @@ namespace {
 
 } // namespace
 
+// native/src/bandtrack_phase.cpp (W16-PX)
+int RunBandTrackPhase(void (*gate)(const char *, bool, const char *));
+static bool gNoBandTrack = false;
+
 int main(int argc, char **argv) {
     // Line-buffer: a SIGSEGV inside the renderer would otherwise discard the
     // whole report and leave no trace of how far it got.
@@ -4939,6 +4943,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--only-mesh") == 0 && i + 1 < argc)
             gOnlyMesh = argv[++i];
         else if (strcmp(argv[i], "--dump-tree") == 0) gDumpTree = true;
+        else if (strcmp(argv[i], "--no-bandtrack") == 0) gNoBandTrack = true;
         else if (strcmp(argv[i], "--crowd-all") == 0) gCrowdShowAll = true;
         else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
@@ -5154,6 +5159,12 @@ int main(int argc, char **argv) {
         results.push_back(r);
         if (r.ok) passed++;
     }
+
+    // W16-PX: the note-highway drawing path (native/src/bandtrack_phase.cpp).
+    // Default mode only, i.e. the run tools/native_health.sh makes; an explicit
+    // cell list is a render experiment and skips it. --no-bandtrack opts out.
+    if (pos.size() == 2 && !gNoBandTrack)
+        RunBandTrackPhase(Gate);
 
     printf("\n=== summary ===\n");
     for (size_t i = 0; i < cells.size(); i++) {
