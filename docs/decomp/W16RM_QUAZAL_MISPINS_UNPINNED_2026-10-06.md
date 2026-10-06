@@ -38,7 +38,7 @@ block lies away from its unit's own code, among other TUs' code, and something i
 
 Evidence:
 - `823F3E30`, `823F3E84`, `823F4498` and `823F4508` reference the string `".\MessageBrokerDDL_Xbox.cpp"`. That is the
-  Xbox counterpart of rb3-Wii's `network/net/MessageBrokerDDL_Wii.cpp`, and no unit for it exists.
+  Xbox counterpart of the RB3 game source's `network/net/MessageBrokerDDL_Wii.cpp`, and no unit for it exists.
 - 17 functions sit only in the vtables of `_DOC_MessageBroker@Quazal`, `_DO_MessageBroker@Quazal`,
   `DOClassTemplate<_DO_RootDO,DOClass>@Quazal`, `HarmonixGameDDLDeclarations@Quazal` or
   `RockBandDDLDeclarations@Quazal`. Six more install those vtables.
@@ -69,7 +69,7 @@ Evidence:
 `RockCentral.cpp`, pin `8250A510-8250AF88`, 2,680 B.
 - It holds the vtable-only methods of `RBDataClient@Quazal` (`8250A510`), `RBBinaryDataClient@Quazal` (`8250AAA8`)
   and `RBTestClient@Quazal` (`8250AF08`), plus their marshalling helpers.
-- rb3-Wii puts these in separate TUs: `RBDataDDL_Wii.cpp`, `RBBinaryDataDDL_Wii.cpp` and `RBTestDDL_Wii.cpp`.
+- The RB3 game source puts these in separate TUs: `RBDataDDL_Wii.cpp`, `RBBinaryDataDDL_Wii.cpp` and `RBTestDDL_Wii.cpp`.
 - RockCentral's own code is at 0x824F64D0–0x824FB3D0. In this pin only the 40 B EH funclets scored, and they paired by
   byte signature.
 
@@ -77,7 +77,7 @@ Evidence:
 
 `band3/bandtrack/TrackPanel.cpp`, pin `82B8FED8-82B8FF80`, 168 B.
 - `82B8FED8` is the only slot of `RockBandDDLDeclarations@Quazal`'s vtable that is not shared.
-- `82B8FF20` is called only by ProductFacade, and it registers the `"RockBand"` product (rb3-Wii:
+- `82B8FF20` is called only by ProductFacade, and it registers the `"RockBand"` product (RB3 game source:
   `band3/net_band/RockBandDDF_Wii.cpp`).
 
 ### 2.5 Quazal static initializers, 0x82C42910–0x82C42DA0
@@ -201,7 +201,7 @@ and does not come from matching anything.
 
 - No Quazal source or reverse engineering, and no new unit headings. The TU identities in §2 are recorded for a future
   pinning lane: MessageBrokerDDL_Xbox.cpp is attested by its file string; the RB*DDL, RockBandDDF and "DynamicData"
-  identities rest on rb3-Wii file names and `.rdata` adjacency.
+  identities rest on RB3 game-source file names and `.rdata` adjacency.
 - No alias admitted or withdrawn beyond the survivor relabel in §3.
 - Native gate not run. The change touches only `splits.txt`, `target_symbol_map.json` and `symbol_aliases.json`;
   no `src/` file and no header.
