@@ -766,15 +766,22 @@ int BandPatchMesh::WorkVerts::TryAddFace(int faceidx, int b) {
     if (!reject && b != 3) {
         int prev = (b == 0) ? 2 : b - 1;
         int next = (b == 2) ? 0 : b + 1;
-        const Vector2 &pb = verts[b]->unk1c;
-        const Vector2 &pn = verts[next]->unk1c;
-        const Vector2 &pp = verts[prev]->unk1c;
-        float ex = pn.x - pb.x;
-        float ey = pn.y - pb.y;
-        float t = Clamp(0.0f, 1.0f, ((pp.x - pb.x) * ex + (pp.y - pb.y) * ey) / (ex * ex + ey * ey));
+        MeshVert *vb = verts[b];
+        MeshVert *vn = verts[next];
+        MeshVert *vp = verts[prev];
+        float ex = vn->unk1c.x - vb->unk1c.x;
+        float ey = vn->unk1c.y - vb->unk1c.y;
+        float t = Clamp(
+            0.0f,
+            1.0f,
+            ((vp->unk1c.x - vb->unk1c.x) * ex + (vp->unk1c.y - vb->unk1c.y) * ey)
+                / (ex * ex + ey * ey)
+        );
         Vector2 proj;
-        Interp(pb, pn, t, proj);
-        reject = (pp.x - 0.5f) * (pp.x - proj.x) + (pp.y - 0.5f) * (pp.y - proj.y) < 0;
+        Interp(vb->unk1c, vn->unk1c, t, proj);
+        reject = (vp->unk1c.x - 0.5f) * (vp->unk1c.x - proj.x)
+                + (vp->unk1c.y - 0.5f) * (vp->unk1c.y - proj.y)
+            < 0;
     }
     if (reject) {
         for (int i = unk10.size() - prevVertCount; i != 0; i--) {
