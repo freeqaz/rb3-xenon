@@ -258,9 +258,12 @@ void CharKeyHandMidi::Poll() {
 
         Vector3 tipOff;
         Scale(forward, -1.0f, tipOff);
-        Vector3 down;
-        Scale(up, -0.4f, down);
-        cur += down;
+        float downX = up.x * -0.4f;
+        float downY = up.y * -0.4f;
+        float downZ = up.z * -0.4f;
+        cur.x = downX + cur.x;
+        cur.y = cur.y + downY;
+        cur.z = cur.z + downZ;
         Vector3 white;
         Scale(keyDir, keyDist / 14.0f, white);
         Vector3 half;
@@ -275,22 +278,24 @@ void CharKeyHandMidi::Poll() {
 
         unk4c[1] = cur;
         Vector3 tip(cur);
-        tip += tipOff;
+        tip.x = cur.x + tipOff.x;
+        tip.y = cur.y + tipOff.y;
+        tip.z = cur.z + tipOff.z;
         unk54[1] = tip;
 
         for (int key = 2; key <= 0x19; key++) {
-            if (!(IsBlackKey((KeyboardKey)key))) {
-                cur += white;
-                unk4c[key] = cur;
-                Vector3 t;
-                Add(cur, tipOff, t);
-                unk54[key] = t;
-            } else {
+            if (IsBlackKey((KeyboardKey)key)) {
                 Vector3 p;
                 Add(cur, black, p);
                 unk4c[key] = p;
                 p += tipOff;
                 unk54[key] = p;
+            } else {
+                cur += white;
+                unk4c[key] = cur;
+                Vector3 t;
+                Add(cur, tipOff, t);
+                unk54[key] = t;
             }
         }
         unk78 = false;
