@@ -35,8 +35,8 @@ file-coherent groups. Each group was read in its own `scripts/setup_worktree.sh`
 full build. Instrument: objdiff's full two-column listing on the graded ruler (`name_check`), read for calls and
 their arguments, member load/store offsets, immediates, branch conditions and return values. Retail float
 constants were read directly from `orig/45410914/band.exe` at the target's relocation addresses wherever a
-constant was involved. Oracles (dc3, rb3-Wii) were consulted only when the listing was ambiguous; **retail bytes
-outrank them**, and three of the eight defects are ones the oracle shares.
+constant was involved. Reference sources were consulted only when the listing was ambiguous; **retail bytes
+outrank them**, and three of the eight defects were inherited from the source we started from.
 
 Every fix was rebuilt with a full `./tools/ninja-locked` in the group's worktree and checked row-by-row against
 that worktree's pre-edit `report.json`; then the combined patches were measured with `tools/ab_measure.py` in the
@@ -48,14 +48,14 @@ lane worktree (§4).
 
 | row | size | defect (retail evidence) | fuzzy |
 |---|---:|---|---|
-| `Locale::Init` | 1,304 | `StringTable` size is Σ`strlen(s)+1` per unique string (`add r11,r11,r17; addi r17,r11,1`); ours omitted the NUL, one byte short per string. DC3 and rb3-Wii agree with retail. | 95.95 → 96.47 |
+| `Locale::Init` | 1,304 | `StringTable` size is Σ`strlen(s)+1` per unique string (`add r11,r11,r17; addi r17,r11,1`); ours omitted the NUL, one byte short per string. The reference sources agree with retail. | 95.95 → 96.47 |
 | `ObjectDir::Save` | 2,108 | Ours stored 0 to `mCurViewportID` (+0x8C) on every save; retail's only access is the load for `bs << mCurViewportID`. | 95.97 → 99.58 |
 | `ObjectDir::ResetViewports` | 532 | Retail stores −1.0 to +0xD8 (`vp[3].m.y.z`); ours +1.0, a reflection (det −1) instead of a rotation. Now `Set(1,0,0, 0,0,-1, 0,1,0)`, as DC3. | 98.31 → 98.35 |
-| `SongParser::HandleRGGemStop` | 2,176 | The area-strum window is tested against `tick` (`r23`, written once by `mr r23,r4`; re-verified in the lane) at both bounds, not `on_tick`. Retail picks `strum_type` by the chord's **stop** tick. **The rb3-Wii oracle has `on_tick`.** | 97.357 → 97.375 |
-| `VocalPlayer::Poll` (1/3) | 3,388 | `frameMinPitch` starts at **9.0e9f**: retail `.rdata 0x820EEF18` = `50 06 1C 46`. Ours was 9985.578125f = `0x461C0650` — **the same word byte-swapped**; the rb3-Wii oracle carries the same error. | unchanged |
+| `SongParser::HandleRGGemStop` | 2,176 | The area-strum window is tested against `tick` (`r23`, written once by `mr r23,r4`; re-verified in the lane) at both bounds, not `on_tick`. Retail picks `strum_type` by the chord's **stop** tick. **The inherited source had `on_tick`.** | 97.357 → 97.375 |
+| `VocalPlayer::Poll` (1/3) | 3,388 | `frameMinPitch` starts at **9.0e9f**: retail `.rdata 0x820EEF18` = `50 06 1C 46`. Ours was 9985.578125f = `0x461C0650` — **the same word byte-swapped**; the inherited source carried the same error. | unchanged |
 | `VocalPlayer::Poll` (2/3) | — | Retail's Poll, `Restart` and `HookupTrack` all call an out-of-line `0x826E3E90` = `!TheNetSession->IsLocal() && PressingToTalk()` (callees named in the map: `?IsLocal@NetSession@@QBA_NXZ`, `?PressingToTalk@VocalPlayer@@QAA_NXZ`; body disassembled in the lane). `f3ec9592d` had collapsed all three to `PressingToTalk()`. Restored as `VocalPlayer::CanChat`, placed after `PressingToTalk` as in retail. | — |
 | `VocalPlayer::Poll` (3/3) | — | Callee `GameMicManager::GetMicCount`: retail `0x8235BA70` is `lwz r3,0x34(r3); blr`. Ours returned 4 in `frame_rate` mode (DC3's fake-mic feature); that branch is now `#ifdef HX_NATIVE`, as `GetMic`'s already is, so native behaviour is unchanged. | — |
-| `VoiceBeat::Analyze` | 1,408 | Syllable trigger is `4*min(0.15, mFloorSigma)` (`fcmpu floor,0.15; ble -> &mFloorSigma`); ours and the rb3-Wii oracle had `max`. The `blt`/`ble` residue differs only at equality, where both operands are the same value. | unchanged |
+| `VoiceBeat::Analyze` | 1,408 | Syllable trigger is `4*min(0.15, mFloorSigma)` (`fcmpu floor,0.15; ble -> &mFloorSigma`); ours (as inherited) had `max`. The `blt`/`ble` residue differs only at equality, where both operands are the same value. | unchanged |
 
 ### 3.2 Behaviour equal (57 rows)
 
@@ -123,10 +123,10 @@ of `band.exe`.
 value at the relocation target and our `__real@XXXXXXXX` value, and list mismatches. It is mechanical, needs no
 judgement per row, and its population is every paired function, not only the gap.
 
-### 5.2 Retail outranked the oracle three times
+### 5.2 Retail outranked the inherited source three times
 
-`HandleRGGemStop` (`on_tick` in rb3-Wii), `VoiceBeat::Analyze` (`max` in rb3-Wii) and `frameMinPitch` (the
-byte-swapped literal in rb3-Wii) are all oracle-shared defects. Retail bytes settled each; no oracle text was
+`HandleRGGemStop` (`on_tick`), `VoiceBeat::Analyze` (`max`) and `frameMinPitch` (the
+byte-swapped literal) are all inherited defects. Retail bytes settled each; no reference text was
 taken as evidence for a fix.
 
 ### 5.3 A removed retail gate came back
