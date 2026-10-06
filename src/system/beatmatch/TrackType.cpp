@@ -14,10 +14,9 @@ Symbol TrackTypeToSym(TrackType type) {
 
 // 0x8277B530
 TrackType SymToTrackType(Symbol sym) {
-    // Retail tests the bound at the TOP of the loop (no rotation).
-    for (int i = 0;; i++) {
-        if (i > kTrackNone)
-            break;
+    // Retail tests the bound at the top as two compares, `cmpwi i,10; blt body;
+    // bne exit` -- the loop also accepts kTrackNone itself (i == 10).
+    for (int i = 0; i < kNumTrackTypes || i == kTrackNone; i++) {
         if (sym == TrackTypeToSym((TrackType)i))
             return (TrackType)i;
     }

@@ -174,21 +174,24 @@ void MidiReader::ReadMidiEvent(
         QueueChannelMsg(tick, status, data1, data2);
 }
 
+// Retail copies `base` into its own register first (`fmr f13,f1`) and keeps
+// the 1.0f constant live for the final `one / result` (`fdivs f0,f12,f0` then a
+// single `fmr f1,f0` at the join). Residual: retail schedules `cmpwi r4,0` above
+// the `mr r11,r4` copy.
 float pow(float base, int exponent) {
-    int exp = exponent;
+    float b = base;
+    unsigned int exp = exponent;
     if (exponent < 0)
         exp = -exponent;
     float result = 1.0f;
     for (;;) {
         if (exp & 1)
-            result *= base;
-        exp = (unsigned)exp >> 1;
+            result *= b;
+        exp >>= 1;
         if (!exp) break;
-        base *= base;
+        b *= b;
     }
-    if (exponent < 0)
-        result = 1.0f / result;
-    return result;
+    return exponent < 0 ? 1.0f / result : result;
 }
 
 // MILO_WARN (not MILO_NOTIFY) throughout this file -- lane W27-FRAMEQ, 2026-08-17.
