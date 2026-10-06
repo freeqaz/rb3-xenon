@@ -562,6 +562,14 @@ void StoreOfferProvider::BuildList(DataArray *grouping) {
     //    temp between them that retail does not have.
     //  - the same but with c_str() hoisted into a named local: no stray store,
     //    exact size, but the pointer compare moves to cr6 -- scores lower.
+    //  W16-RB (2026-10-06) re-measured nine spellings after the rest of the row
+    //  reached 2 charges (exactly these two stray stores). Binding a
+    //  `const String &` first: 98.96 (adds an addi and a second store);
+    //  `*c_str() && c_str()` and `c_str()[0] != 0 && ...`: 99.53 (two stores);
+    //  `!= NULL` and nested ifs: identical to this form; a hoisted char* with
+    //  `*p != 0 && p` or nested `if (*p) if (p)`: pointer test deleted, 99.51;
+    //  `strcmp(p, "") != 0 && p` / `strlen(p) != 0 && p`: inline loops, 96.5 /
+    //  96.8. Nothing tried removes the store while keeping both compares.
     BandStorePanel *prevPanel = BandStorePanel::Instance();
     if (!PrevChunkPath(prevPanel).empty() && PrevChunkPath(prevPanel).c_str()) {
         Element *prev = new Element(NULL, store_previous_chunk, true, false, true);
@@ -650,9 +658,13 @@ void StoreOfferProvider::BuildList(DataArray *grouping) {
                             mShortcuts->Size(), DataNode(shortcutSym)
                         );
                     } else {
-                        mShortcuts->Insert(
-                            mShortcuts->Size(), DataNode(shortcutSym.Str())
-                        );
+                        // NAMED, not a temporary: retail passes this DataNode by
+                        // its recomputed frame address (`addi r5,r31,0xa0`), not
+                        // the ctor's returned `this` (`mr r5,r3`), and naming it
+                        // also gives every later temp in the loop retail's slot
+                        // (W16-RB: 99.24 -> 99.68, 25 charges -> 2).
+                        DataNode name(shortcutSym.Str());
+                        mShortcuts->Insert(mShortcuts->Size(), name);
                     }
                     lastGroup->mShortcut = shortcutSym;
                     curGroupSym = shortcutSym;

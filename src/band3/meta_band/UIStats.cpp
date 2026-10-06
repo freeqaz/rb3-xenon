@@ -53,48 +53,25 @@ void UIStats::DropScreen(UIScreen *screen) {
     mLastDroppedScreen++;
 }
 
-// NOTE (lanes DP-2, W16-EI): this row is ALIAS-GATED, NOT SOURCE-GATED.
-// Do not re-fund it as a source-matching target. Measured at ec15a785 on the
-// GRADED (name_check) ruler = report.json's own provenance.diff_config:
-//   size 2604 B | fuzzy 99.57911 | mpn 99.655914 | 65 of 652 instrs charged
-// Charge composition: 54 offset/immediate + 10 register + 8 symbol + 1 insert
-// + 1 replace. Six of the eight symbol diffs (idx 263-268) target lbl_<hex>
-// placeholders, which name_check FORGIVES (objdiff-core code.rs
-// is_placeholder_symbol_name), so they cost only their register component.
-// THE TWO THAT ARE REALLY CHARGED CANNOT BE MOVED BY ANY SOURCE EDIT:
-//   idx 246  target ?GetContainerName@MemcardXbox@@UAAPBDXZ @ 0x82801f78
-//            ours   ?GetBandUsers@BandUserMgr@@...@XZ
-//            0x82801f78 is already a known fold site in symbol_aliases.json
-//            (survivor GetContainerName, folded GetColor@UIColor) -- all three
-//            are `addi r3,r3,N; blr` member-address getters. Our spelling is
-//            simply absent from that group.
-//   idx 249  target ??0?$vector@HV?$StlNodeAlloc@H...@ABV01@@Z @ 0x827c1378
-//            ours   ??0?$vector@PAVBandUser@@...@ABV01@@Z
-//            target_symbol_map.json contains NO spelling of the
-//            vector<BandUser*> copy ctor at all -- retail's map names only the
-//            vector<int> survivor of that ICF fold.
-// matched_code is all-or-nothing on fuzzy == 100, so the 2604 B is collectable
-// only by installing those two alias memberships (PROVEN, e.g. via
-// tools/ourside_fold_sweep.py), never by editing this file. Even then 63
-// charges remain: the stack-slot wall below plus the register rotation.
-// STACK/REGISTER WALL -- DP-2's census REPRODUCES EXACTLY, it is not stale:
-// 4 user slots DIFFER and 8 are SHIFTED of 32, plus 6 PERMUTED (a class the
-// tool gained since). PERMUTED means both sides use the same slot SET with
-// variables assigned differently = MSVC temporary-slot shaping, which a
-// declaration reorder does NOT address. On top: a 6-register rotation
-// (r22->r20->r18->r22, r21->r19->r25->r21) and an r29<->r4 swap => permuter
-// class, and the permuter is off by directive.
-// CORRECTION TO DP-2's INSTRUMENT CAUTION -- IT IS NOW STALE, THE BUG IS FIXED.
-// DP-2 warned that stack-layout printed "Frame size TGT 0x0 BASE 0x0" with
-// "GPRs TGT 0 BASE 18", a vacuous 0==0 from failing to parse this lis/ori/subf
-// prologue. Today it reports `TGT 0x102f0 BASE 0x102f0` with explicit evidence
-// `stwux r1,r1,r12=-0x102f0` on BOTH sides and GPRs 18/18, and it now discloses
-// fingerprint degeneracy ("28 of 32 target slots share a fingerprint").
-// The instrument WORKS -- use it; do not inherit the distrust.
-// ONE REUSABLE TRAP: do NOT infer charge count from fuzzy%. 65 of 652 instrs
-// (10.0%) are charged here yet fuzzy reads 99.58, because a diff_arg is worth
-// ~0.006 pp. Reading 99.58 as "2-3 charges left" is how this row keeps getting
-// re-briefed as nearly-done.
+// Status (W16-RB, 2026-10-06, graded name_check ruler): 2604 B, fuzzy 99.919,
+// 53 of 652 instructions charged, every one a frame-slot offset.
+// - The two call sites DP-2/W16-EI recorded as alias-gated (idx 246
+//   GetBandUsers -> GetContainerName@MemcardXbox, idx 249 vector<BandUser*>
+//   copy ctor -> vector<int>) now pass: those fold memberships were installed
+//   in symbol_aliases.json after W16-EI. The row is source-collectable.
+// - What W16-EI called a "6-register rotation" at idx 263-268 was not a
+//   register difference. Reading retail's label strings out of band.exe shows
+//   the same assignment on both sides (r22 "%s:%s", r21 "remote_user_%d",
+//   r20 "null", r19 "local_user_%d", r18 ThePlatformMgr, r25 "pad_%d"); only the
+//   ORDER of the six hoisted lis/addi pairs differed. MSVC emits them in reverse
+//   of their first use in source, so the local-user branch has to be written
+//   before the remote-user branch (see the loop below).
+// - Left: the frame slots. Retail (ascending): static-init DataNode temp 0x78,
+//   users / 2nd reset OnlineID temp 0x80, screenExit 0x90, HandleType result
+//   0xb0, local id 0xc0, key 0xd0, padUser 0xe0, val / 1st reset OnlineID temp
+//   0x100, remote id 0x110. Ours: users 0x78, temp 0x88, local id / 2nd temp
+//   0x90, screenExit 0xa0, HandleType 0xc0, remote id / 1st temp 0xd0, val 0xe0,
+//   key 0xf0, padUser 0x100.
 void UIStats::MaybePublish(UIScreen *from) {
     if (!from) return;
     mLastPublishTime = SystemMs();
@@ -142,11 +119,13 @@ void UIStats::MaybePublish(UIScreen *from) {
         int compressedSize = 0x10100;
         unsigned char stackbuf[0x10100];
         unsigned char *buf = stackbuf + 0x100;
-        unsigned char *base = (unsigned char *)mPadLogBuffer;
         unsigned char *write = (unsigned char *)mPadLogWritePtr;
+        unsigned char *base = (unsigned char *)mPadLogBuffer;
         unsigned int writeOff = (unsigned int)(write - base);
         int size;
-        if (write == base || (unsigned int)mPadLogCount < 0x4000) {
+        // retail loads mPadLogWritePtr before mPadLogBuffer and compares
+        // `cmplw base, write` (W16-RB)
+        if (base == write || (unsigned int)mPadLogCount < 0x4000) {
             if ((unsigned int)mPadLogCount < 0x4000) size = writeOff;
             else size = 0x10000;
             memcpy(buf, base, size);
@@ -195,11 +174,40 @@ void UIStats::MaybePublish(UIScreen *from) {
     for (std::vector<BandUser *>::iterator it = users.begin(); it != users.end(); ++it) {
         const BandUser *user = *it; // retail: const (selects the const GetLocal/RemoteBandUser vtable slots)
         bool participating = user->IsParticipating();
-        // retail (Ghidra @0x8255f9d0): merged condition `!IsLocal() || IsNullUser()`
-        // (TU5-added User virtual, vtbl+0x70 — see os/User.h) short-circuits IsLocal() a SECOND time
-        // via the nested `if (!user->IsLocal())`; a local user with the TU5 flag set falls through
-        // both branches and is silently skipped this iteration.
-        if (!user->IsLocal() || user->IsNullUser()) {
+        // retail (Ghidra @0x8255f9d0): the condition `IsLocal() && !IsNullUser()`
+        // (IsNullUser is a TU5-added User virtual, vtbl+0x70 -- see os/User.h). Its else
+        // arm tests IsLocal() a SECOND time via the nested `if (!user->IsLocal())`; a
+        // local user with the TU5 flag set falls through both arms and is silently
+        // skipped this iteration. The local arm is written FIRST: MSVC hoists the six
+        // loop-invariant string/global addresses in reverse of their first use in
+        // source, and retail's order (%s:%s, remote_user, null, local_user,
+        // ThePlatformMgr, pad) only comes out this way (W16-RB: 99.87 -> 99.92).
+        if (user->IsLocal() && !user->IsNullUser()) {
+            int padNum = user->GetLocalBandUser()->GetPadNum();
+            const char *breed = JoypadGetBreedString(padNum);
+            if (mLastBreedString[padNum] != breed) {
+                screenExit.AddPair(
+                    MakeString("pad_%d", padNum), DataNode(breed)
+                );
+                padUser.AddPair(
+                    MakeString("pad_%d", padNum), DataNode(breed)
+                );
+                mLastBreedString[padNum] = breed;
+            }
+
+            OnlineID id;
+            if (participating) {
+                ThePlatformMgr.GetOnlineID(padNum, &id);
+            }
+            if (participating != mLastWasParticipating[padNum]
+                || !(id == mLastPadID[padNum])) {
+                const char *key = MakeString("local_user_%d", padNum);
+                screenExit.AddPair(key, DataNode(participating ? id.ToString() : "null"));
+                padUser.AddPair(key, DataNode(participating ? id.ToString() : "null"));
+                mLastWasParticipating[padNum] = participating;
+                mLastPadID[padNum] = id;
+            }
+        } else {
             if (!user->IsLocal()) {
                 MILO_ASSERT(remoteCount < DIM(mLastRemoteID), 0xEC);
                 user->GetRemoteBandUser(); // retail calls this (result unused), not Reset()
@@ -232,35 +240,14 @@ void UIStats::MaybePublish(UIScreen *from) {
                 }
                 remoteCount++;
             }
-        } else {
-            int padNum = user->GetLocalBandUser()->GetPadNum();
-            const char *breed = JoypadGetBreedString(padNum);
-            if (mLastBreedString[padNum] != breed) {
-                screenExit.AddPair(
-                    MakeString("pad_%d", padNum), DataNode(breed)
-                );
-                padUser.AddPair(
-                    MakeString("pad_%d", padNum), DataNode(breed)
-                );
-                mLastBreedString[padNum] = breed;
-            }
-
-            OnlineID id;
-            if (participating) {
-                ThePlatformMgr.GetOnlineID(padNum, &id);
-            }
-            if (participating != mLastWasParticipating[padNum]
-                || !(id == mLastPadID[padNum])) {
-                const char *key = MakeString("local_user_%d", padNum);
-                screenExit.AddPair(key, DataNode(participating ? id.ToString() : "null"));
-                padUser.AddPair(key, DataNode(participating ? id.ToString() : "null"));
-                mLastWasParticipating[padNum] = participating;
-                mLastPadID[padNum] = id;
-            }
         }
     }
 
-    static Message msg("exit_stats", DataNode(new DataArray(0), kDataArray));
+    // The DataArray* converts to DataNode implicitly (DataNode(DataArray*,
+    // DataType = kDataArray)). Retail passes that temp by its frame address
+    // (`addi r5,r31,0x78`); an explicit DataNode(...) temporary is passed as the
+    // ctor's returned this (`mr r5,r29`) and costs an extra mr (W16-RB).
+    static Message msg("exit_stats", new DataArray(0));
     from->HandleType(msg.mData);
     DataArray *rslt = msg[0].Array(NULL);
     MILO_ASSERT((rslt->Size() % 2) == 0, 0x10D);
