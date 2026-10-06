@@ -95,6 +95,11 @@ public:
     virtual int ThreadStart();
     virtual void ThreadDone(int);
 
+    /** 0x825610B8, called once from App::App right after TheUI's Init.
+        Names the object "audition_mgr" (Object slot 16) and fills the two
+        Symbols at 0x48/0x4c. */
+    void Init();
+
     int mState; // 0x2c -- switched on by slot 21, ThreadStart and ThreadDone
     int unk30; // 0x30
     AuditionSessionBuilder *mBuilder; // 0x34

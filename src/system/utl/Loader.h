@@ -112,6 +112,7 @@ public:
     void SetCacheMode(bool mode) { mCacheMode = mode; }
     void RegisterFactory(const char *, LoaderFactoryFunc *);
     void PollUntilLoaded(Loader *, Loader *);
+    void PollUntilEmpty();
     Loader *GetLoader(const FilePath &) const;
     Loader *ForceGetLoader(const FilePath &);
     Loader *AddLoader(const FilePath &, LoaderPos);
