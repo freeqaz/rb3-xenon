@@ -142,8 +142,11 @@ DirLoader::~DirLoader() {
     mDeleteSelf = false;
     if (!IsLoaded()) {
         Cleanup(nullptr);
-    } else if (mDir) {
-        mDir->SetLoader(nullptr);
+    } else if (ObjectDir *dir = mDir) {
+        // Receiver through a local, not `mDir->SetLoader`: an inlined call on a
+        // null-checked member pointer makes MSVC home the raw receiver to a
+        // dead EH temp slot (`stw r11, 0x50(r31)`), which retail lacks.
+        dir->SetLoader(nullptr);
         if (!mAccessed && !mProxyName) {
             RELEASE(mDir);
         }

@@ -142,7 +142,9 @@ bool CDReadExternal(void *&v, int i, u64 u) {
     } else {
         v = gExternalArkFiles[i];
         u64 l = u;
-        SetFilePointer(v, u, (PLONG)&l, 0);
+        // Retail reads the low word back out of u's home slot rather than
+        // truncating the register (std r5 / lwz r4,+4).
+        SetFilePointer(v, ((LONG *)&u)[1], (PLONG)&l, 0);
         return true;
     }
 }

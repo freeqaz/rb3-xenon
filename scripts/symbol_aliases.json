@@ -99909,9 +99909,10 @@
     "??1?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@QAA@XZ",
     "??1Var@ScriptTask@@QAA@XZ",
     "??1?$pair@PAVDataArray@@VDataNode@@@stlpmtx_std@@QAA@XZ",
-    "??1?$pair@PBDVDataNode@@@stlpmtx_std@@QAA@XZ"
+    "??1?$pair@PBDVDataNode@@@stlpmtx_std@@QAA@XZ",
+    "??1?$pair@VSymbol@@VDataNode@@@stlpmtx_std@@QAA@XZ"
    ],
-   "evidence": "W16-HS 2026-09-30: ICF fold of five 24-byte DataNode-at-+4 destructors (test the type at +8, call DataArray::Release). tools/icf_pair_adjudicate.py --pairs --chase --family, fn_82768B18 against each of the five spellings: FLAT T1 PROVEN for all five (masked bodies equal, the single relocation ?Release@DataArray@@QAAXXZ agrees by NAME, not just shape), CHASED T1 PROVEN, FAMILY 5 of ours -> 1 retail address; retail_bodytwins 1 across all 3,115 pinned target objs. Retail corroboration: 281 retail call sites land on 0x82768B18, 280 of them EH funclets (273 in RockCentral) unwinding pair<const Symbol,DataNode>. Survivor ~VarStack: W16-HN identity (3 agrees, 2 matched-caller witnesses). Every folded spelling is referenced by our objs (pair<const Symbol,DataNode> in 22). --chasetest and --self-break controls passed on the same tree."
+   "evidence": "W16-HS 2026-09-30: ICF fold of five 24-byte DataNode-at-+4 destructors (test the type at +8, call DataArray::Release). tools/icf_pair_adjudicate.py --pairs --chase --family, fn_82768B18 against each of the five spellings: FLAT T1 PROVEN for all five (masked bodies equal, the single relocation ?Release@DataArray@@QAAXXZ agrees by NAME, not just shape), CHASED T1 PROVEN, FAMILY 5 of ours -> 1 retail address; retail_bodytwins 1 across all 3,115 pinned target objs. Retail corroboration: 281 retail call sites land on 0x82768B18, 280 of them EH funclets (273 in RockCentral) unwinding pair<const Symbol,DataNode>. Survivor ~VarStack: W16-HN identity (3 agrees, 2 matched-caller witnesses). Every folded spelling is referenced by our objs (pair<const Symbol,DataNode> in 22). --chasetest and --self-break controls passed on the same tree. W16-PO 2026-10-06: + ??1?$pair@VSymbol@@VDataNode@@ (the non-const pair, temporary of make_pair<Symbol,DataNode> in DataPoint::AddPair): FLAT T1 PROVEN (24 B both, 1 reloc, reloc_tally {}, our_bodytwins 6 -> retail_bodytwins 1); type witness = retail fn_827CD40C, AddPair's own unwind funclet, destroying the frame+0x70 temporary our funclet destroys as pair<Symbol,DataNode>."
   },
   {
    "name": "W17-HCT 2026-09-30 0x8229e3c0",
@@ -116533,6 +116534,15 @@
    "added": {
     "lane": "W16-PG 2026-10-06"
    }
+  },
+  {
+   "name": "make_pair<Symbol,DataNode>",
+   "address": "0x827cd140",
+   "survivor": "??$make_pair@PBDVDataNode@@@stlpmtx_std@@YA?AU?$pair@PBDVDataNode@@@0@PBDVDataNode@@@Z",
+   "folded": [
+    "??$make_pair@VSymbol@@VDataNode@@@stlpmtx_std@@YA?AU?$pair@VSymbol@@VDataNode@@@0@VSymbol@@VDataNode@@@Z"
+   ],
+   "evidence": "W16-PO 2026-10-06. T1: tools/icf_pair_adjudicate.py FLAT T1 PROVEN (retail 96 B == ours 96 B, 4 relocs, retail_bodytwins 1, our_bodytwins 2: the two instantiations are byte-identical including relocations). Type witness from the caller's own retail bytes: ?AddPair@DataPoint@@QAAXVSymbol@@VDataNode@@@Z builds its pair<const Symbol,DataNode> by copying one word out of the make_pair result (lwz/stw, no ??0Symbol@@QAA@PBD@Z), which only a pair<Symbol,DataNode> result allows; the const char* spelling needs the Symbol(const char*) call our previous source emitted."
   }
  ]
 }

@@ -53,9 +53,15 @@ void Hmx::Quat::Set(const Vector3 &v) {
     float f3 = Sine(stack.y);
     float f4 = Cosine(stack.y);
     Set(f1 * f4, f2 * f3, f1 * f3, f2 * f4);
-    f1 = Sine(stack.z);
-    f2 = Cosine(stack.z);
-    Set(f2 * x - f1 * y, f2 * y + f1 * x, f2 * z + f1 * w, f2 * w - f1 * z);
+    // The z-rotation half reads x (in the new y) and w (in the new w)
+    // through a reference to *this and the rest directly; MSVC's load
+    // forwarding keys on the object expression, and only that mix gives
+    // retail's fused products and schedule (DC3 lane w21-ac). Behaviour is
+    // unchanged: Set evaluates all four arguments before storing.
+    float s = Sine(stack.z);
+    float c = Cosine(stack.z);
+    Hmx::Quat &q = *this;
+    Set(c * x - s * y, c * y + s * q.x, c * z + s * w, c * q.w - s * z);
 }
 
 void Hmx::Quat::Set(const Hmx::Matrix3 &m) {

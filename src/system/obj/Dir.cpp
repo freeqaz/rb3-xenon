@@ -715,6 +715,21 @@ ObjectDir::Viewport &ObjectDir::CurViewport() {
     return mViewports[mCurViewportID];
 }
 
+ObjectDir *ObjectDir::NextSubDir(int &which) {
+    if (which == 0)
+        return this;
+    which--;
+    ObjectDir *ret = nullptr;
+    for (int i = 0; i < mSubDirs.size(); i++) {
+        if (mSubDirs[i]) {
+            ret = mSubDirs[i]->NextSubDir(which);
+            if (ret)
+                return ret;
+        }
+    }
+    return ret;
+}
+
 #ifndef HX_NATIVE
 // Retail 0x8274E780: a flat walk over NextSubDir (which already recurses),
 // with no self test; the cursor is re-seeded from a counter each pass.

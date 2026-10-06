@@ -616,10 +616,12 @@ DataArray *DataReadStream(BinStream *bs) {
 DataArray *LoadDtz(const char *c, int i) {
     int decompSize;
     decompSize = 0;
-    ((unsigned char *)&decompSize)[0] = c[i - 1];
-    ((unsigned char *)&decompSize)[1] = c[i - 2];
-    ((unsigned char *)&decompSize)[2] = c[i - 3];
-    ((unsigned char *)&decompSize)[3] = c[i - 4];
+    // the decompressed size is the last 4 bytes, little-endian
+    const char *sizeBytes = &c[i - 4];
+    ((unsigned char *)&decompSize)[0] = sizeBytes[3];
+    ((unsigned char *)&decompSize)[1] = sizeBytes[2];
+    ((unsigned char *)&decompSize)[2] = sizeBytes[1];
+    ((unsigned char *)&decompSize)[3] = sizeBytes[0];
     MILO_ASSERT(decompSize > 0, 0x456);
     void *pDecompBuf = MemAlloc(decompSize, __FILE__, 0x459, "LoadDtz", 0);
     MILO_ASSERT(pDecompBuf, 0x45b);
