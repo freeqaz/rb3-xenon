@@ -384,14 +384,17 @@ void RndFont::Load(BinStream &bs) {
             }
         }
         if (gRev < 4) {
+            // Old revs store the cell height first, then the width: in retail
+            // 0x82475A20 the first value read divides Height(), the second
+            // divides Width().
             float w, h;
             if (gRev < 2) {
-                int wi, hi;
-                bs >> wi >> hi;
-                w = wi;
+                int hi, wi;
+                bs >> hi >> wi;
                 h = hi;
+                w = wi;
             } else {
-                bs >> w >> h;
+                bs >> h >> w;
             }
             RndTex *validTex = ValidTexture();
             if (validTex) {
