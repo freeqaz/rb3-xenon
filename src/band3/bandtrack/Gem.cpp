@@ -617,7 +617,11 @@ void Gem::GetChordFretLabelInfo(String &s, int &i) const {
 // sw2 scatter-include (default/band3/bandtrack/Gem <- bandobj/OutfitConfig.cpp)
 #define gRev gRev_OutfitConfig
 #define gAltRev gAltRev_OutfitConfig
+// W16-PX: native compiles OutfitConfig.cpp standalone with its own compile
+// definitions (native/CMakeLists.txt, X20); emitting it here would drop those.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "bandobj/OutfitConfig.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 

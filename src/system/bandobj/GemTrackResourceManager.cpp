@@ -146,6 +146,30 @@ ArpeggioShapePool::ArpeggioShapePool(ObjectDir *dir, RndGroup *group, int size)
     }
 }
 
+#ifdef HX_NATIVE
+// Native-only: both destructors are declared (ArpeggioShape.h) but no body
+// exists in the tree, and retail carries no named row for either, so nothing
+// pins where they live. GemTrackDir's destructor deletes the pool; the pool
+// owns its shapes.
+ArpeggioShape::~ArpeggioShape() {
+    // The constructor clones all six objects, so the shape owns them.
+    UnhookFromParentGroup();
+    RELEASE(mChordShapeMesh);
+    RELEASE(mFretNumbersChord);
+    RELEASE(mChordLabel);
+    RELEASE(unk0);
+    RELEASE(mChordShapeMat);
+    RELEASE(mFadeMatAnim);
+}
+
+ArpeggioShapePool::~ArpeggioShapePool() {
+    for (std::list<ArpeggioShape *>::iterator it = mShapes.begin(); it != mShapes.end();
+         ++it) {
+        RELEASE(*it);
+    }
+}
+
+#endif
 ArpeggioShape *ArpeggioShapePool::GetArpeggioShape() {
     if (mShapes.empty())
         CreateArpeggioShape();

@@ -244,6 +244,16 @@ BEGIN_SAVES(UILabel)
     bs << mAltAlpha;
 END_SAVES
 
+#ifdef HX_NATIVE
+// Native-only: UICOMP_DC3_VIRTUAL makes OldResourcePreload a virtual natively
+// (ui/UIComponent.h), and this override was declared without a body, so any
+// UILabel subclass whose vtable became reachable failed to link. DC3's body
+// stores the string into LabelStyle's font resource, but retail RB3's UILabel
+// has no LabelStyle (UILabel.h), so the base's read-and-discard is the RB3
+// shape. No xenon code calls it.
+void UILabel::OldResourcePreload(BinStream &bs) { UIComponent::OldResourcePreload(bs); }
+
+#endif
 void UILabel::Load(BinStream &bs) {
     PreLoad(bs);
     PostLoad(bs);

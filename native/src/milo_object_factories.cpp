@@ -37,6 +37,28 @@
 // be an undefined reference, not a feature.
 
 #include "obj/Dir.h"
+#include "bandobj/BandLabel.h"
+#include "bandobj/BandScoreboard.h"
+#include "bandobj/CrowdMeterIcon.h"
+#include "bandobj/EndingBonus.h"
+#include "bandobj/GemTrackDir.h"
+#include "bandobj/OverdriveMeter.h"
+#include "bandobj/PitchArrow.h"
+#include "bandobj/StreakMeter.h"
+#include "bandobj/TrackPanelDir.h"
+#include "bandobj/UnisonIcon.h"
+#include "bandobj/VocalTrackDir.h"
+#include "ui/UIGuide.h"
+#include "bandobj/ChordShapeGenerator.h"
+#include "bandobj/BandButton.h"
+#include "track/TrackWidget.h"
+#include "track/TrackDir.h"
+#include "ui/UISlider.h"
+#include "bandobj/BandStarDisplay.h"
+#include "ui/UILabelDir.h"
+#include "ui/UIFontImporter.h"
+#include "bandobj/BandCrowdMeter.h"
+void RegisterTrackFactories();
 #include "obj/Object.h"
 #include "obj/ObjMacros.h"
 
@@ -534,4 +556,56 @@ void RegisterMiloObjectFactories() {
     if (getenv("RB3_BIND_BANDCAMSHOT")) {
         Hmx::Object::RegisterFactory(Symbol("BandCamShot"), CamShot::NewObject);
     }
+
+    RegisterTrackFactories();
+}
+
+// W16-PX: the note-highway directories, in BandInit()'s order
+// (bandobj/Band.cpp), restricted to the classes the shipped ui/track milos
+// name. Every *Dir here (GemTrackDir, VocalTrackDir, TrackPanelDir,
+// PitchArrowDir, StreakMeterDir, OverdriveMeterDir, EndingBonusDir) is an
+// ObjectDir subclass, so before this an ui/track load desynced at the first
+// one. Each Init() is the engine's own; all but BandLabel's are a bare
+// Register().
+void RegisterTrackFactories() {
+    BandScoreboard::Init();
+    CrowdMeterIcon::Init();
+    EndingBonus::Init();
+    GemTrackDir::Init();
+    PitchArrow::Init();
+    StreakMeter::Init();
+    OverdriveMeter::Init();
+    TrackPanelDir::Init();
+    VocalTrackDir::Init();
+    UnisonIcon::Init();
+    // BandLabel::Init() also runs TheUI->InitResources("BandLabel"), which
+    // walks UIManager state neither driver initialises (no UIManager::Init):
+    // MEASURED, rb3-render SIGSEGVs in list<UIResource*>::sort under it. So the
+    // factory alone; BandLabel type resources are not preloaded.
+    BandLabel::Register();
+    // trackpanel.milo carries a BandCrowdMeterDir (an ObjectDir subclass).
+    // Its TU was already linked (L4) but never registered: MEASURED, the
+    // unregistered dir desynced the stream into a std::bad_alloc in
+    // ObjectDir::PreLoad's viewport vector.
+    BandCrowdMeter::Init();
+    // ui/ classes the track milos and their font resources need. Retail
+    // registers them in UIManager::Init (UILabel::Init registers UILabelDir
+    // next to UILabel), which neither driver runs because it also runs
+    // InitResources. MEASURED without UILabelDir: pentatonic.milo loads as a
+    // plain RndDir and the first UILabel::PostLoad faults in
+    // UILabelDir::TextObj on the null font importer.
+    REGISTER_OBJ_FACTORY(UILabelDir)
+    REGISTER_OBJ_FACTORY(UIFontImporter)
+    REGISTER_OBJ_FACTORY(UIGuide)
+    REGISTER_OBJ_FACTORY(UISlider)
+    // scoreboard.milo's star display (BandInit order: after BandScoreboard).
+    BandStarDisplay::Init();
+    // chord_shape_generator.milo / guitar_effects.milo (BandInit order).
+    // BandButton::Init() also runs InitResources, so the factory alone.
+    ChordShapeGenerator::Init();
+    BandButton::Register();
+    // tracksystem.milo's 608 TrackWidgets and the engine TrackDir base
+    // (registered by the track system module in retail).
+    TrackWidget::Register();
+    TrackDir::Register();
 }

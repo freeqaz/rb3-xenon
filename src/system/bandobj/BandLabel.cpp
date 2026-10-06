@@ -259,7 +259,11 @@ END_PROPSYNCS
 // sw2 scatter-include (default/BandLabel <- bandobj/BandDirector.cpp)
 #define gRev gRev_BandDirector
 #define gAltRev gAltRev_BandDirector
+// W16-PX: native skips this edge; rndobj/Font.cpp already emits BandDirector.cpp
+// (the X4b duplicate-definition case, native/CMakeLists.txt).
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "bandobj/BandDirector.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 

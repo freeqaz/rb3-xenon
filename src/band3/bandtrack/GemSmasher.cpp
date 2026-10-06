@@ -242,4 +242,7 @@ bool GemSmasher::Glowing() const { return mGlowing; }
 // LocalXfm + SetDirty shape of our Tail::MoveSlot) inside the .text span pinned
 // to default/GemSmasher. It is out-of-line, so this unit's obj must compile it
 // for objdiff to pair it.
+// W16-PX: native skips this edge; rndobj/Font.cpp already emits Tail.cpp.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "band3/bandtrack/Tail.cpp"
+#endif

@@ -60,6 +60,10 @@ static struct {
 // the base mem-init's store so the surviving one lands after the vtable
 // materialization, exactly as retail has it. Same one-line fix as the primary
 // template in obj/ObjPtr_p.h; see the note there.
+// Native builds ObjPtr on ObjRefConcrete (obj/Object.h), whose primary
+// template already stores and AddRefs the pointer; this specialization is an
+// X360 scheduling device spelled against the retail layout.
+#ifndef HX_NATIVE
 template <>
 inline ObjPtr<RndDir>::ObjPtr(Hmx::Object *owner, RndDir *ptr)
     : mOwner(owner), mObject(ptr) {
@@ -67,6 +71,7 @@ inline ObjPtr<RndDir>::ObjPtr(Hmx::Object *owner, RndDir *ptr)
     if (mObject)
         mObject->AddRef(this);
 }
+#endif
 
 bool gShowHUD = true;
 
