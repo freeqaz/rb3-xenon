@@ -110,6 +110,11 @@ PASS**, five rows, all at 100: DataSet +140, SetDiskError +208, AddSongData +652
 **+1,240 B / +5 functions**; HvDecrypt is 100 on both legs. B → C (source only, clean image): exactly
 `IsDemo` 99.8781 → 100 and `HvDecrypt` 95.4815 → 100 (+272 B / +2 functions), nothing else.
 
+**Re-run on the landing base.** After rebasing onto main `c8e56eba1`, two more forced-re-split legs (same
+`leg.sh`): A2 = RB3DX image + main `c8e56eba1`, **53,511 / 5,936,448 B**; C2 = clean image + the rebased branch,
+**53,516 / 5,937,688 B**. `report_row_diff` A2 → C2: **PASS**, the same five rows, the same +5 / +1,240 B,
+nothing else; `splits.txt`/`symbols.txt` unchanged. Reports `~/tmp/w16pt/report_{A2,C2}.json`.
+
 The W16-R §1 prediction was DataSet +140, IsDemo +164, AddSongData +652, SetDiskError +208 "iff the
 residue is only the head", `main` "likely". All five crossed. IsDemo needed the source fix; it did not cross
 on the image alone. The HvDecrypt regression was not predicted: that row was matched to the Deluxe bytes on
@@ -267,6 +272,14 @@ only within one image.
 **Rollback.** `git revert -m 1 <merge>`, then put the Deluxe image back under the same lock:
 `cp --reflink=auto $O/rb3dx-archive/default.xex $O/default.xex.new && mv $O/default.xex.new $O/default.xex`,
 then a forced re-split (step 4).
+⚠ Going back to a pre-merge commit stops the next build with
+`ninja: error: rebuilding 'build.ninja': 'scripts/verify_target_image.py', needed by
+'build/45410914/target_image_checked.stamp', missing and no known rule to make it` (measured in this lane,
+checking the worktree out at main for leg A2): the existing `build.ninja` still names the deleted guard. Re-run
+configure by hand with the args baked into `build.ninja` (`configure_args`), then build:
+`python3 configure.py --dtk /home/free/code/milohax/jeff/target/release/dtk --objdiff
+/home/free/code/milohax/objdiff/target/release/objdiff-cli --wrapper /home/free/code/milohax/wibo/build/release/wibo`.
+Going forward (pre-merge → merged) needs nothing: ninja regenerates `build.ninja` itself (measured).
 
 ## 6. Rehearsal record
 
