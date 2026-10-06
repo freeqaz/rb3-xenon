@@ -1,22 +1,12 @@
 #pragma once
+#include "movie/BinkSdk.h"
 #include "os/File.h"
 #include "synth/StreamReader.h"
 #include "synth/StandardStream.h"
 
 #define BINK_AUDIO_CHANNEL_MAX 16
 
-// Forward declarations for Bink SDK structures
-struct BINK {
-    char padding[0x08];
-    unsigned int Frames; // 0x08 - total frame count
-    unsigned int FrameNum; // 0x0C - current frame number
-    unsigned int unk10; // 0x10
-    unsigned int FrameRate; // 0x14
-    unsigned int FrameRateDiv; // 0x18
-    unsigned int BinkError; // 0x1C - error flag
-    char padding3[0x18];
-    int NumTracks; // 0x38
-};
+// Bink SDK structures.  BINK is in movie/BinkSdk.h.
 
 struct BINKTRACK {
     unsigned int Frequency; // 0x00

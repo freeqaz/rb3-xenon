@@ -1,13 +1,11 @@
 #pragma once
 
+#include "movie/BinkSdk.h"
 #include "movie/MovieImpl.h"
 #include "os/Timer.h"
 #include "utl/Str.h"
 #include <vector>
 
-struct BINK {
-    virtual ~BINK();
-};
 
 class MovieInternalBuffers {
 public:

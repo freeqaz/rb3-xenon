@@ -170,7 +170,7 @@ void BinkReader::Poll(float) {
     }
     }
 
-    if (mBink->BinkError != 0) {
+    if (mBink->ReadError != 0) {
         mState = kFail;
     }
 }
