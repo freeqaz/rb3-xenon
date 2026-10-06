@@ -42,45 +42,31 @@ PitchDetector::~PitchDetector() {
 }
 
 void PitchDetector::Detect(unsigned int frame) {
-    // NOTE (lane DI-2/C): keep these UNSIGNED.  dc3-decomp's copy of this same
-    // reconstruction (src/system/synth_xbox/PitchDetector.cpp) declares
-    // size/span/pos/start as signed `int` with explicit casts; adopting that
-    // spelling here measures 79.6% -> 77.5% (worse), so retail's modulo/compare
-    // sequence is the unsigned one.  Do not "fix" this back to match dc3 --
-    // dc3's own PitchDetector unit is only 9.1% matched, i.e. it is NOT a
-    // reference for this function, just a sibling reconstruction.
-    unsigned int span = mSpectral.mWindowSize;
-
-    // Locate the analysis window inside the circular input buffer.  Retail
-    // re-derives the buffer length (end - begin) at each use.
-    unsigned int pos = (mInput->size() - span + frame + 1) % mInput->size();
+    // Locate the analysis window inside the circular input buffer.  The target
+    // re-derives the buffer length at each of its three uses (three inlined
+    // size() calls; a spelled-out `end() - begin()` is CSE'd into one), and
+    // divides unsigned.  The window length is read from mSpectral at each use,
+    // not cached: after the first Mul the image re-reads 0x0(r29), not a local.
+    // min() takes the cast as a temporary (mWindowSize is an int), which is the
+    // 0x58(r1) home the image gives it; `start` is homed at 0x50 the same way.
+    unsigned int pos = (mInput->size() - mSpectral.mWindowSize + frame + 1) % mInput->size();
     unsigned int start = mInput->size() - pos;
-    // std::min(span, start) by const reference: retail spills span to 0x58 and
-    // start to 0x50, compares start < span and loads the winner back (the
-    // (start, span) argument order swaps the two slots). After the first Mul
-    // it re-reads the window size from the member rather than reusing the local.
-    unsigned int firstLen = std::min(span, start);
+    unsigned int firstLen = stlpmtx_std::min((unsigned int)mSpectral.mWindowSize, start);
 
     IPP::Mul(firstLen, &mInput->begin()[pos], &mWindow[0], &mSpectrum[0]);
     if (firstLen != mSpectral.mWindowSize) {
-        IPP::Mul(
-            mSpectral.mWindowSize - firstLen,
-            &mWindow[firstLen],
-            mInput->begin(),
-            &mSpectrum[firstLen]
-        );
+        IPP::Mul(mSpectral.mWindowSize - firstLen, &mWindow[firstLen], mInput->begin(), &mSpectrum[firstLen]);
     }
 
     mSpectral.Analyze(&mSpectrum[0], &mSpectrum[0]);
     IPP::Mul_InPlace(mHop + 1, &mWeight[0], &mSpectrum[0]);
 
     // Skip the initial monotonically-decreasing region of the spectrum.
-    // A plain for loop: MSVC rotates it, so the (sum & ~1) > 2 guard is the
-    // compiler's first-trip test, and /O1 re-reads the bound every trip.
     unsigned int lo = 0;
-    for (unsigned int i = 1;
-         i < (mWindowSize + mHop) / 2 && mSpectrum[i] < mSpectrum[i - 1];
-         i++) {
+    for (unsigned int i = 1; i < (mHop + mWindowSize) / 2; i++) {
+        if (mSpectrum[i] >= mSpectrum[i - 1]) {
+            break;
+        }
         lo = i;
     }
     if (lo < mWindowSize) {
@@ -90,13 +76,11 @@ void PitchDetector::Detect(unsigned int frame) {
     // Weighted peak search across the candidate band.
     unsigned int best = lo;
     float bestScore = 0.0f;
-    if (lo <= mHop) {
-        for (unsigned int j = lo; j <= mHop; j++) {
-            float score = mSpectrum[j] * 1.5f + (mSpectrum[j - 1] + mSpectrum[j + 1]);
-            if (bestScore < score) {
-                bestScore = score;
-                best = j;
-            }
+    for (unsigned int j = lo; j <= mHop; j++) {
+        float score = mSpectrum[j] * 1.5f + (mSpectrum[j - 1] + mSpectrum[j + 1]);
+        if (bestScore < score) {
+            bestScore = score;
+            best = j;
         }
     }
 

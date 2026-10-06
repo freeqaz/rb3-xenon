@@ -23,9 +23,9 @@ const char *kSplashMovie = "splash.tmov";
 const char *kSplashCam = "splash.cam";
 
 Splash::Splash()
-    : mSplashDurationMs(SystemConfig("ui")->FindArray("splash_time")->Float(1) * 1000),
-      mWaitForSplash(SystemConfig("ui")->FindArray("wait_for_splash")->Int(1)), mCurrentDir(0), mCurrentCam(0),
-      mCurrentMovie(0), mCurrentTrigger(0), unk58(-1), mSuspendCount(0), mThreaded(1), mThreadId(-1), mState(0) {
+    : mSplashDurationMs(SystemConfig("ui")->FindFloat("splash_time") * 1000),
+      mWaitForSplash(SystemConfig("ui")->FindInt("wait_for_splash")), mCurrentDir(0), mCurrentCam(0),
+      mCurrentMovie(0), mCurrentTrigger(0), unk58(-1), mSuspendCount(0), mThreaded(1), mThreadId(-1), mState() {
 #ifdef HX_NATIVE
     // No worker thread on native — use non-threaded splash path.
     // Without this, EndSplasher() calls WaitForState(kTerminated) which

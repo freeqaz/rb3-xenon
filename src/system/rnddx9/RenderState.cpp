@@ -94,15 +94,9 @@ void RndRenderState::SetStencilOp(StencilOp fail, StencilOp zfail, StencilOp pas
 }
 
 void RndRenderState::SetBorderColor(uint sampler, bool border) {
-    // Inline GPUTEXTURE_FETCH_CONSTANT.BorderColor (dword[5], bits 0-1) write,
-    // same one-Device()-fetch-per-bitfield-group shape as SetTextureFilter.
     D3DDevice *dev = TheDxRnd.Device();
-    // 77.0%: retail merges with a single `rlwimi r9,r8,0,0,29` (bool register is
-    // the rlwimi destination); we emit `clrrwi`+`or`.  The plain bitfield store
-    // (`.BorderColor = border`) is worse (44.8%) - it inserts the bool INTO the
-    // word instead.  Residual is that one instruction plus an r6/r7 cascade.
     DWORD *pWord = &dev->m_Constants.TextureFetch[sampler].dword[5];
-    *pWord = (*pWord & ~0x00000003u) | (border != 0);
+    *pWord = (*pWord & ~0x00000003) | ((border != 0) & 3);
     dev->m_Pending.m_Mask[3] |= 0x8000000000000000ull >> (sampler + 0x20);
 }
 
@@ -118,27 +112,22 @@ void RndRenderState::SetTextureFilter(uint sampler, FilterMode filter, bool) {
 }
 
 void RndRenderState::SetTextureClamp(uint sampler, ClampMode clamp) {
-    // Retail fetches TheDxRnd.Device() once per bitfield group (3 `lwz 0x1c4`
-    // total), not once per statement (5 in the two-calls-per-group form).
     UINT64 mask = 0x8000000000000000ull >> (sampler + 0x20);
-    {
-        D3DDevice *dev = TheDxRnd.Device();
-        DWORD *pWord = &dev->m_Constants.TextureFetch[sampler].dword[0];
-        *pWord = (*pWord & ~0x00001C00) | ((clamp & 7) << 10);
-        dev->m_Pending.m_Mask[3] |= mask;
-    }
-    {
-        D3DDevice *dev = TheDxRnd.Device();
-        DWORD *pWord = &dev->m_Constants.TextureFetch[sampler].dword[0];
-        *pWord = (*pWord & ~0x0000E000) | ((clamp & 7) << 13);
-        dev->m_Pending.m_Mask[3] |= mask;
-    }
-    {
-        D3DDevice *dev = TheDxRnd.Device();
-        DWORD *pWord = &dev->m_Constants.TextureFetch[sampler].dword[0];
-        *pWord = (*pWord & ~0x00070000) | ((clamp & 7) << 16);
-        dev->m_Pending.m_Mask[3] |= mask;
-    }
+    // Three groups, one device read each (the image has three `lwz 0x224(r9)` and
+    // three `mr` copies, not six loads): the fetch-constant store and the mask
+    // store in a group go through the SAME pointer.
+    D3DDevice *dev = TheDxRnd.Device();
+    DWORD *pWord = &dev->m_Constants.TextureFetch[sampler].dword[0];
+    *pWord = (*pWord & ~0x00001C00) | ((clamp & 7) << 10);
+    dev->m_Pending.m_Mask[3] |= mask;
+    dev = TheDxRnd.Device();
+    pWord = &dev->m_Constants.TextureFetch[sampler].dword[0];
+    *pWord = (*pWord & ~0x0000E000) | ((clamp & 7) << 13);
+    dev->m_Pending.m_Mask[3] |= mask;
+    dev = TheDxRnd.Device();
+    pWord = &dev->m_Constants.TextureFetch[sampler].dword[0];
+    *pWord = (*pWord & ~0x00070000) | ((clamp & 7) << 16);
+    dev->m_Pending.m_Mask[3] |= mask;
 }
 
 void RndRenderState::Init(void) {

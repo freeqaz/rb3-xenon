@@ -33,22 +33,31 @@ void FftIpp::FftReal(
 
     FFTRealForward(&mBuf3[0], (unsigned long)mSize, &mSinCos[0]);
 
+    // Deinterleave FFTRealForward's packed complex output into separate real
+    // and imaginary arrays.  Everything the target's inner loop does beyond
+    // this -- the single running `outIm + i` pointer with `outRe` reached
+    // through a byte bias, the +8 byte stride, the `add`/`lfs 0x4()` pair for
+    // the odd slot -- is MSVC's own induction-variable reduction of exactly
+    // these two subscripts; spelling any of it out by hand produces DIFFERENT
+    // code, not the same code.  Three details are load-bearing and each is
+    // worth a measured amount:
+    //
+    //   * `i` is declared BEFORE `half`, so its `li r8, 0x1` is scheduled
+    //     ahead of the `srawi` that computes `half` (94.4% -> 100%).
+    //   * explicit `if` + `do/while` rather than a `for`: MSVC recognises a
+    //     `for` here as a counted loop and rewrites it into `mtctr`/`bdnz`,
+    //     losing the target's explicit `addi`/`cmplw` counter (88.1% -> 94.4%).
+    //   * unsigned `i` and an unsigned bound, which is what makes the guard
+    //     `cmplwi` and the latch `cmplw` rather than their signed forms.
     int n = mSize;
-    int i = 1;
-    unsigned int half = (unsigned int)(n >> 1);
-    if (half > 1) {
-        char *packed = (char *)&mBuf3[0];
-        int byteOff = 8;
-        float *im = outIm + 1;
-        long reBias = (char *)outRe - (char *)outIm;
+    unsigned int i = 1;
+    int half = n >> 1;
+    if ((unsigned int)half > 1) {
         do {
-            // Even slot -> real out, odd slot -> imag out.
-            *(float *)((char *)im + reBias) = *(float *)(packed + byteOff);
+            outRe[i] = mBuf3[i * 2];
+            outIm[i] = mBuf3[i * 2 + 1];
             ++i;
-            byteOff += 8;
-            im[0] = *(float *)(packed + byteOff - 4);
-            im += 1;
-        } while ((unsigned int)i < half);
+        } while (i < (unsigned int)half);
     }
 
     outIm[0] = 0.0f;

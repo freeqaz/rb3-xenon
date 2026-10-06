@@ -455,12 +455,12 @@ void MoggClip::SetPan(int i1, float f2) {
 // channels in this file are the CORRECT way round and the higher-scoring variant
 // is the wrong one.  MoggClip is 54/55 and this is the residual row; it is a
 // codegen wall, NOT "one source fix from complete".
-void MoggClip::SetupPanInfo(float f1, float f2, bool stereo) {
+void MoggClip::SetupPanInfo(float pan, float panWidth, bool stereo) {
     if (stereo) {
-        SetPan(0, -f2 / 2.0f + f1);
-        SetPan(1, f2 / 2.0f + f1);
+        SetPan(0, (panWidth * -0.5f) + pan);
+        SetPan(1, (panWidth * 0.5f) + pan);
     } else {
-        SetPan(0, f1);
+        SetPan(0, pan);
     }
 }
 

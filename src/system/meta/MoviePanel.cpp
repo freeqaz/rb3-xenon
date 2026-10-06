@@ -47,7 +47,15 @@ BEGIN_HANDLERS(MoviePanel)
 END_HANDLERS
 
 BEGIN_PROPSYNCS(MoviePanel)
-    SYNC_PROP(show_menu, mShowMenu)
+    {
+        _NEW_STATIC_SYMBOL(show_menu)
+        if (sym == _s) {
+            if (PropSync(mShowMenu, _val, _prop, _i + 1, _op))
+                return true;
+            else
+                return false;
+        }
+    }
     SYNC_SUPERCLASS(Hmx::Object)
 END_PROPSYNCS
 

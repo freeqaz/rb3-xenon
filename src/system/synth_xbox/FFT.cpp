@@ -45,29 +45,45 @@ int fft_real_forward_scalar(float* data, unsigned long size, float* context) {
     {
         if (ret == 0) {
             float inv_n = 1.0f / (float)(double)(long long)(unsigned int)size;
-            double sin_2a = sin(inv_n * (float)(2.0 * M_PI));
             float sin_a = (float)sin(inv_n * (float)M_PI);
+            double sin_2a = sin(inv_n * (float)(2.0 * M_PI));
 
-            // DC / Nyquist bins.
+            double cc = (double)sin_a * (double)sin_a;
+            // ss, c and s are declared BEFORE the DC/Nyquist bins, and the two
+            // bin stores are ADJACENT, sum first (w7-br, 85.6 -> 88.0
+            // canonical).  With the three declarations between the stores,
+            // MSVC emits the SECOND store first and defers the first bin's
+            // arithmetic to just before its store; adjacent, the stores keep
+            // source order.  Diff-first adjacent is 86.7; pre-computing both
+            // bins into named temps changes nothing either way.
+            // w8-r: moving ONLY `c`/`s` between the two bin stores (leaving
+            // `ss` above them), to reproduce the image's `lfd c` / `lfd s` pair
+            // sitting BETWEEN `stfs f9, 0x4(r31)` and `stfs f8, 0x0(r31)`, is
+            // byte-identical at 88.048.  The image's residual shape is: diff
+            // computed, sum computed, store DIFF, c/s loaded, store SUM -- it
+            // stores the second bin first WITHOUT deferring the first bin's
+            // arithmetic, which is the half w7-br's declarations-between
+            // variant could not get.
+            float ss = (float)sin_2a;
             double c = 1.0;
             double s = 0.0;
-            float ss = (float)sin_2a;
+
+            // DC / Nyquist bins.
             float re0 = data[0];
             float im0 = data[1];
-            data[1] = re0 - im0;
             data[0] = im0 + re0;
+            data[1] = re0 - im0;
 
-            double cc = (double)sin_a * (double)sin_a * 2.0;
-
-            unsigned int count = size >> 2;
+            float* hi = data + size - 2;
             float* lo = data + 2;
-            float* hi = data + size;
-            for (unsigned int k = 0; k < size >> 2; ++k) {
-                float hi_im = hi[-1];
+
+            cc = cc * 2.0;
+            for (unsigned int k = 0; k < (size >> 2); ++k) {
+                float hi_im = hi[1];
                 float lo_im = lo[1];
                 float diff_im = lo_im - hi_im;
                 float lo_re = lo[0];
-                float hi_re = hi[-2];
+                float hi_re = hi[0];
                 float sum_im = hi_im + lo_im;
                 float sum_re = hi_re + lo_re;
                 float diff_re = lo_re - hi_re;
@@ -89,12 +105,13 @@ int fft_real_forward_scalar(float* data, unsigned long size, float* context) {
                 d = d - (double)sum_im * s;
                 e = e + (double)diff_re * s;
 
-                lo[0] = (float)a * 0.5f;
-                lo[1] = (float)b * 0.5f;
-                hi[-1] = (float)d * 0.5f;
-                hi[-2] = (float)e * 0.5f;
+                *lo = (float)a * 0.5f;
+                ++lo;
+                *lo = (float)b * 0.5f;
+                ++lo;
+                hi[1] = (float)d * 0.5f;
+                hi[0] = (float)e * 0.5f;
 
-                lo += 2;
                 hi -= 2;
             }
         }
@@ -121,17 +138,15 @@ int CalculateSinCosTable(long n, float* table) {
     }
 
     long count = n / 4;
-    long half = n / 2;
     double twoPi = 6.2831854820251465;
-    long j = 0;
-    for (long i = 0; i < count; ++i, j += 2) {
+    for (long i = 0; i < count; ++i) {
         float angle = (float)((double)i * twoPi / (double)n);
         float cv = (float)cos(angle);
         float sv = (float)sin(angle);
-        table[j] = cv;
-        table[j + 1] = sv;
-        table[j + half] = -sv;
-        table[j + half + 1] = cv;
+        table[i * 2] = cv;
+        table[i * 2 + 1] = sv;
+        table[i * 2 + n / 2] = -sv;
+        table[i * 2 + n / 2 + 1] = cv;
     }
     return 0;
 }
@@ -275,18 +290,16 @@ int fft_scalar(float* a, float* b, unsigned long size, long sign, float* twiddle
                     if (blk > 0) {
                         int ctr = blk;
                         do {
-                            float* hi = (float*)((char*)src + stride4);
-                            float hi_im = hi[1];
-                            float l_im = src[1];
-                            float h_re = hi[0];
+                            float t_im = src[1] - *(float*)((char*)src + stride4 + 4);
+                            float h_re = *(float*)((char*)src + stride4);
                             float l_re = src[0];
                             float t_re = l_re - h_re;
                             dst[0] = h_re + l_re;
+                            float l_im = src[1];
+                            dst[1] = l_im + *(float*)((char*)src + stride4 + 4);
                             src += 2;
-                            dst[1] = l_im + hi_im;
-                            float t_im = l_im - hi_im;
-                            *(float*)((char*)dst + blk8) = t_re * wr - t_im * wi;
-                            *(float*)((char*)dst + blk8 + 4) = t_re * wi + t_im * wr;
+                            dst[blk * 2] = t_re * wr - t_im * wi;
+                            dst[blk * 2 + 1] = t_re * wi + t_im * wr;
                             dst += 2;
                             ctr -= 1;
                         } while (ctr != 0);
@@ -323,18 +336,17 @@ int fft_scalar(float* a, float* b, unsigned long size, long sign, float* twiddle
                     int ctr = blk;
                     do {
                         float h_re = *(float*)((char*)src + stride4);
-                        float* hi = (float*)((char*)src + stride4);
                         float l_re = src[0];
                         float t_re = l_re - h_re;
-                        float t_im = src[1] - hi[1];
+                        float t_im = src[1] - *(float*)((char*)src + stride4 + 4);
                         float p_re = t_im * wi;
                         float p_im = t_im * wr;
                         dst[0] = (float)((double)(h_re + l_re) * scale);
                         float l_im = src[1];
+                        dst[1] = (float)((double)(l_im + *(float*)((char*)src + stride4 + 4)) * scale);
                         src += 2;
-                        dst[1] = (float)((double)(l_im + hi[1]) * scale);
-                        *(float*)((char*)dst + blk8) = (float)((double)(t_re * wr - p_re) * scale);
-                        *(float*)((char*)dst + blk8 + 4) = (float)((double)(t_re * wi + p_im) * scale);
+                        dst[blk * 2] = (float)((double)(t_re * wr - p_re) * scale);
+                        dst[blk * 2 + 1] = (float)((double)(t_re * wi + p_im) * scale);
                         dst += 2;
                         ctr -= 1;
                     } while (ctr != 0);
@@ -354,17 +366,16 @@ int fft_scalar(float* a, float* b, unsigned long size, long sign, float* twiddle
                 int stride4 = (int)size * 4;
                 int ctr = blk;
                 do {
-                    float* hi = (float*)((char*)src + stride4);
-                    float t_im = src[1] - hi[1];
+                    float t_im = src[1] - *(float*)((char*)src + stride4 + 4);
                     float h_re = *(float*)((char*)src + stride4);
                     float l_re = src[0];
                     float t_re = l_re - h_re;
                     dst[0] = h_re + l_re;
                     float l_im = src[1];
+                    dst[1] = l_im + *(float*)((char*)src + stride4 + 4);
                     src += 2;
-                    dst[1] = l_im + hi[1];
-                    *(float*)((char*)dst + blk8) = t_re * wr - t_im * wi;
-                    *(float*)((char*)dst + blk8 + 4) = t_re * wi + t_im * wr;
+                    dst[blk * 2] = t_re * wr - t_im * wi;
+                    dst[blk * 2 + 1] = t_re * wi + t_im * wr;
                     dst += 2;
                     ctr -= 1;
                 } while (ctr != 0);
@@ -388,59 +399,61 @@ extern "C" {
 
 // In-place transpose of an n x n matrix of complex floats, two complex
 // values (one 16-byte vector) at a time. Retail 0x82B765F0.
-void SquareComplexTransposeVector(float* data, long n) {
-    XMVECTORU32 perm_lo;
-    XMVECTORU32 perm_hi;
-    long half = n / 2;
+void SquareComplexTransposeVector(float* data, long size) {
+    XMVECTORU32 perm_lo = { 0x00010203, 0x04050607, 0x10111213, 0x14151617 };
+    XMVECTORU32 perm_hi = { 0x08090A0B, 0x0C0D0E0F, 0x18191A1B, 0x1C1D1E1F };
 
-    perm_lo.u[0] = 0x00010203;
-    perm_lo.u[1] = 0x04050607;
-    perm_lo.u[2] = 0x10111213;
-    perm_lo.u[3] = 0x14151617;
-
-    perm_hi.u[0] = 0x08090A0B;
-    perm_hi.u[1] = 0x0C0D0E0F;
-    perm_hi.u[2] = 0x18191A1B;
-    perm_hi.u[3] = 0x1C1D1E1F;
-
-    if (half > 0) {
-        long stride = n * 0x10;
-        long rowHalf = half * 0x10;
-        XMVECTOR vLo = __lvx(&perm_lo, 0);
-        XMVECTOR vHi = __lvx(&perm_hi, 0);
-        char* row = (char*)data;
-        char* col = (char*)data;
-        for (int i = 0; i < half; i++) {
-            char* r0 = row;
-            char* r1 = row + rowHalf;
-            char* c0 = col;
-            char* c1 = col + rowHalf;
-            for (int j = 0; j < i; j++) {
-                XMVECTOR b = __lvx(c1, 0);
-                XMVECTOR a = __lvx(c0, 0);
-                XMVECTOR d = __lvx(r0, 0);
-                XMVECTOR e = __lvx(r1, 0);
-                XMVECTOR t0 = __vperm(a, b, vLo);
-                XMVECTOR t1 = __vperm(a, b, vHi);
-                XMVECTOR t2 = __vperm(d, e, vLo);
-                XMVECTOR t3 = __vperm(d, e, vHi);
-                __stvx(t0, r0, 0);
-                r0 += 0x10;
-                __stvx(t1, r1, 0);
-                r1 += 0x10;
-                __stvx(t2, c0, 0);
-                c0 += stride;
-                __stvx(t3, c1, 0);
-                c1 += stride;
-            }
-            XMVECTOR d = __lvx(r0, 0);
-            XMVECTOR e = __lvx(r1, 0);
-            __stvx(__vperm(d, e, vLo), r0, 0);
-            __stvx(__vperm(d, e, vHi), r1, 0);
-            row += stride;
-            col += 0x10;
-        }
+    long i = 0;
+    long blocks = size / 2;
+    if (blocks <= 0) {
+        return;
     }
+
+    long rowStep = size * 16;
+    long halfStep = blocks * 16;
+    XMVECTOR pm_lo = *(XMVECTOR*)&perm_lo;
+    XMVECTOR pm_hi = *(XMVECTOR*)&perm_hi;
+
+    char* row = (char*)data;
+    char* col = (char*)data;
+    do {
+        char* rowLo = row;
+        char* rowHi = row + halfStep;
+        char* colLo = col;
+        char* colHi = col + halfStep;
+        for (long j = 0; j < i; j++) {
+            // w17-e: cLo before cHi -- MSVC issues the two lvx in the reverse
+            // order, which is the image's (`lvx128 v62, r0, r6` colHi first):
+            // removes 4 register rows (raw 96.62 -> 96.96; canonical unchanged).
+            XMVECTOR cLo = __lvx(colLo, 0);
+            XMVECTOR cHi = __lvx(colHi, 0);
+            XMVECTOR rLo = __lvx(rowLo, 0);
+            XMVECTOR rHi = __lvx(rowHi, 0);
+            XMVECTOR outRowLo = __vperm(cLo, cHi, pm_lo);
+            XMVECTOR outRowHi = __vperm(cLo, cHi, pm_hi);
+            XMVECTOR outColLo = __vperm(rLo, rHi, pm_lo);
+            XMVECTOR outColHi = __vperm(rLo, rHi, pm_hi);
+            __stvx(outRowLo, rowLo, 0);
+            rowLo += 16;
+            __stvx(outRowHi, rowHi, 0);
+            rowHi += 16;
+            __stvx(outColLo, colLo, 0);
+            // MEASURED INERT (w8-r): spelling these `colLo = rowStep + colLo`
+            // to flip the image's `add r7, r4, r7` / `add r6, r4, r6` operand
+            // order is byte-identical at 97.297.  Confirms the commutative
+            // operand-order floor for `add` as well as `fmuls`.
+            colLo += rowStep;
+            __stvx(outColHi, colHi, 0);
+            colHi += rowStep;
+        }
+        XMVECTOR dLo = __lvx(rowLo, 0);
+        XMVECTOR dHi = __lvx(rowHi, 0);
+        i += 1;
+        row += rowStep;
+        col += 16;
+        __stvx(__vperm(dLo, dHi, pm_lo), rowLo, 0);
+        __stvx(__vperm(dLo, dHi, pm_hi), rowHi, 0);
+    } while (i < blocks);
 }
 
 int fft_matrix_forward_columnwise(float* data, long size, float* context) {
@@ -514,8 +527,10 @@ int fft_matrix_forward_columnwise(float* data, long size, float* context) {
     }
 
     // Load VMX constants
-    v_zero = *(XMVECTOR *)__vmx_00000000000000000000000000000000;
-    v_sign = *(XMVECTOR *)__vmx_bf8000003f800000bf8000003f800000;
+    XMVECTOR k_zero = { 0.0f, 0.0f, 0.0f, 0.0f };
+    XMVECTOR k_sign = { 1.0f, -1.0f, 1.0f, -1.0f };
+    v_zero = k_zero;
+    v_sign = k_sign;
 
     // Initialize permutation masks - these will be constructed with lis/ori
     perm_lo.u[0] = 0x00010203;
@@ -533,20 +548,20 @@ int fft_matrix_forward_columnwise(float* data, long size, float* context) {
     perm_swap.u[2] = 0x0C0D0E0F;
     perm_swap.u[3] = 0x08090A0B;
 
-    // Step 1: Twiddle factor multiplication + row FFT
-    int half_rows = rows / 2;
+    // Step 1: Row gather -> row FFT -> twiddle multiply + scatter
     int half_cols = cols / 2;
+    int iter = 0;
 
-    if (half_rows > 0 && half_cols > 0) {
-        float* temp2 = (float*)((char*)temp + half_cols * 0x10);
+    if (half_cols > 0) {
+        int half_rows = rows / 2;
+        float* temp2 = (float*)((char*)temp + half_rows * 0x10);
         int col_idx = 0;
         double two_d = 2.0;
         float* data_ptr = (float*)data;
         float one_f = 1.0f;
         float pi_f = (float)M_PI;
-        float total = (float)(double)((long long)(int)(rows * cols));
+        float total = (float)(double)((long long)(int)(cols * rows));
 
-        int iter = 0;
         do {
             // Compute twiddle angles
             float angle1 = ((float)(long long)col_idx * pi_f) / total;
@@ -555,13 +570,13 @@ int fft_matrix_forward_columnwise(float* data, long size, float* context) {
             // sin² recurrence parameters
             double s1d = sin(angle1);
             float sin2_1 = (float)(s1d * s1d * two_d);
-            float sin_2a1 = (float)sin((float)((double)angle1 * two_d));
+            float sin_2a1 = (float)sin(((double)angle1 * two_d));
             sv.f[0] = sin2_1;
             sv.f[2] = sin_2a1;
 
             double s2d = sin(angle2);
             float sin2_2 = (float)(s2d * s2d * two_d);
-            float sin_2a2 = (float)sin((float)((double)angle2 * two_d));
+            float sin_2a2 = (float)sin(((double)angle2 * two_d));
             sv.f[1] = sin2_2;
             sv.f[3] = sin_2a2;
             v_sin2a = __vmrglw(sv.v, sv.v);
@@ -577,130 +592,169 @@ int fft_matrix_forward_columnwise(float* data, long size, float* context) {
             sv.f[3] = (float)cos(angle2);
 
             v_cos_vec = __lvx(&sv, 0);
+
+            // Initialize running twiddle factors
+            w_im2 = v_sign;
+            w_im1 = v_zero;
             v_cos_splat = __vspltw(v_cos_vec, 0);
+            w_re1 = v_cos_splat;
 
             // Phase 3: Overwrite with sin values, load it
             sv.f[2] = (float)s1d;
+            v_cos_merged = __vmrglw(v_cos_vec, v_cos_vec);
+            w_re2 = v_cos_merged;
             sv.f[3] = (float)s2d;
 
             v_sin_vec = __lvx(&sv, 0);
             v_sin_merged = __vmrglw(v_sin_vec, v_sin_vec);
-
-            // Initialize running twiddle factors
-            v_cos_merged = __vmrglw(v_cos_vec, v_cos_vec);
-            w_re1 = v_cos_splat;
-            w_im1 = v_zero;
-            w_re2 = v_cos_merged;
-            w_im2 = __vmaddfp(v_sign, v_sin_merged, v_zero);
+            w_im2 = __vmaddfp(v_sin_merged, w_im2, v_zero);
 
             float* dst1 = temp;
             float* dst2 = temp2;
             char* src_data = (char*)data_ptr;
             int k = 0;
 
-            if (half_cols > 0) {
-                int data_stride = half_rows * 0x10;
-                pm_swap_v = *(XMVECTOR*)&perm_swap;
-                pm_lo_v = *(XMVECTOR*)&perm_lo;
-                pm_hi_v = *(XMVECTOR*)&perm_hi;
-
+            // Gather a pair of rows out of the column-major matrix into the
+            // contiguous scratch halves.
+            if (half_rows > 0) {
+                int data_stride = half_cols * 0x10;
                 do {
-                    // Load first data element (row 0)
-                    d0 = __lvx(src_data, 0);
+                    a = __lvx(src_data, 0);
                     src_data += data_stride;
-
-                    // Copy sin² values for this iteration
-                    sp_sin2 = v_sin2;
-                    sp_sin2_2 = v_sin2;
-                    sp_sin2_3 = v_sin2;
-
-                    // Begin twiddle recurrence
-                    new_re1 = __vnmsubfp(w_re1, sp_sin2, w_re1);
-                    t1 = __vmaddfp(w_re1, d0, v_zero);
-                    d_swap0 = __vperm(d0, d0, pm_swap_v);
-
-                    // Load second data element (row 1)
-                    d1 = __lvx(src_data, 0);
-                    new_re2 = __vnmsubfp(w_re2, sp_sin2_2, w_re2);
-                    d_swap1 = __vperm(d1, d1, pm_swap_v);
-
-                    p_im1 = __vnmsubfp(w_im1, sp_sin2, w_im1);
-                    t2 = __vmaddfp(w_re2, d1, v_zero);
-
-                    p_im2 = __vnmsubfp(w_im2, sp_sin2_3, w_im2);
-                    new_re1 = __vnmsubfp(w_im1, v_im_init, new_re1);
-                    r1 = __vmaddfp(w_im1, d_swap0, t1);
-                    new_im1 = __vmaddfp(w_re1, v_im_init, p_im1);
-                    r2 = __vmaddfp(w_im2, d_swap1, t2);
-                    new_re2 = __vnmsubfp(w_im2, v_im_init, new_re2);
-                    new_im2 = __vmaddfp(w_re2, v_im_init, p_im2);
-
-                    w_re1 = new_re1;
-                    w_re2 = new_re2;
-                    w_im1 = new_im1;
-                    w_im2 = new_im2;
-
                     k += 1;
-
-                    // Interleave results and store to temp
-                    out_lo = __vperm(r1, r2, pm_lo_v);
-                    out_hi = __vperm(r1, r2, pm_hi_v);
-
+                    b = __lvx(src_data, 0);
+                    src_data += data_stride;
+                    out_lo = __vperm(a, b, *(XMVECTOR*)&perm_lo);
+                    out_hi = __vperm(a, b, *(XMVECTOR*)&perm_hi);
                     __stvx(out_lo, dst1, 0);
                     dst1 += 4;
                     __stvx(out_hi, dst2, 0);
                     dst2 += 4;
-                    src_data += data_stride;
-                } while (k < half_cols);
+                } while (k < half_rows);
             }
 
             // Row FFT on temp buffer halves
-            ret = FFTComplex(temp, cols, -1, context);
+            ret = FFTComplex(temp, rows, -1, context);
             if (ret != 0) goto cleanup;
 
-            ret = FFTComplex((float*)((char*)temp + cols * 8), cols, -1, context);
+            ret = FFTComplex((float*)((char*)temp + rows * 8), rows, -1, context);
             if (ret != 0) goto cleanup;
 
-            // Deinterleave from temp back to data
+            // Twiddle-multiply the transformed rows and scatter them back.
             {
+                // NEGATIVE RESULT on the twiddle loop's two source pointers.
+                // The image walks THREE pointers into this loop -- `mr r10, r29`
+                // (temp), `mr r9, r26` (temp2), `mr r8, r30` (data_ptr) -- and
+                // loads both halves with a zero index: `lvx128 v63, r0, r10` /
+                // `lvx128 v62, r0, r9`, advancing each with its own
+                // `addi rN, rN, 0x10` (FFT.s, the block at 0x45c-0x558).  We
+                // emit only TWO `mr`, plus `subf r7, r29, r26`, and load the
+                // second half indexed off the first: `lvx128 v62, r7, r11`.
+                // That is MSVC folding src2 into src1 + (temp2 - temp) --
+                // induction-variable elimination, and it cascades into the
+                // whole loop's vector-register assignment (61 of this
+                // function's 102 mismatch rows are in this one loop).
+                //
+                // Two variants tried, both BYTE-FOR-BYTE INERT (86.8 canonical /
+                // 84.9 raw, 319 instructions, 60/6/19/17 row split, identical
+                // before and after):
+                //   1. `float*` walked with `+= 4` instead of `char*` walked
+                //      with `+= 0x10` -- i.e. spelled exactly like the gather
+                //      loop 30 lines above, which does NOT get merged even
+                //      though its dst1/dst2 stand in the same temp/temp2
+                //      relationship.
+                //   2. the two increments separated in source order to match
+                //      the image's schedule (src1 right after `k += 1`, src2
+                //      down inside the recurrence after the last use of `b`).
+                // The gather loop's pointers survive because they are STORE
+                // destinations; the merge here is a load-side decision the
+                // pointer's spelling and its increment's position do not reach.
+                //   3. (w7-ay) indexing both loads off temp/temp2 by k
+                //      (`__lvx(temp + k * 4, 0)`, no source pointers at all):
+                //      WORSE, 86.6 -- strength reduction rebuilds the same
+                //      merged pair.
+                //   4. (w7-ay) outside the loop: assigning sv.f[] / w_re1 /
+                //      w_re2 / w_im2 straight from the sin()/__vspltw/__vmrglw
+                //      expressions instead of via the sin2_1/v_cos_splat/
+                //      v_cos_merged/v_sin_merged locals: byte-for-byte inert
+                //      (the `vor128 v62, v63, v63` copy of v_cos_vec and the
+                //      `fmul f0, f1, f1` square-before-copy at the first sin
+                //      return are scheduling, not spelling).
                 char* src1 = (char*)temp;
                 char* src2 = (char*)temp2;
                 char* out = (char*)data_ptr;
                 k = 0;
-                if (half_cols > 0) {
-                    int stride = half_rows * 0x10;
+                if (half_rows > 0) {
+                    int stride = half_cols * 0x10;
                     do {
                         a = __lvx(src1, 0);
                         b = __lvx(src2, 0);
+
+                        // Copy sin² values for this iteration
+                        sp_sin2 = v_sin2;
+                        sp_sin2_2 = v_sin2;
+                        sp_sin2_3 = v_sin2;
+
+                        pm_lo_v = *(XMVECTOR*)&perm_lo;
+                        pm_hi_v = *(XMVECTOR*)&perm_hi;
+                        pm_swap_v = *(XMVECTOR*)&perm_swap;
+
                         k += 1;
                         src1 += 0x10;
                         src2 += 0x10;
-                        hi = __vperm(a, b, *(XMVECTOR*)&perm_hi);
-                        __stvx(__vperm(a, b, *(XMVECTOR*)&perm_lo), out, 0);
+
+                        // Begin twiddle recurrence
+                        d0 = __vperm(a, b, pm_lo_v);
+                        new_re1 = __vnmsubfp(w_re1, sp_sin2, w_re1);
+                        d1 = __vperm(a, b, pm_hi_v);
+                        new_re2 = __vnmsubfp(w_re2, sp_sin2_2, w_re2);
+
+                        t1 = __vmaddfp(w_re1, d0, v_zero);
+                        d_swap0 = __vperm(d0, d0, pm_swap_v);
+                        p_im1 = __vnmsubfp(w_im1, sp_sin2, w_im1);
+
+                        t2 = __vmaddfp(w_re2, d1, v_zero);
+                        d_swap1 = __vperm(d1, d1, pm_swap_v);
+                        p_im2 = __vnmsubfp(w_im2, sp_sin2_3, w_im2);
+
+                        new_re1 = __vnmsubfp(w_im1, v_im_init, new_re1);
+                        new_re2 = __vnmsubfp(w_im2, v_im_init, new_re2);
+                        new_im1 = __vmaddfp(w_re1, v_im_init, p_im1);
+                        new_im2 = __vmaddfp(w_re2, v_im_init, p_im2);
+
+                        r1 = __vmaddfp(w_im1, d_swap0, t1);
+                        r2 = __vmaddfp(w_im2, d_swap1, t2);
+
+                        w_re1 = new_re1;
+                        w_re2 = new_re2;
+                        w_im1 = new_im1;
+                        w_im2 = new_im2;
+
+                        __stvx(r1, out, 0);
                         out += stride;
-                        __stvx(hi, out, 0);
+                        __stvx(r2, out, 0);
                         out += stride;
-                    } while (k < half_cols);
+                    } while (k < half_rows);
                 }
             }
 
             iter += 1;
             col_idx += 4;
             data_ptr += 4;
-        } while (iter < half_rows);
+        } while (iter < half_cols);
     }
 
-    // Step 2: Column FFT (forward) on each column, cols-1 down to 0
-    int col_i = cols - 1;
+    // Step 2: Column FFT (forward) on each column, rows-1 down to 0
+    int col_i = rows - 1;
     if (col_i >= 0) {
-        int neg_stride = -rows;
+        int neg_stride = -cols;
         int stride8 = neg_stride * 8;
-        float* col_ptr = (float*)((char*)data + col_i * rows * 8);
+        float* col_ptr = (float*)((char*)data + col_i * cols * 8);
         do {
-            ret = FFTComplex(col_ptr, rows, -1, context);
+            ret = FFTComplex(col_ptr, cols, -1, context);
             if (ret != 0) goto cleanup;
             col_i -= 1;
-            col_ptr = (float*)((char*)col_ptr + stride8);
+            col_ptr = (float*)(stride8 + (char*)col_ptr);
         } while (col_i >= 0);
     }
 
@@ -819,22 +873,38 @@ int fft_matrix_inverse_columnwise(float *data, long size, float *scratch) {
             sv.f[3] = (float)cos(angle2);
 
             XMVECTOR v_cos_vec = __lvx(&sv, 0);
-            XMVECTOR v_cos_splat = __vspltw(v_cos_vec, 0);
+
+            // Initialize running twiddle factors.  w_re1/w_re2 are formed
+            // from v_cos_vec around the two sv stores, in the image's order
+            // (0x82E4E97C / 0x82E4E984 straddle the `stfs 0x68(r1)`).  MSVC
+            // still sinks the w_re2 merge below the sin-vector load and pays
+            // a `vor128` copy of v_cos_vec for it, exactly as in the forward
+            // transform; spelling it through v_cos_merged, or after the sin
+            // load, is inert or worse.
+            XMVECTOR w_im2 = v_sign;
+            XMVECTOR w_im1 = v_zero;
+            XMVECTOR w_re1 = __vspltw(v_cos_vec, 0);
 
             // Phase 3: Overwrite with sin values, load it
             sv.f[2] = (float)s1d;
+            XMVECTOR w_re2 = __vmrglw(v_cos_vec, v_cos_vec);
             sv.f[3] = (float)s2d;
 
             XMVECTOR v_sin_vec = __lvx(&sv, 0);
             XMVECTOR v_sin_merged = __vmrglw(v_sin_vec, v_sin_vec);
+            w_im2 = __vmaddfp(w_im2, v_sin_merged, v_zero);
 
-            // Initialize running twiddle factors
-            XMVECTOR v_cos_merged = __vmrglw(v_cos_vec, v_cos_vec);
-            XMVECTOR w_re1 = v_cos_splat;
-            XMVECTOR w_im1 = v_zero;
-            XMVECTOR w_re2 = v_cos_merged;
-            XMVECTOR w_im2 = __vmaddfp(v_sign, v_sin_merged, v_zero);
-
+            // BEHAVIOURAL FIX (w7-ay): the gather loop below walks COPIES of
+            // temp/temp2 -- the image's `mr r9, r28` / `mr r8, r27` at
+            // 0x82E4E970-74 -- and r28 (temp) is what the two FFTComplex
+            // calls, the deinterleave and free() then use (0x82E4EA78,
+            // 0x82E4EAA8, 0x82E4EB1C).  The permuter harvest fb98fec2e had
+            // replaced them with `temp += 4` / `temp2 += 4`, which scored
+            // 3pp higher (89.0 vs 86.0) and handed FFTComplex, the second
+            // loop and free() a pointer half_cols*16 bytes past the malloc.
+            // Keep the copies; the score is not the point.  Declared here,
+            // before src_data, like the forward transform; scoping them
+            // inside the guard is worse (85.6).
             float *dst1 = temp;
             float *dst2 = temp2;
             char *src_data = (char *)data_ptr;
@@ -872,9 +942,9 @@ int fft_matrix_inverse_columnwise(float *data, long size, float *scratch) {
                     XMVECTOR p_im2 = __vnmsubfp(w_im2, sp_sin2_3, w_im2);
                     new_re1 = __vnmsubfp(w_im1, v_im_init, new_re1);
                     XMVECTOR r1 = __vmaddfp(w_im1, d_swap0, t1);
+                    new_re2 = __vnmsubfp(w_im2, v_im_init, new_re2);
                     XMVECTOR new_im1 = __vmaddfp(w_re1, v_im_init, p_im1);
                     XMVECTOR r2 = __vmaddfp(w_im2, d_swap1, t2);
-                    new_re2 = __vnmsubfp(w_im2, v_im_init, new_re2);
                     XMVECTOR new_im2 = __vmaddfp(w_re2, v_im_init, p_im2);
 
                     w_re1 = new_re1;
@@ -905,6 +975,12 @@ int fft_matrix_inverse_columnwise(float *data, long size, float *scratch) {
 
             // Deinterleave from temp back to data
             {
+                // Same induction-variable merge as the forward transform's
+                // twiddle loop -- see the NEGATIVE RESULT block in
+                // fft_matrix_forward_columnwise.  The image walks three
+                // pointers in (`mr r9, r28` / `mr r8, r27` / `mr r10, r30`,
+                // FFT.s 0x890-0x8ac); we emit one `mr` and index the second
+                // half off the first.  Both spellings tried there are inert.
                 char *src1 = (char *)temp;
                 char *src2 = (char *)temp2;
                 char *out = (char *)data_ptr;

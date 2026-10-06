@@ -289,10 +289,14 @@ int WinSockSocket::RecvFrom(
         if (err == 0x2733) {
             return 0;
         } else {
+            // The image reuses ONE `li r3, 0` for the `ip` store and the
+            // return value and then joins the common epilogue: the error arm
+            // zeroes `ret` and falls out to `return ret`, it has no return of
+            // its own (an explicit `return 0;` materialises 0 twice, 97.83).
             MILO_FAIL("error in RecvFrom: %i", err);
             port = -1;
             ip = 0;
-            return 0;
+            ret = 0;
         }
     } else {
         ip = addr.sin_addr.s_un.s_addr;

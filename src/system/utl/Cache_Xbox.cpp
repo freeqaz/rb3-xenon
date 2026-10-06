@@ -394,13 +394,13 @@ int CacheXbox::ThreadWrite() {
                     break;
                 }
             }
-            ++nextPos;
+            nextPos++;
         }
         nextPos = mThreadStr.find('\\', nextPos);
     }
 
     HANDLE hFile = (HANDLE)-1;
-    if (success) {
+    if (success != 0) {
         hFile = CreateFileA(
             mThreadStr.c_str(),
             0x40000000,  // GENERIC_WRITE
@@ -413,30 +413,34 @@ int CacheXbox::ThreadWrite() {
     }
 
     if (hFile == (HANDLE)-1) {
-        DWORD err = GetLastError();
+        unsigned int err = GetLastError();
         if (err >= 2 && (err <= 3 || err == 0x15)) {
             return 8;
         }
-    } else {
-        DWORD bytesWritten = 0;
-        int result = WriteFile(hFile, mData, mSize, &bytesWritten, nullptr);
-        if (result != 0) {
-            CloseHandle(hFile);
-            XContentFlush(mCacheID.Name(), nullptr);
-            return 0;
+        if (!IsDeviceConnected(mCacheID.DeviceID())) {
+            return 8;
         }
-
-        GetLastError();
-        CloseHandle(hFile);
-        XContentFlush(mCacheID.Name(), nullptr);
-    }
-
-    if (IsDeviceConnected(mCacheID.DeviceID())) {
-        MILO_NOTIFY("CacheXbox::ThreadWrite() - Unhandled error from CreateFile()/WriteFile()\n");
+        MILO_NOTIFY("CacheXbox::WriteAsync() - Unhandled error from CreateFile(): %d\n", err);
         return -1;
     }
 
-    return 8;
+    DWORD bytesWritten = 0;
+    int result = WriteFile(hFile, mData, mSize, &bytesWritten, nullptr);
+    if (result != 0) {
+        CloseHandle(hFile);
+        XContentFlush(mCacheID.Name(), nullptr);
+        return 0;
+    }
+
+    unsigned int err = GetLastError();
+    CloseHandle(hFile);
+    XContentFlush(mCacheID.Name(), nullptr);
+
+    if (!IsDeviceConnected(mCacheID.DeviceID())) {
+        return 8;
+    }
+    MILO_NOTIFY("CacheXbox::ThreadWrite() - Unhandled error %d from WriteFile()\n", err);
+    return -1;
 }
 
 CacheDirEntry::CacheDirEntry(const CacheDirEntry &o) : mName(o.mName), mDateTime(o.mDateTime), mSize(o.mSize) {}

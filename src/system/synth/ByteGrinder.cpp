@@ -706,14 +706,18 @@ DataNode op58(DataArray *msg) {
 }
 
 DataNode op59(DataArray *msg) {
-    u32 operand = msg->Int(1);
-    u8 w = msg->Int(2);
-
-    u32 w_extended = w;
-    u32 working2 = (w_extended ^ 0x3Cu);
-    u32 working3 = (w_extended << 8) ^ 0x65u;
-    u32 tmp = ((working2 | working3) >> 2);
-    return DataNode(kDataInt, u8(tmp ^ operand));
+    // BEHAVIOUR FIX (w11-d): the image computes ((w >> 2) ^ 0x0F) |
+    // (((w & 3) << 6) ^ 0x19) -- `extrwi r9,r11,8,22; xori r9,r9,0xf` and
+    // `clrlslwi r11,r11,30,6; xori r11,r11,0x19` at 0x8276C938.  The previous
+    // spelling had the two xor constants swapped between the halves
+    // ((w ^ 0x65) | ((w << 8) ^ 0x3C)) >> 2, which differs on 224 of 256 byte
+    // values; this form also agrees with the native nop59 for all 256.
+    unsigned long operand = msg->Int(1);
+    unsigned long w = u8(msg->Int(2));
+    unsigned long a = (w >> 2) ^ 0xF;
+    unsigned long b = ((w & 3) << 6) ^ 0x19;
+    unsigned long tmp = a | b;
+    return DataNode(kDataInt, (int)((tmp ^ operand) & 0xFF));
 }
 
 DataNode op60(DataArray *msg) {

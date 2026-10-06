@@ -234,40 +234,39 @@ bool Archive::GetFileInfo(
     int &fileSize,
     int &fileUCSize
 ) {
-    if (file && *file) {
-        String name(FileGetName(file));
-        String path(FileGetPath(file));
-        int nameValue = mHashTable.GetHashValue(name.c_str());
-        int pathValue = mHashTable.GetHashValue(path.c_str());
-        if (nameValue != -1 && pathValue != -1) {
-            FileEntry entry;
-            entry.mHashedName = nameValue;
-            entry.mHashedPath = pathValue;
-            auto it = std::lower_bound(mFileEntries.begin(), mFileEntries.end(), entry);
-            if (it != mFileEntries.end() && it->HashedName() == nameValue
-                && it->HashedPath() == pathValue) {
-                arkfileNum = 0;
-                unsigned long long u7 = 0;
-                for (; arkfileNum < mNumArkfiles; arkfileNum++) {
-                    unsigned long long u6 = mArkfileSizes[arkfileNum] + u7;
-                    if (it->mOffset < u6)
-                        break;
-                    u7 = u6;
-                }
-                MILO_ASSERT(arkfileNum < mNumArkfiles, 0x183);
-                byteOffset = it->mOffset - u7;
-                fileSize = it->mSize;
-                fileUCSize = it->mUCSize;
-                return true;
-            }
-            arkfileNum = 0;
-            byteOffset = 0;
-            fileSize = 0;
-            fileUCSize = 0;
-            return false;
-        }
+    if (!file || !*file)
+        return false;
+    String name(FileGetName(file));
+    String path(FileGetPath(file));
+    int nameValue = mHashTable.GetHashValue(name.c_str());
+    int pathValue = mHashTable.GetHashValue(path.c_str());
+    if (nameValue == -1 || pathValue == -1)
+        return false;
+    FileEntry entry;
+    entry.mHashedName = nameValue;
+    entry.mHashedPath = pathValue;
+    auto it = std::lower_bound(mFileEntries.begin(), mFileEntries.end(), entry);
+    if (it == mFileEntries.end() || it->HashedName() != nameValue
+        || it->HashedPath() != pathValue) {
+        arkfileNum = 0;
+        byteOffset = 0;
+        fileSize = 0;
+        fileUCSize = 0;
+        return false;
     }
-    return false;
+    arkfileNum = 0;
+    unsigned long long u7 = 0;
+    for (; arkfileNum < mNumArkfiles; arkfileNum++) {
+        unsigned long long u6 = mArkfileSizes[arkfileNum] + u7;
+        if (it->mOffset < u6)
+            break;
+        u7 = u6;
+    }
+    MILO_ASSERT(arkfileNum < mNumArkfiles, 0x183);
+    byteOffset = it->mOffset - u7;
+    fileSize = it->mSize;
+    fileUCSize = it->mUCSize;
+    return true;
 }
 
 // Local override, TU-scoped only: retail's stripped MILO_FAIL residue here

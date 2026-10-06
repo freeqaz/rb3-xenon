@@ -284,7 +284,7 @@ void DxShaderMgr::SetVConstant(VShaderConstant vsc, const Vector4 &v) {
     D3DDevice *dev = TheDxRnd.Device();
     float x = v.x, y = v.y, z = v.z, w = v.w;
     float *dst = (float *)&dev->m_Constants.VertexShaderF[vsc];
-    unsigned int start = (unsigned int)vsc >> 2;
+    int start = (unsigned int)vsc >> 2;
     dev->m_Pending.m_Mask[0] |= (UINT64)0x8000000000000000 >> start;
     dst[0] = x;
     dst[1] = y;
@@ -296,7 +296,7 @@ void DxShaderMgr::SetPConstant(PShaderConstant psc, const Vector4 &v) {
     D3DDevice *dev = TheDxRnd.Device();
     float x = v.x, y = v.y, z = v.z, w = v.w;
     float *dst = (float *)&dev->m_Constants.PixelShaderF[psc];
-    unsigned int start = (unsigned int)psc >> 2;
+    int start = (unsigned int)psc >> 2;
     dev->m_Pending.m_Mask[1] |= (UINT64)0x8000000000000000 >> start;
     dst[0] = x;
     dst[1] = y;
@@ -473,19 +473,25 @@ void DxShaderMgr::LoadShaderFile(FileStream &fs) {
             ShaderType shaderType = ShaderTypeFromName(name.Str());
             unsigned int alloc;
             fs >> alloc;
-            void *bases[4];
+            // TWO arrays of 2, not one of 4: retail (0x827366F0) holds their
+            // two addresses in separate registers and indexes both with the
+            // SAME scaled counter -- `addi r10, r31, 0x80` / `addi r8, r31, 0x88`
+            // then `lwzx r10, r29, r10` / `lwzx r8, r29, r8`. A single
+            // bases[4] indexed by k and k+2 gives one base register.
+            void *bases[2];
+            void *physBases[2];
             bases[0] = nullptr;
             bases[1] = nullptr;
-            bases[2] = nullptr;
-            bases[3] = nullptr;
+            physBases[0] = nullptr;
+            physBases[1] = nullptr;
             for (unsigned int j = 0; j < 2; j++) {
                 SIZE_T size1, size2;
                 fs >> size1;
                 fs >> size2;
                 bases[j] = XMemAlloc(size1, 0x20800000);
-                bases[j + 2] = XMemAlloc(size2, 0xB5800000);
+                physBases[j] = XMemAlloc(size2, 0xB5800000);
                 fs.Read(bases[j], size1);
-                fs.Read(bases[j + 2], size2);
+                fs.Read(physBases[j], size2);
             }
             ShaderPoolAlloc(alloc);
             RndSplasherSuspend();
@@ -494,14 +500,23 @@ void DxShaderMgr::LoadShaderFile(FileStream &fs) {
                 fs >> shaderOptsMask;
                 D3DPixelShader *pPS = nullptr;
                 D3DVertexShader *pVS = nullptr;
-                for (int k = 0; k < 2; k++) {
+                // k is unsigned: the loop bound is `cmplwi cr6, r30, 0x8`.
+                for (unsigned int k = 0; k < 2; k++) {
                     unsigned int ic0;
                     unsigned int ibc;
                     fs >> ic0;
                     fs >> ibc;
                     void *addr = (void *)((unsigned int)bases[k] + ic0);
-                    void *physAddr = (void *)((unsigned int)bases[k + 2] + ibc);
-                    if (k - 1) {
+                    void *physAddr = (void *)((unsigned int)physBases[k] + ibc);
+                    // `!(k - 1)`, i.e. the SECOND record is the vertex shader.
+                    // Retail builds the condition as a boolean VALUE --
+                    // `subi r7, r28, 0x1` / `cntlzw r7, r7` /
+                    // `extrwi. r7, r7, 1, 26` -- which is 1 exactly when
+                    // k - 1 == 0, and `beq` branches to the pixel-shader arm
+                    // otherwise. A bare `if (k - 1)` selects the OPPOSITE arm
+                    // (record 0 registered as the vertex shader).
+                    bool isVertexShader = !(k - 1);
+                    if (isVertexShader) {
                         pVS = (D3DVertexShader *)addr;
                         XGRegisterVertexShader(pVS, physAddr);
                     } else {

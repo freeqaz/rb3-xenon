@@ -124,16 +124,23 @@ void ChatReceiver::ProcessChatData(void *data, unsigned int size, int *flag) {
 
     float z1 = unkc;
     float z2 = unk10;
-    {
-        short *p = (short *)data;
-        for (unsigned int i = 0; i < size / 2; i++) {
-            float in = (float)p[0];
+    unsigned int samps = size >> 1;
+    short *samples = (short *)data;
+    // Both loops index samples[i] off a hand-rotated counter: the indexing is
+    // what gives the image's biased-pointer `lha 0x2(rN)` / `sthu 0x2(rN)`
+    // pair (a `*++p` walk emits addi + sth), and the hand rotation keeps the
+    // compare-against-samps loop out of a CTR loop (97.6 -> 100).
+    unsigned int i = 0;
+    if (samps != 0) {
+        do {
+            float in = (float)samples[i];
             float out = (in - z1) * gain * 2.0f + z2 * coef;
             z1 = in;
-            out = Clamp(-32767.0f, 32767.0f, out);
-            *p++ = (short)out;
+            out = Clamp(-32767.0f, sMaxSample, out);
+            samples[i] = (short)out;
             z2 = (float)(short)out;
-        }
+            i++;
+        } while (i < samps);
     }
     unk10 = z2;
     unkc = z1;
@@ -142,23 +149,24 @@ void ChatReceiver::ProcessChatData(void *data, unsigned int size, int *flag) {
     short minSamp = 0;
     *flag = 1;
     float localRatio = DbToRatio(gLocalGain);
-    {
-        short *p = (short *)data;
-        for (unsigned int i = 0; i < size / 2; i++) {
-            short s = p[0];
+    unsigned int j = 0;
+    if (samps != 0) {
+        do {
+            short s = samples[j];
             if (s >= maxSamp) {
                 maxSamp = s;
             }
             if (s < minSamp) {
                 minSamp = s;
             }
-            *p++ = (short)((float)s * localRatio);
-        }
+            samples[j] = (short)((float)s * localRatio);
+            j++;
+        } while (j < samps);
     }
 
     int newCount;
-    if ((float)maxSamp * (1.0f / 32767.0f) > DbToRatio(gNoiseThreshold)
-        || (float)minSamp * (1.0f / 32767.0f) < -DbToRatio(gNoiseThreshold)) {
+    if ((float)maxSamp * (1.0f / 32767.0f) > DbToRatio(gNoiseThreshold) ||
+        (float)minSamp * (1.0f / 32767.0f) < -DbToRatio(gNoiseThreshold)) {
         newCount = gNoiseInt;
     } else if (unk14 > 0) {
         newCount = unk14 - 1;

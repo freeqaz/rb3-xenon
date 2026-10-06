@@ -104,25 +104,33 @@ void UsbMidiKeyboard::Poll() {
             || gForceDetectKeytar) {
             ProKeysData *proData =
                 (ProKeysData *)&JoypadGetPadData(i)->mProGuitarData;
-
+            // REFUTED (w7-r, 2026-09-14): the image emits `li r26, 1`
+            // (slotCounter) BETWEEN the `bl JoypadGetPadData` and
+            // `addi r29, r3, 0x34` (proData), while we emit it after the addi --
+            // a 2-row adjacent swap. Declaring slotCounter FIRST does not buy it:
+            // MSVC then hoists the `li` to BEFORE the call (idx 38 vs the image's
+            // 40) and the function drops 98.05 -> 97.7. The `li` is an
+            // independent constant the scheduler places freely; there is no
+            // declaration order that lands it in the image's slot.
             int slotCounter = 1;
-            for (int keyIndex = 0; keyIndex < 25; keyIndex++) {
-                int note = keyIndex + 0x30;
-                bool pressed = (proData->unk0[keyIndex / 8] >> (7 - keyIndex % 8)) & 1;
+
+            for (int note = 0x30; note - 0x30 < 25; note++) {
+                bool pressed = (proData->unk0[(note - 0x30) / 8]
+                                >> (7 - (note - 0x30) % 8))
+                    & 1;
 
                 bool storedPressed = TheKeyboard->GetKeyPressed(i, note);
 
                 if (pressed != storedPressed) {
                     if (pressed) {
-                        TheKeyboard->SetKeyVelocity(
-                            i,
-                            note,
-                            TheKeyboard->GetSlottedKeyVelocityFromExtended(
-                                slotCounter, proData->unk0
-                            )
+                        int extVel = TheKeyboard->GetSlottedKeyVelocityFromExtended(
+                            slotCounter, proData->unk0
                         );
+                        TheKeyboard->SetKeyVelocity(i, note, extVel);
                         slotCounter++;
-                        KeyboardKeyPressedMsg msg(note, TheKeyboard->GetKeyVelocity(i, note), i);
+                        KeyboardKeyPressedMsg msg(
+                            note, TheKeyboard->GetKeyVelocity(i, note), i
+                        );
                         SendMessage(msg);
                     } else {
                         TheKeyboard->SetKeyVelocity(i, note, 0);
@@ -178,11 +186,15 @@ void UsbMidiKeyboard::Poll() {
                 SendMessage(msg);
             }
 
-            int b = proData->unkbbool;
-            int c = proData->unkcbool * 2;
-            int d = proData->unkdbool * 4;
-            int e = proData->unkemiddle * 8;
-            int highhand = c + d + e + b;
+            // NOTE: the image emits four separate fused rlwinm extractions and a
+            // flat add chain (d<<2) + (c<<1) + (e<<3) + b; MSVC here reassociates
+            // any spelling of this sum into a Horner chain instead. Tried '|',
+            // explicit sub-grouping and term reordering -- all identical or worse.
+            int hhB = proData->unkbbool;
+            int hhE = proData->unkemiddle << 3;
+            int hhD = proData->unkdbool << 2;
+            int hhC = proData->unkcbool << 1;
+            int highhand = hhD + hhC + hhE + hhB;
             if (highhand != TheKeyboard->GetHighHandPlacement(i)) {
                 TheKeyboard->SetHighHandPlacement(i, highhand);
                 KeyboardHighHandPlacementMsg msg(highhand, i);
@@ -196,7 +208,9 @@ void UsbMidiKeyboard::Poll() {
                 || accelAxisVal1 != TheKeyboard->GetAccelAxisVal(i, 1)
                 || accelAxisVal2 != TheKeyboard->GetAccelAxisVal(i, 2)) {
                 TheKeyboard->SetAccelerometer(i, accelAxisVal0, accelAxisVal1, accelAxisVal2);
-                KeysAccelerometerMsg msg(accelAxisVal0, accelAxisVal1, accelAxisVal2, i);
+                KeysAccelerometerMsg msg(
+                    accelAxisVal0, accelAxisVal1, accelAxisVal2, i
+                );
                 SendMessage(msg);
             }
         }

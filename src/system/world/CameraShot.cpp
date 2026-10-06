@@ -1700,9 +1700,10 @@ void CamShot::Shake(float freq, float amp, const Vector2 &maxAngle, Vector3 &off
 
         Vector3 spring;
         Subtract(mLastDesiredShakeOffset, mLastShakeOffset, spring);
-        float emulateFPS = RndPostProc::Current() && RndPostProc::Current()->EmulateFPS() > 0
-            ? RndPostProc::Current()->EmulateFPS()
-            : 60.0f;
+        int usePPFPS = 0;
+        if (RndPostProc::Current() && RndPostProc::Current()->EmulateFPS() > 0)
+            usePPFPS = 1;
+        float emulateFPS = usePPFPS ? RndPostProc::Current()->EmulateFPS() : 60.0f;
         float fps = 60.0f / emulateFPS;
         spring *= 0.02f;
         Vector3 vel = mShakeVelocity;
