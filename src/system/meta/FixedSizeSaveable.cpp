@@ -153,6 +153,9 @@ operator<<(FixedSizeSaveableStream &fs, const FixedSizeSaveable &saveable) {
     MILO_ASSERT(FixedSizeSaveable::sSaveVersion >= 0, 0x10C);
     MILO_ASSERT(FixedSizeSaveable::sMaxSymbols >= 0, 0x10D);
 
+    // Retail is `saveable.SaveFixed(fs); return fs;` -- the Tell()/size check
+    // below is a dev-build check that the X360 build does not contain.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     int oldtell = fs.Tell();
     saveable.SaveFixed(fs);
     int newtell = fs.Tell();
@@ -172,6 +175,9 @@ operator<<(FixedSizeSaveableStream &fs, const FixedSizeSaveable &saveable) {
             saveable.mSaveSizeMethod(FixedSizeSaveable::GetSaveVersion())
         );
     }
+#else
+    saveable.SaveFixed(fs);
+#endif
 
     return fs;
 }
@@ -184,6 +190,9 @@ operator>>(FixedSizeSaveableStream &fs, FixedSizeSaveable &saveable) {
 
     int asdf = FixedSizeSaveable::sCurrentMemcardLoadVer;
 
+    // Retail is `saveable.LoadFixed(fs, sCurrentMemcardLoadVer); return fs;`
+    // -- no Tell()/size check in the X360 build.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     int oldtell = fs.Tell();
     saveable.LoadFixed(fs, asdf);
     int newtell = fs.Tell();
@@ -201,6 +210,9 @@ operator>>(FixedSizeSaveableStream &fs, FixedSizeSaveable &saveable) {
             saveable.mSaveSizeMethod(asdf)
         );
     }
+#else
+    saveable.LoadFixed(fs, asdf);
+#endif
     return fs;
 }
 

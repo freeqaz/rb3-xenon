@@ -96,9 +96,9 @@ INIT_REVS(0x10, 0)
 
 void CharBonesSamples::Load(BinStream &bs) {
     bs >> gVer;
-    if (!(gVer > 12 && gVer <= 16)) {
-        TheDebugFailer << MakeString(kAssertStr, __FILE__, 0x2a0, "gVer > 12 && gVer <= VER");
-    }
+    // Retail reads the version and goes straight to LoadHeader: the range check
+    // is an assert, compiled out of the X360 build.
+    MILO_ASSERT(gVer > 12 && gVer <= 16, 0x2a0);
     LoadHeader(bs);
     LoadData(bs);
 }
