@@ -1202,9 +1202,10 @@ void RockCentral::RecordAccomplishmentData(
 
         std::hash_map<Symbol, int> goalLBData;
         prog->InqGoalLeaderboardData(goalLBData);
-        std::hash_map<Symbol, int>::const_iterator lbit;
-        for (lbit = goalLBData.begin(); lbit != goalLBData.end(); lbit++) {
-            ADD_BUFFER_PAIR(buf, lbit->second, "lb_goal_value_%s", lbit->first.Str());
+        // Same iterator as the tour loops above: retail declares no fourth iterator
+        // (a separate one re-colours the node/key registers in this loop).
+        for (it = goalLBData.begin(); it != goalLBData.end(); it++) {
+            ADD_BUFFER_PAIR(buf, it->second, "lb_goal_value_%s", it->first.Str());
         }
         const std::set<Symbol> &goals = prog->GetNewGoalsSet();
         FOREACH_POST (it, goals) {
