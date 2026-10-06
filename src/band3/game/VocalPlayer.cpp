@@ -718,9 +718,9 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                         fBestScore
                     );
                 if (bFoundPart) {
+                    bAnyAssigned = true;
                     pBestPart->AddSingerCandidate(pSinger, fBestScore);
                     pSinger->mBestTargetPitch = fBestTargetPitch;
-                    bAnyAssigned = true;
                 }
 #ifdef HX_NATIVE
                 if (mVocalOverlay) {
@@ -834,8 +834,10 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                     float alt = kSemitone - mod;
                     mod = ((alt - mod) >= 0.0f) ? mod : alt;
                     if (mod <= kMaxOctaveDistance) {
-                        int sign = 1;
-                        if (diff <= 0.0f) {
+                        int sign;
+                        if (diff > 0.0f) {
+                            sign = 1;
+                        } else {
                             sign = -1;
                         }
                         int octaveAdjust = (int)(kHalfSemitone + absDiff / kSemitone);
