@@ -58,7 +58,13 @@ void PatchVerts::Add(int vertIdx, RndMesh::VertVector &verts, Vector3 &centroid)
     centroid *= invCount;
 }
 
-int PatchVerts::GreaterEq(int iii) const {
+// GreaterEq and HasVert are inline: retail emits them as COMDATs (they sit
+// among the TU's template instantiations, not in source order), so their
+// callers -- Add, HasVert, RndMesh::OnSync -- are compiled without knowing
+// the callee's register footprint and keep live values in callee-saved
+// registers across the call.  Out-of-line, the compiler parks them in
+// volatiles it knows the callee leaves alone, and all three rows diverge.
+inline int PatchVerts::GreaterEq(int iii) const {
     if (!(!mPatchVerts.empty() && iii > mPatchVerts.front())) {
         return 0;
     } else {
