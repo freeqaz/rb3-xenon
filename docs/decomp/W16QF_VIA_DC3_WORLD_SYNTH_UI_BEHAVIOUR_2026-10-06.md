@@ -116,7 +116,7 @@ Fix: `UIComponent::UpdateResource` takes no resource when `TheUI` is null, **und
 
 ## Measurement
 
-**A/B, final branch.** Run dir `~/tmp/wt-w16qf-ab/.ab_measure_runs/20261006-123055-w16qf2-2612122`:
+**A/B, final branch.** Full tool output: `~/tmp/w16qf/ab2.log`. The scratch A/B worktree was removed afterwards, along with its run dir.
 ```
 leg A: matched=53577 masked=25201 honest=28376 code%=58.072998  (recompiles: 0, settled)
 leg B: matched=53583 masked=25204 honest=28379 code%=58.076744  (recompiles: 19, split=1, patch_steps=7, settle iterations: 2)
