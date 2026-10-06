@@ -984,12 +984,14 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         if (0.0f == fHitPct) {
             fAdjusted = 0.0f;
         }
-        /* Retail 0x826EB030: `fcmpu f3,f29; mr r4,r17(=0); beq; li r4,1` --
-           the flag starts false and is set only on the not-equal arm. A bare
-           `fAdjusted != 0.0f` argument emits the opposite shape
-           (`li r4,1; bne; mr r4,0`). */
-        bool bCorrect = false;
-        if (fAdjusted != 0.0f) {
+        /* Retail 0x826EB030: `fcmpu f3,f29; mr r4,r17(=0); beq; li r4,1`.
+           An if/else on `== 0.0f` puts the false copy after the compare;
+           `bool b = false; if (x != 0) b = true;` hoists it above the fcmpu,
+           and a bare `x != 0.0f` emits `li r4,1; bne; mr r4,0`. */
+        bool bCorrect;
+        if (fAdjusted == 0.0f) {
+            bCorrect = false;
+        } else {
             bCorrect = true;
         }
         TheGameMicManager->SetPitchCorrectionTarget(
