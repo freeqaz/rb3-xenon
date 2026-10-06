@@ -131,8 +131,7 @@ class MicManagerXbox {
 public:
     struct ChatBuffer {
     public:
-        int unk0;
-        int unk4;
+        unsigned long long mXuid;
         unsigned int unk8[252];
     };
 

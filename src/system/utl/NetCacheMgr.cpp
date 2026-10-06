@@ -352,8 +352,9 @@ NetLoaderRef *NetCacheMgr::AddLoaderRef(const char *name, RefType type, NetLoade
         return NULL;
     }
     NetLoaderRef *pNetLoaderRef = NULL;
+    std::list<NetLoaderRef>::iterator listEnd = mNetLoaderRefs.end();
     std::list<NetLoaderRef>::iterator it = mNetLoaderRefs.begin();
-    for (; it != mNetLoaderRefs.end(); ++it) {
+    for (; it != listEnd; ++it) {
         NetLoaderRef &ref = *it;
         if (stricmp(ref.mName.c_str(), name) == 0) {
             if ((RefType)0 == type && ref.mCacheLoader) {
@@ -361,7 +362,7 @@ NetLoaderRef *NetCacheMgr::AddLoaderRef(const char *name, RefType type, NetLoade
             } else if ((RefType)1 == type && ref.mNetLoader) {
                 MILO_ASSERT(ref.mCacheLoader == NULL, 0x180);
             } else {
-                MILO_WARN("Found loader for %s, but it was not type %d.\n", ref.mName.c_str(), (int)type);
+                MILO_WARN("Found loader for %s, but it was not type %d.\n", ref.mName.c_str(), type);
                 continue;
             }
             pNetLoaderRef = &ref;
@@ -370,24 +371,22 @@ NetLoaderRef *NetCacheMgr::AddLoaderRef(const char *name, RefType type, NetLoade
     }
 
     NetLoaderRef newRef;
-    newRef.mRefCount = 0;
-    newRef.mNetLoader = NULL;
-    newRef.mCacheLoader = NULL;
 
     if (!pNetLoaderRef) {
         switch ((unsigned int)type) {
+        // From DC3 lane w14-d, all behaviour-neutral: Create / NetCacheLoader
+        // take `name` by implicit conversion, and NetLoaderRef's inline ctor
+        // (not a named aggregate) gives each arm its own String slot.
         case 0: {
-            NetCacheLoader *ncl = new NetCacheLoader(mCache, String(name));
+            NetCacheLoader *ncl = new NetCacheLoader(mCache, name);
             String s(name);
-            NetLoaderRef tmp = { String(s), 0, NULL, ncl };
-            newRef = tmp;
+            newRef = NetLoaderRef(s, 0, NULL, ncl);
             break;
         }
         case 1: {
-            NetLoader *nl = NetLoader::Create(String(name));
+            NetLoader *nl = NetLoader::Create(name);
             String s(name);
-            NetLoaderRef tmp = { String(s), 0, nl, NULL };
-            newRef = tmp;
+            newRef = NetLoaderRef(s, 0, nl, NULL);
             break;
         }
         default:

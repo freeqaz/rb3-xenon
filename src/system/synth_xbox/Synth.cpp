@@ -416,23 +416,29 @@ void Synth360::SetupHeadsetSubmixes() {
     std::vector<IXAudio2SubmixVoice *> &submixes = mHeadsetSubmixes;
     submixes.resize(4, 0);
 
+    // Create a submix voice (with a headset transfer effect) for each headset.
     for (int i = 0; i < 4; i++) {
         HeadsetXferEffect *effect = new HeadsetXferEffect();
 
         XAUDIO2_EFFECT_DESCRIPTOR effectDesc;
-        XAUDIO2_EFFECT_CHAIN effectChain;
-        effectChain.pEffectDescriptors = &effectDesc;
-        effectDesc.pEffect = static_cast<CXAPOBase *>(effect);
+        // Via IXAPO (the CXAPOBase sub-object at offset 0) -- HeadsetXferEffect
+        // reaches IUnknown through both IXAPO and IXAPOParameters, so a direct
+        // cast is ambiguous. The target stores the pointer unadjusted.
         effectDesc.InitialState = 0;
-        effectChain.EffectCount = 1;
         effectDesc.OutputChannels = 1;
+        effectDesc.pEffect = static_cast<IXAPO *>(effect);
 
-        ((HRESULT(*)(int *, IXAudio2SubmixVoice **, int, int, int, int, int, XAUDIO2_EFFECT_CHAIN *)
-        )(*(int *)(*(int *)(int *)unkc8 + 0x24)))(
-            (int *)unkc8, &submixes[i], 1, 48000, 0, 0, 0, &effectChain
-        );
+        XAUDIO2_EFFECT_CHAIN effectChain;
+        effectChain.EffectCount = 1;
+        effectChain.pEffectDescriptors = &effectDesc;
+
+        ((IXAudio2 *)unkc8)
+            ->CreateSubmixVoice(
+                (IXAudio2Voice **)&submixes[i], 1, 48000, 0, 0, 0, &effectChain
+            );
     }
 
+    // Build the send list that routes everything to the headset submixes.
     std::vector<XAUDIO2_SEND_DESCRIPTOR> sendDescs;
 
     for (int i = 0; i < 4; i++) {
@@ -442,47 +448,42 @@ void Synth360::SetupHeadsetSubmixes() {
         sendDescs.push_back(desc);
     }
 
+    XAUDIO2_VOICE_SENDS voiceSends;
+    voiceSends.SendCount = sendDescs.size();
+    voiceSends.pSends = &sendDescs[0];
+
     WAVEFORMATEX format;
     format.wFormatTag = 1;
-    format.wBitsPerSample = 16;
     format.nChannels = 1;
+    format.wBitsPerSample = 16;
     format.nBlockAlign = 2;
-    format.nAvgBytesPerSec = 96000;
     format.nSamplesPerSec = 48000;
+    format.nAvgBytesPerSec = 96000;
     format.cbSize = 0;
 
-    XAUDIO2_VOICE_SENDS voiceSends;
-    voiceSends.pSends = &sendDescs[0];
-    voiceSends.SendCount = sendDescs.size();
-
     IXAudio2SourceVoice *headsetVoice;
-    int *pEngine = (int *)unkc8;
-    HRESULT hr = ((HRESULT(*)(
-        int *, IXAudio2SourceVoice **, WAVEFORMATEX *, int, float, int, XAUDIO2_VOICE_SENDS *, int
-    ))(*(int *)(*(int *)pEngine + 0x20)))(
-        pEngine, &headsetVoice, &format, 2, 2.0f, 0, &voiceSends, 0
-    );
+    // Flags = 2 == XAUDIO2_VOICE_NOPITCH: the silence voice never repitches.
+    HRESULT hr = ((IXAudio2 *)unkc8)
+                     ->CreateSourceVoice(
+                         (IXAudio2Voice **)&headsetVoice, &format, 2, 2.0f, 0, &voiceSends, 0
+                     );
     MILO_ASSERT(SUCCEEDED(hr), 0x30a);
 
     XAUDIO2_BUFFER buffer;
     buffer.Flags = 0;
     memset(&buffer.AudioBytes, 0, sizeof(buffer) - 4);
-    buffer.LoopBegin = 0;
-    buffer.LoopLength = 0;
     buffer.AudioBytes = 0x100;
     buffer.pAudioData = (const BYTE *)sHeadsetSilence;
     buffer.LoopCount = 0xff;
+    buffer.LoopBegin = 0;
+    buffer.LoopLength = 0;
     buffer.PlayBegin = 0;
     buffer.PlayLength = 0;
-    buffer.pContext = 0;
-    int *pSourceVoice = (int *)unkc0;
-    hr = ((HRESULT(*)(int *, XAUDIO2_BUFFER *, int))(*(int *)(*(int *)pSourceVoice + 0x54)))(
-        pSourceVoice, &buffer, 0
-    );
+    buffer.pContext = nullptr;
+    hr = ((IXAudio2SourceVoice *)unkc0)->SubmitSourceBuffer(&buffer, nullptr);
     MILO_ASSERT(SUCCEEDED(hr), 0x319);
 
-    pSourceVoice = (int *)unkc0;
-    hr = ((HRESULT(*)(int *, int, int))(*(int *)(*(int *)pSourceVoice + 0x4c)))(pSourceVoice, 0, 0);
+    hr = ((IXAudio2SourceVoice *)unkc0)->Start(0, 0);
     MILO_ASSERT(SUCCEEDED(hr), 0x31c);
 }
 

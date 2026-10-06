@@ -328,14 +328,15 @@ void Archive::Merge(Archive &shadow) {
         totalSize += mArkfileSizes[i];
     }
     std::vector<FileEntry> &shadowEntries = shadow.mFileEntries;
+    // Both of shadow's members are hoisted into references before the loop;
+    // this->mHashTable is recomputed inside it (from DC3).
     ArkHash &shadowHash = shadow.mHashTable;
-    ArkHash &ourHash = mHashTable;
     FOREACH (it, shadowEntries) {
         const char *name = shadowHash[it->mHashedName];
         const char *path = shadowHash[it->mHashedPath];
         FileEntry entry;
-        entry.mHashedName = ourHash.AddString(name);
-        entry.mHashedPath = ourHash.AddString(path);
+        entry.mHashedName = mHashTable.AddString(name);
+        entry.mHashedPath = mHashTable.AddString(path);
         auto fileIt = std::lower_bound(mFileEntries.begin(), mFileEntries.end(), entry);
         if (fileIt != mFileEntries.end() && fileIt->mHashedName == entry.HashedName()
             && fileIt->mHashedPath == entry.HashedPath()) {
@@ -343,12 +344,16 @@ void Archive::Merge(Archive &shadow) {
             fileIt->mSize = it->mSize;
             fileIt->mUCSize = it->mUCSize;
         } else {
-            FileEntry toAdd;
-            toAdd.mOffset = it->mOffset + totalSize;
-            toAdd.mHashedName = entry.HashedName();
-            toAdd.mHashedPath = entry.HashedPath();
-            toAdd.mUCSize = it->mUCSize;
-            toAdd.mSize = it->mSize;
+            // A 5-argument ctor: right-to-left argument evaluation loads
+            // UCSize, Size and only then the 64-bit offset, as retail does
+            // (DC3 lane w14-d).
+            FileEntry toAdd(
+                it->mOffset + totalSize,
+                entry.HashedName(),
+                entry.HashedPath(),
+                it->mSize,
+                it->mUCSize
+            );
             extraFileEntries.push_back(toAdd);
         }
     }

@@ -41,6 +41,12 @@ enum NetLoaderPos {
 };
 
 struct NetLoaderRef {
+    NetLoaderRef() : mRefCount(0), mNetLoader(nullptr), mCacheLoader(nullptr) {}
+    NetLoaderRef(
+        const String &name, int refCount, NetLoader *netLoader, NetCacheLoader *cacheLoader
+    )
+        : mName(name), mRefCount(refCount), mNetLoader(netLoader),
+          mCacheLoader(cacheLoader) {}
     void Poll();
     bool NeedsToDownload();
     bool IsDownloading();

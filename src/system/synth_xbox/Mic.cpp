@@ -540,22 +540,23 @@ void MicManagerXbox::AddRemoteMic(unsigned long long const &xuid, XAUDIO2_EFFECT
     bool noChain = chain == 0;
     GainEffect *gainEffect = new GainEffect();
 
-    void *mode;
-    XAUDIO2_EFFECT_CHAIN effectChain;
     XAUDIO2_EFFECT_DESCRIPTOR desc;
-    desc.pEffect = static_cast<IXAPO *>(gainEffect);
     desc.OutputChannels = 1;
+    desc.pEffect = static_cast<IXAPO *>(gainEffect);
+    XAUDIO2_EFFECT_CHAIN effectChain;
     effectChain.EffectCount = 1;
     effectChain.pEffectDescriptors = &desc;
     desc.InitialState = 0;
 
     unk1c->RegisterRemoteTalker(xuid, noChain ? &effectChain : 0, chain, 0);
 
-    mode = _xhv_voicechat_mode;
+    void *mode = _xhv_voicechat_mode;
     unk1c->StartRemoteProcessingModes(xuid, &mode, 1);
 
     ChatBuffer chatBuffer;
-    *(unsigned long long *)&chatBuffer = xuid;
+    // A real u64 member, not a punned `*(u64 *)&chatBuffer`: through the cast
+    // MSVC schedules the unk8[250] store ahead of the xuid `ld` (from DC3).
+    chatBuffer.mXuid = xuid;
     chatBuffer.unk8[250] = 0;
     unk28.push_back(chatBuffer);
 
@@ -656,16 +657,16 @@ void MicManagerXbox::Poll() {
         if (cb.unk8[250] != 0) {
             UINT32 count = cb.unk8[250];
             unk1c->SubmitIncomingChatData(
-                *(UINT64 *)&cb, (unsigned char *)cb.unk8, &count
+                cb.mXuid, (unsigned char *)cb.unk8, &count
             );
             cb.unk8[250] -= count;
             memcpy(cb.unk8, (char *)cb.unk8 + count, cb.unk8[250]);
-        } else if (!TheXboxSynth->mHeadsetSubmixes.empty() && *(UINT64 *)&cb == 0x00DEADBEEFFACEF0ULL) {
+        } else if (!TheXboxSynth->mHeadsetSubmixes.empty() && cb.mXuid == 0x00DEADBEEFFACEF0ULL) {
             unk38.Split();
             if (!unk38.Running() || unk38.Ms() > 2000.0f) {
                 unsigned char buf[0x14] = { 0 };
                 UINT32 count = sizeof(buf);
-                unk1c->SubmitIncomingChatData(*(UINT64 *)&cb, buf, &count);
+                unk1c->SubmitIncomingChatData(cb.mXuid, buf, &count);
                 unk38.Restart();
             }
         }

@@ -256,11 +256,16 @@ DataNode op8(DataArray *msg) {
     return u8(msg->Int(2) + bop) ^ bop;
 }
 
-DataNode op9(DataArray *msg) {
-    unsigned long b = msg->Int(1);
-    unsigned long a = u8(msg->Int(2));
-    return DataNode(kDataInt, (int)(((a ^ b) + b) & 0xFF));
+// op9 goes through a two-argument byte helper: the Int(1) result is truncated
+// to u8 only after the second call's arguments are set up (the inliner's
+// parameter copy, arguments evaluated right to left). Writing the truncation
+// inline coalesces it straight out of r3 instead (helper from DC3).
+static inline int ByteOp9(unsigned long w, u8 bar) {
+    unsigned long foo = u8(w);
+    return ((foo ^ bar) + bar) & 0xFF;
 }
+
+DataNode op9(DataArray *msg) { return DataNode(kDataInt, ByteOp9(msg->Int(2), msg->Int(1))); }
 
 DataNode op10(DataArray *msg) {
     unsigned long operand = msg->Int(1);
