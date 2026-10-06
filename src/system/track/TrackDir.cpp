@@ -451,7 +451,9 @@ BEGIN_PROPSYNCS(TrackDir)
 END_PROPSYNCS
 
 // sw3 cross-dialect scatter-include (default/TrackDir <- rndobj/Anim.cpp) [Object owner]
-#ifndef SW_SCATTER_OWNER_INCLUDE
+// W16-PX: native compiles rndobj/Anim.cpp standalone in every target that links this
+// file, so this owner include would define it twice.
+#if !defined(SW_SCATTER_OWNER_INCLUDE) && !HX_NATIVE
 #define SW_SCATTER_OWNER_INCLUDE
 #define gRev gRev_Anim
 #define gAltRev gAltRev_Anim

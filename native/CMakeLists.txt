@@ -1487,6 +1487,106 @@ set(L4_SCATTER_WIRE
     ${REPO_ROOT}/src/system/net/WebSvcMgr.cpp
 )
 
+# ---- W16-PX: the track and vocal-highway drawing path ----------------------
+# The in-game note highway is two layers: the band3/bandtrack controllers
+# (Track, VocalTrack, GemTrack, Gem, Lyric, GemSmasher) and the bandobj
+# directories they drive (TrackPanelDir, VocalTrackDir, GemTrackDir, BandTrack,
+# NoteTube, PitchArrow, the meters). Until this lane no native target linked
+# either VocalTrack or a single bandobj track directory, so ui/track/gen/*.milo
+# could not load (VocalTrackDir/GemTrackDir/StreakMeterDir are ObjectDir
+# subclasses: no factory means a stream desync) and none of this code ran.
+# rb3-render registers the directory factories (BandInit's subset, see
+# milo_object_factories.cpp RegisterTrackFactories) and drives the controllers
+# over the loaded directories (main_render.cpp RunBandTrackPhase).
+set(BANDTRACK_DRAW_SOURCES
+    ${REPO_ROOT}/src/band3/bandtrack/Track.cpp
+    ${REPO_ROOT}/src/band3/bandtrack/VocalTrack.cpp
+    ${REPO_ROOT}/src/band3/bandtrack/Lyric.cpp
+    ${REPO_ROOT}/src/band3/bandtrack/Gem.cpp
+    ${REPO_ROOT}/src/band3/bandtrack/GemSmasher.cpp
+    ${REPO_ROOT}/src/system/bandobj/TrackPanelDirBase.cpp
+    ${REPO_ROOT}/src/system/bandobj/TrackPanelDir.cpp
+    ${REPO_ROOT}/src/system/bandobj/VocalTrackDir.cpp
+    ${REPO_ROOT}/src/system/bandobj/GemTrackDir.cpp
+    ${REPO_ROOT}/src/system/bandobj/GemTrackResourceManager.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandTrack.cpp
+    ${REPO_ROOT}/src/system/bandobj/NoteTube.cpp
+    ${REPO_ROOT}/src/system/bandobj/PitchArrow.cpp
+    ${REPO_ROOT}/src/system/bandobj/StreakMeter.cpp
+    ${REPO_ROOT}/src/system/bandobj/OverdriveMeter.cpp
+    ${REPO_ROOT}/src/system/bandobj/CrowdMeterIcon.cpp
+    ${REPO_ROOT}/src/system/bandobj/EndingBonus.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandLabel.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandScoreboard.cpp
+    ${REPO_ROOT}/src/system/bandobj/UnisonIcon.cpp
+    # Their link closure, measured from the first link with the factories
+    # registered (342 undefined references): GemTrackDir derives from the
+    # engine's track/TrackDir, which drags TrackWidget; the track milos carry
+    # ChordShapeGenerator/FingerShape, BandStarDisplay and BandButton members.
+    ${REPO_ROOT}/src/system/track/TrackDir.cpp
+    ${REPO_ROOT}/src/system/track/TrackWidget.cpp
+    ${REPO_ROOT}/src/system/track/TrackWidgetImp.cpp
+    ${REPO_ROOT}/src/system/bandobj/ChordShapeGenerator.cpp
+    ${REPO_ROOT}/src/system/bandobj/FingerShape.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandStarDisplay.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandButton.cpp
+    # Real-guitar chord-shape helpers (ChordShapeGenerator, Gem) and the
+    # TU that defines BandTrack::SetTambourine.
+    ${REPO_ROOT}/src/system/beatmatch/RGState.cpp
+    ${REPO_ROOT}/src/system/beatmatch/RGUtl.cpp
+    ${REPO_ROOT}/src/band3/game/TambourineManager.cpp
+)
+# Same reason as X20's OutfitConfig note below: once these property tables are
+# live, the default SYNC_PROP/HANDLE arms name `extern Symbol` globals that are
+# declared in utl/Symbols*.h and defined nowhere. The LOCAL_STATIC arms spell
+# the identical comparison with a function-local static. Native-only.
+# BandCrowdMeter.cpp is linked by L4 below but first becomes live here
+# (RegisterTrackFactories registers it), so it needs the same arms.
+set_source_files_properties(${BANDTRACK_DRAW_SOURCES}
+    ${REPO_ROOT}/src/system/bandobj/BandCrowdMeter.cpp
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+
+# W16-PX: the gameplay layer a live VocalTrack controller reaches through its
+# vtable (VocalPlayer/Singer/VocalPart, SongDB, the M6 scoring graph, BandUser,
+# GameConfig, MetaPerformer, ProfileMgr, ...). rb3-render only: it is what
+# native/src/bandtrack_phase.cpp needs to construct a real VocalTrack.
+set(VOCALTRACK_GAME_SOURCES
+    ${REPO_ROOT}/src/band3/game/VocalPlayer.cpp
+    ${REPO_ROOT}/src/band3/game/Singer.cpp
+    ${REPO_ROOT}/src/band3/game/VocalPart.cpp
+    ${REPO_ROOT}/src/band3/game/VocalScoreHistory.cpp
+    ${REPO_ROOT}/src/band3/game/TambourineDetector.cpp
+    ${REPO_ROOT}/src/system/dsp/VibratoDetector.cpp
+    ${REPO_ROOT}/src/system/synth/VoiceBeat.cpp
+    ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
+    ${REPO_ROOT}/src/band3/game/BandUser.cpp
+    ${REPO_ROOT}/src/band3/game/GameConfig.cpp
+    ${REPO_ROOT}/src/band3/game/GameMode.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandSongMetadata.cpp
+    ${REPO_ROOT}/src/band3/game/Defines.cpp
+    ${REPO_ROOT}/src/band3/meta_band/GameplayOptions.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CharData.cpp
+    ${REPO_ROOT}/src/band3/tour/TourChar.cpp
+    ${REPO_ROOT}/src/band3/tour/TourCharLocal.cpp
+    ${REPO_ROOT}/src/band3/tour/TourSavable.cpp
+    ${SONGDB_SOURCES}
+    ${M6_GAME_SOURCES}
+    ${M3_SOURCES}
+    ${M3B_SOURCES}
+)
+set_source_files_properties(
+    ${REPO_ROOT}/src/band3/game/BandUser.cpp
+    ${REPO_ROOT}/src/band3/game/GameConfig.cpp
+    ${REPO_ROOT}/src/band3/game/GameMode.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandSongMetadata.cpp
+    ${REPO_ROOT}/src/band3/game/Defines.cpp
+    ${REPO_ROOT}/src/band3/meta_band/GameplayOptions.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CharData.cpp
+    ${REPO_ROOT}/src/band3/tour/TourChar.cpp
+    ${REPO_ROOT}/src/band3/tour/TourCharLocal.cpp
+    ${REPO_ROOT}/src/band3/tour/TourSavable.cpp
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+
 set(MILO_TARGET_COMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/milo_object_factories.cpp
     ${ENGINE_SOURCES}
@@ -1551,6 +1651,7 @@ set(MILO_TARGET_COMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/x7_band_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${L4_SCATTER_WIRE}
+    ${BANDTRACK_DRAW_SOURCES}
 )
 
 rb3_add_executable(rb3-milo
@@ -1584,6 +1685,10 @@ if(RB3X_BUILD_ENGINE)
         # header-declared, deliberately undefined in libmilo-engine.a. See the
         # file for why RB3's answers differ from DC3's.
         ${CMAKE_SOURCE_DIR}/src/rb3_render_glue.cpp
+        # W16-PX: drives the track/vocal highway over the loaded ui/track milos.
+        ${CMAKE_SOURCE_DIR}/src/bandtrack_phase.cpp
+        ${CMAKE_SOURCE_DIR}/src/bandtrack_link_stubs.cpp
+        ${VOCALTRACK_GAME_SOURCES}
         ${MILO_TARGET_COMMON_SOURCES}
     )
     list(APPEND MILO_TARGETS rb3-render)

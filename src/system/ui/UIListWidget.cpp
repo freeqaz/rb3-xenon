@@ -257,7 +257,10 @@ void UIListWidget::DrawMesh(
 
 UIList *UIListWidget::ParentList() { return mParentList; }
 
-#ifndef RB3_UILISTWIDGET_IN_PANELDIR
+// Native: PanelDir.cpp's copy of this file is the only one the native targets
+// that compile PanelDir emit (cmake/ScatterIncludes.cmake drops the standalone
+// compile), so it must carry UIResource there or UIComponent/UI cannot link.
+#if !defined(RB3_UILISTWIDGET_IN_PANELDIR) || defined(HX_NATIVE)
 #pragma region UIResource
 // A UIManager-shared resource dir, reference counted by the components using it.
 // Retail places these right after UIListWidget's code.

@@ -388,6 +388,14 @@ void VocalTrackDir::PostLoad(BinStream &bs) {
             // "vocal_harmony_prototype" -- which is a FUNCTION-LOCAL STATIC.
             // Deliberately shadows the global; that is what retail compiled.
             static Symbol vocal_harmony_prototype("vocal_harmony_prototype");
+#ifdef HX_NATIVE
+            // Native Hmx::Object holds its TypeProps by pointer, created lazily
+            // (obj/Object.h, obj/Object.cpp:350), so an object with no typed
+            // props has none. An empty stand-in gives the loop below zero
+            // iterations, which is what an empty inline TypeProps gives retail.
+            TypeProps sNoProps(this);
+            TypeProps &mTypeProps = this->mTypeProps ? *this->mTypeProps : sNoProps;
+#endif
             if (Type() == vocal_harmony_prototype) {
                 MILO_LOG("** Converting prototype to C (%d props)\n", mTypeProps.Size());
                 for (int i = 0; i < mTypeProps.Size(); i++) {

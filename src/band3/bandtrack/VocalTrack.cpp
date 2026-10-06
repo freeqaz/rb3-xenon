@@ -68,6 +68,12 @@ static bool sDumpLyricPlates;
 static bool sDumpPlateStates;
 bool gDebugSpew;
 
+// native: each retail TU defines its own sNullMicClientID (all equal to
+// MicClientID's default (-1,-1)). Natively several of these TUs link into one
+// target, so each copy gets internal linkage instead of a duplicate symbol.
+#ifdef HX_NATIVE
+static
+#endif
 MicClientID sNullMicClientID(-1, -1);
 
 inline TambourineGemPool::TambourineGemPool() {
@@ -2851,7 +2857,11 @@ VocalTrack::LyricShift::LyricShift(float f1, float f2, bool fast)
 // sw2 scatter-include (default/VocalTrack <- bandobj/BandWardrobe.cpp)
 #define gRev gRev_BandWardrobe
 #define gAltRev gAltRev_BandWardrobe
+// W16-PX: native skips this edge; rndobj/Console.cpp -> world/Crowd.cpp already
+// emits BandWardrobe in rb3-milo/rb3-render (same decision as BandCharDesc.cpp).
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "bandobj/BandWardrobe.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 
@@ -2880,5 +2890,9 @@ void ForceEmit_LaneAE_VocalTrack() {
 // SCATTER_MIN: bring in ONLY those three definitions; pulling the whole file in
 // gave MSVC extra /Ob2 inline candidates and cost VocalTrack::Init 100 -> 87.5.
 #define RB3_TRACKCONFIG_SCATTER_MIN 1
+// W16-PX: native compiles TrackConfig.cpp whole; this SCATTER_MIN edge would
+// make the native build drop it and keep only these three functions.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "bandtrack/TrackConfig.cpp"
+#endif
 #undef RB3_TRACKCONFIG_SCATTER_MIN

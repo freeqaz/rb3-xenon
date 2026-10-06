@@ -276,6 +276,8 @@ UIManager *TheUI;
 // Default-constructed rather than interned, so nothing here depends on
 // Symbol::Init ordering.
 Symbol dir;
+// W16-PX: BandTrack::SetupInstrument/Reset key the lead-meter percent label on it.
+Symbol me_percent_format;
 Symbol event;
 Symbol events;
 Symbol keys;
@@ -472,6 +474,7 @@ Message get_customize_slot_msg(Symbol(), DataNode(0));
 // ══════════════════════════════════════════════════════════════════════════
 void InternSymbolGlobals_MiloLinkStubs() {
     dir = Symbol("dir");
+    me_percent_format = Symbol("me_percent_format");
     event = Symbol("event");
     events = Symbol("events");
     keys = Symbol("keys");

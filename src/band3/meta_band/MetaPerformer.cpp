@@ -48,6 +48,12 @@
 #include "utl/Symbols.h"
 
 MetaPerformer *MetaPerformer::sMetaPerformer;
+// native: each retail TU defines its own sNullMicClientID (all equal to
+// MicClientID's default (-1,-1)). Natively several of these TUs link into one
+// target, so each copy gets internal linkage instead of a duplicate symbol.
+#ifdef HX_NATIVE
+static
+#endif
 MicClientID sNullMicClientID;
 
 PerformerStatsInfo::PerformerStatsInfo()

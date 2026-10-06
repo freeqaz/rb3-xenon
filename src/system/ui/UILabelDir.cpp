@@ -18,11 +18,15 @@
 // stays an out-of-line call (mDefaultColor and the mColors fill loop). Declaring
 // the specialization without defining it here forces that call; the body is the
 // implicit instantiation emitted by other TUs.
+// Native: an explicit specialization must be defined by some TU, and no native
+// TU defines these, so native takes the primary template (obj/ObjPtr_p.h).
+#ifndef HX_NATIVE
 template <>
 ObjPtr<UIColor>::ObjPtr(Hmx::Object *, UIColor *);
 // Same for the gRev 3..8 legacy font in PostLoad (retail 0x82810ED0 calls it).
 template <>
 ObjPtr<RndFont>::ObjPtr(Hmx::Object *, RndFont *);
+#endif
 
 UIColor *gColor = nullptr;
 

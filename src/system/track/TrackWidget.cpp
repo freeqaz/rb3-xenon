@@ -437,7 +437,9 @@ END_PROPSYNCS
 #pragma pop
 
 // sw3 cross-dialect scatter-include (default/TrackWidget <- char/ClipCollide.cpp) [Object owner]
-#ifndef SW_SCATTER_OWNER_INCLUDE
+// W16-PX: native compiles char/ClipCollide.cpp standalone in every target that links this
+// file, so this owner include would define it twice.
+#if !defined(SW_SCATTER_OWNER_INCLUDE) && !HX_NATIVE
 #define SW_SCATTER_OWNER_INCLUDE
 #define gRev gRev_ClipCollide
 #define gAltRev gAltRev_ClipCollide
