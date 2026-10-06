@@ -80,6 +80,8 @@
 #include <string>
 #include <vector>
 
+#include "crowd_config_dta.h" // W16-PL: real shipped (crowd ...) block
+
 extern void InitMakeString();
 extern DataArray *gSystemConfig; // src/system/os/System.cpp
 void DataInit();                 // src/system/obj/Data.cpp
@@ -153,10 +155,12 @@ static const char *kConfigDta =
     "      (crowd_boost (1 6 6 6 6)))"
     // -- unison_phrase.point_bonus + crowd.* are read by PlayerParams too --
     "   (unison_phrase (reward 2.0)(penalty 2.0)(point_bonus 1000))"
-    "   (crowd"
-    "      (save_level 0.3)"
-    "      (time_to_return_from_brink 2.0)"
-    "      (crowd_loss_per_sec 0.1))"
+    // W16-PL: the REAL shipped (crowd ...) block (crowd_config_dta.h) is spliced
+    // in at @CROWD@ at startup, as rb3-score4 does. PlayerParams::PlayerParams
+    // reads save_level / time_to_return_from_brink / crowd_loss_per_sec from it.
+    // This driver used to hand-write those three as 0.3 / 2.0 / 0.1; the shipped
+    // values are 0.8333 / 3.5 / 0.04.
+    "   @CROWD@"
     ")";
 
 // -------------------------------------------------------------- SongInfo ----
@@ -319,7 +323,11 @@ int main(int argc, char **argv) {
     DataInit();
     ObjectDir::PreInit(256, 4096);
 
-    gSystemConfig = DataReadString(kConfigDta);
+    {
+        std::string cfg(kConfigDta);
+        cfg.replace(cfg.find("@CROWD@"), 7, kRealCrowdConfigDta);
+        gSystemConfig = DataReadString(cfg.c_str());
+    }
     // Scoring::Scoring() resolves the points-block symbols through TRACK_SYMBOLS.
     DataArray *trackSyms = DataReadString(
         "(drum guitar bass vocals keys real_keys real_guitar "
@@ -461,9 +469,14 @@ int main(int argc, char **argv) {
     printf("--- graph: NativeScorePlayer(%s) over real Player/Band/Scoring, "
            "PlayerParams parsed ---\n", TrackName(trackTy));
     printf("  PlayerParams: spotlightPhrase=%.3f deployThreshold=%.3f "
-           "deployBeats(1/32/beat)=%.5f\n\n",
+           "deployBeats(1/32/beat)=%.5f\n",
            player.mParams->mSpotlightPhrase, player.mParams->mDeployThreshold,
            player.mParams->mDeployBeats);
+    // W16-PL: the three keys PlayerParams reads from the shipped (crowd ...) block.
+    printf("  PlayerParams (crowd): saveLevel=%.4f msToReturnFromBrink=%.0f "
+           "crowdLossPerMs=%.6f\n\n",
+           player.mParams->mCrowdSaveLevel, player.mParams->mMsToReturnFromBrink,
+           player.mParams->mCrowdLossPerMs);
 
     // === Stage 2: credit energy by completing real overdrive phrases ========
     // Every phrase gem is judged and handed to the REAL CommonPhraseCapturer
