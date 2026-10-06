@@ -244,9 +244,13 @@ void CharKeyHandMidi::Poll() {
     }
 
     if (unk78) {
-        // retail 0x822D1980: the layout is built from stack Vector3 objects -- a
-        // 16-byte copy of the first spot updated in place, products kept in named
-        // vectors (separate fmuls/fadds, never fused), whole-vector stores
+        // retail 0x822D1980: the layout is built from three stack Vector3 slots --
+        // cur (a 16-byte copy of the first spot, updated in place), then the
+        // dead keyDir and up slots reused for the tip/black-key and white-key
+        // tip vectors -- each copied whole into the key arrays. The helper
+        // calls (Scale/Add, which evaluate z,y,x) versus the per-component
+        // products below are what fix retail's instruction order; the
+        // -0.4*up offset is NOT contracted into an fnmsubs.
         Vector3 cur = mFirstSpot->WorldXfm().v;
         Vector3 keyDir;
         Subtract(mSecondSpot->WorldXfm().v, cur, keyDir);
@@ -264,23 +268,23 @@ void CharKeyHandMidi::Poll() {
         cur.x = downX + cur.x;
         cur.y = cur.y + downY;
         cur.z = cur.z + downZ;
-        Vector3 white;
-        Scale(keyDir, keyDist / 14.0f, white);
+        float whiteX = keyDir.x * (keyDist / 14.0f);
+        float whiteY = keyDir.y * (keyDist / 14.0f);
+        float whiteZ = keyDir.z * (keyDist / 14.0f);
         Vector3 half;
         Scale(keyDir, keyDist / 28.0f, half);
-        Vector3 back;
-        Scale(tipOff, 2.0f, back);
+        float backX = tipOff.x * 2.0f;
+        float backY = tipOff.y * 2.0f;
+        float backZ = tipOff.z * 2.0f;
         Vector3 raise;
         Scale(up, 0.5f, raise);
         Vector3 black;
-        Add(back, half, black);
+        black.Set(backX + half.x, backY + half.y, backZ + half.z);
         Add(raise, black, black);
 
         unk4c[1] = cur;
         Vector3 tip(cur);
-        tip.x = cur.x + tipOff.x;
-        tip.y = cur.y + tipOff.y;
-        tip.z = cur.z + tipOff.z;
+        Add(cur, tipOff, tip);
         unk54[1] = tip;
 
         for (int key = 2; key <= 0x19; key++) {
@@ -288,10 +292,12 @@ void CharKeyHandMidi::Poll() {
                 Vector3 p;
                 Add(cur, black, p);
                 unk4c[key] = p;
-                p += tipOff;
+                Add(p, tipOff, p);
                 unk54[key] = p;
             } else {
-                cur += white;
+                cur.x = cur.x + whiteX;
+                cur.y = cur.y + whiteY;
+                cur.z = cur.z + whiteZ;
                 unk4c[key] = cur;
                 Vector3 t;
                 Add(cur, tipOff, t);
