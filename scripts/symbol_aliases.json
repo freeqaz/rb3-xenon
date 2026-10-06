@@ -2060,7 +2060,7 @@
   {
    "name": "$_M_find",
    "address": "0x82b992a0",
-   "survivor": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@_N@3@U?$_Select1st@U?$pair@$$CBVSymbol@@_N@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@_N@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@_N@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+   "survivor": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
    "folded": [
     "??$_M_find@I@?$_Rb_tree@IU?$less@I@stlpmtx_std@@IU?$_Identity@I@2@U?$_SetTraitsT@I@priv@2@V?$StlNodeAlloc@I@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABI@Z",
     "??$_M_find@I@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@U?$_Select1st@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABI@Z",
@@ -2084,13 +2084,237 @@
     "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVQuest@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
     "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVTourDesc@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
     "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVTourProperty@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
-    "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
     "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VDataNode@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
     "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VSongRecord@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
     "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VTrainerSection@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@VTrainerSection@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@VTrainerSection@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VTrainerSection@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
-    "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z"
+    "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+    "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@_N@3@U?$_Select1st@U?$pair@$$CBVSymbol@@_N@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@_N@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@_N@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 27 folded spelling(s), 37 census sites over 5 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 27 folded spelling(s), 37 census sites over 5 functions.",
+   "relabelled": {
+    "from": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@_N@3@U?$_Select1st@U?$pair@$$CBVSymbol@@_N@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@_N@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@_N@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+    "to": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+    "lane": "W16-QG",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$_M_find@I@?$_Rb_tree@IU?$less@I@stlpmtx_std@@IU?$_Identity@I@2@U?$_SetTraitsT@I@priv@2@V?$StlNodeAlloc@I@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABI@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@I@?$_Rb_tree@IU?$less@I@stlpmtx_std@@IU?$_Identity@I@2@U?$_): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@I@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@2@U?$_Select1st@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIU?$pair@HPAVRndMesh@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABI@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@I@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIU?$pair@H): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@I@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIVMeshInfo@RndText@@@2@U?$_Select1st@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBIVMeshInfo@RndText@@@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABI@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@I@?$_Rb_tree@IU?$less@I@stlpmtx_std@@U?$pair@$$CBIVMeshInfo): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@K@?$_Rb_tree@KU?$less@K@stlpmtx_std@@U?$pair@$$CBKH@2@U?$_Select1st@U?$pair@$$CBKH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBKH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBKH@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABK@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@K@?$_Rb_tree@KU?$less@K@stlpmtx_std@@U?$pair@$$CBKH@2@U?$_S): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@PAVCharClip@@@?$_Rb_tree@PAVCharClip@@U?$less@PAVCharClip@@@stlpmtx_std@@U?$pair@QAVCharClip@@M@3@U?$_Select1st@U?$pair@QAVCharClip@@M@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@QAVCharClip@@M@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@QAVCharClip@@M@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABQAVCharClip@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@PAVCharClip@@@?$_Rb_tree@PAVCharClip@@U?$less@PAVCharClip@@): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@PAVFaderGroup@@@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderGroup@@@stlpmtx_std@@PAV1@U?$_Identity@PAVFaderGroup@@@3@U?$_SetTraitsT@PAVFaderGroup@@@priv@3@V?$StlNodeAlloc@PAVFaderGroup@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABQAVFaderGroup@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@PAVFaderGroup@@@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderG): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@PAVMoveDetector@@@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABQAVMoveDetector@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@PAVMoveDetector@@@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMo): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@PAVObject@Hmx@@@?$_Rb_tree@PAVObject@Hmx@@U?$less@PAVObject@Hmx@@@stlpmtx_std@@U?$pair@QAVObject@Hmx@@PAVObjectDir@@@4@U?$_Select1st@U?$pair@QAVObject@Hmx@@PAVObjectDir@@@stlpmtx_std@@@4@U?$_MapTraitsT@U?$pair@QAVObject@Hmx@@PAVObjectDir@@@stlpmtx_std@@@priv@4@V?$StlNodeAlloc@U?$pair@QAVObject@Hmx@@PAVObjectDir@@@stlpmtx_std@@@4@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABQAVObject@Hmx@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@PAVObject@Hmx@@@?$_Rb_tree@PAVObject@Hmx@@U?$less@PAVObject): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@PAVRndText@@@?$_Rb_tree@PAVRndText@@U?$less@PAVRndText@@@stlpmtx_std@@PAV1@U?$_Identity@PAVRndText@@@3@U?$_SetTraitsT@PAVRndText@@@priv@3@V?$StlNodeAlloc@PAVRndText@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABQAVRndText@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@PAVRndText@@@?$_Rb_tree@PAVRndText@@U?$less@PAVRndText@@@st): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@3@U?$_Select1st@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@3@U?$_Select1st@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVCharLipSync@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVFader@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVFader@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFader@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVFader@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVGigFilter@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVMoveParent@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVMoveParent@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVMoveParent@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMoveParent@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVMoveVariant@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVMoveVariant@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVMoveVariant@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVMoveVariant@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVQuest@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVTourDesc@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTourDesc@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbo | ours ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbo"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVTourProperty@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTourProperty@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbo | ours ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbo"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VDataNode@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VDataNode@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VSongRecord@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VSongRecord@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@VTrainerSection@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@VTrainerSection@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@VTrainerSection@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VTrainerSection@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@_N@3@U?$_Select1st@U?$pair@$$CBVSymbol@@_N@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@_N@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@_N@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVSymbol@@@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std @ 0x82b992a0, ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbo | ours ??$_M_find@VSymbol@@@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbo"
+    }
+   ]
   },
   {
    "name": "6",
@@ -2695,11 +2919,10 @@
   {
    "name": "$_M_find",
    "address": "0x826d98d8",
-   "survivor": "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSongStatus@@@2@U?$_Select1st@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z",
+   "survivor": "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z",
    "folded": [
     "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z",
     "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHH@2@U?$_Select1st@U?$pair@$$CBHH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z",
-    "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z",
     "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVColor@Hmx@@@2@U?$_Select1st@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z",
     "??$_M_find@VCRC@Hmx@@@?$_Rb_tree@VCRC@Hmx@@U?$less@VCRC@Hmx@@@stlpmtx_std@@U?$pair@$$CBVCRC@Hmx@@M@4@U?$_Select1st@U?$pair@$$CBVCRC@Hmx@@M@stlpmtx_std@@@4@U?$_MapTraitsT@U?$pair@$$CBVCRC@Hmx@@M@stlpmtx_std@@@priv@4@V?$StlNodeAlloc@U?$pair@$$CBVCRC@Hmx@@M@stlpmtx_std@@@4@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVCRC@Hmx@@@Z",
     "??$_M_find@VCRC@Hmx@@@?$_Rb_tree@VCRC@Hmx@@U?$less@VCRC@Hmx@@@stlpmtx_std@@U?$pair@$$CBVCRC@Hmx@@V?$RefRes@X@@@4@U?$_Select1st@U?$pair@$$CBVCRC@Hmx@@V?$RefRes@X@@@stlpmtx_std@@@4@U?$_MapTraitsT@U?$pair@$$CBVCRC@Hmx@@V?$RefRes@X@@@stlpmtx_std@@@priv@4@V?$StlNodeAlloc@U?$pair@$$CBVCRC@Hmx@@V?$RefRes@X@@@stlpmtx_std@@@4@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVCRC@Hmx@@@Z",
@@ -2707,9 +2930,106 @@
     "??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerContribData@PerfectOverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerContribData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerContribData@PerfectOverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerContribData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABW4TrackType@@@Z",
     "??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABW4TrackType@@@Z",
     "??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABW4TrackType@@@Z",
-    "??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABW4TrackType@@@Z"
+    "??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABW4TrackType@@@Z",
+    "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSongStatus@@@2@U?$_Select1st@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 11 folded spelling(s), 21 census sites over 5 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 11 folded spelling(s), 21 census sites over 5 functions.",
+   "relabelled": {
+    "from": "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSongStatus@@@2@U?$_Select1st@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z",
+    "to": "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z",
+    "lane": "W16-QG",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_S @ 0x826d98d8, ??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHH@2@U?$_Select1st@U?$pair@$$CBHH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_S @ 0x826d98d8, ??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHH@2@U?$_S): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVColor@Hmx@@@2@U?$_Select1st@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_S @ 0x826d98d8, ??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVColor@Hm): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VCRC@Hmx@@@?$_Rb_tree@VCRC@Hmx@@U?$less@VCRC@Hmx@@@stlpmtx_std@@U?$pair@$$CBVCRC@Hmx@@M@4@U?$_Select1st@U?$pair@$$CBVCRC@Hmx@@M@stlpmtx_std@@@4@U?$_MapTraitsT@U?$pair@$$CBVCRC@Hmx@@M@stlpmtx_std@@@priv@4@V?$StlNodeAlloc@U?$pair@$$CBVCRC@Hmx@@M@stlpmtx_std@@@4@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVCRC@Hmx@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_S @ 0x826d98d8, ??$_M_find@VCRC@Hmx@@@?$_Rb_tree@VCRC@Hmx@@U?$less@VCRC@Hmx@@@stlpmtx_): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@VCRC@Hmx@@@?$_Rb_tree@VCRC@Hmx@@U?$less@VCRC@Hmx@@@stlpmtx_std@@U?$pair@$$CBVCRC@Hmx@@V?$RefRes@X@@@4@U?$_Select1st@U?$pair@$$CBVCRC@Hmx@@V?$RefRes@X@@@stlpmtx_std@@@4@U?$_MapTraitsT@U?$pair@$$CBVCRC@Hmx@@V?$RefRes@X@@@stlpmtx_std@@@priv@4@V?$StlNodeAlloc@U?$pair@$$CBVCRC@Hmx@@V?$RefRes@X@@@stlpmtx_std@@@4@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABVCRC@Hmx@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_S @ 0x826d98d8, ??$_M_find@VCRC@Hmx@@@?$_Rb_tree@VCRC@Hmx@@U?$less@VCRC@Hmx@@@stlpmtx_): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@H@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABW4TrackType@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_S @ 0x826d98d8, ??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerContribData@PerfectOverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerContribData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerContribData@PerfectOverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerContribData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABW4TrackType@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_S @ 0x826d98d8, ??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABW4TrackType@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_S @ 0x826d98d8, ??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABW4TrackType@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_S @ 0x826d98d8, ??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABW4TrackType@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_S @ 0x826d98d8, ??$_M_find@W4TrackType@@@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSongStatus@@@2@U?$_Select1st@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSongStatus@@@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_S @ 0x826d98d8, ??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSongStat): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$C | ours ??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSongStatus@@@2@U?$_Select1st"
+    }
+   ]
   },
   {
    "name": "$MakeString",
@@ -5932,7 +6252,7 @@
   {
    "name": "1?$vector",
    "address": "0x822d8cc0",
-   "survivor": "??1?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "survivor": "??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
    "folded": [
     "??1?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
@@ -5951,7 +6271,7 @@
     "??1?$vector@V?$ObjPtr@VRndAnimatable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-    "??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+    "??1?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 13, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 3 census sites over 1 functions. RE-ANCHORED 2026-09-13 (lane W12-D): the survivor was ??1?$vector@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@... purely because that was the map name at this address, and that name is WRONG -- retail here is 136 B with element stride 0xc while our ObjPtrVec::Node vector is 132 B with stride 0x10, and different-size COMDATs cannot fold. The map row is now ??1?$vector@VString@@..., so the survivor follows it; the ObjDirPtr<ObjectDir> membership and its T1 evidence are UNCHANGED (String and ObjDirPtr<ObjectDir> are both 12 B and their __destroy_range_aux helpers are both members of the T1 fold group at 0x82710808, so the two ~vector<T> bodies are identical including relocations). ObjPtrVec::Node is NOT added as a folded spelling: it cannot fold on size, and a charge census over every sub-100 row of all 10 objs defining it found 0 sites where our source calls it and retail calls this address. W16-GQ ADDENDUM 2026-09-30: added 4 further ~vector<T> destructor instantiations proven ICF-folded to this same survivor by tools/icf_pair_adjudicate.py --chase, each T=12 B (matching String/ObjDirPtr<ObjectDir> above): ObjPtr<UIColor> (pair#2, FLAT T1 REFUTED -> CHASED T1 PROVEN via 1 SLOT-FOLD-OK, family 20 of ours -> 1 retail addr, 8 full-price charged call sites / 876 B per the W16GQ scout census), FilePath (pair#7, same chase shape, 3 sites / 560 B), ObjPtr<EventTrigger> (pair#8, same chase shape, 4 full sites / 492 B + 2 partial sites not counted here), ObjPtr<RndPropAnim> (pair#13, same chase shape, 8 full sites / 368 B + 2 partial sites not counted here). Zero SLOT-REFUTED, BYTES-DIFFER, or CYCLE-ASSUMED entries in any of the 4 chase logs; no relocation comparison in any of the 4 proofs rested on a placeholder tolerance. See docs/decomp/W16GQ_FCNP_NONMEMBER_ADJUDICATION_2026-09-30.md. W16-GV 2026-09-30: FCNP-tail adjudication rows 17 (vector<ObjPtr<Sequence>>), 18 (vector<ObjPtr<RndGroup>>), 19 (vector<ObjOwnerPtr<Waypoint>>), 21 (vector<ObjPtr<RndTex>>), 22 (vector<ObjOwnerPtr<RndTransformable>>), 28 (vector<ObjPtr<SeqInst>>), 32 (vector<ObjPtr<Object@Hmx>>), 38 (vector<ObjOwnerPtr<CharClip>>) destructors -- all pointer-payload vector<T*>::~vector() instantiations folding to the same 4-byte-pointer-element body as vector<String>::~vector() at 0x822d8cc0. All 8: FLAT T1 REFUTED -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase, 1 SLOT-FOLD-OK (named allocator dealloc callee) each, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED, no map residency for any 'ours' spelling, no prior co-withdrawal. See docs/decomp/W16GV_FCNP_TAIL_2026-09-30.md. ADDED 2026-09-30 (lane W17-IKM): ~vector<ObjPtr<RndTransformable>>, the dtor of CharIKMidi::Load's rev<3 ObjVector local; retail Load's only dtor call (0x823ca9c4) lands here. tools/icf_pair_adjudicate.py: FLAT T1 REFUTED / CHASED T1 PROVEN (136 B both sides) -- the SAME verdict pair as the existing ~vector<ObjPtr<RndTex>> member, i.e. it rests on the same folded __destroy_range_aux callee. Controls: a same-size 136 B decoy that retail keeps at its own address (~vector<MidiParser::VocalEvent>) is REFUTED under --chase, a 36 B decoy (~vector<Vector3>) is REFUTED, and --chasetest passes. Referenced by CharIKMidi.obj only.",
    "admitted": [
@@ -5975,16 +6295,184 @@
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 136 B retail / 136 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ??1StreakMeter@@UAA@XZ. Overrides earlier withdrawal record(s) for this spelling under other survivors (0x82775a08 FABRICATED_CLOSURE_NOT_PARTITION; 0x82775ac0 FABRICATED_CLOSURE_NOT_PARTITION; 0x82bb3bb8 FABRICATED_CLOSURE_NOT_PARTITION): those refused membership without a per-pair proof against this survivor, and the chase above is one."
     }
+   ],
+   "relabelled": {
+    "from": "??1?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "to": "??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "lane": "W16-QG",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??1?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VO): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpm): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEven): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPr): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjPtr@VSequence@@@@V?$StlNodeAlloc@V?$ObjPtr@VSequence@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjPtr@VSequence@@@@V?$StlNodeAlloc@V?$ObjPtr@VSequence): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjPtr@VRndGroup@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjPtr@VRndGroup@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndGroup): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjOwnerPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjOwnerPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$Obj): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjPtr@VSeqInst@@@@V?$StlNodeAlloc@V?$ObjPtr@VSeqInst@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjPtr@VSeqInst@@@@V?$StlNodeAlloc@V?$ObjPtr@VSeqInst@@): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjPtr@V): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjPtr@VRndAnimatable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjPtr@VRndAnimatable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRnd): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndMesh@@): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "old-label",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "folded (PROVEN)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VR @ 0x822d8cc0, ??1?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_s): PROVEN [CHASED] retail 136 B / ours 136 B, 0 cycle-assumed"
+    }
    ]
   },
   {
    "name": "push_back",
    "address": "0x822750d0",
-   "survivor": "?push_back@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAAXPAVRndGroup@@@Z",
+   "survivor": "?FindEmptyLayer@PatchDir@@QAAHXZ",
    "folded": [
-    "?FindEmptyLayer@PatchDir@@QAAHXZ"
+    "?push_back@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAAXPAVRndGroup@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 34, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 3 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 34, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 3 census sites over 1 functions.",
+   "relabelled": {
+    "from": "?push_back@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAAXPAVRndGroup@@@Z",
+    "to": "?FindEmptyLayer@PatchDir@@QAAHXZ",
+    "lane": "W16-QG",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?push_back@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAAXPAVRndGroup@@@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?FindEmptyLayer@PatchDir@@QAAHXZ @ 0x822750d0, ?push_back@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAAXPAVRndGroup@@@Z): UNDECIDABLE [MISSING(ours)] depth 0: retail ?FindEmptyLayer@PatchDir@@QAAHXZ | ours ?push_back@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAAXPAVRndGroup@@@Z"
+    }
+   ]
   },
   {
    "name": "_M_erase",
@@ -16906,11 +17394,27 @@
   {
    "name": "_M_clear",
    "address": "0x82356430",
-   "survivor": "?_M_clear@?$vector@VSmasherPlateInfo@GemTrackResourceManager@@V?$StlNodeAlloc@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "survivor": "?_M_clear_after_move@?$vector@VSmasherPlateInfo@GemTrackResourceManager@@V?$StlNodeAlloc@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
    "folded": [
-    "?_M_clear_after_move@?$vector@VSmasherPlateInfo@GemTrackResourceManager@@V?$StlNodeAlloc@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+    "?_M_clear@?$vector@VSmasherPlateInfo@GemTrackResourceManager@@V?$StlNodeAlloc@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "relabelled": {
+    "from": "?_M_clear@?$vector@VSmasherPlateInfo@GemTrackResourceManager@@V?$StlNodeAlloc@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "to": "?_M_clear_after_move@?$vector@VSmasherPlateInfo@GemTrackResourceManager@@V?$StlNodeAlloc@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "lane": "W16-QG",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?_M_clear@?$vector@VSmasherPlateInfo@GemTrackResourceManager@@V?$StlNodeAlloc@VSmasherPlateInfo@GemTrackResourceManager@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@VSmasherPlateInfo@GemTrackResourceManage @ 0x82356430, ?_M_clear@?$vector@VSmasherPlateInfo@GemTrackResourceManager@@V?$StlNo): UNDECIDABLE [MISSING(ours)] depth 0: retail ?_M_clear_after_move@?$vector@VSmasherPlateInfo@GemTrackResourceManager@@V?$StlNodeAlloc@V | ours ?_M_clear@?$vector@VSmasherPlateInfo@GemTrackResourceManager@@V?$StlNodeAlloc@VSmasherPlat"
+    }
+   ]
   },
   {
    "name": "_GRndGenerator",
@@ -17920,15 +18424,63 @@
   {
    "name": "SyncProperty",
    "address": "0x8235c2e0",
-   "survivor": "?SyncProperty@Object@Hmx@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+   "survivor": "?SyncProperty@Tour@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
    "folded": [
-    "?SyncProperty@Tour@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
     "?SyncProperty@BandConfiguration@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
     "?SyncProperty@FileMergerOrganizer@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
     "?SyncProperty@RndMultiMeshProxy@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
-    "?SyncProperty@WavMgr@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
+    "?SyncProperty@WavMgr@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+    "?SyncProperty@Object@Hmx@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 4 folded spelling(s), 1 census sites over 2 functions. | W16-BU A/B: survivor re-spelled Hmx::Object::SyncProperty, Tour::SyncProperty demoted to a folded spelling."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 4 folded spelling(s), 1 census sites over 2 functions. | W16-BU A/B: survivor re-spelled Hmx::Object::SyncProperty, Tour::SyncProperty demoted to a folded spelling.",
+   "relabelled": {
+    "from": "?SyncProperty@Object@Hmx@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+    "to": "?SyncProperty@Tour@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+    "lane": "W16-QG",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?SyncProperty@BandConfiguration@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?SyncProperty@Tour@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z @ 0x8235c2e0, ?SyncProperty@BandConfiguration@@UAA_NAAVDataNode@@PAVDataArray@@HW4Pr): PROVEN [CHASED] retail 72 B / ours 72 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?SyncProperty@FileMergerOrganizer@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?SyncProperty@Tour@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z @ 0x8235c2e0, ?SyncProperty@FileMergerOrganizer@@UAA_NAAVDataNode@@PAVDataArray@@HW4): PROVEN [CHASED] retail 72 B / ours 72 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?SyncProperty@RndMultiMeshProxy@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?SyncProperty@Tour@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z @ 0x8235c2e0, ?SyncProperty@RndMultiMeshProxy@@UAA_NAAVDataNode@@PAVDataArray@@HW4Pr): PROVEN [CHASED] retail 72 B / ours 72 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?SyncProperty@WavMgr@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?SyncProperty@Tour@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z @ 0x8235c2e0, ?SyncProperty@WavMgr@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z): PROVEN [CHASED] retail 72 B / ours 72 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?SyncProperty@Object@Hmx@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+     "role": "old-label",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "folded (PROVEN)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?SyncProperty@Tour@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z @ 0x8235c2e0, ?SyncProperty@Object@Hmx@@UAA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@): PROVEN [CHASED] retail 72 B / ours 72 B, 0 cycle-assumed"
+    }
+   ]
   },
   {
    "name": "OnMsg",
@@ -87101,11 +87653,27 @@
   {
    "name": "GameModeTerminate",
    "address": "0x827cd628",
-   "survivor": "?GameModeTerminate@@YAXXZ",
+   "survivor": "?NetCacheMgrTerminate@@YAXXZ",
    "folded": [
-    "?NetCacheMgrTerminate@@YAXXZ"
+    "?GameModeTerminate@@YAXXZ"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "relabelled": {
+    "from": "?GameModeTerminate@@YAXXZ",
+    "to": "?NetCacheMgrTerminate@@YAXXZ",
+    "lane": "W16-QG",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?GameModeTerminate@@YAXXZ",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?NetCacheMgrTerminate@@YAXXZ @ 0x827cd628, ?GameModeTerminate@@YAXXZ): UNDECIDABLE [MISSING(ours)] depth 0: retail ?NetCacheMgrTerminate@@YAXXZ | ours ?GameModeTerminate@@YAXXZ"
+    }
+   ]
   },
   {
    "name": "$__insertion_sort",
@@ -97290,10 +97858,10 @@
   {
    "name": "consensus_partition",
    "address": "0x82772b08",
-   "survivor": "??$_Param_Construct@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@0@ABV10@@Z",
+   "survivor": "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
    "folded": [
-    "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z"
+    "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+    "??$_Param_Construct@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@0@ABV10@@Z"
    ],
    "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/.",
    "admitted": [
@@ -97301,6 +97869,30 @@
      "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
      "lane": "W16-NR 2026-10-02",
      "evidence": "chase PROVEN with 0 CYCLE-ASSUMED; unique among 112 retail masked twins (O chased against every twin, only the survivor PROVEN); 1/1 retail call sites at our spelling's sites (objdiff diff of every paired caller) land at the survivor; extent 60 B both sides (size_gate like-for-like). Slot discharge is the W16-JG strict policy."
+    }
+   ],
+   "relabelled": {
+    "from": "??$_Param_Construct@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@0@ABV10@@Z",
+    "to": "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+    "lane": "W16-QG",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataColl @ 0x82772b08, ??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCol): PROVEN [CHASED] retail 60 B / ours 60 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@0@ABV10@@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataColl @ 0x82772b08, ??$_Param_Construct@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??0?$vector@UPressRec@@V?$StlNodeAlloc@UPressRec@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z | ours ??0?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z (same operation, our callee not proven at a retail address of its own)"
     }
    ]
   },
@@ -101071,9 +101663,9 @@
   {
    "name": "SetReleaseSmoothing",
    "address": "0x826ee4d8",
-   "survivor": "?SetReleaseSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z",
+   "survivor": "?Poll@CrowdRating@@QAAXM@Z",
    "folded": [
-    "?Poll@CrowdRating@@QAAXM@Z"
+    "?SetReleaseSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -101082,6 +101674,22 @@
      "spelling": "?Poll@CrowdRating@@QAAXM@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 UNDECIDABLE: VACUOUS: body under 4 words or over half the words masked --); 8 B retail / 8 B ours; retail body-twins 1. Vacuous body (VACUOUS-BUT-IDENTICAL) -- admitted on the retail call-site witness: retail branches to this survivor at 0x8269d5ec, the exact sites where our compiled caller calls this spelling (row otherwise instruction-identical). "
+    }
+   ],
+   "relabelled": {
+    "from": "?SetReleaseSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z",
+    "to": "?Poll@CrowdRating@@QAAXM@Z",
+    "lane": "W16-OS 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?SetReleaseSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?Poll@CrowdRating@@QAAXM@Z @ 0x826ee4d8, ?SetReleaseSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z): UNDECIDABLE [MISSING(ours)] depth 0: retail ?Poll@CrowdRating@@QAAXM@Z | ours ?SetReleaseSmoothing@PitchCorrectedVoice@Synapse@DSP@@QAAXM@Z"
     }
    ]
   },
@@ -102645,9 +103253,9 @@
   {
    "name": "1?$vector",
    "address": "0x822a3010",
-   "survivor": "??1?$vector@UUnlockable@?A0xf8e4b4b5@@V?$StlNodeAlloc@UUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "survivor": "??1?$vector@VPatchPair@MeshPair@BandPatchMesh@@V?$StlNodeAlloc@VPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
    "folded": [
-    "??1?$vector@VPatchPair@MeshPair@BandPatchMesh@@V?$StlNodeAlloc@VPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+    "??1?$vector@UUnlockable@?A0xf8e4b4b5@@V?$StlNodeAlloc@UUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -102656,6 +103264,22 @@
      "spelling": "??1?$vector@VPatchPair@MeshPair@BandPatchMesh@@V?$StlNodeAlloc@VPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 136 B retail / 136 B ours; retail body-twins 7. Retail call site(s) reaching the survivor where we call this spelling: 0x822a4a44."
+    }
+   ],
+   "relabelled": {
+    "from": "??1?$vector@UUnlockable@?A0xf8e4b4b5@@V?$StlNodeAlloc@UUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "to": "??1?$vector@VPatchPair@MeshPair@BandPatchMesh@@V?$StlNodeAlloc@VPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+    "lane": "W16-QG",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??1?$vector@UUnlockable@?A0xf8e4b4b5@@V?$StlNodeAlloc@UUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$vector@VPatchPair@MeshPair@BandPatchMesh@@V?$StlNodeAlloc@VPatchP @ 0x822a3010, ??1?$vector@UUnlockable@?A0xf8e4b4b5@@V?$StlNodeAlloc@UUnlockable@?A0x): UNDECIDABLE [MISSING(ours)] depth 0: retail ??1?$vector@VPatchPair@MeshPair@BandPatchMesh@@V?$StlNodeAlloc@VPatchPair@MeshPair@BandPat | ours ??1?$vector@UUnlockable@?A0xf8e4b4b5@@V?$StlNodeAlloc@UUnlockable@?A0xf8e4b4b5@@@stlpmtx_s"
     }
    ]
   },
@@ -108467,9 +109091,9 @@
   {
    "name": "__destroy_range_aux",
    "address": "0x822a25e8",
-   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAUUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUUnlockable@?A0xf8e4b4b5@@@0@0ABU__false_type@0@@Z",
+   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAVPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPatchPair@MeshPair@BandPatchMesh@@@0@0ABU__false_type@0@@Z",
    "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAVPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPatchPair@MeshPair@BandPatchMesh@@@0@0ABU__false_type@0@@Z"
+    "??$__destroy_range_aux@V?$reverse_iterator@PAUUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUUnlockable@?A0xf8e4b4b5@@@0@0ABU__false_type@0@@Z"
    ],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
@@ -108477,6 +109101,22 @@
      "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAVPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPatchPair@MeshPair@BandPatchMesh@@@0@0ABU__false_type@0@@Z",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 PROVEN); 96 B retail / 96 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?_M_clear_after_move@?$vector@VPatchPair@MeshPair@BandPatchMesh@@V?$StlNodeAlloc@VPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ."
+    }
+   ],
+   "relabelled": {
+    "from": "??$__destroy_range_aux@V?$reverse_iterator@PAUUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUUnlockable@?A0xf8e4b4b5@@@0@0ABU__false_type@0@@Z",
+    "to": "??$__destroy_range_aux@V?$reverse_iterator@PAVPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVPatchPair@MeshPair@BandPatchMesh@@@0@0ABU__false_type@0@@Z",
+    "lane": "W16-QG",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAUUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUUnlockable@?A0xf8e4b4b5@@@0@0ABU__false_type@0@@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__destroy_range_aux@V?$reverse_iterator@PAVPatchPair@MeshPair@BandP @ 0x822a25e8, ??$__destroy_range_aux@V?$reverse_iterator@PAUUnlockable@?A0xf8e4b4b5@): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$__destroy_range_aux@V?$reverse_iterator@PAVPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_s | ours ??$__destroy_range_aux@V?$reverse_iterator@PAUUnlockable@?A0xf8e4b4b5@@@stlpmtx_std@@@stlp"
     }
    ]
   },
@@ -108537,10 +109177,10 @@
   {
    "name": "1?$_Rb_tree",
    "address": "0x8256aef8",
-   "survivor": "??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVString@@@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+   "survivor": "??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
    "folded": [
     "??1?$hash_map@VSymbol@@VString@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
-    "??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ"
+    "??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVString@@@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
@@ -108553,6 +109193,30 @@
      "spelling": "??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 UNDECIDABLE); 4 B retail / 4 B ours. Retail calls the survivor where we call this spelling in 2 row(s), e.g. fn_8256B000, fn_8256B800."
+    }
+   ],
+   "relabelled": {
+    "from": "??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVString@@@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    "to": "??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
+    "lane": "W16-OS 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??1?$hash_map@VSymbol@@VString@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@4@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlN @ 0x8256aef8, ??1?$hash_map@VSymbol@@VString@@U?$hash@VSymbol@@@stlpmtx_std@@U?$equa): PROVEN [CHASED] retail 4 B / ours 4 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVString@@@2@U?$_Select1st@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVString@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlN @ 0x8256aef8, ??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVString@@@2@U?$_Sel): UNDECIDABLE [MISSING(ours)] depth 0: retail ??1?$hash_map@HVString@@U?$hash@H@stlpmtx_std@@U?$equal_to@H@3@V?$StlNodeAlloc@U?$pair@$$C | ours ??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVString@@@2@U?$_Select1st@U?$pair@$$CBH"
     }
    ]
   },
@@ -108591,9 +109255,9 @@
   {
    "name": "CurrentThreadId",
    "address": "0x8238b7e8",
-   "survivor": "?CurrentThreadId@@YAKXZ",
+   "survivor": "??1Weight@PlayBack@CharLipSync@@QAA@XZ",
    "folded": [
-    "??1Weight@PlayBack@CharLipSync@@QAA@XZ"
+    "?CurrentThreadId@@YAKXZ"
    ],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
@@ -108601,6 +109265,22 @@
      "spelling": "??1Weight@PlayBack@CharLipSync@@QAA@XZ",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 UNDECIDABLE); 4 B retail / 4 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. fn_823D4C68."
+    }
+   ],
+   "relabelled": {
+    "from": "?CurrentThreadId@@YAKXZ",
+    "to": "??1Weight@PlayBack@CharLipSync@@QAA@XZ",
+    "lane": "W16-OS 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?CurrentThreadId@@YAKXZ",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1Weight@PlayBack@CharLipSync@@QAA@XZ @ 0x8238b7e8, ?CurrentThreadId@@YAKXZ): UNDECIDABLE [MISSING(ours)] depth 1: retail ??1?$ObjPtr@VCharClip@@@@UAA@XZ | ours GetCurrentThreadId"
     }
    ]
   },
@@ -116198,10 +116878,8 @@
   {
    "name": "fn_827C6708",
    "address": "0x827c6708",
-   "survivor": "fn_827C6708",
-   "folded": [
-    "?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@00@Z"
-   ],
+   "survivor": "?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@00@Z",
+   "folded": [],
    "withdrawn": [],
    "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
    "admitted": [
@@ -116215,6 +116893,22 @@
       "address": "0x826da488",
       "evidence_there": "chase(?_M_insert@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stl @ 0x826da488, ?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHV) fails at callee: retail ?_M_create_node@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@ @ 0x826da1f0 vs ours ?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$. our callee ?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbo PROVEN (clean chase) at 0x82768ff8 = ?_M_create_node@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_ only. Retail holds both callee bodies and they differ, so the body at 0x826da488 is not this member's."
      }
+    }
+   ],
+   "relabelled": {
+    "from": "fn_827C6708",
+    "to": "?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@00@Z",
+    "lane": "W16-QG",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "fn_827C6708",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2 @ 0x827c6708, fn_827C6708): UNDECIDABLE [MISSING(ours)] depth 0: retail ?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pa | ours fn_827C6708"
     }
    ]
   },
@@ -116544,6 +117238,51 @@
     "??$make_pair@VSymbol@@VDataNode@@@stlpmtx_std@@YA?AU?$pair@VSymbol@@VDataNode@@@0@VSymbol@@VDataNode@@@Z"
    ],
    "evidence": "W16-PO 2026-10-06. T1: tools/icf_pair_adjudicate.py FLAT T1 PROVEN (retail 96 B == ours 96 B, 4 relocs, retail_bodytwins 1, our_bodytwins 2: the two instantiations are byte-identical including relocations). Type witness from the caller's own retail bytes: ?AddPair@DataPoint@@QAAXVSymbol@@VDataNode@@@Z builds its pair<const Symbol,DataNode> by copying one word out of the make_pair result (lwz/stw, no ??0Symbol@@QAA@PBD@Z), which only a pair<Symbol,DataNode> result allows; the const char* spelling needs the Symbol(const char*) call our previous source emitted."
+  },
+  {
+   "name": "_GTrainerPanel",
+   "address": "0x826cb610",
+   "survivor": "??_GTrainerPanel@@UAAPAXI@Z",
+   "folded": [
+    "??_ETrainerPanel@@UAAPAXI@Z"
+   ],
+   "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/band3/game/TrainerPanel.obj the symbol ??_ETrainerPanel@@UAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GTrainerPanel@@UAAPAXI@Z (Characteristics=2) -- MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration on RETAIL BYTES: tools/icf_pair_adjudicate.py --chase reads PROVEN for ??_GTrainerPanel@@UAAPAXI@Z at 0x826CB610; our ??_GTrainerPanel@@UAAPAXI@Z COMDAT (68 B) carries relocations to ??1TrainerPanel@@UAA@XZ (retail 0x826CB340, name-equal), ??1Object@Hmx@@UAA@XZ (retail 0x8275CBF0, name-equal) and ??3@YAXPAX@Z (retail 0x8240DDB0, folded under survivor ??3BinStream@@SAXPAX@Z, group 0x8240ddb0), matching retail's at every site. Retail's only references to 0x826CB610 are its own .pdata entry and one branch from TrainerPanel's adjustor thunk ??_ETrainerPanel@@$4PPPPPPPM@A@AAPAXI@Z at 0x826CB1B0; the word at 0x826CB1B8 is 0x48000458 = b to 0x826CB610 ; in OUR object that thunk relocates against ??_ETrainerPanel@@UAAPAXI@Z. Referenced by no vtable. The map previously read ??_ETrainerPanel@@UAAPAXI@Z here (a 0% row: in our objects that spelling is only a weak external, which defines no body for objdiff to pair), and the .text pin sat in band3/game/Stats.cpp; both corrected by lane W16-QG 2026-10-06 (W16-QB audit category 1)."
+  },
+  {
+   "name": "_GCharUpperTwist",
+   "address": "0x823c75d8",
+   "survivor": "??_GCharUpperTwist@@MAAPAXI@Z",
+   "folded": [
+    "??_ECharUpperTwist@@MAAPAXI@Z"
+   ],
+   "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/system/char/CharUpperTwist.obj the symbol ??_ECharUpperTwist@@MAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GCharUpperTwist@@MAAPAXI@Z (Characteristics=2) -- MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration on RETAIL BYTES: tools/icf_pair_adjudicate.py --chase reads PROVEN for ??_GCharUpperTwist@@MAAPAXI@Z at 0x823C75D8; our ??_GCharUpperTwist@@MAAPAXI@Z COMDAT (68 B) carries relocations to ??1CharUpperTwist@@MAA@XZ (retail 0x823C7000, unnamed in our map -- placeholder, forgiven), ??1Object@Hmx@@UAA@XZ (retail 0x8275CBF0, name-equal) and ?MemFree@@YAXPAX@Z (retail 0x827BC430, name-equal), matching retail's at every site. Retail's only references to 0x823C75D8 are its own .pdata entry and one branch from CharUpperTwist's adjustor thunk ??_ECharUpperTwist@@$2PPPPPPPM@A@AAPAXI@Z at 0x823C6E70; the word at 0x823C6E78 is 0x48000760 = b to 0x823C75D8 ; in OUR object that thunk relocates against ??_ECharUpperTwist@@MAAPAXI@Z. Referenced by no vtable. The map previously read fn_823C75D8 here (a 0% placeholder row), and the .text pin sat in FlowIf.cpp; both corrected by lane W16-QG 2026-10-06 (W16-QB audit category 1)."
+  },
+  {
+   "name": "_GNetSession",
+   "address": "0x823e46d0",
+   "survivor": "??_GNetSession@@UAAPAXI@Z",
+   "folded": [
+    "??_ENetSession@@UAAPAXI@Z"
+   ],
+   "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/network/net/NetSession.obj the symbol ??_ENetSession@@UAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GNetSession@@UAAPAXI@Z (Characteristics=2) -- MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration on RETAIL BYTES: tools/icf_pair_adjudicate.py --chase reads PROVEN for ??_GNetSession@@UAAPAXI@Z at 0x823E46D0; our ??_GNetSession@@UAAPAXI@Z COMDAT (68 B) carries relocations to ??1NetSession@@UAA@XZ (retail 0x823E32F0, name-equal), ??1Object@Hmx@@UAA@XZ (retail 0x8275CBF0, name-equal) and ??3@YAXPAX@Z (retail 0x8240DDB0, folded under survivor ??3BinStream@@SAXPAX@Z, group 0x8240ddb0), matching retail's at every site. Retail's only references to 0x823E46D0 are its own .pdata entry and one branch from NetSession's adjustor thunk ??_ENetSession@@$4PPPPPPPM@A@AAPAXI@Z at 0x823E3528; the word at 0x823E3530 is 0x480011A0 = b to 0x823E46D0 ; in OUR object that thunk relocates against ??_ENetSession@@UAAPAXI@Z. Referenced by no vtable. The map previously read ??_ENetSession@@UAAPAXI@Z here (a 0% row: in our objects that spelling is only a weak external, which defines no body for objdiff to pair), and the .text pin sat in MeshAnim.cpp; both corrected by lane W16-QG 2026-10-06 (W16-QB audit category 1)."
+  },
+  {
+   "name": "_GPracticePanel",
+   "address": "0x826b2918",
+   "survivor": "??_GPracticePanel@@UAAPAXI@Z",
+   "folded": [
+    "??_EPracticePanel@@UAAPAXI@Z"
+   ],
+   "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/band3/game/PracticePanel.obj the symbol ??_EPracticePanel@@UAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GPracticePanel@@UAAPAXI@Z (Characteristics=2) -- MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration on RETAIL BYTES: tools/icf_pair_adjudicate.py --chase reads PROVEN for ??_GPracticePanel@@UAAPAXI@Z at 0x826B2918; our ??_GPracticePanel@@UAAPAXI@Z COMDAT (68 B) carries relocations to ??1PracticePanel@@UAA@XZ (retail 0x826B1D08, name-equal), ??1Object@Hmx@@UAA@XZ (retail 0x8275CBF0, name-equal) and ??3@YAXPAX@Z (retail 0x8240DDB0, folded under survivor ??3BinStream@@SAXPAX@Z, group 0x8240ddb0), matching retail's at every site. Retail's only references to 0x826B2918 are its own .pdata entry and one branch from PracticePanel's adjustor thunk ??_EPracticePanel@@$4PPPPPPPM@A@AAPAXI@Z at 0x826B2538; the word at 0x826B2540 is 0x480003D8 = b to 0x826B2918 ; in OUR object that thunk relocates against ??_EPracticePanel@@UAAPAXI@Z. Referenced by no vtable. The map previously read fn_826B2918 here (a 0% placeholder row), and the .text pin sat in FlowOnStop.cpp; both corrected by lane W16-QG 2026-10-06 (W16-QB audit category 1)."
+  },
+  {
+   "name": "_GStorePreviewMgr",
+   "address": "0x827b2770",
+   "survivor": "??_GStorePreviewMgr@@UAAPAXI@Z",
+   "folded": [
+    "??_EStorePreviewMgr@@UAAPAXI@Z"
+   ],
+   "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/system/meta/StorePreviewMgr.obj the symbol ??_EStorePreviewMgr@@UAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GStorePreviewMgr@@UAAPAXI@Z (Characteristics=2) -- MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration on RETAIL BYTES: tools/icf_pair_adjudicate.py --chase reads PROVEN for ??_GStorePreviewMgr@@UAAPAXI@Z at 0x827B2770; our ??_GStorePreviewMgr@@UAAPAXI@Z COMDAT (68 B) carries relocations to ??1StorePreviewMgr@@UAA@XZ (retail 0x827B2218, name-equal), ??1Object@Hmx@@UAA@XZ (retail 0x8275CBF0, name-equal) and ??3@YAXPAX@Z (retail 0x8240DDB0, folded under survivor ??3BinStream@@SAXPAX@Z, group 0x8240ddb0), matching retail's at every site. Retail's only references to 0x827B2770 are its own .pdata entry and one branch from StorePreviewMgr's adjustor thunk ??_EStorePreviewMgr@@$4PPPPPPPM@A@AAPAXI@Z at 0x827B21E0; the word at 0x827B21E8 is 0x48000588 = b to 0x827B2770 ; in OUR object that thunk relocates against ??_EStorePreviewMgr@@UAAPAXI@Z. Referenced by no vtable. The map previously read ??_EStorePreviewMgr@@UAAPAXI@Z here (a 0% row: in our objects that spelling is only a weak external, which defines no body for objdiff to pair), and the .text pin sat in StorePreviewMgr.cpp already (rename only); both corrected by lane W16-QG 2026-10-06 (W16-QB audit category 2)."
   }
  ]
 }
