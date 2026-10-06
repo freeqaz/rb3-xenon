@@ -12310,11 +12310,33 @@
   {
    "name": "F?$_List_iterator",
    "address": "0x824549a0",
-   "survivor": "??F?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@@stlpmtx_std@@@stlpmtx_std@@QAAAAU01@XZ",
-   "folded": [
-    "?DeferUpdateText@RndText@@QAAXXZ"
+   "survivor": "?DeferUpdateText@RndText@@QAAXXZ",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 33, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??F?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@@stlpmtx_std@@@stlpmtx_std@@QAAAAU01@XZ",
+     "lane": "W16-OS 2026-10-03",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(?DeferUpdateText@RndText@@QAAXXZ @ 0x824549a0, ??F?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ?DeferUpdateText@RndText@@QAAXXZ | ours ??F?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@@stlpmtx_std@@@stlpm; anchor ?DeferUpdateText@RndText@@QAAXXZ PROVEN here"
+    }
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 33, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions."
+   "relabelled": {
+    "from": "??F?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@@stlpmtx_std@@@stlpmtx_std@@QAAAAU01@XZ",
+    "to": "?DeferUpdateText@RndText@@QAAXXZ",
+    "lane": "W16-OS 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??F?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@@stlpmtx_std@@@stlpmtx_std@@QAAAAU01@XZ",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "BODY:BYTES-DIFFER",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(?DeferUpdateText@RndText@@QAAXXZ @ 0x824549a0, ??F?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ?DeferUpdateText@RndText@@QAAXXZ | ours ??F?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@@stlpmtx_std@@@stlpm; anchor ?DeferUpdateText@RndText@@QAAXXZ PROVEN here"
+    }
+   ]
   },
   {
    "name": "$_Copy_Construct",

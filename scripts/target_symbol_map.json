@@ -11494,7 +11494,7 @@
  "0x82454160": "?DrawShowing@RndGroup@@UAAXXZ",
  "0x82454410": "?Handle@RndGroup@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x82454990": "?Handle@RndGroup@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
- "0x824549a0": "??F?$_List_iterator@UNetLoaderRef@@U?$_Nonconst_traits@UNetLoaderRef@@@stlpmtx_std@@@stlpmtx_std@@QAAAAU01@XZ",
+ "0x824549a0": "?DeferUpdateText@RndText@@QAAXXZ",
  "0x824549b0": "?GetCurrentStringDimensions@RndText@@QAAXAAM0@Z",
  "0x824549c8": "??8Rect@Hmx@@QBA_NABV01@@Z",
  "0x82454b70": "?Print@RndText@@UAAXXZ",

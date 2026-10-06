@@ -3914,6 +3914,7 @@ Text.cpp:
 	.text       start:0x8231D02C end:0x8231D060
 	.text       start:0x8239C558 end:0x8239C5AC
 	.text       start:0x8239C5D4 end:0x8239C640
+	.text       start:0x824549A0 end:0x824549B0
 	.text       start:0x824549B0 end:0x824549C4
 	.text       start:0x82454A18 end:0x82454B70
 	.text       start:0x82454B70 end:0x8245625C
@@ -6344,7 +6345,6 @@ NetCacheMgr.cpp:
 	.pdata      start:0x82242BB8 end:0x82242CA0
 	.pdata      start:0x82242CA0 end:0x82242CC8
 	.text       start:0x8239CC9C end:0x8239CCA8
-	.text       start:0x824549A0 end:0x824549B0
 	.text       start:0x826E0F30 end:0x826E0F38
 	.text       start:0x827CDCA0 end:0x827CDD28
 	.text       start:0x827CDDE8 end:0x827CEC98
