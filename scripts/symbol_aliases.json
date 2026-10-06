@@ -94898,7 +94898,8 @@
     "?FileReadOnly@@YA_NPBD@Z",
     "?InPlayablePhrase@VocalPart@@QBA_NXZ",
     "?IsLocal@LocalUser@@UBA_NXZ",
-    "?ReceiveUserData@ProfilePicture@@QAA_NXZ"
+    "?ReceiveUserData@ProfilePicture@@QAA_NXZ",
+    "?IsNullUser@NullLocalBandUser@@UBA_NXZ"
    ],
    "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x82533618 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 15 against 2 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies. [W16-KD 2026-10-01, call-site witness: retail ProfilePicture::Poll branches to 0x82533618 where our source calls ProfilePicture::ReceiveUserData; our body compiles identical to the retail survivor. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat VACUOUS), no CYCLE leaf.]",
    "admitted": [
@@ -94906,6 +94907,11 @@
      "spelling": "?IsLocal@LocalUser@@UBA_NXZ",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 UNDECIDABLE: VACUOUS: body under 4 words or over half the words masked --); 8 B retail / 8 B ours; retail body-twins 3. Vacuous body (VACUOUS-BUT-IDENTICAL) -- admitted on the retail call-site witness: retail branches to this survivor at 0x82523ae8, 0x8268e3f4, the exact sites where our compiled caller calls this spelling (row otherwise instruction-identical). "
+    },
+    {
+     "spelling": "?IsNullUser@NullLocalBandUser@@UBA_NXZ",
+     "lane": "W16-RI 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (VACUOUS-BUT-IDENTICAL; flat T1 UNDECIDABLE: 2-word `li r3,1; blr`); 8 B retail / 8 B ours. Independent retail witness for the destination: slot 28 (User::IsNullUser, os/User.h order) of NullLocalBandUser's User vtable 0x820E0C6C is the vtordisp thunk 0x82523AE0, and of AutoplayAuditionUser's 0x820E0E14 is the re-adjusted thunk 0x8268EDB0; both branch to 0x82533618. Neither class has another override in that slot, so the body NullLocalBandUser::IsNullUser (`return true`) lives at 0x82533618."
     }
    ]
   },

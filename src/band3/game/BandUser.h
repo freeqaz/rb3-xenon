@@ -15,6 +15,7 @@ class SessionMgr;
 class LocalBandUser;
 class RemoteBandUser;
 class NullLocalBandUser;
+class AutoplayAuditionUser;
 class Player;
 class Track;
 
@@ -135,6 +136,10 @@ public:
     static LocalBandUser *NewLocalBandUser();
     static RemoteBandUser *NewRemoteBandUser();
     static NullLocalBandUser *NewNullLocalBandUser();
+    /** retail 0x8268F0D0 (`new(0x114)` + the ctor), called only from an unpinned
+        AuditionSessionBuilder method. The name is ours, by analogy with the
+        sibling factories above; no retail caller or string spells it. */
+    static AutoplayAuditionUser *NewAutoplayAuditionUser();
 
     DataNode OnSetDifficulty(DataArray *);
     DataNode OnSetTrackType(DataArray *);
@@ -311,6 +316,33 @@ public:
     virtual bool IsJoypadConnected() const { return false; }
     virtual bool CanSaveData() const { return false; }
     virtual const char *UserName() const { return ""; }
+};
+
+/** TU5 RBN audition stand-in for an autoplayed part (retail RTTI
+    `.?AVAutoplayAuditionUser@@`, bases NullLocalBandUser -> LocalBandUser).
+    Read off retail's four vtables (0x820E0E90 / 0E14 / 0DE4 / 0DC4) against
+    NullLocalBandUser's: it adds one member at +0x4 past NullLocalBandUser
+    (0x24, the ctor stores 5 = kControllerNone; object size 0x114) and
+    overrides only the slots below. Every other differing slot is a vtordisp
+    thunk the compiler regenerates for the shifted layout, branching to the
+    same inherited body. */
+class AutoplayAuditionUser : public NullLocalBandUser {
+public:
+    AutoplayAuditionUser() : mControllerType(kControllerNone) {}
+    virtual ~AutoplayAuditionUser() {}
+    // primary slot 0: `lwz r3,0x24(r3); blr`
+    virtual ControllerType ConnectedControllerType() const { return mControllerType; }
+    // BandUser slots 0 and 1: vtordisp thunks to a `li r3,1` body
+    virtual bool IsInSession(SessionMgr *) const { return true; }
+    virtual bool UnkTU5Virtual() const { return true; }
+    // LocalUser slot 1: `li r3,1`; slots 2-5: `li r3,0`
+    virtual bool IsJoypadConnected() const { return true; }
+    virtual bool HasOnlinePrivilege() const { return false; }
+    virtual bool IsGuest() const { return false; }
+    virtual bool IsSignedIn() const { return false; }
+    virtual bool IsSignedInOnline() const { return false; }
+
+    ControllerType mControllerType; // 0x24
 };
 
 #include "obj/Msg.h"
