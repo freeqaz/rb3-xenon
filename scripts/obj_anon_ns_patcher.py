@@ -52,9 +52,16 @@ Resolution order per occurrence:
   4. same, after stripping a `<prefix>$` decoration      (`template_stripped`)
   5. the token before `?A0x`, from the paired object     (`token`)
   6. the token, from the retail tree                     (`token_global`)
-  7. this object's majority target                       (`majority`)
+  7. this object's majority target, voted by 1-4 ONLY    (`majority`),
+     or, when 1-4 resolved nothing in this object,
+     retail's dominant hash in the paired object         (`majority_retail_weight`)
 
-Only 1-4 are evidence retail states outright.  5-7 exist for symbols we emit
+Only 1-4 are evidence retail states outright, so only 1-4 VOTE in rule 7: a
+token-rule edit respells its own symbol but never moves the object's fallback.
+Until lane W16-PM (2026-10-06) they did vote, so one map edit could flip a
+whole object's fallback hash through the token rule -- W16-PI's WaveFile
+regression (docs/decomp/W16PM_ANON_NS_EVIDENCE_VOTE_2026-10-06.md).
+5-7 exist for symbols we emit
 that retail never did (STL instantiations it inlined, EH tables it did not
 need); those cannot match a retail name whatever we write, so the fallback is
 about keeping the object internally consistent, not about buying a match.  A
@@ -88,8 +95,8 @@ here either.  Re-derived on this tree: 151 of our anonymous-namespace names
 become byte-identical to a name in the paired retail object, 150 of them from
 `template` and exactly 1 from `majority`.  That one is the `Sfx.obj`
 `_Copy_Construct<DebugGraph>` above: the template is locally ambiguous, so the
-evidence rules abstain, and `majority` (142 of 146 occurrences are `b39b74bf`)
-lands on one of the two spellings retail actually uses.  It is a coin flip that
+evidence rules abstain, and `majority` (142 of 146 occurrences are `b39b74bf`;
+re-measured 2026-10-06 on the evidence-only vote: 49 of 53) lands on one of the two spellings retail actually uses.  It is a coin flip that
 came up heads, not evidence, and it should be read that way.
 
 Every rewrite is 8 hex characters over 8 hex characters, so nothing in the
@@ -425,6 +432,8 @@ def plan_object(data, orig_index, global_index):
     edits = {}
     stats = Counter()
     deferred = []          # (absolute_offset, run, offset_in_run)
+    # Votes for rule 7, counted ONLY from rules 1-4.  See the note at the vote.
+    evidence_votes = Counter()
 
     for start, end in hash_runs(data):
         run = data[start:end]
@@ -433,6 +442,7 @@ def plan_object(data, orig_index, global_index):
         if target is not None and len(target) == len(here):
             for (off, _), new in zip(here, target):
                 edits[start + off] = new
+                evidence_votes[new] += 1
             stats[rule] += len(here)
             continue
         for off, _ in here:
@@ -451,18 +461,29 @@ def plan_object(data, orig_index, global_index):
 
     unresolved = []
     if deferred:
-        # Majority over what the evidence-backed rules decided for THIS object,
-        # falling back to retail's own dominant hash in this object when
-        # nothing at all resolved (we emit an anonymous-namespace entity retail
-        # does not have, but retail's object does have the namespace).
-        # Deterministic across passes: both sources are retail, never our
-        # current spelling.
-        source = Counter(edits.values()) or o_weight
+        # Majority over what the EVIDENCE rules (1-4) decided for THIS object,
+        # falling back to retail's own dominant hash in this object when no
+        # evidence rule resolved anything (we emit an anonymous-namespace
+        # entity retail does not have, but retail's object does have the
+        # namespace).  Deterministic across passes: both sources are retail,
+        # never our current spelling.
+        #
+        # ⛔ The vote must NOT count `token`/`token_global` (rules 5-6) edits.
+        # Lane W16-PM, 2026-10-06: it used to (`Counter(edits.values())`), so a
+        # guess this docstring calls non-evidence could outvote the evidence.
+        # Measured on WaveFile.obj (W16-PI §6): one map edit left the token
+        # `Label` resolving to a different hash, 107 token edits followed it,
+        # and the object's fallback hash for ~198 more occurrences flipped
+        # with them -- one guess, multiplied twice.  A token edit is applied to
+        # ITS OWN symbol (that is unchanged here); it just does not vote.
+        source, rule = evidence_votes, 'majority'
+        if not source:
+            source, rule = o_weight, 'majority_retail_weight'
         if source:
             majority = source.most_common(1)[0][0]
             for offset, _run, _off in deferred:
                 edits[offset] = majority
-            stats['majority'] += len(deferred)
+            stats[rule] += len(deferred)
         else:
             unresolved = [run for _o, run, _f in deferred]
     return edits, stats, unresolved
