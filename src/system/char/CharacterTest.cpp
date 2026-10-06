@@ -45,12 +45,18 @@ CharacterTest::~CharacterTest() {
     }
 }
 
+// Retail X360 (0x823DD690, 112 B) dispatches nothing: it
+// reads the selector, builds the unhandled-message path when warned, and
+// returns DATA_UNHANDLED (its __RTDynamicCast names .?AVCharacterTest@@). The
+// dev-build handlers below survive only in the native build.
 BEGIN_CUSTOM_HANDLERS(CharacterTest)
+#ifdef HX_NATIVE
     HANDLE_ACTION(add_defaults, AddDefaults())
     HANDLE_ACTION(test_walk, Walk())
     HANDLE_ACTION(recenter, Recenter())
     HANDLE(get_filtered_clips, OnGetFilteredClips)
     HANDLE_ACTION(sync, Sync())
+#endif
 END_CUSTOM_HANDLERS
 
 BEGIN_CUSTOM_PROPSYNC(CharacterTest)
