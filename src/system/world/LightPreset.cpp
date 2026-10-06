@@ -1450,9 +1450,11 @@ BEGIN_LOADS(LightPreset)
         mKeyframes[0].LegacyLoadP9(d);
     }
     char buf[0x80];
-    unsigned int spotlightcount;
-    bs >> spotlightcount;
-    mSpotlights.resize(spotlightcount);
+    // Retail keeps all four element counts in ONE frame slot (0x58(r31), read
+    // back at each resize), so they are one local.
+    unsigned int count;
+    bs >> count;
+    mSpotlights.resize(count);
     for (int i = 0; i != (unsigned)mSpotlights.size(); i++) {
         bs.ReadString(buf, 0x80);
         mSpotlights[i] = Dir()->Find<Spotlight>(buf, false);
@@ -1461,9 +1463,8 @@ BEGIN_LOADS(LightPreset)
             mSpotlights[i]->AddRef(this);
 #endif
     }
-    unsigned int envcount;
-    bs >> envcount;
-    mEnvironments.resize(envcount);
+    bs >> count;
+    mEnvironments.resize(count);
     for (int i = 0; i != (unsigned)mEnvironments.size(); i++) {
         bs.ReadString(buf, 0x80);
         mEnvironments[i] = Dir()->Find<RndEnviron>(buf, false);
@@ -1472,9 +1473,8 @@ BEGIN_LOADS(LightPreset)
             mEnvironments[i]->AddRef(this);
 #endif
     }
-    unsigned int lightcount;
-    bs >> lightcount;
-    mLights.resize(lightcount);
+    bs >> count;
+    mLights.resize(count);
     for (int i = 0; i != (unsigned)mLights.size(); i++) {
         bs.ReadString(buf, 0x80);
         mLights[i] = Dir()->Find<RndLight>(buf, false);
@@ -1505,7 +1505,7 @@ BEGIN_LOADS(LightPreset)
     }
     String str(mCategory.Str());
     str.ToLower();
-    mCategory = Symbol(str.c_str());
+    mCategory = str.c_str();
     if (sPresetRev < 7) {
         String str2;
         bs >> str2;
@@ -1540,9 +1540,8 @@ BEGIN_LOADS(LightPreset)
     if (sPresetRev > 0xC)
         bs >> (int &)mPlatformOnly;
     if (sPresetRev > 9) {
-        unsigned int sdrawercount;
-        bs >> sdrawercount;
-        mSpotlightDrawers.resize(sdrawercount);
+        bs >> count;
+        mSpotlightDrawers.resize(count);
         for (int i = 0; i != (unsigned)mSpotlightDrawers.size(); i++) {
             bs.ReadString(buf, 0x80);
             mSpotlightDrawers[i] = Dir()->Find<SpotlightDrawer>(buf, false);
