@@ -213,28 +213,6 @@
     "0f7112b8ec15b1a99d56"
    ],
    "reason": "Same DC3-hamobj vs RB3-band3 clash as on X360: rb3-milo/rb3-render link the DC3 hamobj generation through milo_link_stubs.cpp (HamDirector.h) and PostProc_NG/Morph scatter-includes. Both definitions emit a destructor with the same mangled name, so this is a latent COMDAT hazard; see the doc."
-  },
-  {
-   "domain": "native",
-   "verdict": "SPLIT",
-   "names": [
-    "GpuMeshData",
-    "GpuTexData",
-    "__gnu_cxx::__aligned_buffer<std::pair<RndMesh *const, GpuMeshData> >",
-    "__gnu_cxx::__aligned_buffer<std::pair<RndTex *const, GpuTexData> >",
-    "std::__detail::_Hash_node<std::pair<RndMesh *const, GpuMeshData>, false>",
-    "std::__detail::_Hash_node<std::pair<RndTex *const, GpuTexData>, false>",
-    "std::__detail::_Hash_node_value<std::pair<RndMesh *const, GpuMeshData>, false>",
-    "std::__detail::_Hash_node_value<std::pair<RndMesh *const, GpuMeshData>, true>",
-    "std::__detail::_Hash_node_value<std::pair<RndTex *const, GpuTexData>, false>",
-    "std::__detail::_Hash_node_value<std::pair<RndTex *const, GpuTexData>, true>",
-    "std::__detail::_Hash_node_value_base<std::pair<RndMesh *const, GpuMeshData> >",
-    "std::__detail::_Hash_node_value_base<std::pair<RndTex *const, GpuTexData> >",
-    "std::pair<RndMesh *const, GpuMeshData>",
-    "std::pair<RndTex *const, GpuTexData>"
-   ],
-   "identity_regex": ".*\\bGpu(Mesh|Tex)Data\\b",
-   "reason": "milo-native-engine defines GpuMeshData/GpuTexData twice (GpuResourceRegistry.h vs MeshGpuCache.h / Tex_Wgpu.cpp). Fixed on engine branch w16-qd-engine (2330fe7, nests the registry's structs); this entry goes STALE once MILO_ENGINE_PIN includes that fix and should then be deleted."
   }
  ]
 }
