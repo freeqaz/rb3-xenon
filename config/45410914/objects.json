@@ -964,6 +964,7 @@
             "system/beatmatch/PlayerTrackConfigList.cpp": "NonMatching",
             "system/beatmatch/FillInfo.cpp": "NonMatching",
             "system/beatmatch/Playback.cpp": "NonMatching",
+            "system/beatmatch/Output.cpp": "NonMatching",
             "system/beatmatch/TimeSpanVector.cpp": "NonMatching",
             "system/utl/UserGuid.cpp": "NonMatching",
             "system/bandobj/EndingBonus.cpp": {
