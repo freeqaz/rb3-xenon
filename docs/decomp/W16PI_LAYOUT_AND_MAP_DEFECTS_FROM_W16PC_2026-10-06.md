@@ -327,7 +327,7 @@ NATIVE_HEALTH_RESULT verdict=PASS link=PASS link_verified=18 link_expected=18 li
 
 ## 9. Not done
 
-- **AutoplayAuditionUser was not written.** It is TU5-era code with no oracle in any repo. Its two rows (92 B) stay
+- **AutoplayAuditionUser was not written.** It is TU5-era code with no source in any repo. Its two rows (92 B) stay
   unpaired and correctly named.
 - **ThreadMemStack's CritSecTracker tail (85.17) was not chased.** It is codegen, not layout (§3).
 - **The anon_ns patcher was not changed** (§6, last paragraph).
