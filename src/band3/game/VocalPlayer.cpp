@@ -521,12 +521,14 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     float frameMaxPitch = 0.0f;
     bool bWasInFreestyleSection = InFreestyleSection();
 
-    // scoredPartIndices initialized before SongSectionOnly, reserve mVocalParts.size()
-    std::vector<int> scoredPartIndices;
-
     float fBestFreestyleDeployAmt = 0.0f;
     int iMaximumFreestyleDeploymentSinger = -1;
+
+    // scoredPartIndices initialized before SongSectionOnly, reserve mVocalParts.size()
+    std::vector<int> scoredPartIndices;
     scoredPartIndices.reserve(mVocalParts.size());
+
+    VocalPart *pUnpitchedPart = 0;
 
     // Determine section scoring state
     float fSectionBeginMs = 0.0f;
@@ -543,8 +545,6 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
     partsArray.reserve(mVocalParts.size());
     std::vector<Singer *> singersArray;
     singersArray.reserve(mSingers.size());
-
-    VocalPart *pUnpitchedPart = 0;
 
     // Poll tambourine manager
     mTambourineManager.Poll(fCompMS);
