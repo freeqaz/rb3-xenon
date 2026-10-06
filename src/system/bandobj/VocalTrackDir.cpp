@@ -229,18 +229,18 @@ void VocalTrackDir::PreLoad(BinStream &bs) {
 
 namespace {
 const char *TypeToString(DataType ty) {
-    static Symbol int_str("int");
-    static Symbol float_str("float");
-    static Symbol var_str("var");
-    static Symbol func_str("func");
-    static Symbol object_str("object");
-    static Symbol symbol_str("symbol");
-    static Symbol unhandled_str("unhandled");
-    static Symbol array_str("array");
-    static Symbol command_str("command");
-    static Symbol string_str("string");
-    static Symbol property_str("property");
-    static Symbol glob_str("glob");
+    static Symbol int_str("Int");
+    static Symbol float_str("Float");
+    static Symbol var_str("Var");
+    static Symbol func_str("Func");
+    static Symbol object_str("Object");
+    static Symbol symbol_str("Sym");
+    static Symbol unhandled_str("Unhandled");
+    static Symbol array_str("Array");
+    static Symbol command_str("Command");
+    static Symbol string_str("String");
+    static Symbol property_str("Property");
+    static Symbol glob_str("Glob");
     static Symbol unexpected_str("UNEXPECTED");
     switch (ty) {
     case kDataInt:

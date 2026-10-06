@@ -54,6 +54,9 @@ int gWasCommitTag = 0;
 // gVoicesInGC++; thread entry: gVoicesInGC--.
 static int gVoicesLive;   // 0x82E120BC
 static int gVoicesInGC;   // 0x82E120C0
+// MaxFrequencyRatio for CreateSourceVoice.  Retail loads it from a writable
+// .data float (0x82CA69C4 = 10.0f), not a pool constant; the name is ours.
+float gMaxVoiceFrequencyRatio = 10.0f;
 int rolling = 0;
 void StartSynchronizedVoices();
 
@@ -184,7 +187,7 @@ long Voice::createOrReuse(
             XAUDIO2_VOICE_SENDS *,
             XAUDIO2_EFFECT_CHAIN *
         ))(*(int *)(*(int *)pEngine + 0x20)))(
-            pEngine, pPoolVoice, &wfx, 0, 4.0f, 0, sends, &effectChain
+            pEngine, pPoolVoice, &wfx, 0, gMaxVoiceFrequencyRatio, 0, sends, &effectChain
         );
     }
     gVoicesLive++;

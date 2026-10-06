@@ -115,7 +115,7 @@ int ChatReceiver::GetChatData(void *buf, int max) {
 }
 
 void ChatReceiver::ProcessChatData(void *data, unsigned int size, int *flag) {
-    float w = gLowCut * 0.000392699f;
+    float w = gLowCut * 0.00039269909f; // retail 0x39CDE32E = PI / 8000
     float b1 = Sine(w + 1.5707964f) * -2.0f;
     float a1 = -b1;
     float disc = b1 * b1 - (Sine(w + 1.5707964f) * 8.0f - 7.0f) * 4.0f;

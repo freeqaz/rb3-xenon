@@ -696,7 +696,7 @@ void MasterAudio::FadeOutDrums(int trackNum) {
 void MasterAudio::RestoreDrums(int trackNum) {
     AudioTrackNum num = TrackNumAt(trackNum);
     mTrackData[num]->SetInFill(false);
-    SetTrackFader(num, -1, "drum_fill", 0, 250.0f);
+    SetTrackFader(num, -1, "drum_fill", 0, 125.0f);
 }
 
 void MasterAudio::SetVocalState(bool state) {

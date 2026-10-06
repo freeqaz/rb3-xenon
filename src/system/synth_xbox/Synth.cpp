@@ -100,9 +100,9 @@ void Synth360::PreInit() {
     TheXboxSynth = this;
 
     {
-        const char *busNames[9] = { "front_left", "front_right", "center",
-                                    "lfe",        "surr_left",   "surr_right",
-                                    "",           "out_left",    "out_right" };
+        // Retail's meter labels are fixed-width (.rdata 0x82194AE8..0x82194B20).
+        const char *busNames[9] = { "  FL", "  FR", "   C", " LFE", "  SL",
+                                    "  SR", "",     " DML", " DMR" };
         for (int i = 0; i < 9; i++) {
             mLevelData.push_back(LevelData(busNames[i]));
         }

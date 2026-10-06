@@ -4,23 +4,25 @@
 RndRenderState TheRenderState;
 
 // Maps TestFunc to D3DCMPFUNC. Two banks of 8: [0-7] normal Z, [8-15] reversed Z.
+// Retail .rdata 0x821019C8 = {7,1,3,2,5,4,6,0, 7,4,6,2,5,1,3,0}: TestFunc order is
+// Less, LessEqual, Equal, NotEqual, Greater, GreaterEqual between the two ends.
 D3DCMPFUNC RndRenderState::tf2cf[] = {
     // Normal Z
     D3DCMP_ALWAYS,      // 0
     D3DCMP_LESS,        // 1
-    D3DCMP_EQUAL,       // 2
-    D3DCMP_LESSEQUAL,   // 3
-    D3DCMP_GREATER,     // 4
-    D3DCMP_NOTEQUAL,    // 5
+    D3DCMP_LESSEQUAL,   // 2
+    D3DCMP_EQUAL,       // 3
+    D3DCMP_NOTEQUAL,    // 4
+    D3DCMP_GREATER,     // 5
     D3DCMP_GREATEREQUAL,// 6
     D3DCMP_NEVER,       // 7
     // Reversed Z (flip less/greater)
     D3DCMP_ALWAYS,      // 8
     D3DCMP_GREATER,     // 9
-    D3DCMP_EQUAL,       // 10
-    D3DCMP_GREATEREQUAL,// 11
-    D3DCMP_LESS,        // 12
-    D3DCMP_NOTEQUAL,    // 13
+    D3DCMP_GREATEREQUAL,// 10
+    D3DCMP_EQUAL,       // 11
+    D3DCMP_NOTEQUAL,    // 12
+    D3DCMP_LESS,        // 13
     D3DCMP_LESSEQUAL,   // 14
     D3DCMP_NEVER,       // 15
 };

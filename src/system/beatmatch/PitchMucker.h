@@ -20,7 +20,7 @@ public:
             }
             mToggle = !mToggle;
             float curSpeed = sSong->GetSpeed();
-            if (0.99800295f < curSpeed && curSpeed < 1.002001f) {
+            if (0.99800289f < curSpeed && curSpeed < 1.002001f) { // retail 0x3F7F7D1E
                 sSong->SetSpeed(targetPitch);
             }
             mPeriod = rand() * 60 / 32767 + 60;

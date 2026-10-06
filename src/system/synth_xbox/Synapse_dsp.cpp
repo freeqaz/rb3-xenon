@@ -89,7 +89,7 @@ public:
     unsigned char _pad2[0x44 - 0x30]; // pad to match sizeof = 0x44
 };
 
-static const float kBiquadParams[] = { 7902.13f, 0.7071068f, 340.0f };
+static const float kBiquadParams[] = { 7862.0f, 0.707f, 340.0f }; // retail 0x82198028
 
 
 void Synapse::SetVoiceTargetNote(unsigned int idx, float val) {
@@ -207,7 +207,7 @@ Synapse::Synapse(float sampleRate) : mDetectionInterval(64), mTargetPitch(sample
     }
 
     mIirSmooth = 0.0f;
-    mIirCoeff = Time2IirA(0.00811767578125f, mTargetPitch * 0.25f);
+    mIirCoeff = Time2IirA(0.0081600007f, mTargetPitch * 0.25f); // retail 0x3C05B186 = 8.16f * 0.001f
 
     SetAttackSmoothing(30.0f);
     SetReleaseSmoothing(80.0f);

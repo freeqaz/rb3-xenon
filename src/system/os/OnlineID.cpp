@@ -25,7 +25,7 @@ XUID OnlineID::GetXUID() const {
 
 const char *OnlineID::ToString() const {
     if (mValid) {
-        return MakeString("%0x16llx", mXUID);
+        return MakeString("%016llx", mXUID);
     } else
         return "";
 }

@@ -106,8 +106,9 @@ PitchDetector::PitchDetector(int sampleRate) {
     unk48 = 0.0f;
     unk4C = -1.0f;
     SetSampleRate(sampleRate);
-    float b[5] = { 0.046581834f, 0.186327335f, 0.279491007f, 0.186327335f, 0.046581834f };
-    float a[5] = { 1.0f, -0.781814635f, 0.680165708f, -0.182484567f, 0.030120272f };
+    // Retail's coefficients (.rdata 0x8219B058..0x8219B070) are the 5-digit values.
+    float b[5] = { 0.046583f, 0.18633f, 0.2795f, 0.18633f, 0.046583f };
+    float a[5] = { 1.0f, -0.7821f, 0.67998f, -0.18268f, 0.030119f };
     mFilter = new IIR4PoleFilter(b, a);
 }
 

@@ -94,7 +94,7 @@ CamShot *CameraManager::MiloCamera() {
 
 FreeCamera *CameraManager::GetFreeCam(int padnum) {
     if (!mFreeCam) {
-        mFreeCam = new FreeCamera(mParent, 0.001f, 0.05f, 0);
+        mFreeCam = new FreeCamera(mParent, 0.001f, 0.2f, 0);
         mFreeCam->SetPadNum(padnum);
     }
     return mFreeCam;
