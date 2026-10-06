@@ -68,7 +68,7 @@ the Gem ctor, Find/ObjPtr<RndPartLauncher> ×3 (RTTI), DrawToPlate, GetObjectAsS
 
 | row | defect | retail evidence | score Δ |
 |---|---|---|---|
-| `VocalTrack::UpdateScrolling` | `SongSectionOnly` out-params initialised **inverted** (start=FLT_MAX, end=-FLT_MAX); the rb3-Wii oracle carries the same inversion | start ← `0x82071744` = -FLT_MAX, end ← `0x8201C818` = +FLT_MAX | 0 (placeholder labels) |
+| `VocalTrack::UpdateScrolling` | `SongSectionOnly` out-params initialised **inverted** (start=FLT_MAX, end=-FLT_MAX); the inherited source carried the same inversion | start ← `0x82071744` = -FLT_MAX, end ← `0x8201C818` = +FLT_MAX | 0 (placeholder labels) |
 | `VocalTrack::UpdateScrolling` | `FreeOldGems(ms - 250)`; retail frees at **ms − 1000** | `0x820010B4` = 1000.0f | 0 |
 | `GemTrack::DrawBeatLine` | `key_shift_left.wid` / `key_shift_right.wid` **swapped in both arms**, so every key-shift arrow pointed the wrong way | `lbl_8219E06C` = "key_shift_left.wid", `lbl_8219E058` = "key_shift_right.wid", 0x82B94674..0x82B946C4 | 0 |
 | `GemTrack::DrawFill` | crash widget `FillHit(3)` gated on `isDrum` (always true there); retail gates on `!DrumFillsMod()` | value kept live in r17 from the `cntlzw/extrwi` of Game+0x145; after the fix our save drops to `__savegprlr_17`, as retail | 87.99 → 88.80 |
@@ -202,7 +202,7 @@ branch).
   loaded through a retail `lbl_` reads identical under `name_check`. The two checkers here make the class
   checkable. Run both on any row read for behaviour: position-paired to catch swaps, multiset to clear reorder
   artifacts. Over this population they found 8 wrong constant pairs in 340.
-- **The rb3-Wii oracle was the source of two defects** (the inverted section range in VocalTrack, the 1.0 y scale
+- **The inherited source was the origin of two defects** (the inverted section range in VocalTrack, the 1.0 y scale
   and `hackyScaleValue` in PatchLayer::Draw), and a prior "rewritten from retail" commit was the source of a third
   (BuildEndCap). Retail bytes outrank both.
 - None of these files is in a native target yet, so native cannot observe these fixes until the files are linked.
