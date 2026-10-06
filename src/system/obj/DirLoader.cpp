@@ -613,8 +613,11 @@ void DirLoader::Cleanup(const char *str) {
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
         MILO_LOG("%s: %f ms\n", mFile, mTimer.Ms());
 #else
-        // TU5 keeps only the by-value FilePath copy of the log's argument.
-        FilePath file(mFile);
+        // TU5 keeps only the by-value FilePath copy of the log's argument. It
+        // must be a call-argument temporary: retail overlays it on the
+        // mState pointer-to-member temporary at 0x50 (frame 0x80). A named
+        // local or a (void) temporary takes 0x58 and frame 0x90.
+        MiloStripEval("%s: %f ms\n", mFile, mTimer.Ms());
 #endif
     }
     if (mCallback && (str || mForceFailCallback)) {

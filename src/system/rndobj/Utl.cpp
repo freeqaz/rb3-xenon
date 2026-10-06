@@ -1160,11 +1160,14 @@ void UtilDrawCigar(
 // Retail takes no trailing bool: its only caller (CharCollide::Highlight)
 // sets r3-r6/f1 and never loads r8.
 void UtilDrawPlane(const Plane &p, const Vector3 &v, const Hmx::Color &c, int i4, float f) {
+    // Retail puts mb0 at 0x60 and tf88 at 0x90 (frame 0x150), and its
+    // Identity() stores come before the ScaleAdd result and the m.y copy, so
+    // mb0 is declared and initialised first.
+    Hmx::Matrix3 mb0;
+    mb0.Identity();
     Transform tf88;
     ScaleAdd(v, *(const Vector3 *)&p, -p.Dot(v), tf88.v);
     tf88.m.y = *(const Vector3 *)&p;
-    Hmx::Matrix3 mb0;
-    mb0.Identity();
     int minIdx = 0;
     int idx = 0;
     float minDotProduct = 10000.0f;
@@ -1177,17 +1180,22 @@ void UtilDrawPlane(const Plane &p, const Vector3 &v, const Hmx::Color &c, int i4
     Normalize(tf88.m.z, tf88.m.z);
     Cross(tf88.m.y, tf88.m.z, tf88.m.x);
     for (int i = 0; i < i4; i++) {
-        Vector3 vecbc, vecc8, vecd4, vece0;
+        // The quad's four corners are one array local. Retail gives them
+        // 0x90/0xa0/0xb0/0xc0, which are tf88's own slots (tf88 is dead in
+        // memory once its fields are in f23-f31). Four separate Vector3
+        // locals never share that space and cost +0x40 of frame. `-scalar`
+        // at each call, not a named local, gives retail's fmadds operand
+        // order.
+        Vector3 pts[4];
         float scalar = (float)(i + 1) * f;
-        ScaleAdd(tf88.v, tf88.m.x, scalar, vece0);
-        ScaleAdd(tf88.v, tf88.m.z, scalar, vecd4);
-        float negscalar = -scalar;
-        ScaleAdd(tf88.v, tf88.m.x, negscalar, vecc8);
-        ScaleAdd(tf88.v, tf88.m.z, negscalar, vecbc);
-        TheRnd.DrawLine(vece0, vecd4, c, false);
-        TheRnd.DrawLine(vecd4, vecc8, c, false);
-        TheRnd.DrawLine(vecc8, vecbc, c, false);
-        TheRnd.DrawLine(vecbc, vece0, c, false);
+        ScaleAdd(tf88.v, tf88.m.x, scalar, pts[0]);
+        ScaleAdd(tf88.v, tf88.m.z, scalar, pts[1]);
+        ScaleAdd(tf88.v, tf88.m.x, -scalar, pts[2]);
+        ScaleAdd(tf88.v, tf88.m.z, -scalar, pts[3]);
+        TheRnd.DrawLine(pts[0], pts[1], c, false);
+        TheRnd.DrawLine(pts[1], pts[2], c, false);
+        TheRnd.DrawLine(pts[2], pts[3], c, false);
+        TheRnd.DrawLine(pts[3], pts[0], c, false);
     }
 }
 

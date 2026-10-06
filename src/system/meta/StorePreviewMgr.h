@@ -57,8 +57,10 @@ public:
     void SetCurrentPreviewFile(String const &);
     bool IsDownloadingFile(String const &);
     bool AllowPreviewDownload(String const &);
-    /** Retail 0x827B2350: a public 4-byte `b AddToDownloadQueue` wrapper whose
-        only caller is MusicLibraryStore::SetStorePreview. Name is ours. */
+    /** Retail 0x827B2350: a public 4-byte `b AddToDownloadQueue` wrapper, called
+        out of line by MusicLibraryStore::SetStorePreview and inlined into
+        Handle's download_preview_file arm (the inlined scope is what gives the
+        two HANDLE_EXPR String temps their own slot, frame 0xd0). */
     void DownloadPreviewFile(String const &);
     void Poll();
 

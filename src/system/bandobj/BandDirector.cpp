@@ -1915,54 +1915,60 @@ void BandDirector::OnMidiShot5Cleanup() {
     shotProp.replace(0, 4, "shot");
     PropKeys *shotkeys =
         mPropAnim->GetKeys(this, DataArrayPtr(Symbol(shotProp.c_str())));
-    if (shot5keys && shotkeys) {
-        Keys<Symbol, Symbol> *keys5 = shot5keys->AsSymbolKeys();
-        Keys<Symbol, Symbol> *keys = shotkeys->AsSymbolKeys();
-        float frame = keys5->empty() ? -1.0f : keys5->front().frame;
-        std::vector<CamCatEntry> pending;
-        bool directed = false;
-        static DataArray *priorities =
-            SystemConfig("objects", "BandDirector", "cam_cat_priorities")->Array(1);
-        // Collect the shot_5 categories that share a frame, ranked by priority,
-        // and commit one shot for each group to the play mode's shot track.
-        for (unsigned int i = 0; i < keys5->size(); i++) {
-            if ((*keys5)[i].frame > frame && !pending.empty()) {
-                Symbol shot = PickShot(pending, playMode, !directed);
-                pending.clear();
-                if (directed)
-                    frame = keys->back().frame + 3.75f;
-                keys->Add(shot, frame, true);
-                frame = (*keys5)[i].frame;
-                directed = strncmp(shot.Str(), "directed_", 9) == 0;
-            }
-            CamCatEntry entry;
-            entry.mCategory = (*keys5)[i].value;
-            for (int p = 0; p < priorities->Size(); p++) {
-                if (priorities->Node(p).Sym() == entry.mCategory) {
-                    entry.mPriority = p;
-                    break;
-                }
-            }
-            bool inserted = false;
-            for (std::vector<CamCatEntry>::iterator it = pending.begin();
-                 it < pending.end();
-                 ++it) {
-                if (entry.mPriority > it->mPriority) {
-                    pending.insert(it, 1, entry);
-                    inserted = true;
-                    break;
-                }
-            }
-            if (!inserted)
-                pending.push_back(entry);
-        }
-        if (!pending.empty()) {
-            Symbol shot = PickShot(pending, playMode, !directed);
+    // Early return, not an enclosing if: retail's failure path has its own
+    // shotProp-destructor setup (`addi r3` + `b`) rather than sharing ours.
+    if (!shot5keys || !shotkeys)
+        return;
+    Keys<Symbol, Symbol> *keys5 = shot5keys->AsSymbolKeys();
+    Keys<Symbol, Symbol> *keys = shotkeys->AsSymbolKeys();
+    float frame = keys5->empty() ? -1.0f : keys5->front().frame;
+    bool directed = false;
+    std::vector<CamCatEntry> pending;
+    static DataArray *priorities =
+        SystemConfig("objects", "BandDirector", "cam_cat_priorities")->Array(1);
+    // Collect the shot_5 categories that share a frame, ranked by priority,
+    // and commit one shot for each group to the play mode's shot track.
+    for (unsigned int i = 0; i < keys5->size(); i++) {
+        if ((*keys5)[i].frame > frame && !pending.empty()) {
+            // Reference-bound temporary, not a named local: retail packs it
+            // into the same stack slot as the function's Symbol temporaries
+            // (0x54, frame 0x120). A named `Symbol shot` in this loop gets a
+            // private slot and frame 0x130 (measured, W16-QO).
+            const Symbol &shot = PickShot(pending, playMode, !directed);
             pending.clear();
             if (directed)
                 frame = keys->back().frame + 3.75f;
             keys->Add(shot, frame, true);
+            frame = (*keys5)[i].frame;
+            directed = strncmp(shot.Str(), "directed_", 9) == 0;
         }
+        CamCatEntry entry;
+        entry.mCategory = (*keys5)[i].value;
+        for (int p = 0; p < priorities->Size(); p++) {
+            if (priorities->Node(p).Sym() == entry.mCategory) {
+                entry.mPriority = p;
+                break;
+            }
+        }
+        bool inserted = false;
+        for (std::vector<CamCatEntry>::iterator it = pending.begin();
+             it < pending.end();
+             ++it) {
+            if (entry.mPriority > it->mPriority) {
+                pending.insert(it, 1, entry);
+                inserted = true;
+                break;
+            }
+        }
+        if (!inserted)
+            pending.push_back(entry);
+    }
+    if (!pending.empty()) {
+        Symbol shot = PickShot(pending, playMode, !directed);
+        pending.clear();
+        if (directed)
+            frame = keys->back().frame + 3.75f;
+        keys->Add(shot, frame, true);
     }
 }
 #pragma auto_inline(on)

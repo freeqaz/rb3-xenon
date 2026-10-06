@@ -337,11 +337,20 @@ float Synth::UpdateOverlay(RndOverlay *o, float y) {
         }
         DrawMeter(y, rms, peakhold, mLevelData[i].mName.c_str());
     }
-    char buf[64];
-    sprintf(buf, "Total active Sequences: %d", SynthPollable::Pollables().size());
+    // retail's frame is 0xf0: buf is 0x20 bytes at 0x70 (a 64-byte buf
+    // makes it 0x110 with every other slot unchanged).
+    char buf[32];
+    int count = 0;
+    std::list<SynthPollable *>::iterator it = SynthPollable::Pollables().begin();
+    for (std::list<SynthPollable *>::iterator it2 = it;
+         it2 != SynthPollable::Pollables().end();
+         ++it2) {
+        ++count;
+    }
+    sprintf(buf, "Total active Sequences: %d", count);
     TheRnd.DrawString(buf, Vector2(100, y), white, true);
     float f12 = y + 12.0f;
-    FOREACH (it, SynthPollable::Pollables()) {
+    for (; it != SynthPollable::Pollables().end(); ++it) {
         const char *name = (*it)->GetSoundDisplayName();
         if (*name != '\0') {
             TheRnd.DrawString(name, Vector2(100, f12), white, true);
