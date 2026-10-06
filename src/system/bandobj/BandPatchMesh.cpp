@@ -587,8 +587,8 @@ void BandPatchMesh::ProjectPatches(const Transform &xfm, RndTex *tex, bool perm)
                     nwv->SortWorkVertsByZ();
                     workVerts[wvCount] = nwv;
                     meshPairs[wvCount] = cur;
-                    wvCount++;
                     meshIndices[j--] = meshIndices[--meshCount];
+                    wvCount++;
                     break;
                 }
             }

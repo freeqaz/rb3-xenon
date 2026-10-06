@@ -174,8 +174,9 @@ DataNode BandConfiguration::OnStoreConfiguration(DataArray *da) {
         TargTransform &curtarg = mXfms[i].xfms[cfgidx];
         BandCharacter *bchar = TheBandWardrobe->GetCharacter(i);
         if (bchar) {
+            const Transform &xfm = bchar->LocalXfm();
             curtarg.targName = TheBandWardrobe->VenueNames().names[i];
-            curtarg.xfm = bchar->LocalXfm();
+            curtarg.xfm = xfm;
         }
     }
     SyncPlayMode();

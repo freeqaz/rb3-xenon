@@ -184,7 +184,7 @@ public:
     // `unk1f0mappad` pad used to spend by hand -- pad removed accordingly;
     // sizeof(PatchDir) unchanged (0x258), mStickersLoading stays at 0x20c.
     struct SymbolHash {
-        size_t operator()(Symbol s) const { return (size_t)s.Str(); }
+        size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
     };
     typedef std::hash_map<Symbol, std::vector<PatchSticker *>, SymbolHash> StickerMap;
     StickerMap mStickerMap; // retail 0x1f0 (0x1c)

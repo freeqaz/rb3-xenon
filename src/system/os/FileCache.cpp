@@ -420,13 +420,3 @@ void FileCache::Add(const FilePath &fp, char *c, int iii) {
     mEntries.push_back(new FileCacheEntry(file, c, iii));
 }
 
-
-// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
-// interleaved these owners' COMDATs into this TU's .text span.
-#define gRev gRev_MoveAsyncDetector
-#define gAltRev gAltRev_MoveAsyncDetector
-#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
-#include "hamobj/MoveAsyncDetector.cpp"
-#endif
-#undef gRev
-#undef gAltRev
