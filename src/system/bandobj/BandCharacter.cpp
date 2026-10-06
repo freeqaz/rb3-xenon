@@ -2555,8 +2555,10 @@ void BandCharacter::GameOver() {
 }
 
 DataNode BandCharacter::ListAnimGroups(int mask) {
+    // Through the by-value accessor: its Symbol temporary is what puts the
+    // DataArray node-address adds below in retail's (offset, base) order.
     BandCharDesc::CharInstrumentType instType =
-        BandCharDesc::GetInstrumentFromSym(mInstrumentType);
+        BandCharDesc::GetInstrumentFromSym(InstrumentType());
     if (BandCharDesc::kNumInstruments <= instType) {
         DataArray *arr = new DataArray(1);
         arr->Node(0) = Symbol();

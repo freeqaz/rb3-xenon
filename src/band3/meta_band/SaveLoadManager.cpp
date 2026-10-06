@@ -942,9 +942,10 @@ void SaveLoadManager::SetState(State newState) {
         // static-init guard block, not before it.
         static Symbol song_info_cache_name("song_info_cache_name");
         const char *cacheName = unk4c.c_str();
-        if (!TheCacheMgr->ShowUserSelectUIAsync(
-                NULL, 0x25800ULL, cacheName, Localize(song_info_cache_name, NULL), &mCacheID
-            )) {
+        bool shown = TheCacheMgr->ShowUserSelectUIAsync(
+            NULL, 0x25800ULL, cacheName, Localize(song_info_cache_name, NULL), &mCacheID
+        );
+        if (!shown) {
             if (TheCacheMgr->GetLastResult() != 0) {
                 SetState(kS_SongCacheCreateMountRead);
             }
@@ -1110,10 +1111,11 @@ void SaveLoadManager::SetState(State newState) {
         // vptr before the call and holds the vptr in a callee-saved register.
         static Symbol global_options_cache_name("global_options_cache_name");
         int sz = TheProfileMgr.GetGlobalOptionsSize();
-        if (!TheCacheMgr->ShowUserSelectUIAsync(
-                NULL, (unsigned long long)sz, kStrGlobalCacheName,
-                Localize(global_options_cache_name, NULL), &mCacheID
-            )) {
+        bool shown = TheCacheMgr->ShowUserSelectUIAsync(
+            NULL, (unsigned long long)sz, kStrGlobalCacheName,
+            Localize(global_options_cache_name, NULL), &mCacheID
+        );
+        if (!shown) {
             if (TheCacheMgr->GetLastResult() != kCache_NoError) {
                 SetState((State)0x2d);
             }
@@ -1154,10 +1156,11 @@ void SaveLoadManager::SetState(State newState) {
         // Retail order: static-init, THEN GetGlobalOptionsSize, THEN Localize.
         static Symbol global_options_cache_name("global_options_cache_name");
         int sz = TheProfileMgr.GetGlobalOptionsSize();
-        if (!TheCacheMgr->ShowUserSelectUIAsync(
-                NULL, (unsigned long long)sz, kStrGlobalCacheName,
-                Localize(global_options_cache_name, NULL), &mCacheID
-            )) {
+        bool shown = TheCacheMgr->ShowUserSelectUIAsync(
+            NULL, (unsigned long long)sz, kStrGlobalCacheName,
+            Localize(global_options_cache_name, NULL), &mCacheID
+        );
+        if (!shown) {
             if (TheCacheMgr->GetLastResult() != kCache_NoError) {
                 SetState((State)0x3c);
             }
@@ -1177,7 +1180,8 @@ void SaveLoadManager::SetState(State newState) {
     case 0x3d:
     {
         UpdateStatus((SaveLoadMgrStatus)1);
-        if (!TheCacheMgr->MountAsync(mCacheID, &mCache, NULL)) {
+        CacheID *id = mCacheID;
+        if (!TheCacheMgr->MountAsync(id, &mCache, NULL)) {
 #pragma dont_inline on
             MILO_FAIL("TheCacheMgr->MountAsync failed with CacheResult %d\n", (int)TheCacheMgr->GetLastResult());
 #pragma dont_inline reset

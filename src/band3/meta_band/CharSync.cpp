@@ -53,7 +53,8 @@ void CharSync::UpdateCharCache() {
     OvershellPanel *overshell = TheBandUI.GetOvershell();
     MILO_ASSERT(overshell, 0x47);
 
-    if (overshell->InSong() || TheSplasher)
+    bool inSong = overshell->InSong();
+    if (inSong || TheSplasher)
         return;
 
     std::vector<CharData *> data48;

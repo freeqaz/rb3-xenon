@@ -151,7 +151,8 @@ DataNode SetlistMergePanel::OnMsg(const ReleasingLockStepMsg &msg) {
         totalUsers += mSetlists[i].second;
     }
     for (int i = 0; i < numSetlists; i++) {
-        int targetSize = mSetlists[i].second * 100 / totalUsers;
+        int users = mSetlists[i].second;
+        int targetSize = users * 100 / totalUsers;
         if (mSetlists[i].first.size() > (unsigned int)targetSize) {
             mSetlists[i].first.resize(targetSize);
         }

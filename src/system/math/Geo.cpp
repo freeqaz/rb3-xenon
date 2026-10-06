@@ -889,7 +889,8 @@ bool Intersect(
     float s_z = v1.z - tri.origin.z;
     float s_x = v1.x - tri.origin.x;
     float h_x = v2.y * e2.z - v2.z * e2.y;
-    float s_y = v1.y - tri.origin.y;
+    float v1_y = v1.y;
+    float s_y = v1_y - tri.origin.y;
     float h_y = e2_x * v2.z - v2_x * e2.z;
 
     float u_num = s_z * h_z + s_x * h_x;

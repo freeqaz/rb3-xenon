@@ -104,12 +104,13 @@ void TypeProps::SetKeyValue(Symbol key, const DataNode &value, bool b) {
         for (int cnt = nodeCnt - 2; cnt >= 0; cnt -= 2) {
 #ifdef HX_NATIVE
             const char *symstr = mMap->Node(cnt).UncheckedStr();
-            const char *keystr = key.Str();
+            if (symstr == key.Str()) {
 #else
+            // key.Str() is read in the compare, not into a named local: a separate
+            // local re-orders the node-address add (offset, base) against retail.
             int symstr = (int)mMap->Node(cnt).UncheckedStr();
-            int keystr = (int)key.Str();
+            if (symstr == (int)key.Str()) {
 #endif
-            if (symstr == keystr) {
                 DataNode &valNode = mMap->Node(cnt + 1);
                 if (valNode.Type() == kDataObject) {
                     Hmx::Object *o = valNode.UncheckedObj();

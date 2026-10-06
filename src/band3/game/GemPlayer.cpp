@@ -385,7 +385,9 @@ void GemPlayer::Hit(
         }
         const GameGem &gem = TheSongDB->GetGem(mTrackNum, gem_id);
         unsigned int gemSlots = gem.mSlots;
-        float delta = gem.mMs - (ms + mSyncOffset);
+        // Read through the accessor: a direct field load swaps the operands of the
+        // two (ms + mSyncOffset) fadds against retail.
+        float delta = gem.GetMs() - (ms + mSyncOffset);
 #if defined(MILO_DEBUG) && defined(HX_NATIVE)
         // Delta-tracking debug console command ("enable_deltas"/"print_deltas").
         // Absent from retail (0 hits for "enable_deltas"/"print_deltas" strings
