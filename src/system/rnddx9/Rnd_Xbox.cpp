@@ -1231,13 +1231,11 @@ void DxRnd::DoPointTests() {
 // hoists the 1<<63 out of both loops (li r11,1; rldicr r28,r11,63,63) and emits
 // one srd per iteration.
 //
-// Ported from DC3's rnddx9/Rnd_Xbox.cpp with ONE retail-driven correction: DC3
-// frees the texture's physical page with the 4-argument PhysicalFreeTracked(p,
-// __FILE__, line, ""), but retail's call site at 0x8273CC08 sets ONLY r3 before
-// the bl (r4-r6 are volatile across the XGGetTextureLayout call immediately
-// above it), so RB3 calls the 1-argument PhysicalFree.  The map names that
-// address ?PhysicalFreeTracked@@YAXPAXPBDH1@Z because the two fold under ICF --
-// the tracked overload ignores p2/p3/p4, so both compile to the same body.
+// Ported from DC3's rnddx9/Rnd_Xbox.cpp. DC3 frees the texture's physical page
+// with PhysicalFreeTracked(p, __FILE__, line, ""); retail's call site at
+// 0x8273CC08 sets ONLY r3 before the bl (r4-r6 are volatile across the
+// XGGetTextureLayout call immediately above it), so the match build's
+// PhysicalFreeTracked takes the pointer alone (see Memory.h).
 void DxRnd::ReleaseAutoRelease() {
     D3DDevice_SetVertexShader(mD3DDevice, nullptr);
     D3DDevice_SetPixelShader(mD3DDevice, nullptr);
@@ -1295,7 +1293,7 @@ void DxRnd::ReleaseAutoRelease() {
                     nullptr,
                     0
                 );
-                PhysicalFree((void *)data);
+                PhysicalFreeTracked((void *)data);
                 delete tex;
             }
         }

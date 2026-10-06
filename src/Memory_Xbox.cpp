@@ -22,12 +22,21 @@ namespace {
     int gPhysicalUsage;
     char *gPhysicalType = (char *)gNullStr;
 
+    // The allocator id is the eXALLOCATOR_ID byte (attrs >> 16): 0x00-0x7F are
+    // game ids, 0x80-0xBF the XTL's own (eXALLOCATOR_ID_D3D = 0x80 ...), 0xC0-0xFF
+    // middleware. Retail switches on `id - 0x80` through a 27-entry byte table
+    // (0x80-0x9A); ids 0x95 and 0x96 have no case and fall to the default, and
+    // there are no Kinect-era cases (NUISPEECH/NuiApi/NuiIdentity, XMCORE,
+    // XMASSIVE): none of those strings exists in retail, while "XTL:XLSP",
+    // "XTL:D3DAlloc" and "XTL:Unknown" each occur once.
     const char *AllocType(unsigned long p1) {
-        bool isPhys = (p1 & 0x80000000) != 0;
+        // Signed test: retail keeps the masked bit and normalises it with
+        // addic/subfe; an unsigned `!= 0` folds to a single srwi instead.
+        bool isPhys = (int)(p1 & 0x80000000) != 0;
         unsigned int type = p1 >> 0x10 & 0xff;
 
         switch (type) {
-        case 0:
+        case 0x80:
             if (isPhys) {
                 if (gPhysicalType != gNullStr) {
                     return gPhysicalType;
@@ -35,157 +44,126 @@ namespace {
                 return "XTL(phys):D3D";
             }
             return "XTL:D3D";
-        case 1:
+        case 0x81:
             if (!isPhys) {
                 return "XTL:D3DX";
             }
             return "XTL(phys):D3DX";
-        case 2:
+        case 0x82:
             if (!isPhys) {
                 return "XTL:XAUDIO";
             }
             return "XTL(phys):XAUDIO";
-        case 3:
+        case 0x83:
             if (!isPhys) {
                 return "XTL:XAPI";
             }
             return "XTL(phys):XAPI";
-        case 4:
+        case 0x84:
             if (!isPhys) {
                 return "XTL:XACT";
             }
             return "XTL(phys):XACT";
-        case 5:
+        case 0x85:
             if (!isPhys) {
                 return "XTL:XBOXKERNEL";
             }
             return "XTL(phys):XBOXKERNEL";
-        case 6:
+        case 0x86:
             if (!isPhys) {
                 return "XTL:XBDM";
             }
             return "XTL(phys):XBDM";
-        case 7:
+        case 0x87:
             if (!isPhys) {
                 return "XTL:XGRAPHICS";
             }
             return "XTL(phys):XGRAPHICS";
-        case 8:
+        case 0x88:
             if (!isPhys) {
                 return "XTL:XONLINE";
             }
             return "XTL(phys):XONLINE";
-        case 9:
+        case 0x89:
             if (!isPhys) {
                 return "XTL:XVOICE";
             }
             return "XTL(phys):XVOICE";
-        case 10:
+        case 0x8a:
             if (!isPhys) {
                 return "XTL:XHV";
             }
             return "XTL(phys):XHV";
-        case 0xb:
+        case 0x8b:
             if (!isPhys) {
                 return "XTL:USB";
             }
             return "XTL(phys):USB";
-        case 0xc:
+        case 0x8c:
             if (!isPhys) {
                 return "XTL:XMV";
             }
             return "XTL(phys):XMV";
-        case 0xd:
+        case 0x8d:
             if (!isPhys) {
                 return "XTL:SHADERCOMPILER";
             }
             return "XTL(phys):SHADERCOMPILER";
-        case 0xe:
+        case 0x8e:
             if (!isPhys) {
                 return "XTL:XUI";
             }
             return "XTL(phys):XUI";
-        case 0xf:
+        case 0x8f:
             if (!isPhys) {
                 return "XTL:XASYNC";
             }
             return "XTL(phys):XASYNC";
-        case 0x10:
+        case 0x90:
             if (!isPhys) {
                 return "XTL:XCAM";
             }
             return "XTL(phys):XCAM";
-        case 0x11:
+        case 0x91:
             if (!isPhys) {
                 return "XTL:XVIS";
             }
             return "XTL(phys):XVIS";
-        case 0x12:
+        case 0x92:
             if (!isPhys) {
                 return "XTL:XIME";
             }
             return "XTL(phys):XIME";
-        case 0x13:
+        case 0x93:
             if (!isPhys) {
                 return "XTL:XFILECACHE";
             }
             return "XTL(phys):XFILECACHE";
-        case 0x14:
+        case 0x94:
             if (!isPhys) {
                 return "XTL:XRN";
             }
             return "XTL(phys):XRN";
-        case 0x15:
-            if (!isPhys) {
-                return "XTL:XMCORE";
-            }
-            return "XTL(phys):XMCORE";
-        case 0x16:
-            if (!isPhys) {
-                return "XTL:XMASSIVE";
-            }
-            return "XTL(phys):XMASSIVE";
-        case 0x17:
+        case 0x97:
             if (!isPhys) {
                 return "XTL:XAUDIO2";
             }
             return "XTL(phys):XAUDIO2";
-        case 0x18:
+        case 0x98:
             if (!isPhys) {
                 return "XTL:XAVATAR";
             }
             return "XTL(phys):XAVATAR";
-        case 0x19:
+        case 0x99:
             if (!isPhys) {
                 return "XTL:XLSP";
             }
             return "XTL(phys):XLSP";
-        case 0x1a:
+        case 0x9a:
             if (!isPhys) {
                 return "XTL:D3DAlloc";
             }
             return "XTL(phys):D3DAlloc";
-        case 0x1b:
-            if (!isPhys) {
-                return "XTL:NUISPEECH";
-            }
-            return "XTL(phys):NUISPEECH";
-        case 0x1c:
-            if (!isPhys) {
-                return "XTL:NuiApi";
-            }
-            return "XTL(phys):NuiApi";
-        case 0x1d:
-            if (!isPhys) {
-                return "XTL:NuiIdentity";
-            }
-            return "XTL(phys):NuiIdentity";
-
-        case 0x3e:
-            if (!isPhys) {
-                return "XTL:NuiApi_LargePageReadWrite";
-            }
-            return "XTL(phys):NuiApi_LargePageReadWrite";
         default:
             if (type <= 0x7f) {
                 if (!isPhys) {
@@ -203,44 +181,44 @@ namespace {
         }
     }
 
+    // The alignment nibble is (attrs >> 24) & 0xF. For a physical allocation it
+    // uses the XALLOC_PHYSICAL_ALIGNMENT_* encoding: 0 is the 4 KB default, 1 is
+    // unused, and 2..15 are 4 bytes .. 32 KB (1 << n). For a heap allocation it
+    // uses XALLOC_ALIGNMENT_*: 0 (default) and 4 (16) give 16, 1 and 2 (4, 8)
+    // give 8.
     int AllocAlign(unsigned long attrs) {
         unsigned int alignField = (attrs >> 24) & 0xf;
         if (attrs & 0x80000000) {
-            // Physical allocation alignment
             switch (alignField) {
-            case 0: return 4;
-            case 1: return 0x20;
-            case 2: return 0x40;
-            case 3: return 0x80;
-            case 4: return 0x100;
-            case 5: return 0x200;
-            case 6: return 0x400;
-            case 7: return 0x800;
-            case 8: return 0x1000;
-            case 9: return 0x2000;
-            case 10: return 0x4000;
-            case 11: return 0x8000;
-            case 12:
-            case 13:
-            case 14:
-            case 15:
+            case 2: return 4;
+            case 3: return 8;
+            case 4: return 0x10;
+            case 5: return 0x20;
+            case 6: return 0x40;
+            case 7: return 0x80;
+            case 8: return 0x100;
+            case 9: return 0x200;
+            case 10: return 0x400;
+            case 11: return 0x800;
+            case 0:
+            case 12: return 0x1000;
+            case 13: return 0x2000;
+            case 14: return 0x4000;
+            case 15: return 0x8000;
             default:
                 MILO_FAIL("Invalid physical alignment (%d)", alignField);
                 return 0;
             }
         } else {
-            // Heap allocation alignment
-            if (alignField < 1) {
-                return 0x10;
-            }
-            if (alignField < 3) {
-                return 8;
-            }
-            if (alignField != 4) {
+            switch (alignField) {
+            case 0: return 0x10;
+            case 1:
+            case 2: return 8;
+            case 4: return 0x10;
+            default:
                 MILO_FAIL("Invalid heap alignment (%d)", alignField);
                 return 0;
             }
-            return 0x10;
         }
     }
 
@@ -468,25 +446,24 @@ void *PhysicalAllocTracked(unsigned long size, unsigned long alignment, const ch
 }
 #endif
 
-// Retail 0x822733B8 is 84 bytes and makes THREE calls -- XPhysicalSize,
-// XPhysicalFree and MemTrackFree.  Ours was 76 bytes / two calls (no
-// MemTrackFree), which tools/icf_pair_adjudicate.py reports as
-// "masked bodies DIFFER" against that address.  Both of retail's call sites for
-// 0x822733B8 (DxRnd::ReleaseAutoRelease and fn_82B6A828 in ContextChecker) set
-// only r3, so the 1-argument spelling is the one that reaches this body -- and
-// that body tracks.  The map names the address ?PhysicalFreeTracked@@YAXPAXPBDH1@Z
-// because the 4-argument overload ignores p2/p3/p4 and therefore ICF-folds onto
-// this one.  Lane W16-Z, 2026-09-14.
+// Retail has two physical frees. 0x82273470 (68 bytes) is PhysicalFree: no
+// null test and no MemTrackFree. Its only caller is MemFree, which has already
+// tested the pointer and calls MemTrackFree itself after the heap walk (DC3's
+// MemFree calls PhysicalFree the same way).
 void PhysicalFree(void *address) {
-    if (address != 0) {
-        gPhysicalUsage -= XPhysicalSize(address);
-    }
-
+    gPhysicalUsage -= XPhysicalSize(address);
     XPhysicalFree(address);
-    MemTrackFree(address);
 }
 
-void PhysicalFreeTracked(void *address, const char *p2, int p3, const char *p4) {
+// 0x822733B8 (84 bytes) is PhysicalFreeTracked: null test, XPhysicalSize,
+// XPhysicalFree, MemTrackFree. DC3's DxRnd and SynthSample call it as
+// PhysicalFreeTracked(p, __FILE__, __LINE__, ""); retail's callers set only r3,
+// so the match build takes the pointer alone.
+#ifdef HX_NATIVE
+void PhysicalFreeTracked(void *address, const char *, int, const char *) {
+#else
+void PhysicalFreeTracked(void *address) {
+#endif
     if (address != 0) {
         gPhysicalUsage -= XPhysicalSize(address);
     }

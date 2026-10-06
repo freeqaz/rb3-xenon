@@ -68,6 +68,8 @@ RemoteBandUser *BandUser::NewRemoteBandUser() { return new RemoteBandUser(); }
 
 NullLocalBandUser *BandUser::NewNullLocalBandUser() { return new NullLocalBandUser(); }
 
+AutoplayAuditionUser *BandUser::NewAutoplayAuditionUser() { return new AutoplayAuditionUser(); }
+
 void BandUser::Reset() {
     static Symbol none("none"); // retail: function-local static
     User::Reset();

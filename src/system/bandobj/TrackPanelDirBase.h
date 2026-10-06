@@ -24,7 +24,11 @@ public:
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
-    virtual ~TrackPanelDirBase() {}
+    // No user-declared destructor. Retail's ~TrackPanelDirBase (0x823084F0,
+    // 140 B, a COMDAT in TrackPanelDir.obj) is member teardown only, with no
+    // vfptr re-stores; MSVC emits those re-stores for a user-declared
+    // `virtual ~TrackPanelDirBase() {}` (288 B) but not for the implicit
+    // destructor, which stays virtual through PanelDir.
     virtual void PreLoad(BinStream &);
     virtual void PostLoad(BinStream &bs);
     virtual void Enter();

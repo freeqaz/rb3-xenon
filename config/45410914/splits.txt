@@ -3030,9 +3030,6 @@ EventTrigger.cpp:
 	.pdata      start:0x822119A8 end:0x822119B8
 	.pdata      start:0x822119B8 end:0x822119C0
 	.pdata      start:0x822119C0 end:0x82212150
-	.pdata      start:0x82214230 end:0x82214250
-	.pdata      start:0x822142B0 end:0x822142C0
-	.pdata      start:0x8223BA68 end:0x8223BA78
 	.text       start:0x8249B188 end:0x8249B200
 	.text       start:0x8249B200 end:0x8249B22C
 	.text       start:0x8249B230 end:0x8249B274
@@ -3050,9 +3047,6 @@ EventTrigger.cpp:
 	.text       start:0x8249C928 end:0x8249C9E0
 	.text       start:0x8249C9E0 end:0x8249CA68
 	.text       start:0x8249CA68 end:0x824A4A38
-	.text       start:0x824CD738 end:0x824CD818
-	.text       start:0x824CDCE8 end:0x824CDD60
-	.text       start:0x8274DF40 end:0x8274DFC8
 	.text       start:0x82C451E8 end:0x82C45268
 
 system/rndobj/ShaderMgr.cpp:
@@ -3315,9 +3309,11 @@ RenderState.cpp:
 
 system/obj/Dir.cpp:
 	.pdata      start:0x8223BA48 end:0x8223BA68
+	.pdata      start:0x8223BA68 end:0x8223BA78
 	.pdata      start:0x8223BA88 end:0x8223BFE8
 	.pdata      start:0x82261680 end:0x82261688
 	.text       start:0x8274DD58 end:0x8274DF40
+	.text       start:0x8274DF40 end:0x8274DFC8
 	.text       start:0x8274DFC8 end:0x8274DFD0
 	.text       start:0x8274E054 end:0x82754A00
 	.text       start:0x82C40898 end:0x82C408E8
@@ -4925,7 +4921,6 @@ DataNode.cpp:
 	.text       start:0x8274AA08 end:0x8274BB88
 	.text       start:0x8274BBE4 end:0x8274C4E0
 	.text       start:0x82C3FFAC end:0x82C3FFB0
-	.text       start:0x82C40098 end:0x82C405F8
 	.text       start:0x82C40750 end:0x82C40840
 	.text       start:0x82C40AB8 end:0x82C40B20
 	.text       start:0x82C49B20 end:0x82C49B50
@@ -5087,11 +5082,13 @@ Sfx.cpp:
 
 PropSync.cpp:
 	.pdata      start:0x82213F40 end:0x822140C0
+	.pdata      start:0x82214230 end:0x82214250
 	.pdata      start:0x82214250 end:0x82214260
 	.pdata      start:0x82214260 end:0x82214278
 	.pdata      start:0x82214280 end:0x82214290
 	.pdata      start:0x82214290 end:0x82214298
 	.pdata      start:0x82214298 end:0x822142B0
+	.pdata      start:0x822142B0 end:0x822142C0
 	.pdata      start:0x822142C0 end:0x822142F8
 	.pdata      start:0x822142F8 end:0x82214300
 	.pdata      start:0x82214300 end:0x822143D8
@@ -5104,12 +5101,14 @@ PropSync.cpp:
 	.text       start:0x824CAA7C end:0x824CAA80
 	.text       start:0x824CAA8C end:0x824CAA90
 	.text       start:0x824CAC64 end:0x824CBFE0
+	.text       start:0x824CD738 end:0x824CD818
 	.text       start:0x824CD818 end:0x824CD8B8
 	.text       start:0x824CD8B8 end:0x824CDA48
 	.text       start:0x824CDA98 end:0x824CDB80
 	.text       start:0x824CDB80 end:0x824CDBEC
 	.text       start:0x824CDBEC end:0x824CDBF0
 	.text       start:0x824CDBF0 end:0x824CDCE8
+	.text       start:0x824CDCE8 end:0x824CDD60
 	.text       start:0x824CDD60 end:0x824CE130
 	.text       start:0x824CE130 end:0x824CE1A0
 	.text       start:0x824CE1A0 end:0x824CEDA0

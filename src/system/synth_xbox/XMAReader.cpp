@@ -33,7 +33,7 @@ XMAReader::~XMAReader() {
     DeleteAll(mBlocks);
     for (int i = 0; i < 2; i++) {
         if (mPhysicalBuffers[i])
-            PhysicalFree(mPhysicalBuffers[i]);
+            PhysicalFreeTracked(mPhysicalBuffers[i]);
     }
 }
 

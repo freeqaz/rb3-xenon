@@ -21,4 +21,13 @@ void *PhysicalAllocTracked(unsigned long size, unsigned long alignment, const ch
 #else
 void *PhysicalAllocTracked(unsigned long size, unsigned long alignment, const char *name);
 #endif
+// Retail/match: ONE parameter. Every retail call site of the tracked free
+// (0x822733B8: DxRnd::AutoDelete, DxRnd::ReleaseAutoRelease,
+// XMAReader::~XMAReader) sets only r3; the file/line/name arguments are a
+// dev-build tracking feature, kept for the native build only.
+#ifdef HX_NATIVE
 void PhysicalFreeTracked(void *, const char *, int, const char *);
+inline void PhysicalFreeTracked(void *p) { PhysicalFreeTracked(p, __FILE__, __LINE__, ""); }
+#else
+void PhysicalFreeTracked(void *);
+#endif

@@ -108,9 +108,9 @@ public:
                     0
                 );
                 // Retail (0x827355A0, inside the out-of-line copy at 0x82735538)
-                // sets only r3: RB3 frees with the 1-argument PhysicalFree, as
-                // DxRnd::ReleaseAutoRelease does.
-                PhysicalFree((void *)data);
+                // sets only r3: the match build's PhysicalFreeTracked takes the
+                // pointer alone, as in DxRnd::ReleaseAutoRelease.
+                PhysicalFreeTracked((void *)data);
                 delete t;
             } else {
                 mPendingDeletes.push_back(t);
