@@ -361,7 +361,7 @@ float ExternalMicClientMgr::GetRequiredGain(unsigned long dev) {
             return mic->GetGain();
         }
     }
-    return 0.0f;
+    return 1.0f; // retail 0x820009FC: no mic -> unity gain
 }
 
 void ExternalMicClientMgr::OnMicDisconnected(unsigned long dev) {

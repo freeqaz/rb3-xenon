@@ -1003,7 +1003,7 @@ bool BandPatchMesh::WorkVerts::SetSameVerts(WorkVerts *other) {
                 float dx = p.x - v->pos.x;
                 float dy = p.y - v->pos.y;
                 float dz = p.z - v->pos.z;
-                if (dx * dx + dy * dy + dz * dz < 0.01f) {
+                if (dx * dx + dy * dy + dz * dz < 0.1f * 0.1f) { // retail 0x3C23D70B
                     mv->unk27 = 1;
                     if (mMeshVerts.empty()) {
                         SetMeshVerts();

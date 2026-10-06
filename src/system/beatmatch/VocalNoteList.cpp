@@ -366,7 +366,7 @@ void VocalNoteList::DetermineFreestyleSections() {
             float gap = noteMs - sectionStart;
             for (int i = 0; i < mFreestyleMinDuration->Size(); i++) {
                 float pad = mFreestylePad->Float(i);
-                if (gap > 64.0f * pad + mFreestyleMinDuration->Float(i)) {
+                if (gap > 2.0f * pad + mFreestyleMinDuration->Float(i)) {
                     mFreestyleSections.push_back(
                         std::make_pair(sectionStart + pad, noteMs - pad)
                     );

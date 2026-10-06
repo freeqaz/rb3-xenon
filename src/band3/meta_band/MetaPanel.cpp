@@ -359,7 +359,7 @@ bool MetaPanel::IsLoaded() const {
 
 void MetaPanel::FinishLoad() {
     UIPanel::FinishLoad();
-    mMusic->AddFader(TheSynth->Find<Fader>("fade", true));
+    mMusic->AddFader(TheSynth->Find<Fader>("background_music_level.fade", true));
 }
 
 void MetaPanel::Unload() {

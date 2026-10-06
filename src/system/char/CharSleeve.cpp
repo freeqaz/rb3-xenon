@@ -103,7 +103,7 @@ void CharSleeve::Poll() {
         float deltasecs = TheTaskMgr.DeltaSeconds();
         float dvar12 = deltasecs * 60.0f;
         float dv2 = deltasecs * dvar12;
-        float gravity_z = (mGravity * dv2) * -3.858268f;
+        float gravity_z = (mGravity * dv2) * -3.8582678f; // retail 0xC076EDDC = -98 / 25.4
         auto _tmp0 = powf(1.0f - mStiffness, dvar12 * dvar12);
         RndTransformable *sleeveparent = mSleeve->TransParent();
         float absed = fabsf(mSleeve->LocalXfm().v.z);

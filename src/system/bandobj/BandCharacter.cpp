@@ -124,7 +124,7 @@ BandCharacter::BandCharacter()
     unk734 = Hmx::Object::New<Waypoint>();
     unk734->SetRadius(2.0f);
     unk734->SetStrictRadiusDelta(5.0f);
-    unk734->SetAngRadius(0.17453292f);
+    unk734->SetAngRadius(0.17453294f); // retail 0x3E32B8C3 = (float)PI / 18
     unk734->SetStrictAngDelta(0.2617994f);
 #ifdef HX_NATIVE
     unk6d8 = 0;
@@ -2133,7 +2133,8 @@ BandCharacter::SetState(const char *cc, int playFlags, int mask, bool b4, bool b
     }
     CharDriver *oldDriver = unk454;
     mPlayFlags = playFlags;
-    if (AddDriverClipDir() && streq(mGroupName, "realtime_idle")
+    // Retail 0x82010E18 = "sit": the add driver plays only for seated groups.
+    if (AddDriverClipDir() && streq(mGroupName, "sit")
         && (mPlayFlags & 0x38000)) {
         unk454 = mAddDriver;
     } else {

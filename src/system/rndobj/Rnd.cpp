@@ -683,7 +683,7 @@ void Rnd::RemovePointTest(RndFlare *flare) {
 }
 
 float Rnd::YRatio() {
-    static const float kRatio[5] = { 1.0f, 0.75f, 0.5625f, 0.5625f, 0.6f };
+    static const float kRatio[4] = { 1.0f, 0.75f, 0.5625f, 0.5625f }; // retail 0x8205E1E0, one per Aspect
     return kRatio[mAspect];
 }
 
@@ -1126,9 +1126,9 @@ void Rnd::UpdateRate() {
     if (gsTimer && cpuTimer) {
         if (gsTimer->GetLastMs() > 16.7f) {
             if (!(gsTimer->GetLastMs() <= cpuTimer->GetLastMs() + 0.1f)) {
-                mRateGate = "gs";
+                mRateGate = " gs ";
             } else {
-                mRateGate = "cpu";
+                mRateGate = " cpu";
             }
         }
     }
@@ -1139,7 +1139,7 @@ void Rnd::UpdateRate() {
         *mRateOverlay << "\n";
         mRateCount = 5;
         mRateTotal = 0.0f;
-        mRateGate = "";
+        mRateGate = "    ";
     }
 }
 

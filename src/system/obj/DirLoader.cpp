@@ -814,7 +814,7 @@ bool DirLoader::SetupDir(Symbol sym) {
                 dynamic_cast<ObjectDir *>(Hmx::Object::NewObject(sym));
             if (!newDir) {
                 Cleanup(MakeString(
-                    "%s: Trying to make non ObjectDir proxy class %s %s",
+                    "%s: Trying to make non ObjectDir proxy class %s s",
                     mFile.c_str(),
                     mDir->ClassName(),
                     sym

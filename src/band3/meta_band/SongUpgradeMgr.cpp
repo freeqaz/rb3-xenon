@@ -197,7 +197,7 @@ bool SongUpgradeMgr::ContentDiscovered(Symbol s) {
     }
 }
 
-const char *SongUpgradeMgr::ContentPattern() { return "&upgrades.dta"; }
+const char *SongUpgradeMgr::ContentPattern() { return "upgrades.dta"; }
 
 const char *SongUpgradeMgr::ContentDir() { return "songs_upgrades"; }
 

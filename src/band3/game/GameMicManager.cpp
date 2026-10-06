@@ -188,7 +188,7 @@ void GameMicManager::HookUpFxForMicId(GameMic *gmic) {
     }
     Mic *mic = TheSynth->GetMic(gmic->mMicID);
     if (mic) {
-        FxSend *send = unk20->Find<FxSend>("mic.send", false);
+        FxSend *send = unk20->Find<FxSend>("synapse.send", false);
         mic->SetFxSend(send);
     }
     // TU5: the synapse is reset to its neutral target whether or not the mic exists.
@@ -218,7 +218,7 @@ void GameMicManager::Poll(float f1) {
 }
 
 // TU5 body, rebuilt from retail bytes (fn_826818D0); it is not an
-// empty stub. Notes are MIDI pitches, converted with 8.1758 Hz * 2^(n/12).
+// empty stub. Notes are MIDI pitches, converted with 8.1757989 Hz * 2^(n/12) (retail 0x4102D013, MIDI note 0).
 // The second range test overwriting `prox` (not `focus`) is retail's own: both
 // `fmr f24, f0`, and `focus` still reaches SetProximityFocus unmodified.
 void GameMicManager::SetPitchCorrectionTarget(
@@ -233,18 +233,18 @@ void GameMicManager::SetPitchCorrectionTarget(
     if (!unk2f) {
         for (int i = 0; i < 3; i++) {
             if (unk20)
-                unk20->Find<FxSendSynapse>("mic.send", true)->SetAmount(0.0f);
+                unk20->Find<FxSendSynapse>("synapse.send", true)->SetAmount(0.0f);
         }
         return;
     }
-    FxSendSynapse *send = unk20->Find<FxSendSynapse>("mic.send", false);
+    FxSendSynapse *send = unk20->Find<FxSendSynapse>("synapse.send", false);
     if (send) {
         if (enable) {
-            float hz1 = (float)pow(2.0, n1 / 12.0f) * 8.1758f;
-            float hz2 = (float)pow(2.0, n2 / 12.0f) * 8.1758f;
+            float hz1 = (float)pow(2.0, n1 / 12.0f) * 8.1757989f;
+            float hz2 = (float)pow(2.0, n2 / 12.0f) * 8.1757989f;
             if (n2 == 0.0f)
                 hz2 = 0.0f;
-            float hz3 = (float)pow(2.0, n3 / 12.0f) * 8.1758f;
+            float hz3 = (float)pow(2.0, n3 / 12.0f) * 8.1757989f;
             if (n3 == 0.0f)
                 hz3 = 0.0f;
             send->SetProximityEffect(prox);

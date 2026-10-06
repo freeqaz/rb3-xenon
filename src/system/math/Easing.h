@@ -281,7 +281,7 @@ inline float EaseSigmoid(float t, float, float) {
 
 inline float EaseInExp(float t) {
     MILO_ASSERT(t >= 0 && t <= 1, 0x39);
-    return std::pow(t, 3.03f);
+    return std::pow(t, 3.76f);
 }
 
 inline float EaseCircOut(float t, float power, float) {
