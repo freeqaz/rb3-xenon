@@ -37266,5 +37266,7 @@
  "0x82c40a30": "??__EgDataFuncs@@YAXXZ",
  "0x82c49d20": "??__FgDataFuncs@@YAXXZ",
  "0x82c3f4f8": "??__EgOldChars@@YAXXZ",
- "0x82c454e0": "??__FgOldChars@@YAXXZ"
+ "0x82c454e0": "??__FgOldChars@@YAXXZ",
+ "0x82c3f2b8": "??__EgTransListAlloc@@YAXXZ",
+ "0x82c451a8": "??__FgTransListAlloc@@YAXXZ"
 }

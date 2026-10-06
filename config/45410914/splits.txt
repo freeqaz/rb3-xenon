@@ -615,13 +615,13 @@ Console.cpp:
 	.pdata      start:0x8220ED60 end:0x8220EFB8
 	.pdata      start:0x8220EFB8 end:0x8220EFC0
 	.pdata      start:0x8220EFC0 end:0x8220EFD8
-	.pdata      start:0x82261510 end:0x82261518
+	.pdata      start:0x82261508 end:0x82261518
 	.text       start:0x824662D8 end:0x82466334
 	.text       start:0x82466338 end:0x82469388
 	.text       start:0x82469388 end:0x824693F4
 	.text       start:0x824693F4 end:0x82469580
-	.text       start:0x82C3F2F8 end:0x82C3F350
-	.text       start:0x82C451B8 end:0x82C451C8
+	.text       start:0x82C3F2B8 end:0x82C3F350
+	.text       start:0x82C451A8 end:0x82C451C8
 
 ShaderOptions.cpp:
 	.pdata      start:0x822117E0 end:0x82211800
