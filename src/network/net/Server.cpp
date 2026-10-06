@@ -67,7 +67,12 @@ void XboxServer::Init() {
     Server::Init();
     DataArray *cfg = SystemConfig("net", "server");
     Quazal::LSPBackEndServices::SetAccessKey(mKey);
-    Quazal::String filter(cfg->FindArray("filter")->Str(1));
+    // Two statements, not `String filter(cfg->FindArray(...)->Str(1))`: the
+    // temporaries of a class-type declaration's initializer keep their slots
+    // for the rest of the block, which pushed the by-value copy for
+    // SetLSPLoginFilter to 0x60 and the frame to 0x90 (retail: 0x50 / 0x80).
+    const char *filterStr = cfg->FindArray("filter")->Str(1);
+    Quazal::String filter(filterStr);
     SetLSPLoginFilter(filter);
     mBackEnd = new Quazal::LSPBackEndServices();
     mBackEnd->unk74 = 1001;
