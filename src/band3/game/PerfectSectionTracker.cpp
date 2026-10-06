@@ -319,9 +319,12 @@ bool PerfectSectionTracker::HandleExitExtent(float f, int i, bool b) {
                 if (data.unkc != 0) {
                     b1 = true;
                     i15 |= 2;
-                    int num = pPlayer->mStats.mHitCount - data.unk4 - i118;
-                    int seen = pPlayer->mStats.m0x0c - data.unk8;
-                    if ((float)num / (float)(data.unkc - (seen - i11c)) >= unkb0) {
+                    // Declared gems-first: retail then evaluates the hit count
+                    // first (stored to the lower conversion slot).
+                    int sectionGems =
+                        data.unkc - (pPlayer->mStats.m0x0c - data.unk8 - i11c);
+                    int sectionHits = pPlayer->mStats.mHitCount - data.unk4 - i118;
+                    if ((float)sectionHits / (float)sectionGems >= unkb0) {
                         unk8c[key]++;
                         i15 |= 3;
                         b14 = true;
