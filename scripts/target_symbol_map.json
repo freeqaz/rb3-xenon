@@ -1,4 +1,5 @@
 {
+ "0x8242c710": "?CloneKey@Vector3Keys@@UAAXH@Z",
  "0x827c9540": "??$FastSort@$02@LocaleChunkSort@@YAHPBX0@Z",
  "0x827e4960": "??1TextInstance@@QAA@XZ",
  "0x827e53e0": "?clear@?$_List_base@VTextInstance@@V?$StlNodeAlloc@VTextInstance@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
@@ -25298,7 +25299,7 @@
  "0x827e1560": "?OnAddMeshInstance@TrackWidget@@QAA?AVDataNode@@PBVDataArray@@@Z",
  "0x827e1648": "?erase@?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VMeshInstance@@U?$_Nonconst_traits@VMeshInstance@@@stlpmtx_std@@@2@U32@@Z",
  "0x827e16a0": "?insert@?$list@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VMeshInstance@@U?$_Nonconst_traits@VMeshInstance@@@stlpmtx_std@@@2@U32@ABVMeshInstance@@@Z",
- "0x827e1708": null,
+ "0x827e1708": "?clear@?$_List_base@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
  "0x827e1768": "??$PropSync@VRndFont@@@@YA_NAAV?$ObjPtr@VRndFont@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x827e1850": "??$PropSync@VRndText@@@@YA_NAAV?$ObjPtr@VRndText@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x827e1950": "??1TrackWidget@@UAA@XZ",

@@ -3893,7 +3893,6 @@ HamRibbon.cpp:
 
 Text.cpp:
 	.pdata      start:0x821FC500 end:0x821FC508
-	.pdata      start:0x82203ED8 end:0x82203EE0
 	.pdata      start:0x82203EE0 end:0x82203EE8
 	.pdata      start:0x8220E060 end:0x8220E068
 	.pdata      start:0x8220E068 end:0x8220E138
@@ -3904,7 +3903,6 @@ Text.cpp:
 	.pdata      start:0x8220E320 end:0x8220E4E8
 	.pdata      start:0x822224F0 end:0x822224F8
 	.text       start:0x8231D02C end:0x8231D060
-	.text       start:0x8239C558 end:0x8239C5AC
 	.text       start:0x8239C5D4 end:0x8239C640
 	.text       start:0x824549A0 end:0x824549B0
 	.text       start:0x824549B0 end:0x824549C4
@@ -4074,6 +4072,7 @@ PropAnim.cpp:
 	.text       start:0x8242C568 end:0x8242C5D8
 	.text       start:0x8242C5D8 end:0x8242C6B8
 	.text       start:0x8242C6B8 end:0x8242C710
+	.text       start:0x8242C710 end:0x8242C770
 	.text       start:0x8242C770 end:0x8242C7CC
 	.text       start:0x8242C7D0 end:0x8242EC18
 
@@ -5382,13 +5381,11 @@ band3/meta_band/MusicLibraryNetSetlists.cpp:
 	.pdata      start:0x822247E8 end:0x822247F0
 	.pdata      start:0x822247F0 end:0x82224978
 	.pdata      start:0x82224978 end:0x82224980
-	.pdata      start:0x82243DF0 end:0x82243DF8
 	.text       start:0x825CF570 end:0x825CF600
 	.text       start:0x825CF600 end:0x825CF820
 	.text       start:0x825CF820 end:0x825CF890
 	.text       start:0x825CF898 end:0x825D0F24
 	.text       start:0x825D0F24 end:0x825D0F74
-	.text       start:0x827E1708 end:0x827E1768
 
 Award.cpp:
 	.pdata      start:0x82226440 end:0x82226448
@@ -9095,6 +9092,7 @@ TrackWidget.cpp:
 	.pdata      start:0x82243DB8 end:0x82243DC0
 	.pdata      start:0x82243DC0 end:0x82243DD8
 	.pdata      start:0x82243DD8 end:0x82243DF0
+	.pdata      start:0x82243DF0 end:0x82243DF8
 	.pdata      start:0x82243DF8 end:0x82243F68
 	.pdata      start:0x82243F70 end:0x822440B0
 	.pdata      start:0x822440B0 end:0x822440B8
@@ -9119,6 +9117,7 @@ TrackWidget.cpp:
 	.text       start:0x827E1320 end:0x827E1400
 	.text       start:0x827E1400 end:0x827E1560
 	.text       start:0x827E1560 end:0x827E1708
+	.text       start:0x827E1708 end:0x827E1768
 	.text       start:0x827E1768 end:0x827E2BA4
 	.text       start:0x827E2C88 end:0x827E4098
 	.text       start:0x827E4098 end:0x827E4358
@@ -12614,7 +12613,6 @@ MessageTimer.cpp:
 	.text       start:0x82272C00 end:0x82272CF8
 	.text       start:0x82272CF8 end:0x82272DB4
 	.text       start:0x82272DB4 end:0x82272E3C
-	.text       start:0x8242C710 end:0x8242C770
 
 ClipDistMap.cpp:
 	.pdata      start:0x8222B1A0 end:0x8222B1B0
@@ -13839,6 +13837,7 @@ system/char/CharMeshCacheMgr.cpp:
 	.pdata      start:0x82203EC0 end:0x82203EC8
 	.pdata      start:0x82203EC8 end:0x82203ED0
 	.pdata      start:0x82203ED0 end:0x82203ED8
+	.pdata      start:0x82203ED8 end:0x82203EE0
 	.pdata      start:0x82203F00 end:0x82203F08
 	.pdata      start:0x82203F08 end:0x82203F28
 	.pdata      start:0x82203F28 end:0x82203F40
@@ -13847,6 +13846,7 @@ system/char/CharMeshCacheMgr.cpp:
 	.text       start:0x8239C380 end:0x8239C3C8
 	.text       start:0x8239C3D0 end:0x8239C504
 	.text       start:0x8239C508 end:0x8239C558
+	.text       start:0x8239C558 end:0x8239C5AC
 	.text       start:0x8239C5AC end:0x8239C5D4
 	.text       start:0x8239C830 end:0x8239C9B8
 	.text       start:0x8239C9C0 end:0x8239CB2C

@@ -99745,7 +99745,7 @@
   {
    "name": "clear_MusicLibraryNetSetlists",
    "address": "0x827e1708",
-   "survivor": "fn_827E1708",
+   "survivor": "?clear@?$_List_base@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
    "folded": [
     "?clear@?$_List_base@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneState@BandCharacter@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ"
    ],
@@ -99758,12 +99758,6 @@
      "evidence": "tools/icf_pair_adjudicate.chase(fn_827E1708 @ 0x827e1708, ?clear@?$_List_base@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlN): REFUTED [BODY:BYTES-DIFFER] depth 0: retail fn_827E1708 | ours ?clear@?$_List_base@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlNodeAlloc@VSetlistArt; anchor ?clear@?$_List_base@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneState@BandCharacter@@@s PROVEN here"
     }
    ],
-   "relabelled": {
-    "from": "?clear@?$_List_base@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlNodeAlloc@VSetlistArtRecord@MusicLibraryNetSetlists@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
-    "to": "fn_827E1708",
-    "lane": "W16-OS 2026-10-03",
-    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
-   },
    "rechase_w16os": [
     {
      "spelling": "?clear@?$_List_base@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneState@BandCharacter@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
@@ -99771,17 +99765,39 @@
      "verdict": "PROVEN",
      "kind": "CHASED",
      "disposition": "kept",
-     "evidence": "tools/icf_pair_adjudicate.chase(fn_827E1708 @ 0x827e1708, ?clear@?$_List_base@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneSta): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$_List_base@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stl @ 0x827e1708, ?clear@?$_List_base@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneSta): PROVEN [CHASED] retail 88 B / ours 88 B, 0 cycle-assumed"
     },
     {
-     "spelling": "?clear@?$_List_base@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlNodeAlloc@VSetlistArtRecord@MusicLibraryNetSetlists@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+     "spelling": "fn_827E1708",
      "role": "old-label",
-     "verdict": "REFUTED",
-     "kind": "BODY:BYTES-DIFFER",
-     "disposition": "withdrawn",
-     "evidence": "tools/icf_pair_adjudicate.chase(fn_827E1708 @ 0x827e1708, ?clear@?$_List_base@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlN): REFUTED [BODY:BYTES-DIFFER] depth 0: retail fn_827E1708 | ours ?clear@?$_List_base@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlNodeAlloc@VSetlistArt; anchor ?clear@?$_List_base@VBoneState@BandCharacter@@V?$StlNodeAlloc@VBoneState@BandCharacter@@@s PROVEN here"
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$_List_base@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stl @ 0x827e1708, fn_827E1708): UNDECIDABLE [MISSING(ours)] depth 0: retail ?clear@?$_List_base@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_s | ours fn_827E1708"
     }
-   ]
+   ],
+   "relabelled_history": [
+    {
+     "from": "?clear@?$_List_base@VSetlistArtRecord@MusicLibraryNetSetlists@@V?$StlNodeAlloc@VSetlistArtRecord@MusicLibraryNetSetlists@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+     "to": "fn_827E1708",
+     "lane": "W16-OS 2026-10-03",
+     "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+    }
+   ],
+   "relabelled": {
+    "from": "fn_827E1708",
+    "to": "?clear@?$_List_base@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+    "lane": "W16-QB 2026-10-06",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here",
+    "held": [
+     {
+      "spelling": "fn_827E1708",
+      "lane": "W16-QB 2026-10-06",
+      "verdict": "UNDECIDABLE",
+      "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$_List_base@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stl @ 0x827e1708, fn_827E1708): UNDECIDABLE [MISSING(ours)] depth 0: retail ?clear@?$_List_base@VMeshInstance@@V?$StlNodeAlloc@VMeshInstance@@@stlpmtx_std@@@stlpmtx_s | ours fn_827E1708"
+     }
+    ]
+   }
   },
   {
    "name": "4vector_VVector3",
