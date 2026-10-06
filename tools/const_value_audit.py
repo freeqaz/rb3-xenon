@@ -173,13 +173,15 @@ class Image:
                 return s
         return None
 
-    def cstr(self, va, cap=4096):
+    def cstr(self, va, cap=4096, allow_empty=False):
         """NUL-terminated printable string at va (with its NUL), else None."""
         s = self.section(va)
         if s is None:
             return None
         off = va - s[1]
         b = self.d[s[3] + off:s[3] + min(s[4], off + cap)]
+        if allow_empty and b[:1] == b"\0":
+            return b"\0"
         return b[:b.index(b"\0") + 1] if looks_like_cstr(b) else None
 
     def read(self, va, n):
@@ -225,7 +227,7 @@ class Resolver:
                 self.fn_vas[v].append(int(k, 16))
         self.objs = {}
         self.global_def = None
-        self.clean = None          # clean-TU5 Image, for the DX-patch cross-check
+        self.clean = None          # --alt-image, for the in-place-patch cross-check
 
     def obj(self, path):
         if path not in self.objs:
@@ -321,7 +323,7 @@ def compare_operand(res, op, va, bsym, badd, base_path):
     if op == "addi":
         if looks_like_cstr(data) or (bsym.startswith("??_C@") and data[:1] == b"\0"):
             s = data[:data.index(b"\0") + 1]
-            r = res.img.cstr(va)
+            r = res.img.cstr(va, allow_empty=True)
             return {"kind": "str", "ours": s, "retail": r, "eq": r == s}
         w = len(data)
         if w == 0 or w > 4096:
@@ -404,9 +406,16 @@ def use_sites(rows, side_key, values):
             continue
         has_dest = not op.startswith(NO_DEST_PREFIX)
         srcs = rr[1:] if has_dest else rr
-        for r in srcs:
+        # A store consumes its value register into a memory slot: key the site by
+        # the slot (offset + base register), so two stores emitted in a different
+        # order still compare slot-to-slot instead of row-to-row.
+        slot = None
+        if op.startswith("st") and rr:
+            ta = x.get("typed_args", [])
+            slot = ("store", op) + tuple(str(a["value"]) for a in ta[1:])
+        for k, r in enumerate(srcs):
             if r in live:
-                site = ("row", i)
+                site = slot if (slot and k == 0) else ("row", i)
                 sites[site][live[r][0]] += 1
                 feeds[live[r][1]].add(site)
         if has_dest and rr:
@@ -518,7 +527,7 @@ def analyze_function(res, d, base_path, tobj, bobj):
                     dx = (res.clean.read(va, len(c["retail"])) != res.img.read(va, len(c["retail"]))
                           or (iva is not None and res.clean.read(iva, 4) != res.img.read(iva, 4)))
                 out["pos"].append({"row": i, "op": b["opcode"], "kind": c["kind"],
-                                   "dx_patched": dx,
+                                   "image_patch": dx,
                                    "target_sym": to[0], "base_sym": bo[0],
                                    "retail_ea": "0x%08X" % va,
                                    "retail": fmt(c["kind"], c["retail"]),
@@ -531,7 +540,18 @@ def analyze_function(res, d, base_path, tobj, bobj):
     tsites, tfeeds = use_sites(rows, "target", tvals)
     bsites, bfeeds = use_sites(rows, "base", bvals)
     use_mm = []
+
+    def same_op(site):
+        # A row site is only comparable when both sides run the same instruction
+        # there; a "replace" row (fmuls vs fcmpu) is two different consumers.
+        if site[0] == "store":
+            return True
+        r = rows[site[1]]
+        return (r.get("target") or {}).get("opcode") == (r.get("base") or {}).get("opcode")
+
     for site in set(tsites) & set(bsites):
+        if not same_op(site):
+            continue
         if tsites[site] != bsites[site]:
             use_mm.append({"site": list(site),
                            "retail": sorted(k.hex() for k in tsites[site]),
@@ -561,8 +581,8 @@ def analyze_function(res, d, base_path, tobj, bobj):
         p["cleared"] = ok
         if not ok:
             uncleared.append(i)
-    if out["pos"] and all(p.get("dx_patched") for p in out["pos"]):
-        verdict = "DX_PATCH"
+    if out["pos"] and all(p.get("image_patch") for p in out["pos"]):
+        verdict = "IMAGE_PATCH"
     elif (t_only | b_only) & involved:
         verdict = "VALUE"
     elif use_mm:
@@ -624,31 +644,22 @@ def main():
     ap.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 4) // 2))
     ap.add_argument("--out", default=os.path.expanduser("~/tmp/const_value_audit.json"))
     ap.add_argument("--image", default=None)
-    ap.add_argument("--clean-image", default=None,
-                    help="clean (non-DX) TU5 PE; a mismatch whose retail bytes or instruction "
-                         "differ there is labelled dx_patched (default: _tu5probe/clean/"
-                         "band_clean_tu5.exe in this tree or the main repo)")
+    ap.add_argument("--alt-image", default=None,
+                    help="a second PE of the same title (e.g. the RB3DX image, or clean TU5 "
+                         "if the target is ever switched back); a mismatch whose retail bytes or "
+                         "instruction differ there is labelled image_patch -- an in-place binary "
+                         "patch, not source.  Refused if byte-identical to --image.")
     args = ap.parse_args()
     root = os.path.abspath(args.root)
     img = Image(args.image or os.path.join(root, "orig/45410914/band.exe"))
     res = Resolver(root, img)
-    clean = args.clean_image
-    if clean is None:
-        cands = [os.path.join(root, "_tu5probe/clean/band_clean_tu5.exe")]
-        try:
-            common = subprocess.run(["git", "-C", root, "rev-parse", "--git-common-dir"],
-                                    capture_output=True, text=True).stdout.strip()
-            if common:
-                cands.append(os.path.join(os.path.dirname(os.path.abspath(
-                    os.path.join(root, common))), "_tu5probe/clean/band_clean_tu5.exe"))
-        except OSError:
-            pass
-        clean = next((c for c in cands if os.path.exists(c)), None)
-    if clean:
-        res.clean = Image(clean)
-        print("clean-TU5 cross-check:", clean)
-    else:
-        print("clean-TU5 cross-check: OFF (no clean image found)")
+    if args.alt_image:
+        alt = Image(args.alt_image)
+        if alt.d == img.d:
+            sys.exit("--alt-image is byte-identical to the target image: the cross-check "
+                     "would be vacuous")
+        res.clean = alt
+        print("alt-image cross-check:", args.alt_image)
     od = json.load(open(os.path.join(root, "objdiff.json")))
     rep = json.load(open(os.path.join(root, "build/45410914/report.json")))
     base_of = {u["name"]: os.path.join(root, u["base_path"]) for u in od["units"]
@@ -706,9 +717,9 @@ def main():
                                    if k.startswith("verdict_")))
     print("skipped operands: " + "  ".join("%s=%d" % (k[5:], v) for k, v in sorted(totals.items())
                                           if k.startswith("skip_")))
-    for a in sorted(flagged, key=lambda a: ("VALUE SWAP POS_UNRESOLVED DX_PATCH SETONLY REORDER".split().index(a["verdict"]),
+    for a in sorted(flagged, key=lambda a: ("VALUE SWAP POS_UNRESOLVED IMAGE_PATCH SETONLY REORDER".split().index(a["verdict"]),
                                             a["unit"], a["symbol"])):
-        if a["verdict"] in ("VALUE", "SWAP", "POS_UNRESOLVED", "DX_PATCH"):
+        if a["verdict"] in ("VALUE", "SWAP", "POS_UNRESOLVED", "IMAGE_PATCH"):
             print("%-7s %s %s (fuzzy %.2f)" % (a["verdict"], a["unit"], a["symbol"], a["fuzzy"]))
             for p in a["pos"]:
                 print("        row %d %s: retail %s  ours %s" % (p["row"], p["op"], p["retail"], p["ours"]))
