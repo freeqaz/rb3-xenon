@@ -1217,11 +1217,13 @@ void VocalTrackDir::SetRange(float min, float max, int tonic, bool b) {
         }
         mRangeScaleAnim->SetFrame(range, 1.0f);
         mRangeOffsetAnim->SetFrame(offset, 1.0f);
-        RndMat *mat = mPitchWindowMesh->Mat();
         {
-            Transform texXfm = mat->TexXfm();
+            // The write-back re-reads mPitchWindowMesh->Mat(): retail
+            // recomputes &mat->mTexXfm for the second memcpy instead of
+            // holding the first one live across the call.
+            Transform texXfm = mPitchWindowMesh->Mat()->TexXfm();
             texXfm.v.y += texXfm.v.z;
-            mat->SetTexXfm(texXfm);
+            mPitchWindowMesh->Mat()->SetTexXfm(texXfm);
         }
         float bottom = mPitchBottomZ;
         float pitchRange = mPitchTopZ - bottom;
