@@ -529,8 +529,9 @@ if [ $build_rc -eq 0 ]; then
                 fail_lines+=("  LAYOUTODR bad NATIVE_GATE_LAYOUT_ODR='$LAYOUT_ODR' (all|native|off)") ;;
     esac
     if [ -n "$lo_doms" ]; then
-        python3 "$DIR/tools/layout_odr.py" --project-dir "$DIR" check --domain "$lo_doms" \
-            -j "${NATIVE_GATE_LAYOUT_JOBS:-16}" > "$LAYOUT_LOG" 2>&1
+        python3 "$DIR/tools/layout_odr.py" --project-dir "$DIR" \
+            --native-build "$DIR/native/$BUILD" check --domain "$lo_doms" \
+            -j "${NATIVE_GATE_LAYOUT_JOBS:-$(nproc 2>/dev/null || echo 16)}" > "$LAYOUT_LOG" 2>&1
         lo_rc=$?
         layout_line="$(G '^LAYOUT_ODR_RESULT ' "$LAYOUT_LOG" | tail -1)"
         case $lo_rc in
