@@ -677,7 +677,10 @@ void Singer::SetAssignedPart(int part, float f2) {
     mFrameAssignedPart = part;
     if (mVibratoFrameBonus != 0.0f) {
         VocalScoreCache &cache = mScoreCaches[part];
-        cache.unk4 += mVibratoFrameBonus;
+        // Named local, not a direct member read: it decides the fadds operand
+        // order against retail.
+        float bonus = mVibratoFrameBonus;
+        cache.unk4 += bonus;
         mVibratoFrameBonus = 0.0f;
     }
     mScoreHistories[part].BiasLastScore(f2);
