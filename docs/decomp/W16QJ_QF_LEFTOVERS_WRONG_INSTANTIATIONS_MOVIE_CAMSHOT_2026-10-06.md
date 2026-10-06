@@ -113,7 +113,7 @@ Retail evidence:
 - **The ctor** (`0x824c6298`) never constructs 0x40. The graded diff shows our `lwz gNullStr; stw r11,0x40(r30)` as an insert, and retail's next construction is `addi r11,r30,0x44` (`mAnims`).
 - **No access anywhere.** Every retail function the map names as a CamShot member, in `CameraShot.s` and `BandCamShot.s`, was scanned for displacement `0x40` off a non-frame register, and for `-0x220` off the `this+0x260` base CamShot::Save uses. There are no hits on the member. The two `0x40` displacements in `CameraShot.s` are a vtable slot (`LoadSubPart`: `lwz r11,0x4(r11); lwz r11,0x40(r11); mtctr; bctrl`) and a `CamShotFrame` member.
 - **No string.** `"crowd_state_override"` is absent from `band.exe`, as W16-QF and the in-tree propsync note already found.
-- **The RB3 oracle agrees.** It declares an unnamed `int` in exactly this position, right after `mCategory`, and never uses it.
+- **The inherited RB3 game source agrees.** It declares an unnamed `int` in exactly this position, right after `mCategory`, and never uses it.
 
 The slot is real: `mAnims` and every later member are at their retail offsets, and the 100%-matching functions depend on that. So the member stays 4 bytes and becomes `int unk40;`, which has no constructor.
 
