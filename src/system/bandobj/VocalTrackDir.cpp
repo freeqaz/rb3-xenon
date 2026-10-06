@@ -17,12 +17,19 @@
 #include "utl/Messages.h"
 #include <cmath>
 
-// One 4-byte aggregate instead of INIT_REVS's two independent statics -- see
-// the RevsT note in VocalTrackDir.h. The #define pair keeps LOAD_REVS /
-// ASSERT_REVS / packRevs and every `gRev` test below working unchanged, exactly
-// as ChordShapeGenerator.cpp does it. Scoped: #undef'd at the end of the
+// Retail stores both rev words through ONE base register (altRev +0, rev +4),
+// which MSVC only does for an internal-linkage aggregate -- not for the
+// DECLARE_REVS/INIT_REVS class statics. Internal linkage also lets the
+// scheduler prove the two `sth`s cannot alias `*this`, so PostLoad hoists the
+// IsProxy() vbptr load above them exactly as retail does (an external class
+// static here kept that load below both stores). Same idiom as
+// BandConfiguration.cpp / BandDirector.cpp. The #define pair keeps LOAD_REVS /
+// packRevs and every `gRev` test below unchanged; #undef'd at the end of the
 // VocalTrackDir region so the rest of this unity TU is unaffected.
-VocalTrackDir::RevsT VocalTrackDir::gRevs = {0, 0};
+static struct {
+    __declspec(align(4)) unsigned short altRev;
+    __declspec(align(4)) unsigned short rev;
+} gRevs;
 #define gAltRev gRevs.altRev
 #define gRev gRevs.rev
 
