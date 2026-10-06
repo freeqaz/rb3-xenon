@@ -448,11 +448,8 @@ float VocalPlayer::RemoteVocalVolume() const {
 //   - The `clrrwi.` vs retail `srawi`/`cmpwi` size test at the end of the
 //     greedy-matching loop was a source shape after all (W16-RK: both sizes
 //     taken into int locals before the test; see that site).
-//   - One residual (singer-score-loop energy read) is a confirmed benign
-//     register-allocation/scheduling artifact: retail spills a live value to
-//     the stack at this point, we don't need to -- verified against
-//     Singer.h's own 0x5c/0x60/0x64 offset comments, not a member-confusion
-//     bug.
+//   - The singer-score-loop energy "spill" was the inline accessor's return
+//     temporary (W16-RK: read through Singer::GetLastFrameMicEnergy).
 //   - One residual (solo pitch-correction target) is an unresolved, flagged
 //     compiler CSE/scheduling question -- see the TODO(W17) comment at its
 //     site. Not fixed here; left for a future matching lane.
@@ -639,22 +636,16 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
 
             if (bScoringAllowed && pPart->ScoringEnabled()) {
                 VocalScoreCache &cache = pSinger->AccessScoreCache(pPart->mPartIndex);
-                // W17: objdiff flags a mismatch here (retail spills a live value to
-                // a stack slot with `stfs`, ours instead loads straight from
-                // pSinger->mLastFrameMicEnergy at the same positional index) --
-                // confirmed benign register-allocation/scheduling noise, not a
-                // member-confusion bug: mFrameMicPitch/mLastFrameMicEnergy/
-                // mSmoothedMicEnergy below are read at 0x5c/0x60/0x64 respectively,
-                // an exact match for Singer.h's own `// 0xHEX` comments on those
-                // three members. No source change indicated.
-                float fEnergy = pSinger->mLastFrameMicEnergy;
+                // The energy goes through Singer's inline by-value accessor
+                // twice: retail stores the accessor's return temporary to a
+                // stack slot (stfs f3,0x68) before the fsubs.
                 int iRating;
                 float fDev;
                 pPart->ScoreSinger(
                     fCompMS,
                     pSinger->mFrameMicPitch,
-                    fEnergy,
-                    fEnergy - pSinger->mSmoothedMicEnergy,
+                    pSinger->GetLastFrameMicEnergy(),
+                    pSinger->GetLastFrameMicEnergy() - pSinger->mSmoothedMicEnergy,
                     pSinger->mOctaveOffset,
                     pSinger->mTalkyMatcher,
                     cache,

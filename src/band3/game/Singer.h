@@ -120,6 +120,7 @@ public:
     int GetSingerIndex() const { return mSingerIndex; }
     int GetFrameAssignedPart() const { return mFrameAssignedPart; }
     float GetBestTargetPitch() const { return mBestTargetPitch; }
+    float GetLastFrameMicEnergy() const { return mLastFrameMicEnergy; }
     bool HasAssignedPart() const;
 
     VocalPlayer *mPlayer; // 0x0
