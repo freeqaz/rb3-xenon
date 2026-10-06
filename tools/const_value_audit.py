@@ -468,6 +468,7 @@ def analyze_function(res, d, base_path, tobj, bobj):
         imm = word & (0xFFFC if b["opcode"] in ("ld", "lwa") else 0xFFFF)
         return sext16(imm)
 
+    has_bctr = any((r.get("base") or {}).get("opcode") == "bctr" for r in rows)
     tvals, bvals = {}, {}
     for i, ins in enumerate(rows):
         t, b = ins.get("target"), ins.get("base")
@@ -493,6 +494,12 @@ def analyze_function(res, d, base_path, tobj, bobj):
                 if key:
                     tvals[i] = key
         if to and bo and t["opcode"] == b["opcode"]:
+            if bo[0].startswith("$T") and has_bctr:
+                # MSVC switch jump table: branch offsets that move with codegen.
+                out["skips"]["jumptable"] += 1
+                bvals.pop(i, None)
+                tvals.pop(i, None)
+                continue
             c = compare_operand(res, b["opcode"], va, bo[0], bo[1], base_path)
             if "skip" in c:
                 out["skips"][c["skip"]] += 1
