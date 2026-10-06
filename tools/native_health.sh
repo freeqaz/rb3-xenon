@@ -33,7 +33,11 @@
 # that nothing re-reads.
 #
 # So this script does three things the link gate does not:
-#   1. RUNS the binaries and counts their gate verdicts.
+#   1. RUNS EVERY native target (all 18, since W16-PE) on real data and FAILS on
+#      a crash, a hang, a nonzero exit, a [FAIL] line, or a run that exits 0
+#      without printing its completion line; counts gate verdicts where the
+#      target prints them. (Before W16-PE it ran 4 of 18, which is how
+#      rb3-vocal2/rb3-harmony crashed for two months with every check green.)
 #   2. Has a --selftest that DEMONSTRATES the negative controls go red.
 #      A runtime gate nobody has shown able to FAIL is worth nothing, and this
 #      repo's ledger of vacuous gates is long (the native gate itself once
@@ -61,12 +65,20 @@
 #     RB3_ASSETS   data dir (default: ~/code/milohax/rb3/orig-assets/xbox-zip)
 #     RB3_ARK_REF  independently-extracted reference file for rb3-ark's
 #                  byte-exactness gate (default: the extracted-xbox-full copy)
+#     RB3_MILOHAX  root for the chart/dta inputs below (default ~/code/milohax)
+#     RB3_MID_VICARIOUS / RB3_MID_PILLS / RB3_MID_CENTERFOLD / RB3_SONGS_DTA
+#                  per-input overrides; see the RUNTIME section for which target
+#                  reads which. An absent input makes that target UNRUNNABLE
+#                  (nodata), never a pass.
+#     NATIVE_HEALTH_TIMEOUT  per-target wall bound in seconds (default 120);
+#                  exceeding it is a FAIL (hang).
 #
 # EXIT CODES -- deliberately the SAME vocabulary as native_build_gate.sh, so the
 # two can be read by one reader:
 #     0  everything asked for was measured, and all of it is healthy.
-#     1  something is BROKEN: the link gate failed, a runtime gate failed, or
-#        (under --selftest) a negative control did NOT go red.
+#     1  something is BROKEN: the link gate failed, a runtime target crashed /
+#        hung / exited nonzero / failed a gate / stopped before its completion
+#        line, or (under --selftest) a negative control did NOT go red.
 #     2  the script COULD NOT RUN AT ALL (bad option, no such dir, no native/).
 #     3  it RAN and does NOT VOUCH FOR FULL COVERAGE -- a runtime instrument was
 #        UNRUNNABLE for a verified environmental reason (no GPU, absent assets),
@@ -76,6 +88,9 @@
 # THE SUMMARY LINE
 #     NATIVE_HEALTH_RESULT verdict=... link=... runtime=... selftest=... rc=...
 #     Keys, order and spelling are the contract; add fields at the END only.
+#     Appended by W16-PE: runtime_crashed=<N targets that died on a signal>
+#     runtime_failed=<name:kind,...|none>, kind in
+#     crash|hang|exit|gatefail|nocomplete|nogates.
 
 set -uo pipefail
 
@@ -85,7 +100,8 @@ emit() {  # verdict link link_ver link_exp link_skip runtime rt_ran rt_tot
          "link_skipped=$5 runtime=$6 runtime_ran=$7 runtime_total=$8" \
          "gates_pass=$9 gates_fail=${10} unrunnable=${11} selftest=${12}" \
          "scatter_unlinked=${13} scatter_dirb=${14} scatter_multihost=${15} rc=${16}" \
-         "handpose_controls=${17:--} handpose_baseline_fail=${18:--}"
+         "handpose_controls=${17:--} handpose_baseline_fail=${18:--}" \
+         "runtime_crashed=${19:--} runtime_failed=${20:--}"
 }
 
 SELFTEST=0
@@ -154,79 +170,173 @@ else
 fi
 
 # --------------------------------------------------------------- RUNTIME ----
-# Each entry: [--no-assets] <target> <argv...>. Only the targets that emit the
-# house `  [PASS]/[FAIL]` contract AND propagate the verdict to their exit code;
-# the remaining 14 have ad-hoc printing and no common contract.
+# EVERY native target is RUN here, not just the four that print the house
+# `  [PASS]/[FAIL]` contract. (Lane W16-PE, 2026-10-06.)
 #
-# ⚠ This comment used to end with "-- main_score2 in particular prints
-# MATCH/DIVERGENT and returns 0 UNCONDITIONALLY, so it cannot be read as a gate".
-# That was true when N1-GPUGATES wrote it and STALE from 2026-09-10, when
-# L4-NATIVESCATTER gave main_score2.cpp the contract and a real --force-divergent
-# flag. It is wired in below. Re-verified here before wiring, rather than trusted:
-#   (none)              rc=0, 3 [PASS], 0 [FAIL]
-#   --force-divergent   rc=1, 1 [PASS], 2 [FAIL]  (scenB-longest-streak still
-#                       passes => targeted, not a blanket red)
-#   --forcedivergent    rc=2  (unknown argument REFUSED, not silently ignored)
-# rb3-score2 is pure arithmetic against the M5 score_engine transcription: it
-# needs neither assets nor a GPU, which is why it is the one runtime instrument
-# that can run on a box without the ~4 GB ark -- hence --no-assets, so the assets
-# gate does not report it UNRUNNABLE (and drag the verdict to INCOMPLETE) for a
-# dependency it does not have.
+# WHY: until W16-PE this section ran four targets (milo, ark, render, score2).
+# The other 14 were linked by the gate and run by NOTHING. rb3-vocal2 and
+# rb3-harmony segfaulted on their first frame from f3ec9592d (2026-08-03) until
+# W16-PD found it by hand on 2026-10-03 -- two months during which every gate
+# and every health run on this box stayed green. A target nobody runs is worth
+# nothing, however well it links. The full set costs ~3 s wall on a warm tree
+# (measured: render 1.3 s, frame 0.6 s, everything else <0.25 s), so there was
+# never a cost reason to leave any of them out.
+#
+# WHAT EACH RUN MUST DO TO BE GREEN, in the order it is checked:
+#   1. not HANG      -- bounded by `timeout` ($NATIVE_HEALTH_TIMEOUT, default
+#                       120 s). rc 124 = HANG. (If TERM is ignored, `-k` sends
+#                       KILL and the rc is 137, which reads as CRASH SIGKILL --
+#                       still a FAIL, just labelled by the signal.)
+#   2. not CRASH     -- rc > 128 means death by signal (coreutils timeout
+#                       re-raises the child's signal on itself, so a SIGSEGV is
+#                       rc 139 through the wrapper as well -- measured).
+#   3. exit 0        -- any other nonzero rc is EXIT.
+#   4. no `  [FAIL] ` line.
+#   5. print its COMPLETION MARKER -- the line each driver prints only after its
+#                       last stage. rc 0 is not enough on its own: rb3-midi
+#                       `--list` is a real `return 0` that runs no gate at all,
+#                       and the selftest below uses exactly that path as the
+#                       control for this check.
+#   6. --gated targets must also print >=1 `  [PASS] ` line.
+#
+# ⛔ SEMANTICS CHANGE vs. the pre-W16-PE run_target: a run that printed ZERO gate
+# lines used to be classified UNRUNNABLE ("novgates") BEFORE its rc was looked
+# at, so a target that segfaulted before its first [PASS] line made the whole
+# health run INCOMPLETE (rc=3, "nothing is known to be broken") instead of FAIL.
+# A crash is now a FAIL whatever was or was not printed. UNRUNNABLE is reserved
+# for VERIFIED environmental reasons checked BEFORE the run: no executable, a
+# declared input (--needs) absent from disk, or no GPU (rb3-render rc 2 /
+# rb3-frame's adapter-init message).
+#
+# Inputs are DECLARED here instead of being left to each driver's hardcoded
+# default, so a missing file is reported as `nodata` rather than read as a
+# driver abort. All of them are real shipped data (the ark, retail songs.dta,
+# real RB3/RB3DX charts) except rb3-score2 (arithmetic against M5),
+# rb3-save (serialization round-trip) and rb3-frame (GPU clear), which take none.
 echo
-echo "--- runtime gates ---"
+echo "--- runtime: every native target, run ---"
 NB="$DIR/native/build"
+MH="${RB3_MILOHAX:-$HOME/code/milohax}"
+MID_VICARIOUS="${RB3_MID_VICARIOUS:-$MH/onyx/songs-grinnz/tool/vicarious/notes.mid}"
+MID_PILLS="${RB3_MID_PILLS:-$MH/onyx/songs-cort/hurt/pills/notes.mid}"
+MID_CENTERFOLD="${RB3_MID_CENTERFOLD:-$MH/rock-band-3-deluxe/_ark/songs/centerfold/centerfold.mid}"
+SONGS_DTA="${RB3_SONGS_DTA:-$MH/rb3/orig-assets/extracted/songs/songs.dta}"
+RT_TIMEOUT="${NATIVE_HEALTH_TIMEOUT:-120}"
 gates_pass=0; gates_fail=0; rt_ran=0; rt_total=0; unrunnable=(); green=()
+rt_crashed=0; rt_failed=()
 
-# Count gate verdict lines, and REFUSE to call a zero-gate run a pass.
-# A binary that prints nothing has not passed; it has not been measured.
-run_target() {  # [--no-assets] name, then argv
-    local need_assets=1
-    if [ "${1:-}" = "--no-assets" ]; then need_assets=0; shift; fi
-    local name="$1"; shift
+# classify_run LOG MARKER GATED NAME -- cmd...
+# Runs cmd under timeout, then sets CL_STATUS (OK|FAIL|UNRUNNABLE), CL_KIND
+# (ok|hang|crash|exit|gatefail|nocomplete|nogates|nogpu), CL_WHY, CL_RC, CL_P, CL_F.
+# Shared by the real runs AND the selftest controls, so a control that goes red
+# proves THIS classifier fires -- not a copy of it.
+classify_run() {
+    local log="$1" marker="$2" gated="$3" name="$4"; shift 5
+    # rc captured DIRECTLY. Never `prog | tail; echo $?` -- that reports TAIL's rc.
+    timeout -k 10 "$RT_TIMEOUT" "$@" > "$log" 2>&1
+    local rc=$?
+    CL_RC=$rc
+    CL_P=$(G -c '^  \[PASS\] ' "$log"); CL_P=${CL_P:-0}
+    CL_F=$(G -c '^  \[FAIL\] ' "$log"); CL_F=${CL_F:-0}
+    if [ "$rc" -eq 124 ]; then
+        CL_STATUS=FAIL; CL_KIND=hang; CL_WHY="HANG -- still running after ${RT_TIMEOUT}s"; return
+    fi
+    if [ "$rc" -gt 128 ]; then
+        local sig; sig="$(kill -l $((rc - 128)) 2>/dev/null)" || sig="$((rc - 128))"
+        CL_STATUS=FAIL; CL_KIND=crash; CL_WHY="CRASH -- died on SIG$sig (rc=$rc)"; return
+    fi
+    if [ "$rc" -eq 2 ] && [ "$name" = "rb3-render" ]; then
+        # main_render.cpp returns 2 for "NO GPU" specifically, BEFORE the
+        # load/pose/draw/png gates. That is the environment, not the code.
+        CL_STATUS=UNRUNNABLE; CL_KIND=nogpu; CL_WHY="rc=2 NO GPU; reached only $((CL_P + CL_F)) gates"; return
+    fi
+    if [ "$rc" -eq 1 ] && [ "$name" = "rb3-frame" ] \
+       && G -q 'GpuDevice::Init FAILED\|adapter is the NULL backend' "$log"; then
+        CL_STATUS=UNRUNNABLE; CL_KIND=nogpu; CL_WHY="no usable GPU adapter (main_frame.cpp's own message)"; return
+    fi
+    if [ "$rc" -ne 0 ]; then
+        CL_STATUS=FAIL; CL_KIND=exit; CL_WHY="EXIT rc=$rc"; return
+    fi
+    if [ "$CL_F" -ne 0 ]; then
+        CL_STATUS=FAIL; CL_KIND=gatefail; CL_WHY="rc=0 but $CL_F gate(s) FAILED"; return
+    fi
+    if ! G -Eq "$marker" "$log"; then
+        CL_STATUS=FAIL; CL_KIND=nocomplete
+        CL_WHY="rc=0 but never printed its completion line /$marker/ -- it stopped early"; return
+    fi
+    if [ "$gated" = 1 ] && [ "$CL_P" -eq 0 ]; then
+        CL_STATUS=FAIL; CL_KIND=nogates; CL_WHY="rc=0 but ZERO gate lines -- it measured nothing"; return
+    fi
+    CL_STATUS=OK; CL_KIND=ok; CL_WHY="rc=0"
+}
+
+run_target() {  # [--gated] NAME MARKER [--needs PATH]... -- ARGV...
+    local gated=0
+    if [ "${1:-}" = "--gated" ]; then gated=1; shift; fi
+    local name="$1" marker="$2"; shift 2
+    local need missing=""
+    while [ "${1:-}" = "--needs" ]; do
+        need="$2"; shift 2
+        [ -e "$need" ] || missing="${missing:-$need}"
+    done
+    [ "${1:-}" = "--" ] && shift
     rt_total=$((rt_total + 1))
     if [ ! -x "$NB/$name" ]; then
-        echo "  UNRUNNABLE $name -- no executable (the link gate above is the authority on why)"
+        printf '  %-10s %-12s -- no executable (the link gate is the authority on why)\n' UNRUNNABLE "$name"
         unrunnable+=("$name:nobinary"); return
     fi
-    if [ "$need_assets" -eq 1 ] && [ ! -d "$ASSETS" ]; then
-        echo "  UNRUNNABLE $name -- assets absent at $ASSETS (set RB3_ASSETS)"
-        unrunnable+=("$name:noassets"); return
+    if [ -n "$missing" ]; then
+        printf '  %-10s %-12s -- input absent: %s\n' UNRUNNABLE "$name" "$missing"
+        unrunnable+=("$name:nodata"); return
     fi
     local log="$LOGDIR/native_health_${name}_$SLUG.log"
-    # rc captured DIRECTLY. Never `prog | tail; echo $?` -- that reports TAIL's rc.
-    "$NB/$name" "$@" > "$log" 2>&1
-    local rc=$?
-    local p f; p=$(G -c '^  \[PASS\] ' "$log"); f=$(G -c '^  \[FAIL\] ' "$log")
-    p=${p:-0}; f=${f:-0}
-    if [ "$rc" -eq 2 ] && [ "$name" = "rb3-render" ]; then
-        # main_render.cpp:5131 returns 2 for "NO GPU" specifically, BEFORE the
-        # load/pose/draw/png gates. That is the environment, not the code, and
-        # conflating it with rc=1 would report a broken build on a driverless box.
-        echo "  UNRUNNABLE $name -- rc=2 NO GPU; reached only $((p + f)) of ~27 gates"
-        echo "             $(G '\[FAIL\]' "$log" | head -1)"
-        unrunnable+=("$name:nogpu"); return
-    fi
-    if [ $((p + f)) -eq 0 ]; then
-        # Anti-vacuity: a run that emits no verdict has measured NOTHING.
-        echo "  UNRUNNABLE $name -- rc=$rc but ZERO gate lines; it measured nothing"
-        unrunnable+=("$name:novgates"); return
-    fi
+    classify_run "$log" "$marker" "$gated" "$name" -- "$NB/$name" "$@"
+    case "$CL_STATUS" in
+    UNRUNNABLE)
+        printf '  %-10s %-12s -- %s\n' UNRUNNABLE "$name" "$CL_WHY"
+        G '\[FAIL\]' "$log" | head -1 | sed 's/^/             /'
+        unrunnable+=("$name:$CL_KIND"); return ;;
+    esac
     rt_ran=$((rt_ran + 1))
-    gates_pass=$((gates_pass + p)); gates_fail=$((gates_fail + f))
-    if [ "$rc" -ne 0 ] || [ "$f" -ne 0 ]; then
-        echo "  FAIL       $name -- rc=$rc, $p passed, $f FAILED"
-        G '^  \[FAIL\] ' "$log" | head -5 | sed 's/^/            /'
+    gates_pass=$((gates_pass + CL_P)); gates_fail=$((gates_fail + CL_F))
+    if [ "$CL_STATUS" = FAIL ]; then
+        printf '  %-10s %-12s -- %s; %s gate(s) passed, %s failed\n' FAIL "$name" "$CL_WHY" "$CL_P" "$CL_F"
+        G '^  \[FAIL\] ' "$log" | head -5 | sed 's/^/             /'
+        echo "             last output: $(G -v "^timeout: " "$log" | tail -n 1 | cut -c1-100)"
+        rt_failed+=("$name:$CL_KIND")
+        [ "$CL_KIND" = crash ] && rt_crashed=$((rt_crashed + 1))
     else
-        echo "  OK         $name -- rc=0, $p gate(s) passed"
+        if [ "$gated" = 1 ]; then
+            printf '  %-10s %-12s -- rc=0, %s gate(s) passed\n' OK "$name" "$CL_P"
+        else
+            printf '  %-10s %-12s -- rc=0, ran to completion\n' OK "$name"
+        fi
         green+=("$name")
     fi
     echo "             log: $log"
 }
 
-run_target rb3-milo "$ASSETS" ui/track/gen/tracksystem_meshes.milo_xbox
-run_target rb3-ark  "$ASSETS" "$ARK_REF"
-run_target rb3-render "$ASSETS" "$LOGDIR/native_health_render_out_$SLUG"
-run_target --no-assets rb3-score2
+# Order and membership mirror native_build_gate.sh's KNOWN_TARGETS, so a target
+# added there without a row here is visible as a count mismatch (runtime_total
+# vs link_expected) on the summary line.
+run_target         rb3-dta     '^Done\. Showed [0-9]+ song'  --needs "$SONGS_DTA"      -- "$SONGS_DTA"
+run_target --gated rb3-song    '^RESULT: ALL GATES PASSED'   --needs "$ASSETS"         -- "$ASSETS"
+run_target --gated rb3-midi    '^RESULT: ALL GATES PASSED'   --needs "$ASSETS"         -- "$ASSETS"
+run_target         rb3-gem     '^Done\.$'                    --needs "$MID_PILLS"      -- "$MID_PILLS"
+run_target         rb3-hit     '^Done\.$'                    --needs "$MID_PILLS"      -- "$MID_PILLS"
+run_target         rb3-score   '^Done\.$'                    --needs "$MID_PILLS"      -- "$MID_PILLS"
+run_target --gated rb3-score2  '^RESULT: OK'                                           --
+run_target         rb3-score3  '^Done\.$'                    --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
+run_target         rb3-score4  '^Done\.$'                    --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
+run_target         rb3-vocal   '^  all-off \(\+6\) '         --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
+run_target         rb3-vocal2  '^Done\.$'                    --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
+run_target         rb3-harmony '^Done\.$'                    --needs "$MID_CENTERFOLD" -- "$MID_CENTERFOLD"
+run_target         rb3-crowd   '^=== M12 complete'           --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
+run_target         rb3-save    '^=== ALL ROUND-TRIPS OK'                               --
+run_target --gated rb3-ark     '^RESULT: ALL GATES PASSED'   --needs "$ASSETS" --needs "$ARK_REF" -- "$ASSETS" "$ARK_REF"
+run_target         rb3-frame   '^rb3-frame: OK '                                       -- "$LOGDIR/native_health_frame_$SLUG.png"
+run_target --gated rb3-milo    '^RESULT: ALL GATES PASSED'   --needs "$ASSETS"         -- "$ASSETS" ui/track/gen/tracksystem_meshes.milo_xbox
+run_target --gated rb3-render  '^RESULT: ALL GATES PASSED'   --needs "$ASSETS"         -- "$ASSETS" "$LOGDIR/native_health_render_out_$SLUG"
 
 # -------------------------------------------------------------- SELFTEST ----
 # Does each negative control actually go RED? The PAIR is the control: the
@@ -287,6 +397,61 @@ if [ $SELFTEST -eq 1 ]; then
         probe score2-divergent rb3-score2 "$NB/rb3-score2" --force-divergent
     else
         echo "  SKIP  score2-divergent -- binary absent"; st_skip=$((st_skip + 1))
+    fi
+    # ---- RUNTIME CLASSIFIER CONTROLS (W16-PE) ------------------------------
+    # The all-targets runtime section above is only worth something if its
+    # classifier is shown to go red on each failure class it claims to catch.
+    # Each control runs a REAL target binary through the SAME classify_run and
+    # must land in the SPECIFIC class named -- "it went red somehow" is not
+    # enough, because a crash misread as e.g. `nocomplete` would hide the
+    # signal. Same pair rule as above: the target's positive run must be green.
+    #   crash-segv    rb3-harmony with an 16 KiB stack limit -> a real SIGSEGV
+    #                 in the real process (5/5 deterministic, rc 139 through
+    #                 timeout). It dies before main prints anything, so it proves
+    #                 signal death is classified CRASH regardless of output; the
+    #                 mid-run case was demonstrated by source injection in W16-PE
+    #                 (docs/decomp/W16PE_NATIVE_RUNTIME_ALL_TARGETS_2026-10-06.md).
+    #   exit-nonzero  rb3-crowd asked for a part the chart lacks -> its real
+    #                 "track not found; abort." path, rc 1.
+    #   nocomplete    rb3-midi --list -> a real `return 0` that runs no gate and
+    #                 never prints RESULT. Without the completion-marker check
+    #                 this run would read as healthy.
+    ctl() {  # label base expect-kind marker gated -- cmd...
+        local label="$1" base="$2" expect="$3" marker="$4" gated="$5"; shift 5
+        if ! was_green "$base"; then
+            echo "  SKIP  $label -- $base's POSITIVE run was not green, so a red here"
+            echo "        would prove nothing (same breakage twice, not the control)."
+            st_skip=$((st_skip + 1)); return
+        fi
+        local log="$LOGDIR/native_health_selftest_${label}_$SLUG.log"
+        classify_run "$log" "$marker" "$gated" "$base" "$@"
+        if [ "$CL_STATUS" = FAIL ] && [ "$CL_KIND" = "$expect" ]; then
+            echo "  RED   $label -- classified $CL_KIND: $CL_WHY (control WORKS)"
+            st_ok=$((st_ok + 1))
+        else
+            echo "  GREEN $label -- expected class '$expect', got $CL_STATUS/$CL_KIND ($CL_WHY)."
+            echo "        THE CONTROL DID NOT FIRE as specified; the runtime classifier is suspect."
+            st_bad=$((st_bad + 1))
+        fi
+        echo "        log: $log"
+    }
+    if [ -x "$NB/rb3-harmony" ] && [ -e "$MID_CENTERFOLD" ]; then
+        ctl crash-segv rb3-harmony crash '^Done\.$' 0 -- \
+            bash -c 'ulimit -s 16; exec "$@"' _ "$NB/rb3-harmony" "$MID_CENTERFOLD"
+    else
+        echo "  SKIP  crash-segv -- binary or chart absent"; st_skip=$((st_skip + 1))
+    fi
+    if [ -x "$NB/rb3-crowd" ] && [ -e "$MID_VICARIOUS" ]; then
+        ctl exit-nonzero rb3-crowd exit '^=== M12 complete' 0 -- \
+            "$NB/rb3-crowd" "$MID_VICARIOUS" "PART NOSUCH"
+    else
+        echo "  SKIP  exit-nonzero -- binary or chart absent"; st_skip=$((st_skip + 1))
+    fi
+    if [ -x "$NB/rb3-midi" ] && [ -d "$ASSETS" ]; then
+        ctl nocomplete rb3-midi nocomplete '^RESULT: ALL GATES PASSED' 1 -- \
+            "$NB/rb3-midi" "$ASSETS" --list
+    else
+        echo "  SKIP  nocomplete -- binary or assets absent"; st_skip=$((st_skip + 1))
     fi
     # ---- THE THREE RB3_HANDPOSE_* CONTROLS, DELTA-SCORED -------------------
     # ⛔⛔ `rc != 0 && failures > 0` IS NOT A VALID CREDIT FOR THESE, and scoring
@@ -424,6 +589,7 @@ echo
 runtime_verdict="PASS"
 [ ${#unrunnable[@]} -gt 0 ] && runtime_verdict="INCOMPLETE"
 [ "$gates_fail" -ne 0 ] && runtime_verdict="FAIL"
+[ ${#rt_failed[@]} -gt 0 ] && runtime_verdict="FAIL"   # crash / hang / exit / nocomplete
 [ "$rt_ran" -eq 0 ] && runtime_verdict="UNRUNNABLE"
 
 rc=0; verdict="PASS"
@@ -438,7 +604,8 @@ fi
 
 case "$verdict" in
 FAIL)
-    echo "NATIVE HEALTH: FAIL -- something is BROKEN (rc=1)" ;;
+    echo "NATIVE HEALTH: FAIL -- something is BROKEN (rc=1)"
+    for u in ${rt_failed[@]+"${rt_failed[@]}"}; do echo "    - runtime FAILED: $u"; done ;;
 INCOMPLETE)
     echo "NATIVE HEALTH: INCOMPLETE -- ran, but does NOT vouch for full coverage (rc=3)"
     echo "  NOTHING IS KNOWN TO BE BROKEN; something was NOT TESTED:"
@@ -452,5 +619,7 @@ esac
 emit "$verdict" "$link_verdict" "$link_ver" "$link_exp" "$link_skip" \
      "$runtime_verdict" "$rt_ran" "$rt_total" "$gates_pass" "$gates_fail" \
      "$(if [ ${#unrunnable[@]} -gt 0 ]; then IFS=,; echo "${unrunnable[*]}"; else echo none; fi)" \
-     "$selftest" "$sc_unlinked" "$sc_b" "$sc_multi" "$rc" "$hp_ctl" "$hp_base"
+     "$selftest" "$sc_unlinked" "$sc_b" "$sc_multi" "$rc" "$hp_ctl" "$hp_base" \
+     "$rt_crashed" \
+     "$(if [ ${#rt_failed[@]} -gt 0 ]; then IFS=,; echo "${rt_failed[*]}"; else echo none; fi)"
 exit $rc
