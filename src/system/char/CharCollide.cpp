@@ -231,8 +231,12 @@ void CharCollide::Deform() {
         CharCollideStruct *s = &unkStructs[i * 4];
         CharCollideStruct *s2 = s;
         for (int j = 0; j < 4; j++) {
-            Vector3 &pos = mMesh->Verts(s2->vertIdx).pos;
-            Vector3 vertPos(pos.x + s2->vec.x, pos.y + s2->vec.y, pos.z + s2->vec.z);
+            int idx = s2->vertIdx;
+            Vector3 &pos = mMesh->Verts(idx).pos;
+            Vector3 vertPos;
+            vertPos.x = pos.x + s2->vec.x;
+            vertPos.y = pos.y + s2->vec.y;
+            vertPos.z = pos.z + s2->vec.z;
             s2++;
             center.x += vertPos.x;
             center.y += vertPos.y;
@@ -248,8 +252,8 @@ void CharCollide::Deform() {
             Vector3 &pos = mMesh->Verts(s[j].vertIdx).pos;
             Vector3 deformed;
             deformed.y = s[j].vec.y * scale + pos.y;
-            deformed.z = s[j].vec.z * scale + pos.z;
             deformed.x = s[j].vec.x * scale + pos.x;
+            deformed.z = s[j].vec.z * scale + pos.z;
             sph.radius += Distance(deformed, center);
         }
         sph.radius *= 0.25f;
