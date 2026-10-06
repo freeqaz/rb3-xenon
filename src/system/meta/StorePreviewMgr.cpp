@@ -115,7 +115,7 @@ void StorePreviewMgr::DownloadPreviewFile(String const &str) { AddToDownloadQueu
 BEGIN_HANDLERS(StorePreviewMgr)
 HANDLE_ACTION(clear_current_preview, ClearCurrentPreview())
 HANDLE_ACTION(set_current_preview_file, SetCurrentPreviewFile(_msg->Str(2)))
-HANDLE_ACTION(download_preview_file, AddToDownloadQueue(_msg->Str(2)))
+HANDLE_ACTION(download_preview_file, DownloadPreviewFile(_msg->Str(2)))
 HANDLE_EXPR(is_downloading_file, IsDownloadingFile(_msg->Str(2)))
 HANDLE_EXPR(allow_preview_download, AllowPreviewDownload(_msg->Str(2)))
 #ifdef HX_NATIVE
