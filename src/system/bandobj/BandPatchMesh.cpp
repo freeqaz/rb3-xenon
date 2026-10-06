@@ -1124,6 +1124,12 @@ bool BandPatchMesh::FindXfm(RndMesh *mesh, const Vector2 &uv, Transform &xfm) {
     Multiply(uvMat, normMat, posMat);
     Vector3 uvw(uv.x, uv.y, 1.0f);
     Multiply(uvw, posOut, xfm.v);
+    // Retail reads the two gradient rows once, here, and keeps all six floats
+    // in f26-f31 across the calls below for the closing lengths; Length(posOut.x)
+    // after the calls reloads them from the stack instead (frame 0x1f0, one
+    // saved FPR, 75.2%).
+    Vector3 axisX(posOut.x.x, posOut.x.y, posOut.x.z);
+    Vector3 axisY(posOut.y.x, posOut.y.y, posOut.y.z);
     Multiply(uvw, posMat, xfm.m.z);
     ::Normalize(xfm.m.z, xfm.m.z);
     RndMesh::Vert centerVert;
@@ -1136,8 +1142,8 @@ bool BandPatchMesh::FindXfm(RndMesh *mesh, const Vector2 &uv, Transform &xfm) {
     centerMV.unk10.z *= -1.0f;
     centerVert.norm = xfm.m.z;
     centerMV.Normalize(1);
-    float scaleX = Length(posOut.x) * 0.5f;
-    float scaleY = Length(posOut.y) * 0.5f;
+    float scaleX = Length(axisX) * 0.5f;
+    float scaleY = Length(axisY) * 0.5f;
     xfm.m.x.x = centerMV.unk4.x * scaleX;
     xfm.m.x.y = centerMV.unk4.y * scaleX;
     xfm.m.x.z = centerMV.unk4.z * scaleX;
