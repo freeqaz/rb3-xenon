@@ -38,16 +38,26 @@ bitfields, padding, vftable slots, ``this`` adjustors, vbase table), or clang's
 so equal text means equal layout.  Unequal text means the class differs in size,
 a member offset, name or type, a base, or a vtable slot.
 
-TWO PARSE TRAPS (both measured on real output, 2026-10-06)
----------------------------------------------------------
-1. MSVC interleaves ``/showIncludes`` notes and warnings into the report
-   MID-LINE (``\\t+-Note: including file: x.h\\n--``).  Notes are cut out as
-   whole ``Note: including file: ...\\n`` substrings, which splices the
-   interrupted report line back together.  Warnings are suppressed with ``/w``.
-   W16-PZ's instrument G read warning text as member names
-   (``ProfileMgr``, ``RockCentral``, ...).
-2. Bitfield rows are printed ``92.\\t| mForceLod (bitstart=29,nbits=3)``.  The
+PARSE TRAPS (each measured on real output, 2026-10-06; each produced false
+splits before it was handled, and each has a selftest leg)
+---------------------------------------------------------------------------
+1. MSVC interleaves ``/showIncludes`` notes into the report MID-LINE
+   (``\t+-Note: including file: x.h\n--``).  Notes are cut out as whole
+   ``Note: including file: ...\n`` substrings, which splices the interrupted
+   report line back together (A1).  Compiler warnings are suppressed with
+   ``/w``; W16-PZ's instrument G read warning text as member names.
+2. ``/w`` does NOT silence the DRIVER: a TU with per-TU flag overrides (the
+   Quazal ``/Od`` region) prints ``cl : Command line warning D9025``, which
+   lands inside whatever block is printing -- 47 TUs' copies of
+   ``_RTL_CRITICAL_SECTION`` etc. read as a second layout (A4).
+3. Bitfield rows are printed ``92.\t| mForceLod (bitstart=29,nbits=3)``.  The
    fingerprint is the text itself, so no row parser can get this wrong.
+4. clang prints a C TU's trailer as ``[sizeof=16, align=8]`` and a C++ TU's as
+   ``[sizeof=16, dsize=16, align=8, nvsize=16, nvalign=8]``; the class-key the
+   TU spelled (``struct Hmx::Color`` vs ``class Hmx::Color``); anonymous
+   declarations by the include SPELLING of their path; and an empty class as
+   ``class HolmesInput (empty)``.  All four are normalized (A5 for the last,
+   which had hidden every member-less stand-in for a real class).
 
 CACHE
 -----
@@ -63,7 +73,8 @@ entries.
 EXIT CODES (check)
 -----------------
 0  PASS        every TU answered, every SPLIT/UNRESOLVED name is allowlisted
-               with its exact fingerprints
+               (a PIN entry with its exact fingerprints, or a reviewed LIST
+               entry -- see ``evaluate``)
 1  FAIL        an unexplained SPLIT or UNRESOLVED name (or, with --strict, a
                stale allowlist entry)
 2  UNRUNNABLE  no build.ninja / no native build for a domain that was asked for
@@ -96,7 +107,7 @@ import time
 
 # Per-domain parser versions: bumping one invalidates only that domain's cache.
 TOOL_VERSIONS = {"x360": "layout-odr-6", "native": "layout-odr-native-5"}
-TOOL_VERSION = "layout-odr-5/native-2"
+TOOL_VERSION = "/".join(f"{k}={v}" for k, v in sorted(TOOL_VERSIONS.items()))
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION = "45410914"
 CACHE = os.environ.get("RB3_LAYOUT_ODR_CACHE",
