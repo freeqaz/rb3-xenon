@@ -173,9 +173,7 @@ set(DECOMP_FLAGS
 # src/cc5_stub_probe.c). Off by default; a normal build is unaffected.
 option(RB3_STUB_PROBE "Instrument link-stub TUs to record which stubs execute" OFF)
 set(RB3_STUB_TUS
-    ${CMAKE_SOURCE_DIR}/src/m6_link_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/m8_link_stubs.cpp
-    ${CMAKE_SOURCE_DIR}/src/m10_link_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/m10_leaf_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/m4_save_link_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/native_undecomp_stubs.cpp
@@ -313,6 +311,11 @@ set(M1_SOURCES
     # W16-PD: real TrackTypeToSym (was a weak no-op in m1_link_stubs.s).
     ${REPO_ROOT}/src/system/beatmatch/TrackType.cpp
     ${REPO_ROOT}/src/band3/meta_band/SongUpgradeMgr.cpp
+    # W16-PJ: real AllowedToAccessContent / MaxAllowedHmxMaturityLevel (was a
+    # weak return-0 in m1_link_stubs.s, i.e. every rated song read RESTRICTED).
+    ${REPO_ROOT}/src/band3/meta_band/Utl.cpp
+    # W16-PJ: real ControllerType/ScoreType <-> TrackType tables Utl.cpp calls.
+    ${REPO_ROOT}/src/band3/game/Defines.cpp
 )
 
 rb3_add_executable(rb3-song
@@ -327,7 +330,16 @@ rb3_add_executable(rb3-song
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m1_link_stubs.s
 )
-target_compile_options(rb3-song PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS})
+target_compile_options(rb3-song PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
+    -ffunction-sections -fdata-sections)
+# W16-PJ: the same link model as rb3-score2/3/4. Utl.cpp is linked whole for
+# AllowedToAccessContent (BandSongMgr::IsRestricted); its UI-side functions
+# (UtlInit's DataFunc handlers, GetUserFontChar, IsVignette, IsLeaderLocal, the
+# fake-upload cheat) reference BandUser / MetaPerformer / SessionMgr / UIPanel /
+# SongStatusMgr / OvershellPanel, none of which links here and none of which the
+# song driver reaches. --gc-sections drops those unreferenced sections instead of
+# stubbing their callees.
+target_link_options(rb3-song PRIVATE -Wl,--gc-sections)
 target_compile_definitions(rb3-song PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
 target_include_directories(rb3-song SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(rb3-song PRIVATE
@@ -505,13 +517,25 @@ target_include_directories(rb3-score PRIVATE
 )
 target_link_libraries(rb3-score PRIVATE Threads::Threads ZLIB::ZLIB)
 
+# W16-PJ: the REAL SongDB (+ the MultiplayerAnalyzer its ctor builds), replacing
+# the synthetic SongDB that m8_support.cpp / m10_support.cpp / the m6/m8/m10 link
+# stubs used to define. Drivers parse into TheSongDB->GetData() and run the real
+# SongData::PostLoad, which feeds the SongDB through its parser-sink interface.
+set(SONGDB_SOURCES
+    ${REPO_ROOT}/src/band3/game/SongDB.cpp
+    ${REPO_ROOT}/src/band3/game/MultiplayerAnalyzer.cpp
+)
+
 # --- M6: REAL scoring object graph -------------------------------------------
 # Replaces M5's interim score_engine transcription with the genuine band3
 # scoring TUs — Performer / Player / Scoring / Stats / Band — driven through
 # their real methods (see src/main_score2.cpp for the graph census). Those TUs
 # reference a cascade of game/net/UI singletons the scoring path never executes;
-# m6_link_stubs.cpp / .s satisfy them (honest leaf stubs). score_engine.cpp is
-# linked only for the side-by-side cross-check.
+# m8_link_stubs.cpp satisfies them (honest leaf stubs; W16-PJ retired the
+# separate m6_link_stubs.cpp once its SongDB/capturer/Game stubs were replaced by
+# real code -- what remained was m8's set). score2/score3 also link the real
+# SongDB + CommonPhraseCapturer and m8_support.cpp. score_engine.cpp is linked
+# only for the side-by-side cross-check.
 set(M6_GAME_SOURCES
     ${REPO_ROOT}/src/band3/game/Performer.cpp
     ${REPO_ROOT}/src/band3/game/Player.cpp
@@ -528,6 +552,8 @@ rb3_add_executable(rb3-score2
     ${CMAKE_SOURCE_DIR}/src/main_score2.cpp
     ${CMAKE_SOURCE_DIR}/src/score_engine.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
+    ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
+    ${SONGDB_SOURCES}
     ${M6_GAME_SOURCES}
     ${ENGINE_SOURCES}
     ${RNDOBJ_SOURCES}
@@ -536,7 +562,8 @@ rb3_add_executable(rb3-score2
     ${M3B_SOURCES}
     ${DTA_LEXER}
     ${NATIVE_SHIMS}
-    ${CMAKE_SOURCE_DIR}/src/m6_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m8_support.cpp
+    ${CMAKE_SOURCE_DIR}/src/m8_link_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
@@ -567,6 +594,8 @@ rb3_add_executable(rb3-score3
     ${CMAKE_SOURCE_DIR}/src/main_score3.cpp
     ${CMAKE_SOURCE_DIR}/src/score_engine.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
+    ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
+    ${SONGDB_SOURCES}
     ${M6_GAME_SOURCES}
     ${ENGINE_SOURCES}
     ${RNDOBJ_SOURCES}
@@ -575,7 +604,8 @@ rb3_add_executable(rb3-score3
     ${M3B_SOURCES}
     ${DTA_LEXER}
     ${NATIVE_SHIMS}
-    ${CMAKE_SOURCE_DIR}/src/m6_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m8_support.cpp
+    ${CMAKE_SOURCE_DIR}/src/m8_link_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
@@ -600,13 +630,14 @@ target_link_libraries(rb3-score3 PRIVATE Threads::Threads ZLIB::ZLIB)
 # REAL SongData::CalcSongPos turns the headless-audio clock into a SongPos and the
 # REAL Player::Poll re-evaluates scoring/energy every frame, start-to-finish. Adds
 # the PORTED CommonPhraseCapturer (X360-inert; drives real overdrive credit) plus
-# the M8 support/stub layer (minimal real SongDB backed by SongData, Game hooks,
-# headless clock). m8_link_stubs replaces m6_link_stubs (four symbols promoted to
-# real behavior); m6_symbols still supplies the singleton globals.
+# the M8 support/stub layer (the REAL SongDB since W16-PJ, real-body Game hooks,
+# headless clock) and m8_link_stubs; m6_symbols still supplies the singleton
+# globals.
 rb3_add_executable(rb3-score4
     ${CMAKE_SOURCE_DIR}/src/main_score4.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
     ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
+    ${SONGDB_SOURCES}
     ${M6_GAME_SOURCES}
     ${ENGINE_SOURCES}
     ${RNDOBJ_SOURCES}
@@ -648,6 +679,7 @@ rb3_add_executable(rb3-vocal
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
     ${REPO_ROOT}/src/band3/game/VocalPart.cpp
     ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
+    ${SONGDB_SOURCES}
     ${M6_GAME_SOURCES}
     ${ENGINE_SOURCES}
     ${RNDOBJ_SOURCES}
@@ -683,9 +715,11 @@ target_link_libraries(rb3-vocal PRIVATE Threads::Threads ZLIB::ZLIB)
 # TambourineManager) on top of the M8 object graph, plus faithful native
 # ports of the leaf helpers (VibratoDetector, TambourineDetector, VocalScoreHistory,
 # VoiceBeat/TalkyMatcher) and m10_support (synthetic GameMic/GameMicManager +
-# vocal SongDB queries). m10_link_stubs replaces m8_link_stubs (drops the
-# GetVocalNoteListCount->0 stub, adds NetSession::IsLocal). Only the mic is
-# synthetic; all scoring is real. See native/src/main_vocal2.cpp for the census.
+# vocal SongDB queries -- the SongDB part retired by W16-PJ, which links the real
+# SongDB.cpp). m10_link_stubs.cpp (once m8 minus the GetVocalNoteListCount->0
+# stub, plus NetSession::IsLocal) became code-identical to m8_link_stubs.cpp and
+# was deleted (W16-PJ). Only the mic is synthetic; all scoring is real. See
+# native/src/main_vocal2.cpp for the census.
 rb3_add_executable(rb3-vocal2
     ${CMAKE_SOURCE_DIR}/src/main_vocal2.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
@@ -698,6 +732,7 @@ rb3_add_executable(rb3-vocal2
     ${REPO_ROOT}/src/system/dsp/VibratoDetector.cpp
     ${REPO_ROOT}/src/system/synth/VoiceBeat.cpp
     ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
+    ${SONGDB_SOURCES}
     ${M6_GAME_SOURCES}
     ${ENGINE_SOURCES}
     ${RNDOBJ_SOURCES}
@@ -709,7 +744,7 @@ rb3_add_executable(rb3-vocal2
     ${CMAKE_SOURCE_DIR}/src/m8_support.cpp
     ${CMAKE_SOURCE_DIR}/src/m10_support.cpp
     ${CMAKE_SOURCE_DIR}/src/m10_leaf_stubs.cpp
-    ${CMAKE_SOURCE_DIR}/src/m10_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m8_link_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
@@ -748,6 +783,7 @@ rb3_add_executable(rb3-harmony
     ${REPO_ROOT}/src/system/dsp/VibratoDetector.cpp
     ${REPO_ROOT}/src/system/synth/VoiceBeat.cpp
     ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
+    ${SONGDB_SOURCES}
     ${M6_GAME_SOURCES}
     ${ENGINE_SOURCES}
     ${RNDOBJ_SOURCES}
@@ -759,7 +795,7 @@ rb3_add_executable(rb3-harmony
     ${CMAKE_SOURCE_DIR}/src/m8_support.cpp
     ${CMAKE_SOURCE_DIR}/src/m10_support.cpp
     ${CMAKE_SOURCE_DIR}/src/m10_leaf_stubs.cpp
-    ${CMAKE_SOURCE_DIR}/src/m10_link_stubs.cpp
+    ${CMAKE_SOURCE_DIR}/src/m8_link_stubs.cpp
     ${CMAKE_SOURCE_DIR}/src/m6_symbols.cpp
     ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s
     ${CMAKE_SOURCE_DIR}/src/m2_link_stubs.s
@@ -794,6 +830,7 @@ rb3_add_executable(rb3-crowd
     ${CMAKE_SOURCE_DIR}/src/main_crowd.cpp
     ${CMAKE_SOURCE_DIR}/src/m3_symbols.cpp
     ${REPO_ROOT}/src/band3/game/CommonPhraseCapturer.cpp
+    ${SONGDB_SOURCES}
     ${M6_GAME_SOURCES}
     ${ENGINE_SOURCES}
     ${RNDOBJ_SOURCES}

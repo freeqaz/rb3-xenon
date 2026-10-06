@@ -240,5 +240,27 @@ int main(int argc, char **argv) {
         g.Check("metadata non-empty", shown > 0 && withMeta == shown, d);
     }
 
+    {
+        // W16-PJ: BandSongMgr::IsRestricted -> the real AllowedToAccessContent /
+        // MaxAllowedHmxMaturityLevel (meta_band/Utl.cpp), over EVERY loaded song.
+        // Natively there is no parental-control limit (xdk_shims.cpp), so the real
+        // chain allows every rating; the weak return-0 stub this replaced read
+        // every song as restricted.
+        int restricted = 0, rated[6] = {0, 0, 0, 0, 0, 0};
+        for (std::set<int>::const_iterator it = avail.begin(); it != avail.end(); ++it) {
+            BandSongMetadata *md = (BandSongMetadata *)mgr.Data(*it);
+            int r = md ? md->Rating() : -1;
+            rated[(r >= 0 && r <= 4) ? r : 5]++;
+            if (mgr.IsRestricted(*it))
+                restricted++;
+        }
+        printf("  [info] ratings: 0=%d 1=%d 2=%d 3=%d 4=%d other=%d\n", rated[0],
+               rated[1], rated[2], rated[3], rated[4], rated[5]);
+        char d[96];
+        snprintf(d, sizeof(d), "%d of %d song(s) restricted", restricted,
+                 (int)avail.size());
+        g.Check("no parental restriction natively", restricted == 0, d);
+    }
+
     return g.Finish();
 }

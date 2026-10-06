@@ -1,14 +1,13 @@
 // rb3-xenon native M8 — link stubs for the full-song run-through.
 //
-// Derived from m6_link_stubs.cpp (the honest off-path leaf stubs for the real
-// scoring TUs), with four symbols PROMOTED to real behavior in m8_support.cpp
-// (Game::GetActivePlayers, SongDB::GetSongDurationMs, SongDB::GetCommonPhraseID)
-// and the three CommonPhraseCapturer methods now supplied by the ported
-// src/band3/game/CommonPhraseCapturer.cpp. Those are removed here to avoid dup
-// symbols. Added: the TrackPanel/TrackPanelDir unison render leaves the ported
-// capturer references (only reached on the multiplayer/unison path, which the
-// single-player headless run never enters — they exist purely so the link
-// resolves).
+// The honest off-path leaf stubs for the real scoring TUs (this file absorbed
+// the retired m6_link_stubs.cpp, and m10_link_stubs.cpp was its exact copy --
+// W16-PJ). NOT here, because real code supplies
+// them: SongDB (src/band3/game/SongDB.cpp, W16-PJ), CommonPhraseCapturer
+// (src/band3/game/CommonPhraseCapturer.cpp), Game::GetActivePlayers /
+// GetPlayerFromTrack / NumActivePlayers / GetScoringTracks (real bodies in
+// m8_support.cpp, W16-PJ). The TrackPanel unison render leaves are only reached
+// on the multiplayer/unison path.
 #include "game/Game.h"
 #include "game/SongDB.h"
 #include "game/Band.h"
@@ -57,7 +56,6 @@ bool BandUserMgr::IsMultiplayerGame() const { return false; }
 bool GameConfig::CanEndGame() const { return false; }
 void GameConfig::ChangeDifficulty(BandUser* a0, int a1)  { }
 void Game::ForceTrackerStars(int a0)  { }
-int Game::NumActivePlayers() const { return 0; }
 void Game::OnPlayerAddEnergy(Player* a0, float a1)  { }
 void Game::OnPlayerQuarantined(Player* a0)  { }
 void Game::OnPlayerSaved(Player* a0)  { }
@@ -80,18 +78,6 @@ bool Player::AllowWarningState() const { return false; }
 bool Player::InFill() const { return false; }
 bool Player::InFreestyleSection() const { return false; }
 bool Player::InTambourinePhrase() const { return false; }
-// SongDB virtual-table key functions (real bodies live in the un-compiled
-// SongDB.cpp; these emit the vtable for our minimal SongDB in m8_support).
-void SongDB::SetNumTracks(int)  { }
-void SongDB::AddTrack(int, Symbol, SongInfoAudioType, TrackType, bool)  { }
-void SongDB::AddPhrase(BeatmatchPhraseType, int, const Phrase &)  { }
-void SongDB::ClearTrackPhrases(int a0)  { }
-bool SongDB::GetCommonPhraseExtent(int a0, int a1, Extent& a2)  { return false; }
-const GameGemList* SongDB::GetGemList(int a0) const { return 0; }
-int SongDB::GetNumOverdrivePhrases(int a0) const { return 0; }
-int SongDB::GetNumUnisonPhrases(int a0) const { return 0; }
-int SongDB::GetVocalNoteListCount() const { return 0; }
-void SongDB::RebuildPhrases(int a0)  { }
 void TrackPanel::PlaySequence(char const* a0, float a1, float a2, float a3)  { }
 
 // ---- capturer unison render leaves (multiplayer/unison path only) ----

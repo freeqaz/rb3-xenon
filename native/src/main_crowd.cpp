@@ -81,6 +81,8 @@
 #include "utl/Symbol.h"
 
 #include "crowd_config_dta.h" // the REAL shipped (crowd ...) block
+#include "scoring_config_dta.h" // W16-PJ: real shipped (solo ...) + (coda ...)
+#include "game/GameConfig.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -92,16 +94,13 @@ extern void InitMakeString();
 extern DataArray *gSystemConfig;
 void DataInit();
 
-// ---- M8 support globals (native/src/m8_support.cpp) ----
+// ---- M8 support (native/src/m8_support.cpp) ----
 extern float gNativeSongMs;
-extern SongData *gM8SongData;
-extern Player *gM8Player;
-extern int gM8TrackNum;
-extern float gM8DurationMs;
-extern std::vector<int> gM8GemPhrase;
 extern std::vector<bool> gM8Dealt;
-extern std::vector<Player *> gM8ActivePlayers;
-extern std::vector<PlayerScoreInfo> gM8BaseScores;
+Game *NativeMakeGame();
+GameConfig *NativeMakeGameConfig(PlayerTrackConfigList *, float);
+void NativeSongDBPostLoad(SongDB *, float);
+static float gM8DurationMs = 0.0f;
 
 static const int kNDiff = 4;
 static const int kExpertDiff = 3;
@@ -313,10 +312,11 @@ static void RunScenario(const char *label, const Chart &ch, int hitEvery,
     Band *band = new Band(true, 1, true);
     band->NativeLoadBonuses();
     NativeCrowdPlayer player(ch.trackTy, Symbol(TrackName(ch.trackTy)), maxMult, band);
+    player.SetTrackNum(ch.track);
     band->mActivePlayers.push_back(&player);
-    gM8Player = &player;
-    gM8ActivePlayers.clear();
-    gM8ActivePlayers.push_back(&player);
+    // The real Game::GetPlayerFromTrack / GetScoringTracks read this.
+    TheGame->mAllActivePlayers.clear();
+    TheGame->mAllActivePlayers.push_back(&player);
     band->mCommonPhraseCapturer = new CommonPhraseCapturer();
 
     CrowdRating *crowd = player.Crowd();
@@ -427,6 +427,8 @@ int main(int argc, char **argv) {
     // Splice the REAL shipped (crowd ...) block into the (scoring ...) section.
     std::string cfg(kConfigHead);
     cfg += kRealCrowdConfigDta;
+    cfg += kRealSoloConfigDta; // W16-PJ: read by the real MultiplayerAnalyzer
+    cfg += kRealCodaConfigDta;
     cfg += ")";
     gSystemConfig = DataReadString(cfg.c_str());
     DataArray *trackSyms = DataReadString(
@@ -439,10 +441,18 @@ int main(int argc, char **argv) {
     printf("crowd config: REAL RB3 config/scoring.dta (crowd ...) block, "
            "difficulty macros expanded\n\n");
 
-    Scoring *scoring = new Scoring();
+    Scoring *scoring = new Scoring(); // TheScoring: read by the real analyzer
+    (void)scoring;
 
+    // TheGame first: the REAL SongDB sink (AddPhrase) consults it during
+    // SongData::PostLoad below.
+    NativeMakeGame();
+    // W16-PJ: parse INTO the real SongDB's own SongData (its ctor registers the
+    // SongDB as that SongData's parser sink and builds its MultiplayerAnalyzer).
+    SongDB *songDB = new SongDB();
+    TheSongDB = songDB;
     NativeSongInfo songInfo;
-    SongData songData;
+    SongData &songData = *songDB->GetData();
     songData.mNumDifficulties = kNDiff;
     songData.mHopoThreshold = songInfo.GetHopoThreshold();
     songData.mSongInfo = &songInfo;
@@ -468,18 +478,27 @@ int main(int argc, char **argv) {
     }
     songData.mTempoMap = tempoMap;
     songData.mMeasureMap = measureMap;
-    for (size_t i = 0; i < songData.mGemDBs.size(); i++) {
+    for (size_t i = 0; i < songData.mGemDBs.size(); i++)
         songData.mGemDBs[i]->MergeChordGems();
-        songData.mGemDBs[i]->Finalize();
-    }
-    PlayerTrackConfigList expertList(1);
-    expertList.mDefaultDifficulty = kExpertDiff;
-    songData.mPlayerTrackConfigList = &expertList;
-    songData.FixUpTrackConfig(&expertList);
-    songData.SetUpTrackDifficulties(&expertList);
 
     int track = songData.TrackNamed(Symbol(partName));
     if (track == -1) { printf("  track '%s' not found; abort.\n", partName); return 1; }
+
+    // W16-PJ: one REAL player config + the REAL SongData::PostLoad (see
+    // main_score4.cpp for the full rationale).
+    PlayerTrackConfigList expertList(1);
+    expertList.mDefaultDifficulty = kExpertDiff;
+    UserGuid playerGuid;
+    playerGuid.Generate();
+    expertList.AddConfig(playerGuid, songData.TrackTypeAt(track), kExpertDiff, 0, false);
+    songData.mPlayerTrackConfigList = &expertList;
+    NativeMakeGameConfig(&expertList, 0.0f);
+    songData.PostLoad(&expertList);
+    if (expertList.GetTrackNumByUserGuid(playerGuid) != track) {
+        printf("  config resolved track %d, expected %d; abort.\n",
+               expertList.GetTrackNumByUserGuid(playerGuid), track);
+        return 1;
+    }
 
     Chart ch;
     ch.track = track;
@@ -502,40 +521,25 @@ int main(int argc, char **argv) {
         ch.gemMs[g] = songData.GetTempoMap()->TickToTime(gm.GetTick());
         if (ch.gemMs[g] > lastMs) lastMs = ch.gemMs[g];
     }
-    ch.gemPhrase.assign(ch.nGems, -1);
-    for (int p = 0; p < ch.nPhrases; p++) {
-        const Phrase &ph = odPhrases.mPhrases[p];
-        int s = ph.GetTick(), e = ph.GetTick() + ph.GetDurationTicks();
-        for (int g = 0; g < ch.nGems; g++)
-            if (gemTick[g] >= s && gemTick[g] < e) ch.gemPhrase[g] = p;
-    }
-    gM8GemPhrase = ch.gemPhrase;
     gM8Dealt.assign(ch.nGems, false);
+    // Song end = last note + tail (the real SongDB::ParseEvents reads the [end]
+    // event from BeatMaster's MIDI event list, which this driver does not build).
     gM8DurationMs = lastMs + 3000.0f;
-    gM8SongData = &songData;
-    gM8TrackNum = track;
+
+    // W16-PJ: the event-independent half of the REAL SongDB::PostLoad --
+    // SetupPhrases / DisableCodaGems / RunMultiplayerAnalyzer (+ the documented
+    // difficulty restore). Base scores now come from the real analyzer instead of
+    // the placeholder PlayerScoreInfo(.., 100000, 100000, 0) pushed here before.
+    NativeSongDBPostLoad(songDB, gM8DurationMs);
+    // Per-gem overdrive-phrase id from the REAL SongDB (SetupCommonPhrasesForTrack).
+    ch.gemPhrase.assign(ch.nGems, -1);
+    for (int g = 0; g < ch.nGems; g++)
+        ch.gemPhrase[g] = songDB->GetPhraseID(track, g);
 
     printf("  track %d '%s' (type %d): %d Expert gems, %d OD phrase(s), "
            "duration ~%.1f s\n", track, songData.TrackName(track).Str(),
            (int)ch.trackTy, ch.nGems, ch.nPhrases, gM8DurationMs / 1000.0f);
 
-    Game *game = (Game *)std::calloc(1, sizeof(Game));
-    game->mProperties.mEnableStreak = true;
-    game->mProperties.mEnableOverdrive = true;
-    game->mProperties.mAllowOverdrivePhrases = true;
-    game->mProperties.mEndWithSong = false;
-    game->unkdc = -1.0f;
-    TheGame = game;
-
-    SongDB *songDB = new SongDB();
-    songDB->mSongData = &songData;
-    songDB->mSongDurationMs = gM8DurationMs;
-    TheSongDB = songDB;
-
-    gM8BaseScores.clear();
-    gM8BaseScores.push_back(
-        PlayerScoreInfo(ch.trackTy, (Difficulty)kExpertDiff, 100000, 100000, 0));
-    scoring->ComputeStarThresholds(false);
 
     int maxMult =
         (ch.trackTy == kTrackBass || ch.trackTy == kTrackRealBass) ? 6 : 4;
