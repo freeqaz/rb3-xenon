@@ -47,19 +47,14 @@ void RndSoftParticleBuffer::BlurSurface() {
     workMat->SetZMode(kZModeDisable);
     workMat->SetTexWrap(kTexWrapClamp);
 
-    static float kBlurOffsets[10] = {
-        -1.5f, 0.25f,
-        -0.5f, 0.3f,
-         0.5f, 0.25f,
-         1.5f, 0.1f,
-         2.5f, 0.0f
-    };
-
     for (unsigned int pass = 0; pass < 2; pass++) {
-        RndTex *srcTex = mSurfaces[(pass - 1) & 1];
-        RndTex *dstTex = mSurfaces[pass & 1];
+        // Retail 0x824A8490: the pass's render target is the surface the
+        // previous pass sampled, and the surface indexed by the pass itself is
+        // the one it reads -- so the second (vertical) pass lands in
+        // mSurfaces[0], which DoPost binds. (Both were swapped here.)
+        RndTex *dstTex = mSurfaces[(pass - 1) & 1];
 
-        workMat->SetDiffuseTex(srcTex);
+        workMat->SetDiffuseTex(mSurfaces[pass & 1]);
         workMat->MarkDirty(2);
 
         dstTex->MakeDrawTarget();
@@ -70,9 +65,23 @@ void RndSoftParticleBuffer::BlurSurface() {
         float invW = 1.0f / texW;
         float invH = 1.0f / texH;
 
+        // (weight, offset) pairs for the five taps, read out of retail's table
+        // (.data 0x82C70EC8 holds the leading 0.1; the other nine are stored on
+        // first use): weights 0.1/0.25/0.3/0.25/0.1 sum to 1. The previous flat
+        // table here had lost the leading 0.1, so every tap read its offset as
+        // the weight and the next weight as the offset. DC3's table differs in
+        // tap 0 (0.0, in its .bss).
+        static Vector2 kBlurTaps[5] = {
+            Vector2(0.1f, -1.5f),
+            Vector2(0.25f, -0.5f),
+            Vector2(0.3f, 0.5f),
+            Vector2(0.25f, 1.5f),
+            Vector2(0.1f, 2.5f)
+        };
+
         for (int i = 0; i < 5; i++) {
-            float weight = kBlurOffsets[i * 2 + 0];
-            float offset = kBlurOffsets[i * 2 + 1];
+            float weight = kBlurTaps[i].x;
+            float offset = kBlurTaps[i].y;
 
             float scaleU, scaleV;
             if (!(pass & 1)) {
@@ -83,11 +92,13 @@ void RndSoftParticleBuffer::BlurSurface() {
                 scaleV = offset * invH;
             }
 
+            // Retail feeds the taps to pixel-shader constants 0x1F+i (UV scale)
+            // and 0x2F+i (weight); 0x8A/0x9A are DC3's register numbers.
             Vector4 uvScale(scaleU, scaleV, 1.0f, 1.0f);
-            TheShaderMgr.SetPConstant((PShaderConstant)(0x8a + i), uvScale);
+            TheShaderMgr.SetPConstant((PShaderConstant)(0x1f + i), uvScale);
 
             Vector4 uvWeight(weight, weight, weight, weight);
-            TheShaderMgr.SetPConstant((PShaderConstant)(0x9a + i), uvWeight);
+            TheShaderMgr.SetPConstant((PShaderConstant)(0x2f + i), uvWeight);
         }
 
         TheShaderMgr.SetNumTaps(5);
