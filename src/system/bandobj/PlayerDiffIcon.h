@@ -34,6 +34,12 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(PlayerDiffIcon); }
     NEW_OBJ(PlayerDiffIcon);
 
+#ifdef HX_NATIVE
+    // Native: the portable (size_t, debug-name) allocator spelling. The retail
+    // shape below uses the X360-only 2-arg MemAlloc and an `unsigned int`
+    // operator new, neither of which exists on the LP64 host.
+    OBJ_MEM_OVERLOAD(0x22)
+#else
     // Retail INLINES this class's operator new into NewObject and still
     // EVALUATES the allocation-name argument before calling the debug-stripped
     // 2-arg allocator (target: `bl StaticClassName` then `li r4,0; li r3,0x1b8;
@@ -52,6 +58,7 @@ public:
     }
     static void *operator new(unsigned int s, void *place) { return place; }
     static void operator delete(void *v) { (MemFree)(v); }
+#endif
 
     std::vector<RndMesh *> mPlayerMeshes;
     RndMat *mPlayerMat;
