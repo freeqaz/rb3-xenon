@@ -2036,7 +2036,10 @@ const char *ResourceFileCacheHelper::CacheFile(const char *cc) {
 }
 
 #ifndef HX_NATIVE
-bool RndAmbientOcclusion::Edge::operator<(const Edge &e) const {
+// inline: retail emits this as a COMDAT, so the set<Edge> instantiations
+// below (_M_find, insert_unique) call it without knowing its register
+// footprint and keep their live values in callee-saved registers.
+inline bool RndAmbientOcclusion::Edge::operator<(const Edge &e) const {
     unsigned short aMax = v1, aMin = v0;
     unsigned int a;
     if (aMin < aMax) {
