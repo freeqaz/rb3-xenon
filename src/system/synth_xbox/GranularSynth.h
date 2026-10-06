@@ -19,6 +19,7 @@ namespace Synapse {
 // mVoices@0x2c (Voice = 0x18), mWindows@0x38 below, so this is not an
 // inherited-from-DC3 assumption.  Our own Synapse_dsp.cpp models the same
 // class at sizeof 0x44 with mVoices at 0x2C, which agrees a third time.
+// (That local model is gone: Synapse_dsp.cpp now includes this header.)
 class GranularSynth {
 public:
     typedef stlpmtx_std::vector<float, stlpmtx_std::StlNodeAlloc<float> > FloatVec;
@@ -66,6 +67,7 @@ public:
                   unsigned int maxLength);
     ~GranularSynth();
 
+    void SetVoiceEnabled(unsigned int idx, bool enabled); // Synapse_dsp.cpp
     void ExtractGranules();
     void Synthesize(unsigned int count, float *const *out);
     void Flush();
