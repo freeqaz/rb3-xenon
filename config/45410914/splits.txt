@@ -5688,7 +5688,7 @@ PropKeys.cpp:
 	.text       start:0x8263FD2C end:0x8263FD30
 	.text       start:0x82656180 end:0x82656350
 	.text       start:0x82656630 end:0x82656800
-	.text       start:0x8268C920 end:0x8268C988
+	.text       start:0x8268C920 end:0x8268C978
 	.text       start:0x8268C998 end:0x8268C9E8
 	.text       start:0x82698B20 end:0x82698B98
 	.text       start:0x82C3EDDC end:0x82C3F090
@@ -10034,7 +10034,7 @@ BandUser.cpp:
 	.text       start:0x8268AA04 end:0x8268AC08
 	.text       start:0x8268AC08 end:0x8268AEC4
 	.text       start:0x8268AEC8 end:0x8268C920
-	.text       start:0x8268C988 end:0x8268C998
+	.text       start:0x8268C978 end:0x8268C998
 	.text       start:0x8268C9E8 end:0x8268F144
 
 Leaderboard.cpp:
