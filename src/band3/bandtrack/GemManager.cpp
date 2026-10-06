@@ -1598,11 +1598,8 @@ bool GemManager::IsInFill(int idx) {
 }
 
 bool GemManager::IsEndOfFill(int idx) {
-    bool ret = false;
     FillExtent ext(0, 0, 0);
-    if (GetFill(idx, ext) && ext.end == idx)
-        ret = true;
-    return ret;
+    return GetFill(idx, ext) && ext.end == idx;
 }
 
 void GemManager::ClearMissedPhrases() {
