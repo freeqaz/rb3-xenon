@@ -544,7 +544,8 @@ String &String::insert(unsigned int pos, unsigned int count, char c) {
 String &String::insert(unsigned int pos, const char *str) { return replace(pos, 0, str); }
 
 String &String::insert(unsigned int pos, const String &str) {
-    return replace(pos, 0, str.mStr);
+    const char *s = str.mStr;
+    return replace(pos, 0, s);
 }
 
 bool String::operator<(const String &str) const {
@@ -619,17 +620,15 @@ unsigned int String::rfind(const char *str) const {
         return -1;
     int start = -1;
     const char *p = str;
-    int offset = 0;
     while (*p != '\0') {
         int idx = find_last_of(*p);
         if (idx == -1)
             return -1;
         if (start == -1)
             start = idx;
-        else if (idx != offset + start)
+        else if (idx != (p - str) + start)
             return -1;
         p++;
-        offset++;
     }
     if (start == -1)
         return -1;
