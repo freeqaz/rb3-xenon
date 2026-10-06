@@ -560,14 +560,11 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         pPart->Poll(fCompMS, pos);
         pPart->ClearSingerCandidates();
 
-        // pPart->unk98 is an un-named VocalPart field (no verified member name or
-        // offset comment in VocalPart.h) that appears to hold a per-part pitch
-        // mode: usage below implies 0 == pitched, 1 == unpitched. Inferred from
-        // context only -- not confirmed against retail or the class layout, so
-        // the field itself is left as unk98 rather than guessed at.
-        int partPitchMode = pPart->unk98;
-        bSomePitched = bSomePitched | (partPitchMode == 0);
-        bSomeUnpitched = bSomeUnpitched | ((partPitchMode - 1) == 0);
+        // The frame match type is read through the inline by-value accessor
+        // twice: retail loads 0x9c once and stores the accessor's return
+        // temporary to the same stack slot after each read.
+        bSomePitched = bSomePitched | (pPart->GetFrameMatchType() == 0);
+        bSomeUnpitched = bSomeUnpitched | ((pPart->GetFrameMatchType() - 1) == 0);
 
         VocalNote *pNote = (VocalNote *)pPart->mVocalNoteList->NoteAt(fCompMS);
         if (pNote && pNote->mUnpitchedNote && !pUnpitchedPart) {
@@ -836,13 +833,11 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                     pSinger->AccessScoreHistory(pPart->mPartIndex).GetOctaveOffset();
             }
         } else {
-            float fOld = pSinger->GetFrameMicPitch();
             iOctaveOffset = pSinger->mOctaveOffset;
-            if (0.0f != fOld) {
-                float fPrev = pSinger->mBestTargetPitch;
-                bool bHasPrev = (0.0f != fPrev);
+            if (0.0f != pSinger->GetFrameMicPitch()) {
+                bool bHasPrev = (0.0f != pSinger->GetBestTargetPitch());
                 if (bHasPrev) {
-                    float diff = fPrev - fOld;
+                    float diff = pSinger->GetBestTargetPitch() - pSinger->mFrameMicPitch;
                     float absDiff = fabsf(diff);
                     float mod = (float)fmod(absDiff, 12.0);
                     float alt = kSemitone - mod;

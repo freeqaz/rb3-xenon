@@ -119,6 +119,7 @@ public:
     float GetFrameTargetPitch() const { return mFrameTargetPitch; }
     int GetSingerIndex() const { return mSingerIndex; }
     int GetFrameAssignedPart() const { return mFrameAssignedPart; }
+    float GetBestTargetPitch() const { return mBestTargetPitch; }
     bool HasAssignedPart() const;
 
     VocalPlayer *mPlayer; // 0x0

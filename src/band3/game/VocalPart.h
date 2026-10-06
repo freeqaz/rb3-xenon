@@ -80,6 +80,8 @@ public:
     int PartIndex() const { return mPartIndex; }
     float MaxPhraseScore() const { return mPhraseScoreMax; }
     bool InFreestyleSection() const { return mInFreestyleSection; }
+    // unk98 is the field at 0x9c: the frame's match type (0 = pitched, 1 = unpitched).
+    int GetFrameMatchType() const { return unk98; }
 
     static bool FramePhraseMeterFracSorter(const VocalPart *, const VocalPart *);
 
