@@ -1392,8 +1392,9 @@ void VocalTrack::UpdateScrolling(float ms) {
             float &shiftedX = sideLead ? unk2ac : unk2b0;
             while (shifts.size() != 0) {
                 LyricShift &shift = shifts.front();
+                float startMs = shift.unk4;
                 float window = shift.unk8 ? mLyricShiftQuickMs : mLyricShiftMs;
-                if (shift.unk4 >= (lyricMs - window))
+                if (startMs >= (lyricMs - window))
                     break;
                 Vector3 pos(scroller->LocalXfm().v);
                 xPos = shift.unk0;
