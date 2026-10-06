@@ -86,7 +86,7 @@ RndGroup *GroupOwner(Hmx::Object *o) {
 #ifdef HX_NATIVE
         RndGroup *grp = dynamic_cast<RndGroup *>(it->RefOwner());
 #else
-        // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+        // X360: mRefs entries are the ring-refs; each carries RefOwner().
         RndGroup *grp = dynamic_cast<RndGroup *>(RefPtrOf(it)->RefOwner());
 #endif
         if (grp) {
@@ -1865,7 +1865,7 @@ void ConvertBonesToTranses(ObjectDir *dir, bool b) {
         } else {
             if (b) {
                 bool foundBoneRef = false;
-                for (ObjRef::iterator rit = it->Refs().begin();
+                for (ObjRefList::const_iterator rit = it->Refs().begin();
                      !foundBoneRef && rit != it->Refs().end();
                      ++rit) {
                     RndMesh *curRefOwner = dynamic_cast<RndMesh *>(RefPtrOf(rit)->RefOwner());

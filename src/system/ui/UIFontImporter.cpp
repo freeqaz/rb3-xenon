@@ -436,7 +436,7 @@ RndFont *UIFontImporter::FindFontForMat(RndMat *mat) const {
 #ifdef HX_NATIVE
             Hmx::Object *owner = it->RefOwner();
 #else
-            // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+            // X360: mRefs entries are the ring-refs; each carries RefOwner().
             // Calling ObjRef::RefOwner() directly inlines to a constant nullptr
             // here (OBJREF_VIRTUAL is empty off HX_NATIVE), which lets the
             // compiler delete this whole loop body.
@@ -492,7 +492,7 @@ RndText *UIFontImporter::FindTextForFont(RndFont *font) const {
 #ifdef HX_NATIVE
             Hmx::Object *owner = it->RefOwner();
 #else
-            // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+            // X360: mRefs entries are the ring-refs; each carries RefOwner().
             // See the note in FindFontForMat above.
             Hmx::Object *owner = RefPtrOf(it)->RefOwner();
 #endif

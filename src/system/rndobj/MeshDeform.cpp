@@ -288,7 +288,7 @@ void RndMeshDeform::SetMesh(RndMesh *mesh) {
 // Retail walks the mesh's ref ring forward (not a reverse
 // vector of refs).
 RndMeshDeform *RndMeshDeform::FindDeform(RndMesh *m) {
-    for (ObjRef::iterator it = m->Refs().begin(); it != m->Refs().end(); ++it) {
+    for (ObjRefList::const_iterator it = m->Refs().begin(); it != m->Refs().end(); ++it) {
         RndMeshDeform *md = dynamic_cast<RndMeshDeform *>(RefPtrOf(it)->RefOwner());
         if (md) {
             MILO_ASSERT(md->Mesh() == m, 0x125);

@@ -1719,21 +1719,16 @@ DataNode Hmx::Object::HandleType(DataArray *msg) {
 // laneU handed to DirLoader by n_wrong; AddRef 0x8275BD08 and Release 0x8275B378
 // read 0% here because DirLoader.obj did not define them). Bodies are the
 // Object.cpp ones verbatim; canonical definitions stay in Object.cpp.
-#include "utl/PoolAlloc.h"
-void ObjRingInsert(ObjRef *head, ObjRefOwner *ref);
-
 void Hmx::Object::AddRef(ObjRefOwner *ref) {
     if (ref->RefOwner() != this)
-        ObjRingInsert(&mRefs, ref);
+        mRefs.push_front(ref);
 }
 
 void Hmx::Object::Release(ObjRefOwner *ref) {
     if (this != sDeleting && ref->RefOwner() != this) {
-        for (ObjRef *it = mRefs.next; it != &mRefs; it = it->next) {
-            if (RefPtrOf(it) == ref) {
-                it->prev->next = it->next;
-                it->next->prev = it->prev;
-                PoolFree(sizeof(ObjRefNode), it);
+        for (ObjRefList::iterator it = mRefs.begin(); it != mRefs.end(); ++it) {
+            if (*it == ref) {
+                mRefs.erase(it);
                 return;
             }
         }

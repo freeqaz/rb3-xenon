@@ -962,12 +962,12 @@ void HamCamShot::CreateFlippedShowHideList() {
 
 HamCamShot *HamCamShot::InitialShot() {
     HamCamShot *initialShot = this;
-    ObjRef::iterator it = initialShot->Refs().begin();
+    ObjRefList::const_iterator it = initialShot->Refs().begin();
     while (it != initialShot->Refs().end()) {
 #ifdef HX_NATIVE
         HamCamShot *cur = dynamic_cast<HamCamShot *>(it->RefOwner());
 #else
-        // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+        // X360: mRefs entries are the ring-refs; each carries RefOwner().
         HamCamShot *cur = dynamic_cast<HamCamShot *>(RefPtrOf(it)->RefOwner());
 #endif
         if (cur) {

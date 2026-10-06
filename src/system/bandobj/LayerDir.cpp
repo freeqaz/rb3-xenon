@@ -263,8 +263,8 @@ void LayerDir::RefreshLayer(Layer &layer, bool useColorIdx) {
         } else {
             layer.mMat->SetProperty(Symbol("alpha"), DataNode(0.0f));
         }
-        const ObjRef &refs = Refs();
-        for (ObjRef::iterator it = refs.end(); it != refs.begin();) {
+        const ObjRefList &refs = Refs();
+        for (ObjRefList::const_iterator it = refs.end(); it != refs.begin();) {
             --it;
             RndTexRenderer *tr =
                 dynamic_cast<RndTexRenderer *>(RefPtrOf(it)->RefOwner());

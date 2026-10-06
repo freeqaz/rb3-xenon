@@ -93,7 +93,7 @@ void OutfitConfig::MatSwap::SwapResource() {
         static Symbol mn("Mesh");
 #ifdef HX_NATIVE
         MemDoTempAllocations m;
-        const ObjRef &refs = mResourceMat->Refs();
+        const ObjRefList &refs = mResourceMat->Refs();
         for (ObjRef::iterator rit = refs.begin(); rit != refs.end();) {
             ObjRef *cur = rit;
             ++rit;
@@ -107,7 +107,7 @@ void OutfitConfig::MatSwap::SwapResource() {
         // Retail walks mResourceMat's ref ring with no temp-allocation scope, re-reading the
         // ring head every iteration, and reads each node's owner once before
         // stepping to the next node.
-        for (ObjRef::iterator rit = mResourceMat->Refs().begin(); rit != mResourceMat->Refs().end();) {
+        for (ObjRefList::const_iterator rit = mResourceMat->Refs().begin(); rit != mResourceMat->Refs().end();) {
             ObjRefOwner *owner = RefPtrOf(rit);
             ++rit;
             if (owner->RefOwner() && owner->RefOwner()->ClassName() == mn)
@@ -122,7 +122,7 @@ void OutfitConfig::MatSwap::UnSwapResource() {
         static Symbol mn("Mesh");
 #ifdef HX_NATIVE
         MemDoTempAllocations m;
-        const ObjRef &refs = mMat->Refs();
+        const ObjRefList &refs = mMat->Refs();
         for (ObjRef::iterator rit = refs.begin(); rit != refs.end();) {
             ObjRef *cur = rit;
             ++rit;
@@ -136,7 +136,7 @@ void OutfitConfig::MatSwap::UnSwapResource() {
         // Retail walks mMat's ref ring with no temp-allocation scope, re-reading the
         // ring head every iteration, and reads each node's owner once before
         // stepping to the next node.
-        for (ObjRef::iterator rit = mMat->Refs().begin(); rit != mMat->Refs().end();) {
+        for (ObjRefList::const_iterator rit = mMat->Refs().begin(); rit != mMat->Refs().end();) {
             ObjRefOwner *owner = RefPtrOf(rit);
             ++rit;
             if (owner->RefOwner() && owner->RefOwner()->ClassName() == mn)
@@ -1278,9 +1278,9 @@ void OutfitConfig::Mats(std::list<RndMat *> &list, bool allocTempMats) {
         // Do NOT cache Refs() in a local -- retail re-derives the end sentinel
         // from mResourceMat every iteration (`lwz r11,0x14(rIT); addi r11,r11,0x20`).
         // Caching it burns an extra callee-saved reg (__savegprlr_22 vs _23).
-        for (ObjRef::iterator rit = it->mResourceMat->Refs().begin();
+        for (ObjRefList::const_iterator rit = it->mResourceMat->Refs().begin();
              rit != it->mResourceMat->Refs().end();) {
-            // X360: capture the ring-ref (ObjRefNode::refPtr@8) BEFORE advancing.
+            // X360: capture the ring-ref (the mRefs entry's value) BEFORE advancing.
             // Retail loads refPtr then next: `lwz r29,0x8(r28); lwz r28,0x0(r28)`.
             // X7: RefPtrOf has two shapes -- ObjRefOwner* off the ring model
             // (obj/Object.h:271) and identity `const ObjRef*` on it (:277).

@@ -2003,7 +2003,8 @@
     "?erase@?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VSymbol@@U?$_Nonconst_traits@VSymbol@@@stlpmtx_std@@@2@U32@@Z",
     "?erase@?$list@_NV?$StlNodeAlloc@_N@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@_NU?$_Nonconst_traits@_N@stlpmtx_std@@@2@U32@@Z",
     "?erase@?$list@PAVArpeggioShape@@V?$StlNodeAlloc@PAVArpeggioShape@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVArpeggioShape@@U?$_Nonconst_traits@PAVArpeggioShape@@@stlpmtx_std@@@2@U32@@Z",
-    "?erase@?$list@PAVVorbisReader@@V?$StlNodeAlloc@PAVVorbisReader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVVorbisReader@@U?$_Nonconst_traits@PAVVorbisReader@@@stlpmtx_std@@@2@U32@@Z"
+    "?erase@?$list@PAVVorbisReader@@V?$StlNodeAlloc@PAVVorbisReader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVVorbisReader@@U?$_Nonconst_traits@PAVVorbisReader@@@stlpmtx_std@@@2@U32@@Z",
+    "?erase@?$list@PAVObjRefOwner@@V?$StlNodeAlloc@PAVObjRefOwner@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObjRefOwner@@U?$_Nonconst_traits@PAVObjRefOwner@@@stlpmtx_std@@@2@U32@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 41, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 39 folded spelling(s), 46 census sites over 5 functions. || COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x82bb33d8 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 1 charged name_check sites. Per spelling: [?erase@?$list@PBDV?$StlNodeAlloc@PBD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PBDU?$_Nonconst_traits@PBD@stlpmtx_std@@@2@U32@@Z residual CF2, 1 sites: identical: 20/21 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal]",
    "admitted": [
@@ -2016,6 +2017,11 @@
      "spelling": "?erase@?$list@PAVVorbisReader@@V?$StlNodeAlloc@PAVVorbisReader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVVorbisReader@@U?$_Nonconst_traits@PAVVorbisReader@@@stlpmtx_std@@@2@U32@@Z",
      "lane": "W16-NH 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 84 B retail / 84 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x82bb4144."
+    },
+    {
+     "spelling": "?erase@?$list@PAVObjRefOwner@@V?$StlNodeAlloc@PAVObjRefOwner@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObjRefOwner@@U?$_Nonconst_traits@PAVObjRefOwner@@@stlpmtx_std@@@2@U32@@Z",
+     "lane": "W16-PI 2026-10-06",
+     "evidence": "FLAT and CHASED T1 PROVEN (icf_pair_adjudicate.py, 2026-10-06): byte-identical 84-byte masked body, relocation targets agree. Called by Hmx::Object::Release (mRefs.erase), whose retail body calls this survivor."
     }
    ]
   },
@@ -91925,7 +91931,8 @@
     "?insert@?$list@PAVArpeggioShape@@V?$StlNodeAlloc@PAVArpeggioShape@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVArpeggioShape@@U?$_Nonconst_traits@PAVArpeggioShape@@@stlpmtx_std@@@2@U32@ABQAVArpeggioShape@@@Z",
     "?insert@?$list@PAVRndTransformable@@V?$StlNodeAlloc@PAVRndTransformable@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVRndTransformable@@U?$_Nonconst_traits@PAVRndTransformable@@@stlpmtx_std@@@2@U32@ABQAVRndTransformable@@@Z",
     "?insert@?$list@PAVMidiParser@@V?$StlNodeAlloc@PAVMidiParser@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVMidiParser@@U?$_Nonconst_traits@PAVMidiParser@@@stlpmtx_std@@@2@U32@ABQAVMidiParser@@@Z",
-    "?insert@?$list@PAVBandCamShot@@V?$StlNodeAlloc@PAVBandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVBandCamShot@@U?$_Nonconst_traits@PAVBandCamShot@@@stlpmtx_std@@@2@U32@ABQAVBandCamShot@@@Z"
+    "?insert@?$list@PAVBandCamShot@@V?$StlNodeAlloc@PAVBandCamShot@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVBandCamShot@@U?$_Nonconst_traits@PAVBandCamShot@@@stlpmtx_std@@@2@U32@ABQAVBandCamShot@@@Z",
+    "?insert@?$list@PAVObjRefOwner@@V?$StlNodeAlloc@PAVObjRefOwner@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObjRefOwner@@U?$_Nonconst_traits@PAVObjRefOwner@@@stlpmtx_std@@@2@U32@ABQAVObjRefOwner@@@Z"
    ],
    "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF5. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x823d14c0 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (ZERO REFERENCES -- no branch, no address-taken immediate pair, no .rdata/.data pointer word -- or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 5 folded spelling(s), 6 charged name_check sites. Per spelling: [?insert@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@2@U32@ABQAVContent@@@Z residual CF5, 2 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)] [?insert@?$list@P6AXXZV?$StlNodeAlloc@P6AXXZ@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@P6AXXZU?$_Nonconst_traits@P6AXXZ@stlpmtx_std@@@2@U32@ABQ6AXXZ@Z residual CF5, 1 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)] [?insert@?$list@PADV?$StlNodeAlloc@PAD@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PADU?$_Nonconst_traits@PAD@stlpmtx_std@@@2@U32@ABQAD@Z residual CF5, 1 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)] [?insert@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUDep@CharPollableSorter@@U?$_Nonconst_traits@PAUDep@CharPollableSorter@@@stlpmtx_std@@@2@U32@ABQAUDep@CharPollableSorter@@@Z residual CF5, 1 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal] [?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharClip@@U?$_Nonconst_traits@PAVCharClip@@@stlpmtx_std@@@2@U32@ABQAVCharClip@@@Z residual CF5, 1 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal (1 of them via an already-installed alias group, not a literal name match)] ++ W10-B 2026-09-13: survivor RE-SEATED onto the map-resident spelling and list<char*>::insert added. (a) The group previously had ZERO map-resident members -- survivor CharClip* is absent from target_symbol_map.json -- so it violated the one-map-resident-symbol invariant and could not forgive retail's own name at its own address. Object* IS the map name at 0x823d14c0. (b) Whole-binary retail-byte population control, re-derived this lane over .pdata-authoritative extents: of 235 insert-shaped bodies (100 B / 25 instr / exactly 1 bl) carrying 149 distinct _M_create_node targets, EXACTLY ONE create_node is pointer-element (0x82520150: 0xc alloc, word copy, no ctor) and it feeds EXACTLY ONE insert, 0x823d14c0. A no-fold world needs one address per pointer T; the image has one for all of them. Negative control reproduces: list<bool> (0x8274d128) also allocates 0xc but copies with a BYTE op and sits at its own create_node 0x8274cf60. (c) tools/icf_pair_adjudicate.py --chase now returns PROVEN for insert<Object*>/insert<char*>, every level SLOT-FOLD-OK. ++ ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [2]. W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x823d14c0). \"ours\" spelling ?insert@?$list@PAVEventTrigger@@V?$StlNodeAlloc@PAVEventTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVEventTrigger@@U?$_Nonconst_traits@PAVEventTrigger@@@stlpmtx_std@@@2@U32@ABQAVEventTrigger@@@Z is a template/spelling twin of survivor ?insert@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObject@Hmx@@U?$_Nonconst_traits@PAVObject@Hmx@@@stlpmtx_std@@@2@U32@ABQAVObject@Hmx@@@Z at retail address 0x823d14c0. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 4 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 1596 B (1596 B honest) across ['default/EventTrigger'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md.",
    "withdrawn": [
@@ -91966,11 +91973,6 @@
     },
     {
      "spelling": "?insert@?$list@PAVNetCacheLoader@@V?$StlNodeAlloc@PAVNetCacheLoader@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVNetCacheLoader@@U?$_Nonconst_traits@PAVNetCacheLoader@@@stlpmtx_std@@@2@U32@ABQAVNetCacheLoader@@@Z",
-     "lane": "ALIAS-CONSOLIDATION 2026-08-19",
-     "class": "FABRICATED_CLOSURE_NOT_PARTITION"
-    },
-    {
-     "spelling": "?insert@?$list@PAVObjRefOwner@@V?$StlNodeAlloc@PAVObjRefOwner@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObjRefOwner@@U?$_Nonconst_traits@PAVObjRefOwner@@@stlpmtx_std@@@2@U32@ABQAVObjRefOwner@@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     },
@@ -92564,6 +92566,20 @@
      "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (template twin until callee names are chased), CHASED T1 PROVEN, no CYCLE-ASSUMED leaf; 100 B retail / 100 B ours. Retail CharSync::UpdateCharCache (0x82564698) branches to the survivor 0x823d14c0 at 0x82564924, 0x82564954, 0x82564990 and 0x82564ac8, the four sites where our source pushes onto a std::list<CharData*>. The spelling is not map-resident.",
      "why_the_original_premise_failed": "The 2026-08-19 withdrawal was made against a folded list shared by ten groups at distinct addresses, wholesale rather than per membership; this membership is re-derived on retail bytes at its own call sites.",
      "spelling": "?insert@?$list@PAVCharData@@V?$StlNodeAlloc@PAVCharData@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharData@@U?$_Nonconst_traits@PAVCharData@@@stlpmtx_std@@@2@U32@ABQAVCharData@@@Z"
+    },
+    {
+     "spelling": "?insert@?$list@PAVObjRefOwner@@V?$StlNodeAlloc@PAVObjRefOwner@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObjRefOwner@@U?$_Nonconst_traits@PAVObjRefOwner@@@stlpmtx_std@@@2@U32@ABQAVObjRefOwner@@@Z",
+     "lane": "W16-PI 2026-10-06",
+     "verdict": "FOLD -- PROVEN on retail bytes by two independent channels",
+     "evidence": "(1) CHASED T1 PROVEN (tools/icf_pair_adjudicate.py --chase): our 100-byte list<ObjRefOwner*>::insert has the same masked body as retail 0x823d14c0, and its one branch slot (_M_create_node) is discharged by a recursively proven fold onto retail's single pointer-element create_node; flat T1 refuted only on that callee NAME. (2) Call site: Hmx::Object::mRefs is std::list<ObjRefOwner*> (W16-PI), and retail Hmx::Object::AddRef -- whose body is otherwise instruction-identical to ours -- calls 0x823d14c0 for mRefs.insert(begin(), ref). This group's own population control (one pointer-element insert body in retail) says the same.",
+     "why_the_withdrawal_does_not_apply": "FABRICATED_CLOSURE_NOT_PARTITION is the generator's star->clique class (ALIAS_FABRICATED_CLOSURE_CLOSED_2026-09-16.md): it withdrew memberships nobody had adjudicated. This one is adjudicated per membership on retail bytes, and until W16-PI no source emitted this spelling.",
+     "superseded_records": [
+      {
+       "spelling": "?insert@?$list@PAVObjRefOwner@@V?$StlNodeAlloc@PAVObjRefOwner@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObjRefOwner@@U?$_Nonconst_traits@PAVObjRefOwner@@@stlpmtx_std@@@2@U32@ABQAVObjRefOwner@@@Z",
+       "lane": "ALIAS-CONSOLIDATION 2026-08-19",
+       "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+      }
+     ]
     }
    ],
    "merged_in": [
@@ -116166,6 +116182,23 @@
      "spelling": "??$_Param_Construct@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@0@ABV10@@Z",
      "lane": "W16-PH 2026-10-06",
      "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 2 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (none tolerated). (1) leaf ?_M_copy@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@ self-recursive on both sides; unique among 6 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: the survivor itself is named _Copy_Construct<set<Symbol>> (our type, the STLport _Copy_Construct/_Param_Construct spelling fold seen in 80 existing groups); its retail callers __uninitialized_copy/__uninitialized_fill_n<set<Symbol>> and vector<set<Symbol>>::_M_insert_overflow_aux are Tour.cpp rows named by position. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 60 == ours 60. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 2; none lands elsewhere."
+    }
+   ]
+  },
+  {
+   "name": "4?$list",
+   "address": "0x822782d0",
+   "survivor": "??4?$list@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "folded": [
+    "??4?$list@PAVObjRefOwner@@V?$StlNodeAlloc@PAVObjRefOwner@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z"
+   ],
+   "evidence": "Created by lane W16-PI: see per-member records in `admitted`.",
+   "lane": "W16-PI 2026-10-06",
+   "admitted": [
+    {
+     "spelling": "??4?$list@PAVObjRefOwner@@V?$StlNodeAlloc@PAVObjRefOwner@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "lane": "W16-PI 2026-10-06",
+     "evidence": "CHASED T1 PROVEN (icf_pair_adjudicate.py --chase, 2026-10-06): same 180-byte masked body; every relocation slot discharged by a recursively proven fold (erase, _List_base::clear, _M_splice_insert_dispatch). Called by the implicit Hmx::Object::operator= (copies mRefs at +0x20), whose retail body calls this survivor."
     }
    ]
   }

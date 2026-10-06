@@ -102,65 +102,24 @@ MsgSinks gSinks(nullptr);
 #ifndef HX_NATIVE
 // RB3 retail X360: Hmx::Object is 0x28 bytes (verified from ctor lbl_82737FE8 /
 // dtor fn_82738050): vtable@0, TypeProps(inline,0xc)@4, mTypeDef@10,
-// mNote(const char*)@14, mName@18, mDir@1c, mRefs(8B ring)@20.
+// mNote(const char*)@14, mName@18, mDir@1c, mRefs(std::list)@20.
 // dc3-decomp uses a larger layout (0x2c, pointer TypeProps, String mNote).
 static_assert(sizeof(Hmx::Object) == 0x28, "Hmx::Object must be 0x28 (RB3 retail)");
-static_assert(sizeof(ObjRefNode) == 0xc, "ObjRefNode must be 0xc (RB3 retail)");
-
-#include "utl/PoolAlloc.h"
-
-// Allocate a 0xc ring node {next,prev,refPtr} and splice it just after `head`,
-// pointing back at `ref`. Mirrors retail fn_8271EAE0 / fn_82262360 / fn_82737168.
-void ObjRingInsert(ObjRef *head, ObjRefOwner *ref) {
-    ObjRefNode *node =
-        (ObjRefNode *)PoolAlloc(sizeof(ObjRefNode), sizeof(ObjRefNode));
-    node->refPtr = ref;
-    node->next = head->next;
-    node->prev = head;
-    head->next->prev = node;
-    head->next = node;
-}
-
-// Free every 0xc node in the ring and reset the head to self-loop.
-// Mirrors retail fn_82451A48.
-void ObjRingFree(ObjRef *head) {
-    ObjRef *it = head->next;
-    while (it != head) {
-        ObjRef *nxt = it->next;
-        PoolFree(sizeof(ObjRefNode), it);
-        it = nxt;
-    }
-    head->next = head;
-    head->prev = head;
-}
+static_assert(sizeof(ObjRefList) == 8, "Hmx::Object::mRefs must be 8 bytes (RB3 retail)");
 
 void Hmx::Object::AddRef(ObjRefOwner *ref) {
     if (ref->RefOwner() != this)
-        ObjRingInsert(&mRefs, ref);
+        mRefs.push_front(ref);
 }
 
 void Hmx::Object::Release(ObjRefOwner *ref) {
     if (sDeleting != this && ref->RefOwner() != this) {
-        for (ObjRef *it = mRefs.next; it != &mRefs; it = it->next) {
-            if (RefPtrOf(it) == ref) {
-                it->prev->next = it->next;
-                it->next->prev = it->prev;
-                PoolFree(sizeof(ObjRefNode), it);
+        for (ObjRefList::iterator it = mRefs.begin(); it != mRefs.end(); ++it) {
+            if (*it == ref) {
+                mRefs.erase(it);
                 return;
             }
         }
-    }
-}
-
-// X360 ring helpers used by ObjRefRelinkRing/ReplaceList paths.
-void ObjRef::ReplaceList(Hmx::Object *obj) {
-    while (next != this) {
-        ObjRef *cur = next;
-        ObjRefOwner *ref = RefPtrOf(cur);
-        cur->prev->next = cur->next;
-        cur->next->prev = cur->prev;
-        PoolFree(sizeof(ObjRefNode), cur);
-        ref->Replace(nullptr, obj);
     }
 }
 #endif
@@ -175,7 +134,9 @@ Hmx::Object::Object()
     : mTypeProps(this), mTypeDef(nullptr), mNote(gNullStr), mName(gNullStr), mDir(nullptr)
 #endif
 {
+#ifdef HX_NATIVE
     mRefs.DetachSelf();
+#endif
 }
 
 Hmx::Object::~Object() {
@@ -206,15 +167,15 @@ Hmx::Object::~Object() {
 #else
     // Retail X360 (0x8275CBF0, lane W5-A): no explicit ClearAll -- ~TypeProps
     // (fn_82274048 == { ClearAll(); }) runs as the implicit member destructor
-    // AFTER this body. The ref walk reads `next` BEFORE dispatching Replace,
-    // since Replace(this, 0) may unlink the node it is called on. The note is
-    // an owned pool string (see SetNote) and is freed here; the ring itself is
-    // retail's std::list<ObjRefOwner*> member dtor (`_List_base::clear` folded
-    // onto a SynthPollable* instantiation) -- ours is the explicit ObjRingFree.
-    for (ObjRef *it = mRefs.next; it != &mRefs;) {
-        ObjRef *cur = it;
-        it = it->next;
-        RefPtrOf(cur)->Replace(reinterpret_cast<ObjRef *>(this), nullptr);
+    // AFTER this body. The ref walk advances BEFORE dispatching Replace,
+    // since Replace(this, 0) may erase the entry it is called on. The note is
+    // an owned pool string (see SetNote) and is freed here; mRefs' own nodes
+    // are freed by its implicit member dtor (`_List_base::clear`, folded onto
+    // a SynthPollable* instantiation).
+    for (ObjRefList::iterator it = mRefs.begin(); it != mRefs.end();) {
+        ObjRefList::iterator cur = it;
+        ++it;
+        (*cur)->Replace(reinterpret_cast<ObjRef *>(this), nullptr);
     }
     sDeleting = old;
     if (mNote != gNullStr) {
@@ -224,9 +185,6 @@ Hmx::Object::~Object() {
     if (gDataThis == this) {
         gDataThis = nullptr;
     }
-#ifndef HX_NATIVE
-    ObjRingFree(&mRefs);
-#endif
 }
 
 void Hmx::Object::Replace(ObjRef *from, Hmx::Object *to) {
@@ -593,16 +551,12 @@ void Hmx::Object::ReplaceRefs(Hmx::Object *obj) {
         }
         gInReplaceList = wasInReplace;
 #else
-        // Retail X360: walk the pool-node ring; dispatch Replace(this, obj) on
-        // each ring-ref (vtable slot +8), then free the node.
-        for (ObjRef *it = mRefs.next; it != &mRefs;) {
-            ObjRef *nxt = it->next;
-            ObjRefOwner *ref = RefPtrOf(it);
-            it->prev->next = it->next;
-            it->next->prev = it->prev;
-            PoolFree(sizeof(ObjRefNode), it);
+        // Retail X360: erase each entry, then dispatch Replace(this, obj) on
+        // its ring-ref (vtable slot +8).
+        for (ObjRefList::iterator it = mRefs.begin(); it != mRefs.end();) {
+            ObjRefOwner *ref = *it;
+            it = mRefs.erase(it);
             ref->Replace(reinterpret_cast<ObjRef *>(this), obj);
-            it = nxt;
         }
 #endif
     }
@@ -666,19 +620,17 @@ void Hmx::Object::ReplaceRefsFrom(Hmx::Object *from, Hmx::Object *to) {
     }
     other.ReplaceList(to);
 #else
-    // Retail X360: ring entries are pool nodes; the ring-ref's RefOwner()
-    // identifies `from`. For each matching node, dispatch Replace(from, to) on
-    // the ring-ref and free the node (the ref re-AddRefs `to` via SetObj).
-    for (ObjRef *it = mRefs.next; it != &mRefs;) {
-        ObjRef *nxt = it->next;
-        ObjRefOwner *ref = RefPtrOf(it);
+    // Retail X360: the ring-ref's RefOwner() identifies `from`. Each matching
+    // entry is erased and Replace(from, to) dispatched on its ring-ref (the ref
+    // re-AddRefs `to` via SetObj).
+    for (ObjRefList::iterator it = mRefs.begin(); it != mRefs.end();) {
+        ObjRefOwner *ref = *it;
         if (ref->RefOwner() == from) {
-            it->prev->next = it->next;
-            it->next->prev = it->prev;
-            PoolFree(sizeof(ObjRefNode), it);
+            it = mRefs.erase(it);
             ref->Replace(reinterpret_cast<ObjRef *>(from), to);
+        } else {
+            ++it;
         }
-        it = nxt;
     }
 #endif
 }
@@ -1166,14 +1118,17 @@ DataNode Hmx::Object::HandleType(DataArray *msg) {
 DataNode Hmx::Object::OnIterateRefs(const DataArray *da) {
     DataNode *var = da->Var(2);
     DataNode node(*var);
+#ifdef HX_NATIVE
     ObjRef *end = &mRefs;
     for (ObjRef *it = end->next; it != end;) {
         ObjRef *cur = it;
         it = it->next;
-#ifdef HX_NATIVE
         *var = cur->RefOwner();
 #else
-        *var = RefPtrOf(cur)->RefOwner();
+    for (ObjRefList::iterator it = mRefs.begin(); it != mRefs.end();) {
+        ObjRefList::iterator cur = it;
+        ++it;
+        *var = (*cur)->RefOwner();
 #endif
         for (int i = 3; i < da->Size(); i++) {
             da->Command(i)->Execute();

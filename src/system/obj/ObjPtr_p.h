@@ -73,7 +73,7 @@ void ObjRefConcrete<T1, T2>::CopyRef(const ObjRefConcrete &o) {
 }
 #else
 // ----------------------------------------------------------------------------
-// Retail X360: separate-pool-node ring. The ObjRefConcrete is the smart-pointer
+// Retail X360: refs live in Hmx::Object::mRefs. The ObjRefConcrete is the smart-pointer
 // {vtable@0, mOwner@4, mObject@8}. The ring-ref passed to Hmx::Object::AddRef /
 // Release is `this` (an ObjRefOwner).
 //

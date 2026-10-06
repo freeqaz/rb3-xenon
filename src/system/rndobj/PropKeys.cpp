@@ -1069,8 +1069,8 @@ void stlpmtx_std::swap<class Key<class ObjectStage> >(class Key<class ObjectStag
     a.frame = b.frame;
     b.value.CopyRef(temp.value);
     b.frame = temp.frame;
-    // X360 separate-pool-node ring: CopyRef does proper AddRef/Release on its
-    // own node, and temp's dtor releases it — no manual ring relink needed.
+    // X360: CopyRef does proper AddRef/Release on the target's mRefs, and
+    // temp's dtor releases it — no manual ring relink needed.
 }
 #endif
 

@@ -725,7 +725,7 @@ DataNode EventTrigger::Cleanup(DataArray *arr) {
              iter2 != iter->mAnims.end(); ++iter2) {
             RndAnimFilter *filter = dynamic_cast<RndAnimFilter *>(iter2->mAnim.Ptr());
             if (filter) {
-                ObjRef::iterator rit = filter->Refs().begin();
+                ObjRefList::const_iterator rit = filter->Refs().begin();
                 for (; rit != filter->Refs().end(); ++rit) {
                     if (RefPtrOf(rit)->RefOwner() && RefPtrOf(rit)->RefOwner() != (EventTrigger *)iter) break;
                 }

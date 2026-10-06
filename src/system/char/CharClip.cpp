@@ -1045,7 +1045,7 @@ bool CharClip::SharesGroups(CharClip *clip) {
 #ifdef HX_NATIVE
         Hmx::Object *owner = it->RefOwner();
 #else
-        // X360: ring entries are pool nodes; the ring-ref carries RefOwner().
+        // X360: mRefs entries are the ring-refs; each carries RefOwner().
         Hmx::Object *owner = RefPtrOf(it)->RefOwner();
 #endif
         CharClipGroup *group = dynamic_cast<CharClipGroup *>(owner);

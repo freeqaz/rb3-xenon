@@ -375,7 +375,7 @@ void BandHeadShaper::Reskin() {
     }
     for (int i = 0; i < unk18.size(); i++) {
         RndTransformable *bone = unk18[i];
-        for (ObjRef::iterator rit = bone->Refs().begin(); rit != bone->Refs().end();
+        for (ObjRefList::const_iterator rit = bone->Refs().begin(); rit != bone->Refs().end();
              ++rit) {
             RndMesh *mesh = dynamic_cast<RndMesh *>(RefPtrOf(rit)->RefOwner());
             if (!mesh)

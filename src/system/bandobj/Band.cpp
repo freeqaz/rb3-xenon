@@ -120,7 +120,7 @@ DataNode OnPaletteSync(DataArray *array) {
     // Every outfit config and swatch referencing the palette picks up its
     // new colours.
     ColorPalette *colpal = array->Obj<ColorPalette>(1);
-    for (ObjRef::iterator it = colpal->Refs().begin(); it != colpal->Refs().end();
+    for (ObjRefList::const_iterator it = colpal->Refs().begin(); it != colpal->Refs().end();
          ++it) {
         Hmx::Object *owner = RefPtrOf(it)->RefOwner();
         OutfitConfig *cfg = dynamic_cast<OutfitConfig *>(owner);
