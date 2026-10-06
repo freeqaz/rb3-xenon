@@ -150,10 +150,9 @@ void NoteTube::DrawToPlate(TubePlate *plate) {
 #define mWidth unk_0x30
         MILO_ASSERT(mWidth > 0.0f, 0xCE);
 #undef mWidth
-        int numEdges = numPoints * 2;
-        plate->AllocateVerts(numEdges + 4, warnOnReallocate);
+        plate->AllocateVerts((numPoints + 2) * 2, warnOnReallocate);
 
-        bool atFront = mFrontPlate == plate;
+        bool atFront = plate == mFrontPlate;
         float uvX1, uvX0, uvY1, uvY0;
         LookupPitchedUVCoordinates(uvX1, uvX0, uvY1, uvY0, atFront);
         uvX1 -= 0.0078125f;
@@ -176,50 +175,49 @@ void NoteTube::DrawToPlate(TubePlate *plate) {
         );
 
         float halfWidth = 0.0f;
-        int vertIdx = vertStart;
-        for (int i = 0; i < (int)mPoints.size(); i++) {
-            float px = mPoints[i].x;
-            float pz = mPoints[i].z;
+        for (int i = 0; i < mPoints.size(); i++) {
+            Vector3 cur = mPoints[i];
             if (i % 2) {
                 if (i < numPoints - 1) {
-                    float angle =
-                        atan((mPoints[i + 1].z - pz) / (mPoints[i + 1].x - px));
-                    halfWidth = unk_0x30 * (float)tan(angle * 0.5f);
+                    Vector3 next = mPoints[i + 1];
+                    float angle = atan((next.z - cur.z) / (next.x - cur.x));
+                    float tanHalf = tan(angle * 0.5f);
+                    halfWidth = unk_0x30 * tanHalf;
                 } else {
                     halfWidth = 0.0f;
                 }
             }
             SetMeshVert(
-                verts[vertIdx + 2],
-                baseX + (px - halfWidth),
-                pz + unk_0x30,
+                verts[vertStart + i * 2 + 2],
+                (cur.x - halfWidth) + baseX,
+                unk_0x30 + cur.z,
                 uvX0,
                 uvY1
             );
             SetMeshVert(
-                verts[vertIdx + 3],
-                baseX + (px + halfWidth),
-                pz - unk_0x30,
+                verts[vertStart + i * 2 + 3],
+                (cur.x + halfWidth) + baseX,
+                cur.z - unk_0x30,
                 uvX0,
                 uvY0
             );
-            vertIdx += 2;
         }
 
+        int numEdges = numPoints * 2;
         int lastVert = vertStart + numEdges;
-        float lastX = (baseX + (2.0f * unk_0x30 + mPoints[numPoints - 1].x)) - 0.015625f;
-        float lastZ = mPoints[numPoints - 1].z;
+        Vector3 last = mPoints[numPoints - 1];
+        float lastX = (baseX + (2.0f * unk_0x30 + last.x)) - 0.015625f;
         SetMeshVert(
             verts[lastVert + 2],
             lastX,
-            lastZ + unk_0x30,
+            unk_0x30 + last.z,
             uvX1,
             uvY1
         );
         SetMeshVert(
             verts[lastVert + 3],
             lastX,
-            lastZ - unk_0x30,
+            last.z - unk_0x30,
             uvX1,
             uvY0
         );
@@ -263,26 +261,25 @@ void NoteTube::DrawToPlate(TubePlate *plate) {
             1.0f
         );
 
-        int vertIdx = vertStart + 2;
         for (int i = 1; i < numColumns; i++) {
-            float offset = (float)i * kMaxQuadSize;
-            float u = (uvScale * offset) / length;
-            float xOff = offset + (baseX + mPoints[0].x);
+            // The grouping is load-bearing: retail hoists only 1/length and
+            // multiplies uvScale * (1/length) * i inside the loop, then by kMaxQuadSize.
+            float u = (uvScale * (1.0f / length) * (float)i) * kMaxQuadSize;
+            float xOff = ((float)i * kMaxQuadSize + mPoints[0].x) + baseX;
             SetMeshVert(
-                verts[vertIdx],
+                verts[vertStart + i * 2],
                 xOff,
                 unk_0x30 + mPoints[0].z,
                 u,
                 0.0f
             );
             SetMeshVert(
-                verts[vertIdx + 1],
+                verts[vertStart + i * 2 + 1],
                 xOff,
                 mPoints[0].z - unk_0x30,
                 u,
                 1.0f
             );
-            vertIdx += 2;
         }
 
         int lastVert = vertStart + numVerts;
@@ -315,10 +312,10 @@ void NoteTube::DrawToPlate(TubePlate *plate) {
             }
         }
     } else {
-        plate->AllocateVerts(8, warnOnReallocate);
+        int numVerts = 8;
+        plate->AllocateVerts(numVerts, warnOnReallocate);
 
         float x0 = baseX + mPoints[0].x;
-        float x0High = 0.05f + x0;
         SetMeshVert(
             verts[vertStart], x0 - 0.05f, unk_0x30 + mPoints[0].z, 0.0f, 0.0f
         );
@@ -331,45 +328,45 @@ void NoteTube::DrawToPlate(TubePlate *plate) {
         );
         SetMeshVert(
             verts[vertStart + 2],
-            x0High,
+            x0 + 0.05f,
             unk_0x30 + mPoints[0].z,
             0.015625f,
             0.0f
         );
         SetMeshVert(
             verts[vertStart + 3],
-            x0High,
+            x0 + 0.05f,
             mPoints[0].z - unk_0x30,
             0.015625f,
             1.0f
         );
 
+        int lastVert = vertStart + numVerts;
         float x1 = baseX + mPoints[1].x;
-        float x1High = 0.05f + x1;
         SetMeshVert(
-            verts[vertStart + 4],
+            verts[lastVert - 4],
             x1 - 0.05f,
             unk_0x30 + mPoints[1].z,
             0.984375f,
             0.0f
         );
         SetMeshVert(
-            verts[vertStart + 5],
+            verts[lastVert - 3],
             x1 - 0.05f,
             mPoints[1].z - unk_0x30,
             0.984375f,
             1.0f
         );
         SetMeshVert(
-            verts[vertStart + 6],
-            x1High,
+            verts[lastVert - 2],
+            x1 + 0.05f,
             unk_0x30 + mPoints[1].z,
             1.0f,
             0.0f
         );
         SetMeshVert(
-            verts[vertStart + 7],
-            x1High,
+            verts[lastVert - 1],
+            x1 + 0.05f,
             mPoints[1].z - unk_0x30,
             1.0f,
             1.0f
@@ -450,18 +447,14 @@ void TubePlate::AllocateVerts(int num, bool warn) {
 
 void TubePlate::AllocateFaces(int num, bool warn) {
     std::vector<RndMesh::Face> &faces = mMesh->Faces();
-    int newsize = num + faces.size();
     int cap = faces.capacity();
+    int newsize = faces.size() + num;
     if (newsize > cap) {
-        int count = mAllocationCount;
-        float ceiled = std::ceil((float)(newsize - cap) / (float)count);
-        faces.reserve((int)ceiled * count + cap);
-        if (warn)
-            MILO_WARN(
-                "TubePlate: Reallocating faces from %d to %d; please alert HUD/Track owner",
-                cap,
-                faces.capacity()
-            );
+        // Grow in whole mAllocationCount steps; retail emits no warning here and
+        // re-reads both the capacity and mAllocationCount after the ceil call.
+        float ceiled = std::ceil((float)(newsize - cap) / (float)mAllocationCount);
+        int steps = ceiled;
+        faces.reserve(mAllocationCount * steps + faces.capacity());
     }
     faces.resize(newsize);
 }

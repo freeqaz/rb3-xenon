@@ -5504,8 +5504,8 @@ LabelShrinkWrapper.cpp:
 	.text       start:0x82826860 end:0x82827A20
 
 LabelNumberTicker.cpp:
-	.pdata      start:0x82248230 end:0x822483A8
-	.text       start:0x82827A20 end:0x82829218
+	.pdata      start:0x82248230 end:0x82248398
+	.text       start:0x82827A20 end:0x828290A0
 
 SongSortMgr.cpp:
 	.pdata      start:0x82220790 end:0x82220CF0
@@ -5872,17 +5872,19 @@ LocalePanel.cpp:
 	.text       start:0x826B8BA0 end:0x826B8BA8
 
 RhythmDetector.cpp:
-	.pdata      start:0x821F1638 end:0x821F1648
 	.pdata      start:0x821F1678 end:0x821F1680
 	.pdata      start:0x821F1690 end:0x821F16C0
-	.text       start:0x822703A8 end:0x82270414
 	.text       start:0x82270690 end:0x822707C0
 	.text       start:0x82270848 end:0x82270B1C
 	.text       start:0x8227173C end:0x82271748
 
 App.cpp:
+	.pdata      start:0x821F1600 end:0x821F1610
+	.pdata      start:0x821F1638 end:0x821F1648
 	.pdata      start:0x821F16C8 end:0x821F1700
 	.pdata      start:0x821F1700 end:0x821F1748
+	.text       start:0x82270000 end:0x82270188
+	.text       start:0x822703A8 end:0x82270414
 	.text       start:0x82270B84 end:0x82270E68
 	.text       start:0x82270E68 end:0x822716E8
 	.text       start:0x82C43EB0 end:0x82C43ED0
