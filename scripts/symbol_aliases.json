@@ -71300,10 +71300,8 @@
   {
    "name": "$__make_heap",
    "address": "0x82518e68",
-   "survivor": "??$__make_heap@PAPAVMoveDetector@@UMoveDetectorCmp@@PAV1@H@stlpmtx_std@@YAXPAPAVMoveDetector@@0UMoveDetectorCmp@@0PAH@Z",
-   "folded": [
-    "??$__make_heap@PAPAVFileCacheEntry@@UPriority@@PAV1@H@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@0PAH@Z"
-   ],
+   "survivor": "??$__make_heap@PAPAVFileCacheEntry@@UPriority@@PAV1@H@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@0PAH@Z",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 22 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -71415,6 +71413,12 @@
      "spelling": "??$__make_heap@PAVSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@H@stlpmtx_std@@YAXPAVSymbol@@0U?$less@VSymbol@@@0@0PAH@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$__make_heap@PAPAVMoveDetector@@UMoveDetectorCmp@@PAV1@H@stlpmtx_std@@YAXPAPAVMoveDetector@@0UMoveDetectorCmp@@0PAH@Z",
+     "lane": "W16-PG 2026-10-06",
+     "class": "CALLEE_REFUTED_CANNOT_FOLD",
+     "evidence": "This body calls __adjust_heap at 0x82518a80, whose MoveDetectorCmp spelling W16-OS's re-chase REFUTED on bytes (retail compares FileCacheEntry::mPriority at +0x28, signed). ICF folds only relocation-identical bodies, so the MoveDetectorCmp instantiation cannot share this address. No RB3 TU compiles MoveDetectorCmp since W16-PG removed the hamobj/MoveAsyncDetector.cpp scatter include from os/FileCache.cpp."
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
@@ -71423,6 +71427,22 @@
      "spelling": "??$__make_heap@PAPAVFileCacheEntry@@UPriority@@PAV1@H@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@0PAH@Z",
      "lane": "W16-NR 2026-10-02",
      "evidence": "chase PROVEN with 0 CYCLE-ASSUMED; unique among 16 retail masked twins (O chased against every twin, only the survivor PROVEN); 1/1 retail call sites at our spelling's sites (objdiff diff of every paired caller) land at the survivor; extent 108 B both sides (size_gate like-for-like). Slot discharge is the W16-JG strict policy."
+    }
+   ],
+   "relabelled": {
+    "from": "??$__make_heap@PAPAVMoveDetector@@UMoveDetectorCmp@@PAV1@H@stlpmtx_std@@YAXPAPAVMoveDetector@@0UMoveDetectorCmp@@0PAH@Z",
+    "to": "??$__make_heap@PAPAVFileCacheEntry@@UPriority@@PAV1@H@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@0PAH@Z",
+    "lane": "W16-OS 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__make_heap@PAPAVMoveDetector@@UMoveDetectorCmp@@PAV1@H@stlpmtx_std@@YAXPAPAVMoveDetector@@0UMoveDetectorCmp@@0PAH@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__make_heap@PAPAVFileCacheEntry@@UPriority@@PAV1@H@stlpmtx_std@@YAX @ 0x82518e68, ??$__make_heap@PAPAVMoveDetector@@UMoveDetectorCmp@@PAV1@H@stlpmtx_std): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntr | ours ??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDete (same operation, our callee not proven at a retail address of its own)"
     }
    ]
   },
@@ -74947,10 +74967,8 @@
   {
    "name": "$sort_heap",
    "address": "0x82519720",
-   "survivor": "??$sort_heap@PAPAVMoveDetector@@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@0UMoveDetectorCmp@@@Z",
-   "folded": [
-    "??$sort_heap@PAPAVFileCacheEntry@@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@@Z"
-   ],
+   "survivor": "??$sort_heap@PAPAVFileCacheEntry@@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@@Z",
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 20 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -75052,6 +75070,12 @@
      "spelling": "??$sort_heap@PAVSymbol@@U?$less@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVSymbol@@0U?$less@VSymbol@@@0@@Z",
      "lane": "ALIAS-CONSOLIDATION 2026-08-19",
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
+    },
+    {
+     "spelling": "??$sort_heap@PAPAVMoveDetector@@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@0UMoveDetectorCmp@@@Z",
+     "lane": "W16-PG 2026-10-06",
+     "class": "CALLEE_REFUTED_CANNOT_FOLD",
+     "evidence": "This body calls __adjust_heap at 0x82518a80, whose MoveDetectorCmp spelling W16-OS's re-chase REFUTED on bytes (retail compares FileCacheEntry::mPriority at +0x28, signed). ICF folds only relocation-identical bodies, so the MoveDetectorCmp instantiation cannot share this address. No RB3 TU compiles MoveDetectorCmp since W16-PG removed the hamobj/MoveAsyncDetector.cpp scatter include from os/FileCache.cpp."
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 2 other group(s) at 3 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 2 of the 3 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
@@ -75060,6 +75084,22 @@
      "spelling": "??$sort_heap@PAPAVFileCacheEntry@@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@@Z",
      "lane": "W16-NH 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED); 100 B retail / 100 B ours; retail body-twins 16. Retail call site(s) reaching the survivor where we call this spelling: 0x82519d74."
+    }
+   ],
+   "relabelled": {
+    "from": "??$sort_heap@PAPAVMoveDetector@@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@0UMoveDetectorCmp@@@Z",
+    "to": "??$sort_heap@PAPAVFileCacheEntry@@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@@Z",
+    "lane": "W16-OS 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$sort_heap@PAPAVMoveDetector@@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@0UMoveDetectorCmp@@@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$sort_heap@PAPAVFileCacheEntry@@UPriority@@@stlpmtx_std@@YAXPAPAVFil @ 0x82519720, ??$sort_heap@PAPAVMoveDetector@@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAP): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntr | ours ??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDete (same operation, our callee not proven at a retail address of its own)"
     }
    ]
   },
@@ -110482,10 +110522,8 @@
   {
    "name": "__adjust_heap",
    "address": "0x82518a80",
-   "survivor": "??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@HHPAV1@UMoveDetectorCmp@@@Z",
-   "folded": [
-    "??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@HHPAV1@UPriority@@@Z"
-   ],
+   "survivor": "??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@HHPAV1@UPriority@@@Z",
+   "folded": [],
    "evidence": "W16-NF: anonymous retail row fn_82518A80 (16 B, unit FileCache) named by its caller binding; every folded spelling is one a retail caller of this address spells, each admitted by icf_pair_adjudicate.py --chase (admitted[]).",
    "lane": "W16-NF",
    "admitted": [
@@ -110497,7 +110535,31 @@
    ],
    "added": {
     "lane": "W16-NF 2026-10-02"
-   }
+   },
+   "withdrawn": [
+    {
+     "spelling": "??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@HHPAV1@UMoveDetectorCmp@@@Z",
+     "lane": "W16-OS 2026-10-03",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@Y @ 0x82518a80, ??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_s): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntr | ours ??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDete; anchor ??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntr PROVEN here"
+    }
+   ],
+   "relabelled": {
+    "from": "??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@HHPAV1@UMoveDetectorCmp@@@Z",
+    "to": "??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@HHPAV1@UPriority@@@Z",
+    "lane": "W16-OS 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@HHPAV1@UMoveDetectorCmp@@@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "BODY:BYTES-DIFFER",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@Y @ 0x82518a80, ??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_s): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntr | ours ??$__adjust_heap@PAPAVMoveDetector@@HPAV1@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDete; anchor ??$__adjust_heap@PAPAVFileCacheEntry@@HPAV1@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntr PROVEN here"
+    }
+   ]
   },
   {
    "name": "GetRGStrumType",
