@@ -149,6 +149,12 @@ void CharPollGroup::SortPolls() {
     }
 }
 
+// On the match build these live in Character.cpp (#ifndef HX_NATIVE), where
+// retail has them; SortPolls calls Sort externally.  With Sort's body visible
+// in this TU MSVC can prove Sort never retains &polls, and it hoists
+// polls._M_start/_M_finish out of the push_back loop below, which retail
+// re-reads after every iteration.  The native build keeps them here.
+#ifdef HX_NATIVE
 int CharPollableSorter::sSearchID = 0;
 
 void CharPollableSorter::AddDeps(
@@ -257,3 +263,4 @@ void CharPollableSorter::Sort(std::vector<RndPollable *> &polls) {
         }
     }
 }
+#endif
