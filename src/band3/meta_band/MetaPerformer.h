@@ -14,6 +14,19 @@
 
 class PlayerScore;
 
+// MetaPerformer's Wii/dev-build-only members (mWiiPending, mLastVenue,
+// mVenueOverride) and the methods that touch them. Retail RB3-360 has none of
+// them: its MetaPerformer is 940 B (0x3ac), the size the retail factory
+// `MetaPerformer::Init` allocates. This used to be gated on a per-TU
+// `/DRB3_NO_WII_META_MEMBERS` that only MetaPerformer.cpp's compile carries, so
+// every OTHER match-build TU that includes this header saw a 952 B class with
+// the vbase Hmx::Object at 0x390 instead of 0x384 (21 TUs measured with
+// /d1reportAllClassLayout, lane W16-PZ) -- two layouts of one class in one
+// program. The native build keeps them (venue override is a native feature).
+#if defined(HX_NATIVE) && !defined(RB3_NO_WII_META_MEMBERS)
+#define RB3_META_PERFORMER_WII_MEMBERS 1
+#endif
+
 class PerformerStatsInfo {
 public:
     PerformerStatsInfo();
@@ -177,7 +190,7 @@ public:
     void UpdateBattleInstarankData(DataResultList &);
     void ClearInstarankData();
     void ClearBattleInstarankData();
-#ifndef RB3_NO_WII_META_MEMBERS
+#ifdef RB3_META_PERFORMER_WII_MEMBERS
     Symbol GetVenueOverride(); // Wii/dev-only: absent from retail RB3-360
 #endif
     void SetBandNoFail(bool);
@@ -275,7 +288,7 @@ public:
     bool mHarmonyOverride; // 0x378
     bool mRealDrumsOverride; // 0x379
     int unk360; // 0x37c -- LAST own member in retail; vtordisp follows at 0x380.
-#ifndef RB3_NO_WII_META_MEMBERS
+#ifdef RB3_META_PERFORMER_WII_MEMBERS
     // Wii/dev-build-only members. Retail Xbox drops all three: the ctor packs
     // 0x38..0x380 with non-Wii members, then a vtordisp word at 0x380 and the
     // Hmx::Object virtual base at 0x384.

@@ -58,9 +58,14 @@
 #include "world/ColorPalette.h"
 
 
-// Classes whose TUs are not yet ported in-tree. Minimal local declarations keep
-// the BandInit call sequence (and therefore its relocation layout) identical to
-// retail; the Init symbols stay undefined externals, which objdiff pairs fine.
+// Every class BandInit() registers is now declared by its own header. Until
+// lane W16-PZ five of them (DialogDisplay, InstrumentDifficultyDisplay,
+// MicInputArrow, PlayerDiffIcon, ScrollbarDisplay) were empty local stubs
+// `class X { public: static void Init(); };`, i.e. 1-byte classes, while the
+// real definitions are 88/432/500/440/452 B (retail factory allocations). Band.cpp
+// is scatter-included into BandCharacter.cpp, so that TU carried a second,
+// conflicting definition of each class. Their Init() is out-of-line in every
+// real header, so BandInit's call sequence is unchanged.
 //
 // X6: BandConfiguration's factory-only shim is GONE -- the real TU is ported
 // (bandobj/BandConfiguration.{h,cpp}), and its header is included above. The
@@ -109,12 +114,12 @@ void BandSong::CreateSong(
     DataArraySongInfo info(arr, 0, s);
     bmaster->Load(&info, 4, &plist, true, kSongData_NoValidation, &mreceivers);
 }
-class DialogDisplay { public: static void Init(); };
-class InstrumentDifficultyDisplay { public: static void Init(); };
-class MicInputArrow { public: static void Init(); };
+#include "bandobj/DialogDisplay.h"
+#include "bandobj/InstrumentDifficultyDisplay.h"
+#include "bandobj/MicInputArrow.h"
 #include "bandobj/PatchRenderer.h"
-class PlayerDiffIcon { public: static void Init(); };
-class ScrollbarDisplay { public: static void Init(); };
+#include "bandobj/PlayerDiffIcon.h"
+#include "bandobj/ScrollbarDisplay.h"
 
 DataNode OnPaletteSync(DataArray *array) {
     // Every outfit config and swatch referencing the palette picks up its
