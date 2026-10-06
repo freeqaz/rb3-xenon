@@ -82,7 +82,7 @@ int PatchVerts::GreaterEq(int iii) const {
     }
 }
 
-bool PatchVerts::HasVert(int vert) const {
+inline bool PatchVerts::HasVert(int vert) const {
     int idx = GreaterEq(vert);
     if (idx < mPatchVerts.size()) {
         return mPatchVerts[idx] == vert;
@@ -1272,9 +1272,9 @@ void RndMesh::OnSync(int flags) {
     if (PatchOkay(mVerts.size(), mFaces.size())) {
         mPatches.push_back(mFaces.size());
     } else if (flags & 0x100U) {
+        int i4 = 0;
         u16 i12 = 0;
         u16 u13 = 0xFFFF;
-        int i4 = 0;
         FOREACH (it, mFaces) {
             i12 = Max(Max<u16>(i12, it->v1, it->v2), it->v3);
             u13 = Min(Min<u16>(u13, it->v1, it->v2), it->v3);
@@ -1301,21 +1301,21 @@ void RndMesh::OnSync(int flags) {
                 int uvar16 = !gPatchVerts.HasVert(faceIt->v1)
                     + !gPatchVerts.HasVert(faceIt->v2) + !gPatchVerts.HasVert(faceIt->v3);
                 if (uvar16 < u5) {
+                    bestFaceIt = faceIt;
+                    u5 = uvar16;
                     Vector3 v4c;
                     FaceCenter(this, &*faceIt, v4c);
                     Vector3 diff;
                     Subtract(v4c, v40, diff);
                     f68 = LengthSquared(diff);
-                    u5 = uvar16;
-                    bestFaceIt = faceIt;
                 } else if (uvar16 == u5) {
                     Vector3 v58;
                     FaceCenter(this, &*faceIt, v58);
                     Vector3 diff2;
                     Subtract(v58, v40, diff2);
                     if (MinEq(f68, LengthSquared(diff2))) {
-                        u5 = uvar16;
                         bestFaceIt = faceIt;
+                        u5 = uvar16;
                     }
                 }
             }
