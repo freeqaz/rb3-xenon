@@ -7,6 +7,9 @@
 #include "utl/Symbols.h"
 #include "decomp.h"
 
+// Retail declares this before sTasks: its dynamic initializer is 0x82C3FFC0,
+// directly ahead of sTasks' (0x82C3FFD0), and nothing in retail reads it.
+static std::vector<Fader *> sFaderList;
 std::list<FaderTask *> FaderTask::sTasks;
 
 Fader::Fader() : mVal(0.0f), mFaderTask(0), mLocalName(), mMode(kLinear) {}
