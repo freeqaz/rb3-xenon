@@ -319,7 +319,10 @@ void TrackPanelDir::UpdateTimeInfo() {
     if (audition_mode) {
         if (!mTimeGrp) {
             RndDir *dir = Hmx::Object::New<RndDir>();
-            dir->SetProxyFile(FilePath("ui/track/time_info.milo"), false);
+            {
+                FilePath path("ui/track/time_info.milo");
+                dir->SetProxyFile(path, false);
+            }
             dir->SetName("time_info", this);
             SyncObjects();
             // The readout group and labels live in the time_info dir just loaded.
