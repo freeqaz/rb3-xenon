@@ -187,7 +187,9 @@ Gates on the final tree (lane worktree, built):
 - `icf_alias_finder.py --validate`: PASS (1,906 map-consistent / 225 tolerated / 0 contradicted / 2,131).
 - `tools/test_alias_survivor_drift.py`: 14 passed.
 - `icf_pair_adjudicate.py --chasetest`: PASSED, both before the change and on the final tree.
-- Native gate, run last: see the line below.
+- Native gate, run last on the final code at `c6315c148` (only this line of this doc changed afterwards, and the gate
+  was re-run after that commit):
+  `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0`
 
 Not done:
 - No source, map-row, splits or `symbols.txt` edit. None was needed: no pair was refuted and no wrong type was found.
