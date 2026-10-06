@@ -4,18 +4,26 @@
 #include "utl/Locale.h"
 #include "utl/LocaleOrdinal.h"
 #include "obj/Data.h"
+#include <stdio.h>
 #include <string.h>
+
+// RB3 retail 0x82BBABF8 calls the CRT _snprintf directly (no Hx_snprintf
+// wrapper, so a truncated write is not re-terminated); native keeps the wrapper.
+#ifdef HX_NATIVE
+#define SFS_SNPRINTF Hx_snprintf
+#else
+#define SFS_SNPRINTF _snprintf
+#endif
 
 #define BUF_SIZE 0x800
 
-SuperFormatString::SuperFormatString(
-    const char *cc, const DataArray *da, bool b, Locale &locale, Symbol lang
-) {
+// RB3 retail 0x82BBABF8.  Placeholders are `{type:name}` (or
+// `{type:width:name}` for int/float/ordinal), filled from the matching
+// `(name value)` pair of `da`, or localised directly for `token`.
+SuperFormatString::SuperFormatString(const char *cc, const DataArray *da, bool b) {
     char param[8];
     char tempFmt[2048];
     char phInfo[64];
-    mTokensOnly = b;
-    mHasPercentFormat = false;
     if (!da && !b) {
         InitializeWithFmt(cc, true);
         return;
@@ -26,8 +34,6 @@ SuperFormatString::SuperFormatString(
         char *phInfoPos = phInfo;
         char *tempFmtEnd = tempFmt + 2048;
         char *tempFmtPos = tempFmt;
-        bool sawPercent = false;
-        bool sawDouble = false;
         for (const char *p = cc; *p != 0; p++) {
             switch (state) {
             case 0:
@@ -39,17 +45,6 @@ SuperFormatString::SuperFormatString(
                         p++;
                     }
                 } else {
-                    if (*p == '%' && !sawPercent) {
-                        if (p[1] == '%' && !sawDouble) {
-                            sawPercent = true;
-                            mHasPercentFormat = true;
-                        } else {
-                            sawDouble = true;
-                            mHasPercentFormat = false;
-                        }
-                    } else {
-                        sawPercent = false;
-                    }
                     *tempFmtPos++ = *p;
                 }
                 break;
@@ -135,9 +130,8 @@ SuperFormatString::SuperFormatString(
                         bool nodeBad = false;
                         switch (phType) {
                         case 0:
-                            if (node.Type() != kDataString) {
-                                nodeBad = node.Type() != kDataSymbol;
-                            }
+                            nodeBad = node.Type() != kDataString
+                                && node.Type() != kDataSymbol;
                             break;
                         case 1:
                             nodeBad = node.Type() != kDataInt;
@@ -146,9 +140,8 @@ SuperFormatString::SuperFormatString(
                             nodeBad = node.Type() != kDataInt;
                             break;
                         case 3:
-                            if (node.Type() != kDataFloat) {
-                                nodeBad = node.Type() != kDataInt;
-                            }
+                            nodeBad = node.Type() != kDataFloat
+                                && node.Type() != kDataInt;
                             break;
                         case 4:
                             nodeBad = false;
@@ -168,36 +161,36 @@ SuperFormatString::SuperFormatString(
                             switch (phType) {
                             case 0:
                                 if (node.Type() == kDataString) {
-                                    snResult = Hx_snprintf(
+                                    snResult = SFS_SNPRINTF(
                                         tempFmtPos,
                                         tempFmtEnd - tempFmtPos,
                                         "%s",
                                         node.Str()
                                     );
                                 } else {
-                                    snResult = Hx_snprintf(
+                                    snResult = SFS_SNPRINTF(
                                         tempFmtPos,
                                         tempFmtEnd - tempFmtPos,
                                         "%s",
-                                        Localize(node.Sym(), 0, locale)
+                                        Localize(node.Sym(), 0)
                                     );
                                 }
                                 break;
                             case 1:
-                                snResult = Hx_snprintf(
+                                snResult = SFS_SNPRINTF(
                                     tempFmtPos, tempFmtEnd - tempFmtPos, param, node.Int()
                                 );
                                 break;
                             case 2:
-                                snResult = Hx_snprintf(
+                                snResult = SFS_SNPRINTF(
                                     tempFmtPos,
                                     tempFmtEnd - tempFmtPos,
                                     "%s",
-                                    LocalizeSeparatedInt(node.Int(), locale)
+                                    LocalizeSeparatedInt(node.Int())
                                 );
                                 break;
                             case 3:
-                                snResult = Hx_snprintf(
+                                snResult = SFS_SNPRINTF(
                                     tempFmtPos,
                                     tempFmtEnd - tempFmtPos,
                                     param,
@@ -205,26 +198,21 @@ SuperFormatString::SuperFormatString(
                                 );
                                 break;
                             case 4:
-                                snResult = Hx_snprintf(
+                                snResult = SFS_SNPRINTF(
                                     tempFmtPos,
                                     tempFmtEnd - tempFmtPos,
                                     "%s",
-                                    Localize(Symbol(phInfo), 0, locale)
+                                    Localize(Symbol(phInfo), 0)
                                 );
                                 break;
                             case 5:
                                 gender = (LocaleGender)(param[0] != 'm');
                                 num = (LocaleNumber)(param[1] != 's');
                                 x = node.Int();
-                                snResult = Hx_snprintf(
+                                snResult = SFS_SNPRINTF(
                                     tempFmtPos,
                                     tempFmtEnd - tempFmtPos,
                                     "%s",
-                                    // 4-arg: RB3-360 retail has no 6-arg
-                                    // LocalizeOrdinal, and the dropped `lang`
-                                    // / `locale` arguments were never read by
-                                    // the body. (This TU is unpinned, so this
-                                    // is a compile fix, not a match change.)
                                     LocalizeOrdinal(x, gender, num, false)
                                 );
                                 break;
@@ -241,7 +229,7 @@ SuperFormatString::SuperFormatString(
                             "couldn't find parameter for placeholder '%s'\n", phInfo
                         );
                     }
-                    tempFmtPos += Hx_snprintf(
+                    tempFmtPos += SFS_SNPRINTF(
                         tempFmtPos, tempFmtEnd - tempFmtPos, "{missing:%s}", phInfo
                     );
                 } else {
@@ -257,7 +245,7 @@ SuperFormatString::SuperFormatString(
             *phInfoPos = '\0';
             MILO_WARN("bad formatting for placeholder '%s'\n", phInfo);
             tempFmtPos +=
-                Hx_snprintf(tempFmtPos, tempFmtEnd - tempFmtPos, "{badfmt:%s", phInfo);
+                SFS_SNPRINTF(tempFmtPos, tempFmtEnd - tempFmtPos, "{badfmt:%s", phInfo);
         }
         *tempFmtPos = 0;
         MILO_ASSERT(tempFmtPos - tempFmt < BUF_SIZE, 0x10B);
@@ -265,15 +253,4 @@ SuperFormatString::SuperFormatString(
     }
 }
 
-const char *SuperFormatString::FinalStr() {
-    if (!(!mTokensOnly)) {
-        return mFmt;
-    }
-    const char *result = Str();
-    if (!mHasPercentFormat) {
-        return result;
-    }
-    String str(result);
-    str += "%s";
-    return MakeString(str.c_str(), "");
-}
+const char *SuperFormatString::RawFmt() const { return mFmt; }

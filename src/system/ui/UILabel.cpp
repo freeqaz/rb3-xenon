@@ -1026,22 +1026,26 @@ void UILabel::SetTokenFmtImp(
         bool found;
         const char *localized = Localize(mTextToken, &found);
         if (found) {
-            SuperFormatString str(localized, da1, b, TheLocale, gNullStr);
+            // RB3 retail: the three-argument SuperFormatString (no locale /
+            // language), Size() re-read every iteration, and the raw format
+            // string when only tokens were substituted.
+            SuperFormatString str(localized, da1, b);
             if (da2) {
-                int size = da2->Size();
-                if (size > i) {
-                    do {
-                        const DataNode &n = da2->Evaluate(i);
-                        if (n.Type() == kDataSymbol) {
-                            str << Localize(n.Sym(da2), 0);
-                        } else {
-                            str << n;
-                        }
-                        i++;
-                    } while (i < size);
+                for (; i < da2->Size(); i++) {
+                    const DataNode &n = da2->Evaluate(i);
+                    if (n.Type() == kDataSymbol) {
+                        str << Localize(n.Sym(), 0);
+                    } else {
+                        str << n;
+                    }
                 }
             }
-            SetDisplayText(str.FinalStr(), false);
+            const char *text;
+            if (b)
+                text = str.RawFmt();
+            else
+                text = str.Str();
+            SetDisplayText(text, false);
         } else {
             SetDisplayText(localized, false);
         }
