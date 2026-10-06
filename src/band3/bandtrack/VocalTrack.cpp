@@ -1211,8 +1211,10 @@ void VocalTrack::UpdateScrolling(float ms) {
             return;
     }
 
-    float sectionStart = FLT_MAX;
-    float sectionEnd = -FLT_MAX;
+    // Unbounded until SongSectionOnly narrows it: start = -FLT_MAX, end = FLT_MAX
+    // (retail .rdata 0x82071744 / 0x8201C818).
+    float sectionStart = -FLT_MAX;
+    float sectionEnd = FLT_MAX;
     bool sectionOnly = mPlayer->SongSectionOnly(sectionStart, sectionEnd);
     if (sectionOnly && sectionEnd < lookAhead) {
         lookAhead = sectionEnd;
@@ -1414,7 +1416,7 @@ void VocalTrack::UpdateScrolling(float ms) {
     }
 
     if (!mPlayer->IsNet()) {
-        mTambourineGemPool->FreeOldGems(ms - 250.0f);
+        mTambourineGemPool->FreeOldGems(ms - 1000.0f); // retail .rdata 0x820010B4 = 1000.0f
         const std::vector<int> &tambGems =
             mPlayer->mTambourineManager.TambourineGems();
         int targetTick = (int)MsToTick(lookAhead);
