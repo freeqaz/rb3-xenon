@@ -799,8 +799,8 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
         pSinger->AllScoresAreIn(scoredPartIndices);
         pSinger->ResolveAmbiguity();
         int iOctaveOffset = 0;
-        bool bHasBestTarget = (0.0f != pSinger->mBestTargetPitch);
         float fFramePitch = pSinger->mFrameMicPitch;
+        bool bHasBestTarget = (0.0f != pSinger->mBestTargetPitch);
 
         if (bHasBestTarget) {
             pSinger->ClearFreestyleDeployment();
