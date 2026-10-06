@@ -63,13 +63,14 @@ void FingerShape::Update(const RGState &state, bool b1, bool b2) {
                 UpdateAnim(mContourAngleAnims[0], -clamped, b1);
             }
             if (i < 5) {
-                float clamped2 = Clamp<int>(0, 6, num + state.GetFret(i + 1));
+                int next = i + 1;
+                float clamped2 = Clamp<int>(0, 6, num + state.GetFret(next));
                 float minclamp = Min(clamped, clamped2);
                 float f1 = clamped - clamped2;
                 if (mLefty)
                     f1 = -f1;
-                UpdateAnim(mContourHeightAnims[i + 1], minclamp, b1);
-                UpdateAnim(mContourAngleAnims[i + 1], f1, b1);
+                UpdateAnim(mContourHeightAnims[next], minclamp, b1);
+                UpdateAnim(mContourAngleAnims[next], f1, b1);
             }
             if (i == 5) {
                 UpdateAnim(mContourHeightAnims[6], clamped, b1);
