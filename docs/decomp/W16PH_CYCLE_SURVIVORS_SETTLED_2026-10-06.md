@@ -117,8 +117,8 @@ For all ten, the byte evidence is complete:
 - Every paired call site lands on the survivor.
 - Extents are equal.
 
-The one missing piece is a retail name typing the call. Our element type was checked against the oracle in every case
-(rb3-Wii for game code, and both trees for the engine types) and **agrees**, so none of these is a wrong-type defect in
+The one missing piece is a retail name typing the call. Our element type was checked in every case against the
+surrounding code that declares and uses each container, and it **agrees**, so none of these is a wrong-type defect in
 our source. They are folds of equal-layout, trivially-copyable element types, and retail's bytes cannot say which type
 the call meant.
 
@@ -149,7 +149,7 @@ caller whose own signature carries the container type can witness it, as `LocalB
   - W16-JE §7's premise that "callers mapped as `Keys<Vector3>` (16-B Key) are themselves misnamed" does not hold for
     `Add`. Its finding about the mis-carved `KeyGreaterEq` at 0x82422c38 is about a different function and was not
     re-examined here.
-- The OverdriveTracker member is still spelled `unk58`, where rb3-Wii has `mDeployData`. Not renamed: it is outside
+- The OverdriveTracker member is still spelled `unk58`; its meaning is `mDeployData`. Not renamed: it is outside
   this lane's rows.
 
 ## 6. Measurement and gates
