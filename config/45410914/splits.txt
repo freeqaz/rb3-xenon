@@ -3389,6 +3389,8 @@ Character.cpp:
 	.pdata      start:0x82201848 end:0x82201850
 	.pdata      start:0x82201850 end:0x82201858
 	.pdata      start:0x82201860 end:0x82201880
+	.pdata      start:0x82201880 end:0x82201888
+	.pdata      start:0x82201888 end:0x82201890
 	.pdata      start:0x82201890 end:0x822018C0
 	.pdata      start:0x822018C0 end:0x822018C8
 	.pdata      start:0x822018C8 end:0x822018D8
@@ -3506,7 +3508,6 @@ User.cpp:
 	.text       start:0x82524390 end:0x8252439C
 
 Flow.cpp:
-	.pdata      start:0x821F4C70 end:0x821F4C78
 	.pdata      start:0x821F7FA8 end:0x821F7FB0
 	.pdata      start:0x8221E768 end:0x8221E778
 	.text       start:0x822A6F68 end:0x822A6F70
@@ -4658,7 +4659,6 @@ PollAnim.cpp:
 
 ByteGrinder.cpp:
 	.pdata      start:0x82239CF0 end:0x82239F50
-	.pdata      start:0x8223A078 end:0x8223A080
 	.pdata      start:0x8223A0D8 end:0x8223A0E8
 	.pdata      start:0x8223A0E8 end:0x8223A0F0
 	.text       start:0x82725440 end:0x82727F4C
@@ -4870,8 +4870,6 @@ Mat_NG.cpp:
 	.text       start:0x824A8F74 end:0x824AA3E0
 
 CameraShot.cpp:
-	.pdata      start:0x82201880 end:0x82201888
-	.pdata      start:0x82201888 end:0x82201890
 	.pdata      start:0x822133E0 end:0x822133F0
 	.pdata      start:0x822133F8 end:0x82213408
 	.pdata      start:0x82213408 end:0x82213418
@@ -5307,7 +5305,6 @@ UIList.cpp:
 	.pdata      start:0x8223DE50 end:0x8223DE58
 	.pdata      start:0x8223DF90 end:0x8223DFA0
 	.pdata      start:0x8223DFB0 end:0x8223DFE8
-	.pdata      start:0x82240190 end:0x82240198
 	.pdata      start:0x822452A8 end:0x822452F8
 	.pdata      start:0x822452F8 end:0x82245308
 	.pdata      start:0x82245308 end:0x82245318
@@ -6131,6 +6128,7 @@ DataArraySongInfo.cpp:
 	.pdata      start:0x82240158 end:0x82240160
 	.pdata      start:0x82240160 end:0x82240168
 	.pdata      start:0x82240180 end:0x82240190
+	.pdata      start:0x82240190 end:0x82240198
 	.pdata      start:0x82240198 end:0x82240210
 	.pdata      start:0x82240210 end:0x82240218
 	.pdata      start:0x82240218 end:0x822402B8
@@ -6704,6 +6702,7 @@ Archive.cpp:
 
 system/rnddx9/Rnd.cpp:
 	.pdata      start:0x8223A410 end:0x8223A488
+	.pdata      start:0x8223A488 end:0x8223A490
 	.pdata      start:0x82261640 end:0x82261648
 	.text       start:0x82732A94 end:0x82733C70
 	.text       start:0x82733C70 end:0x82733CB0
@@ -6865,7 +6864,6 @@ GranularSynth.cpp:
 SampleData.cpp:
 	.pdata      start:0x821F49D0 end:0x821F49D8
 	.pdata      start:0x8223A280 end:0x8223A2F0
-	.pdata      start:0x8223A488 end:0x8223A490
 	.text       start:0x822A43A4 end:0x822A43E8
 	.text       start:0x8272B2E0 end:0x8272BAC8
 
@@ -11996,6 +11994,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4C48 end:0x821F4C60
 	.pdata      start:0x821F4C60 end:0x821F4C68
 	.pdata      start:0x821F4C68 end:0x821F4C70
+	.pdata      start:0x821F4C70 end:0x821F4C78
 	.pdata      start:0x821F4CC8 end:0x821F4CD0
 	.pdata      start:0x821F4CD0 end:0x821F4CF0
 	.pdata      start:0x821F4CF0 end:0x821F4D00
@@ -12787,6 +12786,7 @@ system/synth/SynthSample.cpp:
 	.pdata      start:0x82239F68 end:0x8223A048
 	.pdata      start:0x8223A048 end:0x8223A068
 	.pdata      start:0x8223A068 end:0x8223A078
+	.pdata      start:0x8223A078 end:0x8223A080
 	.pdata      start:0x8223A080 end:0x8223A098
 	.pdata      start:0x8223A098 end:0x8223A0D8
 	.text       start:0x826FBE68 end:0x826FBEE8
