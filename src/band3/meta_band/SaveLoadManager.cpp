@@ -2010,8 +2010,11 @@ DataNode SaveLoadManager::OnMsg(const NoDeviceChosenMsg &) {
 // kMCFileNotFound to SaveOverwrite, ManualLoadChooseDevice maps
 // kMCObsoleteVersion / kMCNewerVersion to the autoload future prompts, and
 // SaveChooseDevice always moves to SaveNoOverwrite.
-// Residue: retail lowers the outer switch as a binary tree pivoting on 0x47;
-// ours, with the same seven case values, lowers to a compare chain.
+// The default is a stripped MILO_FAIL_RTL: its by-value args keep the default block distinct
+// from the Done/LoadComplete/Finish break while the switch is lowered, so the
+// outer switch becomes the binary tree retail has (pivot 0x47). With plain
+// MILO_FAIL the default merges with the break exit and the switch lowers to a
+// compare chain instead.
 DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
     MILO_ASSERT(mWaiting, 0xaa3);
     mWaiting = false;
@@ -2111,7 +2114,7 @@ DataNode SaveLoadManager::OnMsg(const MCResultMsg &msg) {
     case kS_Finish:
         break;
     default:
-        MILO_FAIL("Unhandled MCResultMsg in state %d and mode %d\n", (int)mState, (int)mMode);
+        MILO_FAIL_RTL("Unhandled MCResultMsg in state %d and mode %d\n", (int)mState, (int)mMode);
         break;
     }
     return 0;
