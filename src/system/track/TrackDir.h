@@ -137,6 +137,10 @@ public:
     }
 
     NEW_OBJ(TrackDir)
+    // Retail TrackDir::NewObject evaluates TrackDir::StaticClassName() before
+    // MemAlloc(0x444, 0): the class has its own operator new. ??_GTrackDir calls
+    // MemFree directly, which PanelDir's inline delete already gives.
+    OBJ_NEW_OVERLOAD
 
     static void Register() { REGISTER_OBJ_FACTORY(TrackDir); }
 
@@ -184,3 +188,5 @@ public:
     // unconditionally to land BandTrack@0x40c / mInUse@0x429 like the target asm.
     // No compiled TU references TrackDir::mTest.
 };
+
+void TrackInit();

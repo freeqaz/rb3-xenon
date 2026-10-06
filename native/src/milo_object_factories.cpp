@@ -604,8 +604,7 @@ void RegisterTrackFactories() {
     // BandButton::Init() also runs InitResources, so the factory alone.
     ChordShapeGenerator::Init();
     BandButton::Register();
-    // tracksystem.milo's 608 TrackWidgets and the engine TrackDir base
-    // (registered by the track system module in retail).
-    TrackWidget::Register();
-    TrackDir::Register();
+    // tracksystem.milo's 608 TrackWidgets and the engine TrackDir base:
+    // TrackInit registers TrackDir then TrackWidget, as App::App calls it.
+    TrackInit();
 }

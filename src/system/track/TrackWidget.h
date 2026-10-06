@@ -60,7 +60,8 @@ public:
     DataNode OnAddMeshInstance(const DataArray *);
 
     NEW_OBJ(TrackWidget)
-    NEW_OVERLOAD
+    // Retail TrackWidget::NewObject inlines StaticClassName() + MemAlloc(0x140, 0).
+    OBJ_NEW_OVERLOAD
     // Retail ??_GTrackWidget calls MemFree directly: the delete inlines.
     DELETE_OVERLOAD_INLINE
     static void Register() { REGISTER_OBJ_FACTORY(TrackWidget); }

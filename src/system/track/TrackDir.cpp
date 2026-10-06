@@ -24,6 +24,13 @@
 static unsigned short gAltRev = 0;
 static unsigned short gRev = 0;
 
+// Registers the track factories: TrackDir first, then TrackWidget. Retail
+// emits the two NewObject bodies and this function ahead of the TrackDir ctor.
+void TrackInit() {
+    TrackDir::Register();
+    TrackWidget::Register();
+}
+
 TrackDir::TrackDir()
     : mRunning(!LOADMGR_EDITMODE), mDrawGroup(this), mAnimGroup(this), mYPerSecond(10.0f),
       mTopY(10.0f), mBottomY(-3.0f), mWarnOnResort(false), mShowingWhenEnabled(this),
