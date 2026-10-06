@@ -655,9 +655,17 @@ void Rnd::TestPoint(const Vector3 &pos, RndFlare *flare) {
         if (depth >= cam->NearPlane() && depth <= cam->FarPlane()
             && screen.x >= 0.0f && screen.y >= 0.0f && screen.x < 1.0f && screen.y < 1.0f) {
 #ifdef HX_NATIVE
-            // Native: no GPU occlusion query — treat in-view flares as fully visible
+            // Native: no GPU occlusion query — treat in-view flares as fully visible.
+            // Retail draws the flare's rect (set by CalcRect just before this call)
+            // as an occlusion query and stores the visible pixel count, which
+            // RndFlare divides by the rect's area when mAreaTest is on. Unoccluded,
+            // that count is the rect's on-screen area; a constant 1.0 would leave
+            // an area-tested flare at ~1/(w*h) strength.
             flare->SetVisible(true);
-            flare->SetOcclusionResult(1.0f);
+            const Hmx::Rect &a = flare->GetArea();
+            float w = Min<float>((float)mWidth, a.x + a.w) - Max(0.0f, a.x);
+            float h = Min<float>((float)mHeight, a.y + a.h) - Max(0.0f, a.y);
+            flare->SetOcclusionResult((w > 0.0f && h > 0.0f) ? w * h : 0.0f);
 #else
             PointTest pt = { 0, 0, 0, 0 };
             std::list<PointTest>::iterator it = mPointTests.insert(mPointTests.end(), pt);
