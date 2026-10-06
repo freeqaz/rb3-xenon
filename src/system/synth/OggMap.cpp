@@ -234,13 +234,19 @@ bool OggMap::ReadMap(BinStream &bs) {
 
 // Opens a mogg, validates its header and seek table, and primes decryption.
 bool OggMap::OpenMogg(const char *file) {
+    long long val;
     mFile = new FileStream(file, FileStream::kRead, true);
     if (!mFile) {
         return false;
     }
     int version;
     *mFile >> version;
-    if (version < 10 || version > 15) {
+    if (version < 10) {
+        delete mFile;
+        mFile = nullptr;
+        return false;
+    }
+    if (version > 15) {
         delete mFile;
         mFile = nullptr;
         return false;
@@ -267,21 +273,18 @@ bool OggMap::OpenMogg(const char *file) {
         } else if (version >= 12 && version <= 15) {
             mFile->Read(gNonce, 16);
             OGGMAP_CHECK_FILE();
-            long long magicA;
-            *mFile >> magicA;
-            gMagicA = magicA;
+            *mFile >> val;
+            gMagicA = val;
             OGGMAP_CHECK_FILE();
-            long long magicB;
-            *mFile >> magicB;
-            gMagicB = magicB;
+            *mFile >> val;
+            gMagicB = val;
             OGGMAP_CHECK_FILE();
             mFile->Read(buf, 16);
             OGGMAP_CHECK_FILE();
             mFile->Read(buf, 16);
             OGGMAP_CHECK_FILE();
-            long long keyIndex;
-            *mFile >> keyIndex;
-            gKeyIndex = keyIndex;
+            *mFile >> val;
+            gKeyIndex = val;
             OGGMAP_CHECK_FILE();
             gKeyIndex = gKeyIndex % 6 + 6;
             ByteGrinder grinder;
