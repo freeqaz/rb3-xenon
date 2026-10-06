@@ -2228,8 +2228,10 @@ bool SongParser::HandleRGGemStop(
             if (didComputeHandPos)
                 mRGHandPos = -1;
 
-            // Strum type from area strum
-            if (on_tick >= info.mRGAreaStrumStartTick && on_tick <= info.mRGAreaStrumEndTick) {
+            // Strum type from area strum. Retail tests the chord's STOP tick here,
+            // not on_tick like every other window above (cmpw against the `tick`
+            // argument register at both bounds).
+            if (tick >= info.mRGAreaStrumStartTick && tick <= info.mRGAreaStrumEndTick) {
                 geminfo.strum_type = info.mRGAreaStrumType;
             } else {
                 geminfo.strum_type = kRGNoStrum;
