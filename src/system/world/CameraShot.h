@@ -257,27 +257,14 @@ protected:
     float mClampHeight; // 0x38
     /** "Category for shot-picking" */
     Symbol mCategory; // 0x3c
-    // NB(rb3-xenon): member ORDER below is reconstructed from retail
-    // CamShot::Save's own this-relative offsets (r30 == this + 0x260, so
-    // member_off == 0x260 - subtrahend). Retail has a 4-byte member at 0x100
-    // and a 0xc member at 0x168, and *nothing* between mPostProcOverrides
-    // (ends 0x19c) and mCrowds (starts 0x19c). The only two members that can
-    // fill those holes are mCrowdStateOverride (Symbol, 4) and mParentDir
-    // (ObjPtr, 0xc) — a unique size-wise assignment that is byte-neutral, so
-    // the object does NOT grow and every member from mCrowds onward keeps the
-    // offset it already had (mCrowds 0x19c / mPS3PerPixel 0x1ac /
-    // mGlowSpot 0x1b0 / mFlags 0x1bc all already matched retail).
-    // ⚠ This supersedes the old "VBASE_WALL / add int mShotStartedPending"
-    // note: that hypothesis put a NEW member at 0x100, which grows the object
-    // by 4 and shifts the already-correct tail (mEndHideList..mSetFrameActive)
-    // — which is exactly why it measured net -3 whole-binary. CheckShotOver()
-    // reads mDuration (0x278) and is at 100%, proving the tail is correct and
-    // must not move.
-    /** "Force the crowd into a particular state".
-        Options are: (none bad ok great
-            skills_bad skills_ok skills_great
-            realtime_idle realtime_bad realtime_ok realtime_great) */
-    Symbol mCrowdStateOverride; // 0x40
+    // A 4-byte member no RB3 code constructs, reads or writes. Retail's ctor
+    // skips 0x40 (its next construction is mAnims at 0x44), and no CamShot or
+    // BandCamShot function touches this+0x40 (also checked as -0x220 off the
+    // this+0x260 base Save uses). It is not DC3's Symbol mCrowdStateOverride:
+    // "crowd_state_override" is absent from band.exe, and a Symbol would be
+    // constructed. The slot must stay, because every later member (mAnims 0x44
+    // onward) is at its retail offset.
+    int unk40; // 0x40
     /** "animatables to be driven with the same frame" */
     ObjPtrList<RndAnimatable> mAnims; // 0x44
     /** "Optional camera path to use" */

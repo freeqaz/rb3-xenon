@@ -593,6 +593,7 @@
             "system/meta/MetaMusicScene.cpp": "NonMatching",
             "system/midi/MidiVarLen.cpp": "NonMatching",
             "system/movie/Movie.cpp": "NonMatching",
+            "system/movie/Movie_Xbox.cpp": "NonMatching",
             "system/movie/MovieSys.cpp": "NonMatching",
             "system/moviebink/BinkMovieSys_Xbox.cpp": "NonMatching",
             "system/net/DingoJob.cpp": "NonMatching",

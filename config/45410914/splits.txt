@@ -3389,6 +3389,8 @@ Character.cpp:
 	.pdata      start:0x82201848 end:0x82201850
 	.pdata      start:0x82201850 end:0x82201858
 	.pdata      start:0x82201860 end:0x82201880
+	.pdata      start:0x82201880 end:0x82201888
+	.pdata      start:0x82201888 end:0x82201890
 	.pdata      start:0x82201890 end:0x822018C0
 	.pdata      start:0x822018C0 end:0x822018C8
 	.pdata      start:0x822018C8 end:0x822018D8
@@ -3438,6 +3440,8 @@ Character.cpp:
 	.text       start:0x823710B8 end:0x823710E4
 	.text       start:0x823710E4 end:0x82371148
 	.text       start:0x82371198 end:0x82371320
+	.text       start:0x82371320 end:0x82371388
+	.text       start:0x82371388 end:0x823713B8
 	.text       start:0x823713B8 end:0x823715E0
 	.text       start:0x823715E0 end:0x823716A8
 	.text       start:0x823716A8 end:0x82371858
@@ -3504,10 +3508,8 @@ User.cpp:
 	.text       start:0x82524390 end:0x8252439C
 
 Flow.cpp:
-	.pdata      start:0x821F4C70 end:0x821F4C78
 	.pdata      start:0x821F7FA8 end:0x821F7FB0
 	.pdata      start:0x8221E768 end:0x8221E778
-	.text       start:0x822A6528 end:0x822A6580
 	.text       start:0x822A6F68 end:0x822A6F70
 	.text       start:0x822D8D48 end:0x822D8D70
 	.text       start:0x82574D90 end:0x82574E1C
@@ -4657,11 +4659,9 @@ PollAnim.cpp:
 
 ByteGrinder.cpp:
 	.pdata      start:0x82239CF0 end:0x82239F50
-	.pdata      start:0x8223A078 end:0x8223A080
 	.pdata      start:0x8223A0D8 end:0x8223A0E8
 	.pdata      start:0x8223A0E8 end:0x8223A0F0
 	.text       start:0x82725440 end:0x82727F4C
-	.text       start:0x82729004 end:0x82729080
 	.text       start:0x82729618 end:0x827296BC
 	.text       start:0x827296BC end:0x82729704
 	.text       start:0x82729704 end:0x82729710
@@ -4870,8 +4870,6 @@ Mat_NG.cpp:
 	.text       start:0x824A8F74 end:0x824AA3E0
 
 CameraShot.cpp:
-	.pdata      start:0x82201880 end:0x82201888
-	.pdata      start:0x82201888 end:0x82201890
 	.pdata      start:0x822133E0 end:0x822133F0
 	.pdata      start:0x822133F8 end:0x82213408
 	.pdata      start:0x82213408 end:0x82213418
@@ -4897,8 +4895,6 @@ CameraShot.cpp:
 	.pdata      start:0x82213CD0 end:0x82213CD8
 	.pdata      start:0x82213CD8 end:0x82213CF0
 	.pdata      start:0x82213CF8 end:0x82213D50
-	.text       start:0x82371320 end:0x82371388
-	.text       start:0x82371388 end:0x823713B8
 	.text       start:0x824BD6C0 end:0x824BD738
 	.text       start:0x824BD738 end:0x824BD750
 	.text       start:0x824BD750 end:0x824BD784
@@ -5309,7 +5305,6 @@ UIList.cpp:
 	.pdata      start:0x8223DE50 end:0x8223DE58
 	.pdata      start:0x8223DF90 end:0x8223DFA0
 	.pdata      start:0x8223DFB0 end:0x8223DFE8
-	.pdata      start:0x82240190 end:0x82240198
 	.pdata      start:0x822452A8 end:0x822452F8
 	.pdata      start:0x822452F8 end:0x82245308
 	.pdata      start:0x82245308 end:0x82245318
@@ -5329,7 +5324,6 @@ UIList.cpp:
 	.text       start:0x827767F0 end:0x82776838
 	.text       start:0x82777658 end:0x82777748
 	.text       start:0x82777C5C end:0x82777D78
-	.text       start:0x827A37B0 end:0x827A3804
 	.text       start:0x827F7830 end:0x827F7AD8
 	.text       start:0x827F7AE0 end:0x827F7B60
 	.text       start:0x827F7B60 end:0x827F7BE0
@@ -6134,6 +6128,7 @@ DataArraySongInfo.cpp:
 	.pdata      start:0x82240158 end:0x82240160
 	.pdata      start:0x82240160 end:0x82240168
 	.pdata      start:0x82240180 end:0x82240190
+	.pdata      start:0x82240190 end:0x82240198
 	.pdata      start:0x82240198 end:0x82240210
 	.pdata      start:0x82240210 end:0x82240218
 	.pdata      start:0x82240218 end:0x822402B8
@@ -6143,6 +6138,7 @@ DataArraySongInfo.cpp:
 	.text       start:0x827A3400 end:0x827A3460
 	.text       start:0x827A3460 end:0x827A3594
 	.text       start:0x827A3688 end:0x827A37AC
+	.text       start:0x827A37B0 end:0x827A3804
 	.text       start:0x827A3808 end:0x827A3FA0
 	.text       start:0x827A3FA0 end:0x827A4014
 	.text       start:0x827A4014 end:0x827A4E10
@@ -6706,8 +6702,10 @@ Archive.cpp:
 
 system/rnddx9/Rnd.cpp:
 	.pdata      start:0x8223A410 end:0x8223A488
+	.pdata      start:0x8223A488 end:0x8223A490
 	.pdata      start:0x82261640 end:0x82261648
 	.text       start:0x82732A94 end:0x82733C70
+	.text       start:0x82733C70 end:0x82733CB0
 	.text       start:0x82C405F8 end:0x82C40630
 
 Rnd_Xbox.cpp:
@@ -6866,10 +6864,8 @@ GranularSynth.cpp:
 SampleData.cpp:
 	.pdata      start:0x821F49D0 end:0x821F49D8
 	.pdata      start:0x8223A280 end:0x8223A2F0
-	.pdata      start:0x8223A488 end:0x8223A490
 	.text       start:0x822A43A4 end:0x822A43E8
 	.text       start:0x8272B2E0 end:0x8272BAC8
-	.text       start:0x82733C70 end:0x82733CB0
 
 rtti.cpp:
 	.pdata      start:0x82248428 end:0x82248470
@@ -11998,6 +11994,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4C48 end:0x821F4C60
 	.pdata      start:0x821F4C60 end:0x821F4C68
 	.pdata      start:0x821F4C68 end:0x821F4C70
+	.pdata      start:0x821F4C70 end:0x821F4C78
 	.pdata      start:0x821F4CC8 end:0x821F4CD0
 	.pdata      start:0x821F4CD0 end:0x821F4CF0
 	.pdata      start:0x821F4CF0 end:0x821F4D00
@@ -12109,6 +12106,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A6270 end:0x822A6438
 	.text       start:0x822A6438 end:0x822A64A4
 	.text       start:0x822A64A4 end:0x822A6528
+	.text       start:0x822A6528 end:0x822A6580
 	.text       start:0x822A6878 end:0x822A68E0
 	.text       start:0x822A68E0 end:0x822A6AA8
 	.text       start:0x822A6AA8 end:0x822A6AB0
@@ -12788,6 +12786,7 @@ system/synth/SynthSample.cpp:
 	.pdata      start:0x82239F68 end:0x8223A048
 	.pdata      start:0x8223A048 end:0x8223A068
 	.pdata      start:0x8223A068 end:0x8223A078
+	.pdata      start:0x8223A078 end:0x8223A080
 	.pdata      start:0x8223A080 end:0x8223A098
 	.pdata      start:0x8223A098 end:0x8223A0D8
 	.text       start:0x826FBE68 end:0x826FBEE8
@@ -12795,6 +12794,7 @@ system/synth/SynthSample.cpp:
 	.text       start:0x82728028 end:0x82728CFC
 	.text       start:0x82728CFC end:0x82728E38
 	.text       start:0x82728E38 end:0x82729004
+	.text       start:0x82729004 end:0x82729080
 	.text       start:0x82729080 end:0x82729244
 	.text       start:0x82729244 end:0x82729618
 	.text       start:0x82B6C844 end:0x82B6C850
