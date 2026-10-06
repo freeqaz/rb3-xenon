@@ -95,7 +95,7 @@ import tempfile
 import time
 
 # Per-domain parser versions: bumping one invalidates only that domain's cache.
-TOOL_VERSIONS = {"x360": "layout-odr-6", "native": "layout-odr-native-4"}
+TOOL_VERSIONS = {"x360": "layout-odr-6", "native": "layout-odr-native-5"}
 TOOL_VERSION = "layout-odr-5/native-2"
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION = "45410914"
@@ -329,6 +329,7 @@ MSVC_HDR = re.compile(r"^(class|struct|union)\s+(\S+)\s+size\((\d+)\):[ \t]*$", 
 CLANG_SEP = "*** Dumping AST Record Layout"
 CLANG_NAME = re.compile(r"^\s*0 \| (?:class|struct|union) (.+?)\s*$")
 KEY_RE = re.compile(r"\b(?:class|struct) (?=[A-Za-z_(])")
+EMPTY_SUFFIX = re.compile(r"\s+\(empty\)$")
 ANON_AT = re.compile(r"(\bat )(\S+?)(:\d+:\d+\))")
 
 
@@ -408,7 +409,14 @@ def parse_native(out, err, root):
         # `(... at src/xdk/xapilibi/../win_types.h:69:5)` are one declaration.
         body = ANON_AT.sub(lambda m: m.group(1) + os.path.normpath(m.group(2)) + m.group(3),
                            body)
-        name = KEY_RE.sub("", normalize_root(m.group(1), spell))
+        # An empty class's header reads `0 | class HolmesInput (empty)`; the
+        # annotation is part of the LAYOUT (kept in the body) but not of the
+        # NAME.  Unstripped, every empty class -- a TU-local stand-in for a real
+        # class above all -- is filed under a name no other TU uses, and the one
+        # split this check exists for reads as two unrelated classes (measured:
+        # os/HolmesClient.cpp's member-less HolmesInput, invisible on native
+        # while the X360 domain reported it).
+        name = KEY_RE.sub("", normalize_root(EMPTY_SUFFIX.sub("", m.group(1)), spell))
         classes.append((name, norm_block(body)))
     return sorted(set(deps)), classes, diags
 
@@ -475,6 +483,9 @@ class Store:
 
 def run_job(job, root, store, hasher, timeout):
     t0 = time.time()
+    # Whole seconds, rounded down: a file written in the same second the compile
+    # started may or may not have been read before the write.
+    started = int(t0) - 1
     with tempfile.TemporaryDirectory(dir=os.path.expanduser("~/tmp")) as td:
         argv = [a.replace("@FO@", os.path.join(td, "layout.obj")) for a in job.argv]
         env = dict(os.environ)
@@ -509,6 +520,20 @@ def run_job(job, root, store, hasher, timeout):
               "skipped_local": skipped, "secs": secs, "deps": depset}
     depmap = {d: hasher(d) for d in depset}
     missing = sorted(d for d, h in depmap.items() if h == "MISSING")
+    moved = []
+    for d in depset:
+        try:
+            if os.stat(hasher.path(d)).st_mtime >= started:
+                moved.append(d)
+        except OSError:
+            pass
+    if moved:
+        # A dependency was written while this TU compiled.  Which version the
+        # compiler read is unknowable, and the hash taken now (or memoized
+        # earlier) may describe the other one -- an entry binding the two would
+        # be served as current forever.  Answer this run, never cache it.
+        result["uncached_deps_changed"] = moved[:5]
+        return result, False
     if missing:
         # A dependency the compiler just read cannot be MISSING.  If it is, our
         # path translation is wrong, and an entry keyed on it would never be
@@ -1198,21 +1223,45 @@ def load_allow(root):
 
 
 def evaluate(summ, allow):
+    """-> (bad [(name, classified, fps)], stale [entry]).
+
+    Two entry shapes:
+      PIN   {"domain", "name", "verdict", "fps": [...], "reason"}
+            accepts exactly these layouts of this name.  Any change to any of
+            them -- or a new layout -- re-fires.
+      LIST  {"domain", "verdict", "names": [...], "reason"}
+            accepts the listed names whatever their layouts.  For a reviewed
+            FAMILY whose splits are expected to churn (the Quazal per-TU
+            mockups); a name not on the list still fails.  A listed name that no
+            longer has that verdict is reported stale, per name.
+    """
     dom = summ["meta"]["domain"]
     entries = [e for e in allow.get("entries", []) if e["domain"] == dom]
-    used, bad = set(), []
+    pins = [(i, e) for i, e in enumerate(entries) if "names" not in e]
+    lists = [(i, e) for i, e in enumerate(entries) if "names" in e]
+    used, used_names, bad = set(), set(), []
     for name, c in sorted(summ["classified"].items()):
         if c["verdict"] not in ("SPLIT", "UNRESOLVED"):
             continue
         fps = entry_fps(c)
-        hit = next((i for i, e in enumerate(entries)
+        hit = next((i for i, e in pins
                     if e["name"] == name and e["verdict"] == c["verdict"]
                     and sorted(e["fps"]) == fps), None)
+        if hit is None:
+            hit = next((i for i, e in lists
+                        if e["verdict"] == c["verdict"] and name in e["names"]), None)
+            if hit is not None:
+                used_names.add((hit, name))
         if hit is None:
             bad.append((name, c, fps))
         else:
             used.add(hit)
-    stale = [e for i, e in enumerate(entries) if i not in used]
+    stale = [e for i, e in pins if i not in used]
+    for i, e in lists:
+        gone = [n for n in e["names"] if (i, n) not in used_names]
+        if gone:
+            stale.append({"domain": e["domain"], "verdict": e["verdict"],
+                          "name": f"{len(gone)} listed name(s)", "fps": gone[:8]})
     return bad, stale
 
 
@@ -1270,7 +1319,7 @@ def cmd_check(a):
         fields.append(f"{dom}_tus={m['tu_compiles']} {dom}_failed={len(m['failed'])}"
                       f" {dom}_split={sum(1 for b in bad if b[1]['verdict'] == 'SPLIT')}"
                       f" {dom}_unresolved={sum(1 for b in bad if b[1]['verdict'] == 'UNRESOLVED')}"
-                      f" {dom}_allowed={sum(1 for e in allow.get('entries', []) if e['domain'] == dom) - len(stale)}"
+                      f" {dom}_allowed={sum(1 for c in summ['classified'].values() if c['verdict'] in ('SPLIT', 'UNRESOLVED')) - len(bad)}"
                       f" {dom}_stale={len(stale)}")
     verdict = {0: "PASS", 1: "FAIL", 2: "UNRUNNABLE", 3: "UNANSWERED"}[rc]
     print(f"LAYOUT_ODR_RESULT verdict={verdict} " + " ".join(fields) + f" rc={rc}")
@@ -1336,6 +1385,11 @@ def selftest_offline():
     _, cl2, d2 = parse_x360(raw2, "/r", "/r")
     _check(R, "A4 driver warnings (which /w does not silence) are cut out",
            cl2 and "Command line" not in cl2[0][1] and not d2, cl2)
+    nat = ("*** Dumping AST Record Layout\n         0 | class HolmesInput (empty)\n"
+           "           | [sizeof=1, dsize=1, align=1,\n           |  nvsize=1, nvalign=1]\n")
+    _, ncl, _d = parse_native(nat, "", "/r")
+    _check(R, "A5 clang's `(empty)` header annotation is not part of the name",
+           ncl and ncl[0][0] == "HolmesInput" and "(empty)" in ncl[0][1], ncl)
     # B. block facts
     blk = ("class Target\tsize(100):\n\t+---\n\t| +--- (base class ?$ObjRefConcrete@VX@@)\n"
            " 0\t| | mOwner\n\t| +---\n 4\t| Symbol mTarget\n"
@@ -1371,6 +1425,23 @@ struct Plain { int p, q[4]; static int s; void (*fn)(int); unsigned bits : 3; };
     _check(R, "C7 data members (not static, fn-ptr, bitfield)",
            ds.get("Plain") and ds["Plain"].members == ["p", "q", "fn", "bits"],
            ds.get("Plain") and ds["Plain"].members)
+    # D. allowlist semantics
+    def summ(**cls):
+        return {"meta": {"domain": "x360"}, "classified": {
+            n: {"verdict": "SPLIT", "splits": {n: {fp: ["t.cpp"] for fp in fps}},
+                "unresolved": []} for n, fps in cls.items()}}
+    pin = {"domain": "x360", "name": "A", "verdict": "SPLIT", "fps": ["f1", "f2"]}
+    lst = {"domain": "x360", "verdict": "SPLIT", "names": ["Q::B", "Q::C"]}
+    allow = {"entries": [pin, lst]}
+    bad, stale = evaluate(summ(A=["f1", "f2"], **{"Q::B": ["g1", "g2"]}), allow)
+    _check(R, "D1 a PIN and a LIST accept what they name; the unused list name is stale",
+           not bad and len(stale) == 1 and stale[0]["fps"] == ["Q::C"], (bad, stale))
+    bad, stale = evaluate(summ(A=["f1", "f3"]), allow)
+    _check(R, "D2 a PIN re-fires when one pinned layout changes",
+           [b[0] for b in bad] == ["A"], bad)
+    bad, _ = evaluate(summ(**{"Q::D": ["h1", "h2"]}), allow)
+    _check(R, "D3 a LIST does not accept a name it does not list",
+           [b[0] for b in bad] == ["Q::D"], bad)
     return R
 
 
