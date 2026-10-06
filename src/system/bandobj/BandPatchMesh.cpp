@@ -63,8 +63,11 @@ static const size_t kMVSlotBase = 0x40;
 // symbol survives; the name is ours, the signature is fixed by the retail body. It
 // refuses (and leaves `out` untouched) when |det| < eps, else writes adj/det.
 // All four inputs are read before the first store, so `out` may alias `m`
-// (ExtendTwin inverts in place). It must be external, not static or inline:
-// under /O1 a once-called static/inline body is inlined, and retail calls it.
+// (ExtendTwin inverts in place). Retail calls it out of line, and ExtendTwin
+// keeps mv/outDir/outUv in r26-r31 across the call, i.e. the caller is compiled
+// without this body's register usage. A plain external lets /O1 use that
+// knowledge (outDir/outUv stay in r5/r6 across the call, ExtendTwin 84.96); an
+// inline COMDAT kept out of line does not (85.24, SetVertsAndFaces 99.00 -> 99.96).
 inline __declspec(noinline) bool Invert(const Hmx::Matrix2 &m, Hmx::Matrix2 &out, float eps) {
     if (std::fabs(m.x.x * m.y.y - m.x.y * m.y.x) < eps)
         return false;
@@ -1116,6 +1119,10 @@ bool BandPatchMesh::FindXfm(RndMesh *mesh, const Vector2 &uv, Transform &xfm) {
     }
     Hmx::Matrix3 posOut;
     Hmx::Matrix3 posMat;
+    // Retail's normal rows sit at 0x50 and share that slot with centerMV
+    // (frame 0x220). A Matrix3 normMat never shares (frame 0x240, with or
+    // without a block, an inline helper, or operator[]); a scoped Vector3[3]
+    // does, which moves centerVert to retail's 0x130.
     {
         Hmx::Matrix3 uvMat;
         Vector3 normRows[3];
@@ -1128,32 +1135,34 @@ bool BandPatchMesh::FindXfm(RndMesh *mesh, const Vector2 &uv, Transform &xfm) {
         Multiply(uvMat, posMat, posOut);
         Multiply(uvMat, *(Hmx::Matrix3 *)normRows, posMat);
     }
+    // Retail keeps posOut.x/.y in f26-f31 across the three calls below for the
+    // closing lengths. Length(posOut.x) after the calls reloads them instead
+    // (75.18); Vector3 axisX = posOut.x copies through GPRs (67.73). Ours still
+    // loads each into a scratch FPR and fmr's it across.
     Vector3 axisX(posOut.x.x, posOut.x.y, posOut.x.z);
     Vector3 axisY(posOut.y.x, posOut.y.y, posOut.y.z);
     Vector3 uvw(uv.x, uv.y, 1.0f);
     Multiply(uvw, posOut, xfm.v);
     Multiply(uvw, posMat, xfm.m.z);
     ::Normalize(xfm.m.z, xfm.m.z);
-    {
-        RndMesh::Vert centerVert;
-        MeshVert centerMV;
-        centerMV.SetVert(&centerVert);
-        centerMV.unk4 = posOut.x;
-        centerMV.unk10 = posOut.y;
-        centerMV.unk10.x = axisY.x * -1.0f;
-        centerMV.unk10.y *= -1.0f;
-        centerMV.unk10.z *= -1.0f;
-        centerVert.norm = xfm.m.z;
-        centerMV.Normalize(1);
-        float scaleX = Length(axisX) * 0.5f;
-        float scaleY = Length(axisY) * 0.5f;
-        xfm.m.x.x = centerMV.unk4.x * scaleX;
-        xfm.m.x.y = centerMV.unk4.y * scaleX;
-        xfm.m.x.z = centerMV.unk4.z * scaleX;
-        xfm.m.y.x = scaleY * centerMV.unk10.x;
-        xfm.m.y.y = centerMV.unk10.y * scaleY;
-        xfm.m.y.z = centerMV.unk10.z * scaleY;
-    }
+    RndMesh::Vert centerVert;
+    MeshVert centerMV;
+    centerMV.SetVert(&centerVert);
+    centerMV.unk4 = posOut.x;
+    centerMV.unk10 = posOut.y;
+    centerMV.unk10.x = axisY.x * -1.0f; // retail negates the held f31, not a reload
+    centerMV.unk10.y *= -1.0f;
+    centerMV.unk10.z *= -1.0f;
+    centerVert.norm = xfm.m.z;
+    centerMV.Normalize(1);
+    float scaleX = Length(axisX) * 0.5f;
+    float scaleY = Length(axisY) * 0.5f;
+    xfm.m.x.x = centerMV.unk4.x * scaleX;
+    xfm.m.x.y = centerMV.unk4.y * scaleX;
+    xfm.m.x.z = centerMV.unk4.z * scaleX;
+    xfm.m.y.x = scaleY * centerMV.unk10.x;
+    xfm.m.y.y = centerMV.unk10.y * scaleY;
+    xfm.m.y.z = centerMV.unk10.z * scaleY;
     return true;
 }
 
