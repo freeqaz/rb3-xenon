@@ -116879,9 +116879,7 @@
    "name": "fn_827C6708",
    "address": "0x827c6708",
    "survivor": "?_M_insert@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@00@Z",
-   "folded": [
-    "fn_827C6708"
-   ],
+   "folded": [],
    "withdrawn": [],
    "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
    "admitted": [
