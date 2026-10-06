@@ -80,6 +80,12 @@ bool CharEyes::sDisableEyeClamping;
 static unsigned short gAltRev = 0;
 static unsigned short gRev = 0;
 
+// Poll's default look times.  As named consts the `: 1.0f` default of
+// minLookTime is not CSE'd with Clamp's 1.0f: retail keeps only the
+// literal-pool anchor in a callee-saved GPR and reloads 1.0f for the default.
+const float kDefaultMaxLookTime = 3.0f;
+const float kDefaultMinLookTime = 1.0f;
+
 #if !defined(__EMSCRIPTEN__) && !defined(__APPLE__)
 float pow(float base, float exp) { return std::pow(base, exp); }
 #endif
@@ -929,9 +935,12 @@ void CharEyes::Replace(ObjRef *ref, Hmx::Object *obj) {
 // mFocusInterest); the clamp products go through a Vector3 local so /fp:fast
 // does NOT contract them into fmadds (retail: fmuls then fadds); `headPos` is
 // scoped per block so r26 is materialised per branch, as retail does, freeing
-// headXfm's register for the loop iterator.  Residual (99.6 fuzzy / 99.99
-// mpn): commutative FP operand order + two load orders, source-order-inert
-// (flipping operands at every such site was measured byte-identical).
+// headXfm's register for the loop iterator.  Residual (99.67 fuzzy / 99.995
+// mpn, W16-RF): commutative FP operand order of the scale, extrapolation-add,
+// projection and Set rows plus the headXfm.v x/z/y load order.  Inert, all
+// measured: operand flips at every site, `dx *= scale` / `dy = scale * dy`
+// forms, the five other dx/dy/dz declaration orders, and `scale * projX` with
+// `headPos.y + s.y`.
 void CharEyes::NextLook() {
     Vector3 &target = mTarget;
     Vector3 oldTarget = target;
@@ -987,8 +996,11 @@ void CharEyes::NextLook() {
         RndTransformable *dirTrans = dynamic_cast<RndTransformable *>(Dir());
         if (dirTrans) {
             const Transform &dirXfm = dirTrans->WorldXfm();
-            if (mTarget.z < dirXfm.v.z) {
-                float scale = (dirXfm.v.z - headXfm.v.z) / (mTarget.z - headXfm.v.z);
+            // Named so dirXfm.v.z is loaded before mTarget.z, as retail does,
+            // while the test stays `mTarget.z < dirZ` (fcmpu target, dir; bge).
+            float dirZ = dirXfm.v.z;
+            if (mTarget.z < dirZ) {
+                float scale = (dirZ - headXfm.v.z) / (mTarget.z - headXfm.v.z);
                 Vector3 s(projX * scale, projY * scale, projZ * scale);
                 target.Set(headPos.x + s.x, s.y + headPos.y, headPos.z + s.z);
             }
@@ -1122,7 +1134,8 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
         float dx = lidPos.x - srcPos.x;
         float dy = lidPos.y - srcPos.y;
         float dz = lidPos.z - srcPos.z;
-        dist = std::sqrt((dy * dy + (dx * dx + dz * dz)));
+        // x + y + z: retail evaluates dy first, then dz, then dx.
+        dist = std::sqrt(dx * dx + dy * dy + dz * dz);
     }
 
     float eyeRot = (1.0f - blinkWeight) * source->LocalXfm().m.y.x;
@@ -1235,9 +1248,10 @@ void CharEyes::LidTrackAndClampingUpdate(EyeDesc &desc, float blinkWeight) {
                 float clampOffZ = midZ - lowerBlinkPos.z;
 
                 Vector3 newLowerPos = lowerLid->WorldXfm().v;
-                newLowerPos.x += clampOffX;
-                newLowerPos.y += clampOffY;
-                newLowerPos.z += clampOffZ;
+                // Member operator+= on a temporary, not three field updates:
+                // with the field spelling MSVC gave this copy its own stack
+                // slot and shifted every Vector3 local in the function by 0x10.
+                newLowerPos += Vector3(clampOffX, clampOffY, clampOffZ);
                 lowerLid->SetWorldPos(newLowerPos);
 
                 const Vector3 &ulidPos = upperLid->WorldXfm().v;
@@ -1441,22 +1455,24 @@ void CharEyes::Poll() {
     Vector3 facingDir(headXfm.m.y);
     Normalize(facingDir, facingDir);
 
-    float cang = Dot(targetDir, facingDir);
+    // Spelled out rather than Dot(targetDir, facingDir): the inlined helper's
+    // reference parameters change the operand order of the x term's fmadds.
+    float cang = targetDir.x * facingDir.x + targetDir.y * facingDir.y
+        + targetDir.z * facingDir.z;
     cang = Clamp(-1.0f, 1.0f, cang);
 
     if (mLastCang != 1e+30f) {
         TheTaskMgr.Seconds(TaskMgr::kRealTime);
-        CharInterest *interest = mCurrentInterest;
         mAvDelta = (cang - mLastCang - mAvDelta) * 0.1f + mAvDelta;
 
-        float minLookTime = mCurrentInterest ? mCurrentInterest->mMinLookTime : 1.0f;
-        float maxLookTime = mCurrentInterest ? mCurrentInterest->mMaxLookTime : 3.0f;
+        float minLookTime = mCurrentInterest ? mCurrentInterest->mMinLookTime : kDefaultMinLookTime;
+        float maxLookTime = mCurrentInterest ? mCurrentInterest->mMaxLookTime : kDefaultMaxLookTime;
         float viewAngleCos = mCurrentInterest ? mCurrentInterest->mMaxViewAngleCos : mMaxEyeCang;
 
         bool canSeeTarget = cang >= viewAngleCos;
 
         if (mLastLook <= maxLookTime && !mNeedRecalc
-            && (mFocusInterest == 0 || mFocusInterest == mCurrentInterest
+            && (mFocusInterest == 0 || mCurrentInterest == mFocusInterest
                 || ((mLastLook <= 0.4f
                      || !mFocusInterest->IsWithinViewCone(headPos, facingDir))
                     && !IsHeadIKWeightIncreasing()))
