@@ -225,6 +225,7 @@ class Resolver:
                 self.fn_vas[v].append(int(k, 16))
         self.objs = {}
         self.global_def = None
+        self.clean = None          # clean-TU5 Image, for the DX-patch cross-check
 
     def obj(self, path):
         if path not in self.objs:
@@ -318,7 +319,7 @@ def compare_operand(res, op, va, bsym, badd, base_path):
     data = data[badd:]
     mask = {m - badd for m in mask if m >= badd}
     if op == "addi":
-        if looks_like_cstr(data):
+        if looks_like_cstr(data) or (bsym.startswith("??_C@") and data[:1] == b"\0"):
             s = data[:data.index(b"\0") + 1]
             r = res.img.cstr(va)
             return {"kind": "str", "ours": s, "retail": r, "eq": r == s}
@@ -448,6 +449,7 @@ def analyze_function(res, d, base_path, tobj, bobj):
         if fva is None or tcode is None:
             return label, "ea_label"
         insn_va = fva + int(t["address"], 16) - t0
+        insn_vas[id(t)] = insn_va
         ea, prim = res.retail_ea(insn_va, label)
         if prim != PRIMARY.get(t["opcode"]):
             return label, "ea_label"
@@ -468,6 +470,7 @@ def analyze_function(res, d, base_path, tobj, bobj):
         imm = word & (0xFFFC if b["opcode"] in ("ld", "lwa") else 0xFFFF)
         return sext16(imm)
 
+    insn_vas = {}
     has_bctr = any((r.get("base") or {}).get("opcode") == "bctr" for r in rows)
     tvals, bvals = {}, {}
     for i, ins in enumerate(rows):
@@ -509,7 +512,13 @@ def analyze_function(res, d, base_path, tobj, bobj):
                 tvals[i] = c["retail"]
             bvals[i] = c["ours"]
             if not c["eq"]:
+                dx = None
+                if res.clean is not None and c["retail"] is not None:
+                    iva = insn_vas.get(id(t))
+                    dx = (res.clean.read(va, len(c["retail"])) != res.img.read(va, len(c["retail"]))
+                          or (iva is not None and res.clean.read(iva, 4) != res.img.read(iva, 4)))
                 out["pos"].append({"row": i, "op": b["opcode"], "kind": c["kind"],
+                                   "dx_patched": dx,
                                    "target_sym": to[0], "base_sym": bo[0],
                                    "retail_ea": "0x%08X" % va,
                                    "retail": fmt(c["kind"], c["retail"]),
@@ -552,7 +561,9 @@ def analyze_function(res, d, base_path, tobj, bobj):
         p["cleared"] = ok
         if not ok:
             uncleared.append(i)
-    if (t_only | b_only) & involved:
+    if out["pos"] and all(p.get("dx_patched") for p in out["pos"]):
+        verdict = "DX_PATCH"
+    elif (t_only | b_only) & involved:
         verdict = "VALUE"
     elif use_mm:
         verdict = "SWAP"
@@ -613,10 +624,31 @@ def main():
     ap.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 4) // 2))
     ap.add_argument("--out", default=os.path.expanduser("~/tmp/const_value_audit.json"))
     ap.add_argument("--image", default=None)
+    ap.add_argument("--clean-image", default=None,
+                    help="clean (non-DX) TU5 PE; a mismatch whose retail bytes or instruction "
+                         "differ there is labelled dx_patched (default: _tu5probe/clean/"
+                         "band_clean_tu5.exe in this tree or the main repo)")
     args = ap.parse_args()
     root = os.path.abspath(args.root)
     img = Image(args.image or os.path.join(root, "orig/45410914/band.exe"))
     res = Resolver(root, img)
+    clean = args.clean_image
+    if clean is None:
+        cands = [os.path.join(root, "_tu5probe/clean/band_clean_tu5.exe")]
+        try:
+            common = subprocess.run(["git", "-C", root, "rev-parse", "--git-common-dir"],
+                                    capture_output=True, text=True).stdout.strip()
+            if common:
+                cands.append(os.path.join(os.path.dirname(os.path.abspath(
+                    os.path.join(root, common))), "_tu5probe/clean/band_clean_tu5.exe"))
+        except OSError:
+            pass
+        clean = next((c for c in cands if os.path.exists(c)), None)
+    if clean:
+        res.clean = Image(clean)
+        print("clean-TU5 cross-check:", clean)
+    else:
+        print("clean-TU5 cross-check: OFF (no clean image found)")
     od = json.load(open(os.path.join(root, "objdiff.json")))
     rep = json.load(open(os.path.join(root, "build/45410914/report.json")))
     base_of = {u["name"]: os.path.join(root, u["base_path"]) for u in od["units"]
@@ -674,9 +706,9 @@ def main():
                                    if k.startswith("verdict_")))
     print("skipped operands: " + "  ".join("%s=%d" % (k[5:], v) for k, v in sorted(totals.items())
                                           if k.startswith("skip_")))
-    for a in sorted(flagged, key=lambda a: ("VALUE SWAP POS_UNRESOLVED SETONLY REORDER".split().index(a["verdict"]),
+    for a in sorted(flagged, key=lambda a: ("VALUE SWAP POS_UNRESOLVED DX_PATCH SETONLY REORDER".split().index(a["verdict"]),
                                             a["unit"], a["symbol"])):
-        if a["verdict"] in ("VALUE", "SWAP", "POS_UNRESOLVED"):
+        if a["verdict"] in ("VALUE", "SWAP", "POS_UNRESOLVED", "DX_PATCH"):
             print("%-7s %s %s (fuzzy %.2f)" % (a["verdict"], a["unit"], a["symbol"], a["fuzzy"]))
             for p in a["pos"]:
                 print("        row %d %s: retail %s  ours %s" % (p["row"], p["op"], p["retail"], p["ours"]))
