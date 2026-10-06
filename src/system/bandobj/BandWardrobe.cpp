@@ -723,7 +723,7 @@ DECOMP_FORCEACTIVE(BandWardrobe, "Bandcharacter is not target")
 bool BandWardrobe::AddDircut(BandCharacter *bchar, BandCamShot *shot, Symbol cat, int ff) {
     if (!bchar)
         MILO_FAIL("BandWardrobe::AddDircut character is NULL");
-    Symbol animinst = BandCharDesc::GetAnimInstrument(bchar->mInstrumentType);
+    Symbol animinst = BandCharDesc::GetAnimInstrument(bchar->InstrumentType());
     DataArray *grouparr =
         GetGroupArray(BandCharDesc::GetInstrumentFromSym(animinst));
     int flag = -1;
