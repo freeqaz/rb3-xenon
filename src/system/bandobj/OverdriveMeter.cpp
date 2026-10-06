@@ -16,18 +16,25 @@ OverdriveMeter::OverdriveMeter()
 
 OverdriveMeter::~OverdriveMeter() {}
 
+// Retail calls the out-of-line ObjPtr assignment body directly for each of
+// these nine members. Spelled through the inline `operator=` wrapper, the
+// extra inline layer pushes this straight-line block over the scheduler's
+// size threshold and every call but the last hoists `mr r3,r31` above the
+// argument loads; calling SetObjConcrete directly gives retail's
+// `li r5 / addi r4 / mr r3` order on all nine calls.
 void OverdriveMeter::SyncObjects() {
     RndDir::SyncObjects();
-    mResetTrig = Find<EventTrigger>("reset.trig", false);
-    mSpotlightPhraseSuccessTrig =
-        Find<EventTrigger>("spotlight_phrase_success.trig", false);
-    mBeDeployingTrig = Find<EventTrigger>("be_deploying.trig", false);
-    mBeFillingTrig = Find<EventTrigger>("be_filling.trig", false);
-    mBeReadyTrig = Find<EventTrigger>("be_ready.trig", false);
-    mPulseMiloTrig = Find<EventTrigger>("pulse_milo.trig", false);
-    mNoOverdriveTrig = Find<EventTrigger>("no_overdrive.trig", false);
-    mExtendAnimGroup = Find<RndGroup>("extend_anim.grp", false);
-    mPulseAnimGroup = Find<RndGroup>("pulse_anim.grp", false);
+    mResetTrig.SetObjConcrete(Find<EventTrigger>("reset.trig", false));
+    mSpotlightPhraseSuccessTrig.SetObjConcrete(
+        Find<EventTrigger>("spotlight_phrase_success.trig", false)
+    );
+    mBeDeployingTrig.SetObjConcrete(Find<EventTrigger>("be_deploying.trig", false));
+    mBeFillingTrig.SetObjConcrete(Find<EventTrigger>("be_filling.trig", false));
+    mBeReadyTrig.SetObjConcrete(Find<EventTrigger>("be_ready.trig", false));
+    mPulseMiloTrig.SetObjConcrete(Find<EventTrigger>("pulse_milo.trig", false));
+    mNoOverdriveTrig.SetObjConcrete(Find<EventTrigger>("no_overdrive.trig", false));
+    mExtendAnimGroup.SetObjConcrete(Find<RndGroup>("extend_anim.grp", false));
+    mPulseAnimGroup.SetObjConcrete(Find<RndGroup>("pulse_anim.grp", false));
 }
 
 // Retail Xbox has a REAL Save here, not an assert stub.
