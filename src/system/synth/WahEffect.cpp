@@ -195,7 +195,6 @@ void WahEffect::Process(float *buf, int numSamples, int numChans) {
                     float sample = buf[sampleIdx + ch];
                     float *pA = (float *)((char *)stack50 + ch * 4);
                     float *pB = (float *)((char *)stack58 + ch * 4);
-                    mLastInput = sample;
                     float state1 = *pA;
                     float state2 = *pB;
 
@@ -214,7 +213,6 @@ void WahEffect::Process(float *buf, int numSamples, int numChans) {
                     absOut = absOut * f21 + f31;
                     out = out / absOut;
 
-                    mLastOutput = out;
                     buf[sampleIdx + ch] = out;
                 }
             }
