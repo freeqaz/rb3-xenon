@@ -1404,9 +1404,10 @@ void VocalTrack::UpdateScrolling(float ms) {
             }
             if (shifts.size() != 0) {
                 LyricShift &shift = shifts.front();
+                float startMs = shift.unk4;
                 float window = shift.unk8 ? mLyricShiftQuickMs : mLyricShiftMs;
-                if (shift.unk4 < lyricMs) {
-                    float t = (lyricMs - shift.unk4) / window;
+                if (startMs < lyricMs) {
+                    float t = (lyricMs - startMs) / window;
                     t = Clamp<float>(0.0f, 1.0f, t);
                     float curX = t * (shift.unk0 - xPos) + xPos;
                     Vector3 pos(scroller->LocalXfm().v);
@@ -1475,7 +1476,8 @@ void VocalTrack::UpdateScrolling(float ms) {
                     : &mDir->mHarmonyLyricScroller);
         RndTransformable *scroller = scrollerPtr->Ptr();
 
-        int *itPPtr = lead ? &unkf4 : (part == 1 ? &unkf8 : &unkfc);
+        int &itPRef = lead ? unkf4 : (part == 1 ? unkf8 : unkfc);
+        int *itPPtr = &itPRef;
         const VocalNote *itT = &noteVec[*itPPtr];
         const VocalNote *altIt =
             altNotes ? &altNotes->mNotes[unkfc] : noteVec.end();
@@ -1930,9 +1932,8 @@ void VocalTrack::UpdateScrolling(float ms) {
                                 height = mDir->mHarmLyricHeight * 0.5f;
                             }
                             mNoteTube->SetPointPos(0, Vector3(0.0f, 0.0f, z));
-                            mNoteTube->SetPointPos(
-                                1, Vector3(tubeEndX - tubeX, 0.0f, z)
-                            );
+                            float tubeLen = tubeEndX - tubeX;
+                            mNoteTube->SetPointPos(1, Vector3(tubeLen, 0.0f, z));
                             mNoteTube->unk_0x30 = height;
                             mNoteTube->SetBackParent(parent);
                             mNoteTube->SetXPos(tubeX);

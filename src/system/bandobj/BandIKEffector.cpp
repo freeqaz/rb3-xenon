@@ -365,7 +365,6 @@ void BandIKEffector::ComputeHandPullAndQuat(
     float aaPlusbb,
     float aPlusb
 ) {
-    const ObjPtr<RndTransformable> &_ref0 = mEffector;
     float dy = handTarget.y - shoulderXfm.v.y;
     float dx = handTarget.x - shoulderXfm.v.x;
     float maxReach = aPlusb * 0.99f;
@@ -396,20 +395,12 @@ void BandIKEffector::ComputeHandPullAndQuat(
     float cosSq = cosAngle * cosAngle;
     float sinAngle = -(float)sqrt(1.0f - cosSq);
 
-    RndTransformable *parent = _ref0->TransParent();
+    RndTransformable *parent = mEffector->TransParent();
     outElbowXfm.v = parent->mLocalXfm.v;
-    outElbowXfm.m.x.y = sinAngle;
-    outElbowXfm.m.x.x = cosAngle;
-    outElbowXfm.m.x.z = 0.0f;
-    outElbowXfm.m.y.x = -sinAngle;
-    outElbowXfm.m.y.y = cosAngle;
-    outElbowXfm.m.y.z = 0.0f;
-    outElbowXfm.m.z.x = 0.0f;
-    outElbowXfm.m.z.y = 0.0f;
-    outElbowXfm.m.z.z = 1.0f;
+    outElbowXfm.m.Set(cosAngle, sinAngle, 0.0f, -sinAngle, cosAngle, 0.0f, 0.0f, 0.0f, 1.0f);
 
     Vector3 localDir;
-    Multiply(_ref0->mLocalXfm.v, outElbowXfm, localDir);
+    Multiply(mEffector->mLocalXfm.v, outElbowXfm, localDir);
     Vector3 localTarget;
     MultiplyTranspose(shoulderXfm, handTarget, localTarget);
     MakeRotQuat(localDir, localTarget, outQuat.q);

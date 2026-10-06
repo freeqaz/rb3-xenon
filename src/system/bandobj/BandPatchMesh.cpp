@@ -125,11 +125,13 @@ bool BandPatchMesh::MeshVert::AddUV(
         double est = __frsqrte(ratio);
         float r = (float)est;
         float recipsq = 0.5f * r * (3.0f - ratio * r * r);
-        float dot5 = v48x * mv->unk4.x + v48y * mv->unk4.y + v48z * mv->unk4.z;
+        float dot4 = Dot(v48, mv->unk10);
         float vry = vr.y;
-        float dot4 = v48x * mv->unk10.x + v48y * mv->unk10.y + v48z * mv->unk10.z;
-        v50x += recipsq * vr.x * dot5;
-        v50y += recipsq * vry * dot4;
+        float dot5 = Dot(v48, mv->unk4);
+        Vector2 d(vr.x * dot5, vry * dot4);
+        d *= recipsq;
+        v50x += d.x;
+        v50y += d.y;
     } else if (lensq > 0)
         return 0;
     if (vp) {
@@ -138,8 +140,7 @@ bool BandPatchMesh::MeshVert::AddUV(
         if (dx * dx + dy * dy > 0.25f)
             return 0;
     }
-    unk1c.x += v50x;
-    unk1c.y += v50y;
+    unk1c += Vector2(v50x, v50y);
     unk4 += mv->unk4;
     unk10 += mv->unk10;
     return 1;

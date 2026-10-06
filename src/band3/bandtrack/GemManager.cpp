@@ -531,10 +531,10 @@ void GemManager::SetupGems(int startTick) {
     trillSlots.first = 0;
     trillSlots.second = 0;
     int nextSlotForTrill = -1;
-    int lastArpeggioEndTick = -1;
     int nextFretForTrill = -1;
     int trillString = -1;
     int arrhythmicEndTick = -1;
+    int lastArpeggioEndTick = -1;
     unk130 = -1;
     mNextArpeggioPhrase = 0;
     ClearArpeggios();

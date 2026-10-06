@@ -50,14 +50,15 @@ void BandRetargetVignette::Poll() {
              ++it) {
             const char *cur = it->c_str();
             if (strncmp(cur, "player", 6) == 0 && strlen(cur) == 7) {
-                BandCharacter *bchar =
-                    TheBandWardrobe->FindTarget(cur, TheBandWardrobe->mVignetteNames);
+                const BandWardrobe::TargetNames &names = TheBandWardrobe->mVignetteNames;
+                BandCharacter *bchar = TheBandWardrobe->FindTarget(cur, names);
                 if (bchar)
                     bchar->Poll();
                 else
                     MILO_NOTIFY_ONCE("%s has NULL for %s", PathName(this), cur);
             } else {
-                Dir()->Find<BandIKEffector>(cur, true)->Poll();
+                BandIKEffector *eff = Dir()->Find<BandIKEffector>(cur, true);
+                eff->Poll();
             }
         }
     }
