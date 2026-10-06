@@ -283,18 +283,14 @@ BEGIN_SAVES(RndPostProc)
     bs << mNoiseBaseScale << mNoiseTopScale << mNoiseIntensity << mNoiseStationary;
     bs << mNoiseMap;
     bs << mNoiseMidtone;
-    bs << mTrailThreshold;
-    bs << mTrailDuration;
-    bs << mEmulateFPS;
-    bs << mPosterLevels;
-    bs << mPosterMin;
+    bs << mTrailThreshold << mTrailDuration << mEmulateFPS;
+    bs << mPosterLevels << mPosterMin;
     bs << mKaleidoscopeComplexity;
     bs << mKaleidoscopeSize;
     bs << mKaleidoscopeAngle;
     bs << mKaleidoscopeRadius;
     bs << mKaleidoscopeFlipUVs;
-    bs << mHallOfTimeRate;
-    bs << mHallOfTimeColor << mHallOfTimeMix;
+    bs << mHallOfTimeRate << mHallOfTimeColor << mHallOfTimeMix;
     bs << mHallOfTimeType;
     bs << mMotionBlurBlend;
     bs << mMotionBlurWeight;
@@ -316,8 +312,7 @@ BEGIN_SAVES(RndPostProc)
     bs << mVignetteIntensity;
     bs << mBloomGlare;
     bs << mBloomStreak;
-    bs << mBloomStreakAttenuation;
-    bs << mBloomStreakAngle;
+    bs << mBloomStreakAttenuation << mBloomStreakAngle;
 #ifdef RB3_HAS_HUE_CONVERGE
     bs << mHueTarget;
     bs << mHueFocus;
