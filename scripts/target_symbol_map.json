@@ -11385,7 +11385,7 @@
  "0x82449758": "?OnActiveParticles@RndParticleSys@@IAA?AVDataNode@@PBVDataArray@@@Z",
  "0x82449780": "?AngleVectorSync@@YA_NAAVVector2@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x82449930": "?_M_erase@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVColor@Hmx@@PAV34@ABU__false_type@2@@Z",
- "0x82449998": "??$__uninitialized_copy@PAVTimeSigChange@MeasureMap@@PAV12@@stlpmtx_std@@YAPAVTimeSigChange@MeasureMap@@PAV12@00ABU__false_type@0@@Z",
+ "0x82449998": "?erase@?$list@VPlane@@V?$StlNodeAlloc@VPlane@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPlane@@U?$_Nonconst_traits@VPlane@@@stlpmtx_std@@@2@U32@0@Z",
  "0x824499f8": "??$__uninitialized_copy@PAVBurst@RndParticleSys@@PAV12@@stlpmtx_std@@YAPAVBurst@RndParticleSys@@PAV12@00ABU__false_type@0@@Z",
  "0x82449a40": "?InitPool@ParticleCommonPool@@QAAXXZ",
  "0x82449b00": "?InitParticle@RndParticleSys@@QAAXPAVRndParticle@@PBVTransform@@@Z",

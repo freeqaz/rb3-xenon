@@ -3026,6 +3026,7 @@ MeshAnim.cpp:
 
 Part.cpp:
 	.pdata      start:0x8220D4F8 end:0x8220D678
+	.pdata      start:0x8220D678 end:0x8220D680
 	.pdata      start:0x8220D680 end:0x8220DA60
 	.pdata      start:0x8220DA60 end:0x8220DA68
 	.pdata      start:0x8220DA68 end:0x8220DA88
@@ -3035,6 +3036,7 @@ Part.cpp:
 	.pdata      start:0x8220DAE8 end:0x8220DB90
 	.pdata      start:0x8220FF10 end:0x8220FF18
 	.text       start:0x82446148 end:0x82449930
+	.text       start:0x82449998 end:0x824499F8
 	.text       start:0x824499F8 end:0x8244D18C
 	.text       start:0x8244D190 end:0x8244D220
 	.text       start:0x8244D220 end:0x8244DC60
@@ -6829,11 +6831,9 @@ rtti.cpp:
 	.text       start:0x8282A258 end:0x8282A2AC
 
 MeasureMap.cpp:
-	.pdata      start:0x8220D678 end:0x8220D680
 	.pdata      start:0x8223D9A0 end:0x8223D9A8
 	.pdata      start:0x82242E70 end:0x82242E98
 	.pdata      start:0x82242E98 end:0x82242EA8
-	.text       start:0x82449998 end:0x824499F8
 	.text       start:0x82771728 end:0x82771798
 	.text       start:0x827D0C20 end:0x827D0C60
 	.text       start:0x827D0C60 end:0x827D0E98
