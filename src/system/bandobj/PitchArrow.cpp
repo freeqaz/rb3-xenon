@@ -23,24 +23,28 @@ PitchArrow::PitchArrow()
       mArrowFXGrp(this, 0), unk280(0), mSpinSpeed(0), mSpinAnim(this, 0),
       mSpinRestFrame(0), mSpinBeginFrame(0), mSpinEndFrame(0) {}
 
+// Retail's 17 Find<T> stores schedule their argument loads as li r5 / addi r4 /
+// mr r3 throughout; through the inline ObjPtr::operator= layer two of them
+// hoist mr r3. Calling SetObjConcrete directly (what operator= does) gives
+// retail's order on every call.
 void PitchArrow::SyncObjects() {
-    mScoreAnim = Find<RndPropAnim>("score.anim", false);
-    mHarmonyFXAnim = Find<RndPropAnim>("harmony_fx.anim", false);
-    mVolumeAnim = Find<RndPropAnim>("volume.anim", false);
-    mTiltAnim = Find<RndPropAnim>("tilt.anim", false);
-    mColorAnim = Find<RndPropAnim>("color.anim", false);
-    mColorFadeAnim = Find<RndPropAnim>("color_fade.anim", false);
-    mSetPitchedTrig = Find<EventTrigger>("set_pitched.trig", false);
-    mSetUnpitchedTrig = Find<EventTrigger>("set_unpitched.trig", false);
-    mSpotlightStartTrig = Find<EventTrigger>("spotlight_start.trig", false);
-    mSpotlightEndTrig = Find<EventTrigger>("spotlight_end.trig", false);
-    mDeployStartTrig = Find<EventTrigger>("deploy_start.trig", false);
-    mDeployEndTrig = Find<EventTrigger>("deploy_end.trig", false);
-    mGhostGrp = Find<RndGroup>("ghost.grp", false);
-    mGhostFadeAnim = Find<RndPropAnim>("ghost_fade.anim", false);
-    mArrowFXGrp = Find<RndGroup>("arrow_fx.grp", false);
-    mSplitAnim = Find<RndPropAnim>("split.anim", false);
-    mArrowStyleAnim = Find<RndPropAnim>("arrow_style.anim", false);
+    mScoreAnim.SetObjConcrete(Find<RndPropAnim>("score.anim", false));
+    mHarmonyFXAnim.SetObjConcrete(Find<RndPropAnim>("harmony_fx.anim", false));
+    mVolumeAnim.SetObjConcrete(Find<RndPropAnim>("volume.anim", false));
+    mTiltAnim.SetObjConcrete(Find<RndPropAnim>("tilt.anim", false));
+    mColorAnim.SetObjConcrete(Find<RndPropAnim>("color.anim", false));
+    mColorFadeAnim.SetObjConcrete(Find<RndPropAnim>("color_fade.anim", false));
+    mSetPitchedTrig.SetObjConcrete(Find<EventTrigger>("set_pitched.trig", false));
+    mSetUnpitchedTrig.SetObjConcrete(Find<EventTrigger>("set_unpitched.trig", false));
+    mSpotlightStartTrig.SetObjConcrete(Find<EventTrigger>("spotlight_start.trig", false));
+    mSpotlightEndTrig.SetObjConcrete(Find<EventTrigger>("spotlight_end.trig", false));
+    mDeployStartTrig.SetObjConcrete(Find<EventTrigger>("deploy_start.trig", false));
+    mDeployEndTrig.SetObjConcrete(Find<EventTrigger>("deploy_end.trig", false));
+    mGhostGrp.SetObjConcrete(Find<RndGroup>("ghost.grp", false));
+    mGhostFadeAnim.SetObjConcrete(Find<RndPropAnim>("ghost_fade.anim", false));
+    mArrowFXGrp.SetObjConcrete(Find<RndGroup>("arrow_fx.grp", false));
+    mSplitAnim.SetObjConcrete(Find<RndPropAnim>("split.anim", false));
+    mArrowStyleAnim.SetObjConcrete(Find<RndPropAnim>("arrow_style.anim", false));
     if (!mScoreAnim || !mHarmonyFXAnim || !mVolumeAnim || !mTiltAnim || !mColorAnim
         || !mColorFadeAnim || !mSetPitchedTrig || !mSetUnpitchedTrig
         || !mSpotlightStartTrig || !mSpotlightEndTrig || !mDeployStartTrig
