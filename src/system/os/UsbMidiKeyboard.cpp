@@ -182,10 +182,10 @@ void UsbMidiKeyboard::Poll() {
                 SendMessage(msg);
             }
 
-            // NOTE: the image emits four separate fused rlwinm extractions and a
-            // flat add chain (d<<2) + (c<<1) + (e<<3) + b; MSVC here reassociates
-            // any spelling of this sum into a Horner chain instead. Tried '|',
-            // explicit sub-grouping and term reordering -- all identical or worse.
+            // Retail: four fused rlwinm extractions and a flat add chain
+            // (d<<2) + (c<<1) + (e<<3) + b, which this spelling reproduces. The
+            // residual is load scheduling only: retail issues the +0xe load
+            // after the first rlwinm, we issue it before, shifting r5-r9 by one.
             int hhB = proData->unkbbool;
             int hhE = proData->unkemiddle << 3;
             int hhD = proData->unkdbool << 2;

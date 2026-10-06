@@ -46,9 +46,9 @@ void PitchDetector::Detect(unsigned int frame) {
     // re-derives the buffer length at each of its three uses (three inlined
     // size() calls; a spelled-out `end() - begin()` is CSE'd into one), and
     // divides unsigned.  The window length is read from mSpectral at each use,
-    // not cached: after the first Mul the image re-reads 0x0(r29), not a local.
+    // not cached: after the first Mul retail re-reads 0x0(r29), not a local.
     // min() takes the cast as a temporary (mWindowSize is an int), which is the
-    // 0x58(r1) home the image gives it; `start` is homed at 0x50 the same way.
+    // 0x58(r1) home retail gives it; `start` is homed at 0x50 the same way.
     unsigned int pos = (mInput->size() - mSpectral.mWindowSize + frame + 1) % mInput->size();
     unsigned int start = mInput->size() - pos;
     unsigned int firstLen = stlpmtx_std::min((unsigned int)mSpectral.mWindowSize, start);
