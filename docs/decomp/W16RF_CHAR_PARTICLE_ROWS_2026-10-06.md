@@ -116,7 +116,7 @@ Several of those edits flipped other commutative rows far from the edit.
    kMinWeight`. Retail loads 0.001 before 144. → 100.
 
 Inert: `mTargets[0]` for `front()`, swapping the two static const declarations, a file-scope
-`kMaxWeight` (it still folds into `__real@43100000`). The rb3-Wii branch order gave 99.26.
+`kMaxWeight` (it still folds into `__real@43100000`). The RB3 game source's branch order gave 99.26.
 
 ### `CharIKHead::Poll` → 100: DC3's helpers plus a dead local
 
