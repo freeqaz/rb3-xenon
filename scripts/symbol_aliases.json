@@ -68244,7 +68244,7 @@
   {
    "name": "_GAutomator",
    "address": "0x823f5270",
-   "survivor": "??_GAutomator@@UAAPAXI@Z",
+   "survivor": "??_GMessageBroker@@UAAPAXI@Z",
    "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 50 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -69130,6 +69130,30 @@
        "disposition": "dropped_singleton"
       }
      ]
+    }
+   ],
+   "relabelled": {
+    "from": "??_GAutomator@@UAAPAXI@Z",
+    "to": "??_GMessageBroker@@UAAPAXI@Z",
+    "lane": "W16-RM 2026-10-06",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here",
+    "held": [
+     {
+      "spelling": "??_GAutomator@@UAAPAXI@Z",
+      "lane": "W16-RM 2026-10-06",
+      "verdict": "UNDECIDABLE",
+      "evidence": "tools/icf_pair_adjudicate.chase(??_GMessageBroker@@UAAPAXI@Z @ 0x823f5270, ??_GAutomator@@UAAPAXI@Z): UNDECIDABLE [UNANCHORED:BYTES-DIFFER] depth 1: retail fn_823F4FA8 | ours ??1Automator@@UAA@XZ (no spelling of ours is PROVEN on this body)"
+     }
+    ]
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??_GAutomator@@UAAPAXI@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "UNANCHORED:BYTES-DIFFER",
+     "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??_GMessageBroker@@UAAPAXI@Z @ 0x823f5270, ??_GAutomator@@UAAPAXI@Z): UNDECIDABLE [UNANCHORED:BYTES-DIFFER] depth 1: retail fn_823F4FA8 | ours ??1Automator@@UAA@XZ (no spelling of ours is PROVEN on this body)"
     }
    ]
   },
