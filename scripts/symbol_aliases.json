@@ -93914,9 +93914,17 @@
    "address": "0x8235cbf0",
    "survivor": "??$_Destroy@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@0@@Z",
    "folded": [
-    "??1?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAA@XZ"
+    "??1?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAA@XZ",
+    "??1?$set@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@QAA@XZ"
    ],
-   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8235cbf0 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 47 against 22 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies."
+   "evidence": "tools/ourside_fold_sweep.py -- our COMDAT for each folded spelling is byte- AND relocation-identical to our COMDAT for the map-resident survivor, which is the /OPT:ICF condition applied to two of OUR OWN COMDATs (both carry the same relocations to the same symbols, so no retail branch target needs naming -- the clause tools/comdat_fold_gate.py fail-closes on). Retail's body at 0x8235cbf0 corroborates the shared COMDAT: same size, every non-relocated word equal as a FULL 32-bit value, every relocated word equal in opcode/AA/LK. Retail fan-in there is 47 against 22 sites our aliases route to it; that fan-in test refutes 68-74% of random survivors and 0% of this population. NOT ruled out, and stated in the docstring: if OUR body for a folded spelling is wrong in a way that coincidentally equals the survivor's, the alias hides it -- cheapest for the smallest bodies.",
+   "admitted": [
+    {
+     "spelling": "??1?$set@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-QK 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN with VACUOUS-DESTINATION-FOLD-PROVEN (4-byte tail-branch thunk on both sides; its destination folds through _M_erase<TrackWidget*> -> 0x822dd9a0, admitted in the same lane). Type witness: the charged funclet fn_82B9B52C destroys this+0x8, Gem::mWidgets (std::set<TrackWidget*>), and the map names _Rb_tree<TrackWidget*> ctor/_M_copy/operator= at 0x82b9adf8/0x82b9a920/0x82bab690 in the same GemManager region."
+    }
+   ]
   },
   {
    "name": "ourside_comdat_identity",
@@ -96822,7 +96830,8 @@
    "survivor": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
    "folded": [
     "?_M_erase@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGG@2@U?$_Select1st@U?$pair@$$CBGG@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
-    "?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z"
+    "?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+    "?_M_erase@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z"
    ],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 3,
@@ -96851,6 +96860,11 @@
      "spelling": "?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
      "lane": "W16-NR 2026-10-02",
      "evidence": "cycle leaf of ?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@: self-recursive, masked body + relocation shape unique image-wide (retail census over all target objs), the two-channel witness of the parent pair applies; chase PROVEN through a self-recursive CYCLE-ASSUMED leaf, broken by two channels (W16-JE method): every leaf masked body + relocation shape is unique image-wide, and a retail map name witnesses our el"
+    },
+    {
+     "spelling": "?_M_erase@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+     "lane": "W16-QK 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN; 92 B / 92 B; retail body-twins 1. Only CYCLE-ASSUMED leaf is the self-recursive slot itself, image-unique (census = 1). Type witness (retail bytes): the charged retail caller fn_82B9A9F0 is the catch funclet of 0x82b9a920, which the map names _Rb_tree<TrackWidget*,...>::_M_copy (same 0x90 frame; the funclet calls _M_erase(top) then rethrows via _CxxThrowException(0,0))."
     }
    ]
   },
@@ -100699,7 +100713,11 @@
     "?_M_fill_insert@?$vector@PAVLocalSavedSetlist@@V?$StlNodeAlloc@PAVLocalSavedSetlist@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVLocalSavedSetlist@@IABQAV3@@Z",
     "?_M_fill_insert@?$vector@IV?$StlNodeAlloc@I@stlpmtx_std@@@stlpmtx_std@@AAAXPAIIABI@Z",
     "?_M_fill_insert@?$vector@PAVTourCharLocal@@V?$StlNodeAlloc@PAVTourCharLocal@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVTourCharLocal@@IABQAV3@@Z",
-    "?_M_fill_insert@?$vector@PAVXMAReaderBlock@@V?$StlNodeAlloc@PAVXMAReaderBlock@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVXMAReaderBlock@@IABQAV3@@Z"
+    "?_M_fill_insert@?$vector@PAVXMAReaderBlock@@V?$StlNodeAlloc@PAVXMAReaderBlock@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVXMAReaderBlock@@IABQAV3@@Z",
+    "?_M_fill_insert@?$vector@PAVSpotlightDrawer@@V?$StlNodeAlloc@PAVSpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVSpotlightDrawer@@IABQAV3@@Z",
+    "?_M_fill_insert@?$vector@PAVSpotlight@@V?$StlNodeAlloc@PAVSpotlight@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVSpotlight@@IABQAV3@@Z",
+    "?_M_fill_insert@?$vector@PAVRndEnviron@@V?$StlNodeAlloc@PAVRndEnviron@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVRndEnviron@@IABQAV3@@Z",
+    "?_M_fill_insert@?$vector@PAVRndLight@@V?$StlNodeAlloc@PAVRndLight@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVRndLight@@IABQAV3@@Z"
    ],
    "withdrawn": [],
    "evidence": "Hand-installed by lane W17-BPM3. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat T1 refuted only on relocation targets -- _M_fill_insert_aux / _M_insert_overflow <unsigned int> vs <Object*> -- which fold recursively through MemOrPoolAlloc/MemOrPoolAllocSTL, PoolAlloc and the operator new twins). Retail keeps four 108-byte body-twins of this shape (vector<float>, vector<float,XboxAllocator>, vector<Object*>, vector<Spotlight*>), so body identity cannot pick the membership; the call-site displacement does: WorkVerts::SetMeshVerts (0x8234A458) bl's 0x82272A60 at the mMeshVerts.resize site (idx 76), and that row is otherwise instruction-identical to retail (318/318 canonical). mMeshVerts' element type unsigned int is pinned by retail's own named callee in the same function, ?erase@?$vector@IV?$StlNodeAlloc@I@ at 0x824B06C8.",
@@ -100736,6 +100754,26 @@
      "spelling": "?_M_fill_insert@?$vector@PAVXMAReaderBlock@@V?$StlNodeAlloc@PAVXMAReaderBlock@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVXMAReaderBlock@@IABQAV3@@Z",
      "lane": "W16-NM 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase --size: FLAT T1 REFUTED (relocation targets disagree, template twin), CHASED T1 PROVEN; size gate ACCEPT (108 == 108). Retail call site: XMAReader::Init (0x82B6AA98) resizing the block vector at +0x60, where our source calls this spelling."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@PAVSpotlightDrawer@@V?$StlNodeAlloc@PAVSpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVSpotlightDrawer@@IABQAV3@@Z",
+     "lane": "W16-QK 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN; 108 B / 108 B; retail body-twins 4. Only CYCLE-ASSUMED leaf is the self-recursive _M_fill_insert_aux<RndDrawable*>, image-unique (census = 1, group 0x82272798). Type witness: heterogeneous fan-in (retail SpotlightDrawer::ClearLights and NgSpotlightDrawer::ClearPostProc call the survivor) and co-callee (the charged retail caller LightPreset::Load also calls Find<SpotlightDrawer> and RemoveSpotlightDrawer). Charged rows: LightPreset::Copy idx 214, LightPreset::Load idx 490."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@PAVSpotlight@@V?$StlNodeAlloc@PAVSpotlight@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVSpotlight@@IABQAV3@@Z",
+     "lane": "W16-QK 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN; 108 B / 108 B; retail body-twins 4. Only CYCLE-ASSUMED leaf is the self-recursive _M_fill_insert_aux<RndDrawable*>, image-unique (census = 1). Type witness, co-callee: the charged retail caller LightPreset::Load also calls ObjectDir::Find<Spotlight> on the element it stores into this vector. Charged row: LightPreset::Load idx 74."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@PAVRndEnviron@@V?$StlNodeAlloc@PAVRndEnviron@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVRndEnviron@@IABQAV3@@Z",
+     "lane": "W16-QK 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN; 108 B / 108 B; retail body-twins 4. Only CYCLE-ASSUMED leaf is the self-recursive _M_fill_insert_aux<RndDrawable*>, image-unique (census = 1). Type witness, co-callee: the charged retail caller LightPreset::Load also calls ObjectDir::Find<RndEnviron>. Charged row: LightPreset::Load idx 150."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@PAVRndLight@@V?$StlNodeAlloc@PAVRndLight@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAPAVRndLight@@IABQAV3@@Z",
+     "lane": "W16-QK 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN; 108 B / 108 B; retail body-twins 4. Only CYCLE-ASSUMED leaf is the self-recursive _M_fill_insert_aux<RndDrawable*>, image-unique (census = 1). Type witness, co-callee: the charged retail caller LightPreset::Load also calls ObjectDir::Find<RndLight>. Charged row: LightPreset::Load idx 222."
     }
    ],
    "restored": [
@@ -101421,7 +101459,8 @@
     "?_M_fill_insert@?$vector@UCompEv@DataEventList@@V?$StlNodeAlloc@UCompEv@DataEventList@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCompEv@DataEventList@@IABU34@@Z",
     "?_M_fill_insert@?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VVector2@@@@IABV3@@Z",
     "?_M_fill_insert@?$vector@VSectionInfo@Stats@@V?$StlNodeAlloc@VSectionInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSectionInfo@Stats@@IABV34@@Z",
-    "?_M_fill_insert@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCamCatEntry@@IABU3@@Z"
+    "?_M_fill_insert@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCamCatEntry@@IABU3@@Z",
+    "?_M_fill_insert@?$vector@VRGTrill@@V?$StlNodeAlloc@VRGTrill@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVRGTrill@@IABV3@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -101445,6 +101484,11 @@
      "spelling": "?_M_fill_insert@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCamCatEntry@@IABU3@@Z",
      "lane": "W16-NH-NAME 2026-10-02",
      "evidence": "W16-JE two-channel cycle proof. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN with 1 CYCLE-ASSUMED leaf/leaves, each self-recursive on both sides; channel 1: the leaf's masked body+relocation shape occurs at exactly ONE retail address (whole-image census of 3095 dtk target objs). Channel 2 (co-callee: the charged retail caller also calls ?OnMidiShot5Cleanup@BandDirector@@QAAXXZ -> ?PickShot@BandDirector@@QAA?AVSymbol@@AAV?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@V2@_N@Z; ?OnMidiShot5Cleanup@BandDirector@@QAAXXZ -> ?PickShot@BandDirector@@QAA?AVSymbol@@AAV?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@V2@_N@Z). 112 B retail / 112 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x82299208."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@VRGTrill@@V?$StlNodeAlloc@VRGTrill@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVRGTrill@@IABV3@@Z",
+     "lane": "W16-QK 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat T1 REFUTED only on relocation targets); 112 B retail / 112 B ours; retail body-twins 24. Only CYCLE-ASSUMED leaf is the self-recursive _M_fill_insert_aux, whose masked body + relocation shape is image-unique (census = 1, the survivor's leaf at group 0x827ea060). Type witness (retail bytes): both charged retail callers, SongParser::Reset and SongParser::HandleRGTrillStop, resize the 12-byte-element vector at this+0xd4 (li r9,0xc), the member our layout and the inherited RB3 game source declare std::vector<RGTrill> mRGTrillArray. Retail call sites: Reset idx 209, HandleRGTrillStop idx 65."
     }
    ]
   },
@@ -117402,6 +117446,23 @@
     "??_EStorePreviewMgr@@UAAPAXI@Z"
    ],
    "evidence": "COMPILER-DECLARED ALIAS (stronger than an ICF byte inference): in our compiled build/45410914/src/system/meta/StorePreviewMgr.obj the symbol ??_EStorePreviewMgr@@UAAPAXI@Z is IMAGE_SYM_CLASS_WEAK_EXTERNAL (105), SectionNumber 0, with aux TagIndex resolving to ??_GStorePreviewMgr@@UAAPAXI@Z (Characteristics=2) -- MSVC itself states the two spellings denote one body, so they necessarily occupy one address after linking. T1 corroboration on RETAIL BYTES: tools/icf_pair_adjudicate.py --chase reads PROVEN for ??_GStorePreviewMgr@@UAAPAXI@Z at 0x827B2770; our ??_GStorePreviewMgr@@UAAPAXI@Z COMDAT (68 B) carries relocations to ??1StorePreviewMgr@@UAA@XZ (retail 0x827B2218, name-equal), ??1Object@Hmx@@UAA@XZ (retail 0x8275CBF0, name-equal) and ??3@YAXPAX@Z (retail 0x8240DDB0, folded under survivor ??3BinStream@@SAXPAX@Z, group 0x8240ddb0), matching retail's at every site. Retail's only references to 0x827B2770 are its own .pdata entry and one branch from StorePreviewMgr's adjustor thunk ??_EStorePreviewMgr@@$4PPPPPPPM@A@AAPAXI@Z at 0x827B21E0; the word at 0x827B21E8 is 0x48000588 = b to 0x827B2770 ; in OUR object that thunk relocates against ??_EStorePreviewMgr@@UAAPAXI@Z. Referenced by no vtable. The map previously read ??_EStorePreviewMgr@@UAAPAXI@Z here (a 0% row: in our objects that spelling is only a weak external, which defines no body for objdiff to pair), and the .text pin sat in StorePreviewMgr.cpp already (rename only); both corrected by lane W16-QG 2026-10-06 (W16-QB audit category 2)."
+  },
+  {
+   "name": "Add",
+   "address": "0x82298898",
+   "survivor": "?Add@?$Keys@VSymbol@@V1@@@QAAHABVSymbol@@M_N@Z",
+   "folded": [
+    "?Add@?$Keys@UDircutEntry@BandDirector@@U12@@@QAAHABUDircutEntry@BandDirector@@M_N@Z"
+   ],
+   "evidence": "Created by lane W16-QK: see per-member records in `admitted`.",
+   "lane": "W16-QK 2026-10-06",
+   "admitted": [
+    {
+     "spelling": "?Add@?$Keys@UDircutEntry@BandDirector@@U12@@@QAAHABUDircutEntry@BandDirector@@M_N@Z",
+     "lane": "W16-QK 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN; 216 B / 216 B; retail body-twins 1. Only CYCLE-ASSUMED leaf is the self-recursive _M_fill_insert_aux<Key<float>>, image-unique (census = 1). Type witness (retail bytes): AddDircut passes this+0xec to the survivor (addi r3,r28,0xec; idx 64-65), and another retail BandDirector function passes the same this+0xec to fn_82295880, which the map names Keys<DircutEntry,DircutEntry>::Cross (stride-8 evidence recorded in BandDirector.h). DircutEntry and Symbol are both one-pointer wrappers, so the two Add instantiations are byte-identical."
+    }
+   ]
   }
  ]
 }
