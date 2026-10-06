@@ -408,9 +408,11 @@ void ChordShapeGenerator::BuildEndCap(
             mesh, xfm, mFretHeights[mFret], contour ? sec1 : sec2, connectingVerts, col
         );
     }
-    // Winding (and the sign of the x scale) flips when exactly one of
-    // "closing cap" and "contour side" holds.
-    bool flip = contour == (orient == right);
+    // Winding (and the sign of the x scale) flips when "opening (left) cap" and
+    // "contour side" agree. Retail compares orient against the static `left`
+    // here (lwz r11,0(r29), r29 = &left, built from "left" @0x82025094), and
+    // against `right` only for the closing clear below.
+    bool flip = contour == (orient == left);
     std::map<unsigned short, unsigned short> capMap;
     RndMesh::VertVector &meshVerts = mesh->Verts();
     RndMesh::VertVector &srcVerts = mSource->Verts();

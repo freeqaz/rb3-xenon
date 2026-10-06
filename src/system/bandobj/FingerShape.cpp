@@ -55,10 +55,9 @@ void FingerShape::Update(const RGState &state, bool b1, bool b2) {
         int i78 = -1;
         bool range = RGGetHeldFretRange(state, i74, i78);
         int num = range ? 1 - i74 : 0;
-        int j = 0;
         for (int i = 0; i < 6; i++) {
             float clamped = Clamp<int>(0, 6, num + state.GetFret(i));
-            UpdateAnim(mFretHeightAnims[j], clamped, b1);
+            UpdateAnim(mFretHeightAnims[i], clamped, b1);
             if (i == 0) {
                 UpdateAnim(mContourHeightAnims[0], clamped, b1);
                 UpdateAnim(mContourAngleAnims[0], -clamped, b1);
@@ -76,7 +75,6 @@ void FingerShape::Update(const RGState &state, bool b1, bool b2) {
                 UpdateAnim(mContourHeightAnims[6], clamped, b1);
                 UpdateAnim(mContourAngleAnims[6], clamped, b1);
             }
-            j++;
         }
         UpdateFretNumber(state, b1);
         *mLastState = state;
