@@ -566,14 +566,13 @@ float VocalPart::CalcPhraseScoreMax(const VocalPhrase *const &phrase) const {
             start--;
         }
     }
-    unsigned int end = p->unk14;
     float result = 0.0f;
-    if ((unsigned int)start == end) return result;
-    // W16-HR: retail clamps with fsel (Max/Min) and re-reads the phrase each pass.
-    for (unsigned int i = start; i != end; i++) {
+    // The bound is read through the phrase in the loop test: retail counts with
+    // cmplw/bne rather than a ctr loop.
+    for (unsigned int i = start; i != p->unk14; i++) {
         const VocalNote &note = list->mNotes[i];
-        float clampedStart = Max(note.mMs, phrase->unk0);
         float clampedEnd = Min(note.mDurationMs + note.mMs, phrase->unk4 + phrase->unk0);
+        float clampedStart = Max(note.mMs, phrase->unk0);
         result += ((clampedEnd - clampedStart) / note.mDurationMs) * mNoteWeights[i];
     }
     return result;
