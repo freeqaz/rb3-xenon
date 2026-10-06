@@ -65,7 +65,7 @@ static const size_t kMVSlotBase = 0x40;
 // All four inputs are read before the first store, so `out` may alias `m`
 // (ExtendTwin inverts in place). It must be external, not static or inline:
 // under /O1 a once-called static/inline body is inlined, and retail calls it.
-bool Invert(const Hmx::Matrix2 &m, Hmx::Matrix2 &out, float eps) {
+inline __declspec(noinline) bool Invert(const Hmx::Matrix2 &m, Hmx::Matrix2 &out, float eps) {
     if (std::fabs(m.x.x * m.y.y - m.x.y * m.y.x) < eps)
         return false;
     float inv = 1.0f / (m.y.y * m.x.x - m.x.y * m.y.x);
@@ -1107,49 +1107,46 @@ bool BandPatchMesh::FindXfm(RndMesh *mesh, const Vector2 &uv, Transform &xfm) {
     for (int i = 0; i < 3; i++) {
         tri[i] = &mesh->Verts((*found)[i]);
     }
-    Hmx::Matrix3 uvMat;
-    Hmx::Matrix3 posMat;
-    Hmx::Matrix3 normMat;
-    Vector3 *uvRows = &uvMat.x;
-    Vector3 *posRows = &posMat.x;
-    Vector3 *normRows = &normMat.x;
-    for (int i = 0; i < 3; i++) {
-        uvRows[i].Set(tri[i]->tex.x, tri[i]->tex.y, 1.0f);
-        posRows[i] = tri[i]->pos;
-        normRows[i] = tri[i]->norm;
-    }
-    Invert(uvMat, uvMat);
     Hmx::Matrix3 posOut;
-    Multiply(uvMat, posMat, posOut);
-    Multiply(uvMat, normMat, posMat);
-    Vector3 uvw(uv.x, uv.y, 1.0f);
-    Multiply(uvw, posOut, xfm.v);
-    // Retail reads the two gradient rows once, here, and keeps all six floats
-    // in f26-f31 across the calls below for the closing lengths; Length(posOut.x)
-    // after the calls reloads them from the stack instead (frame 0x1f0, one
-    // saved FPR, 75.2%).
+    Hmx::Matrix3 posMat;
+    {
+        Hmx::Matrix3 uvMat;
+        Vector3 normRows[3];
+        for (int i = 0; i < 3; i++) {
+            uvMat[i].Set(tri[i]->tex.x, tri[i]->tex.y, 1.0f);
+            normRows[i] = tri[i]->norm;
+            posMat[i] = tri[i]->pos;
+        }
+        Invert(uvMat, uvMat);
+        Multiply(uvMat, posMat, posOut);
+        Multiply(uvMat, *(Hmx::Matrix3 *)normRows, posMat);
+    }
     Vector3 axisX(posOut.x.x, posOut.x.y, posOut.x.z);
     Vector3 axisY(posOut.y.x, posOut.y.y, posOut.y.z);
+    Vector3 uvw(uv.x, uv.y, 1.0f);
+    Multiply(uvw, posOut, xfm.v);
     Multiply(uvw, posMat, xfm.m.z);
     ::Normalize(xfm.m.z, xfm.m.z);
-    RndMesh::Vert centerVert;
-    MeshVert centerMV;
-    centerMV.SetVert(&centerVert);
-    centerMV.unk4 = posOut.x;
-    centerMV.unk10 = posOut.y;
-    centerMV.unk10.x *= -1.0f;
-    centerMV.unk10.y *= -1.0f;
-    centerMV.unk10.z *= -1.0f;
-    centerVert.norm = xfm.m.z;
-    centerMV.Normalize(1);
-    float scaleX = Length(axisX) * 0.5f;
-    float scaleY = Length(axisY) * 0.5f;
-    xfm.m.x.x = centerMV.unk4.x * scaleX;
-    xfm.m.x.y = centerMV.unk4.y * scaleX;
-    xfm.m.x.z = centerMV.unk4.z * scaleX;
-    xfm.m.y.x = scaleY * centerMV.unk10.x;
-    xfm.m.y.y = centerMV.unk10.y * scaleY;
-    xfm.m.y.z = centerMV.unk10.z * scaleY;
+    {
+        RndMesh::Vert centerVert;
+        MeshVert centerMV;
+        centerMV.SetVert(&centerVert);
+        centerMV.unk4 = posOut.x;
+        centerMV.unk10 = posOut.y;
+        centerMV.unk10.x = axisY.x * -1.0f;
+        centerMV.unk10.y *= -1.0f;
+        centerMV.unk10.z *= -1.0f;
+        centerVert.norm = xfm.m.z;
+        centerMV.Normalize(1);
+        float scaleX = Length(axisX) * 0.5f;
+        float scaleY = Length(axisY) * 0.5f;
+        xfm.m.x.x = centerMV.unk4.x * scaleX;
+        xfm.m.x.y = centerMV.unk4.y * scaleX;
+        xfm.m.x.z = centerMV.unk4.z * scaleX;
+        xfm.m.y.x = scaleY * centerMV.unk10.x;
+        xfm.m.y.y = centerMV.unk10.y * scaleY;
+        xfm.m.y.z = centerMV.unk10.z * scaleY;
+    }
     return true;
 }
 
