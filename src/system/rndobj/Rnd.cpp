@@ -1282,80 +1282,64 @@ void Rnd::DrawPreClear() {
         unk150();
     }
 #ifndef HX_NATIVE
-    unsigned int event = 0;
-    if (!(!(!((unsigned char)gRndTextureEvent)))) {
-        event = (unsigned int)gRndTextureEvent;
-    } else {
-        sTexture->FinishCompress(gRndTextureEvent);
-        unsigned int eventVal = (unsigned int)gRndTextureEvent;
-        gRndTextureEvent = 0;
-        if (0 == eventVal) {
-            MILO_ASSERT(sTexture, 0x481);
-            eventVal = (unsigned int)gRndTextureEvent;
+    // Retail 0x824158B8. When CompressThread has finished (sCompressDone), the
+    // compressed DxTex is swapped in for the queued RndTex it was built from,
+    // the request is popped and the original texture deleted; then, if no job
+    // is in flight, requests whose texture went away or whose callback was
+    // cancelled (CompressTextureCancel nulls it) are dropped and the next one is
+    // started on the thread.
+    if (sCompressDone) {
+        sTexture->FinishCompress(sCompressData);
+        sCompressData = nullptr;
+        CompressTexDesc *desc = mCompressTexQueue.front();
+        if (desc->tex) {
+            RndTex *tex = desc->tex;
+            ReplaceObject(tex, sTexture, false, false, false);
+            sTexture = static_cast<DxTex *>(tex);
         }
-        CompressTexDesc *desc = (CompressTexDesc *)mCompressTexQueue.front();
-        RndTex *tex = desc->tex;
-        if (tex) {
-            ReplaceObject(tex, (Hmx::Object *)eventVal, false, false, false);
-            gRndTextureEvent = tex;
-        }
-        auto it = mCompressTexQueue.begin();
-        mCompressTexQueue.erase(it);
+        mCompressTexQueue.erase(mCompressTexQueue.begin());
         delete desc;
-        if (gRndTextureEvent) {
-            CompressTextureCallback *cb = (CompressTextureCallback *)gRndTextureEvent;
-            cb->TextureCompressed((intptr_t)gRndTextureEvent);
-        }
-        event = 0;
-        gRndTextureEvent = 0;
-        gRndTextureEvent = 0;
+        delete sTexture;
+        sTexture = nullptr;
+        sCompressDone = false;
     }
-    if (event == 0) {
-        auto it_end = mCompressTexQueue.end();
-        auto it_begin = mCompressTexQueue.begin();
-        if (it_end != it_begin) {
-            auto it = it_begin;
-            do {
-                CompressTexDesc *desc = *it;
-                if ((desc->tex) && ((unsigned int)desc->alpha > 0U)) {
-                    ++it;
-                } else {
-                    it = mCompressTexQueue.erase(it);
-                    delete desc;
-                }
-            } while (it_end != it);
-            it_begin = mCompressTexQueue.begin();
-            unsigned int count = 0;
-            if (it_begin != it_end) {
-                auto it2 = it_begin;
-                do {
-                    count++;
-                    ++it2;
-                } while (it2 != it_end);
-                if (count > 0) {
-                    CompressTexDesc *first = *mCompressTexQueue.begin();
-                    gRndTextureEvent = (void *)first->tex;
-                    RndTex *newTex;
-                    {
-                        // Retail DrawPreClear (0x824158B8) is one of the 59
-                        // functions that call ?MemPushTemp@@YAXXZ directly, i.e.
-                        // the EMPTY guard, not the out-of-line MemTemp.
-                        MemDoTempAllocations tmp;
-                        newTex = Hmx::Object::New<RndTex>();
-                    }
-                    ReplaceObject((Hmx::Object *)gRndTextureEvent, newTex, false, false, false);
-                    gRndTextureEvent = sTexture->StartCompress((RndTex::AlphaCompress)first->alpha);
-                    if ((unsigned char)gRndTextureEvent != 0) {
-                        MILO_ASSERT(!sCompressDone, 0x4C3);
-                    }
-                    SetEvent((HANDLE)(unsigned int)gRndTextureEvent);
-                }
+    if (!sTexture && !mCompressTexQueue.empty()) {
+        std::list<CompressTexDesc *>::iterator it = mCompressTexQueue.begin();
+        while (it != mCompressTexQueue.end()) {
+            CompressTexDesc *desc = *it;
+            if (desc->tex && desc->callback) {
+                ++it;
+            } else {
+                it = mCompressTexQueue.erase(it);
+                delete desc;
             }
+        }
+        if (mCompressTexQueue.size() != 0) {
+            CompressTexDesc *first = mCompressTexQueue.front();
+            sTexture = static_cast<DxTex *>((RndTex *)first->tex);
+            RndTex *newTex;
+            {
+                // Retail DrawPreClear (0x824158B8) is one of the 59
+                // functions that call ?MemPushTemp@@YAXXZ directly, i.e.
+                // the EMPTY guard, not the out-of-line MemTemp.
+                MemDoTempAllocations tmp;
+                newTex = Hmx::Object::New<RndTex>();
+            }
+            ReplaceObject(sTexture, newTex, false, false, false);
+            sCompressData = sTexture->StartCompress((RndTex::AlphaCompress)first->alpha);
+            MILO_ASSERT(!sCompressDone, 0x4C3);
+            SetEvent(gRndTextureEvent);
         }
     }
 #endif // !HX_NATIVE
     ObjPtrList<RndDrawable> *drawList;
+#ifndef HX_NATIVE
+    // Retail selects mPreClearDraws when mReleaseImmediate is set (lwz/lbz at
+    // 0x150, then 0x128 vs 0x13c), the polarity the X21 note below derived.
+    drawList = mReleaseImmediate ? &mPreClearDraws : &mDraws;
+#else
     drawList = mReleaseImmediate ? &mDraws : &mPreClearDraws;
+#endif
 #ifdef HX_NATIVE
     // ★ X21 — THE PRE-CLEAR LIST SELECTION WAS INVERTED,
     // AND THAT IS WHY THE OUTFIT COMPOSE PASS NEVER RUNS.
@@ -1442,24 +1426,26 @@ void Rnd::DrawPreClear() {
                     (int)mDraws.size(), (int)drawList->size());
     }
 #endif
-    if (drawList->size() > 0) {
-        mWorldCamCopied = true;
+    if (drawList->size() != 0) {
+        // Retail raises the byte at 0x108 (unk148) for the dispatch, not
+        // mWorldCamCopied (0x107): setting and clearing that one here would
+        // discard a CopyWorldCam made earlier in the frame.
+        unk148 = true;
         RndCam *prevCam = RndCam::Current();
         for (ObjPtrList<RndDrawable>::iterator it = drawList->begin();
              it != drawList->end();
              ++it) {
-#ifdef HX_NATIVE
-            // NullifyAllRefs (cascade Phase 0) nullifies ObjPtrList nodes
-            // without erasing them, leaving null entries in the list.
-            // Guard against dereferencing null after splash dir teardown.
-            if (!*it) continue;
-#endif
-            (*it)->DrawPreClear();
+            // Retail null-checks each entry: NullifyAllRefs can leave nulled
+            // nodes in the list without erasing them.
+            RndDrawable *drawable = *it;
+            if (drawable) {
+                drawable->DrawPreClear();
+            }
         }
         if ((prevCam != nullptr) && (prevCam != RndCam::Current())) {
             prevCam->Select();
         }
-        mWorldCamCopied = false;
+        unk148 = false;
     }
 }
 
