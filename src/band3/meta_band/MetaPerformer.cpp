@@ -157,18 +157,18 @@ void MetaPerformer::Init() {
 
 MetaPerformer::MetaPerformer(const BandSongMgr &mgr, const char *cc)
     : Synchronizable(cc),
-#ifndef RB3_NO_WII_META_MEMBERS
+#ifdef RB3_META_PERFORMER_WII_MEMBERS
       mWiiPending(0),
 #endif
       mCreditsPending(0), mVenue(gNullStr),
-#ifndef RB3_NO_WII_META_MEMBERS
+#ifdef RB3_META_PERFORMER_WII_MEMBERS
       mLastVenue(),
 #endif
       mSetlist(gNullStr), mSetlistIsLocal(0), mSetlistIsHmx(0),
       mSongMgr((BandSongMgr *)&mgr), mHasOnlineScoring(0), mSkippedSong(0), unk2c0(0),
       mFestivalReward(0), mCheating(0), unk338(0), unk33c(-1),
       mRecordBattleContextID(-1), mHarmonyOverride(0), mRealDrumsOverride(0), unk360(2)
-#ifndef RB3_NO_WII_META_MEMBERS
+#ifdef RB3_META_PERFORMER_WII_MEMBERS
       ,
       mVenueOverride(gNullStr)
 #endif
@@ -181,7 +181,7 @@ MetaPerformer::MetaPerformer(const BandSongMgr &mgr, const char *cc)
     static Symbol new_remote_user("new_remote_user");
     if (TheSessionMgr)
         TheSessionMgr->AddSink(this, new_remote_user);
-#ifndef RB3_NO_WII_META_MEMBERS
+#ifdef RB3_META_PERFORMER_WII_MEMBERS
     if (mVenueOverride == gNullStr)
         mVenueOverride = no_venue_override;
 #endif
@@ -229,7 +229,7 @@ Symbol MetaPerformer::GetVenueClass() const {
 }
 
 Symbol MetaPerformer::GetLastVenueClass() const {
-#ifdef RB3_NO_WII_META_MEMBERS
+#ifndef RB3_META_PERFORMER_WII_MEMBERS
     Symbol lastVenue = mVenue; // retail Xbox has no separate mLastVenue
 #else
     Symbol lastVenue = mLastVenue;
@@ -975,7 +975,7 @@ void MetaPerformer::ClearInstarankData() {
 }
 
 void MetaPerformer::ClearBattleInstarankData() { mBattleInstarank.Clear(); }
-#ifndef RB3_NO_WII_META_MEMBERS
+#ifdef RB3_META_PERFORMER_WII_MEMBERS
 Symbol MetaPerformer::GetVenueOverride() { return mVenueOverride; }
 #endif
 
@@ -1144,10 +1144,10 @@ void MetaPerformer::SetVenue(Symbol s) {
     if (mVenue != s)
         changed = true;
     mVenue = s;
-#ifndef RB3_NO_WII_META_MEMBERS
+#ifdef RB3_META_PERFORMER_WII_MEMBERS
     mLastVenue = mVenue;
 #endif
-#ifndef RB3_NO_WII_META_MEMBERS
+#ifdef RB3_META_PERFORMER_WII_MEMBERS
     if (mVenueOverride != no_venue_override) {
         mVenue = mVenueOverride;
         mLastVenue = mVenueOverride;
@@ -1763,7 +1763,7 @@ void MetaPerformer::SetCreditsPending() { mCreditsPending = true; }
 void MetaPerformer::ClearCreditsPending() { mCreditsPending = false; }
 
 bool MetaPerformer::AreCreditsPending() const { return mCreditsPending; }
-#ifdef RB3_NO_WII_META_MEMBERS
+#ifndef RB3_META_PERFORMER_WII_MEMBERS
 // Wii-only pending flags; retail Xbox carries no mWiiPending member.
 void MetaPerformer::SetWiiPending(WiiPendingFlags) {}
 void MetaPerformer::ClearWiiPending(WiiPendingFlags) {}
