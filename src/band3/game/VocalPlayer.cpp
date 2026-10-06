@@ -741,13 +741,13 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                and it was measurably backwards: the hand-inlining produced two
                59-instruction blocks (118 instructions) that appear in our object
                and nowhere in retail. */
-            VocalPart **newPartsEnd = std::remove_if(
+            std::vector<VocalPart *>::iterator newPartsEnd = std::remove_if(
                 partsArray.begin(),
                 partsArray.end(),
                 std::mem_fun_t<bool, VocalPart>(&VocalPart::HasBestSingerCandidate)
             );
             partsArray.erase(newPartsEnd, partsArray.end());
-            Singer **newSingersEnd = std::remove_if(
+            std::vector<Singer *>::iterator newSingersEnd = std::remove_if(
                 singersArray.begin(),
                 singersArray.end(),
                 std::const_mem_fun_t<bool, Singer>(&Singer::HasAssignedPart)
