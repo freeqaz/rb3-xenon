@@ -9,7 +9,11 @@
 #include "utl/Loader.h"
 #include "utl/TextStream.h"
 
-ReclaimableAlloc gTransListAlloc(0x4C, "InstanceListNode");
+// Node size of list<Instance>: 8 B of links + the 0x40 B Instance. Retail
+// passes 0x48 (initializer 0x82C3F2B8, and list<Instance>::_M_create_node at
+// 0x82419220 asks CustAlloc for 0x48); DC3's 0x4C covers its extra
+// Instance::mIsVisible, which RB3 does not have.
+ReclaimableAlloc gTransListAlloc(0x48, "InstanceListNode");
 std::list<std::pair<class RndMultiMeshProxy *, int> > RndMultiMesh::sProxyPool;
 
 RndMultiMesh::RndMultiMesh() : mMesh(this) {}

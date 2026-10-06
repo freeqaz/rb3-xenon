@@ -148,7 +148,19 @@ public:
     };
 
     TaskMgr();
-    virtual ~TaskMgr();
+    // No user-declared destructor on retail: ??__FTheTaskMgr (0x82C49B00)
+    // tail-calls Hmx::Object::~Object with no TaskMgr vptr store, and the
+    // vtable's scalar deleting dtor is ICF-folded with ??_GEntityUploader
+    // (0x8250D530: ~Object + conditional delete). A user-declared `{}` dtor
+    // re-stores the vptr first, which retail does not. The timelines are freed
+    // by Terminate (0x8274A8F8), not by a destructor.
+#ifdef HX_NATIVE
+    // Native also allocates the timelines in the ctor; free them at exit.
+    virtual ~TaskMgr() {
+        delete[] mTimelines;
+        mTimelines = nullptr;
+    }
+#endif
     virtual DataNode Handle(DataArray *, bool);
 
     float UISeconds() const;
