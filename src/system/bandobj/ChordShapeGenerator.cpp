@@ -710,15 +710,17 @@ void ChordShapeGenerator::InterpolateXfm(
         float isectX = (-(slopeB * bx - bz) - interceptA) / (slopeA - slopeB);
         Vector3 isect(isectX, (a.v.y + b.v.y) * 0.5f, slopeA * isectX + interceptA);
         if (t < 0.5f) {
+            const Vector3 &av = a.v;
             out.v = isect;
-            out.v -= a.v;
+            out.v -= av;
             out.v *= t * 2.0f;
-            out.v += a.v;
+            out.v += av;
         } else {
+            const Vector3 &bv = b.v;
             out.v = isect;
-            out.v -= b.v;
+            out.v -= bv;
             out.v *= (1.0f - t) * 2.0f;
-            out.v += b.v;
+            out.v += bv;
         }
         Vector3 midEuler(eulerA);
         midEuler += eulerB;
