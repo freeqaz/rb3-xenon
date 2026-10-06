@@ -25895,7 +25895,7 @@
  "0x828099a0": "??0UISlider@@IAA@XZ",
  "0x82809b98": "?ClassName@UISlider@@UBA?AVSymbol@@XZ",
  "0x82809bc8": "??_EUISlider@@$4PPPPPPPM@BFM@AAPAXI@Z",
- "0x82809bd8": "?SetTypeDef@UISlider@@$4PPPPPPPM@A@AAXPAVDataArray@@@Z",
+ "0x82809bd8": "?SetTypeDef@UIComponent@@$4PPPPPPPM@BI@AAXPAVDataArray@@@Z",
  "0x82809be8": "?Load@UISlider@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
  "0x82809bf8": "??_EUISlider@@WBEA@AAPAXI@Z",
  "0x82809c00": "?Replace@RndTransformable@@$4PPPPPPPM@IA@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
