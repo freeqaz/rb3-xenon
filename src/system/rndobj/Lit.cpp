@@ -230,7 +230,7 @@ static struct {
     unsigned short altRev;
     unsigned short pad;
     unsigned short rev;
-} gRevs_Lit;
+} gRevs_Lit = { 0, 0, 0 };
 BEGIN_LOADS(RndLight)
     int rev;
     bs >> rev;

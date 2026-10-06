@@ -88,27 +88,30 @@ int Rnd::sPostProcPanelCount;
 #endif
 
 // Rnd & TheRnd;
-// File-local: Rnd::Modal clears all three from one base address.
-static bool gNotifyKeepGoing;
-static bool gFailKeepGoing;
-static bool gFailRestartConsole;
-
-#define gRndThread gRndHandles.mThread
-#define gRndTextureEvent gRndHandles.mTextureEvent
-
+// File-local statics, laid out as retail's block at 0x82CC2410: texture +0,
+// done +4, notify/fail/restart +5..+7 (Rnd::Modal clears all three off one
+// base), data +8, thread +0xC, event +0x10 (CompressThread addresses the
+// compress statics and both handles off the same base). Each is zero-initialised
+// on purpose: with an explicit initialiser the front end defines the static at
+// its declaration, so declaration order is the ascending .bss order. Plain
+// uninitialised statics are ordered by the code generator instead.
 #ifdef HX_NATIVE
 static void* sTexture = nullptr; // stub — DxTex doesn't exist on native
 #else
-static DxTex *sTexture;
+static DxTex *sTexture = nullptr;
 #endif
-static bool sCompressDone;
-static void *sCompressData;
-// Retail addresses the compress statics and these two handles off one base
-// (0x82CC2410: texture +0, done +4, data +8, thread +0xC, event +0x10).
+static bool sCompressDone = false;
+static bool gNotifyKeepGoing = false;
+static bool gFailKeepGoing = false;
+static bool gFailRestartConsole = false;
+static void *sCompressData = nullptr;
 static struct {
     HANDLE mThread;
     HANDLE mTextureEvent;
-} gRndHandles;
+} gRndHandles = { 0, 0 };
+
+#define gRndThread gRndHandles.mThread
+#define gRndTextureEvent gRndHandles.mTextureEvent
 
 extern int lbl_82F14008;
 extern DataArray *lbl_830A4100;
