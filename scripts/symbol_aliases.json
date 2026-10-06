@@ -9651,12 +9651,36 @@
   {
    "name": "_M_erase",
    "address": "0x82449930",
-   "survivor": "?_M_erase@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVColor@Hmx@@PAV34@ABU__false_type@2@@Z",
+   "survivor": "?_M_erase@?$vector@VBurst@RndParticleSys@@V?$StlNodeAlloc@VBurst@RndParticleSys@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVBurst@RndParticleSys@@PAV34@ABU__false_type@2@@Z",
    "folded": [
     "?_M_erase@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUSpotlightDrawerEntry@LightPreset@@PAU34@ABU__false_type@2@@Z",
-    "?_M_erase@?$vector@VBurst@RndParticleSys@@V?$StlNodeAlloc@VBurst@RndParticleSys@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVBurst@RndParticleSys@@PAV34@ABU__false_type@2@@Z"
+    "?_M_erase@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVColor@Hmx@@PAV34@ABU__false_type@2@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 3, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 2 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 3, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 2 census sites over 1 functions.",
+   "relabelled": {
+    "from": "?_M_erase@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVColor@Hmx@@PAV34@ABU__false_type@2@@Z",
+    "to": "?_M_erase@?$vector@VBurst@RndParticleSys@@V?$StlNodeAlloc@VBurst@RndParticleSys@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVBurst@RndParticleSys@@PAV34@ABU__false_type@2@@Z",
+    "lane": "W16-PM",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?_M_erase@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUSpotlightDrawerEntry@LightPreset@@PAU34@ABU__false_type@2@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?_M_erase@?$vector@VBurst@RndParticleSys@@V?$StlNodeAlloc@VBurst@RndPa @ 0x82449930, ?_M_erase@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@): PROVEN [CHASED] retail 104 B / ours 104 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?_M_erase@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVColor@Hmx@@PAV34@ABU__false_type@2@@Z",
+     "role": "old-label",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "folded (PROVEN)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?_M_erase@?$vector@VBurst@RndParticleSys@@V?$StlNodeAlloc@VBurst@RndPa @ 0x82449930, ?_M_erase@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_st): PROVEN [CHASED] retail 104 B / ours 104 B, 0 cycle-assumed"
+    }
+   ]
   },
   {
    "name": "$_Copy_Construct",
