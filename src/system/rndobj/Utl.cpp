@@ -1765,7 +1765,7 @@ void ResetNormals(RndMesh *m) {
         Hmx::Matrix3 basis;
         ComputeFaceTangentBasis(m, i, basis);
 
-        float crossX = basis.x.y * basis.z.x - basis.z.y * basis.x.x;
+        float crossX = basis.z.x * basis.x.y - basis.x.x * basis.z.y;
         float crossY = basis.z.z * basis.x.x - basis.x.z * basis.z.x;
         float crossZ = basis.x.z * basis.z.y - basis.z.z * basis.x.y;
         Normalize(basis.x, *(Vector3 *)&faceTangents[i]);
@@ -1779,17 +1779,16 @@ void ResetNormals(RndMesh *m) {
     int numVerts = m->Verts().size();
     std::vector<int> repVerts(numVerts);
     for (int i = 0; i < m->Verts().size(); i++) {
-        const Vector3 &pos = m->Verts()[i].pos;
-        int rep = i;
-        for (int j = 0; j < i; j++) {
+        int j;
+        for (j = 0; j < i; j++) {
             const Vector3 &otherPos = m->Verts()[j].pos;
+            const Vector3 &pos = m->Verts()[i].pos;
             if (fabs(pos.x - otherPos.x) <= 0.001f && fabs(pos.y - otherPos.y) <= 0.001f
                 && fabs(pos.z - otherPos.z) <= 0.001f) {
-                rep = j;
                 break;
             }
         }
-        repVerts[i] = rep;
+        repVerts[i] = j;
     }
 
     for (int i = 0; i < m->Verts().size(); i++) {
@@ -1797,14 +1796,13 @@ void ResetNormals(RndMesh *m) {
         m->Verts()[i].norm.Zero();
         ((Vector3 *)pTangent)->Zero();
 
-        int rep = repVerts[i];
         for (int f = 0; f < m->Faces().size(); f++) {
             RndMesh::Face &face = m->Faces()[f];
-            for (int k = 0; k <= 2; k++) {
-                if (repVerts[face[k]] != rep)
+            for (int k = 0; k < 3; k++) {
+                if (repVerts[face[k]] != repVerts[i])
                     continue;
 
-                const RndMesh::Vert &v0 = m->Verts()[face[k]];
+                const RndMesh::Vert &v0 = m->Verts()[face[k % 3]];
                 const RndMesh::Vert &v1 = m->Verts()[face[(k + 1) % 3]];
                 const RndMesh::Vert &v2 = m->Verts()[face[(k + 2) % 3]];
 
@@ -1833,18 +1831,17 @@ void ResetNormals(RndMesh *m) {
                     (double)(d2.x * d1.x + d2.y * d1.y + d2.z * d1.z)
                 );
 
-                crossProd.x *= angle;
-                crossProd.y *= angle;
-                crossProd.z *= angle;
-                Add(m->Verts()[i].norm, crossProd, m->Verts()[i].norm);
+                Vector3 weighted;
+                Scale(crossProd, angle, weighted);
+                Add(m->Verts()[i].norm, weighted, m->Verts()[i].norm);
 
                 Vector4 ft = faceTangents[f];
                 ft.x *= angle;
                 ft.y *= angle;
                 ft.z *= angle;
-                pTangent->x = pTangent->x + ft.x;
-                pTangent->y = pTangent->y + ft.y;
-                pTangent->z = pTangent->z + ft.z;
+                pTangent->x += ft.x;
+                pTangent->y += ft.y;
+                pTangent->z += ft.z;
             }
         }
         Normalize(m->Verts()[i].norm, m->Verts()[i].norm);
@@ -1856,12 +1853,10 @@ void ResetNormals(RndMesh *m) {
         }
 
         Vector4 tangCopy = *pTangent;
-        Vector3 &n = m->Verts()[i].norm;
-        float tDotN = n.x * tangCopy.x + n.z * tangCopy.z + n.y * tangCopy.y;
-        Vector3 scaledNorm;
-        Scale(n, tDotN, scaledNorm);
-        Vector3 ortho;
-        Subtract(*(Vector3 *)&tangCopy, scaledNorm, ortho);
+        const Vector3 &norm = m->Verts()[i].norm;
+        float tDotN = norm.x * tangCopy.x + (norm.z * tangCopy.z + norm.y * tangCopy.y);
+        Vector3 scaled(norm.x * tDotN, norm.y * tDotN, norm.z * tDotN);
+        Vector3 ortho(tangCopy.x - scaled.x, tangCopy.y - scaled.y, tangCopy.z - scaled.z);
         Normalize(ortho, *(Vector3 *)pTangent);
     }
     m->Sync(0x1F);
@@ -2041,7 +2036,10 @@ const char *ResourceFileCacheHelper::CacheFile(const char *cc) {
 }
 
 #ifndef HX_NATIVE
-bool RndAmbientOcclusion::Edge::operator<(const Edge &e) const {
+// inline: retail emits this as a COMDAT, so the set<Edge> instantiations
+// below (_M_find, insert_unique) call it without knowing its register
+// footprint and keep their live values in callee-saved registers.
+inline bool RndAmbientOcclusion::Edge::operator<(const Edge &e) const {
     unsigned short aMax = v1, aMin = v0;
     unsigned int a;
     if (aMin < aMax) {
@@ -2577,88 +2575,93 @@ void BuildVisit(BSPNode *node) {
 }
 
 void BuildFromBSP(RndMesh *mesh) {
-    RndMesh *geomOwner = mesh->GetGeomOwner();
-    BuildVisit(geomOwner->GetBSPTree());
+    // No `geomOwner` local: RndMesh::GetBSPTree(), Verts() and Faces() all read
+    // through mGeomOwner themselves, so retail keeps the PARAMETER in r26 and
+    // re-reads 0x148(r26) at each use (target idx 43/47/96/129).  Binding
+    // `RndMesh *geomOwner = mesh->GetGeomOwner()` costs a third extra
+    // callee-saved GPR -- __savegprlr_21 against the image's __savegprlr_24 --
+    // and 0x20 of frame.
+    BuildVisit(mesh->GetBSPTree());
 
     int totalVerts = 0;
 
     // First pass: count vertices and faces, erase polys with < 3 points
     std::list<BuildPoly>::iterator it = gChildPolys.begin();
     unsigned int totalFaces = 0;
-    while (gChildPolys.end() != it) {
-        unsigned int numPoints = (unsigned int)it->mPoly.points.size();
-        if (numPoints < 3U) {
+    while (it != gChildPolys.end()) {
+        // size() spelled THREE times, deliberately.  The image computes
+        // (end - begin) >> 3 once for the test, off the node pointer
+        // (0x8/0xc(r10)), and then TWICE more in the else arm off a CSE'd
+        // `&points` (0x0/0x4(r11), target idx 29-37) -- two `subf`/`srawi`
+        // pairs from the same two loaded pointers.  Binding `numPoints` folds
+        // them into one and deletes eight instructions the image has.
+        if (it->mPoly.points.size() < 3U) {
             it = gChildPolys.erase(it);
         } else {
-            totalVerts += (int)numPoints;
-            totalFaces += numPoints - 2;
+            totalVerts += (int)it->mPoly.points.size();
+            totalFaces += (unsigned int)it->mPoly.points.size() - 2;
             ++it;
         }
     }
 
     // Resize vertex array
-    geomOwner->Verts().resize(totalVerts);
+    mesh->Verts().resize(totalVerts);
 
-    // Handle face array
-    unsigned int currentFaces = (unsigned int)geomOwner->Faces().size();
-    if (totalFaces < currentFaces) {
-        geomOwner->Faces().erase(
-            geomOwner->Faces().begin() + totalFaces, geomOwner->Faces().end()
-        );
+    // Handle face array.  emptyFace is declared BEFORE the branch -- the image
+    // sinks its three zero `sth`s into the entry block alongside `li r10, 0x6`
+    // and the single `addi r3, r11, 0x110` that serves as `this` for both
+    // erase() and _M_fill_insert() (target idx 48-52).  Faces().size() is
+    // spelled twice, once per use, which is the image's two `divw`s.
+    RndMesh::Face emptyFace;
+    std::vector<RndMesh::Face> &faces = mesh->Faces();
+    if (totalFaces < (unsigned int)faces.size()) {
+        faces.erase(faces.begin() + totalFaces, faces.end());
     } else {
-        RndMesh::Face emptyFace;
-        geomOwner->Faces().insert(
-            geomOwner->Faces().end(), totalFaces - currentFaces, emptyFace
-        );
+        faces.insert(faces.end(), totalFaces - (unsigned int)faces.size(), emptyFace);
     }
 
+    int faceIdx = 0;
     int vertIdx = 0;
     float z = 0.0f;
-    int faceIdx = 0;
 
     // Second pass: transform vertices and create faces
     std::list<BuildPoly>::iterator pit = gChildPolys.begin();
     while (pit != gChildPolys.end()) {
-        std::vector<Vector2> &points = pit->mPoly.points;
-
-        if (!points.empty()) {
-            int vertOffset = vertIdx * 0x60;
-            Vector2 *p = &points[0];
-            Vector2 *pEnd = &points[0] + points.size();
-
-            do {
-                Vector3 pt(p->x, p->y, z);
-                Multiply(
-                    pt,
-                    pit->mTransform,
-                    *(Vector3 *)((char *)geomOwner->Verts().mVerts + vertOffset)
-                );
-                p++;
-                vertIdx++;
-                vertOffset += 0x60;
-            } while (p != pEnd);
+        // No `points` reference: the image reads begin/end straight off the
+        // list node (0x8/0xc(r28)) at every use, and RE-READS end() on every
+        // iteration of the inner loop (target idx 106) -- that is a plain
+        // begin()/end() iterator loop, not a precomputed pEnd.  Binding
+        // `std::vector<Vector2> &points` materialises `addi r25, r28, 0x8` and
+        // then addresses everything off it.
+        for (std::vector<Vector2>::iterator p = pit->mPoly.points.begin();
+             p != pit->mPoly.points.end();
+             ++p) {
+            Vector3 pt(p->x, p->y, z);
+            // vertIdx * 0x60 spelled here, not hoisted to a `vertOffset` local:
+            // MSVC strength-reduces it into an induction variable whose seed
+            // `mulli r29, r30, 0x60` lands in the LOOP PREHEADER, after the
+            // zero-trip guard (target idx 90).  A precomputed local puts the
+            // multiply before the guard instead.
+            Multiply(
+                pt,
+                pit->mTransform,
+                *(Vector3 *)((char *)mesh->Verts().mVerts + vertIdx * 0x60)
+            );
+            vertIdx++;
         }
 
-        unsigned int numPoints = (unsigned int)points.size();
-        int firstVert = vertIdx - (int)numPoints;
-        int v2 = firstVert + 2;
-        if (v2 < vertIdx) {
-            int triCount = vertIdx - v2;
-            int faceOffset = faceIdx * 6;
-            int v1 = firstVert + 1;
-            faceIdx += triCount;
-
-            do {
-                unsigned short *facePtr =
-                    (unsigned short *)((char *)&geomOwner->Faces()[0] + faceOffset);
-                facePtr[0] = (unsigned short)firstVert;
-                facePtr[1] = (unsigned short)v1;
-                facePtr[2] = (unsigned short)v2;
-                v2++;
-                v1++;
-                faceOffset += 6;
-                triCount--;
-            } while (triCount != 0);
+        // w16-a (97.81 -> 100 canonical, modulo register permutation): the
+        // fan is a PLAIN loop over v calling Face::Set.  The hand-stepped
+        // do/while it replaces (byte-offset facePtr, separate v1/v2 counters,
+        // `faceIdx += triCount` up front) is what kept the w7-aq residual
+        // alive -- with the plain loop MSVC itself strength-reduces it to the
+        // image's CTR loop, hoists `clrlwi firstVert`, seeds v-1 with the biased
+        // `addis r10, r11, 0x1 / subi r10, r10, 0x1`, and the size() load-order
+        // rows close too.  Left: the callee-saved swap mesh r26 / faceIdx r25
+        // (9 register-only rows, forgiven by the canonical ruler).
+        int firstVert = vertIdx - (int)pit->mPoly.points.size();
+        for (int v = firstVert + 2; v < vertIdx; v++) {
+            mesh->Faces()[faceIdx++].Set(firstVert, v - 1, v);
         }
         ++pit;
     }
