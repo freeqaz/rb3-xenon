@@ -263,9 +263,10 @@ void LayerDir::RefreshLayer(Layer &layer, bool useColorIdx) {
         } else {
             layer.mMat->SetProperty(Symbol("alpha"), DataNode(0.0f));
         }
-        const ObjRefList &refs = Refs();
-        for (ObjRefList::const_iterator it = refs.end(); it != refs.begin();) {
-            --it;
+        // Retail walks mRefs FORWARD (node->next at +0, end() re-derived each
+        // pass through the virtual-base adjust); a reverse walk visits the
+        // texture renderers in the opposite order.
+        for (ObjRefList::const_iterator it = Refs().begin(); it != Refs().end(); ++it) {
             RndTexRenderer *tr =
                 dynamic_cast<RndTexRenderer *>(RefPtrOf(it)->RefOwner());
             if (tr)
