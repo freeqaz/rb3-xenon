@@ -185,4 +185,9 @@ Native-observable effect of each fix, as far as the code reaches today:
 
 ## 8. Final gate lines
 
-Recorded after the last commit (see the commit that adds them).
+Run on the lane's final source state (`7e3f3bb18` + this doc; no source changed after), worktree `~/tmp/wt-w16pq`:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+NATIVE_HEALTH_RESULT verdict=PASS link=PASS link_verified=18 link_expected=18 link_skipped=0 runtime=PASS runtime_ran=18 runtime_total=18 gates_pass=57 gates_fail=0 unrunnable=none selftest=SKIPPED scatter_unlinked=17 scatter_dirb=0 scatter_multihost=20 rc=0 handpose_controls=- handpose_baseline_fail=- runtime_crashed=0 runtime_failed=none
+```
