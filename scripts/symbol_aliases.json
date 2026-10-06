@@ -98575,11 +98575,23 @@
   {
    "name": "PhysicalFree",
    "address": "0x822733b8",
-   "survivor": "?PhysicalFreeTracked@@YAXPAXPBDH1@Z",
-   "folded": [
-    "?PhysicalFree@@YAXPAX@Z"
-   ],
-   "evidence": "Lane W16-Z 2026-09-14. FLAT T1 PROVEN by tools/icf_pair_adjudicate.py (retail_size 84 == our_size 84, n_relocs 9, reloc_tally {'tolerated_placeholder': 2}), and our_bodytwins==2 confirms the two spellings fold in OUR build as well. The 4-argument tracked overload ignores p2/p3/p4, so both spellings compile to the same body and MSVC folds them; the map therefore shows only the tracked name. Retail-byte witness for the 1-argument call: BOTH call sites of 0x822733B8 in the pinned asm (?ReleaseAutoRelease@DxRnd@@QAAXXZ at 0x8273CC08 and fn_82B6A828 in ContextChecker) set ONLY r3 before the bl, and r4-r6 are volatile across the call immediately preceding. This group was only provable AFTER the source defect it exposed was fixed: our PhysicalFree was 76 bytes / two calls, missing the MemTrackFree that retail's 84-byte body makes -- flat T1 was REFUTED ('masked bodies DIFFER') until src/Memory_Xbox.cpp was corrected in this lane."
+   "survivor": "?PhysicalFreeTracked@@YAXPAX@Z",
+   "folded": [],
+   "evidence": "Lane W16-Z 2026-09-14. FLAT T1 PROVEN by tools/icf_pair_adjudicate.py (retail_size 84 == our_size 84, n_relocs 9, reloc_tally {'tolerated_placeholder': 2}), and our_bodytwins==2 confirms the two spellings fold in OUR build as well. The 4-argument tracked overload ignores p2/p3/p4, so both spellings compile to the same body and MSVC folds them; the map therefore shows only the tracked name. Retail-byte witness for the 1-argument call: BOTH call sites of 0x822733B8 in the pinned asm (?ReleaseAutoRelease@DxRnd@@QAAXXZ at 0x8273CC08 and fn_82B6A828 in ContextChecker) set ONLY r3 before the bl, and r4-r6 are volatile across the call immediately preceding. This group was only provable AFTER the source defect it exposed was fixed: our PhysicalFree was 76 bytes / two calls, missing the MemTrackFree that retail's 84-byte body makes -- flat T1 was REFUTED ('masked bodies DIFFER') until src/Memory_Xbox.cpp was corrected in this lane.",
+   "withdrawn": [
+    {
+     "spelling": "?PhysicalFree@@YAXPAX@Z",
+     "lane": "W16-RI 2026-10-06",
+     "class": "DISTINCT_RETAIL_BODY",
+     "why": "Not a fold. Retail has a separate 68 B PhysicalFree at 0x82273470 (no null test, no MemTrackFree), whose only caller is MemFree (bl at 0x827BC4BC). The W16-Z premise that the two spellings compile to one body held only because our source gave PhysicalFree the tracked body; src/Memory_Xbox.cpp now has both bodies byte-identical to retail, and the map names 0x82273470 directly."
+    },
+    {
+     "spelling": "?PhysicalFreeTracked@@YAXPAXPBDH1@Z",
+     "lane": "W16-RI 2026-10-06",
+     "class": "SPELLING_RETIRED",
+     "why": "The match build's PhysicalFreeTracked takes the pointer only (retail call sites set r3 only), so this 4-argument spelling is no longer emitted outside HX_NATIVE; the survivor is now ?PhysicalFreeTracked@@YAXPAX@Z."
+    }
+   ]
   },
   {
    "name": "DeleteAll",
@@ -106946,16 +106958,22 @@
   {
    "name": "_M_create_node",
    "address": "0x824cdce8",
-   "survivor": "?_M_create_node@?$list@UAnim@EventTrigger@@V?$StlNodeAlloc@UAnim@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUAnim@EventTrigger@@@Z",
-   "folded": [
-    "?_M_create_node@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUBitmapOverride@WorldDir@@@Z"
-   ],
+   "survivor": "?_M_create_node@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUBitmapOverride@WorldDir@@@Z",
+   "folded": [],
    "evidence": "Fold group opened by W16-LB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
      "spelling": "?_M_create_node@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUBitmapOverride@WorldDir@@@Z",
      "lane": "W16-LB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 72 B retail / 72 B ours. Retail calls the survivor where we call this spelling in 1 row(s), e.g. ?insert@?$list@UBitmapOverride@WorldDir@@V?$StlNodeAlloc@UBitmapOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UBitmapOverride@WorldDir@@U?$_Nonconst_traits@UBitmapOverride@WorldDir@@@stlpmtx_std@@@2@U32@ABUBitmapOverride@WorldDir@@@Z."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?_M_create_node@?$list@UAnim@EventTrigger@@V?$StlNodeAlloc@UAnim@EventTrigger@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABUAnim@EventTrigger@@@Z",
+     "lane": "W16-RI 2026-10-06",
+     "class": "DISTINCT_RETAIL_BODY",
+     "why": "Not a fold. list<EventTrigger::Anim>::_M_create_node has its own retail body at 0x824A03B0 (called by insert<Anim> at 0x824A06EC; it calls _Copy_Construct<Anim> at 0x8249FC78), while 0x824CDCE8 calls _Copy_Construct<WorldDir::BitmapOverride> at 0x824CD738 and is called by insert<BitmapOverride> at 0x824CE0EC. Both COMDATs are byte-equal to their own retail bodies in our objs. W16-LB's chase proved the two bodies shape-identical, which they are, but retail keeps them at distinct addresses. The map now names 0x824CDCE8 with the BitmapOverride spelling and 0x824A03B0 with the Anim spelling, and both pins sit with the units that define them (PropSync.cpp / EventTrigger.cpp)."
     }
    ]
   },
