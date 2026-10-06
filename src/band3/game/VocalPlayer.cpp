@@ -660,7 +660,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 if (cache.unk20) {
                     fScore *= mNonpitchStickiness;
                 }
-                pSinger->AppendToScoreHistory(fCompMS, pPart->mPartIndex, fScore, iRating);
+                pSinger->AppendToScoreHistory(fCompMS, pPart->PartIndex(), fScore, iRating);
             }
         }
         if (kInvalidPitch != fBestPitchDeviation) {
@@ -735,7 +735,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 VocalPart *pPart = *pIt2;
                 Singer *pBestSinger = pPart->GetBestSingerCandidate();
                 if (pBestSinger) {
-                    pBestSinger->SetAssignedPart(pPart->mPartIndex, mVocalPartBias);
+                    pBestSinger->SetAssignedPart(pPart->PartIndex(), mVocalPartBias);
                     pBestSinger->mFrameTargetPitch = pBestSinger->mBestTargetPitch;
                     int partIndex = pPart->mPartIndex;
                     scoredPartIndices.push_back(partIndex);
