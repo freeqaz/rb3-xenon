@@ -15,6 +15,7 @@
 #include "game/CrowdRating.h"
 #include "game/BandUser.h"
 #include "beatmatch/MasterAudio.h"
+#include "net/NetSession.h"
 #include "bandobj/BandTrack.h"
 #include "net/NetSession.h"
 #include "utl/Symbols.h"
@@ -59,6 +60,17 @@ void GameConfig::GetSectionBounds(int, float &, float &) const {}
 // TambourineManager, which these targets DO link (TambourineManager.cpp). This
 // is that body verbatim; keep the two in step.
 bool VocalPlayer::InTambourinePhrase() const { return mTambourineManager.unk60 > 0; }
+
+// ---- NetSession::IsLocal -- for VocalPlayer::CanChat (W16-PQ) ----
+// Retail gates chat on `!TheNetSession->IsLocal() && PressingToTalk()`
+// (0x826E3E90), restored in src/band3/game/VocalPlayer.cpp, so Poll, Restart
+// and HookupTrack reach this again (W16-PD had deleted it as unreferenced).
+// The real body (src/network/net/NetSession.cpp) cannot link here: its online
+// path needs NetSession::IsHost and the Quazal session. The only session these
+// drivers hold is NativeMakeNetSession()'s calloc'd one -- mState kIdle (not
+// joining) and mOnlineEnabled false -- for which the real body returns true at
+// its `!mOnlineEnabled` test. That is the value returned here.
+bool NetSession::IsLocal() const { return true; }
 
 // ---- handler Symbol globals (VocalPlayer BEGIN_HANDLERS / property sync) ----
 // Off-path (only the Handle/SyncProperty virtuals reference these).

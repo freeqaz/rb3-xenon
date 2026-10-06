@@ -287,7 +287,7 @@ void VocalPlayer::Restart(bool b1) {
         mBeatMaster->GetAudio()->SetVocalFailFader(0);
         mBeatMaster->GetAudio()->SetVocalDuckFader(0);
         if (mTrack) {
-            mCouldChat = PressingToTalk();
+            mCouldChat = CanChat();
             SendCanChat(mCouldChat);
         }
         Player::Restart(b1);
@@ -512,7 +512,9 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
 #endif
 
     // Declaration order matches target register allocation
-    float frameMinPitch = 9985.578125f;
+    // Retail's literal is 0x50061C46 (9.0e9f, .rdata 0x820EEF18). 9985.578125f
+    // is 0x461C0650 -- the same word read byte-swapped.
+    float frameMinPitch = 9.0e9f;
     float frameMaxPitch = 0.0f;
     bool bWasInFreestyleSection = InFreestyleSection();
 
@@ -969,7 +971,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
 #endif
 
     // Chat handling
-    bool bCanChat = PressingToTalk();
+    bool bCanChat = CanChat();
     if (mCouldChat != bCanChat) {
         SendCanChat(bCanChat);
         mCouldChat = bCanChat;
@@ -1425,7 +1427,7 @@ void VocalPlayer::HookupTrack() {
     MILO_ASSERT(mTrack, 0x88A);
     std::vector<VocalPhrase> &phrases = mVocalParts[0]->mVocalNoteList->mPhrases;
     mTrack->Restart(this, phrases[0].unk0 + phrases[0].unk4, phrases[1].unk0 + phrases[1].unk4);
-    mCouldChat = PressingToTalk();
+    mCouldChat = CanChat();
     SendCanChat(mCouldChat);
     UpdateMicDisplay();
     mTrack->GetVocalTrackDir()->SetMaxMultiplier(mBehavior->GetMaxMultiplier());
@@ -2124,6 +2126,11 @@ bool VocalPlayer::PressingToTalk() {
         }
     }
 }
+
+// Chat is only possible in a networked session: a local session never asks
+// the pad. Out of line in retail (0x826E3E90, right after PressingToTalk at
+// 0x826E3DB0); Restart, Poll and the track-restart path all call it.
+bool VocalPlayer::CanChat() { return !TheNetSession->IsLocal() && PressingToTalk(); }
 
 void VocalPlayer::LocalHitCoda() {
     mBand->LocalFinishedCoda(this);
