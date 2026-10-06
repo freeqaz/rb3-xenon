@@ -1,13 +1,19 @@
 #include "beatmatch/SongData.h"
-#ifdef HX_NATIVE
-// Native rb3-hit never constructs a BeatMatcher (mBeatMatchers stays empty), so
-// SongData's BeatMatcher* loops are dead code that only needs to compile. The
-// real BeatMatcher.h drags in the game/meta_band/tour/net header cascade that is
-// off the native gameplay-core path; a minimal shim avoids it. X360 build is
-// unaffected (still includes the real header below).
-#include "beatmatch/BeatMatcher_native.h"
-#else
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_HAS_BEATMATCHER)
 #include "beatmatch/BeatMatcher.h"
+#define SONGDATA_DRIVES_BEATMATCHERS 1
+#else
+// No native program links beatmatch/BeatMatcher.cpp (measured 2026-10-06 over
+// every executable in native/build), so none can construct a BeatMatcher and
+// mBeatMatchers is always empty: the three loops that drive BeatMatchers are
+// compiled out and BeatMatcher stays the incomplete type SongData.h declares.
+// This replaces beatmatch/BeatMatcher_native.h, a second, member-less
+// definition of BeatMatcher with inline no-op PostLoad/AddTrack that sat in the
+// same programs as the real class (tools/layout_odr.py: two layouts of one
+// class).  A native target that links BeatMatcher.cpp defines
+// RB3_NATIVE_HAS_BEATMATCHER and gets the real header and the real loops;
+// AddBeatMatcher fails loudly if one ever arrives without it.
+#define SONGDATA_DRIVES_BEATMATCHERS 0
 #endif
 #include "beatmatch/GameGem.h"
 #include "beatmatch/GameGemDB.h"
@@ -319,11 +325,13 @@ void SongData::PostLoad(PlayerTrackConfigList *pList) {
         PostLoadTrack(i);
     }
     mPhraseAnalyzer->Analyze();
+#if SONGDATA_DRIVES_BEATMATCHERS
     for (std::vector<BeatMatcher *>::iterator it = mBeatMatchers.begin();
          it != mBeatMatchers.end();
          ++it) {
         (*it)->PostLoad();
     }
+#endif
     PostLoadVocals();
     mLoaded = true;
 }
@@ -344,6 +352,7 @@ void SongData::PostLoadTrack(int track) {
                 trackInfo->mAudioType == kAudioVocals
             );
         }
+#if SONGDATA_DRIVES_BEATMATCHERS
         for (std::vector<BeatMatcher *>::iterator it = mBeatMatchers.begin();
              it != mBeatMatchers.end();
              ++it) {
@@ -355,6 +364,7 @@ void SongData::PostLoadTrack(int track) {
                 trackInfo->mIndependentSlots
             );
         }
+#endif
         for (std::vector<SongParserSink *>::iterator it = mSongParserSinks.begin();
              it != mSongParserSinks.end();
              ++it) {
@@ -741,12 +751,18 @@ void SongData::ValidateVocalSPPhrases() {
     }
 }
 
-void SongData::AddBeatMatcher(BeatMatcher *bm) { mBeatMatchers.push_back(bm); }
+void SongData::AddBeatMatcher(BeatMatcher *bm) {
+#if !SONGDATA_DRIVES_BEATMATCHERS
+    MILO_FAIL("SongData: built without RB3_NATIVE_HAS_BEATMATCHER, cannot drive a BeatMatcher");
+#endif
+    mBeatMatchers.push_back(bm);
+}
 
 void SongData::PostDynamicAdd(BeatMatcher *bm, int trk) {
     if (HasBackupTrack(trk)) {
         RestoreTrackFromBackup(trk);
     }
+#if SONGDATA_DRIVES_BEATMATCHERS
     for (int i = 0; i < mNumTracks; i++) {
         TrackInfo *curTrackInfo = mTrackInfos[i];
         bm->AddTrack(
@@ -757,6 +773,7 @@ void SongData::PostDynamicAdd(BeatMatcher *bm, int trk) {
             curTrackInfo->mIndependentSlots
         );
     }
+#endif
 }
 
 void SongData::RemoveBeatMatcher(BeatMatcher *bm) {

@@ -104,6 +104,7 @@ void Movie::SetWidthHeight(int a, int b) { mImpl->SetWidthHeight(a, b); }
 
 #else // !HX_NATIVE
 #include "movie/Movie.h"
+#include "movie/BinkSdk.h"
 #include "movie/TexMovie.h"
 #include "moviebink/BinkMovieSys.h"
 #include "obj/Data.h"
@@ -127,17 +128,8 @@ void Movie::SetWidthHeight(int a, int b) { mImpl->SetWidthHeight(a, b); }
 #include <string.h>
 #include <vector>
 
-// Bink SDK structures, at the offsets the retail player reads.
-struct BINK {
-    unsigned int Width; // 0x0
-    unsigned int Height; // 0x4
-    unsigned int Frames; // 0x8
-    unsigned int FrameNum; // 0xc
-    unsigned int LastFrameNum; // 0x10
-    unsigned int FrameRate; // 0x14
-    unsigned int FrameRateDiv; // 0x18
-    unsigned int ReadError; // 0x1c
-};
+// Bink SDK structures, at the offsets the retail player reads.  BINK itself is
+// in movie/BinkSdk.h, shared with every other TU that reads one.
 
 struct BINKSUMMARY {
     unsigned int Width; // 0x0

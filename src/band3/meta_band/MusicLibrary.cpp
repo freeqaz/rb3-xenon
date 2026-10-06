@@ -72,15 +72,9 @@
 #include "utl/Symbols2.h"
 #include "utl/Symbols3.h"
 #include "utl/Symbols4.h"
+#include "meta_band/WiiFriendsProvider.h"
 
 MusicLibrary *TheMusicLibrary;
-
-class WiiFriendsProvider {
-public:
-    bool IsPossessiveSuffixNeeded(const char *);
-    const char *GetPossessiveSuffix(const char *);
-};
-extern WiiFriendsProvider TheWiiFriendsProvider;
 
 void MusicLibrary::Init(SongPreview &prev) {
     MILO_ASSERT(!TheMusicLibrary, 0x53);

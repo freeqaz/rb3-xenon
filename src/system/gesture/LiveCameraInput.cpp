@@ -9,6 +9,7 @@
 #include "obj/Object.h"
 #include "os/Debug.h"
 #include "os/System.h"
+#include "rnddx9/Rnd.h"
 #include "rnddx9/Tex.h"
 #include "rndobj/Bitmap.h"
 #include "rndobj/Mat.h"
@@ -28,11 +29,6 @@
 #include "utl/Loader.h"
 #include "../../Memory.h"
 
-class DxRnd {
-public:
-    void ReleaseAutoRelease();
-};
-extern DxRnd TheDxRnd;
 
 float gTempPortraitOffset;
 

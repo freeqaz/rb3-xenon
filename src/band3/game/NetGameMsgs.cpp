@@ -1,4 +1,5 @@
 #include "NetGameMsgs.h"
+#include "game/MusicLibraryTaskMsg.h"
 #include "game/BandUser.h"
 #include "game/BandUserMgr.h"
 #include "game/Player.h"
@@ -13,22 +14,6 @@
 #include "os/PlatformMgr.h"
 #include "utl/Messages.h"
 #include "utl/Symbols.h"
-
-class MusicLibraryTaskMsg : public NetMessage {
-public:
-    MusicLibraryTaskMsg() {}
-    MusicLibraryTaskMsg(MusicLibrary::MusicLibraryTask &);
-    virtual ~MusicLibraryTaskMsg() {}
-    virtual void Save(BinStream &) const;
-    virtual void Load(BinStream &);
-    virtual void Dispatch();
-    NETMSG_BYTECODE(MusicLibraryTaskMsg);
-    NETMSG_NAME(MusicLibraryTaskMsg);
-
-    NETMSG_NEWNETMSG(MusicLibraryTaskMsg);
-
-    MusicLibrary::MusicLibraryTask mTask; // 0x4
-};
 
 PlayerGameplayMsg::PlayerGameplayMsg(
     User *user, int opCode, int arg1, int arg2, int arg3

@@ -97,30 +97,14 @@
 #include "obj/DataFunc.h"
 #include "tour/QuestFilterPanel.h"
 #include "tour/TourChallengeResultsPanel.h"
+#include "tour/TourDescPanel.h"
+#include "meta_band/WiiFriendsProvider.h"
 #include "utl/MakeString.h"
 #include "utl/Symbols.h"
 
 void UtlInit();
 
 // Classes with no header yet — defined inline for factory registration
-// TourDescPanel is NOT a UIPanel and has no filler member.  It is declared for
-// real (with its one member) at src/band3/tour/TourDescPanel.cpp:126 as
-// `class TourDescPanel : public TexLoadPanel { ... TourDescProvider
-// *m_pTourDescProvider; }`, and that declaration is compiler-verified
-// sizeof == 0x84 -- exactly what retail's TourDescPanel::NewObject allocates.
-// The previous `: public UIPanel` + `char unk_pad[0x18]` stub here was an
-// ODR-violating second definition of the same mangled class that happened to
-// land on 0x80.  Mirror the real declaration instead of inventing filler.
-class TourDescProvider;
-
-class TourDescPanel : public TexLoadPanel {
-public:
-    TourDescPanel();
-    OBJ_CLASSNAME(TourDescPanel);
-    NEW_OBJ(TourDescPanel);
-    TourDescProvider *m_pTourDescProvider; // 0x54
-};
-
 class WiiFriendsScreen : public UIPanel {
 public:
     static void Init();
@@ -154,14 +138,6 @@ public:
     String unk2c; // 0x2c
     char unk38[0x18]; // 0x38
 };
-
-class WiiFriendsProvider {
-public:
-    void Init();
-    void Poll();
-    int pad[1]; // size > 2 to avoid sda21 addressing
-};
-extern WiiFriendsProvider TheWiiFriendsProvider;
 
 class WiiInvitationsProvider {
 public:

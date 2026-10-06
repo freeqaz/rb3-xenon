@@ -1,3 +1,4 @@
+#include "movie/BinkSdk.h"
 #include "os/Endian.h"
 #include "os/CritSec.h"
 #include "os/Debug.h"
@@ -75,14 +76,7 @@ struct BINKIO {
     XTEABlockEncrypter *pXTEADecrypter; // 0xe8
 };
 
-struct BINK {
-    unsigned int Width;   // 0x00
-    unsigned int Height;  // 0x04
-    unsigned int Frames;  // 0x08
-    unsigned int FrameNum; // 0x0c
-    char padding[0x28];
-    int NumTracks;        // 0x38
-};
+// BINK is in movie/BinkSdk.h.
 
 #ifdef HX_NATIVE
 // Bink SDK not available on native — stub all proprietary functions

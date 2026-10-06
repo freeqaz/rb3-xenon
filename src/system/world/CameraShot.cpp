@@ -1970,8 +1970,13 @@ bool CamShot::AddCrowd(CamShotCrowd &crowd) {
 }
 
 // sw2 scatter-include (default/CameraShot <- hamobj/DanceRemixer.cpp)
+// X360 only: it exists to pair retail COMDATs, and natively it is the one path
+// that brought DC3's meta_ham MetaPerformer/Instarank/EndGameMsg into an RB3
+// program next to RB3's own classes of those names (tools/layout_odr.py).
+#ifndef HX_NATIVE
 #define gRev gRev_DanceRemixer
 #define gAltRev gAltRev_DanceRemixer
 #include "hamobj/DanceRemixer.cpp"
 #undef gRev
 #undef gAltRev
+#endif

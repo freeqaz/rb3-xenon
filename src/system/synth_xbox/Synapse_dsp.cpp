@@ -1,5 +1,8 @@
 #include "Synapse_dsp.h"
 #include "Biquad.h"
+#include "GranularSynth.h"
+#include "PeakDetector.h"
+#include "PitchDetector.h"
 #include "IPP_basicmath_xbox.h"
 #include <cstring>
 #include <cmath>
@@ -20,74 +23,17 @@ void HighpassCoefficients(float *const, float, float, float);
 
 namespace Synapse {
 
-// Minimal class definitions for destructor visibility
-class PitchDetector {
-public:
-#ifdef HX_NATIVE
-    PitchDetector(const std::vector<float> &, unsigned int, unsigned int);
-#else
-    PitchDetector(const stlpmtx_std::vector<float, stlpmtx_std::StlNodeAlloc<float> > &, unsigned int, unsigned int);
-#endif
-    ~PitchDetector();
-    void Detect(unsigned int);
-    float mField_0x00;
-    float mField_0x04;
-    float mField_0x08;
-    float mDetectedPitch;    // 0x0C
-    float mPitchConfidence;  // 0x10
-    float mPitchClarity;     // 0x14
-    unsigned char _pad[0x128 - 0x18]; // pad to match sizeof = 0x128
-};
-
-class PeakDetector {
-public:
-#ifdef HX_NATIVE
-    PeakDetector(const std::vector<float> &, unsigned int, unsigned int);
-#else
-    PeakDetector(const stlpmtx_std::vector<float, stlpmtx_std::StlNodeAlloc<float> > &, unsigned int, unsigned int);
-#endif
-    ~PeakDetector();
-    void Detect(unsigned int);
-    float mField_0x00;
-    float mDetectedPitch;    // 0x04
-    // ... more fields
-    unsigned char _pad[0x30 - 0x08];
-    float mPeak;             // 0x30
-};
-
-struct GranularVoice {
-    float mField_0x00;
-    float mGain;             // 0x04
-    float mCorrection;       // 0x08
-    bool mEnabled;           // 0x0C
-    unsigned char _pad1[3];
-    double mTimestamp;        // 0x10
-};
-
-class GranularSynth {
-public:
-#ifdef HX_NATIVE
-    GranularSynth(const std::vector<float> &, unsigned int, unsigned int, unsigned int);
-#else
-    GranularSynth(const stlpmtx_std::vector<float, stlpmtx_std::StlNodeAlloc<float> > &, unsigned int, unsigned int, unsigned int);
-#endif
-    ~GranularSynth();
-    void SetVoiceEnabled(unsigned int idx, bool enabled);
-    void Flush();
-    void ExtractGranules();
-    void Synthesize(unsigned int, float *const *);
-
-    float mField_0x00;
-    float mDetectedPitch;    // 0x04
-    float mPeak;             // 0x08
-    float mPitchConfidence;  // 0x0C
-    float mField_0x10;
-    unsigned int mDetectionInterval; // 0x14
-    unsigned int mSampleCount;       // 0x18
-    unsigned char _pad[0x2C - 0x1C];
-    GranularVoice *mVoices;          // 0x2C
-    unsigned char _pad2[0x44 - 0x30]; // pad to match sizeof = 0x44
-};
+// PitchDetector, PeakDetector and GranularSynth come from their own headers
+// (included above).  This file used to carry local stand-in definitions of all
+// three with invented member names, so this TU and the classes' own TUs
+// compiled each class with a different layout (tools/layout_odr.py).  The
+// offsets the code below touches are unchanged:
+//   PitchDetector  0x0C mFrequency  0x10 mConfidence  0x14 mClarity
+//   PeakDetector   0x04 mWidth      0x30 mNextCenter
+//   GranularSynth  0x04 mHopF  0x08 mOffset  0x0C mLengthMix
+//                  0x14 mMaxLength  0x18 mFrame  0x2C mVoices
+//   GranularSynth::Voice  0x00 mPan  0x04 mGain  0x08 mRate  0x0C mActive
+//                         0x10 mNextTime
 
 static const float kBiquadParams[] = { 7862.0f, 0.707f, 340.0f }; // retail 0x82198028
 
@@ -121,15 +67,15 @@ void Synapse::SetVoiceProximityFocus(unsigned int idx, float val) {
 }
 
 void GranularSynth::SetVoiceEnabled(unsigned int idx, bool enabled) {
-    if (enabled != 0 && mVoices[idx].mEnabled == 0) {
-        double timestamp = mVoices[idx].mTimestamp;
-        unsigned int thresh = mDetectionInterval * 3;
-        unsigned int samp = mSampleCount;
+    if (enabled != 0 && mVoices[idx].mActive == 0) {
+        double timestamp = mVoices[idx].mNextTime;
+        unsigned int thresh = mMaxLength * 3;
+        unsigned int samp = mFrame;
         if ((float)samp - timestamp > (double)thresh) {
-            mVoices[idx].mTimestamp = (double)samp;
+            mVoices[idx].mNextTime = (double)samp;
         }
     }
-    mVoices[idx].mEnabled = enabled;
+    mVoices[idx].mActive = enabled;
 }
 
 void Synapse::SetAttackSmoothing(float val) {
@@ -191,7 +137,7 @@ Synapse::Synapse(float sampleRate) : mDetectionInterval(64), mTargetPitch(sample
 
     mGranularSynth.reset(new GranularSynth(mInputBuffer, mVoices.size(), mDefaultPitch, mField_0x20));
     for (unsigned int j = 0; j < mVoices.size(); j++) {
-        mGranularSynth->mVoices[j].mField_0x00 = 0.0f;
+        mGranularSynth->mVoices[j].mPan = 0.0f;
     }
 
     // Biquad filters
@@ -244,27 +190,27 @@ void Synapse::ProcessInPlace(unsigned int arg1, float *arg2) {
             }
 
             (*(PeakDetector **)((char *)this + 0x40))->Detect(mBufferIndex);
-            (*(GranularSynth **)((char *)this + 0x68))->mPeak = (*(PeakDetector **)((char *)this + 0x40))->mPeak;
+            (*(GranularSynth **)((char *)this + 0x68))->mOffset = (*(PeakDetector **)((char *)this + 0x40))->mNextCenter;
 
             unsigned int temp_r11_2 = mBufferIndex;
 
             if (!((mDetectionInterval - 1) & temp_r11_2)) {
                 (*(PitchDetector **)((char *)this + 0x28))->Detect(temp_r11_2 >> 2);
                 PitchDetector *pd = *(PitchDetector **)((char *)this + 0x28);
-                mPitchConfidence = pd->mPitchConfidence;
-                mPitchClarity = pd->mPitchClarity;
+                mPitchConfidence = pd->mConfidence;
+                mPitchClarity = pd->mClarity;
 
                 if (mPitchConfidence > mPitchThreshold) {
-                    float temp_f0_2 = pd->mDetectedPitch * temp_f31;
+                    float temp_f0_2 = pd->mFrequency * temp_f31;
                     mDetectedPitch = temp_f0_2;
 
                     if (temp_f0_2 == temp_f30) {
                         mDetectedPitch = (float)mDefaultPitch;
                     }
 
-                    (*(PeakDetector **)((char *)this + 0x40))->mDetectedPitch = mDetectedPitch;
-                    (*(GranularSynth **)((char *)this + 0x68))->mDetectedPitch = mDetectedPitch;
-                    (*(GranularSynth **)((char *)this + 0x68))->mPitchConfidence = mPitchConfidence;
+                    (*(PeakDetector **)((char *)this + 0x40))->mWidth = mDetectedPitch;
+                    (*(GranularSynth **)((char *)this + 0x68))->mHopF = mDetectedPitch;
+                    (*(GranularSynth **)((char *)this + 0x68))->mLengthMix = mPitchConfidence;
                 }
 
                 for (unsigned int i = 0; i < mVoices.size(); i++) {
@@ -275,8 +221,12 @@ void Synapse::ProcessInPlace(unsigned int arg1, float *arg2) {
                     // NOTE: the cast form (not mVoices[i]) keeps the address add as
                     // (begin, offset); one residual commutative swap remains on the
                     // GetCorrection receiver add (add r3, off, begin vs begin, off).
-                    gs->mVoices[i].mCorrection =
+                    // The correction is computed before the store's address:
+                    // retail reads gs->mVoices' buffer AFTER the call, and an
+                    // operator[] on the left of `=` is evaluated first.
+                    float correction =
                         ((PitchCorrectedVoice *)((char *)mVoices.begin() + i * 56))->GetCorrection();
+                    gs->mVoices[i].mRate = correction;
                 }
             }
 

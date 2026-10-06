@@ -1,6 +1,7 @@
 #include "tour/Tour.h"
 #include "tour/TourDesc.h"
 #include "tour/TourProgress.h"
+#include "tour/TourDescPanel.h"
 #include "meta_band/Accomplishment.h"
 #include "meta_band/AccomplishmentManager.h"
 #include "meta_band/AccomplishmentProgress.h"
@@ -121,31 +122,6 @@ inline bool TourDescProvider::IsTourDescAvailable(Symbol s) const {
     }
     return true;
 }
-
-class TourDescProvider;
-
-class TourDescPanel : public TexLoadPanel {
-public:
-    TourDescPanel();
-    OBJ_CLASSNAME(TourDescPanel);
-    OBJ_SET_TYPE(TourDescPanel);
-    virtual DataNode Handle(DataArray *, bool);
-    virtual void Load();
-    virtual void FinishLoad();
-    virtual void Enter();
-    virtual void Unload();
-
-    Symbol GetSelectedTourDesc(class UIComponent *);
-    void LoadIcons();
-    void Refresh();
-    bool IsTourAvailable();
-    Symbol GetInitiallySelectedTour();
-    void ClearInitiallySelectedTour();
-    void SelectDefaultTour();
-    void SelectTour(Symbol);
-    void CheatWinTour();
-    TourDescProvider *m_pTourDescProvider; // 0x4c
-};
 
 inline void TourDescProvider::UpdateList() {
     MILO_ASSERT(TheTour, 0x49);
