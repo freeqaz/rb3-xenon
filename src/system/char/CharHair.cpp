@@ -377,26 +377,31 @@ void CharHair::SimulateInternal(float fps) {
                             break;
                         }
                     }
-
-                    Scale(m128.y, rsa, t100.m.y);
-                    Cross(t100.m.y, m128.z, t100.m.x);
-                    t100.m.x *= RecipSqrtAccurate(LengthSquared(t100.m.x));
-                    Normalize(t100.m.x, t100.m.x);
-                    Cross(t100.m.x, t100.m.y, t100.m.z);
-                    pt.lastZ = t100.m.z;
-                    if (pt.bone)
-                        pt.bone->SetWorldXfm(t100);
-                    Subtract(idealPos, pt.pos, pt.force);
-                    Vector3 frictionDiff;
-                    Subtract(pt.lastFriction, pt.force, frictionDiff);
-                    pt.lastFriction = pt.force;
-                    pt.force *= stiffFriction;
-                    ScaleAddEq(pt.force, frictionDiff, -mFriction);
-                    Vector3 movement;
-                    Subtract(pt.pos, oldPos, movement);
-                    ScaleAddEq(pt.force, movement, mInertia);
-                    t100.v = pt.pos;
                 }
+
+                // The frame rebuild and force update run for every point; only the
+                // collide loop is gated on pt.collides (retail's size()==0 branch
+                // lands here).  Residual: three commutative operand-order rows
+                // (recipFps fmuls, points[j - 1] add, innerSumRad fadds) that no
+                // source order, declaration order, name or placement moved.
+                Scale(m128.y, rsa, t100.m.y);
+                Cross(t100.m.y, m128.z, t100.m.x);
+                t100.m.x *= RecipSqrtAccurate(LengthSquared(t100.m.x));
+                Normalize(t100.m.x, t100.m.x);
+                Cross(t100.m.x, t100.m.y, t100.m.z);
+                pt.lastZ = t100.m.z;
+                if (pt.bone)
+                    pt.bone->SetWorldXfm(t100);
+                Subtract(idealPos, pt.pos, pt.force);
+                Vector3 frictionDiff;
+                Subtract(pt.lastFriction, pt.force, frictionDiff);
+                pt.lastFriction = pt.force;
+                pt.force *= stiffFriction;
+                ScaleAddEq(pt.force, frictionDiff, -mFriction);
+                Vector3 movement;
+                Subtract(pt.pos, oldPos, movement);
+                ScaleAddEq(pt.force, movement, mInertia);
+                t100.v = pt.pos;
             }
         }
     }
