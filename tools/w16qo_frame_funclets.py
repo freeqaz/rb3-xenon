@@ -2,7 +2,12 @@
 """Attach funclets to census parents by ADDRESS ADJACENCY (W16-QO).
 retail emits a parent's EH cleanup funclets contiguously after its body; each
 funclet's first word is `addi rD,r12,-<parent frame>`. Walk fn_ symbols after the
-parent's extent while they are funclets at tgt_frame."""
+parent's extent while they are funclets at tgt_frame.
+
+Usage: w16qo_frame_funclets.py <w23_collectable --json-out file> <out.json>
+Run from the repo root. Misses funclet runs that start >12 B past the parent
+(e.g. StorePreviewMgr::Handle, +0x40); the W23 multiset count catches those, so
+price a row with the max of the two (docs/decomp/W16QO_FRAME_SIZE_CENSUS_2026-10-06.md)."""
 import json, struct, sys, collections
 sys.path.insert(0, 'tools')
 from w23_frame_scan import scan_unit, _s16
