@@ -18,7 +18,17 @@ VocalPart::VocalPart(VocalPlayer *vp, int idx)
       unka0(-FLT_MAX), unka4(0), unka8(0), mInFreestyleSection(0), unkad(0), unkb0(0),
       unkb4(0), mFirstPhraseMsToScore(0), unkbc(-1.0f), mBestSinger(0),
       mBestSingerPitchDistance(FLT_MAX), unkc8(6), mScoringEnabled(1), mPhraseRank(0) {
+#ifdef HX_NATIVE
+    // Headless has no BandUser; the native VocalPlayer ctor sets
+    // gNativeVocalDifficulty, which Singer and TambourineManager read the same way.
+    // (Retail: mPlayer->GetUser()->GetDifficulty().)
+    extern int gNativeVocalDifficulty;
+    SetDifficultyVariables(
+        mPlayer->GetUser() ? mPlayer->GetUser()->GetDifficulty() : gNativeVocalDifficulty
+    );
+#else
     SetDifficultyVariables(mPlayer->GetUser()->GetDifficulty());
+#endif
 }
 
 VocalPart::~VocalPart() {}

@@ -486,12 +486,25 @@ void SongDB::SetupCommonPhrasesForTrack(int i1) {
             }
             data3c.push_back(i2++);
 
-            while (gems[i11].GetTick() < curRawPhrase.start_tick) {
+            // Retail walks gems[] unchecked. A phrase that starts or ends after
+            // a track's last gem (PART VOCALS: its gems are the note-96
+            // percussion hits, its OD phrases come later) reads past the end;
+            // natively that is a libstdc++ bounds abort. The bound changes no
+            // entry below gems.size(), the only indices GetPhraseID serves.
+            while (
+#ifdef HX_NATIVE
+                i11 < (int)gems.size() &&
+#endif
+                gems[i11].GetTick() < curRawPhrase.start_tick) {
                 data34.push_back(-1);
                 i11++;
             }
 
-            while (gems[i11].GetTick() < curRawPhrase.end_tick) {
+            while (
+#ifdef HX_NATIVE
+                i11 < (int)gems.size() &&
+#endif
+                gems[i11].GetTick() < curRawPhrase.end_tick) {
                 data34.push_back(phraseID);
                 i11++;
             }

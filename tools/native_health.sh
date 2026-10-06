@@ -326,7 +326,11 @@ run_target         rb3-gem     '^Done\.$'                    --needs "$MID_PILLS
 run_target         rb3-hit     '^Done\.$'                    --needs "$MID_PILLS"      -- "$MID_PILLS"
 run_target         rb3-score   '^Done\.$'                    --needs "$MID_PILLS"      -- "$MID_PILLS"
 run_target --gated rb3-score2  '^RESULT: OK'                                           --
-run_target         rb3-score3  '^Done\.$'                    --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
+# W16-PL: rb3-score3's optional 3rd argument is a band chart; centerfold carries
+# four drums/guitar/keys unison phrases, so the REAL CommonPhraseCapturer's unison
+# path runs on every health check (the band stage prints MISMATCH + rc=1 if it
+# disagrees with the driver's own expectation).
+run_target         rb3-score3  '^Done\.$'                    --needs "$MID_VICARIOUS" --needs "$MID_CENTERFOLD" -- "$MID_VICARIOUS" "PART DRUMS" "$MID_CENTERFOLD"
 run_target         rb3-score4  '^Done\.$'                    --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
 run_target         rb3-vocal   '^  all-off \(\+6\) '         --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
 run_target         rb3-vocal2  '^Done\.$'                    --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"

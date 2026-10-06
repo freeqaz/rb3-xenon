@@ -7,10 +7,13 @@
 // the ported body, kept byte-faithful (member/method order, MILO_ASSERT numbers)
 // so it is ready for a future X360 pin.
 //
-// X360-INERT: this file is NOT in config/45410914/objects.json — the retail
-// build never compiles it. It is wired only into the native M8 run-through
-// (native/CMakeLists.txt rb3-score4), where it drives the REAL overdrive-phrase
-// credit through the genuine Player energy path.
+// This file IS in the match build (config/45410914/objects.json, pinned in
+// splits.txt). Natively it links into the scoring drivers (rb3-score2/3/4,
+// vocal, vocal2, harmony, crowd), where it drives the real overdrive-phrase
+// credit through the genuine Player energy path. The five TrackPanel /
+// TrackPanelDir calls are presentation only (EndingBonus and gem-track
+// animation); the native build skips them when no TrackPanel exists, the same
+// guard Player::UnisonHit uses. The match build compiles them unchanged.
 #include "game/CommonPhraseCapturer.h"
 #include "game/Player.h"
 #include "bandtrack/TrackPanel.h"
@@ -54,6 +57,10 @@ void CommonPhraseCapturer::HandlePhraseNote(GemPlayer *p, int i2, int i3, bool b
                 mFinishedTracks |= 1 << i2;
                 if ((tracks & mFinishedTracks) == tracks) {
                     if (IsMultiplayerPhrase(phraseID)) {
+#ifdef HX_NATIVE
+                        // Render leaf: no TrackPanel headless. X360 unchanged.
+                        if (GetTrackPanel())
+#endif
                         GetTrackPanelDir()->UnisonEnd();
                     }
                     mFinishedTracks = 0;
@@ -64,6 +71,10 @@ void CommonPhraseCapturer::HandlePhraseNote(GemPlayer *p, int i2, int i3, bool b
             if (unison && (i3 == 0 || TheSongDB->GetPhraseID(i2, i3 - 1) == -1)
                 && mLastStartedPhraseID != phraseID && !mInUnisonPhrase) {
                 if (IsMultiplayerPhrase(phraseID)) {
+#ifdef HX_NATIVE
+                    // Render leaf: no TrackPanel headless. X360 unchanged.
+                    if (GetTrackPanel())
+#endif
                     GetTrackPanel()->UnisonStart(tracks);
                 }
                 mInUnisonPhrase = true;
@@ -103,6 +114,10 @@ void CommonPhraseCapturer::LocalHitLastGem(Player *p, int i2, int i3) {
             if ((trackBits & (mDisabledTracks | mPhraseStates[i2].unk4)) == trackBits) {
                 AllTracksCompletedPhrase(i2);
             }
+#ifdef HX_NATIVE
+            // Render leaf: no TrackPanel headless. X360 unchanged.
+            if (GetTrackPanel())
+#endif
             GetTrackPanel()->UnisonPlayerSuccess(p);
         }
     }
@@ -118,6 +133,10 @@ void CommonPhraseCapturer::LocalFail(Player *p, int i2, int i3) {
     mPhraseStates[i2].unk0 = 2;
     mPhraseStates[i2].unk8 |= 1 << i3;
     if (TheSongDB->IsUnisonPhrase(i2)) {
+#ifdef HX_NATIVE
+        // Render leaf: no TrackPanel headless. X360 unchanged.
+        if (GetTrackPanel())
+#endif
         GetTrackPanel()->UnisonPlayerFailure(p);
     }
 }
@@ -195,6 +214,10 @@ void CommonPhraseCapturer::AllTracksCompletedPhrase(int n) {
             TheGame->GetPlayerFromTrack(i, true)->CompleteCommonPhrase(true, b4);
         }
     }
+#ifdef HX_NATIVE
+    // Render leaf: no TrackPanel headless. X360 unchanged.
+    if (GetTrackPanel())
+#endif
     GetTrackPanelDir()->UnisonSucceed();
     ExtendPhraseStates(n);
     mPhraseStates[n].unk0 = 1;
