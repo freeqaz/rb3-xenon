@@ -440,29 +440,12 @@ float VocalPlayer::RemoteVocalVolume() const {
         return 1.0f - ret / 0.33f;
 }
 
-// W17-CLEAN-VP (2026-09-30): cleanup-only pass, no codegen changes. This
-// function was called "too diffuse to price as a single-defect row" in
-// docs/decomp/W16_NEXT_WAVE_TARGETING_2026-09-16.md (lane X3, 3,388 B,
-// fuzzy ~93.84%). Re-examined block by block via objdiff's auto-diagnosis;
-// verified findings (each also commented at its own site below):
-//   - The `clrrwi.` vs retail `srawi`/`cmpwi` size test at the end of the
-//     greedy-matching loop was a source shape after all (W16-RK: both sizes
-//     taken into int locals before the test; see that site).
-//   - The singer-score-loop energy "spill" was the inline accessor's return
-//     temporary (W16-RK: read through Singer::GetLastFrameMicEnergy).
-//   - One residual (solo pitch-correction target) is an unresolved, flagged
-//     compiler CSE/scheduling question -- see the TODO(W17) comment at its
-//     site. Not fixed here; left for a future matching lane.
-//   - Register-swap and prologue/register-save-helper (__savegprlr_14 vs
-//     __savegprlr_15) residuals are permuter-class noise, out of scope per
-//     standing project directive (permuter OFF).
-//   - Several retail callees at this row's Function Call Diff are ICF-folded
-//     template instantiations (objdiff shows an arbitrary survivor spelling,
-//     not a wrong callee) or genuinely unidentified fn_XXXXXXXX addresses;
-//     one candidate (SongSectionOnly) was identified and named this pass --
-//     see scripts/target_symbol_map.json and the W17-CLEAN-VP report for the
-//     COFF evidence. The remaining ~19 target-only addresses are unverified
-//     and left for a future identification pass.
+// Matches retail 0x826EB030 byte for byte (W16-RK). The register-swap and
+// frame-size residue earlier lanes filed as permuter-class all came from source
+// shape: inline by-value accessors at the sites where retail stores the
+// accessor's return temporary to a stack slot (Singer::GetFrameMicPitch /
+// GetBestTargetPitch / GetLastFrameMicEnergy, VocalPart::GetFrameMatchType /
+// PartIndex), declaration placement, and the shapes noted at each site below.
 void VocalPlayer::Poll(float ms, const SongPos &pos) {
     if (mGameOver)
         return;
