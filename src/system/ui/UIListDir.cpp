@@ -414,13 +414,15 @@ void UIListDir::BuildDrawState(
     int fadeCountStart = halfDisplay < mFadeOffset ? halfDisplay : mFadeOffset;
     int fadeCountEnd = fadeCountStart;
     if (mFadeOffset != 0) {
-        int fadeEndCalc;
         if (state.Circular()) {
             int selectedDisp = state.SelectedDisplay();
             if (selectedDisp < fadeCountStart) {
                 fadeCountStart = selectedDisp;
             }
-            fadeEndCalc = numDisplay - state.SelectedDisplay() - 1;
+            int fadeEndCalc = numDisplay - state.SelectedDisplay() - 1;
+            if (fadeEndCalc < fadeCountEnd) {
+                fadeCountEnd = fadeEndCalc;
+            }
         } else {
             int firstShowing = state.FirstShowing();
             int adjustedFirstShowing = firstShowing;
@@ -432,10 +434,10 @@ void UIListDir::BuildDrawState(
                 fadeCountStart = adjustedFirstShowing;
             }
             auto _tmp0 = state.Provider()->NumData();
-            fadeEndCalc = _tmp0 - adjustedFirstShowing - numDisplay;
-        }
-        if (fadeEndCalc < fadeCountEnd) {
-            fadeCountEnd = fadeEndCalc;
+            int fadeEndCalc = _tmp0 - adjustedFirstShowing - numDisplay;
+            if (fadeEndCalc < fadeCountEnd) {
+                fadeCountEnd = fadeEndCalc;
+            }
         }
     }
     float fadeStartDist = (float)fadeCountStart * mElementSpacing;

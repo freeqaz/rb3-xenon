@@ -161,15 +161,17 @@ void RndVelocityBuffer::DrawMesh(RndMesh *mesh) const {
     RndMat *mat = mesh->Mat();
     if (mat != nullptr && mat->GetZMode() != kZModeTransparent) {
         mesh->mMotionCache.mShouldCache = true;
-        // NumBones() is read once; the raw count gates the bone limit below and
-        // the clamped one sizes the constant uploads.
-        int rawBones = mesh->NumBones();
         // The current-frame index is derived from the previous-frame one
         // (two xori), not read back from mActiveXfmCacheIndex.
         unsigned int prevIdx = mActiveXfmCacheIndex ^ 1;
         unsigned int currIdx = prevIdx ^ 1;
         const RndXfmCache &prevCache = mXfmCaches[prevIdx];
         const RndXfmCache &currCache = mXfmCaches[currIdx];
+        // NumBones() is read once, after the two cache references: retail
+        // forms the currCache address before the size/0x4c divw.  The raw
+        // count gates the bone limit below and the clamped one sizes the
+        // constant uploads.
+        int rawBones = mesh->NumBones();
         unsigned int prevKey = mesh->mMotionCache.mCacheKey[prevIdx];
         unsigned int currKey = mesh->mMotionCache.mCacheKey[currIdx];
         int numBones = Max(1, rawBones);
