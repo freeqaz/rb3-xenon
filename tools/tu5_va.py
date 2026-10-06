@@ -5,13 +5,13 @@ TU5's XEX is "basic"-format: the loaded image is SECTION-MAPPED, so the flat
 `0x3000 + (VA - image_base)` offset used against the TU0 base xex DRIFTS and
 yields garbage. This tool maps a VA -> correct file offset through the PE
 section table (COFF headers) and disassembles N bytes as PPC32 big-endian
-(capstone), exactly like tools/va_disasm.py but pointed at band_tu5.exe.
+(capstone), exactly like tools/va_disasm.py but pointed at the TU5 PE.
 
 Usage:
   tools/tu5_va.py 0x8283cd20 8          # disassemble N bytes at VA (default 64)
   tools/tu5_va.py --sections            # dump the PE section table
   tools/tu5_va.py --raw 0x8283cd20 8    # hex-dump raw bytes (no disasm)
-  tools/tu5_va.py --pe path 0x... N     # override the PE (defaults to band_tu5.exe)
+  tools/tu5_va.py --pe path 0x... N     # override the PE (defaults to orig/45410914/band.exe)
 
 Import surface (reused by skel_match / map builders):
   load_sections(path) -> (data, image_base, secs[(name, sva, vsize, rawptr, rawsize)])
@@ -21,11 +21,14 @@ import os
 import struct
 import sys
 
-# Default PE = the TU5 section-mapped image. Resolve relative to repo root so the
-# tool works from any cwd inside the worktree.
+# Default PE = the build-extracted target image (the split writes band.exe next to
+# orig/45410914/default.xex; since W16-PT that is clean retail TU5, PE sha1
+# 5f3f667a...). The old default, band_tu5.exe, was a pre-flip copy of the RB3 Deluxe
+# PE that no longer exists in orig/. Resolve relative to repo root so the tool works
+# from any cwd inside the worktree.
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.dirname(_HERE)
-PE = os.path.join(_ROOT, "orig", "45410914", "band_tu5.exe")
+PE = os.path.join(_ROOT, "orig", "45410914", "band.exe")
 
 
 def load_sections(path):

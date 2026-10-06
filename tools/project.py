@@ -2110,6 +2110,37 @@ def generate_build_ninja(
         # n.newline()
 
     ###
+    # Target-image identity check
+    ###
+    # orig/ is gitignored, so nothing else in the graph knows WHICH retail image
+    # the split carves. Clean retail TU5 and the RB3 Deluxe release share section
+    # tables, PE timestamp and extracted size (Deluxe is clean TU5 + 53 words
+    # patched in place), so a wrong image splits cleanly and only moves a few
+    # rows -- it reads as a regression, not as the wrong input. The check runs
+    # every build (its own always-dirty phony: the shared `always` is only
+    # declared when config.json exists, and this edge must exist on a first
+    # build too); write-if-changed + restat keep the stamp, and so the SPLIT,
+    # quiet while the image is unchanged. See scripts/verify_target_image.py.
+    image_guard_script = Path("scripts") / "verify_target_image.py"
+    image_checked = build_path / "target_image_checked.stamp"
+    image_manifest = config.check_sha_path or (Path("config") / config.version / "build.sha1")
+    n.comment("Assert orig/ holds the target image recorded in build.sha1")
+    n.build(outputs="target_image_always", rule="phony")
+    n.rule(
+        name="target_image_check",
+        command=(f"$python {image_guard_script} --manifest {image_manifest}"
+                 f" --quiet --stamp-out $out"),
+        description="CHECK TARGET IMAGE",
+        restat=True,
+    )
+    n.build(
+        outputs=str(image_checked),
+        rule="target_image_check",
+        implicit=[str(image_guard_script), str(image_manifest), "target_image_always"],
+    )
+    n.newline()
+
+    ###
     # Split XEX
     ###
     build_config_path = build_path / "config.json"
@@ -2201,7 +2232,7 @@ def generate_build_ninja(
         # touches config.yml by hand.
         implicit_outputs=[str(split_stamp)],
         rule="split",
-        implicit=[dtk, "scripts/target_symbol_map.json"],
+        implicit=[dtk, "scripts/target_symbol_map.json", str(image_checked)],
         variables={"out_dir": build_path},
     )
     n.newline()
