@@ -504,7 +504,8 @@ void ObjectDir::Save(BinStream &bs) {
     std::vector<InlinedDir> unused;
     mInlinedDirs.swap(unused);
     gLoadingProxyFromDisk = oldProxy;
-    mCurViewportID = (ViewportId)0;
+    // Saving does not reset mCurViewportID: retail's Save reads it (0x8C)
+    // once, for `bs << mCurViewportID`, and never stores it.
     const char *nextname = unk8c ? unk8c->Name() : "";
     bs << nextname;
     const char *camName = mCurCam ? mCurCam->Name() : "";
@@ -771,7 +772,7 @@ void ObjectDir::ResetViewports() {
     vp[1].mXfm.v.Set(-768, 0, 0);
     vp[2].mXfm.m.Set(0, 1, 0, -1, 0, 0, 0, 0, 1);
     vp[2].mXfm.v.Set(768, 0, 0);
-    vp[3].mXfm.m.Set(1, 0, 0, 0, 0, 1, 0, 1, 0);
+    vp[3].mXfm.m.Set(1, 0, 0, 0, 0, -1, 0, 1, 0);
     vp[3].mXfm.v.Set(0, 0, 768);
     vp[4].mXfm.m.Set(1, 0, 0, 0, 0, 1, 0, -1, 0);
     vp[4].mXfm.v.Set(0, 0, -768);

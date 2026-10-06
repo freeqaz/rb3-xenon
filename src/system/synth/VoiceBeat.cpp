@@ -128,7 +128,9 @@ void VoiceBeat::Analyze(
             unk1 = ratio > 0.3;
 
             if (sylDelta < 0 && mSylDeltaPrev >= 0
-                && syl > 4.0 * std::max(0.15, mFloorSigma) && unk1 && unk0) {
+                // Retail picks the SMALLER of 0.15 and the floor
+                // (fcmpu floor, 0.15; ble -> &mFloorSigma), not the larger.
+                && syl > 4.0 * std::min(0.15, mFloorSigma) && unk1 && unk0) {
                 if (storeEvents) {
                     mPeaks.push_back(syl);
                     mTimes.push_back(ms);

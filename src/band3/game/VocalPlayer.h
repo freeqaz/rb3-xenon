@@ -188,6 +188,7 @@ public:
     void BuildPhrases(bool);
     bool ToggleFrameSpew();
     bool PressingToTalk();
+    bool CanChat();
     void SendCanChat(bool);
     void AddAccuracyStat(int);
     void AddScoreStreakStat(float);

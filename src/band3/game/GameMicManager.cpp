@@ -171,10 +171,14 @@ void GameMicManager::LoadMicFx() {
 }
 
 int GameMicManager::GetMicCount() const {
+    // Retail 0x8235BA70 is the 8-byte `lwz r3,0x34(r3); blr`: no frame_rate-mode
+    // fallback (that is the fake-mic feature, native-only like GetMic's).
+#ifdef HX_NATIVE
     if (TheGameMode && TheGameMode->InMode(frame_rate)) {
         return 4;
-    } else
-        return mMicCount;
+    }
+#endif
+    return mMicCount;
 }
 
 void GameMicManager::HookUpFxForMicId(GameMic *gmic) {
