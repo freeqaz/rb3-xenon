@@ -36,7 +36,8 @@ void AccomplishmentSongFilterConditional::Configure(DataArray *i_pConfig) {
             MILO_ASSERT(pEntry, 0x32);
             MILO_ASSERT(pEntry->Size() == 2, 0x33);
             FilterType ty = (FilterType)pEntry->Int(0);
-            Symbol sym = pEntry->Str(1);
+            const char *str = pEntry->Str(1);
+            Symbol sym = str;
             mFilter.AddFilter(ty, sym);
         }
     }

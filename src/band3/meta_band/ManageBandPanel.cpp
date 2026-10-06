@@ -113,7 +113,7 @@ void VignetteViewerProvider::RefreshVignettes(BandProfile *profile, DataArray *a
         if (isAccomplished) {
             std::list<Symbol>::iterator it = newRewardVignettes.begin();
             while (it != newRewardVignettes.end() && *it != accName) {
-                ++it;
+                it++;
             }
             if (it == newRewardVignettes.end()) {
                 mEntries.push_back(vigName);
