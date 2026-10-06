@@ -1528,7 +1528,7 @@ void ObjectDir::PreLoad(BinStream &bs) {
             bool filesneq = mSubDirs[i].GetFile() != notInlinedSubDirs[i];
             if (i20 == 0 || filesneq) {
                 bool b17 = false;
-                if (intVec.size() != 0) {
+                if (intVec.size() > 0) {
                     b17 = intVec[i] != 0;
                 }
                 LoadSubDir(i, notInlinedSubDirs[i], bs, !b17);

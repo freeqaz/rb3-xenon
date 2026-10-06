@@ -578,14 +578,15 @@ public:
         if (which == 0)
             return this;
         which--;
+        ObjectDir *ret = nullptr;
         for (int i = 0; i < mSubDirs.size(); i++) {
             if (mSubDirs[i]) {
-                ObjectDir *ret = mSubDirs[i]->NextSubDir(which);
+                ret = mSubDirs[i]->NextSubDir(which);
                 if (ret)
                     return ret;
             }
         }
-        return nullptr;
+        return ret;
     }
     const char *GetPathName() const { return mPathName; }
     const std::vector<ObjDirPtr<ObjectDir> > &SubDirs() const { return mSubDirs; }
