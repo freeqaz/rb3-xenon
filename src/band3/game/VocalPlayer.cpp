@@ -644,7 +644,7 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
                 pPart->ScoreSinger(
                     fCompMS,
                     pSinger->mFrameMicPitch,
-                    pSinger->GetLastFrameMicEnergy(),
+                    pSinger->mLastFrameMicEnergy,
                     pSinger->GetLastFrameMicEnergy() - pSinger->mSmoothedMicEnergy,
                     pSinger->mOctaveOffset,
                     pSinger->mTalkyMatcher,
