@@ -5626,9 +5626,17 @@
    "survivor": "??$__uninitialized_copy@PAVExtraTail@TrainerGemTab@@PAV12@@stlpmtx_std@@YAPAVExtraTail@TrainerGemTab@@PAV12@00ABU__false_type@0@@Z",
    "folded": [
     "??$__uninitialized_copy@PAVPoint@RndLine@@PAV12@@stlpmtx_std@@YAPAVPoint@RndLine@@PAV12@00ABU__false_type@0@@Z",
-    "??$__uninitialized_copy@PBVPoint@RndLine@@PAV12@@stlpmtx_std@@YAPAVPoint@RndLine@@PBV12@0PAV12@ABU__false_type@0@@Z"
+    "??$__uninitialized_copy@PBVPoint@RndLine@@PAV12@@stlpmtx_std@@YAPAVPoint@RndLine@@PBV12@0PAV12@ABU__false_type@0@@Z",
+    "??$__uninitialized_copy@PAUMemDiffEntry@@PAU1@@stlpmtx_std@@YAPAUMemDiffEntry@@PAU1@00ABU__false_type@0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 4 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 4 census sites over 2 functions.",
+   "admitted": [
+    {
+     "spelling": "??$__uninitialized_copy@PAUMemDiffEntry@@PAU1@@stlpmtx_std@@YAPAUMemDiffEntry@@PAU1@00ABU__false_type@0@@Z",
+     "lane": "W16-PG 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN, CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 84 B retail / 84 B ours. Retail caller: MemDiffEntry's _M_insert_overflow_aux at 0x827d60a0 (named by W16-PG) calls this address where our body calls this spelling."
+    }
+   ]
   },
   {
    "name": "ScrollPastMinDisplay",
@@ -102247,23 +102255,6 @@
    ]
   },
   {
-   "name": "_M_insert_overflow_aux",
-   "address": "0x826b8d20",
-   "survivor": "?_M_insert_overflow_aux@?$vector@UMemDiffEntry@@V?$StlNodeAlloc@UMemDiffEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUMemDiffEntry@@ABU3@ABU__false_type@2@I_N@Z",
-   "folded": [
-    "?_M_insert_overflow_aux@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVVocalPhrase@@ABV3@ABU__false_type@2@I_N@Z"
-   ],
-   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
-   "lane": "W16-JE 2026-10-01",
-   "admitted": [
-    {
-     "spelling": "?_M_insert_overflow_aux@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVVocalPhrase@@ABV3@ABU__false_type@2@I_N@Z",
-     "lane": "W16-JE 2026-10-01",
-     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 404 B retail / 404 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x827819ac."
-    }
-   ]
-  },
-  {
    "name": "$__insertion_sort",
    "address": "0x825d61c0",
    "survivor": "??$__insertion_sort@PAUFilter@FilterViewSetting@@U12@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUFilter@FilterViewSetting@@00P6A_NABU12@1@Z@Z",
@@ -116439,6 +116430,57 @@
      "evidence": "CHASED T1 PROVEN (icf_pair_adjudicate.py --chase, 2026-10-06): same 180-byte masked body; every relocation slot discharged by a recursively proven fold (erase, _List_base::clear, _M_splice_insert_dispatch). Called by the implicit Hmx::Object::operator= (copies mRefs at +0x20), whose retail body calls this survivor."
     }
    ]
+  },
+  {
+   "name": "_M_insert_overflow_aux",
+   "address": "0x826b8d20",
+   "survivor": "?_M_insert_overflow_aux@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVVocalPhrase@@ABV3@ABU__false_type@2@I_N@Z",
+   "folded": [],
+   "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
+   "lane": "W16-JE 2026-10-01",
+   "admitted": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVVocalPhrase@@ABV3@ABU__false_type@2@I_N@Z",
+     "lane": "W16-JE 2026-10-01",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 404 B retail / 404 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x827819ac."
+    }
+   ],
+   "relabelled": {
+    "from": "?_M_insert_overflow_aux@?$vector@UMemDiffEntry@@V?$StlNodeAlloc@UMemDiffEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUMemDiffEntry@@ABU3@ABU__false_type@2@I_N@Z",
+    "to": "?_M_insert_overflow_aux@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVVocalPhrase@@ABV3@ABU__false_type@2@I_N@Z",
+    "lane": "W16-OS 2026-10-03",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@UMemDiffEntry@@V?$StlNodeAlloc@UMemDiffEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUMemDiffEntry@@ABU3@ABU__false_type@2@I_N@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(retail)",
+     "disposition": "map name at 0x827d60a0 (not a member here)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?_M_insert_overflow_aux@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalP @ 0x826b8d20, ?_M_insert_overflow_aux@?$vector@UMemDiffEntry@@V?$StlNodeAlloc@UMemDi): UNDECIDABLE [MISSING(retail)] depth 0: retail ?_M_insert_overflow_aux@?$vector@VVocalPhrase@@V?$StlNodeAlloc@VVocalPhrase@@@stlpmtx_std@ | ours ?_M_insert_overflow_aux@?$vector@UMemDiffEntry@@V?$StlNodeAlloc@UMemDiffEntry@@@stlpmtx_st"
+    }
+   ]
+  },
+  {
+   "name": "_M_insert_overflow_aux",
+   "address": "0x827d60a0",
+   "survivor": "?_M_insert_overflow_aux@?$vector@UMemDiffEntry@@V?$StlNodeAlloc@UMemDiffEntry@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUMemDiffEntry@@ABU3@ABU__false_type@2@I_N@Z",
+   "folded": [
+    "?_M_insert_overflow_aux@?$vector@VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVPoint@RndLine@@ABV34@ABU__false_type@2@I_N@Z"
+   ],
+   "evidence": "W16-PG: retail 0x827d60a0 (404 B, MemTracker span) is the body retail's push_back<MemDiffEntry> calls; RndLine::Point is the same 0x48-byte element shape and retail's _M_fill_insert<Point> calls this same address. Membership admitted by icf_pair_adjudicate.py --chase (admitted[]).",
+   "lane": "W16-PG",
+   "admitted": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@VPoint@RndLine@@V?$StlNodeAlloc@VPoint@RndLine@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVPoint@RndLine@@ABV34@ABU__false_type@2@I_N@Z",
+     "lane": "W16-PG 2026-10-06",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 REFUTED (relocation targets disagree by name only), CHASED T1 PROVEN, 0 CYCLE-ASSUMED; 404 B retail / 404 B ours; retail body-twins 1. Retail call site: _M_fill_insert@vector<RndLine::Point> (default/Line) bl 0x827d60a0 where ours calls this spelling."
+    }
+   ],
+   "added": {
+    "lane": "W16-PG 2026-10-06"
+   }
   }
  ]
 }

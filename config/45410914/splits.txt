@@ -3136,11 +3136,9 @@ system/rndobj/Utl.cpp:
 	.text       start:0x82703BF4 end:0x82703BF8
 
 MemTracker.cpp:
-	.pdata      start:0x82233B50 end:0x82233B60
 	.pdata      start:0x82243228 end:0x82243238
 	.pdata      start:0x82243238 end:0x82243320
 	.pdata      start:0x82243328 end:0x822433D0
-	.text       start:0x826B8D20 end:0x826B8EE8
 	.text       start:0x827D44C8 end:0x827D4550
 	.text       start:0x827D4550 end:0x827D5BB0
 	.text       start:0x827D5C00 end:0x827D7048
@@ -11822,6 +11820,7 @@ VocalNoteList.cpp:
 	.pdata      start:0x82233B28 end:0x82233B30
 	.pdata      start:0x82233B30 end:0x82233B48
 	.pdata      start:0x82233B48 end:0x82233B50
+	.pdata      start:0x82233B50 end:0x82233B60
 	.pdata      start:0x8223E650 end:0x8223E668
 	.pdata      start:0x8223E668 end:0x8223E680
 	.pdata      start:0x8223E680 end:0x8223E6A8
@@ -11838,6 +11837,7 @@ VocalNoteList.cpp:
 	.text       start:0x826B8B3C end:0x826B8BA0
 	.text       start:0x826B8BA8 end:0x826B8C9C
 	.text       start:0x826B8CA0 end:0x826B8D20
+	.text       start:0x826B8D20 end:0x826B8EE8
 	.text       start:0x827808C8 end:0x82780B74
 	.text       start:0x82780B78 end:0x82780E7C
 	.text       start:0x82780E80 end:0x827810F4
