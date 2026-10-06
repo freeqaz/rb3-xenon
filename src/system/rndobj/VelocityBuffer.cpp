@@ -155,45 +155,48 @@ void RndVelocityBuffer::CacheTransform(
 
 void RndVelocityBuffer::DrawMesh(RndMesh *mesh) const {
     MILO_ASSERT(mesh, 0x123);
-    auto _tmp2 = mesh->Showing();
-    MILO_ASSERT(_tmp2, 0x124);
+    MILO_ASSERT(mesh->Showing(), 0x124);
     MILO_ASSERT(TheRnd.DrawMode() == Rnd::kDrawVelocity, 0x125);
 
     RndMat *mat = mesh->Mat();
-    if (mesh && mat != nullptr && mat->GetZMode() != kZModeTransparent) {
-        auto _val0 = mXfmCaches;
+    if (mat != nullptr && mat->GetZMode() != kZModeTransparent) {
         mesh->mMotionCache.mShouldCache = true;
-        unsigned int cacheIdx = mActiveXfmCacheIndex;
-        int numBones = mesh->NumBones();
-        if (numBones <= 0) numBones = 1;
+        // NumBones() is read once; the raw count gates the bone limit below and
+        // the clamped one sizes the constant uploads.
+        int rawBones = mesh->NumBones();
+        // The current-frame index is derived from the previous-frame one
+        // (two xori), not read back from mActiveXfmCacheIndex.
+        unsigned int prevIdx = mActiveXfmCacheIndex ^ 1;
+        unsigned int currIdx = prevIdx ^ 1;
+        const RndXfmCache &prevCache = mXfmCaches[prevIdx];
+        const RndXfmCache &currCache = mXfmCaches[currIdx];
+        unsigned int prevKey = mesh->mMotionCache.mCacheKey[prevIdx];
+        unsigned int currKey = mesh->mMotionCache.mCacheKey[currIdx];
+        int numBones = Max(1, rawBones);
 
-        unsigned int prevKey = mesh->mMotionCache.mCacheKey[cacheIdx ^ 1];
-
-        const float *prevFloats = nullptr;
-        unsigned char prevOk = (unsigned char)(_val0[cacheIdx ^ 1].GetXfms(mesh, prevKey, numBones, prevFloats));
-        if (prevOk) {
-            unsigned int currKey = mesh->mMotionCache.mCacheKey[cacheIdx];
-            int numBonesActual = mesh->NumBones();
-            const float *currFloats = nullptr;
-            unsigned char currOk = (unsigned char)(_val0[cacheIdx].GetXfms(mesh, currKey, numBones, currFloats));
-            if (currOk) {
-                if (numBonesActual <= 40) {
-                    TheShaderMgr.SetMeshInfo(numBonesActual, false);
+        const float *prevFloats;
+        if (prevCache.GetXfms(mesh, prevKey, numBones, prevFloats)) {
+            const float *currFloats;
+            if (currCache.GetXfms(mesh, currKey, numBones, currFloats)) {
+                if (rawBones <= 40) {
+                    TheShaderMgr.SetMeshInfo(rawBones, false);
                     RndShader::SelectConfig(mMat, kVelocityObjectShader, false);
                     TheShaderMgr.SetVConstant((VShaderConstant)9, prevFloats, numBones * 3);
                     TheShaderMgr.SetVConstant((VShaderConstant)0x81, currFloats, numBones * 3);
-                    TheShaderMgr.SetVConstant((VShaderConstant)0, unk36bec[cacheIdx ^ 1]);
-                    TheShaderMgr.SetVConstant((VShaderConstant)4, unk36bec[cacheIdx]);
+                    TheShaderMgr.SetVConstant((VShaderConstant)0, unk36bec[prevIdx]);
+                    TheShaderMgr.SetVConstant((VShaderConstant)4, unk36bec[currIdx]);
                     TheShaderMgr.SetPConstant((PShaderConstant)8, (const Vector4 &)mDepthRangeValues);
-                    mesh->GetGeomOwner()->DrawFaces();
+                    // RB3 draws through the mesh's own DrawFaces slot (0x38).
+                    mesh->DrawFaces();
 #ifdef HX_NATIVE
                     TheNgStats->mMotionBlurs++;
 #endif
                 } else {
-                    auto _tmp3 = PathName(mesh->Mat());
+                    // Retail keeps only the PathName(mesh) call of this notify.
+                    const char *path = PathName(mesh);
                     MILO_NOTIFY_ONCE(
                         "%s (%s): Has too many bones to apply object motion blur (%d bones of max %d)",
-                        (char *)PathName(mesh), _tmp3, numBonesActual, 40
+                        mesh->Name(), path, rawBones, 40
                     );
                 }
             }
