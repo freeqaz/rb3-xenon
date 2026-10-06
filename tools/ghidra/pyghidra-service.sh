@@ -21,8 +21,15 @@ PROJECT_PATH="$PROJECT_DIR/ghidra_projects/RB3Xenon/RB3Xenon"
 # co-resident Ghidra programs are addressed by the paths that reproduce their
 # existing names (basename + sha1[:6]); NEVER load the live default.xex here —
 # it would import a THIRD, duplicate TU5 program (default.xex-c5a170).
-#   TU5 target program  = default_tu5.xex-c5a170  (the current decomp target)
+#   TU5 program          = default_tu5.xex-c5a170  (RB3 Deluxe lineage TU5)
 #   TU0 reference prog   = default.xex-35adb6      (pre-flip base; kept for xref)
+# W16-PT (2026-10-06): the decomp target is now CLEAN retail TU5 (default.xex sha1
+# d56e7f31). The c5a170 program is the RB3 Deluxe image, which differs from it in
+# 53 words (10 in-place patch groups, docs/decomp/W16PT_CLEAN_TU5_RETARGET_2026-10-06.md
+# section 2); every other byte and every address is identical, so it stays usable
+# for xrefs and decompiles OUTSIDE those groups. orig/45410914/default_tu5.xex is
+# kept holding the Deluxe bytes so this program keeps its name -- moving it would
+# import a duplicate program.
 XEX_PATH="$PROJECT_DIR/orig/45410914/tu0-archive/default.xex"   # -> default.xex-35adb6 (TU0)
 TU5_XEX_PATH="$PROJECT_DIR/orig/45410914/default_tu5.xex"       # -> default_tu5.xex-c5a170 (TU5)
 MILOHAX_DIR="$(cd "$PROJECT_DIR/.." && pwd)"

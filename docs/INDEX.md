@@ -682,6 +682,7 @@ historical and re-derive before funding.
 
 ### Build & config formats
 
+- ★ [decomp/W16PT_CLEAN_TU5_RETARGET_2026-10-06.md](decomp/W16PT_CLEAN_TU5_RETARGET_2026-10-06.md) — **the target image is clean retail TU5** (xex `d56e7f31`, PE `5f3f667a`), not the RB3 Deluxe xex; the 53 differing words, the before/after (+5 fns / +1,240 B, nothing else moves), the `CHECK TARGET IMAGE` guard and the exact steps for swapping `orig/`.
 - [config.md](config.md) — dtk config format (banner: real config in `config/45410914/config.json`).
 - [objects.md](objects.md) — objects.json format + this repo's NonMatching / splits pinning workflow.
 - [splits.md](splits.md) — splits.txt per-source-file section-range format.

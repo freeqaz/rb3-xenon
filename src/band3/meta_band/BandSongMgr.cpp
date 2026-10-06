@@ -820,9 +820,12 @@ int BandSongMgr::GetPosInRecentList(int songID) {
 //   result, then __find over the vector at +0x138/+0x13c (= unk11c) with the
 //   result compared against the END pointer -- `subf/cntlzw/extrwi ...,1,26`
 //   sets r3 iff (result == end), i.e. the return is TRUE when NOT FOUND.
+// Only UGC songs can be demos: retail TU5 branches past the early `return false`
+// when IsUGC() is set (`bne` at 0x82575F9C). RB3 Deluxe nops that branch, which
+// makes IsDemo always false in its image.
 bool BandSongMgr::IsDemo(int songID) const {
     BandSongMetadata *data = (BandSongMetadata *)Data(songID);
-    if (data->IsUGC())
+    if (!data->IsUGC())
         return false;
     if (songID == 0x05E69EC1)
         return false;

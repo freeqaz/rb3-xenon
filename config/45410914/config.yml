@@ -1,19 +1,17 @@
 # See config.example.yml for documentation.
 #
-# Targeting RB3 TU5 (v0.0.5.1, entry 0x8283CD20) — the binary all downstream
-# consumers run (RB3Enhanced, same-instrument patch, players). Flipped from
-# vanilla retail TU0 on 2026-07-15 (docs/plans/tu5-landing-runbook.md).
-# CONVENTION: orig/45410914/default.xex holds the TU5 bytes IN PLACE (sha1
-# c5a17091cb44c0119424390a1738d161995e430e) so tools hardcoding default.xex /
-# band.exe follow automatically; the TU0 originals are archived at
-# orig/45410914/tu0-archive/. band.exe is re-extracted from the xex by the
-# build.
-# LINEAGE (W16-R, 2026-09-14, docs/decomp/W16R_SETDISKERROR_CAVE_SERVER_VTABLE_2026-09-14.md
-# section 1): the image above is the RB3DX-lineage TU5 -- byte-identical to
-# RB3DX-Xbox/default.xex, NOT clean retail TU5. Clean retail TU5 is
-# _tu5probe/clean/clean_tu5.xex (PE sha1 5f3f667a689e804c1efc736cae4ff2416a278747);
-# it differs from ours by 53 words / 10 in-place byte-patch groups. The hash above
-# is correct; this line states the lineage the header was previously silent about.
+# Targeting CLEAN retail RB3 TU5 (v0.0.5.1, entry 0x8283CD20) since W16-PT
+# (2026-10-06, docs/decomp/W16PT_CLEAN_TU5_RETARGET_2026-10-06.md).
+# CONVENTION: orig/45410914/default.xex holds the target bytes IN PLACE so tools
+# hardcoding default.xex / band.exe follow automatically:
+#   default.xex sha1 d56e7f31101f7851c96342349d6f9daff0223753 (base TU0 +
+#   tu5/default.xexp; docs/plans/clean-tu5-vs-rb3dx-divergence.md section 1)
+#   band.exe    sha1 5f3f667a689e804c1efc736cae4ff2416a278747 (re-extracted by the split)
+# config/45410914/build.sha1 records the xex hash and the CHECK TARGET IMAGE edge
+# fails the build before the SPLIT if orig/ holds anything else.
+# History: vanilla TU0 until 2026-07-15 (archived at orig/45410914/tu0-archive/);
+# then the RB3 Deluxe release xex (sha1 c5a17091..., = clean TU5 + 53 words patched
+# in place, 10 groups) until 2026-10-06 (archived at orig/45410914/rb3dx-archive/).
 object: orig/45410914/default.xex
 symbols: config/45410914/symbols.txt
 splits: config/45410914/splits.txt

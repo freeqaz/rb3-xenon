@@ -15,14 +15,17 @@ proportional: a sentence or two per step.
 Decompilation of **Rock Band 3** for **Xbox 360** (PowerPC). Goal: matching
 machine code from C++ source. Target binary: title ID `45410914`, at
 `orig/45410914/default.xex` (not committed).
-⛔ **NOT "vanilla retail" — the targeted image is the RB3DX-lineage TU5**, byte-identical
-to `RB3DX-Xbox/default.xex` (sha1 `c5a17091…`), verified on retail bytes by lane W16-R
-(`docs/decomp/W16R_SETDISKERROR_CAVE_SERVER_VTABLE_2026-09-14.md` §1). Clean retail TU5
-is a *different* image (`_tu5probe/clean/clean_tu5.xex`, PE sha1 `5f3f667a…`), differing
-by 53 words / 10 in-place byte-patch groups — so a handful of rows (`DataSet`, `IsDemo`,
-`AddSongData`, `SetDiskError`, `main`) are structurally unmatchable against *this* image
-by any source work, and a confident "LikelyFixable" on them is a false positive by
-construction. Vanilla retail TU0 is archived at `orig/45410914/tu0-archive/`.
+★ **The targeted image is CLEAN retail TU5** (lane W16-PT, 2026-10-06,
+`docs/decomp/W16PT_CLEAN_TU5_RETARGET_2026-10-06.md`): `default.xex` sha1 `d56e7f31…`, extracted
+PE `5f3f667a…`. The hash is recorded in `config/45410914/build.sha1`, and the `CHECK TARGET IMAGE`
+edge fails the build **before the SPLIT** if `orig/` holds anything else.
+Until then the target was the **RB3 Deluxe release xex** (sha1 `c5a17091…`), which is clean TU5 with
+**53 words patched in place in 10 groups** (W16-R §1), now archived at `orig/45410914/rb3dx-archive/`.
+The swap moved exactly five rows, all to 100 (`DataSet`, `SetDiskError`, `IsDemo`, `AddSongData`,
+`main`: +5 fns / +1,240 B), and nothing else, once `HvDecrypt` and `IsDemo` were rewritten to clean
+bytes. ⚠ The Ghidra program `default_tu5.xex-c5a170` is still the **Deluxe** image: same VAs, but its
+bytes are wrong inside those 10 groups. ⚠ A numeric absolute measured on the Deluxe image does not
+compose with one measured after the swap. Vanilla retail TU0 is archived at `orig/45410914/tu0-archive/`.
 
 **Docs index: `docs/INDEX.md`** — audited master index of every doc under
 `docs/` (2026-07-06): current references vs `[HIST]` frozen records, plus a

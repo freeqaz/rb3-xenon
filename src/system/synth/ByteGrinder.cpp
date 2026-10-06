@@ -11,6 +11,8 @@
 #include "os/System.h"
 #include "synth/tomcrypt/mycrypt.h"
 
+#ifdef HX_NATIVE
+// Plain AES-128 keys, one per mogg encryption method, for the libtomcrypt path below.
 static unsigned char gHvKeyGreen[64] = {
     0x01, 0x22, 0x00, 0x38, 0xd2, 0x01, 0x78, 0x8b, 0xdd, 0xcd, 0xd0, 0xf0, 0xfe,
     0x3e, 0x24, 0x7f, 0x51, 0x73, 0xad, 0xe5, 0xb3, 0x99, 0xb8, 0x61, 0x58, 0x1a,
@@ -18,6 +20,18 @@ static unsigned char gHvKeyGreen[64] = {
     0x14, 0x08, 0x73, 0x7c, 0xf2, 0x23, 0xf6, 0xeb, 0x5a, 0x02, 0x1a, 0x83, 0xf3,
     0x97, 0xe9, 0xd4, 0xb8, 0x06, 0x74, 0x14, 0x6b, 0x30, 0x4c, 0x00, 0x91
 };
+#else
+// Retail TU5 (.data 0x82C76258): the key material handed to the kernel key slot, one
+// 16-byte entry per mogg encryption method. It is not a plain AES key; RB3 Deluxe
+// overwrites this table with the plain keys above when it reroutes decryption.
+static unsigned char gHvKeyGreen[64] = {
+    0x6d, 0x85, 0xa8, 0x99, 0x8b, 0x2d, 0x1c, 0x76, 0xfa, 0xde, 0x68, 0xf2, 0xaf,
+    0x38, 0x02, 0xed, 0xb2, 0x3e, 0x8d, 0xac, 0x46, 0x49, 0x97, 0xde, 0x21, 0xdb,
+    0x31, 0xc4, 0x33, 0x1b, 0x75, 0x6a, 0xbb, 0x7c, 0x64, 0xb6, 0x4a, 0x6e, 0x19,
+    0xe9, 0xcc, 0x30, 0xbd, 0x5d, 0x0b, 0x20, 0x80, 0xb4, 0x1f, 0x55, 0x21, 0x65,
+    0x97, 0x2f, 0xe5, 0xaf, 0x27, 0xd2, 0xd4, 0xf4, 0x5e, 0x93, 0xd1, 0x9d
+};
+#endif
 
 namespace {
     int GetEncMethod(int ver) {
@@ -53,19 +67,20 @@ void ByteGrinder::HvDecrypt(unsigned char *inBlock, unsigned char *outBlock, int
 }
 #else
 // Retail decrypts through two XDK routines (0x82840788 / 0x82840820, in the xapilibi
-// block before memfunctions) that wrap a kernel AES call and return Win32 error codes
-// (0x57 for a null key, 0x18 for a key length other than 16). Their exported names are not
-// recovered; the declarations below describe their argument order.
-extern "C" unsigned long HvAesSetKey(void *state, const unsigned char *key, int keyLen);
+// block before memfunctions). Both take a key-slot index (>= 8 fails with
+// ERROR_INVALID_INDEX 0x585), a non-null pointer (else 0x57) and a length of exactly 16
+// (else 0x18), and forward to the xboxkrnl key-slot calls (ordinals 0x242 / 0x24B) on
+// slot 0xE0 + index. Their exported names are not recovered; the declarations below
+// describe their argument order. HvDecrypt uses slot 0 and keeps no AES state of its own.
+extern "C" unsigned long HvAesSetKey(int keySlot, const unsigned char *key, int keyLen);
 extern "C" unsigned long HvAesDecrypt(
-    void *state, const unsigned char *in, int len, unsigned char *out
+    int keySlot, const unsigned char *in, int len, unsigned char *out
 );
 
 void ByteGrinder::HvDecrypt(unsigned char *inBlock, unsigned char *outBlock, int moggVer) {
-    unsigned char state[0x190];
     int enc_method = GetEncMethod(moggVer);
-    HvAesSetKey(state, &gHvKeyGreen[enc_method * 0x10], 0x10);
-    HvAesDecrypt(state, inBlock, 0x10, outBlock);
+    HvAesSetKey(0, &gHvKeyGreen[enc_method * 0x10], 0x10);
+    HvAesDecrypt(0, inBlock, 0x10, outBlock);
 }
 #endif
 

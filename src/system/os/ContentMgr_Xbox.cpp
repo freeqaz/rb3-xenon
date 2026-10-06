@@ -20,9 +20,11 @@ extern "C" {
 // Retail's ignored-content list is a static table of 8 C strings in .rdata
 // (lbl_82089578), walked with an /Oi-inlined strcmp in PollRefresh -- NOT
 // DC3's std::vector<String> filled from SystemConfig (see the note on Init).
+// The last entry is "songcache" (.rdata 0x82089518); RB3 Deluxe renames it in place
+// to "rbdxcache".
 static const char *gIgnoredContent[] = { "rbsongcache", "rb2songcache", "band",
                                          "band3",       "netcache",     "Song Export",
-                                         "globaloptions", "rbdxcache" };
+                                         "globaloptions", "songcache" };
 XboxContentMgr gContentMgr;
 const char *kContentRootFormat = "cnt%08x";
 

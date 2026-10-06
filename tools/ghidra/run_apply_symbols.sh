@@ -27,7 +27,9 @@ MAP_JSON="$SCRIPT_DIR/rb3_symbol_map.json"
 # is TU5-keyed, so the default is the TU5 program. Override with --program=NAME
 # (e.g. --program=default.xex-35adb6 for the TU0 reference, if you have a
 # TU0-keyed map). Co-resident programs are never cross-contaminated: the map VAs
-# must match the chosen program's VAs.
+# must match the chosen program's VAs. (c5a170 is the RB3 Deluxe image; since
+# W16-PT the target is clean retail TU5, which has the same VAs -- the two differ
+# only in 53 patched words -- so the TU5-keyed map applies to it unchanged.)
 PROGRAM="default_tu5.xex-c5a170"
 
 export GHIDRA_INSTALL_DIR="${GHIDRA_INSTALL_DIR:-$MILOHAX_DIR/ghidra/build/ghidra}"

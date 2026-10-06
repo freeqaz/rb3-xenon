@@ -635,8 +635,12 @@ def verify_xex(x):
     HeaderHash and the ImportDigest chain reproduce exactly on retail
     orig/45410914/tu0-archive/default.xex, on the TU5 default.xex and on
     RB3ELoader.xex; the page-hash chain reproduces 235/235 on the tu0 retail XEX.
-    (The TU5 default.xex fails 11/239 pages -- it is a locally patched image whose
-    chain was never recomputed -- so use the tu0 archive as the hash oracle.)"""
+    (The RB3 Deluxe default.xex -- the target until W16-PT, sha1 c5a17091 -- fails
+    11/239 pages: it is a locally patched image whose chain was never recomputed, and
+    the chain breaks at descriptor 0. The clean retail TU5 xex that replaced it, sha1
+    d56e7f31, passes the page chain and fails only HeaderHash, because the TU5 delta
+    applier rewrote its file-format header. Use the tu0 archive as the oracle for a
+    fully verifying image.)"""
     p, skipped = [], []
     if x[:4] != b'XEX2':
         return (["not a XEX2 file"], skipped)
