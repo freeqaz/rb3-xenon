@@ -68,7 +68,12 @@ public:
     JsonConverter();
     virtual ~JsonConverter();
 
-    std::vector<JsonObject *> objects;
+    // Same name as src/system/net/JsonUtils.h's member.  This header is a
+    // second, older declaration of the json classes that only
+    // band3/net_band/RockCentral.cpp includes; with the member spelled
+    // `objects` the two TUs compiled JsonConverter differently
+    // (tools/layout_odr.py).
+    std::vector<JsonObject *> mObjects; // 0x8
 
     JsonArray *NewArray();
     JsonString *NewString(const char *value);
