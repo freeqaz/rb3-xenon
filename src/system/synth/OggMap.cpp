@@ -22,17 +22,33 @@ public:
 };
 
 // Mogg decryption state shared by every OggMap (one validation runs at a time).
+// MSVC lays these file statics out in REVERSE declaration order, so they are
+// declared highest address first; retail's order (offsets from gKey) is noted.
 static int gKeySize = -1;
-static unsigned char gKey[32];
-static unsigned char gNonce[16];
-static symmetric_CTR gCtr;
-static unsigned char gKeyMask[16];
-static int gMagicHashA;
-static bool gDecrypt;
-static int gMagicHashB;
-static int gMagicA;
-static int gMagicB;
-static int gKeyIndex;
+static int gKeyIndex; // 0x368
+static int gMagicB; // 0x364
+static int gMagicA; // 0x360
+static int gUnused35C; // 0x35c, see OggMapReserveUnusedStatics
+static int gMagicHashB; // 0x358
+static bool gDecrypt; // 0x355
+static bool gUnused354; // 0x354, see OggMapReserveUnusedStatics
+static int gMagicHashA; // 0x350
+static unsigned char gKeyMask[16]; // 0x340
+static symmetric_CTR gCtr; // 0x30
+static unsigned char gNonce[16]; // 0x20
+static unsigned char gKey[32]; // 0x0
+
+// Retail reserves a byte at gKey+0x354 and a word at gKey+0x35c that no
+// surviving function in this TU reads or writes: whatever referenced them was
+// discarded by the linker as unreferenced, as GetSongLengthSamples was. MSVC
+// drops a static that no emitted code touches (a `(void)` reference is not
+// enough), which would pack gDecrypt to 0x354 and shift gMagicA/B/gKeyIndex.
+// This never-called function keeps both slots; it is NOT reconstructed retail
+// code.
+void OggMapReserveUnusedStatics() {
+    gUnused354 = false;
+    gUnused35C = 0;
+}
 
 int OggMap::GetSongLengthSamples() { return mGran * mLookup.size(); }
 
@@ -74,8 +90,9 @@ static void SetupCypher(int version) {
     arr->Release();
 
     char i6 = (iEval % 13);
+    int masterKeyArg = (int)masterKey ^ iEval;
     i6 = i6 + 'A';
-    sprintf(script, "{%c %d %c}", i6, (int)masterKey ^ iEval, i6);
+    sprintf(script, "{%c %d %c}", i6, masterKeyArg, i6);
     DataArray *scriptArr = DataReadString(script);
     scriptArr->Evaluate(0);
     scriptArr->Release();
@@ -122,14 +139,13 @@ int OggMap::ReadData(int bytes) {
         mStream.Seek(0, BinStream::kSeekEnd);
         mStream.Compact();
     }
-    unsigned char *data = in;
     if (gDecrypt) {
         ctr_decrypt(in, out, bytes, &gCtr);
         if ((gMagicHashA != 0 || gMagicHashB != 0) && out[0] == 'H' && out[1] == 'M'
             && out[2] == 'X' && out[3] == 'A') {
             out[2] = 'g';
-            out[1] = 'g';
             out[0] = 'O';
+            out[1] = 'g';
             out[3] = 'S';
             if (bytes >= 16) {
                 *(unsigned int *)&out[12] ^= gMagicHashA;
@@ -138,9 +154,10 @@ int OggMap::ReadData(int bytes) {
                 *(unsigned int *)&out[20] ^= gMagicHashB;
             }
         }
-        data = out;
+        mStream.Write(out, bytes);
+    } else {
+        mStream.Write(in, bytes);
     }
-    mStream.Write(data, bytes);
     mStream.Seek(0, BinStream::kSeekBegin);
     return bytes;
 }
@@ -193,15 +210,17 @@ bool OggMap::ReadMap(BinStream &bs) {
         }
         bs >> *it;
     }
-    std::pair<int, int> prev(-1, -1);
+    int prevPos = -1;
+    int prevSamp = -1;
     for (unsigned int i = 0; i < mLookup.size(); i++) {
-        if (mLookup[i].first < prev.first) {
+        if (mLookup[i].first < prevPos) {
             return false;
         }
-        if (mLookup[i].second < prev.second) {
+        if (mLookup[i].second < prevSamp) {
             return false;
         }
-        prev = mLookup[i];
+        prevPos = mLookup[i].first;
+        prevSamp = mLookup[i].second;
     }
     return true;
 }
