@@ -1182,8 +1182,10 @@ void CharPollableSorter::Sort(std::vector<RndPollable *> &polls) {
     for (int i = 0; i < deps.size(); i++)
         depList.push_back(deps[i]);
     while (!depList.empty()) {
-        Dep *curDep = depList.back();
-        depList.pop_back();
+        // Retail takes the queue FRONT: erase(begin()) reads the list head's
+        // _M_next (lwz 0x68), not its _M_prev.
+        Dep *curDep = depList.front();
+        depList.pop_front();
         CharPollable *c = dynamic_cast<CharPollable *>(curDep->obj);
         if (c) {
             std::list<Hmx::Object *> depList1;
