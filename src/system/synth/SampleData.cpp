@@ -144,11 +144,16 @@ void SampleData::Load(BinStream &bs, const FilePath &fp) {
     if (rev > gSampleDataMaxRev) {
         // Retail overlays both FilePath copies onto stack slot 0x60 (frame
         // 0x90). They are the by-value arguments of the stripped log/warn calls,
-        // and MSVC only overlays them when they are call-argument temporaries.
+        // and MSVC only overlays them when they are call-argument temporaries
+        // (MILO_WARN is MiloStripEval in the match build; MILO_LOG is not).
         // A named block local or a `(void)FilePath(fp)` expression temporary
         // gets a private slot at 0x70 and frame 0xa0 (measured, W23 + W16-QO).
         if (rev > 0x3E8 && rev < 0x249F0) {
+#ifdef HX_NATIVE
+            MILO_LOG("%s: loading old cached sample\n", fp);
+#else
             MiloStripEval("%s: loading old cached sample\n", fp);
+#endif
             mSampleRate = rev;
             bs >> mSizeBytes;
             mFormat = kBigEndPCM;
@@ -163,7 +168,7 @@ void SampleData::Load(BinStream &bs, const FilePath &fp) {
 #endif
             bs.Read(mData, mSizeBytes);
         } else {
-            MiloStripEval("can't load new SampleData: %s", fp);
+            MILO_WARN("can't load new SampleData: %s", fp);
         }
         return;
     }
