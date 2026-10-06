@@ -209,19 +209,16 @@ float pow(float base, int exponent) {
 // other 17 sites here carry at most one side-effecting arg, so both macro forms emit
 // identical code -- which is why flipping them costs nothing.
 //
-// REFUTED, do not retry -- ReadMetaEvent's remaining 17 charges are NOT declaration
-// order.  Retail's frame is 0x1c0 vs our 0x1b0 and the residue is three independent
-// causes: (a) retail gives the float->int conversion temp (fctiwz/stfd/lwz for
-// `powed`) its OWN 8-byte slot at 0x68, while we overlay it onto ts_b at 0x60 -- that
-// alone shifts ts_t +8 and buf[0x100] +0x10 after 16-byte alignment, i.e. the whole
-// frame delta and 11 of the 17 sites; (b) a 6-site permutation of the byte locals
-// (retail ts_num=0x50 c=0x51 b=0x52 ts_den=0x53 a=0x54; ours ts_num=0x50 a=0x51
-// b=0x52 c=0x53 ts_den=0x54).  Reordering `unsigned char c, b, a;` to `a, b, c` was
-// MEASURED BYTE-IDENTICAL (obj confirmed 7.5 s newer than source, so the null is a
-// real compile, not a stale artifact) -- MSVC canonicalizes it, exactly as lane W23
-// found for named-vs-temporary and lexical scope in synth/SampleData.cpp.  matched_code
-// keys on fuzzy==100 and is all-or-nothing, so ALL 17 must close for the 972 B; with no
-// lever for (a) or (b) this row is not collectable by source work today.
+// ReadMetaEvent's stack frame (lane W16-PS, 2026-10-06).  Retail's frame is 0x1c0
+// and gives the float->int conversion temp for `powed` (fctiwz/stfd/lwz) its own
+// 8-byte slot at 0x68, with the byte locals at ts_num=0x50 c=0x51 b=0x52 ts_den=0x53
+// a=0x54.  What decides it is the SCOPE of ts_m/ts_b/ts_t: declared in the
+// kTimeSignature case block next to ts_num/ts_den, they are allocated with the case's
+// other locals and the conversion temp cannot overlay ts_b; declared inside the
+// `else` (as we had it) they share with it, the frame shrinks to 0x1b0, and the
+// byte locals permute -- 17 charges.  Measured with the scratch probe: case-block
+// declaration 17 -> 0; declaring them just above `powed` in the else, reordering
+// them, splitting the declaration, or reordering `c, b, a` are all inert.
 void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
     MidiVarLenNumber num(bs);
     unsigned int numVal = num.Value();
@@ -332,6 +329,7 @@ void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
     }
     case kTimeSignature: {
         unsigned char ts_num, ts_den;
+        int ts_m, ts_b, ts_t;
         bs >> ts_num >> ts_den;
         if (ts_den > 6) {
             MILO_WARN(
@@ -354,7 +352,6 @@ void MidiReader::ReadMetaEvent(int tick, unsigned char type, BinStream &bs) {
                     ts_num
                 );
             }
-            int ts_m, ts_b, ts_t;
             mMeasureMap->TickToMeasureBeatTick(tick, ts_m, ts_b, ts_t);
             if (mMeasureMap->AddTimeSignature(ts_m, ts_num, powed, true)) {
                 mRcvr.OnTimeSig(tick, ts_num, powed);
