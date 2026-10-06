@@ -894,35 +894,30 @@ void UIManager::Poll() {
 }
 
 void UIManager::PushScreen(UIScreen *screen) {
-    MILO_ASSERT(screen, 0x38C);
-    if (!mCurrentScreen) {
+    // RB3 retail (0x828047E8, 96 B) has no null test on mCurrentScreen: it always
+    // cancels the transition, pushes the current screen (null included), clears it
+    // and goes to the new screen.  The push-depth report is diagnostic only and
+    // leaves no code in retail, so it stays native-only.
+    CancelTransition();
+    MILO_ASSERT(screen, 0x359);
+    mPushedScreens.push_back(mCurrentScreen);
+#ifdef HX_NATIVE
+    if (mPushedScreens.size() >= mMaxPushDepth) {
         MILO_NOTIFY(
-            "Called PushScreen() with %s when mCurrentScreen is NULL, are you calling PushScreen() twice in the same frame?",
-            screen->Name()
+            "Exceeded max push depth of %i, pushing %s", mMaxPushDepth, screen->Name()
         );
-    } else {
-        CancelTransition();
-        if (mCurrentScreen) {
-            mPushedScreens.push_back(mCurrentScreen);
-        } else {
-            MILO_LOG("UIManager::PushScreen NULL current screen. Not pushing it.\n");
-        }
-        if (mPushedScreens.size() >= mMaxPushDepth) {
-            MILO_NOTIFY(
-                "Exceeded max push depth of %i, pushing %s", mMaxPushDepth, screen->Name()
-            );
-            MILO_LOG("mPushedScreens:\n");
-            FOREACH (it, mPushedScreens) {
-                if (*it) {
-                    MILO_LOG("%s\n", (*it)->Name());
-                } else {
-                    MILO_LOG("NULL pushed screen? That's pretty bad.\n");
-                }
+        MILO_LOG("mPushedScreens:\n");
+        FOREACH (it, mPushedScreens) {
+            if (*it) {
+                MILO_LOG("%s\n", (*it)->Name());
+            } else {
+                MILO_LOG("NULL pushed screen? That's pretty bad.\n");
             }
         }
-        mCurrentScreen = nullptr;
-        GotoScreenImpl(screen, false, false);
     }
+#endif
+    mCurrentScreen = nullptr;
+    GotoScreenImpl(screen, false, false);
 }
 
 DataNode UIManager::OnForeachCurrentScreen(const DataArray *arr) {
