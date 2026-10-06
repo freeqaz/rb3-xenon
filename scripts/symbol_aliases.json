@@ -116533,6 +116533,15 @@
    "added": {
     "lane": "W16-PG 2026-10-06"
    }
+  },
+  {
+   "name": "make_pair<Symbol,DataNode>",
+   "address": "0x827cd140",
+   "survivor": "??$make_pair@PBDVDataNode@@@stlpmtx_std@@YA?AU?$pair@PBDVDataNode@@@0@PBDVDataNode@@@Z",
+   "folded": [
+    "??$make_pair@VSymbol@@VDataNode@@@stlpmtx_std@@YA?AU?$pair@VSymbol@@VDataNode@@@0@VSymbol@@VDataNode@@@Z"
+   ],
+   "evidence": "W16-PO 2026-10-06. T1: tools/icf_pair_adjudicate.py FLAT T1 PROVEN (retail 96 B == ours 96 B, 4 relocs, retail_bodytwins 1, our_bodytwins 2: the two instantiations are byte-identical including relocations). Type witness from the caller's own retail bytes: ?AddPair@DataPoint@@QAAXVSymbol@@VDataNode@@@Z builds its pair<const Symbol,DataNode> by copying one word out of the make_pair result (lwz/stw, no ??0Symbol@@QAA@PBD@Z), which only a pair<Symbol,DataNode> result allows; the const char* spelling needs the Symbol(const char*) call our previous source emitted."
   }
  ]
 }
