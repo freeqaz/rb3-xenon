@@ -1243,13 +1243,15 @@ def evaluate(summ, allow):
       PIN   {"domain", "name", "verdict", "fps": [...], "reason"}
             accepts exactly these layouts of this name.  Any change to any of
             them -- or a new layout -- re-fires.
-      LIST  {"domain", "verdict", "names": [...], "identity_prefix", "reason"}
+      LIST  {"domain", "verdict", "names": [...], "identity_regex", "reason"}
             accepts the listed names whatever their layouts.  For a reviewed
             FAMILY whose splits are expected to churn (the Quazal per-TU
             mockups); a name not on the list still fails, and so does a listed
-            name with a split identity outside `identity_prefix` (MSVC prints
-            `Quazal::Station` as `Station`, so the printed name alone cannot
-            keep an RB3 class of the same bare name out of the family).  A
+            name with a split identity that `identity_regex` does not match
+            (re.match, so anchor it; MSVC prints `Quazal::Station` as
+            `Station`, so the printed name alone cannot keep an RB3 class of
+            the same bare name out of the family -- and a template's identity
+            is its decorated id, `?$DORefTemplate@VStation@Quazal@@`).  A
             listed name that no longer has that verdict is reported stale.
     """
     dom = summ["meta"]["domain"]
@@ -1267,7 +1269,7 @@ def evaluate(summ, allow):
         if hit is None:
             hit = next((i for i, e in lists
                         if e["verdict"] == c["verdict"] and name in e["names"]
-                        and all(ident.startswith(e.get("identity_prefix", ""))
+                        and all(re.match(e.get("identity_regex", ""), ident)
                                 for ident in c["splits"])), None)
             if hit is not None:
                 used_names.add((hit, name))
@@ -1461,13 +1463,17 @@ struct Plain { int p, q[4]; static int s; void (*fn)(int); unsigned bits : 3; };
     bad, _ = evaluate(summ(**{"Q::D": ["h1", "h2"]}), allow)
     _check(R, "D3 a LIST does not accept a name it does not list",
            [b[0] for b in bad] == ["Q::D"], bad)
-    pre = {"entries": [dict(lst, identity_prefix="Q::")]}
+    pre = {"entries": [dict(lst, identity_regex=r"^(Q::|\?\$.*@Q@@)")]}
     bad, _ = evaluate(summ(**{"Q::B": ["g1", "g2"]}), pre)
     bad2, _ = evaluate({"meta": {"domain": "x360"}, "classified": {"Q::B": {
         "verdict": "SPLIT", "splits": {"B": {"g1": ["t.cpp"], "g2": ["u.cpp"]}},
         "unresolved": []}}}, pre)
-    _check(R, "D4 a LIST's identity_prefix keeps a same-named class outside it out",
-           not bad and [b[0] for b in bad2] == ["Q::B"], (bad, bad2))
+    bad3, _ = evaluate({"meta": {"domain": "x360"}, "classified": {"T": {
+        "verdict": "SPLIT", "splits": {"?$T@VB@Q@@": {"k1": ["t.cpp"], "k2": ["u.cpp"]}},
+        "unresolved": []}}}, {"entries": [dict(pre["entries"][0], names=["T"])]})
+    _check(R, "D4 a LIST's identity_regex keeps a same-named class outside it out"
+           " and admits a template id inside it",
+           not bad and [b[0] for b in bad2] == ["Q::B"] and not bad3, (bad, bad2, bad3))
     return R
 
 
