@@ -74,7 +74,7 @@ The texture-transform write-back now calls `mPitchWindowMesh->Mat()` again
 instead of reusing a cached `RndMat *`. Retail recomputes `&mat->mTexXfm` for the
 second copy. The remaining residue is the position of `(60 - min)` relative to the
 pitch-range computation. These spellings were inert or worse:
-- an oracle-style reference copy (93.62)
+- a reference-then-copy spelling (93.62)
 - a const getter
 - direct `mTexXfm` access through a temporary friend (reverted)
 - explicit `memcpy`
