@@ -1,6 +1,8 @@
 // Retail inlines the owner-only ObjPtr ctor in this TU (SmasherPlateInfo's
-// mSmasherPlate(this) expands to three stores, not a `bl ??0ObjPtr`).
+// mSmasherPlate(this) expands to three stores, not a `bl ??0ObjPtr`), with
+// the mObject store after the vptr store (DEFER_OBJECT shape, see Object.h).
 #define RB3_OBJPTR_INLINE_OWNER_CTOR
+#define RB3_TU_OBJPTR_OWNER_CTOR_DEFER_OBJECT
 #include "bandobj/GemTrackResourceManager.h"
 #include "obj/Msg.h"
 #include "bandobj/ArpeggioShape.h"
