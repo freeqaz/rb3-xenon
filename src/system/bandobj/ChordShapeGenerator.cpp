@@ -213,8 +213,11 @@ void ChordShapeGenerator::DumpChordGenData() {
 static int kMaxVerts = 400;
 static int kMaxFaces = 600;
 
-static unsigned int faceIt;
-static int vertIt;
+// Retail co-addresses these two with vertIt at faceIt-4. The explicit `= 0`
+// makes the front end define them here, so this declaration order sets the
+// .bss order; without it the order is fixed by codegen and comes out reversed.
+static int vertIt = 0;
+static unsigned int faceIt = 0;
 
 RndMesh *ChordShapeGenerator::BuildChordMesh(unsigned int ui, int i) {
     RGUnpackChordShapeID(ui, mStringFrets, &unk64);
