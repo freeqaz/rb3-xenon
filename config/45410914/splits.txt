@@ -2221,7 +2221,7 @@ StoreEnumeration.cpp:
 	.text       start:0x827B7ED0 end:0x827B7EE0
 	.text       start:0x827B7EE0 end:0x827B8090
 	.text       start:0x827B8090 end:0x827B8590
-	.text       start:0x827B8590 end:0x827B8690
+	.text       start:0x827B8590 end:0x827B8680
 
 Jukebox.cpp:
 	.pdata      start:0x82241048 end:0x82241060
@@ -7119,7 +7119,6 @@ Achievements.cpp:
 	.text       start:0x827A2458 end:0x827A2564
 	.text       start:0x827A2564 end:0x827A25AC
 	.text       start:0x827A25B0 end:0x827A28B8
-	.text       start:0x827B8690 end:0x827B86B0
 	.text       start:0x82C40DA8 end:0x82C40DB8
 	.text       start:0x82C49DB0 end:0x82C49DE0
 
@@ -16178,3 +16177,6 @@ system/beatmatch/Output.cpp:
 	.pdata      start:0x822616E0 end:0x822616E8
 	.text       start:0x82C40D68 end:0x82C40DA8
 	.text       start:0x82C49DA0 end:0x82C49DB0
+
+system/meta/Achievements_Xbox.cpp:
+	.text       start:0x827B8680 end:0x827B86B0

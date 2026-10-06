@@ -1,5 +1,8 @@
 {
  "0x822fc4f8": "??1?$map@HVColor@Hmx@@U?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@4@@stlpmtx_std@@QAA@XZ",
+ "0x827b8680": "?GetAchievementData@Achievements@@AAA?AUXUSER_ACHIEVEMENT@@HH@Z",
+ "0x827b8690": "?SubmitAchievementsFunc@Achievements@@CAHXZ",
+ "0x827d2858": "?BeatInfoCmp@@YA_NABUBeatInfo@@H@Z",
  "0x827f4298": "?Replace@RndTransformable@@$4PPPPPPPM@BDM@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x827f42c8": "?Print@RndTransformable@@$4PPPPPPPM@BDM@AAXXZ",
  "0x8242c710": "?CloneKey@Vector3Keys@@UAAXH@Z",
