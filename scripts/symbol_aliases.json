@@ -14035,7 +14035,9 @@
    "name": "0?$_Rb_tree",
    "address": "0x82b9adf8",
    "survivor": "??0?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@QAA@ABV01@@Z",
-   "folded": [],
+   "folded": [
+    "??0?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAA@ABV01@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 3 folded spelling(s), 1 census sites over 2 functions.",
    "withdrawn": [
     {
@@ -14054,7 +14056,14 @@
      "class": "FABRICATED_CLOSURE_NOT_PARTITION"
     }
    ],
-   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md."
+   "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 1 other group(s) at 2 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 1 of the 2 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md.",
+   "admitted": [
+    {
+     "spelling": "??0?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAA@ABV01@@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 2 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (none tolerated). (1) leaf ?_M_copy@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@ self-recursive on both sides; unique among 6 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: fan-in: retail ??$_Copy_Construct<set<Symbol>> and vector<set<Symbol>>::_M_fill_insert_aux / _M_insert_overflow_aux (Tour.cpp contribution, named by position) call the survivor. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 240 == ours 240. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 3, unpaired-caller 2; none lands elsewhere."
+    }
+   ]
   },
   {
    "name": "_GSongMgr",
@@ -16866,9 +16875,17 @@
    "address": "0x825d6988",
    "survivor": "??$sort@PAUFilter@FilterViewSetting@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUFilter@FilterViewSetting@@0P6A_NABU12@1@Z@Z",
    "folded": [
-    "??$sort@PAUGroupDrawDist@@P6A_NABU1@0@Z@stlpmtx_std@@YAXPAUGroupDrawDist@@0P6A_NABU1@1@Z@Z"
+    "??$sort@PAUGroupDrawDist@@P6A_NABU1@0@Z@stlpmtx_std@@YAXPAUGroupDrawDist@@0P6A_NABU1@1@Z@Z",
+    "??$sort@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@0P6A_NABU12@1@Z@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 3, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 3, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "admitted": [
+    {
+     "spelling": "??$sort@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@0P6A_NABU12@1@Z@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (none tolerated). (1) leaf ??$__introsort_loop@PAUCuePoint@?A0x81ddebd1@@U12@HP6A_NABU1 self-recursive on both sides; unique among 3 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: co-callee: the charged row WaveFile::ReadMarkers passes ?CompareCuePoints@?A0x81ddebd1@@YA_NABUCuePoint@1@0@Z (100% row) as the comparator -- the Compare template argument bool(*)(const CuePoint&,const CuePoint&) of our spelling. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 112 == ours 112. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 1; none lands elsewhere."
+    }
+   ]
   },
   {
    "name": "$__destroy_range",
@@ -72023,17 +72040,30 @@
    "name": "$sort",
    "address": null,
    "survivor": "??$sort@PAPAVFlowNode@@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0P6A_NPAV1@1@Z@Z",
-   "folded": [
-    "??$sort@PAPAVRndDrawable@@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@0P6A_NPAV1@1@Z@Z",
-    "??$sort@PAPAVVocalPart@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@0P6A_NPBV1@1@Z@Z"
-   ],
+   "folded": [],
    "evidence": "Partitioned out of the closure at 0x822d17f0 by ALIAS-REPAIR 2026-08-19 (UNDER_PARTITIONED_ICF_CLOSURE). These spellings agree with each other on their RESOLVED operands -- resolved through the ICF congruence over our own build -- and disagree with the origin survivor '??$sort@PAPAVCamShot@@UNameSort@@@stlpmtx_std@@YAXPAPAVCamShot@@0UNameSort@@@Z', so the origin group claimed one fold where the evidence supports two. No retail address is known for this class, so it renders into no map bucket.",
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
     "origin_survivor": "??$sort@PAPAVCamShot@@UNameSort@@@stlpmtx_std@@YAXPAPAVCamShot@@0UNameSort@@@Z",
     "origin_address": "0x822d17f0"
-   }
+   },
+   "withdrawn": [
+    {
+     "spelling": "??$sort@PAPAVRndDrawable@@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@0P6A_NPAV1@1@Z@Z",
+     "lane": "W16-PH 2026-10-06",
+     "class": "MOVED_FROM_ADDRESSLESS_PARTITION",
+     "disposition": "membership moved, group kept",
+     "evidence": "Address-less partition class (renders no map line, forgives nothing). Moved to the survivor at 0x822bed18 on per-membership retail evidence: Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:CALLEE-CHASED x4). (1) leaf ??$__introsort_loop@PAPAVRndDrawable@@PAV1@HP6A_NPAV1@0@Z@st self-recursive on both sides; unique among 11 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: co-callee: the charged row RndDir::SyncDrawables passes ?SortDraws@@YA_NPAVRndDrawable@@0@Z (100% row) as the sort comparator -- exactly the Compare template argument bool(*)(RndDrawable*,RndDrawable*) of our spelling -- and also calls VectorRemove<RndDrawable*>(vector<RndDrawable*>&). The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 112 == ours 112. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 2, unaligned 1; none lands elsewhere."
+    },
+    {
+     "spelling": "??$sort@PAPAVVocalPart@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@0P6A_NPBV1@1@Z@Z",
+     "lane": "W16-PH 2026-10-06",
+     "class": "MOVED_FROM_ADDRESSLESS_PARTITION",
+     "disposition": "membership moved, group kept",
+     "evidence": "Address-less partition class (renders no map line, forgives nothing). Moved to the survivor at 0x822bed18 on per-membership retail evidence: Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:CALLEE-CHASED x4). (1) leaf ??$__introsort_loop@PAPAVVocalPart@@PAV1@HP6A_NPBV1@0@Z@stlp self-recursive on both sides; unique among 11 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: co-callee: the charged row VocalPlayer::HandlePhraseEnd passes ?FramePhraseMeterFracSorter@VocalPart@@SA_NPBV1@0@Z (100% row) as the comparator -- the Compare template argument bool(*)(const VocalPart*,const VocalPart*) of our spelling. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 112 == ours 112. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 1; none lands elsewhere."
+    }
+   ]
   },
   {
    "name": "Replace",
@@ -97706,9 +97736,29 @@
    "address": "0x822bed18",
    "survivor": "??$sort@PAPAVRndPollable@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndPollable@@0P6A_NPBV1@1@Z@Z",
    "folded": [
-    "??$sort@PAPAVNetSearchResult@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVNetSearchResult@@0P6A_NPBV1@1@Z@Z"
+    "??$sort@PAPAVNetSearchResult@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVNetSearchResult@@0P6A_NPBV1@1@Z@Z",
+    "??$sort@PAPAVRndDrawable@@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@0P6A_NPAV1@1@Z@Z",
+    "??$sort@PAPAVFriend@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@0P6A_NPBV1@1@Z@Z",
+    "??$sort@PAPAVVocalPart@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@0P6A_NPBV1@1@Z@Z"
    ],
-   "evidence": "W16-AE 2026-09-14: sort<NetSearchResult**,bool(*)(const NetSearchResult*,const NetSearchResult*)> folds onto the map-resident survivor sort<RndPollable**,...> at 0x822bed18 on CHASED T1 (tools/icf_pair_adjudicate.py --chase, 112 B both sides; flat T1 REFUTED as template twin; the __introsort_loop / __adjust_heap / sort_heap / __partial_sort slots are SLOT-FOLD-OK, __introsort_loop self-recursion CYCLE-ASSUMED coinductively). Caller: SessionSearcher::StopSearching."
+   "evidence": "W16-AE 2026-09-14: sort<NetSearchResult**,bool(*)(const NetSearchResult*,const NetSearchResult*)> folds onto the map-resident survivor sort<RndPollable**,...> at 0x822bed18 on CHASED T1 (tools/icf_pair_adjudicate.py --chase, 112 B both sides; flat T1 REFUTED as template twin; the __introsort_loop / __adjust_heap / sort_heap / __partial_sort slots are SLOT-FOLD-OK, __introsort_loop self-recursion CYCLE-ASSUMED coinductively). Caller: SessionSearcher::StopSearching.",
+   "admitted": [
+    {
+     "spelling": "??$sort@PAPAVRndDrawable@@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@0P6A_NPAV1@1@Z@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:CALLEE-CHASED x4). (1) leaf ??$__introsort_loop@PAPAVRndDrawable@@PAV1@HP6A_NPAV1@0@Z@st self-recursive on both sides; unique among 11 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: co-callee: the charged row RndDir::SyncDrawables passes ?SortDraws@@YA_NPAVRndDrawable@@0@Z (100% row) as the sort comparator -- exactly the Compare template argument bool(*)(RndDrawable*,RndDrawable*) of our spelling -- and also calls VectorRemove<RndDrawable*>(vector<RndDrawable*>&). The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 112 == ours 112. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 2, unaligned 1; none lands elsewhere."
+    },
+    {
+     "spelling": "??$sort@PAPAVFriend@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@0P6A_NPBV1@1@Z@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:CALLEE-CHASED x4). (1) leaf ??$__introsort_loop@PAPAVFriend@@PAV1@HP6A_NPBV1@0@Z@stlpmtx self-recursive on both sides; unique among 11 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: co-callee: the charged row FriendsProvider::OnMsg passes ?FriendCmp@@YA_NPBVFriend@@0@Z (100% row) as the comparator -- the Compare template argument bool(*)(const Friend*,const Friend*) of our spelling. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 112 == ours 112. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 1; none lands elsewhere."
+    },
+    {
+     "spelling": "??$sort@PAPAVVocalPart@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@0P6A_NPBV1@1@Z@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:CALLEE-CHASED x4). (1) leaf ??$__introsort_loop@PAPAVVocalPart@@PAV1@HP6A_NPBV1@0@Z@stlp self-recursive on both sides; unique among 11 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: co-callee: the charged row VocalPlayer::HandlePhraseEnd passes ?FramePhraseMeterFracSorter@VocalPart@@SA_NPBV1@0@Z (100% row) as the comparator -- the Compare template argument bool(*)(const VocalPart*,const VocalPart*) of our spelling. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 112 == ours 112. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 1; none lands elsewhere."
+    }
+   ]
   },
   {
    "name": "UpdateSearchList",
@@ -102683,7 +102733,8 @@
    "survivor": "?_M_fill_insert@?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@M@@IABV3@@Z",
    "folded": [
     "?_M_fill_insert@?$vector@VSeam@MeshAO@OutfitConfig@@V?$StlNodeAlloc@VSeam@MeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSeam@MeshAO@OutfitConfig@@IABV345@@Z",
-    "?_M_fill_insert@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVStreakInfo@Stats@@IABV34@@Z"
+    "?_M_fill_insert@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVStreakInfo@Stats@@IABV34@@Z",
+    "?_M_fill_insert@?$vector@V?$Key@VSymbol@@@@V?$StlNodeAlloc@V?$Key@VSymbol@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VSymbol@@@@IABV3@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -102697,6 +102748,11 @@
      "spelling": "?_M_fill_insert@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVStreakInfo@Stats@@IABV34@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (FOLDPROVE-2 method), lane W16-JE. --chase is CHASED T1 PROVEN with its only CYCLE-ASSUMED leaf the self-recursive slot. (1) MASKED-BODY UNIQUENESS: ?_M_fill_insert_aux@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStrea self-recursive on both sides, whole-image census of retail bodies with its masked bytes AND relocation shape = exactly 1 (?_M_fill_insert_aux@?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlp) -- so if retail instantiated our spelling's leaf it can only be the survivor's leaf. (2) HETEROGENEOUS FAN-IN naming our element type: retail 2 call(s) the survivor/leaf chain (e.g. ??$SaveHighest@VStreakInfo@Stats@@@Stats@@QAAXAAV?$vector@VStreakInfo@Stats@@V?$StlNodeAll, ?resize@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlp). The self-recursive slot itself is NOT counted as evidence. Placeholder-slot audit: every tolerated slot re-checked (data globals one address, unnamed callees chase PROVEN), 0 bad."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@V?$Key@VSymbol@@@@V?$StlNodeAlloc@V?$Key@VSymbol@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VSymbol@@@@IABV3@@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:DATA-ACCEPTED x3). (1) leaf ?_M_fill_insert_aux@?$vector@V?$Key@VSymbol@@@@V?$StlNodeAll self-recursive on both sides; whole-image census of retail bodies with its masked bytes AND relocation shape = exactly 1 (the survivor's leaf). (2) TYPE WITNESS: fan-in: the charged retail row ?Add@?$Keys@VSymbol@@V1@@@ (Keys<Symbol,Symbol>, base vector<Key<Symbol>>) calls the survivor; that row is itself called by ?SetKey@SymbolKeys@@ and ?CloneKey@SymbolKeys@@ (SymbolKeys is-a Keys<Symbol,Symbol>, names from the PropKeys vtable). The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 108 == ours 108. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 1, unpaired-caller 3; none lands elsewhere."
     }
    ]
   },
@@ -104614,7 +104670,8 @@
    "address": "0x824260a8",
    "survivor": "?Add@?$Keys@VVector3@@V1@@@QAAHABVVector3@@M_N@Z",
    "folded": [
-    "?Add@?$Keys@VQuat@Hmx@@V12@@@QAAHABVQuat@Hmx@@M_N@Z"
+    "?Add@?$Keys@VQuat@Hmx@@V12@@@QAAHABVQuat@Hmx@@M_N@Z",
+    "?Add@?$Keys@VColor@Hmx@@V12@@@QAAHABVColor@Hmx@@M_N@Z"
    ],
    "evidence": "Fold group opened by W16-LB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
@@ -104622,6 +104679,11 @@
      "spelling": "?Add@?$Keys@VQuat@Hmx@@V12@@@QAAHABVQuat@Hmx@@M_N@Z",
      "lane": "W16-LB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 REFUTED); 272 B retail / 272 B ours. Retail calls the survivor where we call this spelling in 3 row(s), e.g. ?OnAddRotKey@RndTransAnim@@IAA?AVDataNode@@PBVDataArray@@@Z, ?SetKey@RndTransAnim@@UAAXM@Z, ?SetKeyVal@RndPropAnim@@QAAXPAVObject@Hmx@@PAVDataArray@@MABVDataNode@@_N@Z."
+    },
+    {
+     "spelling": "?Add@?$Keys@VColor@Hmx@@V12@@@QAAHABVColor@Hmx@@M_N@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:DATA-ACCEPTED x3). (1) leaf ?_M_fill_insert_aux@?$vector@V?$Key@VColor@Hmx@@@@V?$StlNode self-recursive on both sides; whole-image census of retail bodies with its masked bytes AND relocation shape = exactly 1 (the survivor's leaf). (2) TYPE WITNESS: fan-in: retail ?SetKey@ColorKeys@@UAAHM@Z (ColorKeys is-a Keys<Color,Color>; name from the PropKeys vtable) calls the survivor. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 272 == ours 272. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 6, unpaired-caller 2; none lands elsewhere."
     }
    ]
   },
@@ -115991,6 +116053,121 @@
    "added": {
     "lane": "W16-OZ 2026-10-03"
    }
+  },
+  {
+   "name": "$__introsort_loop",
+   "address": "0x826714d8",
+   "survivor": "??$__introsort_loop@PAPAVRndPollable@@PAV1@HP6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndPollable@@00HP6A_NPBV1@1@Z@Z",
+   "folded": [
+    "??$__introsort_loop@PAPAVRndDrawable@@PAV1@HP6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@00HP6A_NPAV1@1@Z@Z",
+    "??$__introsort_loop@PAPAVFriend@@PAV1@HP6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@00HP6A_NPBV1@1@Z@Z",
+    "??$__introsort_loop@PAVSymbol@@V1@HP6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@00HP6A_NV1@1@Z@Z",
+    "??$__introsort_loop@PAPAVVocalPart@@PAV1@HP6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@00HP6A_NPBV1@1@Z@Z"
+   ],
+   "evidence": "Created by lane W16-PH: see per-member records in `admitted`.",
+   "lane": "W16-PH 2026-10-06",
+   "admitted": [
+    {
+     "spelling": "??$__introsort_loop@PAPAVRndDrawable@@PAV1@HP6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@00HP6A_NPAV1@1@Z@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Leaf membership of pair #3 (??$sort@PAPAVRndDrawable@@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPA -> survivor ??$sort@PAPAVRndPollable@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPA), lane W16-PH: the self-recursive leaf the chase assumed. Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:CALLEE-CHASED x4). (1) leaf ??$__introsort_loop@PAPAVRndDrawable@@PAV1@HP6A_NPAV1@0@Z@st self-recursive on both sides; unique among 11 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: co-callee: the charged row RndDir::SyncDrawables passes ?SortDraws@@YA_NPAVRndDrawable@@0@Z (100% row) as the sort comparator -- exactly the Compare template argument bool(*)(RndDrawable*,RndDrawable*) of our spelling -- and also calls VectorRemove<RndDrawable*>(vector<RndDrawable*>&). The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 112 == ours 112. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 2, unaligned 1; none lands elsewhere."
+    },
+    {
+     "spelling": "??$__introsort_loop@PAPAVFriend@@PAV1@HP6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@00HP6A_NPBV1@1@Z@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Leaf membership of pair #5 (??$sort@PAPAVFriend@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFrie -> survivor ??$sort@PAPAVRndPollable@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPA), lane W16-PH: the self-recursive leaf the chase assumed. Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:CALLEE-CHASED x4). (1) leaf ??$__introsort_loop@PAPAVFriend@@PAV1@HP6A_NPBV1@0@Z@stlpmtx self-recursive on both sides; unique among 11 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: co-callee: the charged row FriendsProvider::OnMsg passes ?FriendCmp@@YA_NPBVFriend@@0@Z (100% row) as the comparator -- the Compare template argument bool(*)(const Friend*,const Friend*) of our spelling. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 112 == ours 112. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 1; none lands elsewhere."
+    },
+    {
+     "spelling": "??$__introsort_loop@PAVSymbol@@V1@HP6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@00HP6A_NV1@1@Z@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:CALLEE-CHASED x2). (1) leaf ??$__introsort_loop@PAVSymbol@@V1@HP6A_NV1@0@Z@stlpmtx_std@@ self-recursive on both sides; unique among 11 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: fan-in + co-callee: retail ??$sort@PAVSymbol@@P6A_NV1@0@Z@ calls the survivor and also calls ??$__final_insertion_sort@PAVSymbol@@P6A_NV1@0@Z@ -- a Symbol-specific body retail kept distinct from the pointer-sort family. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 188 == ours 188. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 1, unpaired-caller 1; none lands elsewhere."
+    },
+    {
+     "spelling": "??$__introsort_loop@PAPAVVocalPart@@PAV1@HP6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@00HP6A_NPBV1@1@Z@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Leaf membership of pair #18 (??$sort@PAPAVVocalPart@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVV -> survivor ??$sort@PAPAVRndPollable@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPA), lane W16-PH: the self-recursive leaf the chase assumed. Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:CALLEE-CHASED x4). (1) leaf ??$__introsort_loop@PAPAVVocalPart@@PAV1@HP6A_NPBV1@0@Z@stlp self-recursive on both sides; unique among 11 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: co-callee: the charged row VocalPlayer::HandlePhraseEnd passes ?FramePhraseMeterFracSorter@VocalPart@@SA_NPBV1@0@Z (100% row) as the comparator -- the Compare template argument bool(*)(const VocalPart*,const VocalPart*) of our spelling. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 112 == ours 112. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 1; none lands elsewhere."
+    }
+   ]
+  },
+  {
+   "name": "$__introsort_loop",
+   "address": "0x825d6828",
+   "survivor": "??$__introsort_loop@PAUFilter@FilterViewSetting@@U12@HP6A_NABU12@0@Z@stlpmtx_std@@YAXPAUFilter@FilterViewSetting@@00HP6A_NABU12@1@Z@Z",
+   "folded": [
+    "??$__introsort_loop@PAUCuePoint@?A0x81ddebd1@@U12@HP6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@00HP6A_NABU12@1@Z@Z"
+   ],
+   "evidence": "Created by lane W16-PH: see per-member records in `admitted`.",
+   "lane": "W16-PH 2026-10-06",
+   "admitted": [
+    {
+     "spelling": "??$__introsort_loop@PAUCuePoint@?A0x81ddebd1@@U12@HP6A_NABU12@0@Z@stlpmtx_std@@YAXPAUCuePoint@?A0x81ddebd1@@00HP6A_NABU12@1@Z@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Leaf membership of pair #4 (??$sort@PAUCuePoint@?A0x81ddebd1@@P6A_NABU12@0@Z@stlpmtx_std -> survivor ??$sort@PAUFilter@FilterViewSetting@@P6A_NABU12@0@Z@stlpmtx_), lane W16-PH: the self-recursive leaf the chase assumed. Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (none tolerated). (1) leaf ??$__introsort_loop@PAUCuePoint@?A0x81ddebd1@@U12@HP6A_NABU1 self-recursive on both sides; unique among 3 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: co-callee: the charged row WaveFile::ReadMarkers passes ?CompareCuePoints@?A0x81ddebd1@@YA_NABUCuePoint@1@0@Z (100% row) as the comparator -- the Compare template argument bool(*)(const CuePoint&,const CuePoint&) of our spelling. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 112 == ours 112. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 1; none lands elsewhere."
+    }
+   ]
+  },
+  {
+   "name": "4?$_Rb_tree",
+   "address": "0x82bab690",
+   "survivor": "??4?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+   "folded": [
+    "??4?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+    "??4?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAAAV01@ABV01@@Z"
+   ],
+   "evidence": "Created by lane W16-PH: see per-member records in `admitted`.",
+   "lane": "W16-PH 2026-10-06",
+   "admitted": [
+    {
+     "spelling": "??4?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 3 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:DATA-ACCEPTED x3). (1) leaf ?_M_copy@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@ self-recursive on both sides; unique among 6 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form); leaf ?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H self-recursive on both sides; whole-image census of retail bodies with its masked bytes AND relocation shape = exactly 1 (the survivor's leaf). (2) TYPE WITNESS: fan-in: retail LocalBandMachine::SetAvailableSongs and SetProGuitarOrBassSongs, whose own signatures take const set<int>&, call the survivor; both also call operator==<set<int>> (100% row). The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 200 == ours 200. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 2, unpaired-caller 2; none lands elsewhere."
+    },
+    {
+     "spelling": "??4?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAAAAV01@ABV01@@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 2 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (none tolerated). (1) leaf ?_M_copy@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@ self-recursive on both sides; unique among 6 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: fan-in: retail ??4?$vector@V?$set@VSymbol@@ (Tour.cpp contribution, named by position) calls the survivor. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 200 == ours 200. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 2, unpaired-caller 3; none lands elsewhere."
+    }
+   ]
+  },
+  {
+   "name": "_M_copy",
+   "address": "0x82b9a920",
+   "survivor": "?_M_copy@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@AAAPAU_Rb_tree_node_base@2@PAU32@0@Z",
+   "folded": [
+    "?_M_copy@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@AAAPAU_Rb_tree_node_base@2@PAU32@0@Z",
+    "?_M_copy@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@AAAPAU_Rb_tree_node_base@2@PAU32@0@Z"
+   ],
+   "evidence": "Created by lane W16-PH: see per-member records in `admitted`.",
+   "lane": "W16-PH 2026-10-06",
+   "admitted": [
+    {
+     "spelling": "?_M_copy@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@AAAPAU_Rb_tree_node_base@2@PAU32@0@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Leaf membership of pair #8 (??4?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_ -> survivor ??4?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpm), lane W16-PH: the self-recursive leaf the chase assumed. Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 3 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:DATA-ACCEPTED x3). (1) leaf ?_M_copy@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@ self-recursive on both sides; unique among 6 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form); leaf ?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H self-recursive on both sides; whole-image census of retail bodies with its masked bytes AND relocation shape = exactly 1 (the survivor's leaf). (2) TYPE WITNESS: fan-in: retail LocalBandMachine::SetAvailableSongs and SetProGuitarOrBassSongs, whose own signatures take const set<int>&, call the survivor; both also call operator==<set<int>> (100% row). The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 200 == ours 200. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 2, unpaired-caller 2; none lands elsewhere."
+    },
+    {
+     "spelling": "?_M_copy@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@AAAPAU_Rb_tree_node_base@2@PAU32@0@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Leaf membership of pair #15 (??0?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$ -> survivor ??0?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpm), lane W16-PH: the self-recursive leaf the chase assumed. Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 2 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (none tolerated). (1) leaf ?_M_copy@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@ self-recursive on both sides; unique among 6 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: fan-in: retail ??$_Copy_Construct<set<Symbol>> and vector<set<Symbol>>::_M_fill_insert_aux / _M_insert_overflow_aux (Tour.cpp contribution, named by position) call the survivor. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 240 == ours 240. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 3, unpaired-caller 2; none lands elsewhere."
+    }
+   ]
+  },
+  {
+   "name": "$_Copy_Construct",
+   "address": "0x8235cb88",
+   "survivor": "??$_Copy_Construct@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@0@ABV10@@Z",
+   "folded": [
+    "??$_Param_Construct@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@0@ABV10@@Z"
+   ],
+   "evidence": "Created by lane W16-PH: see per-member records in `admitted`.",
+   "lane": "W16-PH 2026-10-06",
+   "admitted": [
+    {
+     "spelling": "??$_Param_Construct@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@0@ABV10@@Z",
+     "lane": "W16-PH 2026-10-06",
+     "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 2 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (none tolerated). (1) leaf ?_M_copy@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@ self-recursive on both sides; unique among 6 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: the survivor itself is named _Copy_Construct<set<Symbol>> (our type, the STLport _Copy_Construct/_Param_Construct spelling fold seen in 80 existing groups); its retail callers __uninitialized_copy/__uninitialized_fill_n<set<Symbol>> and vector<set<Symbol>>::_M_insert_overflow_aux are Tour.cpp rows named by position. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 60 == ours 60. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 2; none lands elsewhere."
+    }
+   ]
   }
  ]
 }
