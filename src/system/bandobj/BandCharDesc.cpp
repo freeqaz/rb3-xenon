@@ -372,7 +372,7 @@ BandCharDesc::Patch::Patch()
     mSaveSizeMethod = &SaveSize;
 }
 
-inline bool BandCharDesc::Patch::operator==(const BandCharDesc::Patch &p) const {
+bool BandCharDesc::Patch::operator==(const BandCharDesc::Patch &p) const {
     return mTexture == p.mTexture && mCategory == p.mCategory
         && streq(mMeshName.c_str(), p.mMeshName.c_str()) && mUV == p.mUV
         && mRotation == p.mRotation && mScale == p.mScale;
@@ -423,7 +423,7 @@ BandCharDesc::Head::Head()
     mSaveSizeMethod = &SaveSize;
 }
 
-inline bool BandCharDesc::Head::operator==(const BandCharDesc::Head &h) const {
+bool BandCharDesc::Head::operator==(const BandCharDesc::Head &h) const {
     return mHide == h.mHide && mEyeColor == h.mEyeColor && mShape == h.mShape
         && mChin == h.mChin && mChinWidth == h.mChinWidth && mChinHeight == h.mChinHeight
         && mJawWidth == h.mJawWidth && mJawHeight == h.mJawHeight && mNose == h.mNose
