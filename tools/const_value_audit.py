@@ -59,14 +59,18 @@ Run it on a FULLY BUILT tree (./tools/ninja-locked): an unpatched or unbuilt
 tree has stale target names (the renamer) and stale objs.
 """
 import argparse
+import array
+import bisect
 import collections
 import concurrent.futures as cf
+import gc
 import json
 import os
 import re
 import struct
 import subprocess
 import sys
+import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -76,44 +80,71 @@ SCN_WRITE = 0x80000000
 SCN_CODE = 0x20
 
 
-class Coff:
-    """Minimal PE/COFF obj reader: sections, relocations, symbols (LE headers)."""
+def coff_symbols(d):
+    """Yield (name, secidx 0-based, value) for every defined external/static symbol.
 
-    def __init__(self, path):
-        self.path = path
-        d = open(path, "rb").read()
-        self.d = d
-        _m, nsec, _t, psym, nsym, opt, _c = struct.unpack_from("<HHIIIHH", d, 0)
-        strtab = psym + nsym * 18
-        self.secs = []
-        for i in range(nsec):
-            o = 20 + opt + i * 40
-            raw = d[o:o + 8]
-            size, ptr, prel, _pl, nrel, _nl, ch = struct.unpack_from("<IIIIHHI", d, o + 16)
-            relocs = set()
-            for k in range(nrel):
-                va, _si, _ty = struct.unpack_from("<IIH", d, prel + k * 10)
-                relocs.add(va)
-            self.secs.append({"size": size, "ptr": ptr, "ch": ch, "relocs": relocs,
-                              "raw": raw})
-        self.syms = {}            # name -> (secidx 0-based, value)
-        self.by_sec = collections.defaultdict(list)
-        i = 0
-        while i < nsym:
-            o = psym + i * 18
+    Shared by Coff and Resolver.build_global, which needs only names and section
+    indices and must not keep every obj's bytes alive.
+    """
+    _m, _nsec, _t, psym, nsym, _opt, _c = struct.unpack_from("<HHIIIHH", d, 0)
+    strtab = psym + nsym * 18
+    i = 0
+    while i < nsym:
+        o = psym + i * 18
+        value, secn, _typ, scl, naux = struct.unpack_from("<IhHBB", d, o + 8)
+        if secn > 0 and scl in (2, 3) and naux == 0:
             if d[o:o + 4] == b"\0\0\0\0":
                 so = struct.unpack_from("<I", d, o + 4)[0]
                 e = d.index(b"\0", strtab + so)
                 name = d[strtab + so:e].decode("latin1")
             else:
                 name = d[o:o + 8].rstrip(b"\0").decode("latin1")
-            value, secn, _typ, scl, naux = struct.unpack_from("<IhHBB", d, o + 8)
-            if secn > 0 and scl in (2, 3) and naux == 0:
-                self.syms.setdefault(name, (secn - 1, value))
-                self.by_sec[secn - 1].append(value)
-            i += 1 + naux
-        for k in self.by_sec:
-            self.by_sec[k] = sorted(set(self.by_sec[k]))
+            yield name, secn - 1, value
+        i += 1 + naux
+
+
+def coff_section_chars(d):
+    """Characteristics of each section, in order."""
+    _m, nsec, _t, _psym, _nsym, opt, _c = struct.unpack_from("<HHIIIHH", d, 0)
+    return [struct.unpack_from("<I", d, 20 + opt + i * 40 + 36)[0] for i in range(nsec)]
+
+
+class Coff:
+    """Minimal PE/COFF obj reader: sections, relocations, symbols (LE headers).
+
+    Relocation offsets and symbol values are kept as sorted `array('I')`s and
+    searched with bisect: a Python set of ints costs ~15x the memory, and a
+    whole-binary run touches ~2.2M relocations.
+    """
+
+    def __init__(self, path):
+        self.path = path
+        d = open(path, "rb").read()
+        self.d = d
+        _m, nsec, _t, _psym, _nsym, opt, _c = struct.unpack_from("<HHIIIHH", d, 0)
+        self.secs = []
+        for i in range(nsec):
+            o = 20 + opt + i * 40
+            size, ptr, prel, _pl, nrel, _nl, ch = struct.unpack_from("<IIIIHHI", d, o + 16)
+            relocs = array.array("I", sorted(set(
+                struct.unpack_from("<I", d, prel + k * 10)[0] for k in range(nrel))))
+            self.secs.append({"size": size, "ptr": ptr, "ch": ch, "relocs": relocs})
+        self.syms = {}            # name -> (secidx 0-based, value)
+        by_sec = collections.defaultdict(set)
+        for name, si, value in coff_symbols(d):
+            self.syms.setdefault(name, (si, value))
+            by_sec[si].add(value)
+        self.by_sec = {k: array.array("I", sorted(v)) for k, v in by_sec.items()}
+
+    def _end(self, si, val):
+        """End of the symbol at (si, val): the next symbol's value, else section size."""
+        vals = self.by_sec.get(si, ())
+        k = bisect.bisect_right(vals, val)
+        return vals[k] if k < len(vals) else self.secs[si]["size"]
+
+    def _relocs_in(self, s, lo, hi):
+        r = s["relocs"]
+        return r[bisect.bisect_left(r, lo):bisect.bisect_left(r, hi)]
 
     def code(self, name):
         """(section offset, bytes, reloc offsets relative to start) for a code symbol."""
@@ -123,9 +154,8 @@ class Coff:
         s = self.secs[si]
         if not (s["ch"] & SCN_CODE):
             return None
-        nxt = [v for v in self.by_sec[si] if v > val]
-        end = nxt[0] if nxt else s["size"]
-        rel = {r - val for r in s["relocs"] if val <= r < end}
+        end = self._end(si, val)
+        rel = {r - val for r in self._relocs_in(s, val, end)}
         return val, self.d[s["ptr"] + val:s["ptr"] + end], rel
 
     def extent(self, name):
@@ -136,8 +166,7 @@ class Coff:
         s = self.secs[si]
         if s["ch"] & SCN_CODE:
             return None
-        nxt = [v for v in self.by_sec[si] if v > val]
-        end = nxt[0] if nxt else s["size"]
+        end = self._end(si, val)
         if s["ptr"] == 0:
             # .bss: zero-initialised, mutable.  Return the zeros of its real extent
             # so an address-of (`addi`) compares too -- returning b"" here made
@@ -146,9 +175,8 @@ class Coff:
             return bytes(end - val), set(), False
         data = self.d[s["ptr"] + val:s["ptr"] + end]
         mask = set()
-        for r in s["relocs"]:
-            if val <= r < end:
-                mask.update(range(r - val, r - val + 4))
+        for r in self._relocs_in(s, val, end):
+            mask.update(range(r - val, r - val + 4))
         return data, mask, not (s["ch"] & SCN_WRITE)
 
 
@@ -207,6 +235,8 @@ LOAD_W = {"lfs": 4, "lfsu": 4, "lfd": 8, "lfdu": 8, "lwz": 4, "lwzu": 4,
           "lha": 2, "lhz": 2, "lhzu": 2, "lbz": 1, "lbzu": 1, "ld": 8, "lwa": 4}
 VALUE_OPS = set(LOAD_W) | {"addi"}
 
+OBJ_CACHE_MAX = 16          # parsed objs kept per process (Resolver.obj)
+
 NO_DEST_PREFIX = ("st", "cmp", "fcmp", "b", "mt", "dcb", "tw", "td", "sync",
                   "isync", "eieio", "lwsync", "icbi")
 
@@ -229,28 +259,53 @@ class Resolver:
             if isinstance(v, str) and re.fullmatch(r"0x[0-9A-Fa-f]+", k):
                 self.va_by_name.setdefault(v, int(k, 16))
                 self.fn_vas[v].append(int(k, 16))
-        self.objs = {}
-        self.global_def = None
+        # Parsed objs, least recently used first.  Bounded: a whole-binary run
+        # otherwise ends with every worker holding most of the ~1,000 base objs.
+        self.objs = collections.OrderedDict()
+        self.obj_cache_max = OBJ_CACHE_MAX
+        self.global_def = None     # data symbol name -> index into global_paths
+        self.global_paths = []
         self.clean = None          # --alt-image, for the in-place-patch cross-check
 
     def obj(self, path):
-        if path not in self.objs:
-            try:
-                self.objs[path] = Coff(path)
-            except (OSError, struct.error, ValueError):
-                self.objs[path] = None
-        return self.objs[path]
+        if path in self.objs:
+            self.objs.move_to_end(path)
+            return self.objs[path]
+        try:
+            c = Coff(path)
+        except (OSError, struct.error, ValueError):
+            c = None
+        self.objs[path] = c
+        if len(self.objs) > self.obj_cache_max:
+            self.objs.popitem(last=False)
+        return c
 
     def build_global(self, base_paths):
+        """Map every data symbol to the first base obj (in base_paths order) defining it.
+
+        Reads only symbol tables and section headers, and keeps no obj: holding
+        all of them here cost ~1.3 GB in the parent, which every forked worker
+        then gradually copied.
+        """
         self.global_def = {}
+        self.global_paths = []
         for p in base_paths:
-            c = self.obj(p)
-            if c is None:
+            try:
+                d = open(p, "rb").read()
+                chars = coff_section_chars(d)
+                syms = list(coff_symbols(d))
+            except (OSError, struct.error, ValueError):
                 continue
-            for n, (si, _v) in c.syms.items():
-                s = c.secs[si]
-                if not (s["ch"] & SCN_CODE):
-                    self.global_def.setdefault(n, p)
+            idx = len(self.global_paths)
+            self.global_paths.append(p)
+            seen = set()
+            for n, si, _v in syms:
+                # Coff.syms keeps a name's FIRST definition; only that one counts.
+                if n in seen:
+                    continue
+                seen.add(n)
+                if not (chars[si] & SCN_CODE):
+                    self.global_def.setdefault(n, idx)
 
     def function_va(self, name, tcode):
         """VA of a target function whose non-relocated words match band.exe, else None."""
@@ -295,7 +350,7 @@ class Resolver:
         c = self.obj(base_path)
         ext = c.extent(name) if c else None
         if ext is None and self.global_def is not None and name in self.global_def:
-            c2 = self.obj(self.global_def[name])
+            c2 = self.obj(self.global_paths[self.global_def[name]])
             ext = c2.extent(name) if c2 else None
         return ext
 
@@ -562,7 +617,9 @@ def analyze_function(res, d, base_path, tobj, bobj):
         r = rows[site[1]]
         return (r.get("target") or {}).get("opcode") == (r.get("base") or {}).get("opcode")
 
-    for site in set(tsites) & set(bsites):
+    # Sorted: a set of str-bearing tuples iterates in hash-seed order, which made
+    # the `use` list's order differ from run to run.
+    for site in sorted(set(tsites) & set(bsites), key=repr):
         if not same_op(site):
             continue
         # Compare the VALUES reaching the site, not how often: a stack slot
@@ -630,25 +687,33 @@ def run_unit(args):
     res = G["res"]
     tobj = res.obj(target_path)
     bobj = res.obj(base_path)
-    p = subprocess.run(objdiff_cmd(G["root"]) + ["-u", unit], input="\n".join(syms),
-                       capture_output=True, text=True, cwd=G["root"])
     results = []
     n_not_found = 0
-    for ln in p.stdout.splitlines():
-        try:
-            d = json.loads(ln)
-        except ValueError:
-            continue
-        if "error" in d:
-            n_not_found += 1
-            continue
-        a = analyze_function(res, d, base_path, tobj, bobj)
-        a.update({"unit": unit, "symbol": d["symbol"],
-                  "fuzzy": d.get("fuzzy_match_percent", 0.0),
-                  "size": d.get("target_size")})
-        a.pop("pos_keys", None)
-        results.append(a)
-    return unit, results, n_not_found, p.returncode
+    # Stream objdiff's JSONL one function at a time instead of buffering it.
+    # The symbol list goes in through a file, so objdiff can never block on a
+    # full stdout pipe while we are still writing its stdin.
+    with tempfile.TemporaryFile("w+") as fin:
+        fin.write("\n".join(syms))
+        fin.seek(0)
+        with subprocess.Popen(objdiff_cmd(G["root"]) + ["-u", unit], stdin=fin,
+                              stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                              text=True, cwd=G["root"]) as p:
+            for ln in p.stdout:
+                try:
+                    d = json.loads(ln)
+                except ValueError:
+                    continue
+                if "error" in d:
+                    n_not_found += 1
+                    continue
+                a = analyze_function(res, d, base_path, tobj, bobj)
+                a.update({"unit": unit, "symbol": d["symbol"],
+                          "fuzzy": d.get("fuzzy_match_percent", 0.0),
+                          "size": d.get("target_size")})
+                a.pop("pos_keys", None)
+                results.append(a)
+        rc = p.returncode
+    return unit, results, n_not_found, rc
 
 
 def main():
@@ -656,7 +721,10 @@ def main():
     ap.add_argument("--root", default=ROOT)
     ap.add_argument("--unit", action="append", help="limit to unit(s)")
     ap.add_argument("--rows", help="file of 'unit symbol' lines")
-    ap.add_argument("--jobs", type=int, default=max(1, (os.cpu_count() or 4) // 2))
+    # Each job runs its own objdiff-cli (up to ~350 MB for the largest units), which
+    # dominates peak memory: whole binary 3.0 GB at 8 jobs vs 5.5 GB at 16.
+    ap.add_argument("--jobs", type=int, default=max(1, min(8, (os.cpu_count() or 4) // 2)),
+                    help="parallel units (default %(default)s; each runs one objdiff-cli)")
     ap.add_argument("--out", default=os.path.expanduser("~/tmp/const_value_audit.json"))
     ap.add_argument("--image", default=None)
     ap.add_argument("--alt-image", default=None,
@@ -712,7 +780,13 @@ def main():
         if syms:
             jobs.append((n, base_of[n], tgt_of.get(n), syms))
     G.update(res=res, root=root)
-    all_rows = []
+    # Workers are forked and inherit the parent's heap copy-on-write.  Drop what
+    # they never read, and freeze the rest so the cyclic GC in each worker does
+    # not write to (and so privately copy) every inherited container's page.
+    del rep, od
+    gc.collect()
+    gc.freeze()
+    flagged = []
     totals = collections.Counter()
     with cf.ProcessPoolExecutor(max_workers=args.jobs) as ex:
         for unit, results, nf, rc in ex.map(run_unit, jobs, chunksize=1):
@@ -728,8 +802,8 @@ def main():
                 totals["verdict_" + a["verdict"]] += 1
                 for k, v in a["skips"].items():
                     totals["skip_" + k] += v
-                all_rows.append(a)
-    flagged = [a for a in all_rows if a["verdict"] != "CLEAN"]
+                if a["verdict"] != "CLEAN":
+                    flagged.append(a)
     json.dump({"totals": dict(totals), "flagged": flagged}, open(args.out, "w"), indent=1)
     print("units %d  functions %d  not-found %d" % (totals["units"], totals["functions"],
                                                      totals["not_found"]))
