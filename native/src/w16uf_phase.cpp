@@ -578,6 +578,10 @@ void StoreMainPanelChecks() {
     if (!fixtureOk)
         return;
     // Pre-state that FinishLoad must overwrite.
+    // Labels 1 and 2 hold a token FinishLoad must clear (the shipped labels
+    // may load with none, which would make the check unable to fail).
+    lbl[0]->SetTextToken(Symbol("w16uf_token"));
+    lbl[1]->SetTextToken(Symbol("w16uf_token"));
     Symbol tok3 = lbl[2]->GetTextToken();
     for (int i = 0; i < 6; i++)
         mats[i]->mDirty &= ~2;
