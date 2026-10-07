@@ -138,22 +138,11 @@ CharEyes::~CharEyes() {}
 void CharEyes::Enter() {
     mLastFacing.Zero();
     mLastLook = 0;
-    // The image stores a third float zero, to 0xcc, that this function never
-    // wrote. Realigning the header's (uniformly 0x28-stale) offset comments
-    // against the store set puts mAvDelta there, and the `stateReset:` block in
-    // NextLook() resets it on exactly this adjacency: `mLastLook = 0.0f;
-    // mAvDelta = 0.0f;`. Without it, Enter() leaked the previous take's
-    // angular-velocity accumulator into a freshly entered character.
     mAvDelta = 0.0f;
-    // w7-by (87.35955 -> 100.0, 0 mismatch rows): the statement order is RB3's
-    // CharEyes::Enter member for member (mBlinkActive is RB3's mTargetTooClose,
-    // the lone byte store right above the filter-flags copy at 0x823772A0),
-    // and the flags copy is the inline ClearInterestFilterFlags() call.  The
-    // inlined call is a scheduling barrier: spelled as a plain member
-    // assignment MSVC hoists `lwz r10, 0x60(r31)` above every store, where
-    // the image loads it at 0x823772B8, immediately before the `stw` at
-    // 0x823772BC.  That hoist is what made every mBlinkActive placement read
-    // as a loss (w7-ap measured 85.7 for exactly this order without it).
+    // Store order is retail's (100.0). The filter-flags copy goes through the
+    // inline ClearInterestFilterFlags(): spelled as a plain assignment, MSVC
+    // hoists the mDefaultFilterFlags load above every store, where retail
+    // loads it immediately before the copy's store.
     mLastCang = 1.0f;
     mLastBlinkWeight = -1.0f;
     mBlinkDetect = false;

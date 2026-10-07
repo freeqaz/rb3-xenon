@@ -329,6 +329,8 @@ void RndTransAnim::MakeTransform(float frame, Transform &tf, bool whole, float b
             MakeRotMatrix(q80, tf.m);
         } else if (whole)
             tf.m.Identity();
+        // Retail tests mFollowPath (lbz 0x51) first: v4c is only written by
+        // InterpVector when following the path.
         if (mFollowPath && !mTransKeys.empty()) {
             if (!mRotKeys.empty()) {
                 MakeRotMatrix(v4c, tf.m.z, tf.m);

@@ -1219,6 +1219,11 @@ __declspec(noinline) auto _outline_Int(_T* _obj) -> decltype(_obj->Int()) {
 }
 
 float Rnd::DrawTimers(float f) {
+    // Retail (0x82412058) is a plain function-local static of POINTER type: ONE
+    // guard bit (0x82CC2538 bit 0) protecting the store to 0x82CC2534. The two
+    // Symbols are ordinary stack temps inside the initializer -- they get no
+    // guard bits of their own, so the hand-rolled lbl_830A4104 emulation is
+    // wrong on both the guard shape and the reload after the guard.
     static DataArray *timerCfg =
         SystemConfig(Symbol("rnd"))->FindArray(Symbol("timer_script"), false);
 
@@ -1243,9 +1248,8 @@ float Rnd::DrawTimers(float f) {
     float bgLeft = 0.025f;
     float rowSpacing = 0.045f;
     float totalHeight = numTimers * rowSpacing;
-    // The image copies f into its callee-saved row cursor inside the argument
-    // block of the FIRST DrawRectScreen (fmr f24, f23), so y is already live
-    // there; declaring it after that call costs a scheduling row.
+    // Retail copies f into its callee-saved row cursor inside the argument
+    // block of the first DrawRectScreen, so y is declared before that call.
     float y = f;
 
     Hmx::Rect rect(bgLeft, f, 0.95f, totalHeight);
@@ -1264,10 +1268,8 @@ float Rnd::DrawTimers(float f) {
     for (std::list<std::pair<Timer, TimerStats> >::iterator it = timers.begin();
          it != timers.end();
          ++it) {
-        // The image materialises &it->first once per iteration (addi r30, r28, 8)
-        // and reads every Timer member through it, so the timer is a named
-        // reference here rather than a repeated it->first -- bound BEFORE the
-        // Draw() test (w14-a: the addi sits above the cmplwi in the image).
+        // Retail materialises &it->first once per iteration, above the
+        // Draw() test, and reads every Timer member through it.
         Timer &timer = it->first;
         if (!timer.Draw()) {
             continue;
@@ -1294,9 +1296,8 @@ float Rnd::DrawTimers(float f) {
             DrawRectScreen(rect, worstExcessColor, nullptr, nullptr, nullptr);
         }
 
-        // w14-a RESIDUAL (99.99): the image stores rect.x (0x70) before
-        // rect.y (0x74) here; we store y first. Inert: `y += ...` hoisted above
-        // the rect.x store, and `rect.y = y += rowSpacing`.
+        // RESIDUAL (99.75): retail stores rect.x before rect.y here (we store y
+        // first), and permutes f23/f24/f25/f27/f28 relative to ours.
         rect.x = bgLeft;
         y += rowSpacing;
         rect.y = y;

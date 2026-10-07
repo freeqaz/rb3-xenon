@@ -290,37 +290,10 @@ void CharIKFingers::CalculateHandDest(int engagedCount, int firstEngaged) {
             if (!mIsRightHand) {
                 Scale(sideOffsetBase, -1.0f, sideOffsetBase);
             }
-            // RESIDUAL (w7-ao, 93.53 canonical): the largest cluster is inside
-            // this inlined Multiply(Vector3, Matrix3, Vector3), not in this
-            // function. The image accumulates the three rows in z, x, y order
-            // (0x823827A4: `fmuls` off m.z, then `fmadds` off m.x, then off
-            // m.y) and reuses ONE register for the two zero components of
-            // `sideOffsetBase`; we emit x, y, z. That term order lives in
-            // math/Mtx.h, a PCH-reached header, so it is out of this lane's
-            // scope -- and `Multiply` there is on the wave DO-NOT-WORK list.
-            // NEGATIVE RESULT (w7-ba, 2026-09-14): the cluster is not "x, y, z
-            // order" -- it is FACTORING.  Ours emits `(m.y + m.z) * zero +
-            // m.x * x` (one fadds per component, then fmadds), because y and z
-            // are the same opaque literal value; the image keeps three
-            // separate products (z*0 first at 823827A4, +x*x, +y*0 last).
-            // Neither `Zero(); x = ...; x *= -1` nor hoisting the scalar
-            // (`float off; if (!right) off *= -1; Vector3(off, 0, 0)`) moved a
-            // row (93.53 both).  The lever is not the assignment order here.
-            // NEGATIVE RESULT (w7-ao, 2026-09-14): two reorderings of the
-            // Scale/Add pair in the loop below were measured against the
-            // hypothesis that the fmuls/fadds cluster at idx 48-53 was ours:
-            // hoisting the Scale above the Add is inert on the cluster and adds
-            // 3 commutative rows; folding the target position into sideScaled
-            // costs 93.53 -> 92.04. The cluster is the header's.
-            // w21-i (93.53 -> 100 canonical): the cluster above WAS the
-            // factoring, and it is source-addressable at the call site.  With
-            // the Mtx.h Multiply inlined, MSVC sees y and z of sideOffsetBase
-            // are the same zero and folds `m.y.c*0 + m.z.c*0` into one
-            // `(m.y.c + m.z.c) * 0`.  The image (0x823827A4..) computes
-            // m.z.c*0 first, fmadds m.x.c*off onto it, and adds m.y.c*0 last:
-            // `m.y*y + (m.x*x + m.z*z)`.  Spelled that way here (same values,
-            // the image's association), the two zero products stay separate.
-            // Writing it as a flat `z + x + y` sum was inert (93.53).
+            // Multiply(sideOffsetBase, refM) spelled with retail's association,
+            // m.y*y + (m.x*x + m.z*z). sideOffsetBase's y and z are the same
+            // zero, and with the plain row-by-row form MSVC folds the two zero
+            // products into one (m.y + m.z) * 0; retail keeps them separate.
             {
                 const Hmx::Matrix3 &refM = mKeyboardRefBone->WorldXfm().m;
                 sideOffsetBase.Set(
@@ -338,11 +311,7 @@ void CharIKFingers::CalculateHandDest(int engagedCount, int firstEngaged) {
             for (int i = 0; i < 5; i++) {
                 FingerDesc &finger = mFingers[i];
                 if (finger.mIsEngaged) {
-                    // w21-i: avgPos first -- the image's x add is `fadds f11, f27, f11`
-                    // (avg.x + pos.x); closes one commutative row.  The two left
-                    // (fmuls side.z/side.y * (i - 2) at idx 102-103) did not move;
-                    // `Vector3 sideScaled(sideOffsetBase); sideScaled *= i - 2.0f`
-                    // costs 100 -> 88.3 (frame +0x10).
+                    // avgPos first: retail adds avg.x + pos.x.
                     Add(avgPos, finger.mTargetWorldPos, avgPos);
                     Vector3 sideScaled;
                     Scale(sideOffsetBase, i - 2.0f, sideScaled);
@@ -417,19 +386,11 @@ void CharIKFingers::CalculateFingerDest(FingerNum num) {
 
                 Vector3 toTarget;
                 Subtract(targetPos, f1Xfm.v, toTarget);
-                // The two 16-byte copies out of f1Xfm are DIFFERENT KINDS of copy,
-                // and MSVC lowers them differently.  f1z is default-constructed
-                // and then ASSIGNED: copy-assignment is emitted as lwz/stw pairs
-                // that the scheduler interleaves with the Subtract above
-                // (82381D34 `addi r11, r1, 0xa0` sits between the Subtract's
-                // loads and its fsubs).  f1x is copy-CONSTRUCTED: that lowers to
-                // a block copy that stays below the toTarget stores (82381D7C).
-                // Both as copy-ctors (w7-ak) read 90.4 -- the f1z loads were
-                // hoisted into the f1x block copy and the eight words needed
-                // r28/r30 (`__savegprlr_28` vs the image's `_29`); declaring f1z
-                // after the Length() calls did not stop that hoist.  Both as
-                // assignments reads 91.0 (the copies interleave with each other
-                // and float above the Subtract).  This spelling: 100.0.
+                // f1z is default-constructed then ASSIGNED (word copies that the
+                // scheduler interleaves with the Subtract above), f1x is
+                // copy-constructed (a block copy below it). That pair of
+                // spellings is what reaches 100.0; both as copy-ctors or both as
+                // assignments does not.
                 Vector3 f1z;
                 f1z = f1Xfm.m.z;
                 Vector3 f1x(f1Xfm.m.x);
@@ -557,9 +518,8 @@ void CharIKFingers::MeasureLengths() {
     }
 
     if (mHand && mHand->TransParent() && mHand->TransParent()->TransParent()) {
-        // w21-q: ONE `len` local reused for both bones -- the image's
-        // `fmr f12, f11` is the first square moved out of the register the
-        // second length then reuses; two named locals never produce it.
+        // ONE `len` local reused for both bones: retail moves the first
+        // square out of the register the second length then reuses.
         mInv2ab = 2.0f;
         mAAPlusBB = 0;
         float len = Length(mHand->LocalXfm().v); // hand bone
