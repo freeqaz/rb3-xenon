@@ -154,7 +154,8 @@ public:
     virtual void Print();
     bool BitmapFont() const { return true; }
 
-    OBJ_MEM_OVERLOAD(0x7C)
+    // Retail ??_GRndFont (0x82474298) calls MemFree directly: the delete inlines.
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x7C)
     NEW_OBJ(RndFont)
     static void Init() { REGISTER_OBJ_FACTORY(RndFont) }
 
