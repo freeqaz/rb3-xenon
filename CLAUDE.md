@@ -529,6 +529,13 @@ plain uncached-but-correct compile). Cache lives at `~/.cache/rb3-objcache`
   byte-identical to a real compile except (a) the 4-byte COFF timestamp (zeroed on
   hits) and (b) for cross-root hits, the single embedded `/Fo` path string — both
   match-irrelevant
+  ⛔ **(c) — "only (a) and (b)" is FALSE for 86 objs** (lane W16-RY,
+  2026-10-07, `0ae2ae5d5`): MSVC's anonymous-namespace hash depends on the
+  directory cl runs in, and the `anon_ns` patcher rewrites only hashes retail
+  attests, so a cross-root hit serves another worktree's `?A0x…` value.
+  `report.json` is unaffected (0 of 68,884 rows differ), but **anything keyed
+  on an exact unattested `?A0x…` name flips** — the ICF alias validator did
+  (now compares those by template). `tools/icf_alias_build.py` still does not.
   ⛔ **"match-irrelevant" is TRUE FOR THE METRIC AND BADLY MISLEADING FOR BYTE
   COMPARISON — raw `.obj` byte comparison is a DEAD INSTRUMENT here.** A
   cache-served obj embeds the `/Fo` path of whichever worktree **populated** the
