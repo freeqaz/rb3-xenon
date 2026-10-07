@@ -42,15 +42,6 @@ GemRepTemplate::GemRepTemplate(const TrackConfig &tc)
       ),
       mTrackCfg(tc), mTailClipY(0), mTailScaleX(1.0f), mObjectDir(NULL) {
     mSlotMats = new RndMat *[tc.GetMaxSlots()];
-#ifdef HX_NATIVE
-    {
-        // Stomp-watch (RB3_STATS_DBG): label these non-RndMesh VertVectors so
-        // the Mesh.cpp vert-alloc ring can attribute their buffers by name.
-        extern void RB3StompLabelVV(void *, const char *);
-        RB3StompLabelVV(&mTailVerts, "GemRepTemplate.mTailVerts");
-        RB3StompLabelVV(&mCapVerts, "GemRepTemplate.mCapVerts");
-    }
-#endif
 }
 
 GemRepTemplate::~GemRepTemplate() {

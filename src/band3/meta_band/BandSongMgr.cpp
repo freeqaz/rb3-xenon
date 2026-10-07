@@ -1135,6 +1135,13 @@ void BandSongMgr::AllowCacheWrite(bool b) {
 }
 
 void BandSongMgr::CheatToggleMaxSongCount() {
+#ifdef HX_NATIVE
+    // The X360 arm names the utl/Symbols*.h globals, which are declared but
+    // defined nowhere natively; these are the same three symbols.
+    static Symbol song_mgr("song_mgr");
+    static Symbol max_song_count("max_song_count");
+    static Symbol max_song_count_debug("max_song_count_debug");
+#endif
     int max;
     DataArray *cfg = SystemConfig(song_mgr);
     max = cfg->FindInt(max_song_count);

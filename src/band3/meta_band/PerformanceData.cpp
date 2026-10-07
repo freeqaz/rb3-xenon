@@ -4,7 +4,10 @@
 #include "os/DateTime.h"
 #include "network/net/NetSession.h"
 
+// Native builds link meta_band/MetaPanel.cpp, which defines this too.
+#ifndef HX_NATIVE
 bool MetaPanel::sIsPlaytest;
+#endif
 
 PerformanceData::PerformanceData()
     : m0x24(-1), m0x28(false), mIsOnline(false), mIsPlaytest(false), mIsCheating(false),

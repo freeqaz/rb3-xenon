@@ -53,6 +53,9 @@
 #include "net/Net.h"
 #include "net_band/RockCentral.h"
 #include "os/PlatformMgr.h"
+#include "synth/Synth.h"
+#include "meta_band/AssetStore.h"
+#include "meta_band/BandUI.h"
 
 [[noreturn]] static void BandTrackUnreached(const char *fn) {
     fprintf(stderr, "bandtrack_link_stubs: UNREACHED stub called: %s\n", fn);
@@ -66,7 +69,8 @@ CharSync *TheCharSync = nullptr;
 NetSession *TheNetSession = nullptr;
 SessionMgr *TheSessionMgr = nullptr;
 SongDB *TheSongDB = nullptr;
-BandSongMgr *TheSongMgrPtr = nullptr;
+// W16-TJ: TheSongMgrPtr is now the real one (meta_band/BandSongMgr.cpp, which
+// W16TJ_LINK_SOURCES links), pointing at the real gSongMgr.
 // W16-SH: Net is held BY VALUE (net/NetCore.h: `extern Net TheNet`). The real
 // TU (network/net/Net.cpp) is the Quazal session layer, out of scope; same
 // zero-filled-storage convention TheProfileMgr used before ProfileMgr.cpp was
@@ -96,9 +100,7 @@ void NetSession::SendMsgToAll(NetMessage &, PacketType) { UNREACHED(); }
 
 const PracticeSection &PracticeSectionProvider::GetSection(int) const { UNREACHED(); }
 
-void PrefabMgr::GetPrefabs(std::vector<PrefabChar *> &) const { UNREACHED(); }
-PrefabChar *PrefabMgr::GetDefaultPrefab(int) const { UNREACHED(); }
-PrefabMgr *PrefabMgr::GetPrefabMgr() { UNREACHED(); }
+// W16-TJ: PrefabMgr's three stubs retired; meta_band/PrefabMgr.cpp is linked.
 
 void SendJunkPatchesToAll() { UNREACHED(); }
 
@@ -112,5 +114,28 @@ void RockCentral::RecordScore(int, int, std::vector<PlayerScore> &, int, int, bo
 
 // W16-SH: the body is PlatformMgr_Xbox.cpp (XUser online-ID query, platform-only).
 void PlatformMgr::GetOnlineID(int, OnlineID *) const { UNREACHED(); }
+
+// W16-TJ: the edge of the CustomizePanel / ClosetMgr / BandSongMgr closure
+// (W16TJ_LINK_SOURCES). Synth::Play is the audio device (synth/Synth.cpp is
+// not linked; ClosetMgr plays its finish cues through it), SyncAvailableSongs
+// is another RockCentral call, and XBackgroundDownloadSetMode is the XDK
+// background-download switch CustomizePanel::Enter/Exit flip.
+void Synth::Play(const char *, float, float, float) { UNREACHED(); }
+void RockCentral::SyncAvailableSongs(const std::vector<BandProfile *> &, const std::vector<int> &,
+                                     const std::vector<int> &, Hmx::Object *) { UNREACHED(); }
+DWORD XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE) { UNREACHED(); }
+// The "show asset names" debug toggle AssetProvider reads; no TU in the tree
+// defines it. Off, as in a retail session.
+bool gShowAssetName = false;
+// TheBandUI is held BY VALUE (meta_band/BandUI.h: `extern BandUI TheBandUI`);
+// BandUI.cpp is the whole front-end shell. Zero-filled storage, as for TheNet:
+// UIEvent's transition path reads it; a virtual call through it faults.
+alignas(BandUI) unsigned char gW16TJBandUIStorage[sizeof(BandUI)] __asm__("TheBandUI");
+// AssetStore's store-offer parse and download poll, and NetSync's transition
+// checks. AssetOffer has no TU in this tree.
+AssetOffer::AssetOffer(DataArray *) { UNREACHED(); }
+extern "C" DWORD XMarketplaceGetDownloadStatus(DWORD, unsigned long long, DWORD *) { UNREACHED(); }
+bool NetSession::IsBusy() const { UNREACHED(); }
+void RockCentral::FailAllOutstandingCalls() { UNREACHED(); }
 
 

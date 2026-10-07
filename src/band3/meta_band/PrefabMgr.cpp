@@ -377,11 +377,15 @@ END_HANDLERS
 #undef gAltRev
 
 // sw2 scatter-include (default/band3/meta_band/PrefabMgr <- obj/MessageTimer.cpp)
+// Native: rndobj/PropAnim.cpp already emits MessageTimer.cpp in every target
+// that links this file, so a second copy here is a duplicate definition.
+#ifndef HX_NATIVE
 #define gRev gRev_MessageTimer
 #define gAltRev gAltRev_MessageTimer
 #include "obj/MessageTimer.cpp"
 #undef gRev
 #undef gAltRev
+#endif
 
 // sw2 scatter-include (default/band3/meta_band/PrefabMgr <- band3/meta_band/AccomplishmentManager.cpp)
 #define gRev gRev_AccomplishmentManager
@@ -391,7 +395,9 @@ END_HANDLERS
 #undef gAltRev
 
 // sw3 cross-dialect scatter-include (default/band3/meta_band/PrefabMgr <- rndobj/Text.cpp) [Object owner]
-#ifndef SW_SCATTER_OWNER_INCLUDE
+// Native builds compile rndobj/Text.cpp standalone, so this copy would be a
+// second definition of every RndText symbol.
+#if !defined(SW_SCATTER_OWNER_INCLUDE) && !defined(HX_NATIVE)
 #define SW_SCATTER_OWNER_INCLUDE
 #define gRev gRev_Text
 #define gAltRev gAltRev_Text
