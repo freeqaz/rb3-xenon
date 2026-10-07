@@ -124,7 +124,11 @@ void NativeArchiveInit() {
     SetUsingCD(false);
     printf("DC3 Web: archive system bypassed (MEMFS mode)\n");
 #else
-    Symbol plat = PlatformSymbol(TheLoadMgr.GetPlatform());
+    // Retail's ArchiveInit builds the name from the CONSTANT kPlatformXBox
+    // (os/Archive.cpp), never from TheLoadMgr's platform; so does this, so a
+    // driver that sets another load platform still mounts the disc's archive
+    // (lane W16-UC).
+    Symbol plat = PlatformSymbol(kPlatformXBox);
     const char *mainArk = MakeString("gen/main_%s", plat);
     printf("DC3 Native: Loading archive %s.hdr\n", mainArk);
     TheArchive = new Archive(mainArk, 0);
