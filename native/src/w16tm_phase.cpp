@@ -19,18 +19,25 @@
 //                 v0x0E / v0x10 have no independent decryptor, so the
 //                 reference is the unencrypted OggMap the encoder wrote: the
 //                 decoded length must land past its last entry and within two
-//                 map steps of it. libogg checks every page's CRC32, so a wrong
-//                 key fails the decode outright.
+//                 map steps of it. libogg checks every page's CRC32 (natively
+//                 too since W16-TM, as retail's ogg_sync_pageseek does), so a
+//                 wrong key or magic hash fails the decode outright.
 //   fx-compress-* CompressionEffect: ratio <= 1.01 is a bypass (output ==
 //                 input); in steady state the slope above the threshold is
 //                 1/ratio of the slope below it; a signal under the gate
-//                 threshold is gated to silence.
+//                 threshold decays at the gate's 1.01 s release, which has a
+//                 closed form.
 //   synth-utl-*   CalcSpeedFromTranspose / CalcTransposeFromSpeed against
 //                 2^(semitones/12), CalcRateForTempoSync against bpm/60 per
 //                 quarter note.
 //   flow-if-*     FlowIf::Activate: the six operators on ints, floats and a
 //                 mixed pair, against C++'s own comparison, observed through
 //                 whether the child node is activated.
+//   flow-switchcase-* FlowSwitchCase::IsValidCase: the same 36 cases, a symbol
+//                 operand, use_last_value, and kTransition's type-strict
+//                 to/from rule.
+//   synth-streamnull StreamNull's timer life cycle (needs Timer::Init, which
+//                 rb3-render's main now calls).
 //
 // Each gate can fail; the sabotage controls are in
 // docs/decomp/W16TM_VIA_DC3_NATIVE_LINK_2026-10-07.md.
