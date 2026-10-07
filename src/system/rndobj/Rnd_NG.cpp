@@ -160,16 +160,19 @@ void NgRnd::ResetStats() {
 #endif
 }
 
-// Retail 0x82B87200. The weight on each counter is read off retail: each
-// `lwax` at a fixed NgStats offset feeds the `fmadds` with one constant, and
-// UpdateOverlay's format strings name the offsets (0x4 "parts", 0x8
-// "part_sys", 0x14 "bones", 0x24 "lights (approx)", 0x2c "flares", 0x30
-// "motion blur"). Six of the twelve weights sat on the wrong counter here
-// (right weight / previous weight): parts 0.01 / 0.000233, part_sys 0.000233
-// / 0.005, bones 0.005 / 0.00126, lights (approx) 0.00126 / 0.01, flares
-// 0.003 / 0.017, motion blur 0.017 / 0.003.
+// Retail 0x82B87200. Weight per NgStats counter, read from retail's code: each
+// `lwax` at a fixed counter offset feeds one product, and each product's
+// constant is a `.rdata` float (UpdateOverlay's format strings name the
+// offsets): parts (0x4) 0.00023333334, part_sys (0x8) 0.005, reg_meshes 0.0028,
+// mut_meshes 0.0112, bones (0x14) 0.00126, mats 0.0097, cams 0.0068,
+// lights (real) 0.001, lights (approx) (0x24) 0.01, multimesh 0.001,
+// flares (0x2c) 0.017, motion blur (0x30) 0.003. The literal-pool constants
+// are placeholder relocations on the target side, so the ruler does not compare
+// their values: a weight on the wrong counter scores 100 when the term order
+// matches. The one residue is which of the two innermost products the compiler
+// computes first (part_sys vs parts), which no spelling tried here moves.
 float EstimateDraw(int idx) {
-    return ((float)gNgStats[idx].mMotionBlurs * 0.017f + ((float)gNgStats[idx].mFlares * 0.003f + ((float)gNgStats[idx].mMultiMeshInsts * 0.001f + ((float)gNgStats[idx].mLightsApprox * 0.00126f + ((float)gNgStats[idx].mLightsReal * 0.001f + ((float)gNgStats[idx].mCams * 0.0068f + ((float)gNgStats[idx].mMats * 0.0097f + ((float)gNgStats[idx].mBones * 0.005f + ((float)gNgStats[idx].mMutMeshes * 0.0112f + ((float)gNgStats[idx].mRegMeshes * 0.0028f + ((float)gNgStats[idx].mPartSys * 0.00023333334f + (float)gNgStats[idx].mParts * 0.01f)))))))))));
+    return (float)gNgStats[idx].mMotionBlurs * 0.003f + ((float)gNgStats[idx].mFlares * 0.017f + ((float)gNgStats[idx].mMultiMeshInsts * 0.001f + ((float)gNgStats[idx].mLightsApprox * 0.01f + ((float)gNgStats[idx].mLightsReal * 0.001f + ((float)gNgStats[idx].mCams * 0.0068f + ((float)gNgStats[idx].mMats * 0.0097f + ((float)gNgStats[idx].mBones * 0.00126f + ((float)gNgStats[idx].mMutMeshes * 0.0112f + ((float)gNgStats[idx].mRegMeshes * 0.0028f + ((float)gNgStats[idx].mPartSys * 0.005f + (float)gNgStats[idx].mParts * 0.00023333334f))))))))));
 }
 
 float NgRnd::UpdateOverlay(RndOverlay *overlay, float y) {
