@@ -449,6 +449,11 @@ void ReadEditorDirDead(BinStream &bs) {
     for (unsigned int i = 0; i < 20; i++) {
         while (true) {
 #ifdef HX_NATIVE
+            // W16-UL: same exit as ReadDead's. A failed stream reads zeros,
+            // and the end marker below has no zero byte, so this hunt would
+            // never end. Retail never reaches it on shipped data.
+            if (bs.Fail())
+                return;
             bs.WaitUntilReady();
 #else
             EofType t;

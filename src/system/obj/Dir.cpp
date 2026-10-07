@@ -99,6 +99,29 @@ static bool ShouldSkipCascadeNullify(Hmx::Object *obj, const std::vector<ObjectD
 // gate checks that a load and unload returns it to where it was.
 int gNativeLiveObjectDirs = 0;
 
+// W16-UL: Hmx::Object frees deferred because they happened inside a cascade.
+int gNativeCascadeObjFreesDeferred = 0;
+
+// W16-UL: the native operator delete of every Hmx::Object class
+// (OBJ_MEM_OVERLOAD, utl/MemMgr.h). Inside a cascade, ~Object skips
+// ReplaceRefs (Object.cpp) and ring unlinks write into neighbours
+// (SafeReleaseFromRing), on the rule that every object the cascade destroys
+// stays allocated until FlushDeferredFrees. DeleteObjects keeps that rule for
+// the objects a dir names, but an object a dtor deletes by itself did not:
+// ArpeggioShape's dtor deletes its dir-less RndMat and then its RndMatAnim,
+// whose ObjPtr<RndMat> unlink wrote 16 bytes into the freed mat and corrupted
+// the heap once the trackpanel tree was actually destroyed (valgrind,
+// rb3-render bandtrack phase). Retail needs none of this: its ~Object always
+// runs ReplaceRefs, which nulls the MatAnim's pointer before the free.
+void NativeObjMemFree(void *v, const char *file, int line, const char *name) {
+    if (v && ObjectDir::InDeleteObjects()) {
+        gNativeCascadeObjFreesDeferred++;
+        ObjectDir::DeferFree(v);
+        return;
+    }
+    MemFree(v, file, line, name);
+}
+
 // W16-UL: the next three helpers are DC3's (dc3-decomp cafbd23da, 43bf21c36,
 // 1902b1704), carried here because rb3-xenon's copy of this cascade predates
 // them and leaked every venue's subdir tree on unload.
