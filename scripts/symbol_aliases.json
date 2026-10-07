@@ -123044,6 +123044,25 @@
      "chase": "tools/icf_pair_adjudicate.chase(??0?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z @ 0x82bb3430, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
     }
    ]
+  },
+  {
+   "name": "MakeString",
+   "address": "0x825122b0",
+   "survivor": "??$MakeString@PBDPBDPBDPBDPBD@@YAPBDPBD00000@Z",
+   "folded": [
+    "??$MakeString@HHHHH@@YAPBDPBDHHHHH@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-UP: W16-UH's census proved each folded spelling is the callee retail reaches at this address (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??$MakeString@HHHHH@@YAPBDPBDHHHHH@Z",
+     "lane": "W16-UP",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_825122B0 and ours calls this spelling; chase(fn_825122B0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$MakeString@PBDPBDPBDPBDPBD@@YAPBDPBD00000@Z @ 0x825122b0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    }
+   ]
   }
  ]
 }

@@ -410,3 +410,21 @@ void ArchiveInit() {
     gDebugArkOrder = OptionBool("debug_arkorder", false);
     TheBlockMgr.Init();
 }
+
+#ifndef HX_NATIVE
+// Lane W16-UP: ORPHAN INSTANTIATION (the pattern of dc3-decomp's w8-a block in
+// rndobj/Utl.cpp).  Retail places the five-argument MakeString at 0x825122B0,
+// between Archive::GetGuid and this TU's FileEntry sort COMDATs, and nothing
+// in this unit calls it: its callers are MemTracker and PoolAlloc, whose objs
+// link after this one.  So this obj had a function, later discarded by
+// /OPT:REF, that formatted five arguments.  Its name, format and argument
+// types are not recoverable (the const char* and int instantiations are
+// byte-identical and fold); this stand-in reproduces only the instantiation.
+// It must be external -- MSVC drops an unreferenced static before
+// instantiating through it.
+const char *ArchiveDiscardedFormat5(
+    const char *a, const char *b, const char *c, const char *d, const char *e
+) {
+    return MakeString("%s %s %s %s %s", a, b, c, d, e);
+}
+#endif
