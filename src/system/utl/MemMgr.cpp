@@ -91,6 +91,9 @@ std::vector<String> gUseLowestMipExceptions;
 // gThreadIds sits in .data (0x82C78E0C) initialised { -1, 0, 0, 0, 0, 0 },
 // the same shape as MakeString.cpp's per-thread table.
 static int gThreadIds[MAX_BUF_THREADS] = { -1 };
+// Retail .data 0x82C78E24, directly after gThreadIds, holds -1 (MemInit sets it
+// to 0). It was declared in MemHeap.h but never defined here.
+int MemHeapStack::sDefaultHeap = -1;
 
 #ifdef HX_NATIVE
 static MemHeapStack gNullMemStack;

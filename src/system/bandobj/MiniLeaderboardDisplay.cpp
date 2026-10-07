@@ -50,11 +50,12 @@ END_LOADS
 #undef ASSERT_REVS
 // Separate statics are not co-addressed here (measured: two relocs), so they
 // live in one aligned(4) aggregate, as in ui/LabelNumberTicker.cpp.
+// Retail keeps this aggregate in .bss (zero); LOAD_REVS fills it before any read.
 #define INIT_REVS(r_, a_)                                                                \
     static struct {                                                                      \
         __declspec(align(4)) unsigned short altRev;                                      \
         __declspec(align(4)) unsigned short rev;                                         \
-    } gRevs_MiniLeaderboardDisplay = { a_, r_ };
+    } gRevs_MiniLeaderboardDisplay = { 0, 0 };
 #define LOAD_REVS(bs)                                                                    \
     int rev;                                                                             \
     bs >> rev;                                                                           \

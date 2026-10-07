@@ -21,7 +21,8 @@ bool (*LoadMgr::sFileOpenCallback)(const char *);
 LoadMgr TheLoadMgr;
 // File-local: retail schedules ldr1's vtable loads above the ++gLoadCount
 // store in PollUntilLoaded, which MSVC only does when the counter cannot alias.
-static int gLoadCount;
+// Retail .data 0x82C78E2C starts the counter at 1, not 0.
+static int gLoadCount = 1;
 
 struct LoaderGlitchContext {
     String file;            // 0x0

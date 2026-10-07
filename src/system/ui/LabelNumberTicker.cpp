@@ -128,11 +128,12 @@ void LabelNumberTicker::Enter() {
 #undef ASSERT_REVS
 // Separate statics are not co-addressed in this TU (measured: two relocs), so
 // they live in one aligned(4) aggregate, as in ui/UIListArrow.cpp.
+// Retail keeps this aggregate in .bss (zero); LOAD_REVS fills it before any read.
 #define INIT_REVS(r_, a_)                                                                \
     static struct {                                                                      \
         __declspec(align(4)) unsigned short altRev;                                      \
         __declspec(align(4)) unsigned short rev;                                         \
-    } gRevs_LabelNumberTicker = { a_, r_ };
+    } gRevs_LabelNumberTicker = { 0, 0 };
 #define LOAD_REVS(bs)                                                                    \
     int rev;                                                                             \
     bs >> rev;                                                                           \

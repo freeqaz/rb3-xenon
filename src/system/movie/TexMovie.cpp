@@ -108,7 +108,14 @@ END_PROPSYNCS
 // (same pattern as ui/UIFontImporter.cpp's gSaveRev): target emits lis/lwz
 // from a data address instead of the constant-folded `li r11, 8` that
 // SAVE_REVS(8, 0)'s inline packRevs() produces.
+// Retail .data 0x82C77238 holds 5: RB3 saves TexMovie at rev 5, alt 0. Native
+// keeps DC3's rev 8 because its Save also writes mIsLocalized, which its Load
+// reads only when rev > 5.
+#ifdef HX_NATIVE
 static int gSaveRev = (0 << 16) | 8; // packRevs(alt=0, rev=8)
+#else
+static int gSaveRev = 5;
+#endif
 
 BEGIN_SAVES(TexMovie)
     bs << gSaveRev;

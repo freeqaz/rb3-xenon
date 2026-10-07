@@ -88,7 +88,8 @@ std::vector<char *> gPristineSystemArgs;
 
 namespace {
     bool gPreconfigOverride;
-    bool gHasPreconfig;
+    // Retail .data 0x82C71834 holds 1: initialized true.
+    bool gHasPreconfig = true;
 
     void CheckForArchive() {
         gUsingCD = true;
