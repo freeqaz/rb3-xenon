@@ -999,8 +999,8 @@ void UtilDrawSphere(const Vector3 &v, float f, const Hmx::Color &col) {
     } else {
         Transform tf58;
         tf58.Reset();
-        Scale(Vector3(f, f, f), tf58.m, tf58.m);
         tf58.v = v;
+        Scale(Vector3(f, f, f), tf58.m, tf58.m);
         sSphereMesh->Mat()->SetColor(col.red, col.green, col.blue);
         sSphereMesh->Mat()->SetAlpha(0.2f);
         sSphereMesh->Mat()->SetCull(kCullNone);
