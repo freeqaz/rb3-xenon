@@ -85,12 +85,6 @@ BinStream &operator<<(BinStream &bs, const CharIKHand::IKTarget &t) {
     return bs;
 }
 
-BinStream &operator<<(BinStream &bs, const CharBlendBone::ConstraintSystem &cs) {
-    bs << cs.mTarget;
-    bs << cs.mWeight;
-    return bs;
-}
-
 BEGIN_SAVES(CharIKHand)
     SAVE_REVS(0xC, 0)
     SAVE_SUPERCLASS(Hmx::Object)
