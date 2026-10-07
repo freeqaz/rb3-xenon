@@ -35,6 +35,8 @@
 
 #include <chrono>
 #include <cmath>
+#include <csignal>
+#include <unistd.h>
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
@@ -253,6 +255,22 @@ void LightPresetCheck(ObjectDir *root) {
          ps.size(), missing, withKeys, keys);
 }
 
+// A fault inside an unload kills the process before any gate can report it.
+// Armed only around `dir = nullptr`: name the venue in a FAIL line, then
+// re-raise so the run still ends on the signal (native_health counts it as a
+// crash). write(2) only; the process is already lost.
+char gUnloading[160];
+void OnUnloadFault(int sig) {
+    char line[256];
+    int len = snprintf(line, sizeof(line),
+                       "  [FAIL] uj-venue-unload %s — signal %d during the unload\n",
+                       gUnloading, sig);
+    if (len > 0)
+        (void)!write(1, line, len < (int)sizeof(line) ? len : (int)sizeof(line) - 1);
+    signal(sig, SIG_DFL);
+    raise(sig);
+}
+
 int VenueChecks() {
     NativeStreamAuditBegin();
     const int n = sizeof(kVenues) / sizeof(kVenues[0]);
@@ -292,7 +310,12 @@ int VenueChecks() {
         // The unload. Before W16-UJ every arena and festival died here
         // (SIGSEGV in ~ObjectDir's seed restore); a crash ends the run, which
         // native_health reports as runtime_crashed.
+        snprintf(gUnloading, sizeof(gUnloading), "%s", base);
+        void (*oldSegv)(int) = signal(SIGSEGV, OnUnloadFault);
+        void (*oldBus)(int) = signal(SIGBUS, OnUnloadFault);
         dir = nullptr;
+        signal(SIGSEGV, oldSegv);
+        signal(SIGBUS, oldBus);
         released++;
         fflush(stdout);
     }
