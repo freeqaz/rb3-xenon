@@ -131,14 +131,13 @@ void BandHeadShaper::Init() {
     FilePathTracker tracker(FileRoot());
     const char *genderpath = "";
     DataArray *cfg = SystemConfig("objects", "BandCharDesc");
-    auto _tmp0 = cfg->FindData("head_male_path", genderpath, false);
+    if (cfg->FindData("head_male_path", genderpath, false)
 #ifdef HX_NATIVE
-    // char-Load 5b: serialization is byte-correct on LE (CharLoad5b gtest); head
-    // shapes now load by default on native. RB3_NO_HEAD_SHAPER=1 opts back out.
-    if (getenv("RB3_NO_HEAD_SHAPER"))
-        _tmp0 = false;
+        // char-Load 5b: serialization is byte-correct on LE (CharLoad5b gtest); head
+        // shapes now load by default on native. RB3_NO_HEAD_SHAPER=1 opts back out.
+        && !getenv("RB3_NO_HEAD_SHAPER")
 #endif
-    if (_tmp0 && genderpath[0] != 0) {
+        && genderpath[0] != 0) {
         static int _x = MemFindHeap("char");
         MemPushHeap(_x);
         {
@@ -156,12 +155,11 @@ void BandHeadShaper::Init() {
         gVisemes[3] = FindSubdir(gMaleDir, "vignette_visemes");
         MemPopHeap();
     }
-    auto _tmp1 = cfg->FindData("head_female_path", genderpath, false);
+    if (cfg->FindData("head_female_path", genderpath, false)
 #ifdef HX_NATIVE
-    if (getenv("RB3_NO_HEAD_SHAPER")) // see head_male_path note above
-        _tmp1 = false;
+        && !getenv("RB3_NO_HEAD_SHAPER") // see head_male_path note above
 #endif
-    if (_tmp1 && genderpath[0] != 0) {
+        && genderpath[0] != 0) {
         static int _x = MemFindHeap("char");
         MemPushHeap(_x);
         {
