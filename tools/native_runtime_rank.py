@@ -148,8 +148,9 @@ def run_all(repo, bdir):
         if raws:
             sh(["llvm-profdata", "merge", "-sparse", "-o",
                 os.path.join(pdir, name + ".profdata")] + raws, check=True)
-        status[name] = {"rc": rc, "ok": ok, "profraw": len(raws)}
-        print("  %-12s rc=%-3d %s profraw=%d" % (name, rc, "OK  " if ok else "FAIL", len(raws)))
+        rawb = sum(os.path.getsize(f) for f in raws)
+        status[name] = {"rc": rc, "ok": ok, "profraw": len(raws), "profraw_bytes": rawb}
+        print("  %-12s rc=%-3d %s profraw=%d (%d B)" % (name, rc, "OK  " if ok else "FAIL", len(raws), rawb))
     json.dump(status, open(os.path.join(pdir, "status.json"), "w"), indent=1)
     return status
 
@@ -160,7 +161,9 @@ def export_counts(repo, bdir):
     pdir = os.path.join(bdir, "prof")
     srcroot = os.path.realpath(os.path.join(repo, "src")) + os.sep
     out = {}
+    per_target = {}
     for name in json.load(open(os.path.join(pdir, "status.json"))):
+        per_target[name] = 0
         pd = os.path.join(pdir, name + ".profdata")
         exe = os.path.join(bdir, name)
         if not os.path.exists(pd):
@@ -188,7 +191,8 @@ def export_counts(repo, bdir):
             e["count"] += c
             if c:
                 e["targets"][name] = e["targets"].get(name, 0) + c
-    return out
+                per_target[name] += 1
+    return out, per_target
 
 
 # ------------------------------------------------------------ demangling ----
@@ -310,19 +314,58 @@ def parse_itanium(dem, mangled):
     return key_from(head.strip(), params, const)
 
 
+# ---------------------------------------------------------------- tiers ----
+# The campaign's scope rings (CAMPAIGN_STATE_* §2, W16-OV's scope_ledger2.py):
+# scripts/native_scope_map.py classify(), with NATIVE-VIA-DC3 split into VIA-DC3
+# (DC3 has the same path under src/system) and IN-RB3ENG (it does not). IN_SCOPE
+# is the native port's ring; rows in scaffold units (tools/ceiling_recompute.py's
+# coff_symcount <= 6 rule) are outside the reachable ceiling and are dropped from
+# the tier figures, so "in-scope gap" here is the campaign's in-scope gap.
+IN_SCOPE = ("IN-CORE", "IN-SOON", "IN-RB3ENG")
+
+
+def tier_fn(repo):
+    sys.path.insert(0, os.path.join(repo, "scripts"))
+    sys.path.insert(0, os.path.join(repo, "tools"))
+    import native_scope_map as N
+    dc3 = os.path.join(os.environ.get("RB3_MILOHAX", os.path.expanduser("~/code/milohax")), "dc3-decomp")
+    have = set()
+    for r, _, fs in os.walk(os.path.join(dc3, "src/system")):
+        for n in fs:
+            have.add(os.path.relpath(os.path.join(r, n), dc3).lower())
+    if not have:
+        print("native_runtime_rank: no DC3 tree at %s, cannot split VIA-DC3" % dc3, file=sys.stderr)
+        sys.exit(2)
+
+    def tier(src):
+        t = N.classify(src)
+        if t == "NATIVE-VIA-DC3":
+            return "VIA-DC3" if (src or "").lower() in have else "IN-RB3ENG"
+        return {"NATIVE-CORE": "IN-CORE", "NATIVE-SOON": "IN-SOON"}.get(t, t)
+    return tier
+
+
 # ------------------------------------------------------------------ rows ----
 def in_scope_rows(repo):
     r = json.load(open(os.path.join(repo, "build/45410914/report.json")))
     o = json.load(open(os.path.join(repo, "objdiff.json")))
     sp = {u["name"]: (u.get("metadata") or {}).get("source_path", "") for u in o["units"]}
+    bp = {u["name"]: u.get("base_path") for u in o["units"]}
+    import ceiling_recompute as C
+    tier = tier_fn(repo)
     rows = []
     for u in r["units"]:
         s = sp.get(u["name"], "")
         if not (s.startswith("src/band3/") or s.startswith("src/system/")):
             continue
+        b = bp.get(u["name"])
+        cnt = C.coff_symcount(b if not b or os.path.isabs(b) else os.path.join(repo, b)) if b else None
+        # outside the reachable ceiling: no base obj (unpairable) or a scaffold shell
+        scaffold = "unpairable" if not b else ("scaffold" if cnt and cnt[0] <= 6 else "")
+        t = tier(s)
         for f in u.get("functions", []):
             fz = float(f.get("fuzzy_match_percent", 0))
-            rows.append({"unit": u["name"], "src": s, "name": f["name"],
+            rows.append({"unit": u["name"], "src": s, "name": f["name"], "scope": t, "scaffold": scaffold,
                          "dem": (f.get("metadata") or {}).get("demangled_name", ""),
                          "size": int(f.get("size", 0)), "fuzzy": fz,
                          "mpn": float(f.get("match_percent_normalized", 0))})
@@ -356,7 +399,21 @@ def main():
     if bad:
         print("native_runtime_rank: targets did not complete: %s" % bad, file=sys.stderr)
 
-    counts = export_counts(repo, bdir)
+    counts, per_target = export_counts(repo, bdir)
+    # W16-TF: rb3-render ends in _exit(), which skipped the profile writer, so
+    # its .profraw was 0 bytes and every row it runs read "not executed" while
+    # the target itself read rc=0 OK. A target that ran but counted nothing is
+    # a broken leg, not a fact about the code.
+    ninja = open(os.path.join(bdir, "build.ninja")).read()
+    srcdir = os.path.realpath(os.path.join(repo, "src")).lstrip("/")
+    for t, s_ in status.items():
+        if s_.get("profraw_bytes", 1) == 0:
+            fails.append("%s wrote an empty profile (_exit before the profile runtime's atexit?)" % t)
+        # rb3-frame compiles only main_frame.cpp, so 0 is right there; a target
+        # that compiles this repo's src/ objects must enter at least one.
+        if per_target.get(t, 0) == 0 and ("CMakeFiles/%s.dir/%s/" % (t, srcdir)) in ninja:
+            fails.append("%s compiles repo src/ objects but counted none of them" % t)
+    print("src/ functions entered per target: %s" % ", ".join("%s %d" % kv for kv in sorted(per_target.items())))
     if not counts:
         print("native_runtime_rank: no profile data", file=sys.stderr)
         sys.exit(2)
@@ -428,12 +485,29 @@ def main():
     exb = sum(r["size"] for r in ex)
     print("in-scope sub-100 rows: %d (%d B); joined: %s; executed: %d rows / %d B"
           % (len(rows), sum(r["size"] for r in rows), dict(tiers), len(ex), exb))
-    hdr = "count\ttargets\tfuzzy\tmpn\tsize\ttier\tname\tsrc\tdemangled"
+    # Executed rows per scope ring, gap rows only (scaffold units dropped).
+    print("\nby scope ring (reachable gap rows; executed = entered at least once):")
+    print("  %-14s %6s %9s %9s %10s" % ("ring", "rows", "bytes", "exec rows", "exec bytes"))
+    ring = collections.defaultdict(lambda: [0, 0, 0, 0])
+    for r in rows:
+        if r["scaffold"]:
+            continue
+        for k in (r["scope"], "IN-SCOPE" if r["scope"] in IN_SCOPE else None):
+            if not k:
+                continue
+            acc = ring[k]
+            acc[0] += 1; acc[1] += r["size"]
+            if r["count"] > 0:
+                acc[2] += 1; acc[3] += r["size"]
+    for k in sorted(ring, key=lambda k: (k != "IN-SCOPE", -ring[k][1])):
+        acc = ring[k]
+        print("  %-14s %6d %9d %9d %10d" % (k, acc[0], acc[1], acc[2], acc[3]))
+    hdr = "count\ttargets\tfuzzy\tmpn\tsize\ttier\tscope\tname\tsrc\tdemangled"
     lines = [hdr]
     for r in rows:
-        lines.append("%d\t%s\t%.2f\t%.2f\t%d\t%s\t%s\t%s\t%s" % (
+        lines.append("%d\t%s\t%.2f\t%.2f\t%d\t%s\t%s\t%s\t%s\t%s" % (
             r["count"], ",".join(sorted(r["targets"])) or "-", r["fuzzy"], r["mpn"], r["size"],
-            r["tier"], r["name"], r["src"], r["dem"]))
+            r["tier"], r["scope"] + ("/" + r["scaffold"] if r["scaffold"] else ""), r["name"], r["src"], r["dem"]))
     if a.out:
         open(a.out, "w").write("\n".join(lines) + "\n")
     for ln in lines[:a.top + 1]:

@@ -1816,6 +1816,8 @@ if(RB3X_BUILD_ENGINE)
         ${CMAKE_SOURCE_DIR}/src/w16sh_link_support.cpp
         # W16-SH: gates over the dsp/synth/meta code linked above.
         ${CMAKE_SOURCE_DIR}/src/w16sh_phase.cpp
+        # W16-TF: gates over engine math/utl rows no native target entered.
+        ${CMAKE_SOURCE_DIR}/src/w16tf_phase.cpp
         ${VOCALTRACK_GAME_SOURCES}
         ${W16SH_LINK_SOURCES}
         ${W16SH_DEP_SOURCES}
