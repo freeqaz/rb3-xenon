@@ -123,11 +123,11 @@ void RockCentral::RecordScore(int, int, std::vector<PlayerScore> &, int, int, bo
 void PlatformMgr::GetOnlineID(int, OnlineID *) const { UNREACHED(); }
 
 // W16-TJ: the edge of the CustomizePanel / ClosetMgr / BandSongMgr closure
-// (W16TJ_LINK_SOURCES). Synth::Play is the audio device (synth/Synth.cpp is
-// not linked; ClosetMgr plays its finish cues through it), SyncAvailableSongs
-// is another RockCentral call, and XBackgroundDownloadSetMode is the XDK
-// background-download switch CustomizePanel::Enter/Exit flip.
-void Synth::Play(const char *, float, float, float) { UNREACHED(); }
+// (W16TJ_LINK_SOURCES). SyncAvailableSongs is another RockCentral call, and
+// XBackgroundDownloadSetMode is the XDK background-download switch
+// CustomizePanel::Enter/Exit flip. Synth::Play needs no stub: W16-TH wrote its
+// body (retail 0x826FE8A8) in synth/Synth.cpp, which CheatProvider.cpp's
+// scatter-include compiles into this target.
 void RockCentral::SyncAvailableSongs(const std::vector<BandProfile *> &, const std::vector<int> &,
                                      const std::vector<int> &, Hmx::Object *) { UNREACHED(); }
 DWORD XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE) { UNREACHED(); }
