@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "c4d84cfbf",
+ "recorded_at": "7188511f8",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -1127,7 +1127,7 @@
   "0x823b5560": "??1?$ObjPtrList@VCharBone@@VObjectDir@@@@UAA@XZ",
   "0x823b5cc0": "??1Recenter@CharBoneDir@@QAA@XZ",
   "0x823b6738": "??1CharBoneDir@@UAA@XZ",
-  "0x823b8618": null,
+  "0x823b8618": "?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ",
   "0x823b8be8": "??1?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@UAA@XZ",
   "0x823b9560": "??1CharWeightSetter@@UAA@XZ",
   "0x823bf7d8": "??1CharIKFoot@@UAA@XZ",
@@ -1384,7 +1384,7 @@
   "0x8249b7f0": "??1?$ObjOwnerPtr@VRndDrawable@@@@UAA@XZ",
   "0x8249bac8": "??1ProxyCall@EventTrigger@@QAA@XZ",
   "0x8249bb38": "??$?6VSequence@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VSequence@@VObjectDir@@@@@Z",
-  "0x8249bbb0": null,
+  "0x8249bbb0": "??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable@@VObjectDir@@@@@Z",
   "0x8249d120": "??1?$ObjPtrList@VRndPartLauncher@@VObjectDir@@@@UAA@XZ",
   "0x8249d1f0": "?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ",
   "0x8249d6a8": "?Load@?$ObjPtrList@VSequence@@VObjectDir@@@@QAA_NAAVBinStream@@_N@Z",
@@ -1719,7 +1719,7 @@
   "0x82603cd8": "?Refresh@AuditionSessionPanel@@QAAXXZ",
   "0x826058e8": "??$MakeString@VSymbol@@VString@@@@YAPBDPBDVSymbol@@VString@@@Z",
   "0x8260aae8": "??1CalibrationPanel@@UAA@XZ",
-  "0x8260eed8": null,
+  "0x8260eed8": "??1?$_Slist_base@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@QAA@XZ",
   "0x8260ffd8": "?clear@?$hashtable@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
   "0x826100f8": "??1?$hashtable@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@HU?$hash@H@2@U?$_HashMapTraitsT@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@priv@2@U?$_Select1st@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@U?$equal_to@H@2@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
   "0x826206b0": "??$Find@VMainHubPanel@@@ObjectDir@@QAAPAVMainHubPanel@@PBD_N@Z",
@@ -1918,7 +1918,7 @@
   "0x82718c00": "?insert@?$list@UNote@MidiChannel@@V?$StlNodeAlloc@UNote@MidiChannel@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UNote@MidiChannel@@U?$_Nonconst_traits@UNote@MidiChannel@@@stlpmtx_std@@@2@U32@ABUNote@MidiChannel@@@Z",
   "0x82718ce0": "??0?$list@UNote@MidiChannel@@V?$StlNodeAlloc@UNote@MidiChannel@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
   "0x82718e28": "??0MidiChannel@@QAA@ABV0@@Z",
-  "0x8271a138": null,
+  "0x8271a138": "?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
   "0x8271a220": "??0?$ObjPtr@VMoggClip@@@@QAA@ABV0@@Z",
   "0x8271b8b8": "??$__destroy_range_aux@V?$reverse_iterator@PAVMoggClipMap@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAVMoggClipMap@@@0@0ABU__false_type@0@@Z",
   "0x8271c1f0": "??0MoggClipMap@@QAA@ABV0@@Z",
@@ -2051,7 +2051,7 @@
   "0x82768ef0": "?DataPopVar@@YAXXZ",
   "0x82768f98": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
   "0x82768ff8": "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@PAVDataArray@@@2@@Z",
-  "0x827690d0": null,
+  "0x827690d0": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
   "0x82769120": "?DataGetMacro@@YAPAVDataArray@@VSymbol@@@Z",
   "0x8276d050": "??0DirUnloader@@QAA@PAVObjectDir@@@Z",
   "0x8276faf0": "??$__uninitialized_fill_n@PAVPlayerTrackConfig@@IV1@@stlpmtx_std@@YAPAVPlayerTrackConfig@@PAV1@IABV1@ABU__false_type@0@@Z",
@@ -5690,6 +5690,56 @@
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z": "UNDECIDABLE",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z": "UNDECIDABLE",
     "??$_Copy_Construct@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndMesh@@@@ABV1@@Z": "PROVEN"
+   }
+  },
+  "0x822ce170": {
+   "survivor": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "callees": [
+    "0x82273470",
+    "0x825243e0",
+    "0x82524420",
+    "0x82710808",
+    "0x827badb0",
+    "0x827bbd88",
+    "0x827bc430",
+    "0x827bca50",
+    "0x827c44b8",
+    "0x8282aed0",
+    "0x82e0699c",
+    "0x82e06ba8",
+    "0x82e06e08"
+   ],
+   "verdicts": {
+    "?_M_clear@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear@?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear@?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear@?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjOwnerPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VBandTrack@@@@V?$StlNodeAlloc@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VGemTrackDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VGemTrackDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndAnimatable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndGroup@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VSeqInst@@@@V?$StlNodeAlloc@V?$ObjPtr@VSeqInst@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VSequence@@@@V?$StlNodeAlloc@V?$ObjPtr@VSequence@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN",
+    "?_M_clear_after_move@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN"
    }
   },
   "0x822d0be8": {
@@ -10336,6 +10386,56 @@
    ],
    "verdicts": {
     "??_ECharBoneDir@@UAAPAXI@Z": "UNDECIDABLE"
+   }
+  },
+  "0x823b8618": {
+   "survivor": "?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ",
+   "callees": [
+    "0x8227d0e8",
+    "0x825243e0",
+    "0x82524420",
+    "0x8275b378",
+    "0x827badb0",
+    "0x827c44b8",
+    "0x827d51a8",
+    "0x82bb33d8",
+    "0x82c4bfec",
+    "0x82c4bffc",
+    "0x82e05c4c",
+    "0x82e0699c",
+    "0x82e06e08",
+    "0x82e06efc"
+   ],
+   "verdicts": {
+    "?clear@?$ObjPtrList@VRndDrawable@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VRndLight@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharCollide@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VRndMesh@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCamShot@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharPollable@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VRndTransformable@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VBandCamShot@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharLookAt@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharWeightable@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharacter@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VObjectDir@@V1@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VRndAnimatable@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VRndPartLauncher@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VTrackWidget@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VUILabel@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VWaypoint@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VWorldCrowd@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharBoneOffset@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharCuff@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharDriverMidi@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharHair@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharIKHand@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharIKMidi@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharIKScale@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharInterest@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VCharKeyHandMidi@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VOutfitConfig@@VObjectDir@@@@QAAXXZ": "PROVEN"
    }
   },
   "0x823ba1f0": {
@@ -16632,6 +16732,33 @@
     "??$?6VRndMat@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndMat@@VObjectDir@@@@@Z": "PROVEN"
    }
   },
+  "0x8249bbb0": {
+   "survivor": "??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable@@VObjectDir@@@@@Z",
+   "callees": [
+    "0x82000c55",
+    "0x827c4d18",
+    "0x827c4f58",
+    "0x827c5098",
+    "0x827c5100",
+    "0x82b8c888"
+   ],
+   "verdicts": {
+    "??$?6VRndMesh@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndMesh@@VObjectDir@@@@@Z": "PROVEN",
+    "??$?6VRndTransformable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndTransformable@@VObjectDir@@@@@Z": "PROVEN",
+    "??$?6VEventTrigger@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VEventTrigger@@VObjectDir@@@@@Z": "PROVEN",
+    "??$?6VRndLight@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndLight@@VObjectDir@@@@@Z": "PROVEN",
+    "??$?6VCharWeightSetter@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@@Z": "PROVEN",
+    "??$?6VRndAnimatable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndAnimatable@@VObjectDir@@@@@Z": "PROVEN",
+    "??$?6VBandCamShot@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VBandCamShot@@VObjectDir@@@@@Z": "PROVEN",
+    "??$?6VCamShot@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCamShot@@VObjectDir@@@@@Z": "PROVEN",
+    "??$?6VCharPollable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCharPollable@@VObjectDir@@@@@Z": "PROVEN",
+    "??$?6VCharacter@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCharacter@@VObjectDir@@@@@Z": "PROVEN",
+    "??$?6VRndPartLauncher@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndPartLauncher@@VObjectDir@@@@@Z": "PROVEN",
+    "??$?6VTrackWidget@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VTrackWidget@@VObjectDir@@@@@Z": "PROVEN",
+    "??$?6VUILabel@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VUILabel@@VObjectDir@@@@@Z": "PROVEN",
+    "??$?6VWaypoint@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VWaypoint@@VObjectDir@@@@@Z": "PROVEN"
+   }
+  },
   "0x8249d1f0": {
    "survivor": "?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ",
    "callees": [
@@ -20972,8 +21099,8 @@
     "0x827bca50"
    ],
    "verdicts": {
-    "??1?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ": "UNDECIDABLE",
-    "?clear@?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ": "UNDECIDABLE"
+    "??1?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ": "PROVEN",
+    "?clear@?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ": "PROVEN"
    }
   },
   "0x82597ed0": {
@@ -23084,6 +23211,29 @@
    ],
    "verdicts": {
     "??$MakeString@PBDVString@@PBD@@YAPBDPBD0VString@@0@Z": "PROVEN"
+   }
+  },
+  "0x8260eed8": {
+   "survivor": "??1?$_Slist_base@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@QAA@XZ",
+   "callees": [
+    "0x82273470",
+    "0x825243e0",
+    "0x82524420",
+    "0x827badb0",
+    "0x827bbd88",
+    "0x827bc430",
+    "0x827bca50",
+    "0x827c44b8",
+    "0x8282aed0",
+    "0x82e0699c",
+    "0x82e06ba8",
+    "0x82e06e08"
+   ],
+   "verdicts": {
+    "??1?$_Slist_base@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@QAA@XZ": "PROVEN",
+    "??1?$_Slist_base@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@QAA@XZ": "PROVEN",
+    "?clear@?$slist@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$slist@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ": "PROVEN"
    }
   },
   "0x8260ffd8": {
@@ -28025,6 +28175,30 @@
     "?GetDefaultPrefab@PrefabMgr@@QBAPAVPrefabChar@@H@Z": "PROVEN"
    }
   },
+  "0x8271a138": {
+   "survivor": "?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+   "callees": [
+    "0x8275b378",
+    "0x827bca50",
+    "0x82bb33d8",
+    "0x82e05c4c"
+   ],
+   "verdicts": {
+    "?Unlink@?$ObjPtrList@VFader@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z": "PROVEN",
+    "?Unlink@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z": "PROVEN",
+    "?Unlink@?$ObjPtrList@VRndFont@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z": "PROVEN",
+    "?Unlink@?$ObjPtrList@VRndMat@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z": "PROVEN",
+    "?Unlink@?$ObjPtrList@VSequence@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z": "PROVEN",
+    "?Unlink@?$ObjPtrList@VCharBone@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z": "PROVEN",
+    "?Unlink@?$ObjPtrList@VRndTexBlendController@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z": "PROVEN",
+    "?Unlink@?$ObjPtrList@VTask@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z": "PROVEN",
+    "?Unlink@?$ObjPtrList@VCharMeshHide@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z": "PROVEN",
+    "?Unlink@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z": "PROVEN",
+    "?Unlink@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z": "PROVEN",
+    "?Unlink@?$ObjPtrList@VSeqInst@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z": "PROVEN",
+    "?Unlink@?$ObjPtrList@VSfxInst@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z": "PROVEN"
+   }
+  },
   "0x8271a818": {
    "survivor": "??1?$_Vector_base@VSfxMap@@V?$StlNodeAlloc@VSfxMap@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
    "callees": [
@@ -28833,6 +29007,35 @@
     "?_M_create_node@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_std@@U?$pair@QAVFlowNode@@W4QueueState@1@@3@U?$_Select1st@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@QAVFlowNode@@W4QueueState@1@@2@@Z": "PROVEN"
    }
   },
+  "0x827690d0": {
+   "survivor": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+   "callees": [
+    "0x82768f98",
+    "0x827badb0",
+    "0x827bc430",
+    "0x827bca50"
+   ],
+   "verdicts": {
+    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@UEdge@RndAmbientOcclusion@@U?$less@UEdge@RndAmbientOcclusion@@@stlpmtx_std@@U12@U?$_Identity@UEdge@RndAmbientOcclusion@@@4@U?$_SetTraitsT@UEdge@RndAmbientOcclusion@@@priv@4@V?$StlNodeAlloc@UEdge@RndAmbientOcclusion@@@4@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@3@U?$_Select1st@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDepChecker@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDepChecker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDepChecker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDepChecker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVGigFilter@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVQuest@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHH@2@U?$_Select1st@U?$pair@$$CBHH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHW4AnimState@BandList@@@2@U?$_Select1st@U?$pair@$$CBHW4AnimState@BandList@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHW4AnimState@BandList@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHW4AnimState@BandList@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHW4RevealState@BandList@@@2@U?$_Select1st@U?$pair@$$CBHW4RevealState@BandList@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHW4RevealState@BandList@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHW4RevealState@BandList@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBH_N@2@U?$_Select1st@U?$pair@$$CBH_N@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBH_N@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@KU?$less@K@stlpmtx_std@@U?$pair@$$CBKH@2@U?$_Select1st@U?$pair@$$CBKH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBKH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBKH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@3@U?$_Select1st@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@H@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@_N@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@_N@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@_N@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@_N@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ": "PROVEN"
+   }
+  },
   "0x8276c970": {
    "survivor": "??$_Copy_Construct@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VObject@Hmx@@@@ABV1@@Z",
    "callees": [
@@ -29212,7 +29415,8 @@
     "0x827bca50"
    ],
    "verdicts": {
-    "??$__destroy_range@PAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@0@00@Z": "PROVEN"
+    "??$__destroy_range@PAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@0@00@Z": "PROVEN",
+    "??$__destroy_range@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@00@Z": "PROVEN"
    }
   },
   "0x82774388": {

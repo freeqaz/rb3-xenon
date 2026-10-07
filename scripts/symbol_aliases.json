@@ -121075,7 +121075,8 @@
    "address": "0x82774330",
    "survivor": "??$__destroy_mv_srcs@PAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@0@00@Z",
    "folded": [
-    "??$__destroy_range@PAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@0@00@Z"
+    "??$__destroy_range@PAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@0@00@Z",
+    "??$__destroy_range@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@00@Z"
    ],
    "withdrawn": [],
    "evidence": "Opened by W16-UM 2026-10-07: W16-UH's census proved each folded spelling is the callee retail reaches at this address (see 'admitted').",
@@ -121085,6 +121086,13 @@
      "lane": "W16-UM 2026-10-07",
      "how": "CENSUS-SITE",
      "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_82774330 and ours calls this spelling; chase(fn_82774330, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$__destroy_mv_srcs@PAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@ @ 0x82774330, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$__destroy_range@PAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@00@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "a row W16-UM paired calls this spelling where retail's relocation names the survivor (objdiff diff_arg)",
      "chase": "tools/icf_pair_adjudicate.chase(??$__destroy_mv_srcs@PAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@ @ 0x82774330, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
     }
    ]
@@ -121200,6 +121208,936 @@
      "how": "CENSUS-SITE",
      "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_826DA438 and ours calls this spelling; chase(fn_826DA438, spelling) PROVEN",
      "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$p @ 0x826da438, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    }
+   ]
+  },
+  {
+   "name": "_M_clear_after_move",
+   "address": "0x822ce170",
+   "survivor": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "folded": [
+    "?_M_clear@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear@?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear@?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear@?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjOwnerPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VBandTrack@@@@V?$StlNodeAlloc@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VGemTrackDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VGemTrackDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndAnimatable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndGroup@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VSeqInst@@@@V?$StlNodeAlloc@V?$ObjPtr@VSeqInst@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VSequence@@@@V?$StlNodeAlloc@V?$ObjPtr@VSequence@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+    "?_M_clear_after_move@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-UM 2026-10-07: W16-UH's census proved each folded spelling is the callee retail reaches at this address (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "?_M_clear@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear@?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear@?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear@?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjOwnerPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VBandTrack@@@@V?$StlNodeAlloc@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VGemTrackDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VGemTrackDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndAnimatable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndGroup@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VSeqInst@@@@V?$StlNodeAlloc@V?$ObjPtr@VSeqInst@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VSequence@@@@V?$StlNodeAlloc@V?$ObjPtr@VSequence@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_822CE170 and ours calls this spelling; chase(fn_822CE170, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?_M_clear_after_move@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "a row W16-UM paired calls this spelling where retail's relocation names the survivor (objdiff diff_arg)",
+     "chase": "tools/icf_pair_adjudicate.chase(?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V? @ 0x822ce170, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    }
+   ]
+  },
+  {
+   "name": "clear",
+   "address": "0x823b8618",
+   "survivor": "?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ",
+   "folded": [
+    "?clear@?$ObjPtrList@VRndDrawable@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VRndLight@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharCollide@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VRndMesh@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCamShot@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharPollable@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VRndTransformable@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VBandCamShot@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharLookAt@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharWeightable@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharacter@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VObjectDir@@V1@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VRndAnimatable@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VRndPartLauncher@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VTrackWidget@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VUILabel@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VWaypoint@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VWorldCrowd@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharBoneOffset@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharCuff@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharDriverMidi@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharHair@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharIKHand@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharIKMidi@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharIKScale@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharInterest@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VCharKeyHandMidi@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VOutfitConfig@@VObjectDir@@@@QAAXXZ"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-UM 2026-10-07: W16-UH's census proved each folded spelling is the callee retail reaches at this address (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndDrawable@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 23 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndLight@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 6 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharCollide@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 4 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndMesh@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 4 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCamShot@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 3 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharPollable@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 3 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndTransformable@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 3 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VBandCamShot@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharLookAt@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharWeightable@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharacter@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VObjectDir@@V1@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndAnimatable@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndPartLauncher@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VTrackWidget@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VUILabel@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VWaypoint@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VWorldCrowd@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharBoneOffset@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharCuff@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharDriverMidi@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharHair@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharIKHand@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharIKMidi@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharIKScale@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharInterest@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharKeyHandMidi@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VOutfitConfig@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    }
+   ]
+  },
+  {
+   "name": "?6VRndDrawable",
+   "address": "0x8249bbb0",
+   "survivor": "??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable@@VObjectDir@@@@@Z",
+   "folded": [
+    "??$?6VRndMesh@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndMesh@@VObjectDir@@@@@Z",
+    "??$?6VRndTransformable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndTransformable@@VObjectDir@@@@@Z",
+    "??$?6VEventTrigger@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VEventTrigger@@VObjectDir@@@@@Z",
+    "??$?6VRndLight@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndLight@@VObjectDir@@@@@Z",
+    "??$?6VCharWeightSetter@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@@Z",
+    "??$?6VRndAnimatable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndAnimatable@@VObjectDir@@@@@Z",
+    "??$?6VBandCamShot@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VBandCamShot@@VObjectDir@@@@@Z",
+    "??$?6VCamShot@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCamShot@@VObjectDir@@@@@Z",
+    "??$?6VCharPollable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCharPollable@@VObjectDir@@@@@Z",
+    "??$?6VCharacter@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCharacter@@VObjectDir@@@@@Z",
+    "??$?6VRndPartLauncher@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndPartLauncher@@VObjectDir@@@@@Z",
+    "??$?6VTrackWidget@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VTrackWidget@@VObjectDir@@@@@Z",
+    "??$?6VUILabel@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VUILabel@@VObjectDir@@@@@Z",
+    "??$?6VWaypoint@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VWaypoint@@VObjectDir@@@@@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-UM 2026-10-07: W16-UH's census proved each folded spelling is the callee retail reaches at this address (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??$?6VRndMesh@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndMesh@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 6 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$?6VRndTransformable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndTransformable@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 6 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$?6VEventTrigger@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VEventTrigger@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 4 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$?6VRndLight@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndLight@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 3 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$?6VCharWeightSetter@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$?6VRndAnimatable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndAnimatable@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$?6VBandCamShot@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VBandCamShot@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$?6VCamShot@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCamShot@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$?6VCharPollable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCharPollable@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$?6VCharacter@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCharacter@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$?6VRndPartLauncher@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndPartLauncher@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$?6VTrackWidget@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VTrackWidget@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$?6VUILabel@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VUILabel@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??$?6VWaypoint@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VWaypoint@@VObjectDir@@@@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8249BBB0 and ours calls this spelling; chase(fn_8249BBB0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable @ 0x8249bbb0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    }
+   ]
+  },
+  {
+   "name": "Unlink",
+   "address": "0x8271a138",
+   "survivor": "?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+   "folded": [
+    "?Unlink@?$ObjPtrList@VFader@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+    "?Unlink@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+    "?Unlink@?$ObjPtrList@VRndFont@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+    "?Unlink@?$ObjPtrList@VRndMat@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+    "?Unlink@?$ObjPtrList@VSequence@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+    "?Unlink@?$ObjPtrList@VCharBone@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+    "?Unlink@?$ObjPtrList@VRndTexBlendController@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+    "?Unlink@?$ObjPtrList@VTask@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+    "?Unlink@?$ObjPtrList@VCharMeshHide@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+    "?Unlink@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+    "?Unlink@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+    "?Unlink@?$ObjPtrList@VSeqInst@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+    "?Unlink@?$ObjPtrList@VSfxInst@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-UM 2026-10-07: W16-UH's census proved each folded spelling is the callee retail reaches at this address (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "?Unlink@?$ObjPtrList@VFader@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 6 aligned call site(s) where retail calls fn_8271A138 and ours calls this spelling; chase(fn_8271A138, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z @ 0x8271a138, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?Unlink@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 6 aligned call site(s) where retail calls fn_8271A138 and ours calls this spelling; chase(fn_8271A138, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z @ 0x8271a138, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?Unlink@?$ObjPtrList@VRndFont@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 4 aligned call site(s) where retail calls fn_8271A138 and ours calls this spelling; chase(fn_8271A138, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z @ 0x8271a138, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?Unlink@?$ObjPtrList@VRndMat@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 3 aligned call site(s) where retail calls fn_8271A138 and ours calls this spelling; chase(fn_8271A138, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z @ 0x8271a138, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?Unlink@?$ObjPtrList@VSequence@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 3 aligned call site(s) where retail calls fn_8271A138 and ours calls this spelling; chase(fn_8271A138, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z @ 0x8271a138, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?Unlink@?$ObjPtrList@VCharBone@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_8271A138 and ours calls this spelling; chase(fn_8271A138, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z @ 0x8271a138, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?Unlink@?$ObjPtrList@VRndTexBlendController@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_8271A138 and ours calls this spelling; chase(fn_8271A138, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z @ 0x8271a138, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?Unlink@?$ObjPtrList@VTask@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_8271A138 and ours calls this spelling; chase(fn_8271A138, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z @ 0x8271a138, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?Unlink@?$ObjPtrList@VCharMeshHide@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8271A138 and ours calls this spelling; chase(fn_8271A138, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z @ 0x8271a138, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?Unlink@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8271A138 and ours calls this spelling; chase(fn_8271A138, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z @ 0x8271a138, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?Unlink@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8271A138 and ours calls this spelling; chase(fn_8271A138, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z @ 0x8271a138, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?Unlink@?$ObjPtrList@VSeqInst@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8271A138 and ours calls this spelling; chase(fn_8271A138, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z @ 0x8271a138, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?Unlink@?$ObjPtrList@VSfxInst@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8271A138 and ours calls this spelling; chase(fn_8271A138, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z @ 0x8271a138, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    }
+   ]
+  },
+  {
+   "name": "clear",
+   "address": "0x827690d0",
+   "survivor": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+   "folded": [
+    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@UEdge@RndAmbientOcclusion@@U?$less@UEdge@RndAmbientOcclusion@@@stlpmtx_std@@U12@U?$_Identity@UEdge@RndAmbientOcclusion@@@4@U?$_SetTraitsT@UEdge@RndAmbientOcclusion@@@priv@4@V?$StlNodeAlloc@UEdge@RndAmbientOcclusion@@@4@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@3@U?$_Select1st@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDepChecker@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDepChecker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDepChecker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDepChecker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVGigFilter@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVQuest@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHH@2@U?$_Select1st@U?$pair@$$CBHH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHW4AnimState@BandList@@@2@U?$_Select1st@U?$pair@$$CBHW4AnimState@BandList@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHW4AnimState@BandList@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHW4AnimState@BandList@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHW4RevealState@BandList@@@2@U?$_Select1st@U?$pair@$$CBHW4RevealState@BandList@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHW4RevealState@BandList@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHW4RevealState@BandList@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBH_N@2@U?$_Select1st@U?$pair@$$CBH_N@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBH_N@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@KU?$less@K@stlpmtx_std@@U?$pair@$$CBKH@2@U?$_Select1st@U?$pair@$$CBKH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBKH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBKH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@3@U?$_Select1st@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@H@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@_N@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@_N@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@_N@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@_N@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-UM 2026-10-07: W16-UH's census proved each folded spelling is the callee retail reaches at this address (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 8 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@UEdge@RndAmbientOcclusion@@U?$less@UEdge@RndAmbientOcclusion@@@stlpmtx_std@@U12@U?$_Identity@UEdge@RndAmbientOcclusion@@@4@U?$_SetTraitsT@UEdge@RndAmbientOcclusion@@@priv@4@V?$StlNodeAlloc@UEdge@RndAmbientOcclusion@@@4@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@3@U?$_Select1st@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDepChecker@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDepChecker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDepChecker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDepChecker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVGigFilter@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVQuest@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 2 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHH@2@U?$_Select1st@U?$pair@$$CBHH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHW4AnimState@BandList@@@2@U?$_Select1st@U?$pair@$$CBHW4AnimState@BandList@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHW4AnimState@BandList@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHW4AnimState@BandList@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHW4RevealState@BandList@@@2@U?$_Select1st@U?$pair@$$CBHW4RevealState@BandList@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHW4RevealState@BandList@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHW4RevealState@BandList@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBH_N@2@U?$_Select1st@U?$pair@$$CBH_N@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBH_N@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@KU?$less@K@stlpmtx_std@@U?$pair@$$CBKH@2@U?$_Select1st@U?$pair@$$CBKH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBKH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBKH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@3@U?$_Select1st@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@H@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@_N@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@_N@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@_N@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@_N@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_827690D0 and ours calls this spelling; chase(fn_827690D0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CB @ 0x827690d0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    }
+   ]
+  },
+  {
+   "name": "??1",
+   "address": "0x8260eed8",
+   "survivor": "??1?$_Slist_base@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$_Slist_base@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@QAA@XZ",
+    "??1?$_Slist_base@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@QAA@XZ",
+    "?clear@?$slist@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$slist@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-UM 2026-10-07: W16-UH's census proved each folded spelling is the callee retail reaches at this address (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??1?$_Slist_base@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8260EED8 and ours calls this spelling; chase(fn_8260EED8, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??1?$_Slist_base@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@V?$StlNode @ 0x8260eed8, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "??1?$_Slist_base@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8260EED8 and ours calls this spelling; chase(fn_8260EED8, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??1?$_Slist_base@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@V?$StlNode @ 0x8260eed8, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$slist@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8260EED8 and ours calls this spelling; chase(fn_8260EED8, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??1?$_Slist_base@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@V?$StlNode @ 0x8260eed8, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$slist@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-UM 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_8260EED8 and ours calls this spelling; chase(fn_8260EED8, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??1?$_Slist_base@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@V?$StlNode @ 0x8260eed8, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
     }
    ]
   }

@@ -264,9 +264,10 @@ def do_alias(ledger, addrs, write, extra=()):
                 # at a shallower depth (a recursive tree _M_erase).  Any other
                 # assumption counts against admission, as in alias_locate_home.
                 # (the trace truncates names on SLOT-OK rows, so match by prefix)
-                entered = [(t[2], t[3]) for t in tr if t[1] == "SLOT-OK:CALLEE-CHASED"]
+                entered = [(t[2], t[3]) for t in tr
+                           if t[1] in ("SLOT-OK:CALLEE-CHASED", "SLOT-FOLD-OK")]
                 ncyc = sum(1 for t in tr if t[1] == "CYCLE-ASSUMED"
-                           and not any(t[2] == rn and str(t[3]).startswith(on)
+                           and not any(str(t[2]).startswith(rn) and str(t[3]).startswith(on)
                                        for rn, on in entered))
                 nrec = sum(1 for t in tr if t[1] == "CYCLE-ASSUMED") - ncyc
                 und = any(t[1].startswith("SLOT-UNDISCHARGED") for t in tr)
