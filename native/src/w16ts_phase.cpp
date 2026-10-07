@@ -32,6 +32,7 @@
 #include "meta_band/ModifierMgr.h"
 #include "meta_band/SongSortMgr.h"
 #include "meta_band/SongUpgradeMgr.h"
+#include "meta_band/SaveLoadManager.h"
 #include "meta_band/UIStats.h"
 #include "net/NetCore.h"
 #include "net/Server.h"
@@ -39,7 +40,10 @@
 #include "os/Joypad.h"
 #include "os/OnlineID.h"
 #include "ui/UIScreen.h"
+#include "utl/Cache.h"
+#include "utl/CacheMgr.h"
 #include "utl/DataPointMgr.h"
+#include "utl/MemMgr.h"
 #include "obj/Data.h"
 #include "obj/DataFile.h"
 #include "obj/Dir.h"
@@ -935,6 +939,359 @@ void UIStatsChecks() {
     macros->Release();
 }
 
+// ============================================ SaveLoadManager::SetState ==
+// SetState is a 0x6b-state machine; most arms hand off to TheMemcardMgr,
+// TheProfileMgr, TheSongMgr or TheUIEventMgr, which have no native fixture. The
+// arms gated here are the ones whose whole effect is members, UpdateStatus,
+// SetState itself, and TheCacheMgr / mCache -- the song-cache and global-options
+// cache flow -- plus the exit-state cleanup every transition runs.
+//
+// Fixture: a real SaveLoadManager (its ctor names it saveload_mgr in the main
+// dir and sinks ThePlatformMgr; its dtor undoes both), TheCacheMgr replaced by a
+// CacheMgr subclass and mCache by a Cache subclass that record each call with
+// the manager's mState at the time, and a sink that records every
+// SaveLoadMgrStatusUpdateMsg UpdateStatus exports. The CacheID store is the real
+// CacheMgr's (GetCacheID / AddCacheID / RemoveCacheID are not virtual).
+//
+// THE REFERENCE is the transition table read off retail fn_82550880 (TU5), each
+// with the retail address of its immediate:
+//   0x15,0x16 -> 0x19 (0x82550C9C li 0x19); 0x19 failure with a non-zero result
+//   -> 0x1a (0x82550D6C li 0x1a); 0x24/0x25: unk7c 1/0, unk78 0, unk68 1, then
+//   0x22 if mCache else 0x26 (0x82550F14 subfic/subfe/clrrwi/addi 0x26);
+//   0x26: mCacheID = 0 then 0x27 (0x82550F34 stw, li 0x27); 0x13: GetCacheID
+//   ("globaloptions", the .data pointer 0x82C72830 -> 0x82089524) when mCacheID
+//   is null, then 0x37 if still null else 0x31 (0x82550F84 / 0x82550F8C);
+//   0x53 -> 0x40 / 0x3d the same way (0x825515D4 / 0x825515DC).
+// Retail's row reads mpn 100 / fuzzy 99.95 (relocation names only), so the
+// immediates and branch shapes of our body are retail's; the gate checks what
+// the native build DOES with them.
+
+struct SlmCall {
+    std::string op;
+    int state;
+    std::string arg;
+};
+std::vector<SlmCall> gSlmCalls;
+std::vector<std::pair<int, int>> gSlmStatus; // (status, mState)
+SaveLoadManager *gSlm = nullptr;
+
+void SlmRec(const char *op, const std::string &arg) {
+    gSlmCalls.push_back({op, gSlm ? (int)gSlm->mState : -1, arg});
+}
+
+struct W16tsCacheID : public CacheID {
+    const char *GetCachePath(const char *) override { return ""; }
+    const char *GetCacheSearchPath(const char *) override { return ""; }
+};
+
+struct W16tsCache : public Cache {
+    const char *GetCacheName() override { return "w16ts"; }
+    void Poll() override {}
+    bool IsConnectedSync() override { return true; }
+    bool GetFreeSpaceSync(u64 *) override { SlmRec("Cache::GetFreeSpaceSync", ""); return true; }
+    bool DeleteSync(const char *n) override { SlmRec("Cache::DeleteSync", n); return true; }
+    bool GetDirectoryAsync(const char *n, std::vector<CacheDirEntry> *, Hmx::Object *) override {
+        SlmRec("Cache::GetDirectoryAsync", n);
+        return true;
+    }
+    bool GetFileSizeAsync(const char *n, unsigned int *out, Hmx::Object *) override {
+        SlmRec("Cache::GetFileSizeAsync",
+               std::string(n) + (gSlm && out == (unsigned int *)&gSlm->mSaveSize ? " ->mSaveSize" : " ->?"));
+        return true;
+    }
+    bool ReadAsync(const char *n, void *, unsigned int, Hmx::Object *) override {
+        SlmRec("Cache::ReadAsync", n);
+        return true;
+    }
+    bool WriteAsync(const char *n, void *, unsigned int, Hmx::Object *) override {
+        SlmRec("Cache::WriteAsync", n);
+        return true;
+    }
+    bool DeleteAsync(const char *n, Hmx::Object *) override {
+        SlmRec("Cache::DeleteAsync", n);
+        return true;
+    }
+};
+
+std::string IdName(CacheID *id);
+
+struct W16tsCacheMgr : public CacheMgr {
+    bool mShowOk = true;
+    CacheResult mShowFail = kCache_NoError;
+    void Poll() override {}
+    bool SearchAsync(const char *n, CacheID **) override {
+        SlmRec("SearchAsync", n);
+        return true;
+    }
+    bool ShowUserSelectUIAsync(LocalUser *u, u64 size, const char *n, const char *, CacheID **) override {
+        char b[96];
+        snprintf(b, sizeof(b), "%s size 0x%llx user %s", n, (unsigned long long)size, u ? "set" : "null");
+        SlmRec("ShowUserSelectUIAsync", b);
+        if (!mShowOk)
+            SetLastResult(mShowFail);
+        return mShowOk;
+    }
+    bool CreateCacheIDFromDeviceID(unsigned int dev, const char *n, const char *, CacheID **) override {
+        char b[96];
+        snprintf(b, sizeof(b), "device %u %s", dev, n);
+        SlmRec("CreateCacheIDFromDeviceID", b);
+        return true;
+    }
+    bool CreateCacheID(const char *, const char *, const char *, const char *, const char *, int,
+                       CacheID **) override {
+        SlmRec("CreateCacheID", "");
+        return true;
+    }
+    bool MountAsync(CacheID *id, Cache **c, Hmx::Object *) override {
+        SlmRec("MountAsync", IdName(id) + (gSlm && c == &gSlm->mCache ? " ->mCache" : " ->?"));
+        return true;
+    }
+    bool UnmountAsync(Cache **c, Hmx::Object *) override {
+        SlmRec("UnmountAsync", gSlm && c == &gSlm->mCache ? "&mCache" : "?");
+        return true;
+    }
+    bool DeleteAsync(CacheID *id) override {
+        SlmRec("DeleteAsync", IdName(id));
+        return true;
+    }
+};
+
+W16tsCacheID *gIdGlobal = nullptr, *gIdOther = nullptr;
+std::string IdName(CacheID *id) {
+    return id == nullptr ? "null" : id == gIdGlobal ? "idGlobal" : id == gIdOther ? "idOther" : "id?";
+}
+
+struct StatusSink : public Hmx::Object {
+    DataNode Handle(DataArray *msg, bool) override {
+        if (msg && msg->Size() > 2 && msg->Type(1) == kDataSymbol
+            && !strcmp(msg->Sym(1).Str(), "saveloadmgr_status_update_msg"))
+            gSlmStatus.push_back({msg->Int(2), gSlm ? (int)gSlm->mState : -1});
+        return DataNode(kDataUnhandled, 0);
+    }
+};
+
+std::string CallsText(const std::vector<SlmCall> &v) {
+    std::string s;
+    for (auto &c : v) {
+        char b[48];
+        snprintf(b, sizeof(b), "@0x%x ", c.state);
+        s += (s.empty() ? "" : "; ") + std::string(b) + c.op + "(" + c.arg + ")";
+    }
+    return s.empty() ? "none" : s;
+}
+std::string StatusText(const std::vector<std::pair<int, int>> &v) {
+    std::string s;
+    for (auto &p : v) {
+        char b[32];
+        snprintf(b, sizeof(b), "%s%d@0x%x", s.empty() ? "" : " ", p.first, p.second);
+        s += b;
+    }
+    return s.empty() ? "none" : s;
+}
+
+struct SlmCase {
+    const char *label;
+    int from, to;
+    std::function<void(SaveLoadManager *, W16tsCacheMgr *)> setup;
+    int wantState;
+    std::vector<SlmCall> wantCalls;
+    std::vector<std::pair<int, int>> wantStatus;
+    std::function<bool(SaveLoadManager *)> post;
+};
+
+void SaveLoadManagerChecks() {
+    bool nameFree = !ObjectDir::Main()->Find<Hmx::Object>("saveload_mgr", false);
+    CacheMgr *savedCacheMgr = TheCacheMgr;
+    W16tsCacheMgr *cm = new W16tsCacheMgr();
+    W16tsCache *cache = new W16tsCache();
+    gIdGlobal = new W16tsCacheID();
+    gIdOther = new W16tsCacheID();
+    cm->AddCacheID(gIdGlobal, Symbol("globaloptions"));
+    bool storeOk = cm->GetCacheID(Symbol("globaloptions")) == gIdGlobal
+        && cm->GetCacheID(Symbol("w16ts_other")) == nullptr;
+    Gate("sl-fixture", nameFree && storeOk,
+         "saveload_mgr %s in the main dir; the recording CacheMgr's real CacheID store "
+         "answers globaloptions -> idGlobal and an unknown name -> null: %s",
+         nameFree ? "free" : "ALREADY PRESENT", storeOk ? "yes" : "NO");
+    if (!nameFree || !storeOk)
+        return;
+    TheCacheMgr = cm;
+    SaveLoadManager *slm = new SaveLoadManager();
+    gSlm = slm;
+    StatusSink *sink = new StatusSink();
+    slm->AddSink(sink);
+
+    const int kNeutral = 0x1a; // kS_SongCacheCreateMountRead: no exit cleanup, no entry body
+    const std::string g = "globaloptions";
+    std::vector<SlmCase> cases = {
+        {"0x26 clears mCacheID, searches the global cache", kNeutral, 0x26,
+         [&](SaveLoadManager *m, W16tsCacheMgr *) { m->mCacheID = gIdOther; }, 0x27,
+         {{"SearchAsync", 0x27, g}}, {},
+         [&](SaveLoadManager *m) { return m->mCacheID == nullptr; }},
+        {"0x24 with a mounted cache unmounts it", kNeutral, 0x24,
+         [&](SaveLoadManager *m, W16tsCacheMgr *) {
+             m->mCache = cache; m->unk7c = 7; m->unk78 = 9; m->unk68 = false; },
+         0x22, {{"UnmountAsync", 0x22, "&mCache"}}, {},
+         [&](SaveLoadManager *m) { return m->unk7c == 1 && m->unk78 == 0 && m->unk68; }},
+        {"0x25 with no cache goes 0x26 -> 0x27", kNeutral, 0x25,
+         [&](SaveLoadManager *m, W16tsCacheMgr *) {
+             m->mCache = nullptr; m->mCacheID = gIdOther; m->unk7c = 7; m->unk78 = 9; m->unk68 = false; },
+         0x27, {{"SearchAsync", 0x27, g}}, {},
+         [&](SaveLoadManager *m) {
+             return m->unk7c == 0 && m->unk78 == 0 && m->unk68 && m->mCacheID == nullptr; }},
+        {"0x13 looks the global id up and mounts it", kNeutral, 0x13,
+         [&](SaveLoadManager *m, W16tsCacheMgr *) { m->mCacheID = nullptr; }, 0x31,
+         {{"MountAsync", 0x31, "idGlobal ->mCache"}}, {{1, 0x31}},
+         [&](SaveLoadManager *m) { return m->mCacheID == gIdGlobal; }},
+        {"0x13 keeps an id it already holds", kNeutral, 0x13,
+         [&](SaveLoadManager *m, W16tsCacheMgr *) { m->mCacheID = gIdOther; }, 0x31,
+         {{"MountAsync", 0x31, "idOther ->mCache"}}, {{1, 0x31}},
+         [&](SaveLoadManager *m) { return m->mCacheID == gIdOther; }},
+        {"0x53 looks the global id up and mounts it (0x3d)", kNeutral, 0x53,
+         [&](SaveLoadManager *m, W16tsCacheMgr *) { m->mCacheID = nullptr; }, 0x3d,
+         {{"MountAsync", 0x3d, "idGlobal ->mCache"}}, {{1, 0x3d}},
+         [&](SaveLoadManager *m) { return m->mCacheID == gIdGlobal; }},
+        {"0x16 drops its id and asks the user for a song cache", kNeutral, 0x16,
+         [&](SaveLoadManager *m, W16tsCacheMgr *c) {
+             W16tsCacheID *tmp = new W16tsCacheID();
+             c->AddCacheID(tmp, Symbol("w16ts_songcache"));
+             m->mCacheID = tmp; m->unk4c = "w16ts_songcache"; c->mShowOk = true; },
+         0x19, {{"ShowUserSelectUIAsync", 0x19, "w16ts_songcache size 0x25800 user null"}}, {},
+         [&](SaveLoadManager *m) {
+             return m->mCacheID == nullptr && !TheCacheMgr->GetCacheID(Symbol("w16ts_songcache")); }},
+        {"0x15 whose dialog fails with a result goes to 0x1a", kNeutral, 0x15,
+         [&](SaveLoadManager *m, W16tsCacheMgr *c) {
+             m->mCacheID = nullptr; c->mShowOk = false; c->mShowFail = kCache_ErrorUserCancel; },
+         0x1a, {{"ShowUserSelectUIAsync", 0x19, "w16ts_songcache size 0x25800 user null"}}, {},
+         nullptr},
+        {"0x15 whose dialog fails with no result waits in 0x19", kNeutral, 0x15,
+         [&](SaveLoadManager *m, W16tsCacheMgr *c) {
+             m->mCacheID = nullptr; c->mShowOk = false; c->mShowFail = kCache_NoError; },
+         0x19, {{"ShowUserSelectUIAsync", 0x19, "w16ts_songcache size 0x25800 user null"}}, {},
+         nullptr},
+        {"0x1d deletes the cache", kNeutral, 0x1d,
+         [&](SaveLoadManager *m, W16tsCacheMgr *c) { m->mCacheID = gIdOther; c->mShowOk = true; },
+         0x1d, {{"DeleteAsync", 0x1d, "idOther"}}, {{1, 0x1d}}, nullptr},
+        {"0x30 deletes the cache", kNeutral, 0x30,
+         [&](SaveLoadManager *m, W16tsCacheMgr *) { m->mCacheID = gIdGlobal; }, 0x30,
+         {{"DeleteAsync", 0x30, "idGlobal"}}, {{1, 0x30}}, nullptr},
+        {"0x1b mounts without a status", kNeutral, 0x1b,
+         [&](SaveLoadManager *m, W16tsCacheMgr *) { m->mCacheID = gIdOther; }, 0x1b,
+         {{"MountAsync", 0x1b, "idOther ->mCache"}}, {}, nullptr},
+        {"0x2e mounts without a status", kNeutral, 0x2e,
+         [&](SaveLoadManager *m, W16tsCacheMgr *) { m->mCacheID = gIdGlobal; }, 0x2e,
+         {{"MountAsync", 0x2e, "idGlobal ->mCache"}}, {}, nullptr},
+        {"0x20 mounts for write with a status", kNeutral, 0x20,
+         [&](SaveLoadManager *m, W16tsCacheMgr *) { m->mCacheID = gIdOther; }, 0x20,
+         {{"MountAsync", 0x20, "idOther ->mCache"}}, {{1, 0x20}}, nullptr},
+        {"0x1e sizes the cache file into mSaveSize", kNeutral, 0x1e,
+         [&](SaveLoadManager *m, W16tsCacheMgr *) { m->mCache = cache; m->unk4c = "w16ts_songcache"; },
+         0x1e, {{"Cache::GetFileSizeAsync", 0x1e, "w16ts_songcache ->mSaveSize"}}, {}, nullptr},
+        {"0x2c builds the global id from the chosen device", kNeutral, 0x2c,
+         [&](SaveLoadManager *m, W16tsCacheMgr *) { m->unk7c = 2; m->unk78 = 3; m->mCacheID = nullptr; },
+         0x2c, {{"CreateCacheIDFromDeviceID", 0x2c, "device 3 globaloptions"}}, {}, nullptr},
+        {"0x22 unmounts", kNeutral, 0x22, [&](SaveLoadManager *m, W16tsCacheMgr *) { m->mCache = cache; },
+         0x22, {{"UnmountAsync", 0x22, "&mCache"}}, {}, nullptr},
+        {"0x23 unmounts", kNeutral, 0x23, nullptr, 0x23, {{"UnmountAsync", 0x23, "&mCache"}}, {}, nullptr},
+        {"0x34 unmounts", kNeutral, 0x34, nullptr, 0x34, {{"UnmountAsync", 0x34, "&mCache"}}, {}, nullptr},
+        {"0x35 unmounts", kNeutral, 0x35, nullptr, 0x35, {{"UnmountAsync", 0x35, "&mCache"}}, {}, nullptr},
+        {"0x3f unmounts", kNeutral, 0x3f, nullptr, 0x3f, {{"UnmountAsync", 0x3f, "&mCache"}}, {}, nullptr},
+    };
+    int bad = 0;
+    for (SlmCase &c : cases) {
+        slm->mState = (SaveLoadManager::State)c.from;
+        if (c.setup)
+            c.setup(slm, cm);
+        gSlmCalls.clear();
+        gSlmStatus.clear();
+        slm->SetState((SaveLoadManager::State)c.to);
+        bool callsOk = gSlmCalls.size() == c.wantCalls.size();
+        for (size_t i = 0; callsOk && i < gSlmCalls.size(); i++)
+            callsOk = gSlmCalls[i].op == c.wantCalls[i].op && gSlmCalls[i].state == c.wantCalls[i].state
+                && gSlmCalls[i].arg == c.wantCalls[i].arg;
+        bool ok = (int)slm->mState == c.wantState && callsOk && gSlmStatus == c.wantStatus
+            && (!c.post || c.post(slm));
+        printf("  %-52s 0x%02x -> 0x%02x: %s\n", c.label, c.to, (int)slm->mState, ok ? "ok" : "WRONG");
+        if (!ok) {
+            printf("    calls  %s\n    want   %s\n    status %s / want %s\n", CallsText(gSlmCalls).c_str(),
+                   CallsText(c.wantCalls).c_str(), StatusText(gSlmStatus).c_str(),
+                   StatusText(c.wantStatus).c_str());
+            bad++;
+        }
+    }
+    Gate("sl-cache-arms", bad == 0,
+         "%d SetState transitions through the song-cache and global-options arms: end state, "
+         "every CacheMgr/Cache call (with the state it was made in) and every status export "
+         "match the retail table; %d wrong",
+         (int)cases.size(), bad);
+
+    // ---- exit-state cleanup, the same-state no-op, Idle and Start ----
+    int ebad = 0;
+    auto expect = [&](bool ok, const char *what) {
+        printf("  %-72s %s\n", what, ok ? "ok" : "WRONG");
+        if (!ok)
+            ebad++;
+    };
+    void *buf = MemAlloc(64, __FILE__, __LINE__, "w16ts", 0);
+    slm->mState = (SaveLoadManager::State)0x1f;
+    slm->mData = buf;
+    slm->SetState(SaveLoadManager::kS_Finish);
+    expect(slm->mData == buf && slm->mState == SaveLoadManager::kS_Finish,
+           "leaving 0x1f for kS_Finish keeps mData");
+    slm->SetState((SaveLoadManager::State)kNeutral);
+    expect(slm->mData == nullptr, "leaving kS_Finish frees mData");
+    for (int st : {0x1f, 0x21, 0x32, 0x33, 0x3e}) {
+        slm->mState = (SaveLoadManager::State)st;
+        slm->mData = MemAlloc(64, __FILE__, __LINE__, "w16ts", 0);
+        slm->SetState((SaveLoadManager::State)kNeutral);
+        char w[96];
+        snprintf(w, sizeof(w), "leaving 0x%02x for another state frees mData", st);
+        expect(slm->mData == nullptr, w);
+    }
+    slm->mState = (SaveLoadManager::State)0x27;
+    gSlmCalls.clear();
+    gSlmStatus.clear();
+    slm->mCacheID = gIdOther;
+    slm->SetState((SaveLoadManager::State)0x27);
+    expect(gSlmCalls.empty() && gSlmStatus.empty() && slm->mCacheID == gIdOther,
+           "SetState to the current state does nothing");
+    slm->mState = SaveLoadManager::kS_Idle;
+    gSlmStatus.clear();
+    slm->SetState((SaveLoadManager::State)kNeutral);
+    expect(gSlmStatus == std::vector<std::pair<int, int>>{{0, kNeutral}},
+           "leaving kS_Idle exports status 0 after mState is set");
+    gSlmStatus.clear();
+    slm->SetState(SaveLoadManager::kS_Idle);
+    expect(gSlmStatus == std::vector<std::pair<int, int>>{{5, 0}}, "entering kS_Idle exports status 5");
+    slm->unk7c = 7;
+    gSlmStatus.clear();
+    slm->SetState(SaveLoadManager::kS_Start);
+    expect(slm->unk7c == 0 && gSlmStatus == std::vector<std::pair<int, int>>{{0, 1}},
+           "kS_Idle -> kS_Start: status 0, unk7c cleared");
+    Gate("sl-exit", ebad == 0,
+         "exit-state cleanup (mData freed leaving the five cache-data states unless for "
+         "kS_Finish, and leaving kS_Finish), the same-state no-op, kS_Idle's two exports and "
+         "kS_Start: %d wrong",
+         ebad);
+
+    // ---- restore ----
+    slm->mState = (SaveLoadManager::State)kNeutral;
+    slm->mCacheID = nullptr;
+    slm->mCache = nullptr;
+    slm->mData = nullptr;
+    slm->RemoveSink(sink);
+    delete sink;
+    delete slm;
+    gSlm = nullptr;
+    TheCacheMgr = savedCacheMgr;
+    cm->RemoveCacheID(gIdGlobal);
+    delete gIdGlobal;
+    delete gIdOther;
+    gIdGlobal = gIdOther = nullptr;
+    delete cache;
+    delete cm;
+}
+
 } // namespace
 
 int RunW16TSPhase(GateFn gate) {
@@ -948,5 +1305,6 @@ int RunW16TSPhase(GateFn gate) {
     ModifierChecks();
     BandDirectorChecks();
     UIStatsChecks();
+    SaveLoadManagerChecks();
     return gRan;
 }

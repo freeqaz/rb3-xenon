@@ -1988,6 +1988,12 @@ set(W16TS_LINK_SOURCES
     ${REPO_ROOT}/src/system/bandobj/CrowdAudio.cpp
     # RemoteBandUser's ctor news a TourCharRemote (UIStats::MaybePublish fixture).
     ${REPO_ROOT}/src/band3/tour/TourCharRemote.cpp
+    # SaveLoadManager::SetState's edge: StandIn::SaveSize (BandProfile::SaveSize)
+    # and the two memcard actions it news (the memcard layer itself is stubbed loudly in
+    # w16ts_link_support.cpp).
+    ${REPO_ROOT}/src/band3/meta_band/StandIn.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandMemcardAction.cpp
+    ${REPO_ROOT}/src/system/meta/MemcardAction.cpp
 )
 set_source_files_properties(${W16TS_LINK_SOURCES}
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
