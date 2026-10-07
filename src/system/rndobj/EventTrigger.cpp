@@ -959,20 +959,6 @@ void EventTrigger::ConvertParticleTriggerType() {
 }
 
 
-
-// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
-// interleaved these owners' COMDATs into this TU's .text span.
-#define gRev gRev_FlowTrigger
-#define gAltRev gAltRev_FlowTrigger
-#include "flow/FlowTrigger.cpp"
-#undef gRev
-#undef gAltRev
-#define gRev gRev_Flow
-#define gAltRev gAltRev_Flow
-#include "flow/Flow.cpp"
-#undef gRev
-#undef gAltRev
-
 // sw2 scatter-include (default/EventTrigger <- gesture/SkeletonClip.cpp)
 #define gRev gRev_SkeletonClip
 #define gAltRev gAltRev_SkeletonClip

@@ -1365,15 +1365,6 @@ END_HANDLERS
 
 #pragma endregion Automator
 
-// Lane-AE b2 scatter-include: retail placed FlowQueueable::RequestStop's COMDAT
-// (4 B -- verified: a bare `b FlowNode::RequestStop` tail call) inside the .text
-// span pinned to default/UI.
-#define gRev gRev_FlowQueueable
-#define gAltRev gAltRev_FlowQueueable
-#include "flow/FlowQueueable.cpp"
-#undef gRev
-#undef gAltRev
-
 // ---------------------------------------------------------------------------
 // SCAFFOLD -- LocalePanel COMDAT donor. Read before removing.
 //

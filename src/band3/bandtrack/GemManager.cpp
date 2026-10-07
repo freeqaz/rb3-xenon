@@ -1638,13 +1638,6 @@ RndDir *TrackDir::SmasherPlate() {
 
 bool TrackDir::IsBlackKey(int) const { return false; }
 
-// sw2 scatter-include (default/band3/bandtrack/GemManager <- flow/FlowManager.cpp)
-#define gRev gRev_FlowManager
-#define gAltRev gAltRev_FlowManager
-#include "flow/FlowManager.cpp"
-#undef gRev
-#undef gAltRev
-
 // ---------------------------------------------------------------------------
 // lane-AE batch-3 (sw3) force-emit: retail scattered these template/implicit
 // COMDATs into the .text span pinned to default/band3/bandtrack/GemManager.
@@ -1668,6 +1661,12 @@ bool TrackDir::IsBlackKey(int) const { return false; }
 template RndText::Line *
 stlpmtx_std::vector<RndText::Line, stlpmtx_std::StlNodeAlloc<RndText::Line> >::
     erase(RndText::Line *, RndText::Line *);
+
+// W16-TZ: retail 0x82272240 is MakeString<float,float,float> (112 B), the last
+// block of this unit's pins in the pre-main template run. It used to pair only
+// because flow/FlowManager.cpp was scatter-included here, and retail contains no
+// Flow system (W16-TU). This instantiates the same template directly instead.
+template const char *MakeString<float, float, float>(const char *, float, float, float);
 
 // W16-IA: the _Param_Construct<WorldCrowd::CharData::Char3D> instantiation and
 // the ??0Entry@LocalePanel force-emit that used to sit here were removed. Both

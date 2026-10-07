@@ -449,12 +449,3 @@ void CheatsTerminate() {
         gCheatsManager = 0;
     }
 }
-
-// sw2 scatter-include (default/Cheats <- flow/Flow.cpp)
-#define gRev gRev_Flow
-#define gAltRev gAltRev_Flow
-#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
-#include "flow/Flow.cpp"
-#endif
-#undef gRev
-#undef gAltRev
