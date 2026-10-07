@@ -111,6 +111,7 @@ extern "C" __attribute__((weak)) int __llvm_profile_write_file(void);
 #include "os/Archive.h"
 #include "os/Debug.h"
 #include "os/File.h"
+#include "os/Timer.h"
 #include "boot_invariants.h"
 #include "os/System.h"
 #include "rndobj/Cam.h"
@@ -5142,6 +5143,9 @@ static bool gNoW16TF = false;
 // native/src/w16tj_phase.cpp (W16-TJ)
 int RunW16TJPhase(void (*gate)(const char *, bool, const char *));
 static bool gNoW16TJ = false;
+// native/src/w16tm_phase.cpp (W16-TM)
+int RunW16TMPhase(void (*gate)(const char *, bool, const char *));
+static bool gNoW16TM = false;
 
 int main(int argc, char **argv) {
     // Line-buffer: a SIGSEGV inside the renderer would otherwise discard the
@@ -5174,6 +5178,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--no-w16sh") == 0) gNoW16SH = true;
         else if (strcmp(argv[i], "--no-w16tf") == 0) gNoW16TF = true;
         else if (strcmp(argv[i], "--no-w16tj") == 0) gNoW16TJ = true;
+        else if (strcmp(argv[i], "--no-w16tm") == 0) gNoW16TM = true;
         else if (strcmp(argv[i], "--crowd-all") == 0) gCrowdShowAll = true;
         else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
@@ -5247,6 +5252,9 @@ int main(int argc, char **argv) {
     // a synthesised `objects` section, because Rnd::PreInit reads it) and
     // StandUpRenderer().
     InitMakeString();
+    // The game sets the timebase-to-ms factors in Timer::Init (SystemPreInit);
+    // without it every Timer, and so every VarTimer, reads 0 ms. W16-TM.
+    Timer::Init();
     Symbol::Init();
     // ⛔ X8: intern the 248 hand-defined Symbol globals that HANDLE_ACTION /
     // SYNC_PROP dispatch on. They were default-constructed (the NULL symbol),
@@ -5412,6 +5420,11 @@ int main(int argc, char **argv) {
     // rule; --no-w16tj opts out.
     if (pos.size() == 2 && !gNoW16TJ)
         RunW16TJPhase(Gate);
+    // W16-TM: tomcrypt known answers, shipped moggs decoded through
+    // StandardStream/VorbisReader, CompressionEffect, synth/Utl and FlowIf
+    // (native/src/w16tm_phase.cpp). Same default-mode rule; --no-w16tm opts out.
+    if (pos.size() == 2 && !gNoW16TM)
+        RunW16TMPhase(Gate);
 
     printf("\n=== summary ===\n");
     for (size_t i = 0; i < cells.size(); i++) {

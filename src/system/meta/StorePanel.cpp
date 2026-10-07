@@ -739,6 +739,9 @@ END_HANDLERS
 // sw2 scatter-include (default/StorePanel <- hamobj/DancerSequence.cpp)
 #define gRev gRev_DancerSequence
 #define gAltRev gAltRev_DancerSequence
+// W16-TM: native skips this edge; L4_SCATTER_WIRE compiles it standalone, so a second emitter is a duplicate.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "hamobj/DancerSequence.cpp"
+#endif
 #undef gRev
 #undef gAltRev

@@ -1171,20 +1171,29 @@ void ByteGrinder::Init() {
 // sw2 scatter-include (default/ByteGrinder <- hamobj/HamBattleData.cpp)
 #define gRev gRev_HamBattleData
 #define gAltRev gAltRev_HamBattleData
+// W16-TM: native skips this edge; L4_SCATTER_WIRE compiles it standalone, so a second emitter is a duplicate.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "hamobj/HamBattleData.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 
 // sw2 scatter-include (default/ByteGrinder <- synth/MicNull.cpp)
 #define gRev gRev_MicNull
 #define gAltRev gAltRev_MicNull
+// W16-TM: native skips this edge; rb3-render compiles it standalone, so a second emitter is a duplicate.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "synth/MicNull.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 
 // sw2 scatter-include (default/ByteGrinder <- gesture/SkeletonClip.cpp)
 #define gRev gRev_SkeletonClip
 #define gAltRev gAltRev_SkeletonClip
+// W16-TM: native skips this edge; rb3-render already compiles it, so a second emitter is a duplicate.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "gesture/SkeletonClip.cpp"
+#endif
 #undef gRev
 #undef gAltRev

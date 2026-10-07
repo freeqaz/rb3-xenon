@@ -17,7 +17,14 @@ MoggClipMap::MoggClipMap(Hmx::Object *obj)
 // Retail copy-constructs the Hmx::Object base (0x822774F8, the body every other
 // caller spells as Object's copy ctor), not its default ctor (0x8275CB88).
 MoggClipMap::MoggClipMap(const MoggClipMap &mogg)
-    : Hmx::Object(mogg), mMoggClip(mogg.mMoggClip), mPan(mogg.mPan), mPanWidth(mogg.mPanWidth),
+#if HX_NATIVE
+    // Native has no Hmx::Object copy ctor (it would duplicate the ref list and
+    // name-table entry); the map's state is its five members. W16-TM.
+    : Hmx::Object(),
+#else
+    : Hmx::Object(mogg),
+#endif
+      mMoggClip(mogg.mMoggClip), mPan(mogg.mPan), mPanWidth(mogg.mPanWidth),
       mVolume(mogg.mVolume), mIsStereo(mogg.mIsStereo) {}
 
 MoggClipMap &MoggClipMap::operator=(const MoggClipMap &mogg) {

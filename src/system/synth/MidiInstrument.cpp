@@ -385,7 +385,10 @@ void MidiInstrument::StartSample(
 // sw2 scatter-include (default/MidiInstrument <- band3/bandtrack/GemTrack.cpp)
 #define gRev gRev_GemTrack
 #define gAltRev gAltRev_GemTrack
+// W16-TM: native skips this edge; ui/UIList.cpp already emits it, so a second emitter is a duplicate.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "band3/bandtrack/GemTrack.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 

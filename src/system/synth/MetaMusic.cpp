@@ -353,7 +353,10 @@ END_HANDLERS
 #define gRev gRev_PropAnim
 #define gAltRev gAltRev_PropAnim
 #include "obj/dialect_object_push.h"
+// W16-TM: native skips this edge; the rndobj glob compiles it standalone, so a second emitter is a duplicate.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "rndobj/PropAnim.cpp"
+#endif
 #include "obj/dialect_object_pop.h"
 #undef gRev
 #undef gAltRev

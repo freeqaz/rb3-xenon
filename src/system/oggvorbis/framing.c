@@ -567,10 +567,10 @@ long ogg_sync_pageseek(ogg_sync_state *oy,ogg_page *og){
   if(oy->bodybytes+oy->headerbytes>bytes)return(0);
   
   /* The whole test page is buffered.  Verify the checksum */
-#ifndef HX_NATIVE
-  /* On Xbox, v0xE mogg decryption (HMXA→OggS + magicHash XOR) intentionally
-     corrupts the CRC field as an anti-tamper measure. The game never validates
-     Ogg CRCs — skip the check on native to match Xbox behavior. */
+  /* Retail verifies it too (ogg_sync_pageseek, 0x82C2D198, zeroes page+0x16
+     and calls ogg_page_checksum_set). The v0E+ magic-hash XOR covers bytes
+     20-23, which include CRC bytes 22-23, and VorbisReader undoes it before
+     the page gets here, so a correctly decrypted page passes. W16-TM. */
   {
     /* Grab the checksum bytes, set the header field to zero */
     char chksum[4];
@@ -597,7 +597,6 @@ long ogg_sync_pageseek(ogg_sync_state *oy,ogg_page *og){
       goto sync_fail;
     }
   }
-#endif
   
   /* yes, have a whole page all ready to go */
   {
