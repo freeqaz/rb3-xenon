@@ -41,6 +41,9 @@ struct UIListWidgetDrawState {
     std::vector<UIListElementDrawState> mElements; // 0x38
 };
 
+// Retail UIListDir::DrawWidgets (0x8280DB70) tests the draw type against 0
+// (Always), 3 (FocusedOrManual) and 1 (OnlyFocused), so Never is a real value
+// at 2 and FocusedOrManual is 3.
 enum UIListWidgetDrawType {
     kUIListWidgetDrawAlways,
     kUIListWidgetDrawOnlyFocused,
