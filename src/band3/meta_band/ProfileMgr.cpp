@@ -90,11 +90,11 @@ ProfileMgr::ProfileMgr()
         mMicVolumes.push_back(8);
         mForcedMicGains.push_back(kNotForcingGain);
     }
-    // retail allocates 47 rows (0xbc bytes), each a float[kNumLagContexts]
-    const int kNumLagJoypadTypes = 47;
-    mJoypadExtraLagOffsets = new float *[kNumLagJoypadTypes];
+    // one float[kNumLagContexts] row per joypad type: retail allocates 0xbc bytes
+    // (kJoypadNumTypes = 47 pointers) and never frees them (see ~ProfileMgr)
+    mJoypadExtraLagOffsets = new float *[kJoypadNumTypes];
     ProfileMgr *pThis = this;
-    for (int i = 0; i < kNumLagJoypadTypes; i++) {
+    for (int i = 0; i < kJoypadNumTypes; i++) {
         mJoypadExtraLagOffsets[i] = new float[kNumLagContexts];
         for (int j = 0; j < kNumLagContexts; j++) {
             pThis->mJoypadExtraLagOffsets[i][j] =

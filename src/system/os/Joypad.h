@@ -131,9 +131,10 @@ enum JoypadType {
     kJoypadWiiMidiBoxKeyboard = 44,
     kJoypadWiiMidiBoxDrums = 45,
     kJoypadWiiKeytar = 46,
-    kJoypad3ds = 47,
-    kJoypad3dsDebug = 48,
-    kJoypadNumTypes = 49
+    // RB3 has 47 joypad types. DC3's engine adds kJoypad3ds/kJoypad3dsDebug (47, 48)
+    // and kJoypadNumTypes = 49; RB3 retail's ProfileMgr ctor (0x82548058) sizes its
+    // per-type lag table with this constant and allocates 0xbc bytes = 47 rows.
+    kJoypadNumTypes = 47
 };
 
 enum JoypadBreedDataStatus {
