@@ -1873,6 +1873,19 @@ list(FILTER W16TM_OGGVORBIS_SOURCES INCLUDE REGEX "/oggvorbis/")
 set_source_files_properties(${W16TM_OGGVORBIS_SOURCES}
     PROPERTIES INCLUDE_DIRECTORIES "${REPO_ROOT}/src/system/oggvorbis")
 
+# ---- W16-TR: what a live StorePanel needs ---------------------------------
+# w16tr_phase.cpp constructs a StorePanel, so its vtable is live. Its bodies
+# reach StreamPlayer (StorePreviewMgr's song previews) and FirstSortChar
+# (StoreOffer::FirstChar), both portable. The Marketplace backend it also
+# reaches (XboxEnumeration, XboxPurchaser) is replaced by rule and stubbed in
+# w16tr_link_stubs.cpp. docs/decomp/W16TR_DISCARDED_CALLERS_2026-10-07.md.
+set(W16TR_DEP_SOURCES
+    ${REPO_ROOT}/src/system/meta/StreamPlayer.cpp
+    ${REPO_ROOT}/src/system/meta/Sorting.cpp
+)
+set_source_files_properties(${W16TR_DEP_SOURCES}
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+
 set(MILO_TARGET_COMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/milo_object_factories.cpp
     ${ENGINE_SOURCES}
@@ -1991,6 +2004,10 @@ if(RB3X_BUILD_ENGINE)
         # W16-TM: crypto, mogg decode, compressor, synth/Utl and FlowIf gates
         # over the VIA-DC3 files linked below (W16TM_LINK_SOURCES).
         ${CMAKE_SOURCE_DIR}/src/w16tm_phase.cpp
+        # W16-TR: callers for MetaMusic, DeJitterPanel, StorePanel and
+        # MidiSynth, which W16-TM linked but --gc-sections discarded.
+        ${CMAKE_SOURCE_DIR}/src/w16tr_phase.cpp
+        ${CMAKE_SOURCE_DIR}/src/w16tr_link_stubs.cpp
         ${VOCALTRACK_GAME_SOURCES}
         ${W16SH_LINK_SOURCES}
         ${W16SH_DEP_SOURCES}
@@ -1998,6 +2015,7 @@ if(RB3X_BUILD_ENGINE)
         ${W16TJ_VOCAL_SOURCES}
         ${W16TM_LINK_SOURCES}
         ${W16TM_DEP_SOURCES}
+        ${W16TR_DEP_SOURCES}
         ${MILO_TARGET_COMMON_SOURCES}
     )
     list(APPEND MILO_TARGETS rb3-render)
