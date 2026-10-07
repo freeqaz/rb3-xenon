@@ -250,6 +250,11 @@ void FlangerGates() {
          quiet ? "0" : "NONZERO");
 }
 
+// Retail's ctor (0x82548058) allocates 0xbc bytes = 47 lag rows sized by
+// kJoypadNumTypes; DC3's enum (49, with two 3DS types) would let the
+// Get/SetJoypadExtraLag range asserts admit rows past the table.
+static_assert(kJoypadNumTypes == 47, "RB3 has 47 joypad types (retail lag table is 0xbc bytes)");
+
 void ProfileMgrGates() {
     ProfileMgr &pm = TheProfileMgr;
     int bad = 0, cells = 0;
