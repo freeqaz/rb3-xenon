@@ -38,6 +38,7 @@
 #include "meta_band/BandSongMgr.h"
 #include "obj/Data.h"
 #include "obj/DataFile.h"
+#include "obj/Dir.h"
 #include "os/Archive.h"
 #include "os/File.h"
 #include "os/System.h"
@@ -45,6 +46,7 @@
 
 #include "ark_verify.h"
 #include "retail_boot_macros.h"
+#include "retail_system_config.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -52,24 +54,15 @@
 
 extern void InitMakeString();
 extern void InitM1Symbols();     // native/src/m1_symbols.cpp — interns Symbol globals
-extern DataArray *gSystemConfig; // src/system/os/System.cpp
-// native/src/platform/File_Native.cpp
-extern void NativeSetDataDir(const char *dir);
-// native/src/platform/System_Native.cpp
-extern void NativeArchiveInit();
+void DataInit();                 // src/system/obj/Data.cpp
 
 using arkverify::Gates;
 
-// The BandSongMgr load loop calls SystemConfig(missing_song_data)->FindArray(
-// songSym, false). Give it a minimal, valid config so that resolves to "no
-// override" (null) instead of dereferencing a null gSystemConfig.
-static DataArray *MakeMinimalSystemConfig() {
-    DataArray *missing = new DataArray(1);
-    missing->Node(0) = DataNode(Symbol("missing_song_data"));
-    DataArray *cfg = new DataArray(1);
-    cfg->Node(0) = DataNode(missing, kDataArray);
-    return cfg;
-}
+// W16-UG: the system config is retail's, read off the disc by
+// RetailSystemConfig::Boot (as the ten W16-UD drivers do). The BandSongMgr load
+// loop asks SystemConfig(missing_song_data)->FindArray(songSym, false); until
+// W16-UG the driver answered from a one-entry config with an empty
+// (missing_song_data), so retail's per-song overrides never applied.
 
 static bool HasSongId(DataArray *song) {
     return song->FindArray(Symbol("song_id"), false) != nullptr;
@@ -131,8 +124,16 @@ int main(int argc, char **argv) {
     InitMakeString();
     Symbol::Init();
     InitM1Symbols(); // must follow Symbol::Init() (interns the Symbol globals)
+    DataInit();      // data funcs + script engine (the config's autoruns use them)
     { g.total++; g.failures += RetailBootMacros::Define(); } // retail's boot DTA macros (W16-UA)
-    gSystemConfig = MakeMinimalSystemConfig();
+    ObjectDir::PreInit(256, 4096); // sMainDir + DataSetThis(main)
+    // Retail's config off the disc (W16-UG). Archive mode mounts the dataDir
+    // given on the command line; loose mode still needs the disc for the config,
+    // found at $RB3_ASSETS, and reads its dta from the host afterwards.
+    if (int rc = RetailSystemConfig::Boot(arkMode ? dataDir : nullptr))
+        return rc;
+    if (!arkMode)
+        SetUsingCD(false); // the loose dta is a host path, not an archive member
 
     printf("=== rb3-xenon native M14: BandSongMgr fed from the .ark ===\n");
     printf("mode : %s\n", arkMode ? "ARCHIVE" : "loose file (legacy)");
@@ -140,9 +141,8 @@ int main(int argc, char **argv) {
     const char *dtaPath = loosePath;
     if (arkMode) {
         printf("data : %s\n", dataDir);
-        NativeSetDataDir(dataDir);
-        SetUsingCD(true); // ★ must precede any NewFile(); see the header comment.
-        NativeArchiveInit();
+        // Boot(dataDir) above mounted it: NativeSetDataDir, SetUsingCD(true)
+        // (★ must precede any NewFile(); see the header comment), NativeArchiveInit.
         if (!TheArchive) {
             fprintf(stderr, "FATAL: TheArchive is null after NativeArchiveInit()\n");
             return 1;

@@ -55,7 +55,8 @@
 // Usage:
 //   rb3-midi <dataDir> [arkMidPath] [--reference <file>] [--dump <file>] [--corrupt]
 //   rb3-midi <dataDir> --list
-//   rb3-midi --loose <path>          (legacy: parse a loose .mid, no archive)
+//   rb3-midi --loose <path>          (legacy: parse a loose host .mid; the system
+//                                    config still comes off the disc at $RB3_ASSETS)
 
 #include "midi/MidiParserMgr.h"
 #include "midi/MidiParser.h"
@@ -76,6 +77,7 @@
 
 #include "ark_verify.h"
 #include "retail_boot_macros.h"
+#include "retail_system_config.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -84,27 +86,19 @@
 #include <vector>
 
 extern void InitMakeString();
-extern DataArray *gSystemConfig; // src/system/os/System.cpp
 void DataInit();                 // src/system/obj/Data.cpp
-// native/src/platform/File_Native.cpp
-extern void NativeSetDataDir(const char *dir);
-// native/src/platform/System_Native.cpp
-extern void NativeArchiveInit();
 
 using arkverify::Gates;
 
-// SystemConfig("beatmatcher") must resolve to a valid array (MidiParserMgr's ctor
-// + FinishLoad look up (beatmatcher (midi_parsers ...))). We give it an empty
-// (beatmatcher) so midi_parsers is absent -> the mgr constructs no parsers of its
-// own, and we construct them directly below (they self-register in
-// MidiParser::Parsers(), which is exactly what the mgr dispatches over).
-static DataArray *MakeSystemConfig() {
-    DataArray *bm = new DataArray(1);
-    bm->Node(0) = DataNode(Symbol("beatmatcher"));
-    DataArray *cfg = new DataArray(1);
-    cfg->Node(0) = DataNode(bm, kDataArray);
-    return cfg;
-}
+// W16-UG: the system config is retail's, read off the disc by
+// RetailSystemConfig::Boot (as the ten W16-UD drivers do). Until W16-UG this
+// driver built a one-entry config, an empty (beatmatcher), so MidiParserMgr
+// found no (midi_parsers ...) and constructed none of retail's parsers. Now the
+// manager's ctor runs retail's (beatmatcher (midi_parsers (init ...))), which
+// builds the console's 69 parsers (events_parser, the stage-kit parsers when
+// {stagekit_present}, ...), and FinishLoad runs its (finish_loading ...). The
+// driver's own two probe parsers are named probe_* so they do not collide with
+// retail's events_parser.
 
 // ----------------------------------------------------- independent SMF walk --
 // A deliberately naive, self-contained Standard-MIDI-File structural parse of the
@@ -296,7 +290,13 @@ int main(int argc, char **argv) {
     DataInit();                     // data funcs + script engine
     { g.total++; g.failures += RetailBootMacros::Define(); } // retail's boot DTA macros (W16-UA)
     ObjectDir::PreInit(256, 4096);  // sMainDir + DataSetThis(main)
-    gSystemConfig = MakeSystemConfig();
+    // Retail's config off the disc (W16-UG). Archive mode mounts the dataDir
+    // given on the command line; loose mode still needs the disc for the config,
+    // found at $RB3_ASSETS, and reads its .mid from the host afterwards.
+    if (int rc = RetailSystemConfig::Boot(arkMode ? dataDir : nullptr))
+        return rc;
+    if (!arkMode)
+        SetUsingCD(false); // the loose .mid is a host path, not an archive member
 
     printf("=== rb3-xenon native M14: MIDI parsed straight out of the .ark ===\n");
     printf("mode : %s\n", arkMode ? "ARCHIVE" : "loose file (legacy)");
@@ -309,10 +309,9 @@ int main(int argc, char **argv) {
     std::vector<unsigned char> arkBytes;
 
     if (arkMode) {
-        // --- mount ---------------------------------------------------------
-        NativeSetDataDir(dataDir);
-        SetUsingCD(true); // ★ must precede any NewFile(); see the header comment.
-        NativeArchiveInit();
+        // --- mount: Boot(dataDir) above did NativeSetDataDir, SetUsingCD(true)
+        // (★ must precede any NewFile(); see the header comment) and
+        // NativeArchiveInit.
         if (!TheArchive) {
             fprintf(stderr, "FATAL: TheArchive is null after NativeArchiveInit()\n");
             return 1;
@@ -494,10 +493,10 @@ int main(int argc, char **argv) {
     printf("\n--- Stage 2: MidiParserMgr dispatch + MidiParser::ParseAll ---\n");
 
     MidiParser *eventsParser =
-        MakeParser("events_parser",
+        MakeParser("probe_events_parser",
                    "(track_name EVENTS) (text {$this add_message $mp.data})");
     MidiParser *noteParser =
-        MakeParser("note_parser",
+        MakeParser("probe_note_parser",
                    "(track_name 'PART BASS') (midi {$this add_message $mp.data})");
 
     MidiParserMgr mgr(nullptr, Symbol("nativetest"));
