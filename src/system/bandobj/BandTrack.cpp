@@ -199,7 +199,8 @@ void BandTrack::Reset() {
         if (mParent) {
             if (mParent->GetNoBackFromBrink()) {
                 static Symbol no_saving("no_saving");
-                mFailedFeedback->SetProperty(no_saving, DataNode(1));
+                DataNode on(1);
+                mFailedFeedback->SetProperty(no_saving, on);
             }
         }
         delete unkf0;
@@ -223,10 +224,8 @@ void BandTrack::Reset() {
     if (mPopupObject) {
         ResetPopup();
         if (mParent) {
-            mPopupObject->SetProperty(
-                "popup_help_disabled",
-                DataNode(mParent->ShouldDisablePopupHelp() || unk1e)
-            );
+            DataNode disabled(mParent->ShouldDisablePopupHelp() || unk1e);
+            mPopupObject->SetProperty("popup_help_disabled", disabled);
         }
     }
     SetupPlayerIntro();
