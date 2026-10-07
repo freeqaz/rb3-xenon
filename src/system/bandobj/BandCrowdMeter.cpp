@@ -152,7 +152,7 @@ void BandCrowdMeter::Poll() {
             }
         }
         std::sort(mDraws.begin(), mDraws.end(), SortDraws);
-        if (mOrderedPeaks.size() != oldgrpsize) {
+        if (oldgrpsize != mOrderedPeaks.size()) {
             ShowPeakArrow(mOrderedPeaks.size());
         }
     }

@@ -100,16 +100,16 @@ void AppLabel::SetLeaderboardName(const LeaderboardRow &lb) {
 }
 
 void AppLabel::SetLeaderboardRankAndName(const LeaderboardRow &lb) {
-    // Retail: pick the name first (function-local static band_default_name),
-    // then one shared "%s) %s" format.
-    const char *name;
     if (lb.mUnnamedBand) {
         static Symbol band_default_name("band_default_name");
-        name = MakeString(Localize(band_default_name, nullptr), lb.mName.c_str());
+        const char *name =
+            MakeString(Localize(band_default_name, nullptr), lb.mName.c_str());
+        SetDisplayText(MakeString("%s) %s", LocalizeSeparatedInt(lb.mRank), name), true);
     } else {
-        name = lb.mName.c_str();
+        SetDisplayText(
+            MakeString("%s) %s", LocalizeSeparatedInt(lb.mRank), lb.mName.c_str()), true
+        );
     }
-    SetDisplayText(MakeString("%s) %s", LocalizeSeparatedInt(lb.mRank), name), true);
 }
 
 void AppLabel::SetCreditsText(DataArray *arr, UIListSlot *slot) {

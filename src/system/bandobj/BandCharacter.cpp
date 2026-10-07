@@ -1854,11 +1854,11 @@ bool BandCharacter::IsLoading() {
 }
 
 void BandCharacter::StartLoad(bool b1, bool b2, bool b3) {
+    bool b4 = !mInCloset && (b2 || (unk224 & 7));
     bool wasInCloset = mInCloset;
-    bool b4 = !wasInCloset && (b2 || (unk224 & 7));
     mInCloset = b2;
     unk5a1 = b4;
-    if (wasInCloset && !b2)
+    if (wasInCloset && !mInCloset)
         b3 = true;
     if (!IsLoading() || !unk6bd || b3) {
         unk6bd = b4 || b3;

@@ -344,16 +344,16 @@ void BandIKEffector::ComputeElbowPullAndQuat(
     const Vector3 &armVec = mEffector->TransParent()->mLocalXfm.v;
     MakeRotQuat(armVec, localElbow, outQuat.q);
 
-    float dy = elbowTarget.y - shoulderXfm.v.y;
+    // The pull vector is built in outQuat.v and scaled in place; armVec.x is
+    // read before the Subtract overwrites outQuat.v.
     float armLen = armVec.x;
-    float dx = elbowTarget.x - shoulderXfm.v.x;
-    outQuat.v.x = dx;
-    float dz = elbowTarget.z - shoulderXfm.v.z;
-    float len = (float)sqrt(dy * dy + outQuat.v.x * outQuat.v.x + dz * dz);
-    float scale = 1.0f - armLen / len;
+    Subtract(elbowTarget, shoulderXfm.v, outQuat.v);
+    float lenSq = outQuat.v.x * outQuat.v.x + outQuat.v.y * outQuat.v.y;
+    lenSq += outQuat.v.z * outQuat.v.z;
+    float scale = 1.0f - armLen / sqrtf(lenSq);
     outQuat.v.x *= scale;
-    outQuat.v.y = dy * scale;
-    outQuat.v.z = dz * scale;
+    outQuat.v.y *= scale;
+    outQuat.v.z *= scale;
 }
 
 void BandIKEffector::ComputeHandPullAndQuat(
