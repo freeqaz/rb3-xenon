@@ -50,18 +50,18 @@ void LocaleChunkSort::Sort(OrderedLocaleChunk *chunks, int count) {
 namespace LocaleChunkSort {
 template <int N>
 int FastSort(const void *a, const void *b) {
-    int offset = (int)a - (int)b;
-    int i = 0;
-    do {
-        int valA = *(int *)((char *)b + offset);
-        int valB = *(int *)b;
+    // a and b are OrderedLocaleChunks: compare the value word of each of the
+    // first N DataNodes in turn (an 8-byte stride, the node's size).
+    const DataNode *na = (const DataNode *)a;
+    const DataNode *nb = (const DataNode *)b;
+    for (int i = 0; i < N; i++) {
+        int valA = *(const int *)&na[i];
+        int valB = *(const int *)&nb[i];
         if (valA < valB)
             return -1;
         if (valA > valB)
             return 1;
-        i++;
-        b = (const char *)b + 8;
-    } while (i < N);
+    }
     return 0;
 }
 
