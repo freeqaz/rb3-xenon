@@ -615,6 +615,9 @@ bool Campaign::HasValidUser() const {
 // GetAssociatedLocalBandUser -- the residue of some destructible temp that was
 // optimised away, which is also why /Ob2 did not inline it. That construct is
 // not identified, so the out-of-line call is reproduced with noinline.
+// Retail's FuncInfo (0x820A1EF0) is maxState 1, one unwind entry with a NULL
+// action, no IP-to-state entries. Exactly five retail functions use that shape:
+// this one, SongDB::PostLoad and ModifierMgr::IsHidden/IsActive/IsModifierActive.
 __declspec(noinline) LocalBandUser *Campaign::GetLaunchUser() const {
     LocalBandUser *u = GetUser();
     if (u)

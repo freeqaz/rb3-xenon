@@ -1538,10 +1538,13 @@ AccomplishmentProvider::Custom(int, int data, UIListCustom *slot, Hmx::Object *o
 //   .L_14C:
 //     stfs f0, 0x38(r30)
 // We emit two independent `lis __real@3f800000@ha` / `lis __real@3e800000@ha`
-// because our 1.0f and 0.25f are separate `__real@` COMDATs with no
-// guaranteed -0x1c relationship -- that relation is a property of retail's
-// .rdata packing, which no source spelling of SetAlpha(1.0f)/SetAlpha(0.25f)
-// can express.  Structural; the row cannot cross by source work.
+// because our 1.0f and 0.25f are separate `__real@` COMDATs.
+// CORRECTION (lane W16-RV): the shared base is COMPILER co-addressing of
+// TU-local data, not linker packing. Retail .rdata 0x820BC0C0..0x820BC0E0 reads
+// 1.0, 0.25, then Text's threshold table t[] = 0.14 .. 1.0 (base 0x820BC0C8).
+// lbl_820BC0E0 is t[6]; the 0.25f is the TU-local float just before t[0]. So
+// retail's 1.0f here is the table's last element, reached from one base with an
+// immediate -0x1c. No plausible SetAlpha spelling reads t[6], so this stays open.
 //
 // The Function Call Diff here is likewise not a defect: String(const char*)
 // vs String(Symbol) and the BeatMatcher::GetTick / UIListMesh::DefaultMat pair
