@@ -316,7 +316,7 @@ def compare_operand(res, op, va, bsym, badd, base_path):
     if sec is None:
         return {"skip": "retail_unmapped"}
     retail_ro = sec[0] == ".rdata"
-    if not ro and not retail_ro:
+    if not ro and not retail_ro and not getattr(res, "include_mutable", False):
         return {"skip": "mutable"}
     data = data[badd:]
     mask = {m - badd for m in mask if m >= badd}
@@ -331,11 +331,20 @@ def compare_operand(res, op, va, bsym, badd, base_path):
         kind = "blob"
     else:
         w = LOAD_W[op]
+        if not data and not ro and getattr(res, "include_mutable", False):
+            # Ours is in .bss (Coff.extent returns b"" for a section with no raw
+            # data): a zero-initialised static, so its initial value is zeros.
+            data = bytes(w)
         if len(data) < w:
             return {"skip": "extent"}
         data = data[:w]
         kind = {"lfs": "f32", "lfsu": "f32", "lfd": "f64", "lfdu": "f64"}.get(op, "int%d" % (8 * w))
     r = res.img.read(va, w)
+    if r is None and not retail_ro and getattr(res, "include_mutable", False):
+        # Past the section's raw data but inside its virtual size: the loader
+        # zero-fills this tail (retail .bss), so the initial value is zeros.
+        if sec[1] <= va and va + w <= sec[1] + sec[2]:
+            r = bytes(w)
     if r is None:
         return {"skip": "retail_unmapped"}
     if mask:
@@ -651,10 +660,17 @@ def main():
                          "if the target is ever switched back); a mismatch whose retail bytes or "
                          "instruction differ there is labelled image_patch -- an in-place binary "
                          "patch, not source.  Refused if byte-identical to --image.")
+    ap.add_argument("--include-mutable", action="store_true",
+                    help="also compare INITIALISED writable data (a file-scope or function "
+                         "static's initial value, e.g. `static float sFogScale = 0.125f`). "
+                         "A symbol of ours in .bss reads as zeros (a zero-initialised "
+                         "static); a value a dynamic initialiser writes later is not seen "
+                         "on either side.")
     args = ap.parse_args()
     root = os.path.abspath(args.root)
     img = Image(args.image or os.path.join(root, "orig/45410914/band.exe"))
     res = Resolver(root, img)
+    res.include_mutable = args.include_mutable
     if args.alt_image:
         alt = Image(args.alt_image)
         if alt.d == img.d:

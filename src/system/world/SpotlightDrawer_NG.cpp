@@ -115,8 +115,8 @@ void NgSpotlightDrawer::SpotlightResources::Clear() {
 }
 
 
-static float sSheetIntensity = 8.0f;
-static float sSheetW = 0.0f;
+static float sSheetIntensity = 8.0f; // RB3 retail 0x82C71194 = 8.0f
+static float sSheetW = 0.5f; // RB3 retail 0x82C71198 = 0.5f
 
 #ifdef HX_NATIVE
 void NgSpotlightDrawer::SetupFogDensityMap() {}
@@ -554,8 +554,8 @@ void NgSpotlightDrawer::SetupFogDensityState() {
     TheShaderMgr.SetPConstant((PShaderConstant)0x7F, fogParams);
 }
 
-static float sBlurAmount = 0.5f;
-static bool sSeparateBlurPasses = false;
+static float sBlurAmount = 1.0f; // RB3 retail 0x82C711C0 = 1.0f
+static bool sSeparateBlurPasses = true; // RB3 retail 0x82C711C4 = 0x01
 
 void NgSpotlightDrawer::BlurRT() {
     D3DDevice_SetDepthStencilSurface(TheDxRnd.Device(), 0);
@@ -567,7 +567,7 @@ void NgSpotlightDrawer::BlurRT() {
     }
 }
 
-static float sFogScale = 1.0f;
+static float sFogScale = 0.125f; // RB3 retail 0x82C711CC = 0.125f
 
 #ifndef HX_NATIVE
 void NgSpotlightDrawer::BlurRT(float amountX, float amountY) {
