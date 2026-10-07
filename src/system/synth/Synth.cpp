@@ -527,13 +527,9 @@ void Synth::PauseAllSfx(bool pause) {
         if (sfx) {
             sfx->Pause(pause);
         }
-#ifdef HX_NATIVE
-        // DC3-era: RB3 retail (fn_826FE780) pauses Sfx only.
-        Sound *sound = dynamic_cast<Sound *>(*it);
-        if (sound) {
-            sound->Pause(pause);
-        }
-#endif
+        // RB3 retail (fn_826FE780) pauses Sfx only. DC3 also pauses its Sound
+        // objects; RB3 has no Sound class (no Sound.cpp in the X360 build, no
+        // factory registers one), so native follows retail. W16-TM.
     }
 }
 
