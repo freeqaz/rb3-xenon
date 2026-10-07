@@ -114,12 +114,18 @@ void RndShaderMgr::SetShaderErrorDisplay(bool disp) { mDisplayShaderError = disp
 bool RndShaderMgr::GetShaderErrorDisplay() { return mDisplayShaderError; }
 
 unsigned long RndShaderMgr::InitShaders() {
+#ifdef HX_NATIVE
     if (UsingCD() || GetGfxMode() == kOldGfx)
         mCacheShaders = false;
     else {
         DataArray *cfg = SystemConfig("rnd", "cache_shaders");
         mCacheShaders = cfg->Int(1);
     }
+#else
+    // Retail 0x8246B740 (44 B) clears the flag unconditionally: no UsingCD /
+    // gfx-mode test and no rnd/cache_shaders config read (those are DC3's).
+    mCacheShaders = false;
+#endif
     RndShader::Init();
     return RndShaderProgram::InitModTime();
 }
