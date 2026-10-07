@@ -55,7 +55,7 @@ Scratch trees, local branches deleted after the runs:
   (reverse of `a87e436fa`). `c5c9237a8` (S1) removes QP's four pins and names
   (reverse of `00b977b2b`, 3-way). `--revert S1` therefore re-adds pins and
   names only, which is the patch QP could not measure.
-- **RC scratch:** `9895fce5d` is a 3-way revert of `36e8e4d6a`, except the
+- **RC scratch:** `573bff58e` is a 3-way revert of `36e8e4d6a`, except the
   `0x827B8690` Achievements hunk. That hunk is entangled with `03caf1f01`'s
   Achievements_Xbox re-home, so it is kept at tip state on both legs.
   `--revert` of it gives leg B = the branch tip exactly.
@@ -105,7 +105,11 @@ all.
 ## 4. Native gate
 
 The lane touches no `src/` file, so this is a confirmation rather than a risk
-check. See the commit that adds this doc for the gate line.
+check. `tools/native_build_gate.sh` in `~/tmp/wt-w16sp` at `78170c46c`:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
 
 ## 5. Not done
 
