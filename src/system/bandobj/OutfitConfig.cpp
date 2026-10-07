@@ -393,7 +393,7 @@ void OutfitConfig::Piercing::Deform(SyncMeshCB *cb) {
             Subtract(headVert.pos, before.pos, delta);
             if (reskinMesh) {
                 for (int j = 0; j < piece.unk14.size(); j++) {
-                    unsigned short dstIdx = piece.unk14[j];
+                    int dstIdx = piece.unk14[j];
                     if (dstIdx >= reskinMesh->Verts().size()) {
                         MILO_WARN(
                             "%s mesh %s no longer matches piece %d, has fewer verts "
