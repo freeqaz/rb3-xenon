@@ -6295,9 +6295,17 @@
     "??$__unguarded_linear_insert@PAPAVRndPollable@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndPollable@@PAV1@P6A_NPBV1@2@Z@Z",
     "??$__unguarded_linear_insert@PAPAVRndTransformable@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndTransformable@@PAV1@P6A_NPBV1@2@Z@Z",
     "??$__unguarded_linear_insert@PAPAVVocalPart@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@PAV1@P6A_NPBV1@2@Z@Z",
-    "??$__unguarded_linear_insert@PAVSymbol@@V1@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@V1@P6A_N11@Z@Z"
+    "??$__unguarded_linear_insert@PAVSymbol@@V1@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@V1@P6A_N11@Z@Z",
+    "??$__unguarded_linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@PAV1@P6A_NPBV1@2@Z@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 6, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 3 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 6, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 3 census sites over 2 functions.",
+   "admitted": [
+    {
+     "spelling": "??$__unguarded_linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@PAV1@P6A_NPBV1@2@Z@Z",
+     "lane": "W16-TU 2026-10-07",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN; 84 B / 84 B, relocation targets agree, retail body-twins 1 (one retail body of the shape, our build has 8 identical spellings). Witness on retail bytes: 0x82666160 (__linear_insert, inside FriendsProvider's own code, named for FriendsProvider's Friend** instantiation by W16-TU) calls bl 0x82670F88, and our FriendsProvider.obj spells that call __unguarded_linear_insert<Friend**>. Replaces the forgiveness the held FlowNode** spelling used to give this site."
+    }
+   ]
   },
   {
    "name": "$__uninitialized_copy",
