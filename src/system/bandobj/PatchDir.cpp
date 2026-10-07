@@ -857,7 +857,11 @@ END_HANDLERS
 // does: rename the included pair (internal linkage, so no emitted code changes).
 #define gRev gRev_BandCamShot
 #define gAltRev gAltRev_BandCamShot
+// W16-SH: native skips this edge; rb3-render already emits BandCamShot through
+// bandobj/BandCharDesc.cpp, so a second emitter is a duplicate definition.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "bandobj/BandCamShot.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 #undef SW_SCATTER_OWNER_INCLUDE

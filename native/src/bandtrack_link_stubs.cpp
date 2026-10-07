@@ -47,6 +47,9 @@
 #include "net/NetSession.h"
 #include "meta_band/SessionMgr.h"
 #include "game/SongDB.h"
+#include "net/Net.h"
+#include "net_band/RockCentral.h"
+#include "os/PlatformMgr.h"
 
 [[noreturn]] static void BandTrackUnreached(const char *fn) {
     fprintf(stderr, "bandtrack_link_stubs: UNREACHED stub called: %s\n", fn);
@@ -56,38 +59,39 @@
 #define UNREACHED() BandTrackUnreached(__PRETTY_FUNCTION__)
 
 // --- singletons (8) ---------------------------------------------------------
-BandUserMgr *TheBandUserMgr = nullptr;
 CharSync *TheCharSync = nullptr;
 GamePanel *TheGamePanel = nullptr;
 NetSession *TheNetSession = nullptr;
 SessionMgr *TheSessionMgr = nullptr;
 SongDB *TheSongDB = nullptr;
 BandSongMgr *TheSongMgrPtr = nullptr;
-// ProfileMgr is held BY VALUE (meta_band/ProfileMgr.h: `extern ProfileMgr
-// TheProfileMgr`). Zero-filled storage under the same (unmangled) symbol name:
-// any virtual call through it dereferences a null vptr and faults.
-alignas(ProfileMgr) unsigned char gBandTrackProfileMgrStorage[sizeof(ProfileMgr)]
-    __asm__("TheProfileMgr");
+// W16-SH: Net is held BY VALUE (net/NetCore.h: `extern Net TheNet`). The real
+// TU (network/net/Net.cpp) is the Quazal session layer, out of scope; same
+// zero-filled-storage convention TheProfileMgr used before ProfileMgr.cpp was
+// linked: TheNet.GetServer() reads a null mServer, a virtual call faults.
+alignas(Net) unsigned char gW16SHNetStorage[sizeof(Net)] __asm__("TheNet");
+// W16-SH: RockCentral is the Quazal RB* data-service client
+// (net_band/RockCentral.cpp needs Quazal::RBDataClient/ServiceClient/Protocol
+// and XNet), held by value. Zero-filled storage; its six methods the linked
+// profile/score code calls are loud stubs below.
+alignas(RockCentral) unsigned char gW16SHRockCentralStorage[sizeof(RockCentral)]
+    __asm__("TheRockCentral");
 
 // --- functions (27 stubs + 2 real) ---------------------------------------------------------
-SongStatusMgr *BandProfile::GetSongStatusMgr() const { UNREACHED(); }
-int BandProfile::GetHardcoreIconLevel() const { UNREACHED(); }
-void BandProfile::SetLastCharUsed(CharData *) { UNREACHED(); }
-void BandProfile::SetLastPrefabCharUsed(Symbol) { UNREACHED(); }
-
-int BandUserMgr::GetSlot(const UserGuid &) const { UNREACHED(); }
-ControllerType BandUserMgr::DebugGetControllerTypeOverride(int) { UNREACHED(); }
 
 void CharSync::UpdateCharCache() { UNREACHED(); }
 
 void GamePanel::SetPlayingTrackIntroUntil(float) { UNREACHED(); }
 
-MetaPerformer *MetaPerformer::Current() { UNREACHED(); }
-Symbol MetaPerformer::Song() const { UNREACHED(); }
-bool MetaPerformer::IsNoFailActive() const { UNREACHED(); }
 
 bool NetSession::HasUser(const User *) const { UNREACHED(); }
 void NetSession::UpdateUserData(User *, unsigned int) { UNREACHED(); }
+// W16-SH: SessionMgr's sends. TheNetSession is null here, so these are only
+// reachable through a null session; network/net/NetSession.cpp is not linked.
+bool NetSession::IsJoining() const { UNREACHED(); }
+void NetSession::SendMsg(User *, NetMessage &, PacketType) { UNREACHED(); }
+void NetSession::SendMsg(const std::vector<RemoteUser *> &, NetMessage &, PacketType) { UNREACHED(); }
+void NetSession::SendMsgToAll(NetMessage &, PacketType) { UNREACHED(); }
 
 const PracticeSection &PracticeSectionProvider::GetSection(int) const { UNREACHED(); }
 
@@ -95,34 +99,17 @@ void PrefabMgr::GetPrefabs(std::vector<PrefabChar *> &) const { UNREACHED(); }
 PrefabChar *PrefabMgr::GetDefaultPrefab(int) const { UNREACHED(); }
 PrefabMgr *PrefabMgr::GetPrefabMgr() { UNREACHED(); }
 
-void ProfileMgr::SetMicVol(int, int) { UNREACHED(); }
-int ProfileMgr::GetMicVol(int) const { UNREACHED(); }
-int ProfileMgr::GetSliderStepCount() const { UNREACHED(); }
-// ★ The two bodies below are NOT stubs: VocalTrack::Init asks
-// BandUser::GetGameplayOptions, which asks ProfileMgr for the user's profile.
-// They are copied verbatim from src/band3/meta_band/ProfileMgr.cpp (the TU
-// itself cannot link here -- see the header), so a null/unsaved user gets the
-// real answer, "no profile", and falls back to its own GameplayOptions. Only
-// GetProfileFromPad, reached for a user who CAN save, is a loud stub.
-BandProfile *ProfileMgr::GetProfileForUser(const LocalUser *user) {
-    if (user && user->IsLocal() && user->CanSaveData()) {
-        return GetProfileFromPad(user->GetPadNum());
-    } else
-        return nullptr;
-}
-GameplayOptions *ProfileMgr::GetGameplayOptionsFromUser(LocalBandUser *user) {
-    BandProfile *profile = GetProfileForUser(user);
-    if (profile)
-        return &profile->mGameplayOptions;
-    else
-        return nullptr;
-}
-BandProfile *ProfileMgr::GetProfileFromPad(int) { UNREACHED(); }
-void ProfileMgr::SetVocalCueVolume(int) { UNREACHED(); }
-void ProfileMgr::SetSynapseEnabled(bool) { UNREACHED(); }
-unsigned int ProfileMgr::GetCymbalConfiguration() const { UNREACHED(); }
-void ProfileMgr::UpdateMicLevels(int) { UNREACHED(); }
-
 void SendJunkPatchesToAll() { UNREACHED(); }
 
-int SongStatusMgr::GetCachedTotalDiscScore(ScoreType) const { UNREACHED(); }
+// W16-SH: RockCentral (Quazal client, see the singleton note above).
+void RockCentral::RecordPerformance(const Profile *, const PerformanceData *, int, Hmx::Object *, DataResultList &) { UNREACHED(); }
+void RockCentral::RecordAccomplishmentData(const Profile *, AccomplishmentProgress *, int, Hmx::Object *, DataResultList &) { UNREACHED(); }
+void RockCentral::GetWebLinkStatus(const Profile *, int, DataResultList &, Hmx::Object *) { UNREACHED(); }
+void RockCentral::GetSetlistCreationStatus(const Profile *, int, DataResultList &, Hmx::Object *) { UNREACHED(); }
+void RockCentral::SyncSetlists(std::vector<BandProfile *> &, DataResultList &, Hmx::Object *) { UNREACHED(); }
+void RockCentral::RecordScore(int, int, std::vector<PlayerScore> &, int, int, bool, Hmx::Object *, DataResultList &) { UNREACHED(); }
+
+// W16-SH: the body is PlatformMgr_Xbox.cpp (XUser online-ID query, platform-only).
+void PlatformMgr::GetOnlineID(int, OnlineID *) const { UNREACHED(); }
+
+

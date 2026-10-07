@@ -45,6 +45,12 @@
 #include "utl/Locale.h"
 #include "utl/Symbols.h"
 
+// native: each retail TU defines its own sNullMicClientID (all equal to
+// MicClientID's default (-1,-1)). Natively several of these TUs link into one
+// target, so each copy gets internal linkage instead of a duplicate symbol.
+#ifdef HX_NATIVE
+static
+#endif
 MicClientID sNullMicClientID;
 
 NewOvershellLocalUserMsg::NewOvershellLocalUserMsg(LocalBandUser *user)
@@ -1662,7 +1668,11 @@ END_HANDLERS
 // sw2 scatter-include (default/OvershellPanel <- bandobj/BandWardrobe.cpp)
 #define gRev gRev_BandWardrobe
 #define gAltRev gAltRev_BandWardrobe
+// W16-SH: native skips this edge; rb3-render already emits BandWardrobe through
+// rndobj/Console.cpp -> world/Crowd.cpp, so a second emitter is a duplicate.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "bandobj/BandWardrobe.cpp"
+#endif
 #undef gRev
 #undef gAltRev
 

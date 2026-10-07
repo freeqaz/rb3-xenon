@@ -1587,6 +1587,106 @@ set_source_files_properties(
     ${REPO_ROOT}/src/band3/tour/TourSavable.cpp
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
 
+# ---- W16-SH: in-scope band3/bandobj files no native target compiled ------
+# (CAMPAIGN_STATE_2026-10-07 lever 5). rb3-render only, like
+# VOCALTRACK_GAME_SOURCES.
+set(W16SH_LINK_SOURCES
+    ${REPO_ROOT}/src/band3/meta_band/CustomizePanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/UIStats.cpp
+    ${REPO_ROOT}/src/system/bandobj/LayerDir.cpp
+    ${REPO_ROOT}/src/band3/meta_band/MetaPerformer.cpp
+    ${REPO_ROOT}/src/band3/meta_band/StoreOfferProvider.cpp
+    ${REPO_ROOT}/src/band3/game/PerfectSectionTracker.cpp
+    ${REPO_ROOT}/src/system/synth/EQEffect.cpp
+    ${REPO_ROOT}/src/band3/meta_band/NextSongPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/MusicLibraryNetSetlists.cpp
+    ${REPO_ROOT}/src/band3/meta_band/PatchPanel.cpp
+    ${REPO_ROOT}/src/band3/game/TrainerGemTab.cpp
+    ${REPO_ROOT}/src/system/dsp/SndAnalysis.cpp
+    ${REPO_ROOT}/src/band3/meta_band/StoreMainPanel.cpp
+    ${REPO_ROOT}/src/band3/game/PerfectOverdriveTracker.cpp
+    ${REPO_ROOT}/src/band3/meta_band/OvershellSlot.cpp
+    ${REPO_ROOT}/src/band3/meta_band/OvershellPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/Leaderboard.cpp
+    ${REPO_ROOT}/src/band3/game/VocalTrainerPanel.cpp
+    ${REPO_ROOT}/src/system/bandobj/MicInputArrow.cpp
+    ${REPO_ROOT}/src/system/bandobj/PatchDir.cpp
+    ${REPO_ROOT}/src/band3/meta_band/ProfileMgr.cpp
+    ${REPO_ROOT}/src/system/synth/FlangerEffect.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SetlistMergePanel.cpp
+    ${REPO_ROOT}/src/system/beatmatch/JoypadController.cpp
+    ${REPO_ROOT}/src/system/synth/WahEffect.cpp
+    ${REPO_ROOT}/src/band3/game/FocusTracker.cpp
+    ${REPO_ROOT}/src/band3/game/GameMic.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AssetMgr.cpp
+    ${REPO_ROOT}/src/band3/game/GameMicManager.cpp
+    ${REPO_ROOT}/src/band3/meta_band/Accomplishment.cpp
+    ${REPO_ROOT}/src/band3/game/FretHand.cpp
+    ${REPO_ROOT}/src/band3/meta_band/ClosetPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/Campaign.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SessionMgr.cpp
+    ${REPO_ROOT}/src/system/synth/DelayEffect.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandLeadMeter.cpp
+    ${REPO_ROOT}/src/band3/game/BandUserMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/UploadErrorMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/EditSetlistPanel.cpp
+    ${REPO_ROOT}/src/system/beatmatch/MasterAudio.cpp
+    ${REPO_ROOT}/src/system/beatmatch/KeyboardTrackWatcherImpl.cpp
+    ${REPO_ROOT}/src/band3/game/TrackerUtils.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CharacterCreatorPanel.cpp
+    ${REPO_ROOT}/src/band3/net_band/EntityUploader.cpp
+    ${REPO_ROOT}/src/band3/meta_band/FriendsProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/StoreMenuPanel.cpp
+    ${REPO_ROOT}/src/system/beatmatch/Submix.cpp
+    ${REPO_ROOT}/src/system/synth/DistortionEffect.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandMachine.cpp
+    ${REPO_ROOT}/src/system/bandobj/MiniLeaderboardDisplay.cpp
+    ${REPO_ROOT}/src/band3/meta_band/StoreInfoPanel.cpp
+    ${REPO_ROOT}/src/system/beatmatch/SlotChannelMapping.cpp
+    ${REPO_ROOT}/src/band3/tour/QuestManager.cpp
+    ${REPO_ROOT}/src/band3/meta_band/ModifierMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CalibrationPanel.cpp
+    ${REPO_ROOT}/src/band3/game/StatCollector.cpp
+    ${REPO_ROOT}/src/system/beatmatch/DrumTrackWatcherImpl.cpp
+    ${REPO_ROOT}/src/band3/game/OverdriveTracker.cpp
+    ${REPO_ROOT}/src/system/beatmatch/GuitarController.cpp
+    ${REPO_ROOT}/src/band3/meta_band/Matchmaker.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandSongPref.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongRecord.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongSortNode.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongStatusMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/PerformanceData.cpp
+    ${REPO_ROOT}/src/system/bandobj/MeterDisplay.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongSortByArtist.cpp
+    ${REPO_ROOT}/src/band3/meta_band/TokenRedemptionPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CharProvider.cpp
+    ${REPO_ROOT}/src/system/bandobj/ReviewDisplay.cpp
+    ${REPO_ROOT}/src/band3/meta_band/StoreSongSortNode.cpp
+    ${REPO_ROOT}/src/system/beatmatch/BeatMaster.cpp
+    ${REPO_ROOT}/src/band3/net_band/DataResults.cpp
+)
+# Their link closure: TUs outside the 96 that the linked files need.
+set(W16SH_DEP_SOURCES
+    ${REPO_ROOT}/src/band3/meta_band/BandProfile.cpp
+    ${REPO_ROOT}/src/system/meta/Profile.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandMachineMgr.cpp
+    ${REPO_ROOT}/src/system/synth/Faders.cpp
+    ${REPO_ROOT}/src/band3/tour/TourBand.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SavedSetlist.cpp
+    ${REPO_ROOT}/src/system/net/JsonUtils.cpp
+    ${REPO_ROOT}/src/network/net/NetMessage.cpp
+    ${REPO_ROOT}/src/system/synth/MicClientMapper.cpp
+    ${REPO_ROOT}/src/system/net/json-c/arraylist.c
+    ${REPO_ROOT}/src/system/net/json-c/debug.c
+    ${REPO_ROOT}/src/system/net/json-c/json_object.c
+    ${REPO_ROOT}/src/system/net/json-c/json_tokener.c
+    ${REPO_ROOT}/src/system/net/json-c/linkhash.c
+    ${REPO_ROOT}/src/system/net/json-c/printbuf.c
+)
+set_source_files_properties(${W16SH_LINK_SOURCES} ${W16SH_DEP_SOURCES}
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+
 set(MILO_TARGET_COMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/milo_object_factories.cpp
     ${ENGINE_SOURCES}
@@ -1694,7 +1794,10 @@ if(RB3X_BUILD_ENGINE)
         # W16-PX: drives the track/vocal highway over the loaded ui/track milos.
         ${CMAKE_SOURCE_DIR}/src/bandtrack_phase.cpp
         ${CMAKE_SOURCE_DIR}/src/bandtrack_link_stubs.cpp
+        ${CMAKE_SOURCE_DIR}/src/w16sh_link_support.cpp
         ${VOCALTRACK_GAME_SOURCES}
+        ${W16SH_LINK_SOURCES}
+        ${W16SH_DEP_SOURCES}
         ${MILO_TARGET_COMMON_SOURCES}
     )
     list(APPEND MILO_TARGETS rb3-render)
