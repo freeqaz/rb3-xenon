@@ -154,7 +154,7 @@ Fix:
 `git diff main w16-st` at main `4cad8b368`, and its kinds are map and source.
 - Both legs were forced to re-split and both sat at a `symbols.txt` fixed point (0 extra splits).
 - Leg B settled in 2 iterations, with 223 MSVC recompiles and the renamer patching 1,863 files.
-- Run dir: `~/tmp/wt-w16st-ab/.ab_measure_runs/20261007-055702-branch-2429274/`. The tool restored the tree.
+- Run dir: `~/tmp/w16st/ab_run/` (copied out of the removed A/B worktree, `.ab_measure_runs/20261007-055702-branch-2429274`). The tool restored the tree.
 
 | | leg A (main 4cad8b368) | leg B (w16-st) | Δ |
 |---|---:|---:|---:|
