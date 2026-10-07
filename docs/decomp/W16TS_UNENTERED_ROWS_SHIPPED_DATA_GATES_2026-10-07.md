@@ -326,8 +326,15 @@ again.
 
 ## 9. Result lines
 
-(appended after `native_health.sh`; the native build gate line is in the lane's final
-report, because the gate runs as the last action, after this doc is committed)
+```
+NATIVE_HEALTH_RESULT verdict=PASS link=PASS link_verified=18 link_expected=18 link_skipped=0 runtime=PASS runtime_ran=18 runtime_total=18 gates_pass=200 gates_fail=0 unrunnable=none selftest=SKIPPED scatter_unlinked=13 scatter_dirb=0 scatter_multihost=12 rc=0 handpose_controls=- handpose_baseline_fail=- runtime_crashed=0 runtime_failed=none
+```
+
+The scatter counts were not attributed file by file. This lane changed one scatter
+include, the `HamMove.cpp` include in `CrowdAudio.cpp`, which is now off natively.
+
+The native build gate line is in the lane's final report. The gate was run as the last
+action, after this doc was committed.
 
 ## Reproduce
 
