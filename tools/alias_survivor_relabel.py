@@ -196,9 +196,11 @@ def main():
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--json", help="write every verdict here")
     ap.add_argument("--lane", default="W16-OS 2026-10-03")
+    ap.add_argument("--rechase-key", default="rechase_w16os",
+                    help="group field the per-membership re-chase verdicts are written to")
     a = ap.parse_args()
     LANE = a.lane
-    RKEY = "rechase_w16os"
+    RKEY = a.rechase_key
     doc = json.load(open(LEDGER))
     G = doc["groups"]
     J = Judge()

@@ -199,6 +199,12 @@ void WorldInstance::Load(BinStream &bs) {
     PostLoad(bs);
 }
 
+// Retail keeps an explicit override that only forwards to RndDir. Its vtable
+// slot is a vtordisp{-4,0} thunk to this body, which adjusts `this` by -0x14 and
+// tail-calls RndDir::Replace; without the override MSVC emits a single
+// vtordisp{-4,20} thunk straight to RndDir::Replace instead.
+void WorldInstance::Replace(ObjRef *from, Hmx::Object *to) { RndDir::Replace(from, to); }
+
 void WorldInstance::PreLoad(BinStream &bs) {
     if (IsProxy())
         DeleteObjects();

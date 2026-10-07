@@ -23,6 +23,7 @@ public:
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
+    virtual void Replace(ObjRef *, Hmx::Object *);
     virtual void Copy(const Hmx::Object *, CopyType);
     virtual void Load(BinStream &);
     virtual void PreSave(BinStream &);

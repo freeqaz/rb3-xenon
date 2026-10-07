@@ -66,7 +66,8 @@ sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "scripts"))
 MAP = ROOT / "scripts/target_symbol_map.json"
 LEDGER = ROOT / "scripts/symbol_aliases.json"
-LANE = "W16-UM 2026-10-07"
+LANE = "W16-UM 2026-10-07"   # --lane overrides (W16-UN reused this tool)
+WORK = Path.home() / "tmp/w16um"   # --workdir overrides
 DEFAULT_CENSUS = Path.home() / "tmp/w16uh/census_after.json"
 
 
@@ -186,7 +187,7 @@ def do_map(ledger, addrs, dry):
     insert = {r["A"]: r["survivor"] for r in rows if not r["key_is_null_row"]}
     nulls = {r["A"]: r["survivor"] for r in rows if r["key_is_null_row"]}
     if insert:
-        tmp = Path.home() / "tmp/w16um/rows.json"
+        tmp = WORK / "rows.json"
         tmp.write_text(json.dumps(insert, indent=1))
         cmd = [sys.executable, str(ROOT / "tools/gated_map_write.py"), "--target", str(MAP),
                "--rows-json", str(tmp)] + (["--dry-run"] if dry else [])
@@ -290,8 +291,8 @@ def do_alias(ledger, addrs, write, extra=()):
                                      "site(s) where retail calls fn_%08X and ours calls this "
                                      "spelling; chase(fn_%08X, spelling) PROVEN" % (
                                          r["sites"][f], va, va)) if r["sites"][f] else (
-                                     "a row W16-UM paired calls this spelling where retail's "
-                                     "relocation names the survivor (objdiff diff_arg)"),
+                                     "a row %s paired calls this spelling where retail's "
+                                     "relocation names the survivor (objdiff diff_arg)" % LANE.split()[0]),
                         "chase": "tools/icf_pair_adjudicate.chase(%s @ %s, ours): PROVEN, 0 "
                                  "undischarged, %d cycle(s) assumed%s" % (
                                      S[:70], X, nrec,
@@ -312,7 +313,7 @@ def do_alias(ledger, addrs, write, extra=()):
                                     rec["spelling"][:70], rec.get("why", "")))
     print("admitted %d, refused %d" % (sum(r["admitted"] for r in log),
                                        sum(not r["admitted"] for r in log)))
-    out = Path.home() / ("tmp/w16um/alias_log_%s.json" % "_".join(a[2:] for a in addrs[:1]))
+    out = WORK / ("alias_log_%s.json" % "_".join(a[2:] for a in addrs[:1]))
     out.write_text(json.dumps(log, indent=1))
     if write:
         LEDGER.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n")
@@ -320,6 +321,7 @@ def do_alias(ledger, addrs, write, extra=()):
 
 
 def main():
+    global LANE, WORK
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", choices=["plan", "map", "alias"])
     ap.add_argument("--census", default=str(DEFAULT_CENSUS))
@@ -330,7 +332,10 @@ def main():
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--extra", action="append", default=[], metavar="0xADDR=Spelling",
                     help="alias: also admit Spelling at the (already named) address")
+    ap.add_argument("--lane", default=LANE, help="lane label written into alias records")
+    ap.add_argument("--workdir", default=str(WORK), help="scratch dir for rows.json / alias logs")
     a = ap.parse_args()
+    LANE, WORK = a.lane, Path(a.workdir)
     addrs = [x for x in re.split(r"[,\s]+", a.addrs) if x]
     if a.mode == "plan":
         return plan(a.census, a.out)
