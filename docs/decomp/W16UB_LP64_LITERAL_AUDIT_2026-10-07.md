@@ -267,7 +267,24 @@ The ruler is `name_check` (from `objdiff.json`) and objdiff-cli was stable acros
 so the patch was applied and compiled, not absent-vs-absent. The tool restored the
 tree and verified it afterwards.
 
-## 8. What was not done
+## 8. Final native runs (worktree `~/tmp/wt-w16ub`, at `2d5b2818d`)
+
+`tools/native_build_gate.sh`:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
+
+`tools/native_health.sh .`, with its own link pass (rb3-render: `rc=0, 220 gate(s) passed`):
+
+```
+NATIVE_HEALTH_RESULT verdict=PASS link=PASS link_verified=18 link_expected=18 link_skipped=0 runtime=PASS runtime_ran=18 runtime_total=18 gates_pass=257 gates_fail=0 unrunnable=none selftest=SKIPPED scatter_unlinked=13 scatter_dirb=0 scatter_multihost=12 rc=0 handpose_controls=- handpose_baseline_fail=- runtime_crashed=0 runtime_failed=none
+```
+
+This health PASS comes after an earlier health FAIL in this lane: `gates_fail=1`,
+`ub-memtrack-stacks` SIGABRT, which is §2 #17.
+
+## 9. What was not done
 
 - `-Wshorten-64-to-32` (1,161 sites) was counted, not triaged (§1).
 - Byte order was not swept as a class. #13 and #14 surfaced through the subscript and
