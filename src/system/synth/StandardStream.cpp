@@ -634,7 +634,9 @@ void StandardStream::InitInfo(int i1, int sampleRate, bool floatSamples, int i4)
 #else
     unk154 = i4;
     int numChannels = mVirtualChans + i1;
-    unkec = (mInfoChannels / sampleRate);
+    // The length in seconds, as retail and DC3 compute it (was the old channel
+    // count over the rate, an integer 0). Nothing reads it back. W16-TM.
+    unkec = (float)i4 / (float)sampleRate;
     mInfoChannels = numChannels;
     auto& _ref2 = mSampleRate;
     if (!mGetInfoOnly) {
