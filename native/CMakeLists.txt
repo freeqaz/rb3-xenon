@@ -1657,6 +1657,12 @@ set(MILO_TARGET_COMMON_SOURCES
 rb3_add_executable(rb3-milo
     ${CMAKE_SOURCE_DIR}/src/main_milo.cpp
     ${MILO_TARGET_COMMON_SOURCES}
+    # W16-RW: Rnd::TestPoint asks the engine's point-test seam for an occlusion
+    # tester (rndobj/Rnd.cpp, HX_NATIVE). rb3-render gets the seam's storage
+    # from libmilo-engine.a; rb3-milo links no engine, so it compiles the one
+    # dependency-free TU (it includes only its own header) and, registering no
+    # tester, keeps TestPoint's "visible, unoccluded" fallback.
+    ${MILO_ENGINE_PATH}/src/platform/PointTestHook.cpp
 )
 set(MILO_TARGETS rb3-milo)
 
