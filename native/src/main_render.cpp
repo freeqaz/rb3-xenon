@@ -89,6 +89,11 @@
 #include "char/CharBoneDir.h"
 // W16-PD: weak hook into native/src/cc5_stub_probe.c (probe builds only).
 extern "C" __attribute__((weak)) void rb3_stub_probe_dump(void);
+// clang's profile runtime writes its .profraw from an atexit handler, which the
+// _exit() at the end of main() skips. Weak, so it is null unless the target is
+// built with -fprofile-instr-generate (tools/native_runtime_rank.py, W16-TF:
+// rb3-render's profile was 0 bytes and the tool credited it with nothing).
+extern "C" __attribute__((weak)) int __llvm_profile_write_file(void);
 #include "char/CharClip.h"
 #include "char/CharClipSet.h"
 #include "char/CharDriver.h"
@@ -5131,6 +5136,9 @@ static bool gNoBandTrack = false;
 // native/src/w16sh_phase.cpp (W16-SH)
 int RunW16SHPhase(void (*gate)(const char *, bool, const char *));
 static bool gNoW16SH = false;
+// native/src/w16tf_phase.cpp (W16-TF)
+int RunW16TFPhase(void (*gate)(const char *, bool, const char *));
+static bool gNoW16TF = false;
 
 int main(int argc, char **argv) {
     // Line-buffer: a SIGSEGV inside the renderer would otherwise discard the
@@ -5161,6 +5169,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--dump-tree") == 0) gDumpTree = true;
         else if (strcmp(argv[i], "--no-bandtrack") == 0) gNoBandTrack = true;
         else if (strcmp(argv[i], "--no-w16sh") == 0) gNoW16SH = true;
+        else if (strcmp(argv[i], "--no-w16tf") == 0) gNoW16TF = true;
         else if (strcmp(argv[i], "--crowd-all") == 0) gCrowdShowAll = true;
         else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
@@ -5387,6 +5396,12 @@ int main(int argc, char **argv) {
     // --no-w16sh opts out.
     if (pos.size() == 2 && !gNoW16SH)
         RunW16SHPhase(Gate);
+    // W16-TF: math/Geo (BSP build and queries, clipping, intersection,
+    // frustum), Rot, Interp, Key, UTF8 and SuperFormatString rows that no
+    // native target entered (native/src/w16tf_phase.cpp). Same default-mode
+    // rule; --no-w16tf opts out.
+    if (pos.size() == 2 && !gNoW16TF)
+        RunW16TFPhase(Gate);
 
     printf("\n=== summary ===\n");
     for (size_t i = 0; i < cells.size(); i++) {
@@ -5423,6 +5438,7 @@ int main(int argc, char **argv) {
     // _exit skips the stub probe's destructor; dump explicitly (no-op symbol
     // absent outside -DRB3_STUB_PROBE=ON builds -- see cc5_stub_probe.c).
     if (rb3_stub_probe_dump) rb3_stub_probe_dump();
+    if (__llvm_profile_write_file) __llvm_profile_write_file();
     fflush(stdout);
     fflush(stderr);
     _exit(gFailures == 0 ? 0 : 1);

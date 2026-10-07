@@ -20,6 +20,10 @@ inline StaticByteCode() in the same TU. Always delete, then re-link all targets.
 Reachability is a separate instrument: -DRB3_STUB_PROBE=ON for the C++ stub TUs
 (native/src/cc5_stub_probe.c), and one-shot gdb breakpoints for the .s stubs.
 
+Every native/src object on a link edge must be classified as a stub (STUB_RE)
+or a non-stub driver/phase (NON_STUB_RE); an unclassified one exits 3, so a
+new stub file cannot be silently left out of the census (W16-TF).
+
 Usage: native_stub_census.py <native_build_dir> <out.json> [--authored]
   --authored: keep only symbols the stub TU authors (all .s weak stubs; strong
   T/D/B/R from .cpp stubs, which drops header-inline COMDATs; plus the
@@ -39,8 +43,21 @@ STUB_RE = re.compile(
     r"native_undecomp_stubs\.cpp|native_job_stubs\.cpp|thunk_stubs\.cpp|x7_band_stubs\.cpp|"
     r"x20_bandpatchmesh_link\.cpp|native_link_glue\.cpp|xdk_shims\.cpp|"
     r"m1_symbols\.cpp|m3_symbols\.cpp|m6_symbols\.cpp|m8_support\.cpp|m10_support\.cpp|"
-    r"beatmatch_native_support\.cpp|rb3_render_glue\.cpp|milo_object_factories\.cpp)\.o$"
+    r"beatmatch_native_support\.cpp|rb3_render_glue\.cpp|milo_object_factories\.cpp|"
+    r"bandtrack_link_stubs\.cpp|w16sh_link_support\.cpp)\.o$"
 )
+
+# native/src objects that are linked but are NOT stubs: drivers and runtime
+# phases (their symbols are test code, not substitutes for src/ code) and the
+# reachability probe. Every other native/src object a target links must match
+# STUB_RE, or the run refuses (exit 3). W16-TF: bandtrack_link_stubs.cpp (26
+# definitions) and w16sh_link_support.cpp (10) were linked by main for a whole
+# round while STUB_RE did not list them, and the census read clean.
+NON_STUB_RE = re.compile(
+    r"/src/(main_[a-z0-9]+\.cpp|bandtrack_phase\.cpp|w16sh_phase\.cpp|"
+    r"w16tf_phase\.cpp|score_engine\.cpp|cc5_stub_probe\.c)\.o$"
+)
+NATIVE_SRC_RE = re.compile(r"CMakeFiles/[^/]+\.dir/src/[^/]+\.o$")
 
 targets = {}
 with open(NINJA) as f:
@@ -53,6 +70,20 @@ with open(NINJA) as f:
         implicit = rest.split(" || ")[0].split(" | ")[1].split() if " | " in rest.split(" || ")[0] else []
         libs = [x for x in implicit if x.endswith(".a")]
         targets[m.group(1)] = (explicit, libs)
+
+# Refuse on an unclassified native/src object (the STUB_RE drift guard).
+unclassified = sorted({o for objs, _ in targets.values() for o in objs
+                       if NATIVE_SRC_RE.search(o) and not STUB_RE.search(o)
+                       and not NON_STUB_RE.search(o)})
+if not targets:
+    print("native_stub_census: no link edges parsed from %s" % NINJA, file=sys.stderr)
+    sys.exit(2)
+if unclassified:
+    print("native_stub_census: REFUSED -- native/src object(s) linked by a target are in neither "
+          "STUB_RE nor NON_STUB_RE; classify them first:", file=sys.stderr)
+    for o in unclassified:
+        print("  " + o, file=sys.stderr)
+    sys.exit(3)
 
 nm_cache = {}
 def nm(path):

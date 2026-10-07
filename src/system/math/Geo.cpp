@@ -1003,7 +1003,6 @@ void BSPFace::Update() {
     }
 }
 
-#ifndef HX_NATIVE
 bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
     if (faces.empty()) {
         node = nullptr;
@@ -1015,10 +1014,19 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
         return false;
     }
     node = new BSPNode();
+#ifndef HX_NATIVE
     // NB: default-initialised (not value-initialised) — retail passes the empty
     // comparator without first storing a zero byte to its stack slot.
     stlpmtx_std::less<BSPFace> _cmp;
     stlpmtx_std::_S_sort<BSPFace, stlpmtx_std::StlNodeAlloc<BSPFace>, stlpmtx_std::less<BSPFace>>(faces, _cmp);
+#else
+    // The same stable merge sort by descending area (the less<BSPFace>
+    // specialisation above): libc++'s list::sort is stable too, so equal-area
+    // faces keep their order and the candidate planes are tried in retail's
+    // order. Until W16-TF the whole function was `return false;` here, so every
+    // kVolumeBSP RndMesh lost its collision tree natively.
+    faces.sort([](const BSPFace &a, const BSPFace &b) { return a.area > b.area; });
+#endif
 
     // size(), not a hand count: distance()'s by-const-ref first parameter homes
     // the begin() temporary (the stw to 0x60) and walks a copy of it.
@@ -1140,9 +1148,6 @@ bool MakeBSPTree(BSPNode *&node, std::list<BSPFace> &faces, int depth) {
         return false;
     return true;
 }
-#else
-bool MakeBSPTree(BSPNode *&, std::list<BSPFace> &, int) { return false; }
-#endif
 
 bool Intersect(const Transform &tf, const Hmx::Polygon &poly, const BSPNode *node) {
     bool front = false;
