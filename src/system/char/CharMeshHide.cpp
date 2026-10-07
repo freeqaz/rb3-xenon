@@ -145,8 +145,7 @@ void CharMeshHide::Init() { REGISTER_OBJ_FACTORY(CharMeshHide) }
 #pragma endregion CharMeshHide
 
 // sw2 scatter-include (default/CharMeshHide <- synth/Sfx.cpp)
-#define gRev gRev_Sfx
-#define gAltRev gAltRev_Sfx
+// No gRev/gAltRev rename here: Sfx.cpp has no file-static revs, and the rename
+// only hit Sfx.h's `SfxMap::gRev`, turning the reference in Sfx::Load into an
+// undefined `SfxMap::gRev_Sfx`. W16-TM.
 #include "synth/Sfx.cpp"
-#undef gRev
-#undef gAltRev
