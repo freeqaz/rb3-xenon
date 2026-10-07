@@ -119,7 +119,9 @@ void NativeObjMemFree(void *v, const char *file, int line, const char *name) {
         ObjectDir::DeferFree(v);
         return;
     }
-    MemFree(v, file, line, name);
+    // W16-UO: OBJ_MEM_OVERLOAD allocates with ::operator new natively (MemMgr.h),
+    // so the free is ::operator delete, the same as FlushDeferredFrees.
+    ::operator delete(v);
 }
 
 // W16-UL: the next three helpers are DC3's (dc3-decomp cafbd23da, 43bf21c36,

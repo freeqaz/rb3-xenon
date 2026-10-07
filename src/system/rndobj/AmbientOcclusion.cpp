@@ -1232,11 +1232,16 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
 
                     bool smallFace = perimeter <= mTessellateTriSmall;
                     bool largeFace = perimeter > mTessellateTriLarge;
+                    // W16-UO: one FacePriority for both branches. Each branch
+                    // used to declare its own in an inner block and leave pFP
+                    // pointing at it, so the push_back below read a dead object
+                    // (ASan stack-use-after-scope natively; MSVC keeps the slot
+                    // live, so retail pushes the value computed here).
+                    FacePriority fp;
                     FacePriority *pFP;
                     if (smallError || smallFace) {
                         if (largeFace) {
                             // Large face, low error: priority based on size
-                            FacePriority fp;
                             fp.priority = mTessellateTriError * negThree
                                 - (perimeter - mTessellateTriLarge);
                             fp.faceIndex = faceIdx;
@@ -1248,10 +1253,9 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                         }
                     } else {
                         // High error: priority based on error
-                        FacePriority fp2;
-                        fp2.priority = -totalError;
-                        fp2.faceIndex = faceIdx;
-                        pFP = &fp2;
+                        fp.priority = -totalError;
+                        fp.faceIndex = faceIdx;
+                        pFP = &fp;
                     }
                     priorities.push_back(*pFP);
                 nextFace:
@@ -1511,49 +1515,50 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
 
                         unsigned short blendIdx = (unsigned short)numVertsPhase3;
 
+                        // W16-UO: one Face that outlives the branches. Each branch
+                        // used to set a block-scoped tmpA/tmpB and leave pFace
+                        // pointing at it, so every push_back(*pFace) below read a
+                        // dead object (ASan stack-use-after-scope, rb3-render's
+                        // W16-TY AO checks). MSVC keeps those slots live, so
+                        // retail pushes the face set here.
+                        RndMesh::Face edge;
                         // Edge 0 (v0-v1)
                         RndMesh::Face *pFace;
                         if (mids[0] == 0xffff) {
-                            RndMesh::Face tmpA;
-                            tmpA.Set(blendIdx, curFace->v1, curFace->v2);
-                            pFace = &tmpA;
+                            edge.Set(blendIdx, curFace->v1, curFace->v2);
+                            pFace = &edge;
                         } else {
                             RndMesh::Face tmpA;
                             tmpA.Set(blendIdx, curFace->v1, mids[0]);
                             newFaces.push_back(tmpA);
-                            RndMesh::Face tmpB;
-                            tmpB.Set(blendIdx, mids[0], curFace->v2);
-                            pFace = &tmpB;
+                            edge.Set(blendIdx, mids[0], curFace->v2);
+                            pFace = &edge;
                         }
                         newFaces.push_back(*pFace);
 
                         // Edge 1 (v1-v2)
                         if (mids[1] == 0xffff) {
-                            RndMesh::Face tmpA;
-                            tmpA.Set(blendIdx, curFace->v2, curFace->v3);
-                            pFace = &tmpA;
+                            edge.Set(blendIdx, curFace->v2, curFace->v3);
+                            pFace = &edge;
                         } else {
                             RndMesh::Face tmpA;
                             tmpA.Set(blendIdx, curFace->v2, mids[1]);
                             newFaces.push_back(tmpA);
-                            RndMesh::Face tmpB;
-                            tmpB.Set(blendIdx, mids[1], curFace->v3);
-                            pFace = &tmpB;
+                            edge.Set(blendIdx, mids[1], curFace->v3);
+                            pFace = &edge;
                         }
                         newFaces.push_back(*pFace);
 
                         // Edge 2 (v2-v0)
                         if (mids[2] == 0xffff) {
-                            RndMesh::Face tmpA;
-                            tmpA.Set(blendIdx, curFace->v3, curFace->v1);
-                            pFace = &tmpA;
+                            edge.Set(blendIdx, curFace->v3, curFace->v1);
+                            pFace = &edge;
                         } else {
                             RndMesh::Face tmpA;
                             tmpA.Set(blendIdx, curFace->v3, mids[2]);
                             newFaces.push_back(tmpA);
-                            RndMesh::Face tmpB;
-                            tmpB.Set(blendIdx, mids[2], curFace->v1);
-                            pFace = &tmpB;
+                            edge.Set(blendIdx, mids[2], curFace->v1);
+                            pFace = &edge;
                         }
                         newFaces.push_back(*pFace);
 

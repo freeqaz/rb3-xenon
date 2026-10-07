@@ -173,16 +173,27 @@ public:
         // argument expression itself.
         (void)StaticClassName().Str();
 #endif
+#ifdef HX_NATIVE
+        // W16-UO: the native Hmx::Object allocation family (utl/MemMgr.h). With
+        // MemAlloc (malloc) here, ~ObjectDir's ::operator delete of every
+        // CharClip it destroyed was an alloc-dealloc mismatch (ASan, rb3-render:
+        // 4,524 reports from the venue cells' Character unloads).
+        return NativeObjAlloc(s);
+#else
         return MemAlloc(s, __FILE__, 0x51, StaticClassName().Str(), 0);
+#endif
     }
 #ifdef HX_NATIVE
     static void *operator new(size_t s, void *place) { return place; }
+    static void operator delete(void *v) {
+        NativeObjMemFree(v, __FILE__, 0x51, StaticClassName().Str());
+    }
 #else
     static void *operator new(unsigned int s, void *place) { return place; }
-#endif
     static void operator delete(void *v) {
         MemFree(v, __FILE__, 0x51, StaticClassName().Str());
     }
+#endif
 
     /** "Start beat, beat this clip starts at" */
     float StartBeat() const { return mBeatTrack.front().value; }

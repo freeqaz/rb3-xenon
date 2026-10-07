@@ -145,7 +145,7 @@ public:
                             if (ObjectDir::InDeleteObjects())
                                 ObjectDir::DeferFree(block);
                             else
-                                free(block);
+                                ::operator delete(block); // W16-UO: see DeferFree
 #else
                             delete mObject;
 #endif
@@ -626,12 +626,18 @@ public:
      *  because MergeObjectsRecurse handles subdirs separately. */
     static bool InMergeDirs() { return sInMergeDirs; }
     static void SetInMergeDirs(bool v) { sInMergeDirs = v; }
+    // W16-UO: every block handed here is a whole Hmx::Object allocation, and
+    // natively every such allocation is ::operator new: classes without an
+    // overload use the global new, and every class overload in utl/MemMgr.h
+    // forwards to it. So the free is ::operator delete, not free(), which was
+    // an allocation-family mismatch on every object (ASan alloc-dealloc-mismatch,
+    // valgrind "Mismatched free()", e.g. ClipGraphGenerator, VocalTrackDir).
     static void DeferFree(void *block) { sPendingFrees().push_back(block); }
     static void FlushDeferredFrees() {
         auto &v = sPendingFrees();
         if (!v.empty()) {
             for (void *p : v)
-                free(p);
+                ::operator delete(p);
             v.clear();
             Hmx::Object::sRingsDirty = true;
         }

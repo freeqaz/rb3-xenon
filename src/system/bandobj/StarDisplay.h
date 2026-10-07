@@ -68,9 +68,9 @@ public:
     // This mirrors MemMgr.h's own #ifdef HX_NATIVE OBJ_MEM_OVERLOAD verbatim; we
     // cannot just USE that macro because it also declares operator delete, which
     // costs a funclet row (see the note above). MemMgr.h is another lane's file.
-    static void *operator new(size_t s) {
-        return MemAlloc(s, __FILE__, 0x3e, StaticClassName().Str(), 0);
-    }
+    // W16-UO: NativeObjAlloc, the family the inherited OBJ_MEM_OVERLOAD delete and
+    // ~ObjectDir free (utl/MemMgr.h).
+    static void *operator new(size_t s) { return NativeObjAlloc(s); }
     static void *operator new(size_t s, void *place) { return place; }
 #else
     static void *operator new(unsigned int s) {
