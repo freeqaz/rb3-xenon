@@ -28,6 +28,10 @@ any precondition fails.
    python3 tools/ab_measure.py --worktree <wt> --pick <ref>          # apply a commit
    python3 tools/ab_measure.py --worktree <wt> --revert <ref>        # revert a commit
    ```
+   **Carve patches** (`symbols.txt` edits, or pins that make the split
+   merge) are measured too — commit them and use `--pick`/`--revert`; if the
+   run prints `LANDING`, commit its `legB_symbols_fixed_point.diff` with the
+   patch (lane W16-SP).
    Options: `--restore` (revert the patch after measuring), `--name-check`
    (opt-in second ruler; small nc deltas mean nothing, ~0.05pp noise floor),
    `--jobs N` / `AB_NINJA_JOBS` (default 12).
