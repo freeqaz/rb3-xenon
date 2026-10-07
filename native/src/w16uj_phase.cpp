@@ -52,6 +52,9 @@ int NativeStreamAuditMissSkips();
 
 typedef void (*GateFn)(const char *, bool, const char *);
 
+// obj/Dir.cpp (HX_NATIVE), W16-UL: ObjectDirs constructed and not destroyed.
+extern int gNativeLiveObjectDirs;
+
 namespace {
 
 GateFn gGate = nullptr;
@@ -277,6 +280,7 @@ int VenueChecks() {
     NativeStreamAuditBegin();
     const int n = sizeof(kVenues) / sizeof(kVenues[0]);
     int clean = 0, released = 0;
+    int freed = 0, dirsCreated = 0, dirsLeft = 0; // W16-UL
     for (int i = 0; i < n; i++) {
         const char *path = kVenues[i];
         const char *base = strrchr(path, '/') + 1;
@@ -287,6 +291,7 @@ int VenueChecks() {
         int r0 = gNativeFailedStreamReads, o0 = NativeStreamAuditObjects();
         int a0 = NativeStreamAuditAnomalies(), m0 = NativeStreamAuditMissSkips();
         auto t0 = std::chrono::steady_clock::now();
+        const int liveDirs0 = gNativeLiveObjectDirs; // W16-UL
         ObjDirPtr<ObjectDir> dir;
         snprintf(gUnloading, sizeof(gUnloading), "%s", base);
         gStage = "load";
@@ -318,6 +323,7 @@ int VenueChecks() {
         // The unload. Before W16-UJ every arena and festival died here
         // (SIGSEGV in ~ObjectDir's seed restore); a crash ends the run, which
         // native_health reports as runtime_crashed.
+        const int created = gNativeLiveObjectDirs - liveDirs0; // W16-UL
         gStage = "unload";
         oldSegv = signal(SIGSEGV, OnUnloadFault);
         oldBus = signal(SIGBUS, OnUnloadFault);
@@ -325,10 +331,32 @@ int VenueChecks() {
         signal(SIGSEGV, oldSegv);
         signal(SIGBUS, oldBus);
         released++;
+        // W16-UL: the unload destroys every ObjectDir the load created. Before
+        // W16-UL the native ~ObjectDir cascade nulled the parent's mSubDirs
+        // ObjDirPtr instead of releasing it, so each venue's inlined subdir
+        // tree (16.1 MB for small_club_01) outlived the unload.
+        {
+            const int left = gNativeLiveObjectDirs - liveDirs0;
+            const bool f = created > 0 && left == 0;
+            if (f)
+                freed++;
+            dirsCreated += created;
+            dirsLeft += left;
+            char fname[96];
+            snprintf(fname, sizeof(fname), "ul-venue-freed %s", base);
+            Gate(fname, f,
+                 "%d ObjectDir(s) alive after the load, %d of them still alive after the "
+                 "unload",
+                 created, left);
+        }
         fflush(stdout);
     }
     Gate("uj-venues", clean == n && released == n,
          "%d of %d shipped venue milos loaded cleanly, %d unloaded", clean, n, released);
+    Gate("ul-venues-freed", freed == n,
+         "%d of %d venue unloads destroyed every ObjectDir their load created (%d created, "
+         "%d left alive)",
+         freed, n, dirsCreated, dirsLeft);
     return clean;
 }
 
