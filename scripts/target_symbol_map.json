@@ -1,4 +1,5 @@
 {
+ "0x822b0d48": "??0?$ObjPtr@VEventTrigger@@@@QAA@PAVObject@Hmx@@PAVEventTrigger@@@Z",
  "0x825122b0": "??$MakeString@PBDPBDPBDPBDPBD@@YAPBDPBD00000@Z",
  "0x824417d8": "?_M_erase@?$vector@V?$Key@VTexPtr@RndMatAnim@@@@V?$StlNodeAlloc@V?$Key@VTexPtr@RndMatAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@VTexPtr@RndMatAnim@@@@PAV3@0ABU__false_type@2@@Z",
  "0x82441608": "??$_Destroy_Range@PAV?$Key@VTexPtr@RndMatAnim@@@@@stlpmtx_std@@YAXPAV?$Key@VTexPtr@RndMatAnim@@@@0@Z",
