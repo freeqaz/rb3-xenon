@@ -137,6 +137,15 @@ END_HANDLERS
 CharBlendBone::ConstraintSystem::ConstraintSystem(Hmx::Object *o)
     : mTarget(o), mWeight(0.5f) {}
 
+// Retail places this writer at 0x823C3300, at the head of this TU's region, and
+// DC3's map attributes the same spelling to CharBlendBone.obj. (dc3-decomp
+// defines it in CharIKHand.cpp, which is where this tree inherited it from.)
+BinStream &operator<<(BinStream &bs, const CharBlendBone::ConstraintSystem &cs) {
+    bs << cs.mTarget;
+    bs << cs.mWeight;
+    return bs;
+}
+
 BinStream &operator>>(BinStream &bs, CharBlendBone::ConstraintSystem &cs) {
     bs >> cs.mTarget;
     bs >> cs.mWeight;
