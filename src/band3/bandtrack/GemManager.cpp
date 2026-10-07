@@ -138,10 +138,12 @@ void GemManager::DrawTrackMasks(int i1, int i2) {
         }
     }
 
-    for (; mNextArpeggioPhrase < mArpeggioPhrases.size(); mNextArpeggioPhrase++) {
+    while (mNextArpeggioPhrase < mArpeggioPhrases.size()) {
         ArpeggioPhrase *curPhrase = &mArpeggioPhrases[mNextArpeggioPhrase];
-        if (curPhrase->mEndTick < i2)
+        if (curPhrase->mEndTick < i2) {
+            mNextArpeggioPhrase++;
             continue;
+        }
         if (curPhrase->mStartTick > i1)
             break;
         const Gem &curGem = mGems[curPhrase->mGemId];
@@ -198,6 +200,7 @@ void GemManager::DrawTrackMasks(int i1, int i2) {
         curPhrase->mShape = poolShape;
         ArpeggioPhrase *active = curPhrase;
         mActiveArpeggios.push_back(active);
+        mNextArpeggioPhrase++;
     }
 }
 
