@@ -25,7 +25,7 @@ public:
     virtual void Poll();
     virtual void PollDeps(std::list<Hmx::Object *> &, std::list<Hmx::Object *> &);
 
-    OBJ_MEM_OVERLOAD(0x18)
+    OBJ_MEM_OVERLOAD_INLINE_DEL(0x18)
     NEW_OBJ(CharMirror);
 
     ObjPtr<CharServoBone> mServo; // 0x20
