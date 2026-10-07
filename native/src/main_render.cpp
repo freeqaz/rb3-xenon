@@ -139,6 +139,7 @@ void InternSymbolGlobals_M6Symbols();
 
 #include "gfx/Screenshot.h"
 #include "platform/Rnd_Wgpu.h"
+#include "platform/PointTestHook.h"  // W16-RX: which step answers the flare tests
 
 #include <cmath>
 #include <cstdio>
@@ -2187,6 +2188,60 @@ namespace {
         }
         s.coverage = n ? (double)(n - best) / (double)n : 0.0;
         return s;
+    }
+
+    // -----------------------------------------------------------------------
+    // W16-RX: which step answers the flares' point tests.
+    //
+    // Rnd::TestPoint registers its own result handler on every call, so the
+    // frame loop wraps it after the flares draw; the wrapper counts the answers
+    // and passes each one on. The loop reads the count after Rnd::EndWorld and
+    // again after EndDrawing.
+    // -----------------------------------------------------------------------
+    NativePointTestResultFn gPointTestConsumer = nullptr;
+    int gPointTestAnswers = 0;
+    void CountPointTestAnswer(const NativePointTestResult &res) {
+        gPointTestAnswers++;
+        if (gPointTestConsumer) gPointTestConsumer(res);
+    }
+
+    // W16-RX: RB3_POST_WORLD_OCCLUDER=1. A quad just past the near plane that
+    // covers the whole view, drawn after Rnd::EndWorld and before EndDrawing,
+    // where a frame draws its UI. It writes depth in front of every flare, so a
+    // point test that reads the depth buffer after it reads every flare hidden.
+    // Retail tests at world end (DxRnd::DoWorldEnd -> DoPointTests), before it.
+    // It covers the whole frame, so image-not-empty fails under it: a probe for
+    // the flare answers, not a picture.
+    RndMesh *MakePostWorldOccluder(ObjectDir *dir, RndCam *cam) {
+        RndMat *mat = Hmx::Object::New<RndMat>();
+        mat->SetName("w16rx_post_world_occluder_mat", dir);
+        mat->SetColor(0.1f, 0.1f, 0.1f);
+        mat->SetPreLit(true);
+        mat->SetUseEnv(false);
+        mat->SetZMode(kZModeNormal);
+        mat->SetBlend(RndMat::kBlendSrc);
+        mat->SetAlphaCut(false);
+        mat->SetCull(kCullNone);
+        RndMesh *mesh = Hmx::Object::New<RndMesh>();
+        // Named: the renderer draws an unnamed mesh as text, without depth.
+        mesh->SetName("w16rx_post_world_occluder", dir);
+        // In the camera's frame: Milo cameras look down +y, with z up.
+        const float d = cam->NearPlane() * 4.0f;
+        const float l = d * 4.0f;
+        mesh->Verts().resize(4);
+        const float corners[4][2] = {{-l, -l}, {l, -l}, {-l, l}, {l, l}};
+        for (int i = 0; i < 4; i++) {
+            RndMesh::Vert &v = mesh->Verts()[i];
+            v.pos.Set(corners[i][0], d, corners[i][1]);
+            v.norm.Set(0, -1, 0);
+        }
+        std::vector<RndMesh::Face> faces(2);
+        faces[0].Set(0, 1, 2);
+        faces[1].Set(2, 1, 3);
+        mesh->Faces() = faces;
+        mesh->SetMat(mat);
+        mesh->SetLocalXfm(cam->WorldXfm());
+        return mesh;
     }
 
     // -----------------------------------------------------------------------
@@ -4307,8 +4362,9 @@ namespace {
         // reached RndFlare::DrawShowing, so no flare drew and nothing ever
         // called Rnd::TestPoint. Retail draws them through the drawable tree;
         // here they go last, so their point tests (answered by the engine's
-        // occlusion queries at EndDrawing, one frame later) see the frame's
-        // finished depth. RB3_NO_FLARE_DRAW restores the old flare-less draw.
+        // occlusion queries at the world end that follows them, one frame
+        // later; W16-RX) see the world's finished depth. RB3_NO_FLARE_DRAW
+        // restores the old flare-less draw.
         std::vector<RndFlare *> flares;
         if (deep && getenv("RB3_NO_FLARE_DRAW") == nullptr) flares = CollectDeep<RndFlare>(dir);
         printf("  flares: %d RndFlare(s)%s\n", (int)flares.size(),
@@ -4816,6 +4872,21 @@ namespace {
             }
         }
 
+        // W16-RX: the world ends after the world's drawables, as
+        // WorldDir::DrawShowing ends it (world/Dir.cpp); RB3_NO_END_WORLD leaves
+        // that to EndDrawing, as before. RB3_POST_WORLD_OCCLUDER draws geometry
+        // after the world end (MakePostWorldOccluder).
+        const bool endWorld = getenv("RB3_NO_END_WORLD") == nullptr;
+        RndMesh *postWorldOccluder = nullptr;
+        if (getenv("RB3_POST_WORLD_OCCLUDER") && RndCam::Current()) {
+            postWorldOccluder = MakePostWorldOccluder(dir, RndCam::Current());
+            printf("  post-world occluder: a %s quad %.3f in front of the camera, drawn "
+                   "after the world end\n",
+                   postWorldOccluder->Name(), RndCam::Current()->NearPlane() * 4.0f);
+        }
+        printf("  world end: %s\n", endWorld ? "Rnd::EndWorld after the world's drawables"
+                                              : "none (RB3_NO_END_WORLD): EndDrawing ends it");
+        int answersAtWorldEnd = 0, answersAtEndDrawing = 0;
         for (int f = 0; f < frames; f++) {
             TheRnd.BeginDrawing();
             r.drawn = 0;
@@ -4875,7 +4946,35 @@ namespace {
                 fl->DrawShowing();
                 r.flaresDrawn++;
             }
+            // W16-RX: count the answers each step delivers (see
+            // CountPointTestAnswer). The engine answers last frame's tests, and
+            // draws this frame's, at the world end (WgpuRnd::DoWorldEnd, as
+            // retail DxRnd::DoWorldEnd runs DoPointTests), or at EndDrawing for
+            // a frame that never ended its world.
+            if (!flares.empty() && GetNativePointTestResultFn() != CountPointTestAnswer) {
+                gPointTestConsumer = GetNativePointTestResultFn();
+                SetNativePointTestResultFn(CountPointTestAnswer);
+            }
+            const int answersBefore = gPointTestAnswers;
+            if (endWorld) TheRnd.EndWorld();
+            const int atWorldEnd = gPointTestAnswers - answersBefore;
+            if (postWorldOccluder) postWorldOccluder->DrawShowing();
             TheRnd.EndDrawing();
+            const int atEndDrawing = gPointTestAnswers - answersBefore - atWorldEnd;
+            if (!flares.empty())
+                printf("  point tests: frame %d answered %d at the world end, %d at "
+                       "EndDrawing\n",
+                       f, atWorldEnd, atEndDrawing);
+            answersAtWorldEnd += atWorldEnd;
+            answersAtEndDrawing += atEndDrawing;
+        }
+        if (!flares.empty() && endWorld && frames >= 2) {
+            char d[160];
+            snprintf(d, sizeof(d),
+                     "%d answer(s) at the world end, %d at EndDrawing, over %d frame(s)",
+                     answersAtWorldEnd, answersAtEndDrawing, frames);
+            Gate("flare-tests-at-world-end", answersAtWorldEnd > 0 && answersAtEndDrawing == 0,
+                 d);
         }
         // W16-RW: each flare's last answer. `occ` is the area query's visible
         // pixel count; DrawShowing scales the flare by occ / (rect w * h), and a
