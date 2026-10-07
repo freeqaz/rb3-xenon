@@ -156,6 +156,7 @@ must not land in a non-durable place.
 """
 
 import argparse
+import difflib
 import gzip
 import hashlib
 import inspect
@@ -195,7 +196,8 @@ SPLIT_FORCING_KINDS = frozenset({"map", "splits", "symbols"})
 # because the split rule's command line is baked into build.ninja).
 NO_FIXED_POINT_ENV = "SPLIT_GUARD_NO_FIXED_POINT_CHECK"
 SPLIT_GUARD_REWROTE_MARK = "[split-guard] THE SPLIT REWROTE ITS OWN INPUT"
-SPLIT_PATHS = {f"config/{TITLE}/splits.txt", CONFIG_YML_REL}
+SPLITS_REL = f"config/{TITLE}/splits.txt"
+SPLIT_PATHS = {SPLITS_REL, CONFIG_YML_REL}
 # ⚠ THIS SET IS HAND-MAINTAINED AND HAS DRIFTED FROM THE ACTUAL BUILD INPUTS
 # ONCE ALREADY. A configgen path that is missing here does NOT merely mislabel
 # the run -- classify() returns kinds=[] and the run is REFUSED as "touches no
@@ -737,6 +739,14 @@ class ABMeasure:
         # forced split consumed, and the fixed point it converged to.
         self.split_start_sha = {}
         self.fixed_point_sha = {}
+        # The same pair for splits.txt (lane W16-TD), which the split ALSO
+        # rewrites: every .pdata range is re-derived from the .text block that
+        # owns its function. Bytes (not shas) for the start, because leg B's
+        # landing diff is computed FROM the file the split consumed.
+        # _split_input_splits is set by force_split(), never elsewhere.
+        self._split_input_splits = None
+        self.splits_start = {}
+        self.splits_fixed_sha = {}
         self.say = verbose_print
         self.ninja = self.wt / "tools" / "ninja-locked"
         self.evidence = {}   # verification evidence, goes into result.json
@@ -799,6 +809,17 @@ class ABMeasure:
         that trap from the other direction)."""
         return hashlib.sha256((self.wt / SYMBOLS_REL).read_bytes()).hexdigest()
 
+    def splits_bytes(self):
+        """The CURRENT splits.txt, as bytes. The split rewrites it on every
+        run (.pdata follows .text), so it is the second half of "what did the
+        split consume, and what did it write back?" (lane W16-TD)."""
+        return (self.wt / SPLITS_REL).read_bytes()
+
+    def restore_splits(self):
+        """Restore the committed splits.txt. Same positional rule as
+        restore_symbols(): only immediately before a split-forcing build."""
+        git(self.wt, "checkout", "--", SPLITS_REL)
+
     def force_split(self):
         """Force the SPLIT edge to re-run, recording the symbols.txt content
         it is about to CONSUME.
@@ -810,6 +831,7 @@ class ABMeasure:
         the COMMITTED file so both legs start identically) do it themselves,
         immediately before calling this."""
         self._split_input_sha = self.symbols_sha()
+        self._split_input_splits = self.splits_bytes()
         (self.wt / STAMP_REL).unlink(missing_ok=True)
         (self.wt / CONFIG_YML_REL).touch()
 
@@ -848,12 +870,19 @@ class ABMeasure:
                     "the FIRST split's objs were carved from a symbols.txt it "
                     "then superseded — reading there under-reports bytes"))
         # splits.txt is ALSO rewritten by the split (.pdata is re-derived every
-        # run). It is byte-stable in every case measured, so it is NOT part of
-        # the convergence condition — but a SECOND feedback channel that is
-        # silently still moving is exactly the shape of the defect this method
-        # exists to fix, so it is surfaced rather than assumed.
-        self.evidence[f"leg{leg}_splits_sha"] = hashlib.sha256(
-            (self.wt / f"config/{TITLE}/splits.txt").read_bytes()).hexdigest()[:12]
+        # run). It is NOT part of the convergence condition: dtk clears and
+        # re-derives the whole .pdata set from .text on every run, so the
+        # .pdata lines it READ never shape what it carves, and the objs the
+        # first split emitted are already the fixed point's objs. What it
+        # IS part of is LANDING (lane W16-TD): a .text move whose patch does
+        # not carry the re-derived .pdata lines is not a fixed point of the
+        # split, and main's next build stops at the split-guard. W16-TB
+        # landed exactly that (f83a5d708 is the repair), while this tool
+        # recorded the moved sha here and said nothing. splits_outcome()
+        # now adjudicates it the way symbols_outcome() does symbols.txt.
+        self.splits_fixed_sha[leg] = hashlib.sha256(
+            self.splits_bytes()).hexdigest()
+        self.evidence[f"leg{leg}_splits_sha"] = self.splits_fixed_sha[leg][:12]
         return res
 
     def symbols_drift(self):
@@ -1054,6 +1083,7 @@ class ABMeasure:
             # patch, the patch's own hunks).
             self.force_split()
             self.split_start_sha["A"] = self._split_input_sha
+            self.splits_start["A"] = self._split_input_splits
         # ⚠ NO restore_symbols() below this point — see the docstring: it is a
         # discovered dep of the SPLIT edge AND a split output, so restoring
         # inside the loop re-dirties the graph and the loop cannot converge.
@@ -1188,6 +1218,19 @@ class ABMeasure:
             # under a symbols label. For a patch that does not touch
             # symbols.txt the order is immaterial (one file, untouched by it).
             self.restore_symbols()
+            # Same reasoning for splits.txt (lane W16-TD): when leg A's
+            # committed splits.txt is not a split fixed point, leg A's split
+            # rewrote it, and the patch's hunks were written against the
+            # COMMITTED file. Leg B must start from HEAD+patch, exactly like
+            # symbols.txt, or `git apply` fails (or lands on leg A's output).
+            _, sd = git(self.wt, "diff", "--", SPLITS_REL)
+            if sd.strip():
+                keep = self.rundir / "legA_splits_rederived_vs_head.diff"
+                keep.write_text(sd)
+                self.say("  [apply] leg A's split re-derived splits.txt (the "
+                         "base tree is not a split fixed point); restoring "
+                         f"the committed file before apply (saved -> {keep})")
+                self.restore_splits()
         rc, out = git(self.wt, "apply", "--check", str(patch_path), check=False)
         if rc != 0:
             raise Refusal("apply", f"patch does not apply cleanly:\n{out}")
@@ -1211,6 +1254,7 @@ class ABMeasure:
                      "INERT: '[APPLIED] ... 0 files patched')")
             self.force_split()
             self.split_start_sha["B"] = self._split_input_sha
+            self.splits_start["B"] = self._split_input_splits
         if "configgen" in kinds:
             # ⛔ Do NOT run configure.py here (lane W16-NG). It would run
             # BEFORE the split, reading build/<title>/config.json -- the
@@ -1280,6 +1324,7 @@ class ABMeasure:
         if kinds & SPLIT_FORCING_KINDS:
             self.converge_split("B", "legB_build")
             self.symbols_outcome(kinds)
+            self.splits_outcome(kinds)
         return res
 
     def symbols_outcome(self, kinds):
@@ -1313,6 +1358,98 @@ class ABMeasure:
                      "leg B's fixed-point symbols.txt with the patch — saved "
                      f"as a diff vs HEAD: "
                      f"{out.get('legB_fixed_point_diff_vs_head')}")
+
+    def splits_outcome(self, kinds):
+        """After leg B's fixed point: the splits.txt half of what landing
+        this patch requires (lane W16-TD). The split re-derives every .pdata
+        line from the .text block that owns its function, so a patch that
+        moves .text and does not carry the moved .pdata lines is not a fixed
+        point: landed alone, main's next build stops at the split-guard (it
+        did, for W16-TB; f83a5d708 is the repair). Saves two diffs:
+
+          legB_splits_rederived.diff     leg B's START -> its fixed point:
+                                         exactly the lines to commit ON TOP
+                                         of the patch (applies to HEAD+patch)
+          legB_splits_fixed_point.diff   HEAD -> leg B's fixed point (the
+                                         whole file to land, patch included)
+        """
+        a_start = self.splits_start.get("A")
+        b_start = self.splits_start.get("B")
+        out = check_splits_fixed_point(
+            self.evidence.get("applied_files", []),
+            a_start and hashlib.sha256(a_start).hexdigest(),
+            self.splits_fixed_sha.get("A"),
+            b_start and hashlib.sha256(b_start).hexdigest(),
+            self.splits_fixed_sha.get("B"))
+        if not out["patch_is_fixed_point"]:
+            fixed = self.splits_bytes()
+            red = splits_rederived_diff(b_start, fixed)
+            keep = self.rundir / "legB_splits_rederived.diff"
+            keep.write_text(red)
+            out["legB_rederived_diff"] = str(keep)
+            out["legB_rederived_lines"] = diff_line_counts(red)
+            # Self-check, on the file actually on disk: the diff must
+            # reverse-apply to leg B's fixed point. A diff that does not
+            # apply is worse than none -- it would be committed as a repair.
+            rc, msg = git(self.wt, "apply", "--check", "-R", str(keep),
+                          check=False)
+            out["legB_rederived_diff_reverse_applies"] = rc == 0
+            if rc != 0:
+                out["legB_rederived_diff_check_output"] = msg[-1000:]
+            _, d = git(self.wt, "diff", "--", SPLITS_REL)
+            keep2 = self.rundir / "legB_splits_fixed_point.diff"
+            keep2.write_text(d)
+            out["legB_fixed_point_diff_vs_head"] = str(keep2)
+        self.evidence["splits_fixed_point"] = out
+        if not out["legA_start_is_fixed_point"]:
+            self.say("  [splits] ⚠ leg A's COMMITTED splits.txt is NOT a "
+                     "split fixed point (leg A's split re-derived it): the "
+                     "base tree itself fails the split-guard on a plain "
+                     "build. Both legs are still read at their fixed points.")
+        if out["patch_is_fixed_point"]:
+            self.say("  [splits] leg B's starting splits.txt IS what its "
+                     "split wrote back: the patch needs no .pdata lines.")
+        else:
+            n = out["legB_rederived_lines"]
+            self.say("  [splits] ⚠ PATCH IS NOT A SPLIT FIXED POINT: leg B's "
+                     f"split re-derived splits.txt (+{n['added']}/-"
+                     f"{n['removed']} lines; .pdata follows moved .text). Leg "
+                     "B was measured at the fixed point. To LAND it, commit "
+                     "the re-derived lines with the patch: "
+                     f"`git apply {out['legB_rederived_diff']}` on top of it "
+                     + ("(verified: it reverse-applies to leg B's file)"
+                        if out["legB_rederived_diff_reverse_applies"] else
+                        "(⚠ it did NOT reverse-apply to leg B's file -- "
+                        "use the full file diff instead)")
+                     + f"; full file vs HEAD: "
+                     f"{out['legB_fixed_point_diff_vs_head']}")
+
+
+def splits_rederived_diff(start, fixed):
+    """PURE: a git-applyable unified diff of splits.txt from `start` (the
+    file leg B's split consumed) to `fixed` (what it wrote back), bytes in."""
+    if start is None or fixed is None:
+        return ""
+    a = start.decode("utf-8").splitlines(keepends=True)
+    b = fixed.decode("utf-8").splitlines(keepends=True)
+    lines = list(difflib.unified_diff(a, b, f"a/{SPLITS_REL}",
+                                      f"b/{SPLITS_REL}", n=3))
+    if not lines:
+        return ""
+    return f"diff --git a/{SPLITS_REL} b/{SPLITS_REL}\n" + "".join(lines)
+
+
+def diff_line_counts(diff_text):
+    """PURE: added/removed body lines of a unified diff (headers excluded)."""
+    add = rem = 0
+    for l in (diff_text or "").splitlines():
+        if l.startswith("+++") or l.startswith("---"):
+            continue
+        if l.startswith("+"):
+            add += 1
+        elif l.startswith("-"):
+            rem += 1
+    return {"added": add, "removed": rem}
 
 
 DIFF_PATH_RE = re.compile(r"^diff --git a/(.+?) b/(.+)$", re.M)
@@ -1736,6 +1873,43 @@ def check_symbols_fixed_point(kinds, a_start, a_fixed, b_start, b_fixed):
             "measure nothing. Check the edit against the split's own carve "
             "rules (a .pdata BeginAddress, a Class-4 merge, a size that ends "
             "inside a symbol) — the split, not this patch, decides the carve.")
+    return {"legA_start_is_fixed_point": a_start == a_fixed,
+            "patch_is_fixed_point": b_start == b_fixed,
+            "legB_fixed_point_equals_legA": b_fixed == a_fixed,
+            "shas": {"legA_start": a_start[:12], "legA_fixed": a_fixed[:12],
+                     "legB_start": b_start[:12], "legB_fixed": b_fixed[:12]}}
+
+
+def check_splits_fixed_point(applied_files, a_start, a_fixed, b_start,
+                             b_fixed):
+    """PURE: what the two legs' splits.txt fixed points say (lane W16-TD).
+
+    Unlike symbols.txt, splits.txt is never the convergence condition (dtk
+    re-derives .pdata from .text every run, so the .pdata lines it reads do
+    not shape the carve); this decides LANDING, plus one refusal:
+
+    REFUSES a patch whose only applied file is splits.txt when leg B's split
+    wrote back EXACTLY leg A's file although the patch changed it -- the split
+    re-derived every hunk away (an edit to .pdata lines only, which are
+    output, not input), so leg B is leg A again: absent-vs-absent. A patch
+    with any other file (map, config.yml, source) is never refused on this
+    ground: those can matter while splits.txt ends where leg A's did.
+    """
+    if not (a_start and a_fixed and b_start and b_fixed):
+        raise Refusal("splits-fixed-point",
+                      "a leg has no recorded splits.txt start/fixed-point "
+                      "sha -- the fixed-point bookkeeping did not run; "
+                      "refusing rather than describing a state nobody "
+                      "measured.")
+    applied = set(applied_files or ())
+    if applied == {SPLITS_REL} and b_fixed == a_fixed and b_start != a_start:
+        raise Refusal(
+            "splits-fixed-point",
+            "splits.txt-only patch, but leg B's split wrote back EXACTLY leg "
+            "A's splits.txt: the split re-derived every hunk away (.pdata "
+            "lines are split OUTPUT -- dtk re-derives them from .text on every "
+            "run), so leg B is leg A again and the A/B would measure nothing. "
+            "Move the .text block instead; .pdata follows it.")
     return {"legA_start_is_fixed_point": a_start == a_fixed,
             "patch_is_fixed_point": b_start == b_fixed,
             "legB_fixed_point_equals_legA": b_fixed == a_fixed,
@@ -2505,6 +2679,15 @@ def main():
                       "commit leg B's fixed-point symbols.txt with it "
                       f"({sfp.get('legB_fixed_point_diff_vs_head')}), or "
                       "main's next build fails the split-guard")
+            pfp = ab.evidence.get("splits_fixed_point") or {}
+            if pfp and not pfp.get("patch_is_fixed_point"):
+                n = pfp.get("legB_rederived_lines") or {}
+                print("  ⚠ LANDING: leg B's split RE-DERIVED splits.txt "
+                      f"(+{n.get('added')}/-{n.get('removed')} lines, .pdata "
+                      "following moved .text); commit those lines with the "
+                      f"patch ({pfp.get('legB_rederived_diff')} applies on "
+                      "top of it), or main's next build fails the "
+                      "split-guard")
         print(f"  Δmatched={delta['matched_functions']:+d}  "
               f"Δmasked_equal={delta['masked_equal_functions']:+d}  "
               f"Δhonest={delta['honest']:+d}  "
@@ -2954,6 +3137,106 @@ def selftest():
           f"apply at {_ai})")
     if not ok:
         fails.append("W16-SP apply_patch restore order")
+
+    # ---- W16-TD: splits.txt re-derivation (.pdata follows moved .text) ----
+    # W16-TB measured a .text re-home correctly, landed it WITHOUT the
+    # re-derived .pdata lines, and main's next build stopped at the split-
+    # guard (repaired by f83a5d708). Each branch below is driven both ways.
+    _TB = [SPLITS_REL, "scripts/target_symbol_map.json"]
+    _o = check_splits_fixed_point(_TB, H, H, X, M)          # TB shape
+    ok = (_o["patch_is_fixed_point"] is False
+          and _o["legA_start_is_fixed_point"] is True
+          and _o["legB_fixed_point_equals_legA"] is False)
+    _o = check_splits_fixed_point(_TB, H, H, M, M)          # TB + f83a5d708
+    ok = ok and _o["patch_is_fixed_point"] is True
+    print(("  PASS" if ok else "  FAIL") + "  [W16-TD] splits patch_is_"
+          "fixed_point is False for a .text move whose split re-derives "
+          ".pdata (W16-TB as committed) and True once the re-derived lines "
+          "ride along (TB + f83a5d708)")
+    if not ok:
+        fails.append("W16-TD splits patch_is_fixed_point")
+    check("[W16-TD] splits.txt-only patch whose split writes back EXACTLY "
+          "leg A's file REFUSES (a .pdata-only edit: the split re-derived it "
+          "away)",
+          lambda: check_splits_fixed_point([SPLITS_REL], H, H, X, H),
+          expect_refusal=True)
+    check("[W16-TD] the same shape with a map file in the patch PASSES (the "
+          "map edit is real even though splits.txt ends where leg A's did)",
+          lambda: check_splits_fixed_point(_TB, H, H, X, H),
+          expect_refusal=False)
+    check("[W16-TD] the same shape with config.yml in the patch PASSES",
+          lambda: check_splits_fixed_point([SPLITS_REL, CONFIG_YML_REL],
+                                           H, H, X, H),
+          expect_refusal=False)
+    check("[W16-TD] a map-only patch (splits.txt untouched, start == leg A) "
+          "PASSES",
+          lambda: check_splits_fixed_point(["scripts/target_symbol_map.json"],
+                                           H, H, H, H),
+          expect_refusal=False)
+    check("[W16-TD] missing splits.txt fixed-point bookkeeping REFUSES",
+          lambda: check_splits_fixed_point(_TB, H, None, X, M),
+          expect_refusal=True)
+    # The landing diff must be one `git apply` accepts on HEAD+patch and that
+    # turns it into the split's output byte-for-byte; checked with real git
+    # on a TB-shaped fixture (a .pdata boundary moving between two headings,
+    # and a .pdata line dropped), plus the empty case.
+    _start = ("GuitarController.cpp:\n"
+              "\t.pdata      start:0x8223FC08 end:0x8223FC30\n"
+              "\t.pdata      start:0x8223FC30 end:0x8223FC38\n"
+              "\t.pdata      start:0x82240038 end:0x82240040\n"
+              "\t.text       start:0x8279C4A8 end:0x8279C630\n\n"
+              "JoypadController.cpp:\n"
+              "\t.pdata      start:0x8223FC00 end:0x8223FC08\n"
+              "\t.text       start:0x8279B280 end:0x8279B2C8\n").encode()
+    _fixed = (_start.decode()
+              .replace("0x8223FC08 end:0x8223FC30", "0x8223FC28 end:0x8223FC30")
+              .replace("\t.pdata      start:0x82240038 end:0x82240040\n", "")
+              .replace("0x8223FC00 end:0x8223FC08", "0x8223FC00 end:0x8223FC28")
+              ).encode()
+    _red = splits_rederived_diff(_start, _fixed)
+    ok = (splits_rederived_diff(_start, _start) == ""
+          and diff_line_counts(_red) == {"added": 2, "removed": 3})
+    with tempfile.TemporaryDirectory() as _td:
+        _tdp = Path(_td)
+        _f = _tdp / SPLITS_REL
+        _f.parent.mkdir(parents=True)
+        _f.write_bytes(_start)
+        (_tdp / "red.diff").write_text(_red)
+        subprocess.run(["git", "init", "-q"], cwd=_td, check=True)
+        _rc = subprocess.run(["git", "apply", "red.diff"], cwd=_td,
+                             capture_output=True).returncode
+        ok = ok and _rc == 0 and _f.read_bytes() == _fixed
+        # and the reverse self-check splits_outcome() runs must agree
+        _rc2 = subprocess.run(["git", "apply", "--check", "-R", "red.diff"],
+                              cwd=_td, capture_output=True).returncode
+        _f.write_bytes(_start)
+        _rc3 = subprocess.run(["git", "apply", "--check", "-R", "red.diff"],
+                              cwd=_td, capture_output=True).returncode
+        ok = ok and _rc2 == 0 and _rc3 != 0
+    print(("  PASS" if ok else "  FAIL") + "  [W16-TD] splits_rederived_diff: "
+          "empty when unchanged; on a TB-shaped fixture `git apply` turns "
+          "leg B's start into its fixed point byte-for-byte, and the "
+          "reverse check accepts the fixed point and REJECTS the start")
+    if not ok:
+        fails.append("W16-TD splits_rederived_diff")
+    # SHAPE: leg B adjudicates splits.txt after its fixed point (as it does
+    # symbols.txt), converge_split records the splits fixed point, and
+    # apply_patch's splits.txt restore sits BEFORE `git apply`.
+    _lb = [l for l in inspect.getsource(ABMeasure.leg_b_build).splitlines()
+           if not l.strip().startswith("#")]
+    _ci = [i for i, l in enumerate(_lb) if 'self.converge_split("B"' in l]
+    _si = [i for i, l in enumerate(_lb) if "self.splits_outcome(" in l]
+    _cs = "self.splits_fixed_sha[leg] =" in inspect.getsource(
+        ABMeasure.converge_split)
+    _rs = [i for i, l in enumerate(_code) if "self.restore_splits()" in l]
+    ok = (len(_ci) == 1 and len(_si) == 1 and _ci[0] < _si[0] and _cs
+          and len(_rs) == 1 and _rs[0] < _ai[0])
+    print(("  PASS" if ok else "  FAIL") + "  [W16-TD] leg_b_build calls "
+          f"splits_outcome after converge_split (at {_ci} / {_si}), "
+          f"converge_split records it ({_cs}), apply_patch restores "
+          f"splits.txt before git apply ({_rs} < {_ai})")
+    if not ok:
+        fails.append("W16-TD splits_outcome wiring")
 
     # leg-B application assertions, every branch, no build required.
     base = {"msvc": 0, "split": 0, "patch": 0, "other_work": 0, "work": 0,
