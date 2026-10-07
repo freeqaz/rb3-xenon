@@ -65,6 +65,7 @@ void SetTheBeatMap(BeatMap *);
 // abstract; the parse reads track/pan/vol/vocal-part hints).
 #include "utl/SongInfoCopy.h"
 #include "utl/SongInfoAudioType.h"
+#include "retail_boot_macros.h"
 class NativeSongInfo : public SongInfo {
 public:
     Symbol GetName() const { return Symbol("native_test"); }
@@ -200,6 +201,7 @@ int main(int argc, char **argv) {
     InitMakeString();
     Symbol::Init();
     DataInit();
+    RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
     ObjectDir::PreInit(256, 4096);
     gSystemConfig = DataReadString(kConfigDta);
 

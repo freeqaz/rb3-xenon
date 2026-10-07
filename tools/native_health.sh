@@ -337,10 +337,71 @@ run_target         rb3-vocal2  '^Done\.$'                    --needs "$MID_VICAR
 run_target         rb3-harmony '^Done\.$'                    --needs "$MID_CENTERFOLD" -- "$MID_CENTERFOLD"
 run_target         rb3-crowd   '^=== M12 complete'           --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
 run_target         rb3-save    '^=== ALL ROUND-TRIPS OK'                               --
-run_target --gated rb3-ark     '^RESULT: ALL GATES PASSED'   --needs "$ASSETS" --needs "$ARK_REF" -- "$ASSETS" "$ARK_REF"
+CFG_ARK="$LOGDIR/native_health_syscfg_ark_$SLUG.txt"; rm -f "$CFG_ARK"
+run_target --gated rb3-ark     '^RESULT: ALL GATES PASSED'   --needs "$ASSETS" --needs "$ARK_REF" -- "$ASSETS" "$ARK_REF" --config-dump "$CFG_ARK"
 run_target         rb3-frame   '^rb3-frame: OK '                                       -- "$LOGDIR/native_health_frame_$SLUG.png"
 run_target --gated rb3-milo    '^RESULT: ALL GATES PASSED'   --needs "$ASSETS"         -- "$ASSETS" ui/track/gen/tracksystem_meshes.milo_xbox
+CFG_RENDER="$LOGDIR/native_health_render_out_$SLUG/syscfg_preinit.txt"; rm -f "$CFG_RENDER"
 run_target --gated rb3-render  '^RESULT: ALL GATES PASSED'   --needs "$ASSETS"         -- "$ASSETS" "$LOGDIR/native_health_render_out_$SLUG"
+
+# ---------------------------------------------------- BOOT CONFIG (W16-UA) --
+# Retail defines REGION_NA, HX_XBOX, HX_WIN, HX_NG and _SHIP before it reads any
+# config (SystemPreInit -> RegionInit, then PreInitSystem), and the shipped .dtb
+# files test HX_XBOX and _SHIP with #ifdef/#ifndef. Every native driver that
+# reads DTA now defines the same macros first (native/src/retail_boot_macros.h).
+# Two checks, both counted as runtime failures:
+#   1. every such driver printed `[PASS] boot-macros` (its macro table held
+#      exactly the five before its first read). A driver that stops calling
+#      Define() prints nothing, so the line's ABSENCE fails too.
+#   2. tools/retail_boot_config.py rebuilds the config from the shipped .dtb
+#      files and the retail image with no engine code, and the dumps rb3-ark
+#      and rb3-render wrote must equal it line for line, macro line included.
+#      HX_WIN, HX_NG and REGION_NA gate no shipped content, so that macro line
+#      is the only place a missing one shows.
+# rb3-frame links only milo-engine and reads no DTA, so it has no row.
+echo
+echo "--- boot config: do the native targets read the config the console reads? ---"
+BOOT_MACRO_TARGETS=(rb3-dta rb3-song rb3-midi rb3-gem rb3-hit rb3-score rb3-score2
+    rb3-score3 rb3-score4 rb3-vocal rb3-vocal2 rb3-harmony rb3-crowd rb3-save
+    rb3-ark rb3-milo rb3-render)
+bm_ok=0; bm_skip=0; cfg_ark_equal=0
+for t in "${BOOT_MACRO_TARGETS[@]}"; do
+    if printf '%s\n' ${unrunnable[@]+"${unrunnable[@]}"} | G -q "^$t:"; then
+        bm_skip=$((bm_skip + 1)); continue
+    fi
+    tlog="$LOGDIR/native_health_${t}_$SLUG.log"
+    if G -q '^  \[PASS\] boot-macros ' "$tlog" 2>/dev/null; then
+        bm_ok=$((bm_ok + 1))
+    else
+        printf '  %-10s %-12s -- no [PASS] boot-macros line: %s\n' FAIL "$t" \
+            "$(G 'boot-macros' "$tlog" 2>/dev/null | head -1 | cut -c1-90)"
+        rt_failed+=("$t:boot-macros")
+    fi
+done
+echo "  boot-macros: $bm_ok of ${#BOOT_MACRO_TARGETS[@]} DTA-reading target(s) printed [PASS]" \
+     "($bm_skip unrunnable, not checked)"
+cfg_check() {  # label dump-path -- sets CC_RC
+    local label="$1" dump="$2" out="$LOGDIR/native_health_cfgview_${1}_$SLUG.log"
+    python3 "$DIR/tools/retail_boot_config.py" check "$dump" --assets "$ASSETS" > "$out" 2>&1
+    CC_RC=$?
+    printf '  %-6s %s\n' "$label" "$(head -1 "$out")"
+}
+for pair in "rb3-ark:$CFG_ARK" "rb3-render:$CFG_RENDER"; do
+    t="${pair%%:*}"; dump="${pair#*:}"
+    if printf '%s\n' ${unrunnable[@]+"${unrunnable[@]}"} | G -q "^$t:"; then
+        echo "  SKIP   $t config view -- $t was unrunnable"; continue
+    fi
+    if [ ! -s "$dump" ]; then
+        printf '  %-10s %-12s -- wrote no config dump at %s\n' FAIL "$t" "$dump"
+        rt_failed+=("$t:config-view"); continue
+    fi
+    cfg_check "$t" "$dump"
+    case "$CC_RC" in
+    0) [ "$t" = rb3-ark ] && cfg_ark_equal=1 ;;
+    1) rt_failed+=("$t:config-view") ;;
+    *) unrunnable+=("$t:config-view-norun") ;;
+    esac
+done
 
 # -------------------------------------------------------------- SELFTEST ----
 # Does each negative control actually go RED? The PAIR is the control: the
@@ -402,6 +463,41 @@ if [ $SELFTEST -eq 1 ]; then
     else
         echo "  SKIP  score2-divergent -- binary absent"; st_skip=$((st_skip + 1))
     fi
+    # ---- BOOT MACRO CONTROLS (W16-UA) ------------------------------------
+    # Drop ONE of retail's five boot macros (RB3_BOOT_MACRO_DROP) and rerun
+    # rb3-ark. RED needs BOTH instruments to fire: rb3-ark's own gates fail
+    # (boot-macros always; joypad-controllers for HX_XBOX; ship-dev-blocks-absent
+    # and the song count for _SHIP), AND tools/retail_boot_config.py reports the
+    # dump DIFFERENT from the retail read. The pair is rb3-ark's positive run
+    # being green with its dump EQUAL.
+    for m in REGION_NA HX_XBOX HX_WIN HX_NG _SHIP; do
+        label="bootmacro-drop-$m"
+        if ! was_green rb3-ark || [ "$cfg_ark_equal" -ne 1 ]; then
+            echo "  SKIP  $label -- rb3-ark's POSITIVE run was not green with an EQUAL"
+            echo "        config view, so a red here would prove nothing."
+            st_skip=$((st_skip + 1)); continue
+        fi
+        log="$LOGDIR/native_health_selftest_${label}_$SLUG.log"
+        dump="$LOGDIR/native_health_selftest_${label}_$SLUG.txt"; rm -f "$dump"
+        RB3_BOOT_MACRO_DROP="$m" "$NB/rb3-ark" "$ASSETS" "$ARK_REF" --config-dump "$dump" \
+            > "$log" 2>&1
+        rc=$?
+        f=$(G -c '^  \[FAIL\] ' "$log"); f=${f:-0}
+        python3 "$DIR/tools/retail_boot_config.py" check "$dump" --assets "$ASSETS" \
+            > "$log.view" 2>&1
+        vrc=$?
+        if [ "$rc" -ne 0 ] && [ "$f" -gt 0 ] && [ "$vrc" -eq 1 ]; then
+            echo "  RED   $label -- rc=$rc, $f gate(s) failed ($(G '^  \[FAIL\] ' "$log" \
+                | sed 's/^  \[FAIL\] //; s/ .*//' | tr '\n' ' ')); config view: $(head -1 "$log.view" \
+                | cut -d' ' -f2,4-7) (control WORKS)"
+            st_ok=$((st_ok + 1))
+        else
+            echo "  GREEN $label -- rc=$rc, $f gate(s) failed, config view rc=$vrc --"
+            echo "        THE CONTROL DID NOT FIRE; a missing $m would go unnoticed."
+            st_bad=$((st_bad + 1))
+        fi
+        echo "        log: $log"
+    done
     # ---- RUNTIME CLASSIFIER CONTROLS (W16-PE) ------------------------------
     # The all-targets runtime section above is only worth something if its
     # classifier is shown to go red on each failure class it claims to catch.

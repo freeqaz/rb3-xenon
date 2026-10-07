@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <strings.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
@@ -68,6 +69,28 @@ static bool NativeLooseFileExists(const char *file) {
     unsigned long long byteOff = 0;
     if (TheArchive->GetFileInfo(norm, arkNum, byteOff, fileSize, ucSize))
         return false; // the archive owns it -- not loose, and the ark wins
+    // ⛔ A .dta is never in the archive under its own name. CachedDataFile
+    // (obj/DataFile.cpp) asks FileIsLocal with the .dta name and, when that
+    // says "not local", reads <dir>/gen/<base>.dtb from the ark. So the check
+    // above always missed a .dta, and any .dta that also existed on the host
+    // filesystem was read as a host TEXT file instead of the shipped .dtb.
+    // That happened for real (W16-UA): with the data dir at
+    // ~/code/milohax/rb3/orig-assets/xbox-zip, "../../system/run/..." lands in
+    // the rb3 Wii repo's system/run/, and 16 of the 27 files the preinit config
+    // reads (default, macros, joypad, objects, every *_objects.dta, ...) came
+    // from there. The ark owns a .dta exactly when it owns that .dtb.
+    size_t n = strlen(norm);
+    if (n > 4 && strcasecmp(norm + n - 4, ".dta") == 0) {
+        const char *slash = strrchr(norm, '/');
+        char dtb[300];
+        if (slash)
+            snprintf(dtb, sizeof(dtb), "%.*s/gen/%.*s.dtb", (int)(slash - norm), norm,
+                     (int)(norm + n - 4 - (slash + 1)), slash + 1);
+        else
+            snprintf(dtb, sizeof(dtb), "gen/%.*s.dtb", (int)(n - 4), norm);
+        if (TheArchive->GetFileInfo(dtb, arkNum, byteOff, fileSize, ucSize))
+            return false;
+    }
     // Qualify exactly as every other read here does, so NativeSetDataDir()
     // and the overlay directory are both honoured.
     char qualified[256];

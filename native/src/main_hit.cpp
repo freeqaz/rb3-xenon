@@ -51,6 +51,7 @@
 #include "obj/Dir.h"
 #include "utl/FileStream.h"
 #include "utl/Symbol.h"
+#include "retail_boot_macros.h"
 
 #include <cstdio>
 #include <vector>
@@ -257,6 +258,7 @@ int main(int argc, char **argv) {
     InitMakeString();
     Symbol::Init();
     DataInit();
+    RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
     ObjectDir::PreInit(256, 4096);
 
     gSystemConfig = DataReadString(kBeatmatcherDta);

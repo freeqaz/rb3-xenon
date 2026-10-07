@@ -83,6 +83,7 @@
 #include "crowd_config_dta.h" // the REAL shipped (crowd ...) block
 #include "scoring_config_dta.h" // W16-PJ: real shipped (solo ...) + (coda ...)
 #include "game/GameConfig.h"
+#include "retail_boot_macros.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -422,6 +423,7 @@ int main(int argc, char **argv) {
     InitMakeString();
     Symbol::Init();
     DataInit();
+    RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
     ObjectDir::PreInit(256, 4096);
 
     // Splice the REAL shipped (crowd ...) block into the (scoring ...) section.

@@ -23,6 +23,7 @@
 #include "obj/DataUtl.h"
 #include "os/File.h"
 #include "os/Joypad.h"
+#include "retail_boot_macros.h"
 #include "os/JoypadMsgs.h"
 #include "os/System.h"
 #include "utl/FilePath.h"
@@ -658,9 +659,12 @@ void JoypadChecks() {
     // game's config/joypad.dta, and its trailing #merge of
     // system/run/config/default.dta DataMergeTags the system joypad.dta into it
     // (tags the game lacks are added; the game's own tags, e.g. its empty
-    // `ignore`, win). rb3-render reads the config with none of those macros
-    // defined, so its section lacks the HX_XBOX `controllers` block; this
-    // fixture rebuilds the section the same way with them defined.
+    // `ignore`, win). This fixture rebuilds the section from the two files with
+    // those macros defined. When W16-TW wrote it, rb3-render read its config
+    // with none of them defined, so SystemConfig("joypad") had no HX_XBOX
+    // `controllers` block. Since W16-UA rb3-render defines them before its read
+    // (retail_boot_macros.h), and tw-joy-syscfg checks that SystemConfig("joypad")
+    // now equals this fixture node for node.
     const char *kMacros[] = { "HX_XBOX", "HX_WIN", "HX_NG", "_SHIP" };
     DataArray *savedMacro[4];
     for (int i = 0; i < 4; i++) {
@@ -714,6 +718,24 @@ void JoypadChecks() {
             cfg->Release();
         gJoyCfg = nullptr;
         return;
+    }
+
+    // W16-UA: the config rb3-render read at boot is the one the console reads,
+    // so its joypad section is this fixture.
+    {
+        DataArray *sys = gSystemConfig->FindArray("joypad", false);
+        std::string a = sys ? RetailBootMacros::Canonical(sys) : std::string();
+        std::string b = RetailBootMacros::Canonical(cfg);
+        size_t at = 0;
+        while (at < a.size() && at < b.size() && a[at] == b[at])
+            at++;
+        char where[64] = "";
+        if (sys && a != b)
+            snprintf(where, sizeof(where), ", first difference at byte %zu", at);
+        Gate("tw-joy-syscfg", sys && a == b,
+             "SystemConfig(\"joypad\") %s the fixture: %zu vs %zu canonical bytes%s",
+             !sys ? "MISSING, not" : a == b ? "equals" : "DIFFERS from", a.size(), b.size(),
+             where);
     }
 
     JoypadData saved = *JoypadGetPadData(0);

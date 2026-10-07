@@ -145,6 +145,7 @@ void InternSymbolGlobals_M6Symbols();
 
 #include "gfx/Screenshot.h"
 #include "platform/Rnd_Wgpu.h"
+#include "retail_boot_macros.h"
 #include "platform/PointTestHook.h"  // W16-RX: which step answers the flare tests
 
 #include <cmath>
@@ -270,9 +271,12 @@ namespace {
     //
     // So this reads the shipped preinit config whole, exactly as
     // PreInitSystem/ReadSystemConfig would (os/System.cpp:223-230 is literally
-    // `DataReadFile(config, true)`), and skips only PreInitSystem's DataSetMacro
-    // / OptionStr / DataRegisterFunc / SetGfxMode wrapper. Measured contents:
-    // 25 top-level sections including `rnd`, `objects`, `system`, `ui`, `mem`.
+    // `DataReadFile(config, true)`), and skips only PreInitSystem's OptionStr /
+    // DataRegisterFunc / SetGfxMode wrapper. PreInitSystem's DataSetMacro calls
+    // are NOT skipped: main() defines the same macros first
+    // (retail_boot_macros.h, W16-UA). Measured contents: 24 top-level sections
+    // including `rnd`, `objects`, `system`, `ui`, `mem`. (Before W16-UA, with no
+    // macros, it was 25: the extra was the `#ifndef _SHIP` `hostnames`.)
     //
     // ⚠ config/band_keep.dta -- the SystemInit half -- is NOT read, and cannot
     // be: it pulls ui/dev_only/selvenue.dta, which is not in the shipped
@@ -280,16 +284,32 @@ namespace {
     // then a hard failure inside ui/init.dta). That is a property of the retail
     // disc, not of this harness. Everything the render path needs is in the
     // preinit half.
+    // W16-UA: where StandUpConfig writes the config it read, in
+    // tools/retail_boot_config.py's canonical form (<outDir>/syscfg_preinit.txt).
+    std::string gConfigDumpPath;
+
     bool StandUpConfig() {
         const char *cfg = getenv("RB3_SYSCFG");
         if (!cfg) cfg = "config/band_preinit_keep.dta";
 
+        // main() has already defined retail's boot macros
+        // (RetailBootMacros::Define), so this reads what the console's
+        // PreInitSystem reads: the joypad section has its HX_XBOX `controllers`
+        // block and none of the `#ifndef _SHIP` dev blocks.
+        std::string bootMacros = RetailBootMacros::TableNames();
         gSystemConfig = DataReadFile(cfg, true);
         if (!gSystemConfig) {
             Gate("system-config", false, cfg);
             return false;
         }
         DataVariable("syscfg") = gSystemConfig;
+        // Dumped before the objects merge below edits it, so it can be compared
+        // whole with the retail read (tools/native_health.sh does).
+        if (!gConfigDumpPath.empty()) {
+            bool ok = RetailBootMacros::DumpConfig(gSystemConfig, bootMacros,
+                                                   gConfigDumpPath.c_str());
+            Gate("config-dump", ok, gConfigDumpPath.c_str());
+        }
 
         DataArray *objects = gSystemConfig->FindArray(Symbol("objects"), false);
 
@@ -5294,6 +5314,7 @@ int main(int argc, char **argv) {
     printf("dataDir : %s\noutDir  : %s\n", dataDir, outDir);
 
     DataInit();
+    gFailures += RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
     NativeArchiveInit();
     if (!TheArchive) {
         fprintf(stderr, "FATAL: TheArchive is null after NativeArchiveInit()\n");
@@ -5367,6 +5388,7 @@ int main(int argc, char **argv) {
         }
     }
 
+    gConfigDumpPath = std::string(outDir) + "/syscfg_preinit.txt";
     if (!StandUpConfig()) {
         printf("\nRESULT: FAILED (%d gate failure(s))\n", gFailures);
         return 1;

@@ -6,6 +6,7 @@
 #include "obj/Data.h"
 #include "obj/DataFile.h"
 #include "utl/Symbol.h"
+#include "retail_boot_macros.h"
 #include <cstdio>
 #include <cstdlib>
 
@@ -20,6 +21,7 @@ int main(int argc, char **argv) {
 
     InitMakeString();
     Symbol::Init(); // creates the global StringTable used to intern symbols
+    RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
 
     DataArray *root = DataReadFile(argv[1], true);
     if (!root) {
