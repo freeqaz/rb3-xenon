@@ -1331,6 +1331,12 @@ static void RotateToMultiplyUncompressed(
 // in the ShortQuat and uncompressed arms (RotateToMultiply's operands). Tried in the
 // uncompressed arm's q.Set: `f2 * x` / `f2 * z` (byte-identical) and per-component
 // assignments in w,x,y,z order (99.73).
+//
+// The product is other * q in every arm, native included. Retail's uncompressed
+// arm (0x823ADA1C..0x823ADAB8) stores x = q.w*o.x + q.x*o.w + q.z*o.y - q.y*o.z,
+// which is the Hamilton product o * q; RotateBy's is the other way round (q * o).
+// Native used to compute q * o here, so every rotate_to blend turned the wrong
+// way; rb3-render's ty-bones-rotate-to gate checks the order on a shipped clip.
 void CharBones::RotateTo(CharBones &bones, float f2) const {
     if (!mBones.empty()) {
         Bone *myBonesItr = (Bone *)mBones.data();
@@ -1417,23 +1423,7 @@ void CharBones::RotateTo(CharBones &bones, float f2) const {
                     } else {
                         q.w = (q.w * f2) + (1 - f2);
                     }
-#ifdef HX_NATIVE
-                    {
-                        // Native fix (kept from the pre-DC3 body): the quaternion
-                        // product is taken as q * other, (sw,sx,sy,sz)*(dw,dx,dy,dz).
-                        float sw_ = q.w, sx_ = q.x, sy_ = q.y, sz_ = q.z;
-                        float dx = otherQuatItr->x, dy = otherQuatItr->y;
-                        float dz = otherQuatItr->z, dw = otherQuatItr->w;
-                        float nw = sw_*dw - sx_*dx - sy_*dy - sz_*dz;
-                        float nx = sw_*dx + sx_*dw + sy_*dz - sz_*dy;
-                        float ny = sw_*dy - sx_*dz + sy_*dw + sz_*dx;
-                        float nz = sw_*dz + sx_*dy - sy_*dx + sz_*dw;
-                        otherQuatItr->x = nx; otherQuatItr->y = ny;
-                        otherQuatItr->z = nz; otherQuatItr->w = nw;
-                    }
-#else
                     RotateToMultiply(*otherQuatItr, q, *otherQuatItr);
-#endif
                     myBonesItr++;
                     if (myBonesItr == myBonesEnd) {
                         break;
@@ -1467,23 +1457,7 @@ void CharBones::RotateTo(CharBones &bones, float f2) const {
                     } else {
                         q.w = (q.w * f2) + (1 - f2);
                     }
-#ifdef HX_NATIVE
-                    {
-                        // Native fix (kept from the pre-DC3 body): the quaternion
-                        // product is taken as q * other, (sw,sx,sy,sz)*(dw,dx,dy,dz).
-                        float sw_ = q.w, sx_ = q.x, sy_ = q.y, sz_ = q.z;
-                        float dx = otherQuatItr->x, dy = otherQuatItr->y;
-                        float dz = otherQuatItr->z, dw = otherQuatItr->w;
-                        float nw = sw_*dw - sx_*dx - sy_*dy - sz_*dz;
-                        float nx = sw_*dx + sx_*dw + sy_*dz - sz_*dy;
-                        float ny = sw_*dy - sx_*dz + sy_*dw + sz_*dx;
-                        float nz = sw_*dz + sx_*dy - sy_*dx + sz_*dw;
-                        otherQuatItr->x = nx; otherQuatItr->y = ny;
-                        otherQuatItr->z = nz; otherQuatItr->w = nw;
-                    }
-#else
                     RotateToMultiply(*otherQuatItr, q, *otherQuatItr);
-#endif
                     myBonesItr++;
                     if (myBonesItr == myBonesEnd) {
                         break;
@@ -1519,23 +1493,7 @@ void CharBones::RotateTo(CharBones &bones, float f2) const {
                     } else {
                         q.w += (1 - f2);
                     }
-#ifdef HX_NATIVE
-                    {
-                        // Native fix (kept from the pre-DC3 body): the quaternion
-                        // product is taken as q * other, (sw,sx,sy,sz)*(dw,dx,dy,dz).
-                        float sw_ = q.w, sx_ = q.x, sy_ = q.y, sz_ = q.z;
-                        float dx = otherQuatItr->x, dy = otherQuatItr->y;
-                        float dz = otherQuatItr->z, dw = otherQuatItr->w;
-                        float nw = sw_*dw - sx_*dx - sy_*dy - sz_*dz;
-                        float nx = sw_*dx + sx_*dw + sy_*dz - sz_*dy;
-                        float ny = sw_*dy - sx_*dz + sy_*dw + sz_*dx;
-                        float nz = sw_*dz + sx_*dy - sy_*dx + sz_*dw;
-                        otherQuatItr->x = nx; otherQuatItr->y = ny;
-                        otherQuatItr->z = nz; otherQuatItr->w = nw;
-                    }
-#else
                     RotateToMultiplyUncompressed(*otherQuatItr, q, *otherQuatItr);
-#endif
                     myBonesItr++;
                     if (myBonesItr == myBonesEnd) {
                         break;
