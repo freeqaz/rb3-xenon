@@ -31,7 +31,11 @@
 #include "utl/BinStream.h"
 #include "utl/FilePath.h"
 #include "utl/Loader.h"
+#include "rndobj/Mat.h"
+#include "rndobj/MatAnim.h"
 #include "world/LightPreset.h"
+
+#include <algorithm>
 
 #include <chrono>
 #include <cmath>
@@ -51,6 +55,18 @@ int NativeStreamAuditAnomalies();
 int NativeStreamAuditMissSkips();
 
 typedef void (*GateFn)(const char *, bool, const char *);
+
+// obj/Dir.cpp (HX_NATIVE), W16-UL: ObjectDirs constructed and not destroyed.
+extern int gNativeLiveObjectDirs;
+// utl/ChunkStream.cpp (HX_NATIVE), W16-UL: the native read-ahead buffer count
+// and the chunk boundaries at which ReadImpl had to wait out a TempEof.
+int NativeChunkReadAheadBuffers();
+extern int gNativeChunkTempEofWaits;
+// obj/Dir.cpp (HX_NATIVE), W16-UL: Hmx::Object frees deferred inside a cascade.
+extern int gNativeCascadeObjFreesDeferred;
+// obj/DirLoader.cpp: the two marker hunts that skip unreadable stream bytes.
+void ReadDead(BinStream &bs);
+void ReadEditorDirDead(BinStream &bs);
 
 namespace {
 
@@ -255,6 +271,87 @@ void LightPresetCheck(ObjectDir *root) {
          ps.size(), missing, withKeys, keys);
 }
 
+// ======================================================= failed stream ==
+// W16-UL: ReadDead and ReadEditorDirDead hunt for an end marker one byte at a
+// time. On a failed stream every read returns zero (BinStream::Read), and
+// neither marker is zero, so without a Fail() exit the hunt never ends. The
+// stream below has failed from the start; its Fail() also counts the calls and
+// throws once a hunt has plainly spun, so an unfixed build reports a FAIL here
+// instead of hanging the run.
+struct Spun {};
+class FailedStream : public BinStream {
+public:
+    int mFailCalls = 0;
+    int mEofCalls = 0;
+    static const int kSpinCap = 1 << 16;
+    virtual void Flush() {}
+    virtual int Tell() { return 0; }
+    virtual EofType Eof() {
+        mEofCalls++;
+        return NotEof;
+    }
+    virtual bool Fail() {
+        if (++mFailCalls > kSpinCap)
+            throw Spun();
+        return true;
+    }
+    virtual const char *Name() const { return "w16ul-failed-stream"; }
+
+private:
+    virtual void ReadImpl(void *data, int bytes) { memset(data, 0, bytes); }
+    virtual void WriteImpl(const void *, int) {}
+    virtual void SeekImpl(int, SeekType) {}
+};
+
+void FailedStreamCheck(const char *gate, void (*hunt)(BinStream &)) {
+    FailedStream fs;
+    const int r0 = gNativeFailedStreamReads;
+    bool spun = false;
+    try {
+        hunt(fs);
+    } catch (const Spun &) {
+        spun = true;
+    }
+    const int reads = gNativeFailedStreamReads - r0;
+    Gate(gate, !spun,
+         "%s: %d Fail() polls, %d reads attempted on the failed stream (cap %d)",
+         spun ? "SPUN until the cap -- no fail exit" : "returned", fs.mFailCalls, reads,
+         FailedStream::kSpinCap);
+}
+
+// ===================================================== cascade delete ==
+// W16-UL: inside a cascading ~ObjectDir, ~Object skips ReplaceRefs and ring
+// unlinks write into their neighbours, so every object the cascade destroys
+// must stay allocated until the cascade ends. ArpeggioShape's dtor (run when
+// the trackpanel's GemTrackDir is destroyed) deletes its own dir-less RndMat
+// and then its RndMatAnim, whose ObjPtr<RndMat> unlink wrote into the freed
+// mat: heap corruption, glibc abort in about half of the default runs once
+// the W16-UL leak fix let that tree be destroyed. This repeats the pair in a
+// cascade and checks the mat's block is deferred. Without the fix the block is
+// freed at once; the anim is then leaked rather than deleted, so the failing
+// leg reports instead of corrupting the heap.
+void CascadeDeleteCheck() {
+    const int before = gNativeCascadeObjFreesDeferred;
+    RndMat *mat = Hmx::Object::New<RndMat>();
+    RndMatAnim *anim = Hmx::Object::New<RndMatAnim>();
+    anim->SetMat(mat);
+    void *block = dynamic_cast<void *>(mat);
+    std::vector<void *> &pending = ObjectDir::sPendingFrees();
+    const size_t p0 = pending.size();
+    ObjectDir::sDeleteObjectsDepth++;
+    delete mat;
+    const bool deferred = std::find(pending.begin() + p0, pending.end(), block) != pending.end();
+    if (deferred)
+        delete anim; // its ObjPtr<RndMat> unlink writes into the mat's block
+    ObjectDir::sDeleteObjectsDepth--;
+    ObjectDir::FlushDeferredFrees();
+    Gate("ul-cascade-delete-deferred", deferred,
+         "a RndMat deleted inside a cascade: free %s; %d Hmx::Object frees deferred earlier "
+         "in this run (the bandtrack trackpanel unload's ArpeggioShapes among them)",
+         deferred ? "deferred to the end of the cascade" : "IMMEDIATE (the anim is leaked)",
+         before);
+}
+
 // A fault inside a load or an unload kills the process before any gate can
 // report it. Armed only around those two steps: name the venue in a FAIL line,
 // then
@@ -277,6 +374,8 @@ int VenueChecks() {
     NativeStreamAuditBegin();
     const int n = sizeof(kVenues) / sizeof(kVenues[0]);
     int clean = 0, released = 0;
+    int freed = 0, dirsCreated = 0, dirsLeft = 0; // W16-UL
+    int waitVenues = 0, tempEofWaits = 0, sc15Waits = 0, bc07Waits = 0; // W16-UL
     for (int i = 0; i < n; i++) {
         const char *path = kVenues[i];
         const char *base = strrchr(path, '/') + 1;
@@ -285,8 +384,10 @@ int VenueChecks() {
         bool inArk =
             TheArchive && TheArchive->GetFileInfo(FileMakePath(".", path), arkNum, off, fileSize, ucSize);
         int r0 = gNativeFailedStreamReads, o0 = NativeStreamAuditObjects();
+        const int w0 = gNativeChunkTempEofWaits; // W16-UL
         int a0 = NativeStreamAuditAnomalies(), m0 = NativeStreamAuditMissSkips();
         auto t0 = std::chrono::steady_clock::now();
+        const int liveDirs0 = gNativeLiveObjectDirs; // W16-UL
         ObjDirPtr<ObjectDir> dir;
         snprintf(gUnloading, sizeof(gUnloading), "%s", base);
         gStage = "load";
@@ -302,6 +403,15 @@ int VenueChecks() {
         int reads = gNativeFailedStreamReads - r0, objs = NativeStreamAuditObjects() - o0;
         int anomalies = NativeStreamAuditAnomalies() - a0;
         int misses = NativeStreamAuditMissSkips() - m0;
+        const int waits = gNativeChunkTempEofWaits - w0; // W16-UL
+        if (waits > 0) {
+            waitVenues++;
+            tempEofWaits += waits;
+            if (!strcmp(base, "small_club_15.milo_xbox"))
+                sc15Waits = waits;
+            if (!strcmp(base, "big_club_07.milo_xbox"))
+                bc07Waits = waits;
+        }
         ObjectDir *root = dir;
         bool ok = inArk && root && reads == 0 && anomalies == 0 && objs > 0;
         char name[96];
@@ -318,6 +428,7 @@ int VenueChecks() {
         // The unload. Before W16-UJ every arena and festival died here
         // (SIGSEGV in ~ObjectDir's seed restore); a crash ends the run, which
         // native_health reports as runtime_crashed.
+        const int created = gNativeLiveObjectDirs - liveDirs0; // W16-UL
         gStage = "unload";
         oldSegv = signal(SIGSEGV, OnUnloadFault);
         oldBus = signal(SIGBUS, OnUnloadFault);
@@ -325,10 +436,43 @@ int VenueChecks() {
         signal(SIGSEGV, oldSegv);
         signal(SIGBUS, oldBus);
         released++;
+        // W16-UL: the unload destroys every ObjectDir the load created. Before
+        // W16-UL the native ~ObjectDir cascade nulled the parent's mSubDirs
+        // ObjDirPtr instead of releasing it, so each venue's inlined subdir
+        // tree (16.1 MB for small_club_01) outlived the unload.
+        {
+            const int left = gNativeLiveObjectDirs - liveDirs0;
+            const bool f = created > 0 && left == 0;
+            if (f)
+                freed++;
+            dirsCreated += created;
+            dirsLeft += left;
+            char fname[96];
+            snprintf(fname, sizeof(fname), "ul-venue-freed %s", base);
+            Gate(fname, f,
+                 "%d ObjectDir(s) alive after the load, %d of them still alive after the "
+                 "unload",
+                 created, left);
+        }
         fflush(stdout);
     }
     Gate("uj-venues", clean == n && released == n,
          "%d of %d shipped venue milos loaded cleanly, %d unloaded", clean, n, released);
+    Gate("ul-venues-freed", freed == n,
+         "%d of %d venue unloads destroyed every ObjectDir their load created (%d created, "
+         "%d left alive)",
+         freed, n, dirsCreated, dirsLeft);
+    // W16-UL: the W16-UJ venue gates test ReadImpl's TempEof wait only if the
+    // shipped loads reach it, and they reach it only because native keeps 2
+    // read-ahead buffers (ChunkStream.cpp). small_club_15 and big_club_07 are
+    // the two loads that failed before W16-UJ. If the count changes, or the
+    // wait stops happening, this gate fails rather than the venue gates going
+    // quietly vacuous.
+    const int bufs = NativeChunkReadAheadBuffers();
+    Gate("ul-chunk-tempeof-reached", bufs == 2 && sc15Waits > 0 && bc07Waits > 0,
+         "native read-ahead buffers %d (W16-UJ's trigger assumes 2); TempEof waits: "
+         "small_club_15 %d, big_club_07 %d, %d over %d of %d venue loads",
+         bufs, sc15Waits, bc07Waits, tempEofWaits, waitVenues, n);
     return clean;
 }
 
@@ -338,6 +482,9 @@ int RunW16UJPhase(GateFn gate) {
     gGate = gate;
     printf("\n=== W16-UJ phase: shipped venue loads, fsel NaN in Min/Max/Clamp ===\n");
     ClampChecks();
+    CascadeDeleteCheck();
+    FailedStreamCheck("ul-readdead-failed-stream", ReadDead);
+    FailedStreamCheck("ul-readeditordirdead-failed-stream", ReadEditorDirDead);
     VenueChecks();
     return gRan;
 }

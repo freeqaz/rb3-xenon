@@ -368,6 +368,10 @@ void *operator new[](size_t size);
 void operator delete(void *mem) noexcept;
 void operator delete[](void *mem) noexcept;
 
+// W16-UL: the native operator delete of every Hmx::Object class. Inside a
+// cascading ~ObjectDir it defers the free to the end of the cascade, like the
+// cascade's own DeleteObjects; otherwise it is MemFree. Defined in obj/Dir.cpp.
+void NativeObjMemFree(void *v, const char *file, int line, const char *name);
 
 #define OBJ_MEM_OVERLOAD(line_num)                                                       \
     static void *operator new(size_t s) {                                                \
@@ -375,7 +379,7 @@ void operator delete[](void *mem) noexcept;
     }                                                                                    \
     static void *operator new(size_t s, void *place) { return place; }                   \
     static void operator delete(void *v) {                                               \
-        MemFree(v, __FILE__, line_num, StaticClassName().Str());                         \
+        NativeObjMemFree(v, __FILE__, line_num, StaticClassName().Str());                \
     }
 
 // Retail inlines the class operator delete for OBJ_MEM_OVERLOAD classes (see the

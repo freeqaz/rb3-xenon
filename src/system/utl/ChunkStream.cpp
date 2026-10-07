@@ -47,6 +47,22 @@ namespace {
 
 Hmx::Object *gActiveChunkObject;
 
+#ifdef HX_NATIVE
+// W16-UL: the native read-ahead depth. Retail keeps 3 chunk buffers (the
+// `% 3` arms below); native keeps 2, at all five sites that name the count.
+// W16-UJ's TempEof fix in ReadImpl is only exercised on shipped data BECAUSE
+// of this count: with 2 buffers, a read that crosses a whole chunk without an
+// Eof() poll reaches the next chunk boundary with that chunk's buffer still
+// kReading. DC3 kept 3 and needed a chunk over 0x40000 bytes to reach the same
+// wait. The W16-UL gate asserts the count and counts the waits, so a change
+// here cannot silently leave the W16-UJ venue gates testing nothing.
+static const int kNativeReadAheadBuffers = 2;
+int NativeChunkReadAheadBuffers() { return kNativeReadAheadBuffers; }
+// Chunk boundaries at which ReadImpl found the next chunk still TempEof and
+// had to poll for it (the W16-UJ wait).
+int gNativeChunkTempEofWaits = 0;
+#endif
+
 void ChunkStream::SetPlatform(Platform plat) {
     if (plat == kPlatformNone) {
         plat = ConsolePlatform();
@@ -76,7 +92,7 @@ void ChunkStream::ReadChunkAsync() {
     int idx;
     for (; bufIdx < 4; bufIdx++) {
 #ifdef HX_NATIVE
-        idx = (mCurBufferIdx + bufIdx) % 2;
+        idx = (mCurBufferIdx + bufIdx) % kNativeReadAheadBuffers;
 #else
         idx = (mCurBufferIdx + bufIdx) % 3;
 #endif
@@ -295,6 +311,8 @@ void ChunkStream::ReadImpl(void *data, int bytes) {
             // TempEof)` around the same pipeline (ReadChunks above); keep
             // polling it here, bounded as BinStream::WaitUntilReady is.
             EofType eof = Eof();
+            if (eof == TempEof)
+                gNativeChunkTempEofWaits++;
             for (int polls = 0; eof == TempEof && polls < 100000; polls++) {
                 Timer::Sleep(0);
                 eof = Eof();
@@ -387,7 +405,7 @@ EofType ChunkStream::Eof() {
         if (mChunkInfo.mID != 0xCABEDEAF)
             mBufSize += 0x800;
 #ifdef HX_NATIVE
-        int cap = Min(2, mChunkInfo.mNumChunks);
+        int cap = Min(kNativeReadAheadBuffers, mChunkInfo.mNumChunks);
 #else
         int cap = Min(3, mChunkInfo.mNumChunks);
 #endif
@@ -399,7 +417,7 @@ EofType ChunkStream::Eof() {
         mCurChunk = chunks - 1;
         mCurBufOffset = mChunkInfo.mMaxChunkSize & kChunkSizeMask;
 #ifdef HX_NATIVE
-        mCurBufferIdx = 1;
+        mCurBufferIdx = kNativeReadAheadBuffers - 1;
 #else
         mCurBufferIdx = 2;
 #endif
@@ -424,7 +442,7 @@ EofType ChunkStream::Eof() {
             return RealEof;
         else {
 #ifdef HX_NATIVE
-            int idx = (mCurBufferIdx + 1) % 2;
+            int idx = (mCurBufferIdx + 1) % kNativeReadAheadBuffers;
 #else
             int idx = (mCurBufferIdx + 1) % 3;
 #endif
@@ -517,7 +535,7 @@ void ChunkStream::DecompressChunkAsync() {
     int idx;
     for (; bufIdx < 4; bufIdx++) {
 #ifdef HX_NATIVE
-        idx = (mCurBufferIdx + bufIdx) % 2;
+        idx = (mCurBufferIdx + bufIdx) % kNativeReadAheadBuffers;
 #else
         idx = (mCurBufferIdx + bufIdx) % 3;
 #endif

@@ -1970,6 +1970,122 @@ namespace {
         return b;
     }
 
+    // -----------------------------------------------------------------------
+    // W16-UL: which side of a scene the camera looks from.
+    //
+    // Retail draws a material whose `cull` byte is set with D3DCULL_CW
+    // (NgMat::SetBasicState, rndobj/Mat_NG.cpp). On Xenos that value is
+    // PA_SU_SC_MODE_CNTL cull_back with face=0, "front is CCW" (xenia
+    // gpu/registers.h). The shipped meshes wind each face right-handed around
+    // its own vertex normals (banner.mesh: 90 of 90 non-degenerate faces), so
+    // retail shows a single-sided face only to a viewer on the side its normal
+    // points to. The native backend culls the same faces (Mesh_Wgpu.cpp reads
+    // the same byte; Back cull, CCW front).
+    //
+    // The cell camera's fixed azimuth (0.45 rad) sits on the +Y side. A scene
+    // made of single-sided geometry facing -Y (a banner, a video venue's
+    // backdrops) is then seen only from behind, and retail would show nothing
+    // there either. So explicit-path cells take the side the scene's own
+    // single-sided geometry faces: the area-weighted sum of the right-handed
+    // face normals of every showing, unskinned mesh whose material culls.
+    // Skinned meshes are left out: their vertices are placed by the palette,
+    // not by the mesh transform. The harness's own fallback material is left
+    // out: it is not the asset's.
+    // -----------------------------------------------------------------------
+    enum CellSide { kSideFixed = 0, kSideFront = 1, kSideBack = 2 };
+
+    struct SingleSidedFront {
+        double v[3] = { 0, 0, 0 };
+        int meshes = 0;
+        int faces = 0;
+    };
+
+    SingleSidedFront ComputeSingleSidedFront(const std::vector<RndMesh *> &meshes) {
+        SingleSidedFront f;
+        for (size_t i = 0; i < meshes.size(); i++) {
+            RndMesh *m = meshes[i];
+            if (!m || !m->Showing() || m->IsSkinned()) continue;
+            RndMat *mat = m->Mat();
+            if (!mat || !mat->GetCull()) continue;
+            if (mat->Name() && !strcmp(mat->Name(), "x3_fallback_mat")) continue;
+            RndMesh *owner = m->GetGeomOwner();
+            if (!owner) owner = m;
+            const int nv = owner->NumVerts();
+            const int ncv = owner->NumCompressedVerts();
+            const unsigned char *cv = owner->CompressedVerts();
+            if (nv <= 0 && (ncv <= 0 || !cv)) continue;
+            const int count = nv > 0 ? nv : ncv;
+            const Transform &x = m->WorldXfm();
+            auto pos = [&](int vi, float *p) {
+                float l[3];
+                if (nv > 0) {
+                    const RndMesh::Vert &vv = owner->Verts(vi);
+                    l[0] = vv.pos.x;
+                    l[1] = vv.pos.y;
+                    l[2] = vv.pos.z;
+                } else {
+                    // 36-byte record, position = 3 big-endian floats at offset 0.
+                    for (int k = 0; k < 3; k++) {
+                        unsigned int be;
+                        memcpy(&be, cv + (size_t)vi * 36 + k * 4, 4);
+                        be = __builtin_bswap32(be);
+                        memcpy(&l[k], &be, 4);
+                    }
+                }
+                p[0] = x.m.x.x * l[0] + x.m.y.x * l[1] + x.m.z.x * l[2] + x.v.x;
+                p[1] = x.m.x.y * l[0] + x.m.y.y * l[1] + x.m.z.y * l[2] + x.v.y;
+                p[2] = x.m.x.z * l[0] + x.m.y.z * l[1] + x.m.z.z * l[2] + x.v.z;
+            };
+            std::vector<RndMesh::Face> &fs = owner->Faces();
+            int used = 0;
+            for (size_t fi = 0; fi < fs.size(); fi++) {
+                const RndMesh::Face &fc = fs[fi];
+                if (fc.v1 >= count || fc.v2 >= count || fc.v3 >= count) continue;
+                float a[3], b[3], c[3];
+                pos(fc.v1, a);
+                pos(fc.v2, b);
+                pos(fc.v3, c);
+                const float e1[3] = { b[0] - a[0], b[1] - a[1], b[2] - a[2] };
+                const float e2[3] = { c[0] - a[0], c[1] - a[1], c[2] - a[2] };
+                const float n[3] = { e1[1] * e2[2] - e1[2] * e2[1],
+                                     e1[2] * e2[0] - e1[0] * e2[2],
+                                     e1[0] * e2[1] - e1[1] * e2[0] };
+                if (n[0] != n[0] || n[1] != n[1] || n[2] != n[2]) continue;
+                f.v[0] += n[0];
+                f.v[1] += n[1];
+                f.v[2] += n[2];
+                used++;
+            }
+            if (used) {
+                f.meshes++;
+                f.faces += used;
+            }
+        }
+        return f;
+    }
+
+    // Returns the azimuth to use. kSideFront puts the eye on the side the
+    // single-sided geometry faces, kSideBack on the other side (the cull
+    // control), kSideFixed leaves it. A scene with no horizontal single-sided
+    // front keeps the given azimuth.
+    float ChooseCellSide(const std::vector<RndMesh *> &meshes, float azimuth, int side,
+                         SingleSidedFront &f) {
+        f = ComputeSingleSidedFront(meshes);
+        const double h = f.v[0] * sinf(azimuth) + f.v[1] * cosf(azimuth);
+        float out = azimuth;
+        if ((side == kSideFront && h < 0.0) || (side == kSideBack && h > 0.0))
+            out = azimuth + 3.14159265f;
+        const double len = sqrt(f.v[0] * f.v[0] + f.v[1] * f.v[1] + f.v[2] * f.v[2]);
+        printf("  framing: single-sided front (%.3f %.3f %.3f) over %d mesh(es), %d "
+               "face(s); side %s; azimuth %.4f -> %.4f\n",
+               len > 0 ? f.v[0] / len : 0.0, len > 0 ? f.v[1] / len : 0.0,
+               len > 0 ? f.v[2] / len : 0.0, f.meshes, f.faces,
+               side == kSideFront ? "front" : side == kSideBack ? "back (cull control)"
+                                                                : "fixed",
+               azimuth, out);
+        return out;
+    }
+
     // Milo world convention is Z-up, camera basis m.x = right, m.y = forward,
     // m.z = up (dc3 ViewerCamera.cpp:66). Placement is fully derived from the
     // scene bbox and two fixed angles -- no clock, no input, no randomness --
@@ -3874,7 +3990,7 @@ namespace {
 
     CellResult RenderCell(const char *arkPath, const char *outDir, int frames,
                           float azimuth, float elevation, float distScale,
-                          bool dumpRnd) {
+                          bool dumpRnd, int side = kSideFixed) {
         CellResult r;
         printf("\n=== %s ===\n", arkPath);
 
@@ -4824,7 +4940,14 @@ namespace {
         // caveat the X4c coordinator review raised; these overrides make the
         // framing explicit and reproducible instead of implicit per-cell.
         if (gDistScale > 0.0f) distScale = gDistScale;
-        if (gAzimuth > -900.0f) azimuth = gAzimuth;
+        // W16-UL: an explicit --azimuth is taken as given; otherwise the cell's
+        // side rule picks the side (see ChooseCellSide).
+        if (gAzimuth > -900.0f) {
+            azimuth = gAzimuth;
+            side = kSideFixed;
+        }
+        SingleSidedFront front;
+        if (side != kSideFixed) azimuth = ChooseCellSide(meshes, azimuth, side, front);
         if (gElevation > -900.0f) elevation = gElevation;
         PlaceCamera(cam, b, azimuth, elevation, distScale);
 
@@ -5120,6 +5243,7 @@ namespace {
         if (slash != std::string::npos) base = base.substr(slash + 1);
         size_t dot = base.find('.');
         if (dot != std::string::npos) base = base.substr(0, dot);
+        if (side == kSideBack) base += "_back"; // W16-UL cull control: own file
         r.png = std::string(outDir) + "/" + base + ".png";
 
         if (!WriteScreenshot(r.png.c_str(), px.data(), w, h)) {
@@ -5136,11 +5260,26 @@ namespace {
                      "background #%06x",
                      r.stats.coverage * 100.0, kMinCoverage * 100.0, r.stats.distinct,
                      kMinDistinct, r.stats.modal);
-            Gate("image-not-empty",
-                 r.stats.coverage >= kMinCoverage && r.stats.distinct >= kMinDistinct, d);
+            if (side == kSideBack) {
+                // W16-UL cull control: from behind, every single-sided face is
+                // culled, as retail's D3DCULL_CW culls it, so the frame is the
+                // clear colour alone. It needs a front to stand behind.
+                char d2[224];
+                snprintf(d2, sizeof(d2),
+                         "coverage %.2f%% (== 0), %zu distinct colour(s) (== 1), "
+                         "background #%06x; single-sided front over %d face(s) (> 0)",
+                         r.stats.coverage * 100.0, r.stats.distinct, r.stats.modal,
+                         front.faces);
+                r.ok = front.faces > 0 && r.stats.coverage == 0.0 && r.stats.distinct == 1;
+                Gate("ul-back-culled", r.ok, d2);
+            } else {
+                Gate("image-not-empty",
+                     r.stats.coverage >= kMinCoverage && r.stats.distinct >= kMinDistinct, d);
+            }
         }
 
-        r.ok = r.stats.coverage >= kMinCoverage && r.stats.distinct >= kMinDistinct;
+        if (side != kSideBack)
+            r.ok = r.stats.coverage >= kMinCoverage && r.stats.distinct >= kMinDistinct;
 
         // Drop the scene before the next cell: two milos alive at once is a
         // different (and untested) thing from one at a time, and the second
@@ -5187,6 +5326,8 @@ static bool gNoW16UF = false;
 // native/src/w16uj_phase.cpp (W16-UJ)
 int RunW16UJPhase(void (*gate)(const char *, bool, const char *));
 static bool gNoW16UJ = false;
+// W16-UL: the eight front-side venue cells and the cull control in default mode.
+static bool gNoW16UL = false;
 
 int main(int argc, char **argv) {
     // Line-buffer: a SIGSEGV inside the renderer would otherwise discard the
@@ -5227,6 +5368,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--no-w16ub") == 0) gNoW16UB = true;
         else if (strcmp(argv[i], "--no-w16uf") == 0) gNoW16UF = true;
         else if (strcmp(argv[i], "--no-w16uj") == 0) gNoW16UJ = true;
+        else if (strcmp(argv[i], "--no-w16ul") == 0) gNoW16UL = true;
         else if (strcmp(argv[i], "--crowd-all") == 0) gCrowdShowAll = true;
         else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
@@ -5283,14 +5425,37 @@ int main(int argc, char **argv) {
     struct Cell {
         const char *path;
         float azimuth, elevation, distScale;
+        int side; // W16-UL: kSideFixed / kSideFront / kSideBack (ChooseCellSide)
     };
     std::vector<Cell> cells;
     if (pos.size() == 2) {
-        cells.push_back({"ui/track/gen/tracksystem_meshes.milo_xbox", 0.45f, 0.35f, 0.9f});
-        cells.push_back({"char/crowd/gen/crowd_female01.milo_xbox", 0.35f, 0.10f, 1.15f});
+        cells.push_back({"ui/track/gen/tracksystem_meshes.milo_xbox", 0.45f, 0.35f, 0.9f,
+                         kSideFixed});
+        cells.push_back({"char/crowd/gen/crowd_female01.milo_xbox", 0.35f, 0.10f, 1.15f,
+                         kSideFixed});
+        // W16-UL: the eight shipped venue milos whose single-sided geometry
+        // faces -Y, so the fixed +Y camera saw only back faces and rendered an
+        // empty frame. They take the explicit-path framing, front side. The
+        // last cell is the cull control: arena_11's banner from behind must
+        // render the clear colour alone. --no-w16ul skips all nine.
+        if (!gNoW16UL) {
+            static const char *const kUlCells[] = {
+                "world/venue/arena/arena_11/gen/banner.milo_xbox",
+                "world/venue/big_club/big_club_14/gen/banner_mim.milo_xbox",
+                "world/venue/video/video_02/gen/video_02.milo_xbox",
+                "world/venue/video/video_03/gen/video_03.milo_xbox",
+                "world/venue/video/video_04/gen/video_04.milo_xbox",
+                "world/venue/video/video_05/gen/video_05.milo_xbox",
+                "world/venue/video/video_06/gen/video_06.milo_xbox",
+                "world/venue/video/video_07/gen/video_07.milo_xbox",
+            };
+            for (size_t i = 0; i < sizeof(kUlCells) / sizeof(kUlCells[0]); i++)
+                cells.push_back({kUlCells[i], 0.45f, 0.30f, 0.9f, kSideFront});
+            cells.push_back({kUlCells[0], 0.45f, 0.30f, 0.9f, kSideBack});
+        }
     } else {
         for (size_t i = 2; i < pos.size(); i++)
-            cells.push_back({pos[i], 0.45f, 0.30f, 0.9f});
+            cells.push_back({pos[i], 0.45f, 0.30f, 0.9f, kSideFront});
     }
 
     // ---- bring-up: the exact X2 prologue, in the exact X2 order -----------
@@ -5443,7 +5608,8 @@ int main(int argc, char **argv) {
             continue;
         }
         CellResult r = RenderCell(cells[i].path, outDir, frames, cells[i].azimuth,
-                                  cells[i].elevation, cells[i].distScale, dumpRnd);
+                                  cells[i].elevation, cells[i].distScale, dumpRnd,
+                                  cells[i].side);
         results.push_back(r);
         if (r.ok) passed++;
     }
@@ -5517,7 +5683,10 @@ int main(int argc, char **argv) {
     printf("\n=== summary ===\n");
     for (size_t i = 0; i < cells.size(); i++) {
         const CellResult &r = results[i];
-        printf("  %-8s %-46s %s\n", r.ok ? "RENDER" : "EMPTY", cells[i].path,
+        printf("  %-8s %-46s %s\n",
+               cells[i].side == kSideBack ? (r.ok ? "CULLED" : "NOTCULL")
+                                          : (r.ok ? "RENDER" : "EMPTY"),
+               cells[i].path,
                r.png.empty() ? "(no png)" : r.png.c_str());
         if (!r.png.empty()) {
             printf("           %d meshes (%d skinned, %d textured), %d drawn, "

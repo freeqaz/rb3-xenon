@@ -94,6 +94,105 @@ static bool ShouldSkipCascadeNullify(Hmx::Object *obj, const std::vector<ObjectD
     ObjectDir *asDir = dynamic_cast<ObjectDir *>(obj);
     return asDir && HasExternalDirPtrs(asDir, cascade);
 }
+
+// W16-UL: ObjectDirs constructed and not yet destroyed. rb3-render's venue
+// gate checks that a load and unload returns it to where it was.
+int gNativeLiveObjectDirs = 0;
+
+// W16-UL: Hmx::Object frees deferred because they happened inside a cascade.
+int gNativeCascadeObjFreesDeferred = 0;
+
+// W16-UL: the native operator delete of every Hmx::Object class
+// (OBJ_MEM_OVERLOAD, utl/MemMgr.h). Inside a cascade, ~Object skips
+// ReplaceRefs (Object.cpp) and ring unlinks write into neighbours
+// (SafeReleaseFromRing), on the rule that every object the cascade destroys
+// stays allocated until FlushDeferredFrees. DeleteObjects keeps that rule for
+// the objects a dir names, but an object a dtor deletes by itself did not:
+// ArpeggioShape's dtor deletes its dir-less RndMat and then its RndMatAnim,
+// whose ObjPtr<RndMat> unlink wrote 16 bytes into the freed mat and corrupted
+// the heap once the trackpanel tree was actually destroyed (valgrind,
+// rb3-render bandtrack phase). Retail needs none of this: its ~Object always
+// runs ReplaceRefs, which nulls the MatAnim's pointer before the free.
+void NativeObjMemFree(void *v, const char *file, int line, const char *name) {
+    if (v && ObjectDir::InDeleteObjects()) {
+        gNativeCascadeObjFreesDeferred++;
+        ObjectDir::DeferFree(v);
+        return;
+    }
+    MemFree(v, file, line, name);
+}
+
+// W16-UL: the next three helpers are DC3's (dc3-decomp cafbd23da, 43bf21c36,
+// 1902b1704), carried here because rb3-xenon's copy of this cascade predates
+// them and leaked every venue's subdir tree on unload.
+//
+// Compute the set of dirs that SURVIVE this cascade. A dir survives when it has
+// external DirPtrs (it was reparented into a dir outside the cascade tree). The
+// set is TRANSITIVE: every dir reachable from a survivor (via SubDirs or child
+// ObjectDirs) also survives, because the survivor still owns that whole subtree.
+static void CollectSurvivorClosure(
+    const std::vector<ObjectDir *> &cascade, std::vector<ObjectDir *> &survivors
+) {
+    // Seed: every cascade dir that has truly-external DirPtrs.
+    for (size_t i = 0; i < cascade.size(); i++) {
+        if (HasExternalDirPtrs(cascade[i], cascade)
+            && std::find(survivors.begin(), survivors.end(), cascade[i]) == survivors.end()) {
+            survivors.push_back(cascade[i]);
+        }
+    }
+    // Closure: pull in everything a survivor still owns.
+    for (size_t i = 0; i < survivors.size(); i++) {
+        ObjectDir *dir = survivors[i];
+        for (int s = 0; s < dir->SubDirs().size(); s++) {
+            ObjectDir *sub = dir->SubDirs()[s];
+            if (sub && std::find(survivors.begin(), survivors.end(), sub) == survivors.end())
+                survivors.push_back(sub);
+        }
+        for (ObjDirItr<Hmx::Object> it(dir, false); it != nullptr; ++it) {
+            ObjectDir *asDir = dynamic_cast<ObjectDir *>(&*it);
+            if (asDir && asDir != dir
+                && std::find(survivors.begin(), survivors.end(), asDir) == survivors.end())
+                survivors.push_back(asDir);
+        }
+    }
+}
+
+static bool IsSurvivor(ObjectDir *dir, const std::vector<ObjectDir *> &survivors) {
+    return dir && std::find(survivors.begin(), survivors.end(), dir) != survivors.end();
+}
+
+// Pre-nullify a cascade dir's ref ring EXCEPT the ObjDirPtrs that cascade dirs
+// hold to it in their mSubDirs. Those are how retail destroys a subdir:
+// ~ObjectDir's mSubDirs.clear() releases them and the last one deletes it.
+// NullifyObj only sets an ObjDirPtr's mObject to NULL, without the release and
+// without the DirPtrRefCounts decrement, so a nulled mSubDirs entry released
+// nothing on clear() and the subdir was never destroyed. Every venue's inlined
+// *_base.milo and everything under it leaked that way, with every ref into it
+// cut, and the shared subdirs stayed findable by their loader path, so the next
+// load of the same file got the leaked dir back. The DirPtrRefCounts entries
+// are left alone, so the release path counts right.
+//
+// Unconditionally, as retail's ObjectDir::DeleteObjects deletes every object a
+// dir names with no DirPtr test; a subdir SHARED into the dying tree from
+// outside still survives, by refcount.
+static void NullifyAllRefsKeepingSubDirPtrs(
+    ObjectDir *dir, const std::vector<ObjectDir *> &cascade
+) {
+    std::vector<ObjRef *> kept;
+    for (size_t q = 0; q < cascade.size(); q++) {
+        const std::vector<ObjDirPtr<ObjectDir> > &subs = cascade[q]->SubDirs();
+        for (size_t s = 0; s < subs.size(); s++) {
+            if ((ObjectDir *)subs[s] == dir) {
+                ObjRef *ref = const_cast<ObjDirPtr<ObjectDir> *>(&subs[s]);
+                dir->Release(ref); // unlink from dir's ring
+                kept.push_back(ref);
+            }
+        }
+    }
+    dir->NullifyAllRefs();
+    for (size_t k = 0; k < kept.size(); k++)
+        dir->AddRef(kept[k]); // back into the (now otherwise empty) ring
+}
 #endif
 
 #pragma region Virtual Methods
@@ -109,10 +208,14 @@ ObjectDir::ObjectDir()
       mCurViewportID((ViewportId)0), unk8c(nullptr), mCurCam(nullptr), mAlwaysInlined(0),
       mAlwaysInlineHash(gNullStr) {
     ResetViewports();
+#ifdef HX_NATIVE
+    gNativeLiveObjectDirs++; // W16-UL: the venue unload gate's live count
+#endif
 }
 
 ObjectDir::~ObjectDir() {
 #ifdef HX_NATIVE
+    gNativeLiveObjectDirs--;
     // Track destruction depth so ~Object, ~ObjRefConcrete, ObjDirPtr, FlowNode,
     // and Sequence can skip ring operations during cascading teardown.
     sDeleteObjectsDepth++;
@@ -123,22 +226,30 @@ ObjectDir::~ObjectDir() {
     if (sDeleteObjectsDepth == 1 && !TheLoadMgr.AsyncUnload()) {
         std::vector<ObjectDir *> allDirs;
         CollectCascadeDirs(this, allDirs);
+        // Dirs reparented out of this tree survive, and so does everything they
+        // still own (transitive closure; W16-UL, from DC3).
+        std::vector<ObjectDir *> survivors;
+        CollectSurvivorClosure(allDirs, survivors);
         for (size_t i = 0; i < allDirs.size(); i++) {
-            // Skip dirs that have EXTERNAL DirPtrs — they were reparented
-            // and will survive. Nullifying their refs would break external code.
-            if (allDirs[i] != this && ShouldSkipCascadeNullify(allDirs[i], allDirs))
+            // Skip dirs that survive (reparented, or owned by something that was).
+            // Nullifying their refs would break external code or sever the
+            // survivor's ownership of this subtree.
+            if (allDirs[i] != this && IsSurvivor(allDirs[i], survivors))
                 continue;
+            // W16-UL: keep the cascade's own mSubDirs ObjDirPtrs, so the
+            // mSubDirs.clear() below releases and destroys each subdir.
             if (allDirs[i]->IsRefAlive())
-                allDirs[i]->NullifyAllRefs();
+                NullifyAllRefsKeepingSubDirPtrs(allDirs[i], allDirs);
             for (ObjDirItr<Hmx::Object> it(allDirs[i], false); it != nullptr; ++it) {
                 Hmx::Object *obj = it;
                 if (obj == allDirs[i])
                     continue;
-                // Skip objects that have EXTERNAL DirPtrs. They will
-                // survive this dir's destruction and need their refs intact.
-                // Detach them from this dir so ~Object::RemoveFromDir()
-                // won't access freed memory when they are eventually deleted.
-                if (ShouldSkipCascadeNullify(obj, allDirs)) {
+                // Skip objects that survive (external DirPtrs, or living inside a
+                // survivor subtree). They keep their refs intact. Detach them
+                // from this dir so ~Object::RemoveFromDir() won't access freed
+                // memory when they are eventually deleted.
+                ObjectDir *objAsDir = dynamic_cast<ObjectDir *>(obj);
+                if (IsSurvivor(objAsDir, survivors) || ShouldSkipCascadeNullify(obj, allDirs)) {
                     obj->DetachFromDir();
                     continue;
                 }
