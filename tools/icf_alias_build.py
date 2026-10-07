@@ -87,7 +87,28 @@ def placeholder(n: str) -> bool:
     return (not n) or n.startswith(_PLACEHOLDER)
 
 
-def relocs_agree(rt, ob, mapped=frozenset(), strict=True, tally=None) -> bool:
+# ★★★ W16-TV (2026-10-07).  AN UNNAMED RETAIL CALLEE IS NOT FLAT-T1 EVIDENCE.
+# CD-9 refused a retail `fn_<B>` slot only when OUR callee is map-resident, and
+# tolerated it otherwise.  That tolerance proved ten wrong memberships on
+# 2026-09-15 (W16-CU's restorations of groups 723 x5, 875, 1201 x3, 1223; see
+# docs/decomp/W16TT_FOLD_LEADS_ON_RETAIL_2026-10-07.md §3.1): in every one the
+# fn_ slot was the ONLY slot that named the callee, retail's callee was a
+# different function (100%-matched under its later name), and flat T1 read
+# PROVEN without comparing it.  An unmapped callee of ours says nothing about
+# which function retail calls there, so the slot is undecided, not agreed.
+#
+# "refuse" (the default): a retail `fn_` slot against a real (non-placeholder)
+# name of ours fails flat T1.  The pair can still be proven -- by the chase,
+# whose W16-JG discharge reads fn_<B>'s bytes against our callee
+# (CALLEE-CHASED) -- but never by a literal-name comparator that did not look.
+# "tolerate" restores the pre-W16-TV behaviour.  It exists ONLY so
+# tools/test_alias_proof_gaps.py can show the planted control goes PROVEN
+# without the fix; never use it for an admission.
+UNNAMED_CALLEE_POLICY = "refuse"
+
+
+def relocs_agree(rt, ob, mapped=frozenset(), strict=True, tally=None,
+                 unnamed_callee=None) -> bool:
     """Do retail(S) and ours(F) agree on relocation TARGETS, not just shape?
 
     ICF folds COMDATs only when their relocations resolve to the SAME symbols, so a
@@ -111,7 +132,19 @@ def relocs_agree(rt, ob, mapped=frozenset(), strict=True, tally=None) -> bool:
     side is also unresolvable. When our side is map-resident it is a REFUTATION.
     (Placeholders that are not address-bearing -- ``$``, ``.``, ``__`` -- keep the old
     tolerance; they carry no address to contradict.)
+
+    ★ W16-TV: with ``strict`` a retail ``fn_`` slot against a real name of ours
+    is refused whether or not ours is mapped (UNNAMED_CALLEE_POLICY above).
+
+    ⚠ NECESSARY, NOT SUFFICIENT.  A same-name slot (``rn == on``) is accepted
+    here without reading the callee, because this function has no bodies.  The
+    retail name is the MAP's, so that slot is only as good as the map's
+    identification of the callee: group 771 was "proven" on 2026-09-15 because
+    the map had put OUR spelling on a twin body (W16-TT §2).  A PROOF must go
+    through ``icf_pair_adjudicate.adjudicate`` (which chase-confirms every flat
+    pass and reads same-name callees) -- never through this function alone.
     """
+    pol = unnamed_callee or UNNAMED_CALLEE_POLICY
     rr, orr = rt[1], ob[1]
     if len(rr) != len(orr):
         return False
@@ -124,12 +157,31 @@ def relocs_agree(rt, ob, mapped=frozenset(), strict=True, tally=None) -> bool:
             if tally is not None:
                 tally["refuted_mapped_callee_vs_placeholder"] += 1
             return False
+        if strict and pol == "refuse" and rn.startswith("fn_") \
+                and not placeholder(on):
+            if tally is not None:
+                tally["refused_unnamed_retail_callee"] += 1
+            return False
         if placeholder(rn) or placeholder(on):
             if tally is not None and rn.startswith(("fn_", "lbl_")):
                 tally["tolerated_placeholder"] += 1
             continue
         return False
     return True
+
+
+def _t1_chase_confirms(retail, ours, t, b, mapped, stats, why):
+    """★ W16-TV.  Confirm a flat-T1 pass with the chase, which reads every
+    same-name slot's callee (relocs_agree cannot) and discharges every
+    placeholder slot (W16-JG).  A failed confirmation is counted and the pair
+    falls through to the weaker tiers exactly as a flat failure would."""
+    from icf_pair_adjudicate import chase  # lazy: that module imports this one
+    tr = []
+    if chase(retail, ours, t, b, mapped, out=tr):
+        return True
+    stats["reject_T1_CHASE_CONFIRM_FAILED"] += 1
+    why[(t, b)] = "reject_T1_CHASE_CONFIRM_FAILED"
+    return False
 
 
 def collect(paths, label=""):
@@ -236,8 +288,11 @@ def survivor_self_check(rt, st, mapped=frozenset(), strict=True, mode="shape", e
         if ro != oo or rty != oty:
             return "reloc shape differs at retail +0x%x (type %s) vs ours +0x%x (type %s)" % (ro, rty, oo, oty)
     rtc, stc = canon_relocs(rt, eq), canon_relocs(st, eq)
-    if not relocs_agree(rtc, stc, mapped, strict, None):
-        first = _first_disagreeing_target(rtc, stc, mapped, strict)
+    # ★ W16-TV: this is a REFUSAL gate ("our survivor COMDAT contradicts
+    # retail"), so an unnamed retail callee keeps the old tolerance here: an
+    # undecided slot is not a contradiction.  Only PROOFS lost the tolerance.
+    if not relocs_agree(rtc, stc, mapped, strict, None, unnamed_callee="tolerate"):
+        first = _first_disagreeing_target(rtc, stc, mapped, strict, "tolerate")
         return ("reloc targets differ after alias-equivalence resolution: retail %s vs ours %s"
                 % (first[0][:70], first[1][:70]))
     if mode == "strict" and rt[0] != st[0]:
@@ -245,7 +300,7 @@ def survivor_self_check(rt, st, mapped=frozenset(), strict=True, mode="shape", e
     return None
 
 
-def _first_disagreeing_target(rt, ob, mapped, strict):
+def _first_disagreeing_target(rt, ob, mapped, strict, unnamed_callee=None):
     """The first (retail, ours) reloc-target pair relocs_agree() REFUSES -- not
     the first pair whose names merely differ.  The first cut of the refusal
     string used the latter and pointed an adjudicator at a tolerated
@@ -256,6 +311,9 @@ def _first_disagreeing_target(rt, ob, mapped, strict):
         if rn == on:
             continue
         if strict and rn.startswith(("fn_", "lbl_")) and on in mapped:
+            return (rn, on)
+        if strict and (unnamed_callee or UNNAMED_CALLEE_POLICY) == "refuse" \
+                and rn.startswith("fn_") and not placeholder(on):
             return (rn, on)
         if placeholder(rn) or placeholder(on):
             continue
@@ -618,6 +676,11 @@ def main() -> int:
         if rt is not None and ob is not None and not vacuous(rt):
             if rt[0] == ob[0] and rt[2] == ob[2] and \
                     relocs_agree(rt, ob, mapped, strict, reltally):
+                # ★ W16-TV: flat T1 is necessary, not sufficient -- every
+                # same-name slot is now READ by the chase (see relocs_agree).
+                if not _t1_chase_confirms(retail, ours, t, b, mapped, stats, why):
+                    ssites["reject_T1_CHASE_CONFIRM_FAILED"] += n
+                    continue
                 tier = 1
             elif rt[0] == ob[0] and rt[2] == ob[2]:
                 stats["reject_RELOC_TARGETS_DIFFER"] += 1

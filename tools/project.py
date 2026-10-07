@@ -529,6 +529,12 @@ def generate_build_ninja(
     # above, because it is the seam BETWEEN their two files; see its edge.
     survdrift_script = Path("tools") / "alias_survivor_drift.py"
     survdrift_checked = build_path / "alias_survivor_drift_checked.stamp"
+    # ... and its callees' names (lane W16-TV): a fold proof compares retail
+    # relocation target NAMES, which come from the map, so a renamed callee can
+    # turn a recorded proof into a refutation without touching the survivor.
+    calleedrift_script = Path("tools") / "alias_callee_name_drift.py"
+    calleedrift_json = Path("scripts") / "alias_callee_names.json"
+    calleedrift_checked = build_path / "alias_callee_name_drift_checked.stamp"
     # Assert the SPLIT TARGET OBJS actually carry the mangled names the renamer
     # is supposed to install. objdiff pairs BY NAME, so virgin `fn_<addr>` objs
     # un-pair essentially every named row -- measured on main 2026-08-21 as
@@ -1547,6 +1553,7 @@ def generate_build_ninja(
                 str(icf_map_checked),
                 str(mapinj_checked),
                 str(survdrift_checked),
+                str(calleedrift_checked),
                 str(renamed_checked),
             ],
             order_only="post-build",
@@ -1804,6 +1811,43 @@ def generate_build_ninja(
                       str(mapinj_json), "always"],
         )
 
+        ###
+        # *** A RENAMED CALLEE RE-PROVES ITS ALIAS GROUP. *** (lane W16-TV,
+        # 2026-10-07.) The survivor-drift edge above pins the SURVIVOR's name;
+        # nothing pinned the names its proof READS. Group 771 was recorded
+        # PROVEN while the map put our spelling on the depth-1 callee
+        # 0x82773E70 (a twin body), and when W16-SG renamed that callee the
+        # record stayed, because the survivor never moved; groups 723/875/1201/
+        # 1223 were proven while their callees were unnamed and kept their
+        # records after the map named them (W16-TT §2-§3). This edge compares
+        # the applied map name at every callee address each group's survivor
+        # reaches in <= 3 relocation steps with scripts/alias_callee_names.json
+        # and fails when one moved, when a group is unrecorded, or when a folded
+        # member has no recorded proof. `always` over the map, the alias file
+        # and the snapshot, gating the report like the survivor check. Cost: one
+        # interpreter start, three JSON reads. Fix on failure (needs the objs,
+        # which this edge does not gate): `tools/alias_callee_name_drift.py
+        # --reprove --write`, which re-proves and refuses to record a group
+        # whose membership no longer proves.
+        ###
+        n.comment("Assert no alias group's recorded callee names have moved under its proof")
+        n.rule(
+            name="alias_callee_name_drift_check",
+            command=(f"$python {calleedrift_script} --check --quiet"
+                     f" --stamp $out --stamp-input {calleedrift_script}"
+                     f" --stamp-input {icf_aliases_json}"
+                     f" --stamp-input {mapinj_json}"
+                     f" --stamp-input {calleedrift_json}"),
+            description="CHECK ALIAS CALLEE NAMES VS MAP",
+            restat=True,
+        )
+        n.build(
+            outputs=str(calleedrift_checked),
+            rule="alias_callee_name_drift_check",
+            implicit=[str(calleedrift_script), str(icf_aliases_json),
+                      str(mapinj_json), str(calleedrift_json), "always"],
+        )
+
         n.comment("Assert the split target objs carry their mangled names")
         n.rule(
             name="target_objs_renamed_check",
@@ -1970,6 +2014,9 @@ def generate_build_ninja(
             # survivor puts the wrong names in the equivalence buckets this
             # report scores with.
             str(survdrift_checked),
+            # ... and on the alias callee-name check (lane W16-TV): a group whose
+            # callee was renamed under its proof may forgive the wrong function.
+            str(calleedrift_checked),
             # ... and on the split-currency check, because the TARGET side of
             # every diff in this report is written by an edge that declares
             # none of it. Without this the report is free to measure objects

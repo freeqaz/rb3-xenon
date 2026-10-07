@@ -75,6 +75,24 @@ def adjudicate(tgt, ours, survivor, our_name, mapped, verbose=True):
                                reloc_tally=dict(tally))
     d["reloc_tally"] = dict(tally)
     d["n_relocs"] = len(rt[1])
+    if FLAT_CONFIRM:
+        # ★ W16-TV.  Flat T1 compares relocation target NAMES and accepts a
+        # same-name slot without reading the callee; the name is the MAP's, so
+        # the slot is only as good as the map's identification (group 771,
+        # 2026-09-15).  A flat pass is therefore confirmed by the chase, which
+        # reads every same-name callee and discharges every placeholder slot.
+        tr = []
+        if not chase(tgt, ours, survivor, our_name, mapped, out=tr):
+            pos = [f for f in tr if f[1] in _POSITIVE_CONTRADICTIONS
+                   or f[1].startswith("SLOT-CONTRADICTED")]
+            first = (pos or [f for f in tr if f[1] in _FAILURE_KINDS
+                             or f[1].startswith("SLOT-UNDISCHARGED")] or tr[-1:] or [None])[0]
+            return ("REFUTED" if pos else "UNDECIDABLE"), dict(
+                d, why="flat T1 agrees on bytes and literal relocation names, but the "
+                       "chase confirmation failed (%s) -- a same-name or placeholder "
+                       "slot does not hold on retail bytes" % (first,),
+                flat_t1=True, confirm_trace=tr[-12:])
+        d["confirmed_by_chase"] = True
     return "PROVEN", d
 
 
@@ -599,6 +617,95 @@ def discharge_slot(tgt, ours, rn, on, mapped, depth, stack, memo, out, maxdepth,
     return "OK", "DATA-ACCEPTED", on[:60]
 
 
+# ★★★ W16-TV (2026-10-07).  A SAME-NAME SLOT IS READ, NOT TRUSTED.
+#
+# THE HOLE (W16-TT, docs/decomp/W16TT_FOLD_LEADS_ON_RETAIL_2026-10-07.md §2).
+# Both comparators accepted a relocation slot whose two target names are EQUAL
+# without looking at the callee: `_slots_agree` did `if rn == on: continue`,
+# chase() returned True for `survivor == our_name and depth > 0` ("name equality
+# IS the evidence"), and flat T1's relocs_agree does the same.  The retail name
+# comes from scripts/target_symbol_map.json, so the slot is exactly as good as
+# the map's identification of that callee.  On 2026-09-15 the map named
+# 0x82773E70 with OUR spelling `__destroy_range_aux<rev_it<vector<short>*>>`
+# while that body destroys 12-byte elements (ours: 2-byte), and group 771's
+# membership was recorded PROVEN on the one slot that discriminates the fold.
+#
+# Now `_samename_ok` reads it: when the callee is present and non-vacuous on
+# BOTH sides, retail's body named N is chased against our N like any pair.
+#   * read holds                      -> OK (SAMENAME-READ-OK)
+#   * read fails AND our N is PROVEN  -> CONTRADICTED (SAMENAME-CONTRADICTED):
+#     (clean chase) at another retail    /OPT:ICF keeps one copy of identical
+#     body Y                             code, so retail's copy of our N is Y and
+#                                        the body the map calls N is not it.
+#   * read fails, our N located nowhere -> accepted, traced SAMENAME-UNVERIFIED.
+#     A byte difference alone says our PORT of N may be imperfect, not that the
+#     map is wrong (W16-TT's negative control: ?Release@Object@Hmx under W16-JE's
+#     SetObjConcrete<UILabel>).  Positive evidence is required to refute, the
+#     same rule W16-JG uses for an undischarged callee.
+#   * callee absent or vacuous on either side -> nothing to read, accepted.
+# The locate step runs with the old trust policy (as W16-TT's validated audit
+# did): it bounds the recursion, and it can only make a contradiction HARDER to
+# establish, never easier.
+#
+# SAMENAME_POLICY = "trust" restores the pre-W16-TV behaviour and FLAT_CONFIRM =
+# False lets a flat-T1 pass stand unconfirmed.  Both exist ONLY so
+# tools/test_alias_proof_gaps.py can show its planted bad memberships read
+# PROVEN without the fixes; never use them for an admission.
+SAMENAME_POLICY = "check"
+FLAT_CONFIRM = True
+SAMENAME_TALLY = collections.Counter()
+_POSITIVE_CONTRADICTIONS = {"SAMENAME-CONTRADICTED", "MAPPED-VS-PLACEHOLDER"}
+_FAILURE_KINDS = {"BYTES-DIFFER", "RELOC-COUNT", "RELOC-SHAPE", "MAPPED-VS-PLACEHOLDER",
+                  "VACUOUS", "VACUOUS-PLACEHOLDER-SLOT", "DEPTH-CAP",
+                  "SLOT-REFUTED", "SAMENAME-CONTRADICTED"}
+
+
+def _samename_ok(tgt, ours, name, mapped, depth, stack, memo, out, maxdepth, ctx):
+    """Read one same-name slot (see the W16-TV note above).  True = holds."""
+    global SAMENAME_POLICY
+    if SAMENAME_POLICY != "check" or placeholder(name):
+        return True
+    rt, ob = tgt.get(name), ours.get(name)
+    if rt is None or ob is None or vacuous(rt) or vacuous(ob):
+        SAMENAME_TALLY["uncheckable"] += 1
+        return True
+    key = ("SAMENAME", name)
+    if key in memo:
+        return memo[key]
+    if key in stack:
+        return True                       # coinductive, as chase() is
+    stack.append(key)
+    sub = []
+    ok = chase(tgt, ours, name, name, mapped, depth, stack, memo, sub, maxdepth,
+               ctx, read_samename=True)
+    stack.pop()
+    if ok:
+        SAMENAME_TALLY["read_ok"] += 1
+        out.append((depth, "SAMENAME-READ-OK", name[:70], name[:70]))
+    else:
+        SAMENAME_POLICY = "trust"
+        try:
+            ys = locate_retail(tgt, ours, name, mapped, exclude=name)
+        finally:
+            SAMENAME_POLICY = "check"
+        fail = [f for f in sub if f[1] in _FAILURE_KINDS]
+        if ys:
+            SAMENAME_TALLY["contradicted"] += 1
+            out.append((depth, "SAMENAME-CONTRADICTED", name[:70],
+                        "our %s is PROVEN to be retail %s; the body the map names "
+                        "it differs (%s)" % (name[:50], ",".join(ys[:3]),
+                                             fail[0][1] if fail else "?")))
+        else:
+            SAMENAME_TALLY["unverified"] += 1
+            out.append((depth, "SAMENAME-UNVERIFIED", name[:70],
+                        "bytes differ (%s) but our callee is located at no other "
+                        "retail body: port divergence, not a map contradiction"
+                        % (fail[0][1] if fail else "?")))
+            ok = True
+    memo[key] = ok
+    return ok
+
+
 # ★ W16-GG.  Set ONLY by --self-break.  When true, chase()'s vacuous branch stops
 # accounting for the relocation DESTINATION and admits any vacuous pair whose
 # masked bytes and relocation SHAPE agree -- i.e. exactly the permissive failure
@@ -654,6 +761,12 @@ def _slots_agree(tgt, ours, rt, ob, survivor, our_name, mapped, depth, stack,
             ok = False
             break
         if rn == on:
+            # ★ W16-TV: read, not trusted.
+            if not _samename_ok(tgt, ours, rn, mapped, depth + 1, stack, memo,
+                                out, maxdepth, ctx):
+                out.append((depth, "SLOT-REFUTED", rn[:70], on[:70]))
+                ok = False
+                break
             continue
         if rn.startswith(("fn_", "lbl_")) and on in mapped:
             # CD-9: retail spells a callee fn_<B> only when B is absent from the
@@ -1444,7 +1557,7 @@ def size_controls(tgt, ours):
 
 
 def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
-          out=None, maxdepth=12, ctx=None):
+          out=None, maxdepth=12, ctx=None, read_samename=False):
     """RECURSIVE T1: verify a fold through relocation-target EQUIVALENCE.
 
     WHY the flat T1 tier cannot decide this class.  ``relocs_agree`` compares
@@ -1472,14 +1585,16 @@ def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
     out = out if out is not None else []
     ctx = ctx if ctx is not None else {}
     key = (survivor, our_name)
+    if survivor == our_name and depth > 0 and not read_samename:
+        # A same-name SLOT (retail's reloc names S and so does ours).  This used
+        # to `return True` -- "name equality IS the evidence" -- but the retail
+        # name is the MAP's.  ★ W16-TV: read it (see _samename_ok).
+        return _samename_ok(tgt, ours, survivor, mapped, depth, stack, memo,
+                            out, maxdepth, ctx)
     if key in memo:
         return memo[key]
     if key in stack:
         out.append((depth, "CYCLE-ASSUMED", survivor, our_name))
-        return True
-    if survivor == our_name and depth > 0:
-        # A same-name SLOT (retail's reloc names S and so does ours) is exactly
-        # what flat T1's relocs_agree accepts: name equality IS the evidence.
         return True
     # ★ W16-AE: NOT at depth 0.  A self-pair [S, S] handed in at the top used to
     # short-circuit here and read PROVEN without a single byte compared -- a
@@ -1573,6 +1688,17 @@ def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
         # dissolve the discriminator; --self-break proves that decoy can go red.
         if rt[0] == ob[0]:
             if list(rt[1]) == list(ob[1]):
+                # ★ W16-TV: identical literal names are still map names; read
+                # each callee (an 8-byte thunk's destination IS its content).
+                stack.append(key)
+                held = all(_samename_ok(tgt, ours, n, mapped, depth + 1, stack,
+                                        memo, out, maxdepth, ctx)
+                           for (_o, n, _t) in rt[1])
+                stack.pop()
+                if not held:
+                    out.append((depth, "SLOT-REFUTED", survivor, our_name))
+                    memo[key] = False
+                    return False
                 out.append((depth, "VACUOUS-BUT-IDENTICAL", survivor, our_name))
                 return True
             if _slots_agree(tgt, ours, rt, ob, survivor, our_name, mapped, depth,
@@ -1608,6 +1734,43 @@ def chase(tgt, ours, survivor, our_name, mapped, depth=0, stack=None, memo=None,
                       ctx=ctx)
     memo[key] = ok
     return ok
+
+
+def membership_verdict(tgt, ours, survivor, our_name, mapped, memo=None):
+    """★ W16-TV.  ONE verdict for an installed membership (survivor, folded):
+    flat T1 (chase-confirmed) first, then the chase.  Returns (verdict, why,
+    trace) with verdict in PROVEN / REFUTED / UNDECIDABLE.
+
+    REFUTED needs either a flat refutation the chase could not overturn (bytes
+    or relocation targets differ and no recursive fold explains it) or a
+    positive contradiction in the chase trace; a chase that merely fails on a
+    pair flat T1 could not judge (absent, vacuous, or an undischarged slot) is
+    UNDECIDABLE.  Shared by tools/alias_callee_name_drift.py and
+    tools/alias_samename_slot_audit.py so the snapshot, the re-proof and the
+    audit cannot disagree about what "proven" means.
+
+    ⚠ ONE MEMO PER MEMBERSHIP -- do not share one across memberships.  chase()
+    memoizes a FAILED pair at whatever depth it was first reached, including a
+    DEPTH-CAP failure, and a later membership that meets the same pair at a
+    shallower depth inherits the failure.  Measured (W16-TV): one memo shared
+    over the whole file read group 1629's list<Symbol>::_S_sort REFUTED with an
+    EMPTY trace; a fresh memo reads it PROVEN on both policies.  `memo` is
+    accepted only for a caller re-asking about the SAME membership."""
+    memo = memo if memo is not None else {}
+    v, d = adjudicate(tgt, ours, survivor, our_name, mapped, verbose=False)
+    if v == "PROVEN":
+        return "PROVEN", "flat T1, chase-confirmed", []
+    if tgt.get(survivor) is None or ours.get(our_name) is None:
+        return "UNDECIDABLE", d.get("why", ""), []
+    tr = []
+    if chase(tgt, ours, survivor, our_name, mapped, out=tr, memo=memo):
+        return "PROVEN", "chase", tr
+    pos = [f for f in tr if f[1] in _POSITIVE_CONTRADICTIONS
+           or f[1].startswith("SLOT-CONTRADICTED")]
+    if v == "REFUTED" or pos:
+        first = (pos or [f for f in tr if f[1] in _FAILURE_KINDS] or tr[-1:] or [None])[0]
+        return "REFUTED", "%s | chase: %s" % (d.get("why", "")[:120], first), tr
+    return "UNDECIDABLE", d.get("why", ""), tr
 
 
 def family(tgt, ours, our_name, survivor):

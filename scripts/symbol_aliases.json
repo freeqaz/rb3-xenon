@@ -6143,9 +6143,7 @@
    "name": "TeleportTarget",
    "address": "0x822b2e20",
    "survivor": "?TeleportTarget@BandCamShot@@QAAXPAVRndTransformable@@ABVTransform@@_N@Z",
-   "folded": [
-    "?TeleportTarget@HamCamShot@@QAAXPAVRndTransformable@@ABVTransform@@_N@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 3 census sites over 1 functions.",
    "relabelled": {
     "from": "?TeleportTarget@HamCamShot@@QAAXPAVRndTransformable@@ABVTransform@@_N@Z",
@@ -6161,6 +6159,14 @@
      "kind": "VACUOUS-PLACEHOLDER-SLOT",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(?TeleportTarget@BandCamShot@@QAAXPAVRndTransformable@@ABVTransform@@_N @ 0x822b2e20, ?TeleportTarget@HamCamShot@@QAAXPAVRndTransformable@@ABVTransform@@_N@): UNDECIDABLE [VACUOUS-PLACEHOLDER-SLOT] depth 1: retail lbl_82CBCE34 | ours ?msg@?4??TeleportTarget@HamCamShot@@QAAXPAVRndTransformable@@ABVTransf"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?TeleportTarget@HamCamShot@@QAAXPAVRndTransformable@@ABVTransform@@_N@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVHamCamShot@@ RTTI and no \"HamCamShot\" class-name string in band.exe (BandCamShot has both)), so retail holds no instantiation to fold;  tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 VACUOUS-PLACEHOLDER-SLOT: retail lbl_82CBCE34 vs ours ?msg@?4??TeleportTarget@HamCamShot@@QAAXPAVRndTransformable@@ABVTransf. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: relabelled W16-OS 2026-10-03, rechase_w16os . See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ]
   },
@@ -6196,7 +6202,6 @@
     "??$__uninitialized_fill_n@PAUPanInfo@MoggClip@@IU12@@stlpmtx_std@@YAPAUPanInfo@MoggClip@@PAU12@IABU12@ABU__false_type@0@@Z",
     "??$__uninitialized_fill_n@PAUPlayerMappingData@MicClientMapper@@IU12@@stlpmtx_std@@YAPAUPlayerMappingData@MicClientMapper@@PAU12@IABU12@ABU__false_type@0@@Z",
     "??$__uninitialized_fill_n@PAUQuickJoyCheat@@IU1@@stlpmtx_std@@YAPAUQuickJoyCheat@@PAU1@IABU1@ABU__false_type@0@@Z",
-    "??$__uninitialized_fill_n@PAUShaderMacro@@IU1@@stlpmtx_std@@YAPAUShaderMacro@@PAU1@IABU1@ABU__false_type@0@@Z",
     "??$__uninitialized_fill_n@PAUTemporalWindow@?1??CalcFrameScore@FreestyleMoveRecorder@@QBAXAAUFreestyleFrameScores@@PBUFreestyleMoveFrame@@HPBVBaseSkeleton@@M@Z@IU1?1??23@QBAX01H2M@Z@@stlpmtx_std@@YAPAUTemporalWindow@?1??CalcFrameScore@FreestyleMoveRecorder@@QBAXAAUFreestyleFrameScores@@PBUFreestyleMoveFrame@@HPBVBaseSkeleton@@M@Z@PAU1?1??23@QBAX01H2M@Z@IABU1?1??23@QBAX01H2M@Z@ABU__false_type@0@@Z",
     "??$__uninitialized_fill_n@PAUWaitInfo@@IU1@@stlpmtx_std@@YAPAUWaitInfo@@PAU1@IABU1@ABU__false_type@0@@Z",
     "??$__uninitialized_fill_n@PAUXUSER_ACHIEVEMENT@@IU1@@stlpmtx_std@@YAPAUXUSER_ACHIEVEMENT@@PAU1@IABU1@ABU__false_type@0@@Z",
@@ -6223,7 +6228,15 @@
     "??$__uninitialized_fill_n@PAVUpcomingFretRelease@GemPlayer@@IV12@@stlpmtx_std@@YAPAVUpcomingFretRelease@GemPlayer@@PAV12@IABV12@ABU__false_type@0@@Z",
     "??$__uninitialized_fill_n@PAVWaitingMachine@WaitList@LockStepMgr@@IV123@@stlpmtx_std@@YAPAVWaitingMachine@WaitList@LockStepMgr@@PAV123@IABV123@ABU__false_type@0@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 45, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 43 folded spelling(s), 3 census sites over 3 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 45, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 43 folded spelling(s), 3 census sites over 3 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAUShaderMacro@@IU1@@stlpmtx_std@@YAPAUShaderMacro@@PAU1@IABU1@ABU__false_type@0@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_BODY_LOCATED_ELSEWHERE_ON_RETAIL",
+     "evidence": "Our body is PROVEN (clean chase, tools/icf_pair_adjudicate.locate_retail) at retail ??$__uninitialized_fill_n@PAU?$pair@HH@stlpmtx_std@@IU12@@stlpmtx_std@@YAPAU?$pair@HH@0@PAU10@IABU10@ABU__false_type@0@@Z, not at 0x824d44d8. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 0 BYTES-DIFFER: retail ??$__uninitialized_fill_n@PAVSpotlightEntry@SpotlightDrawer@@IV12@@stlpmtx_std@@YAPAVSpotl vs ours ??$__uninitialized_fill_n@PAUShaderMacro@@IU1@@stlpmtx_std@@YAPAUShaderMacro@@PAU1@IABU1@A. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    }
+   ]
   },
   {
    "name": "AtFrame",
@@ -6654,22 +6667,17 @@
    "address": "0x823d3ac8",
    "survivor": "??$_Copy_Construct@UWeight@PlayBack@CharLipSync@@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z",
    "folded": [
-    "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x364ee173@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
     "??$_Param_Construct@UWeight@PlayBack@CharLipSync@@U123@@stlpmtx_std@@YAXPAUWeight@PlayBack@CharLipSync@@ABU123@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 3 census sites over 3 functions.",
@@ -7488,6 +7496,36 @@
      "class": "CONTRADICTED_BY_RETAIL_CALLERS",
      "disposition": "withdrawn",
      "evidence": "The map now places this spelling at 0x822E5040: its 4 retail bl callers are exactly GemTrackDir's vector<pair<ObjPtr<EventTrigger>,ObjPtr<EventTrigger>>> members (__uninitialized_copy/__uninitialized_fill_n/_M_insert_overflow_aux/push_back), the only code that spells it. Membership here could forgive no call site and contradicted that placement (icf_alias_finder --validate FATAL)."
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "LEAF_CALLEE_SIZE_DIFFERS_ON_RETAIL",
+     "evidence": "The survivor's callee is 84 B in retail and our callee is 56 B: different-size bodies cannot be one COMDAT, so retail's copy of our spelling does not call the survivor's callee. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0Weight@PlayBack@CharLipSync@@QAA@ABU012@@Z vs ours ??0?$pair@$$CBVString@@V1@@stlpmtx_std@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 5 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVHamMove@@ RTTI and no \"HamMove\" class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 84 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0Weight@PlayBack@CharLipSync@@QAA@ABU012@@Z vs ours ??0LocalizedName@HamMove@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@UMoveReplacer@@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 HamMove type: no RTTI/class-name string in band.exe; RB3 engine source defines no MoveReplacer), so retail holds no instantiation to fold; leaf sizes 84 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0Weight@PlayBack@CharLipSync@@QAA@ABU012@@Z vs ours ??0MoveReplacer@@QAA@ABU0@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 HamMove type: no RTTI/class-name string in band.exe; RB3 engine source defines no MoveReplacer), so retail holds no instantiation to fold; leaf sizes 84 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0Weight@PlayBack@CharLipSync@@QAA@ABU012@@Z vs ours ??0MoveReplacer@@QAA@ABU0@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 HamMove type: no .?AVMoveParent@@ RTTI / class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 84 B retail vs 240 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0Weight@PlayBack@CharLipSync@@QAA@ABU012@@Z vs ours ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMov. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350.",
@@ -16341,10 +16379,6 @@
    "survivor": "?push_back@?$vector@VTrackChannels@@V?$StlNodeAlloc@VTrackChannels@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVTrackChannels@@@Z",
    "folded": [
     "?push_back@?$vector@ULabel@?A0xe9afadec@@V?$StlNodeAlloc@ULabel@?A0xe9afadec@@@stlpmtx_std@@@stlpmtx_std@@QAAXABULabel@?A0xe9afadec@@@Z",
-    "?push_back@?$vector@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@Z",
-    "?push_back@?$vector@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@Z",
-    "?push_back@?$vector@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@Z",
-    "?push_back@?$vector@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@Z",
     "?push_back@?$vector@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 8 folded spelling(s), 1 census sites over 2 functions.",
@@ -16361,6 +16395,30 @@
      "class": "PLACEHOLDER_SLOT_CALLEE_LOCATED_ELSEWHERE",
      "disposition": "membership withdrawn, group kept",
      "evidence": "tools/alias_placeholder_slot_audit.py: a relocation slot whose retail target is unnamed was tolerated on trust when this membership was admitted. Decided on retail bytes: CALLEE-LOCATED-ELSEWHERE @+0x24 retail fn_827A3608 vs ours ??$_Copy_Construct@UObjVersion@@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@ -- our ??$_Copy_Construct@UObjVersion@@@stlpmtx_std@@YAXP is PROVEN to be retail fn_822C9048, not fn_827A3608; SLOT-CONTRADICTED:CALLEE-LOCATED-ELSEWHERE @+? retail fn_827A3608 vs ours ??$_Copy_Construct@UObjVersion@@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@ -- in strict chase at depth 1"
+    },
+    {
+     "spelling": "?push_back@?$vector@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 Flow system: no .?AVFlow@@ RTTI and no \"Flow\" class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 80 B retail vs 60 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx vs ours ??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPt. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "?push_back@?$vector@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 Flow system: no .?AVFlow@@ RTTI and no \"Flow\" class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 80 B retail vs 60 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx vs ours ??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$O. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "?push_back@?$vector@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 container: RB3 engine source has no ObjPtrVec (RB3 uses ObjPtrList/ObjVector)), so retail holds no instantiation to fold; leaf sizes 80 B retail vs 60 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx vs ours ??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "?push_back@?$vector@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVRhythmDetector@@ RTTI / class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 80 B retail vs 60 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx vs ours ??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNo. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ]
   },
@@ -19279,11 +19337,16 @@
    "name": "$sort",
    "address": "0x8242c568",
    "survivor": "??$sort@PAVDataArrayPtr@@UForAllKeyframesSorter@@@stlpmtx_std@@YAXPAVDataArrayPtr@@0UForAllKeyframesSorter@@@Z",
-   "folded": [
-    "??$sort@PAPAUEventEntry@@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@0UMaxSort@@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$sort@PAPAUEventEntry@@UMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@0UMaxSort@@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "LEAF_CALLEE_SIZE_DIFFERS_ON_RETAIL",
+     "evidence": "The survivor's callee is 208 B in retail and our callee is 188 B: different-size bodies cannot be one COMDAT, so retail's copy of our spelling does not call the survivor's callee. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??$__introsort_loop@PAVDataArrayPtr@@V1@HUForAllKeyframesSorter@@@stlpmtx_std@@YAXPAVDataA vs ours ??$__introsort_loop@PAPAUEventEntry@@PAU1@HUMaxSort@@@stlpmtx_std@@YAXPAPAUEventEntry@@00H. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: relabelled W16-OS 2026-10-03, rechase_w16os . See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -19834,11 +19897,16 @@
    "name": "$_Copy_Construct",
    "address": "0x8230df20",
    "survivor": "??$_Copy_Construct@VContentPoolMapping@SongSectionController@@@stlpmtx_std@@YAXPAVContentPoolMapping@SongSectionController@@ABV12@@Z",
-   "folded": [
-    "??$_Copy_Construct@UEventSink@MsgSinks@@@stlpmtx_std@@YAXPAUEventSink@MsgSinks@@ABU12@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??$_Copy_Construct@UEventSink@MsgSinks@@@stlpmtx_std@@YAXPAUEventSink@MsgSinks@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 message system: the RB3 engine (Msg.h) defines MsgSource::Sink/EventSink and no MsgSinks class; ours holds ObjOwnerPtr<Hmx::Object> where the retail callee copies an ObjPtr<Hmx::Object>), so retail holds no instantiation to fold; leaf sizes 92 B retail vs 92 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0ContentPoolMapping@SongSectionController@@QAA@ABV01@@Z vs ours ??0EventSink@MsgSinks@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: relabelled W16-OS 2026-10-03, rechase_w16os . See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -24956,7 +25024,6 @@
     "??1?$_Vector_base@VViewport@ObjectDir@@V?$StlNodeAlloc@VViewport@ObjectDir@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@VTransform@@V?$StlNodeAlloc@VTransform@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@VViewport@ObjectDir@@V?$StlNodeAlloc@VViewport@ObjectDir@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-    "??1?$vector@U?$pair@PAVRndTexBlendController@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndTexBlendController@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@UGranule@GranularSynth@Synapse@DSP@@V?$StlNodeAlloc@UGranule@GranularSynth@Synapse@DSP@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 139, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 7 folded spelling(s), 0 census sites over 1 functions. W16-U 2026-09-14: survivor re-homed to the spelling whose COMDAT equals the retail body at 0x8266c440 (masked bytes + branch relocations adjudicated by name); the previous survivor is demoted to folded. The membership SET is unchanged, so this asserts no new fold -- gen_symbol_alias_map.py renders [survivor, *folded] at one bucket address, order-independent.",
@@ -24965,6 +25032,14 @@
      "spelling": "??1?$vector@UGranule@GranularSynth@Synapse@DSP@@V?$StlNodeAlloc@UGranule@GranularSynth@Synapse@DSP@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
      "lane": "W16-LB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 PROVEN); 36 B retail / 36 B ours. Retail calls the survivor where we call this spelling in 2 row(s), e.g. fn_82B74688, fn_82B74A7C."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??1?$vector@U?$pair@PAVRndTexBlendController@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndTexBlendController@@M@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_BODY_LOCATED_ELSEWHERE_ON_RETAIL",
+     "evidence": "Our body is PROVEN (clean chase, tools/icf_pair_adjudicate.locate_retail) at retail ??1?$_Vector_base@VTrackerPlayerDisplay@@V?$StlNodeAlloc@VTrackerPlayerDisplay@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ, not at 0x8266c440. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 0 BYTES-DIFFER: retail ??1?$vector@VTriangle@@V?$StlNodeAlloc@VTriangle@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ vs ours ??1?$vector@U?$pair@PAVRndTexBlendController@@M@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRn. Call sites: 0 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ]
   },
@@ -29747,41 +29822,17 @@
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
-    "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Move_Construct_Aux@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@AAU12@ABU__false_type@0@@Z",
-    "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
-    "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@ABU12@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VPatchPair@MeshPair@BandPatchMesh@@V123@@stlpmtx_std@@YAXPAVPatchPair@MeshPair@BandPatchMesh@@ABV123@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
@@ -30102,6 +30153,150 @@
      "class": "CHASE_REFUTED_RETAIL_SITES_ELSEWHERE",
      "disposition": "membership withdrawn, group kept",
      "evidence": "icf_pair_adjudicate --chase REFUTES this membership (relocation targets disagree -- template twin, not a fold). The spelling chases PROVEN, uniquely among retail's masked twins, at 0x82772b08 (??$_Param_Construct@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV), where retail's call sites land: chase PROVEN with 0 CYCLE-ASSUMED; unique among 112 retail masked twins (O chased against every twin, only the survivor PROVEN); 1/1 retail call sites at our spelling's sites (objdiff diff of every paired caller) land at the survivor; extent 60 B both sides (size_gate like-for-like). Slot discharge is the W16-JG strict policy."
+    },
+    {
+     "spelling": "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVHamMove@@ RTTI and no \"HamMove\" class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0LocalizedName@HamMove@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 Flow system: no .?AVFlow@@ RTTI and no \"Flow\" class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VFlow@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 Flow system: no .?AVFlow@@ RTTI and no \"Flow\" class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 Flow system: no .?AVFlow@@ RTTI and no \"Flow\" class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 Flow system: no .?AVFlow@@ RTTI and no \"Flow\" class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVHamCharacter@@ RTTI / class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVHamMove@@ RTTI and no \"HamMove\" class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VHamMove@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 container: RB3 engine source has no ObjPtrVec (RB3 uses ObjPtrList/ObjVector)), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 128 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVRhythmDetector@@ RTTI / class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 container: RB3 engine source has no ObjPtrVec (RB3 uses ObjPtrList/ObjVector)), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 128 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_BODY_LOCATED_ELSEWHERE_ON_RETAIL",
+     "evidence": "Our body is PROVEN (clean chase, tools/icf_pair_adjudicate.locate_retail) at retail ??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z, not at 0x82346e50. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 3 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVCharSignalApplier@@ RTTI and no class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0BoneOp@CharSignalApplier@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 3 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 HamMove type: no RTTI/class-name string in band.exe; RB3 engine source defines no MoveReplacer), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0MoveReplacer@@QAA@ABU0@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlow@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 Flow system: no .?AVFlow@@ RTTI and no \"Flow\" class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VFlow@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 Flow system: no .?AVFlow@@ RTTI and no \"Flow\" class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VFlowLabel@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 Flow system: no .?AVFlow@@ RTTI and no \"Flow\" class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VFlowNode@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 Flow system: no .?AVFlow@@ RTTI and no \"Flow\" class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VFlowOutPort@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVHamCharacter@@ RTTI / class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VHamCharacter@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VHamMove@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVHamMove@@ RTTI and no \"HamMove\" class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VHamMove@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 container: RB3 engine source has no ObjPtrVec (RB3 uses ObjPtrList/ObjVector)), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 128 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VObject@Hmx@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVRhythmDetector@@ RTTI / class-name string in band.exe; RB3 engine source has no ObjPtrVec), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 144 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VRhythmDetector@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@U12@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTex@@VObjectDir@@@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 container: RB3 engine source has no ObjPtrVec (RB3 uses ObjPtrList/ObjVector)), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 128 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0Node@?$ObjPtrVec@VRndTex@@VObjectDir@@@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 HamMove type: no .?AVMoveParent@@ RTTI / class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 56 B retail vs 240 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMov. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_BODY_LOCATED_ELSEWHERE_ON_RETAIL",
+     "evidence": "Our body is PROVEN (clean chase, tools/icf_pair_adjudicate.locate_retail) at retail ??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z, not at 0x82346e50. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0PatchPair@MeshPair@BandPatchMesh@@QAA@ABV012@@Z vs ours ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 3 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350.",
@@ -34068,25 +34263,18 @@
    "address": "0x823048e0",
    "survivor": "??$_Param_Construct@V?$ObjPtr@VGemTrackDir@@@@V1@@stlpmtx_std@@YAXPAV?$ObjPtr@VGemTrackDir@@@@ABV1@@Z",
    "folded": [
-    "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x364ee173@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$ObjPtr@VGemTrackDir@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VGemTrackDir@@@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
@@ -34865,6 +35053,48 @@
      "class": "CHASE_REFUTED_RETAIL_SITES_ELSEWHERE",
      "disposition": "membership withdrawn, group kept",
      "evidence": "icf_pair_adjudicate --chase REFUTES this membership (relocation targets disagree -- template twin, not a fold). The spelling chases PROVEN, uniquely among retail's masked twins, at 0x82772b08 (??$_Param_Construct@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV), where retail's call sites land: chase PROVEN with 0 CYCLE-ASSUMED; unique among 112 retail masked twins (O chased against every twin, only the survivor PROVEN); 1/1 retail call sites at our spelling's sites (objdiff diff of every paired caller) land at the survivor; extent 60 B both sides (size_gate like-for-like). Slot discharge is the W16-JG strict policy."
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "LEAF_CALLEE_SIZE_DIFFERS_ON_RETAIL",
+     "evidence": "The survivor's callee is 120 B in retail and our callee is 56 B: different-size bodies cannot be one COMDAT, so retail's copy of our spelling does not call the survivor's callee. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0?$ObjPtr@VGemTrackDir@@@@QAA@ABV0@@Z vs ours ??0?$pair@$$CBVString@@V1@@stlpmtx_std@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 5 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVHamMove@@ RTTI and no \"HamMove\" class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 120 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0?$ObjPtr@VGemTrackDir@@@@QAA@ABV0@@Z vs ours ??0LocalizedName@HamMove@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_BODY_LOCATED_ELSEWHERE_ON_RETAIL",
+     "evidence": "Our body is PROVEN (clean chase, tools/icf_pair_adjudicate.locate_retail) at retail ??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z, not at 0x823048e0. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0?$ObjPtr@VGemTrackDir@@@@QAA@ABV0@@Z vs ours ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 3 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVCharSignalApplier@@ RTTI and no class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 120 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0?$ObjPtr@VGemTrackDir@@@@QAA@ABV0@@Z vs ours ??0BoneOp@CharSignalApplier@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 3 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 HamMove type: no RTTI/class-name string in band.exe; RB3 engine source defines no MoveReplacer), so retail holds no instantiation to fold; leaf sizes 120 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0?$ObjPtr@VGemTrackDir@@@@QAA@ABV0@@Z vs ours ??0MoveReplacer@@QAA@ABU0@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 HamMove type: no .?AVMoveParent@@ RTTI / class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 120 B retail vs 240 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0?$ObjPtr@VGemTrackDir@@@@QAA@ABV0@@Z vs ours ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMov. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_BODY_LOCATED_ELSEWHERE_ON_RETAIL",
+     "evidence": "Our body is PROVEN (clean chase, tools/icf_pair_adjudicate.locate_retail) at retail ??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z, not at 0x823048e0. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0?$ObjPtr@VGemTrackDir@@@@QAA@ABV0@@Z vs ours ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 3 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350.",
@@ -41173,21 +41403,17 @@
    "address": "0x8237b938",
    "survivor": "??$_Param_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@V1@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z",
    "folded": [
-    "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x364ee173@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
     "??$_Copy_Construct@V?$ObjOwnerPtr@VRndTransformable@@@@@stlpmtx_std@@YAXPAV?$ObjOwnerPtr@VRndTransformable@@@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
@@ -42001,6 +42227,30 @@
      "class": "CONTRADICTED_BY_RETAIL_CALLERS",
      "disposition": "withdrawn",
      "evidence": "The map now places this spelling at 0x822E5040: its 4 retail bl callers are exactly GemTrackDir's vector<pair<ObjPtr<EventTrigger>,ObjPtr<EventTrigger>>> members (__uninitialized_copy/__uninitialized_fill_n/_M_insert_overflow_aux/push_back), the only code that spells it. Membership here could forgive no call site and contradicted that placement (icf_alias_finder --validate FATAL)."
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "LEAF_CALLEE_SIZE_DIFFERS_ON_RETAIL",
+     "evidence": "The survivor's callee is 120 B in retail and our callee is 56 B: different-size bodies cannot be one COMDAT, so retail's copy of our spelling does not call the survivor's callee. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0?$ObjOwnerPtr@VRndTransformable@@@@QAA@ABV0@@Z vs ours ??0?$pair@$$CBVString@@V1@@stlpmtx_std@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 5 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVHamMove@@ RTTI and no \"HamMove\" class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 120 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0?$ObjOwnerPtr@VRndTransformable@@@@QAA@ABV0@@Z vs ours ??0LocalizedName@HamMove@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 HamMove type: no RTTI/class-name string in band.exe; RB3 engine source defines no MoveReplacer), so retail holds no instantiation to fold; leaf sizes 120 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0?$ObjOwnerPtr@VRndTransformable@@@@QAA@ABV0@@Z vs ours ??0MoveReplacer@@QAA@ABU0@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 HamMove type: no .?AVMoveParent@@ RTTI / class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 120 B retail vs 240 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0?$ObjOwnerPtr@VRndTransformable@@@@QAA@ABV0@@Z vs ours ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMov. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350.",
@@ -48231,25 +48481,18 @@
    "address": "0x8266c470",
    "survivor": "??$_Copy_Construct@VLeaderboardRow@@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z",
    "folded": [
-    "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x364ee173@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@UNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@@stlpmtx_std@@YAXPAUNode@?$ObjPtrVec@VRndTransformable@@VObjectDir@@@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
     "??$_Param_Construct@VLeaderboardRow@@V1@@stlpmtx_std@@YAXPAVLeaderboardRow@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
@@ -49028,6 +49271,48 @@
      "class": "CHASE_REFUTED_RETAIL_SITES_ELSEWHERE",
      "disposition": "membership withdrawn, group kept",
      "evidence": "icf_pair_adjudicate --chase REFUTES this membership (relocation targets disagree -- template twin, not a fold). The spelling chases PROVEN, uniquely among retail's masked twins, at 0x82772b08 (??$_Param_Construct@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV), where retail's call sites land: chase PROVEN with 0 CYCLE-ASSUMED; unique among 112 retail masked twins (O chased against every twin, only the survivor PROVEN); 1/1 retail call sites at our spelling's sites (objdiff diff of every paired caller) land at the survivor; extent 60 B both sides (size_gate like-for-like). Slot discharge is the W16-JG strict policy."
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "LEAF_CALLEE_SIZE_DIFFERS_ON_RETAIL",
+     "evidence": "The survivor's callee is 172 B in retail and our callee is 56 B: different-size bodies cannot be one COMDAT, so retail's copy of our spelling does not call the survivor's callee. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0LeaderboardRow@@QAA@ABV0@@Z vs ours ??0?$pair@$$CBVString@@V1@@stlpmtx_std@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 5 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVHamMove@@ RTTI and no \"HamMove\" class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 172 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0LeaderboardRow@@QAA@ABV0@@Z vs ours ??0LocalizedName@HamMove@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_BODY_LOCATED_ELSEWHERE_ON_RETAIL",
+     "evidence": "Our body is PROVEN (clean chase, tools/icf_pair_adjudicate.locate_retail) at retail ??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z, not at 0x8266c470. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0LeaderboardRow@@QAA@ABV0@@Z vs ours ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 3 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UBoneOp@CharSignalApplier@@U12@@stlpmtx_std@@YAXPAUBoneOp@CharSignalApplier@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVCharSignalApplier@@ RTTI and no class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 172 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0LeaderboardRow@@QAA@ABV0@@Z vs ours ??0BoneOp@CharSignalApplier@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 3 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 HamMove type: no RTTI/class-name string in band.exe; RB3 engine source defines no MoveReplacer), so retail holds no instantiation to fold; leaf sizes 172 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0LeaderboardRow@@QAA@ABV0@@Z vs ours ??0MoveReplacer@@QAA@ABU0@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 HamMove type: no .?AVMoveParent@@ RTTI / class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 172 B retail vs 240 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0LeaderboardRow@@QAA@ABV0@@Z vs ours ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMov. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_BODY_LOCATED_ELSEWHERE_ON_RETAIL",
+     "evidence": "Our body is PROVEN (clean chase, tools/icf_pair_adjudicate.locate_retail) at retail ??$_Copy_Construct@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@0@ABV10@@Z, not at 0x8266c470. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0LeaderboardRow@@QAA@ABV0@@Z vs ours ??0?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAA@. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 3 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350.",
@@ -50827,21 +51112,17 @@
    "address": "0x8232fb50",
    "survivor": "??$_Param_Construct@UMerger@FileMerger@@U12@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z",
    "folded": [
-    "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x364ee173@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x6b6981fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x7ce805fb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Copy_Construct@UDebugGraph@?A0x9f7029cb@@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
     "??$_Copy_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x364ee173@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x364ee173@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x6b6981fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x6b6981fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x7ce805fb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x7ce805fb@@ABU12@@Z",
     "??$_Param_Construct@UDebugGraph@?A0x9f7029cb@@U12@@stlpmtx_std@@YAXPAUDebugGraph@?A0x9f7029cb@@ABU12@@Z",
-    "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
     "??$_Param_Construct@V?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@0@ABV10@@Z",
     "??$_Param_Construct@V?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$map@VSymbol@@VString@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@4@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
     "??$_Copy_Construct@UMerger@FileMerger@@@stlpmtx_std@@YAXPAUMerger@FileMerger@@ABU12@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 104 folded spelling(s), 0 census sites over 1 functions.",
@@ -51660,6 +51941,30 @@
      "class": "CONTRADICTED_BY_RETAIL_CALLERS",
      "disposition": "withdrawn",
      "evidence": "The map now places this spelling at 0x822E5040: its 4 retail bl callers are exactly GemTrackDir's vector<pair<ObjPtr<EventTrigger>,ObjPtr<EventTrigger>>> members (__uninitialized_copy/__uninitialized_fill_n/_M_insert_overflow_aux/push_back), the only code that spells it. Membership here could forgive no call site and contradicted that placement (icf_alias_finder --validate FATAL)."
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVString@@V1@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVString@@V1@@0@ABU10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "LEAF_CALLEE_SIZE_DIFFERS_ON_RETAIL",
+     "evidence": "The survivor's callee is 224 B in retail and our callee is 56 B: different-size bodies cannot be one COMDAT, so retail's copy of our spelling does not call the survivor's callee. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0Merger@FileMerger@@QAA@ABU01@@Z vs ours ??0?$pair@$$CBVString@@V1@@stlpmtx_std@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 5 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Copy_Construct@ULocalizedName@HamMove@@@stlpmtx_std@@YAXPAULocalizedName@HamMove@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVHamMove@@ RTTI and no \"HamMove\" class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 224 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0Merger@FileMerger@@QAA@ABU01@@Z vs ours ??0LocalizedName@HamMove@@QAA@ABU01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@UMoveReplacer@@U1@@stlpmtx_std@@YAXPAUMoveReplacer@@ABU1@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 HamMove type: no RTTI/class-name string in band.exe; RB3 engine source defines no MoveReplacer), so retail holds no instantiation to fold; leaf sizes 224 B retail vs 84 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0Merger@FileMerger@@QAA@ABU01@@Z vs ours ??0MoveReplacer@@QAA@ABU0@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??$_Param_Construct@V?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$set@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@V?$StlNodeAlloc@PBVMoveParent@@@3@@0@ABV10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 HamMove type: no .?AVMoveParent@@ RTTI / class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 224 B retail vs 240 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0Merger@FileMerger@@QAA@ABU01@@Z vs ours ??0?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMov. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 6 group(s) -- one COMDAT has ONE retail address, so at most one claim can hold. Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ],
    "withdrawn_reason": "ALIAS-CONSOLIDATION 2026-08-19: this group shares a byte-identical `folded` list with 15 other group(s) at 16 DISTINCT retail addresses; a folded-away spelling belongs to at most one address, so at least 15 of the 16 claims are fabricated and nothing in the file says which. Withdrawn under the neutrality-preserving rule: a name is withdrawn only when EVERY group holding it is also withdrawn from, so no name changes gate-(e) ambiguity status and the accepted canon is bit-identical. Do NOT re-add by hand -- the defect is in the generator (closure, not partition); re-adding one member re-arms the fail-open channel for the whole cluster. Basis and the class-wide price: decomp-synth docs/plans/il-witness/SHADOW_PAIR_OPTIONS_2026-08-18.md. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350. W17-HCT 2026-09-30: retail places the BandPatchMesh copy-construct at 0x8229D350 -- it is called by __uninitialized_fill_n<BandPatchMesh> (0x822AA8D8, whose source calls _Param_Construct), __uninitialized_copy<BandPatchMesh> (0x822AA970) and _M_insert_overflow_aux<BandPatchMesh> (0x822AB128, whose source calls _Copy_Construct), all word-identical to our bodies, and it calls BandPatchMesh's copy ctor (0x8234C410). A spelling lives at one address; this group's membership came from a relocation-masked closure (T1 masks the callee, which is the only thing that distinguishes these bodies) -- withdrawn here, installed at 0x8229d350.",
@@ -63393,7 +63698,6 @@
    "address": "0x822c9048",
    "survivor": "fn_822C9048",
    "folded": [
-    "??$_Copy_Construct@USink@MsgSinks@@@stlpmtx_std@@YAXPAUSink@MsgSinks@@ABU12@@Z",
     "??$_Param_Construct@UObjVersion@@U1@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@Z",
     "??$_Copy_Construct@UObjVersion@@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@Z"
    ],
@@ -63419,6 +63723,12 @@
      "witness_c_N_retail_addr": "0x824be668",
      "witness_c_S_retail_addr": "0x8228d530",
      "evidence": "RETAIL KEEPS THE DISCRIMINATING CALLEES APART. At +40 our folded spelling calls ??0?$ObjPtr@VWorldCrowd@@@@QAA@ABV0@@Z and the survivor calls ??0?$ObjPtr@VObject@Hmx@@@@QAA@ABV0@@Z. Retail places them at 0x824be668 and 0x8228d530 respectively: 0x824be668 is witnessed by map-named caller ??0CamShotCrowd@@QAA@ABV0@@Z @0x824c3608 +28 (tier STRONG), 0x8228d530 by ??0?$Key@VObjectStage@@@@QAA@ABV0@@Z @0x8228efa0 +28 (tier STRONG). Retail's own body at X=0x822c9048 calls 0x8228d530 at +40, so X IS the survivor and our spelling is not the body there. Guards: both destinations are .pdata BeginAddresses (120 / 104 B)."
+    },
+    {
+     "spelling": "??$_Copy_Construct@USink@MsgSinks@@@stlpmtx_std@@YAXPAUSink@MsgSinks@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 message system: the RB3 engine (Msg.h) defines MsgSource::Sink/EventSink and no MsgSinks class; ours holds ObjOwnerPtr<Hmx::Object> where the retail callee copies an ObjPtr<Hmx::Object>), so retail holds no instantiation to fold; leaf sizes 104 B retail vs 104 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0?$ObjPtr@VObject@Hmx@@@@QAA@ABV0@@Z vs ours ??0?$ObjOwnerPtr@VObject@Hmx@@@@QAA@ABV0@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: rechase_w16os , rechase_w16ou W16-OU 2026-10-03. See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ],
    "relabelled": {
@@ -77685,15 +77995,27 @@
    "folded": [
     "??1?$Keys@VTransform@@V1@@@QAA@XZ",
     "??1?$_Vector_base@U?$pair@PAVBandProfile@@VPerformerStatsInfo@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVBandProfile@@VPerformerStatsInfo@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
-    "??1?$_Vector_base@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$_Vector_base@V?$Key@VTransform@@@@V?$StlNodeAlloc@V?$Key@VTransform@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$_Vector_base@VData@MultiplayerAnalyzer@@V?$StlNodeAlloc@VData@MultiplayerAnalyzer@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$_Vector_base@VGameGem@@V?$StlNodeAlloc@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$_Vector_base@VMoggClipMap@@V?$StlNodeAlloc@VMoggClipMap@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
-    "??1?$vector@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
     "??1?$vector@V?$Key@VTransform@@@@V?$StlNodeAlloc@V?$Key@VTransform@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 10, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 9 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 10, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 9 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??1?$_Vector_base@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_BODY_LOCATED_ELSEWHERE_ON_RETAIL",
+     "evidence": "Our body is PROVEN (clean chase, tools/icf_pair_adjudicate.locate_retail) at retail fn_824DFA50, not at 0x8271a818. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 0 BYTES-DIFFER: retail ??1?$_Vector_base@VSfxMap@@V?$StlNodeAlloc@VSfxMap@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ vs ours ??1?$_Vector_base@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ. Call sites: 0 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    },
+    {
+     "spelling": "??1?$vector@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_BODY_LOCATED_ELSEWHERE_ON_RETAIL",
+     "evidence": "Our body is PROVEN (clean chase, tools/icf_pair_adjudicate.locate_retail) at retail fn_824DFA50, not at 0x8271a818. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 0 BYTES-DIFFER: retail ??1?$_Vector_base@VSfxMap@@V?$StlNodeAlloc@VSfxMap@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ vs ours ??1?$vector@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ. Call sites: 0 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    }
+   ]
   },
   {
    "name": "$PropSync",
@@ -81895,8 +82217,7 @@
    "address": "0x826fe590",
    "survivor": "??$_Param_Construct@VSfxMap@@V1@@stlpmtx_std@@YAXPAVSfxMap@@ABV1@@Z",
    "folded": [
-    "??$_Copy_Construct@VSfxMap@@@stlpmtx_std@@YAXPAVSfxMap@@ABV1@@Z",
-    "??$_Param_Construct@UCheat@CheatProvider@@U12@@stlpmtx_std@@YAXPAUCheat@CheatProvider@@ABU12@@Z"
+    "??$_Copy_Construct@VSfxMap@@@stlpmtx_std@@YAXPAVSfxMap@@ABV1@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
    "relabelled": {
@@ -81933,6 +82254,14 @@
      "kind": "CALLEE-UNLOCATED",
      "disposition": "unchanged",
      "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$_Param_Construct@UCheat@CheatProvider@@U12@@stlpmtx_std@@YAXPAUCheat@CheatProvider@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "LEAF_CALLEE_SIZE_DIFFERS_ON_RETAIL",
+     "evidence": "The survivor's callee is 108 B in retail and our callee is 64 B: different-size bodies cannot be one COMDAT, so retail's copy of our spelling does not call the survivor's callee. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0SfxMap@@QAA@ABV0@@Z vs ours ??0Cheat@CheatProvider@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: relabelled W16-OS 2026-10-03, rechase_w16os . See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ]
   },
@@ -82104,10 +82433,17 @@
     "??0EnumProduct@@QAA@XZ",
     "??0LoaderGlitchContext@@QAA@XZ",
     "??0Marker@@QAA@XZ",
-    "??0NetLoaderRef@@QAA@XZ",
     "??0OSCValue@OSCMessenger@@QAA@XZ"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 7, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 6 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 7, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 6 folded spelling(s), 0 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??0NetLoaderRef@@QAA@XZ",
+     "lane": "W16-TV 2026-10-07",
+     "class": "BODY_SIZE_DIFFERS_ON_RETAIL",
+     "evidence": "Retail survivor body 48 B vs our body 64 B: different-size bodies cannot be one COMDAT. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 0 BYTES-DIFFER: retail ?Filename@File@@UBA?AVString@@XZ vs ours ??0NetLoaderRef@@QAA@XZ. Call sites: 0 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: generator T1 (no per-membership record). See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    }
+   ]
   },
   {
    "name": "Load",
@@ -82517,11 +82853,17 @@
    "address": "0x82442df8",
    "survivor": "?_M_erase@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV3@0ABU__false_type@2@@Z",
    "folded": [
-    "?_M_erase@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@PAV3@0ABU__false_type@2@@Z",
-    "?_M_erase@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@PAV3@0ABU__false_type@2@@Z"
+    "?_M_erase@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@PAV3@0ABU__false_type@2@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?_M_erase@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@PAV3@0ABU__false_type@2@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_BODY_LOCATED_ELSEWHERE_ON_RETAIL",
+     "evidence": "Our body is PROVEN (clean chase, tools/icf_pair_adjudicate.locate_retail) at retail fn_82442E68, not at 0x82442df8. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??4?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01 vs ours ??4?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@QAAAAV01@ABV01. Call sites: 2 of our callers, 1 pair with a retail body by name, 0 of those call the survivor, 1 call something else (?resize@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@ -> fn_82442E68). Spelling claimed by 1 group(s). Installed by: relabelled W16-OS 2026-10-03, rechase_w16os . See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -84792,11 +85134,16 @@
    "name": "_M_fill_insert",
    "address": "0x823aade0",
    "survivor": "?_M_fill_insert@?$vector@VStrand@CharHair@@V?$StlNodeAlloc@VStrand@CharHair@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVStrand@CharHair@@IABV34@@Z",
-   "folded": [
-    "?_M_fill_insert@?$vector@UDynamicPropertyEntry@Flow@@V?$StlNodeAlloc@UDynamicPropertyEntry@Flow@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUDynamicPropertyEntry@Flow@@IABU34@@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@UDynamicPropertyEntry@Flow@@V?$StlNodeAlloc@UDynamicPropertyEntry@Flow@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUDynamicPropertyEntry@Flow@@IABU34@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (DC3 Flow system: no .?AVFlow@@ RTTI / \"Flow\" class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 144 B retail vs 128 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 2 BYTES-DIFFER: retail ??0Strand@CharHair@@QAA@ABV01@@Z vs ours ??0DynamicPropertyEntry@Flow@@QAA@ABU01@@Z. Call sites: 4 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: relabelled W16-OS 2026-10-03, rechase_w16os . See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -86328,8 +86675,7 @@
    "address": "0x824adbd0",
    "survivor": "??$_Param_Construct@USpotlightEntry@LightPreset@@U12@@stlpmtx_std@@YAXPAUSpotlightEntry@LightPreset@@ABU12@@Z",
    "folded": [
-    "??$_Copy_Construct@USpotlightEntry@LightPreset@@@stlpmtx_std@@YAXPAUSpotlightEntry@LightPreset@@ABU12@@Z",
-    "??$_Copy_Construct@UEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@ABU12@@Z"
+    "??$_Copy_Construct@USpotlightEntry@LightPreset@@@stlpmtx_std@@YAXPAUSpotlightEntry@LightPreset@@ABU12@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
    "relabelled": {
@@ -86366,6 +86712,14 @@
      "kind": "CALLEE-UNLOCATED",
      "disposition": "unchanged",
      "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$_Copy_Construct@UEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@ABU12@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "LEAF_CALLEE_SIZE_DIFFERS_ON_RETAIL",
+     "evidence": "The survivor's callee is 140 B in retail and our callee is 76 B: different-size bodies cannot be one COMDAT, so retail's copy of our spelling does not call the survivor's callee. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0SpotlightEntry@LightPreset@@QAA@ABU01@@Z vs ours ??0Entry@LocalePanel@@QAA@ABU01@@Z. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: relabelled W16-OS 2026-10-03, rechase_w16os . See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ]
   },
@@ -86463,11 +86817,16 @@
    "name": "contains",
    "address": "0x827be190",
    "survivor": "?contains@String@@QBA_NPBD@Z",
-   "folded": [
-    "?contains@FixedString@@QBA_NPBD@Z"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "?contains@FixedString@@QBA_NPBD@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "LEAF_CALLEE_BYTES_DIFFER_NO_SUPPORT",
+     "evidence": "Same-size leaf callees ((76, 76) B) differ in bytes, our callee is located at no retail body, and no retail call site supports the fold. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ?find@String@@QBAIPBDI@Z vs ours ?find@FixedString@@QBAIPBDI@Z. Call sites: 0 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: relabelled W16-OS 2026-10-03, rechase_w16os . See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
@@ -92430,9 +92789,7 @@
    "name": "GetTotalDurationSeconds",
    "address": "0x822b4eb0",
    "survivor": "?GetTotalDurationSeconds@BandCamShot@@QAAMXZ",
-   "folded": [
-    "?GetTotalDurationSeconds@HamCamShot@@QAAMXZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
    "relabelled": {
     "from": "?GetTotalDurationSeconds@HamCamShot@@QAAMXZ",
@@ -92460,6 +92817,14 @@
      "kind": "CALLEE-UNLOCATED",
      "disposition": "unchanged",
      "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?GetTotalDurationSeconds@HamCamShot@@QAAMXZ",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVHamCamShot@@ RTTI and no \"HamCamShot\" class-name string in band.exe (BandCamShot has both)), so retail holds no instantiation to fold; leaf sizes 200 B retail vs 200 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ?ListNextShots@BandCamShot@@IAA_NAAV?$list@PAVBandCamShot@@V?$StlNodeAlloc@PAVBandCamShot@ vs ours ?ListNextShots@HamCamShot@@IAA_NAAV?$list@PAVHamCamShot@@V?$StlNodeAlloc@PAVHamCamShot@@@s. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: relabelled W16-OS 2026-10-03, rechase_w16os . See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ]
   },
@@ -92703,9 +93068,7 @@
    "name": "GetNumShots",
    "address": "0x822b4df0",
    "survivor": "?GetNumShots@BandCamShot@@QAAHXZ",
-   "folded": [
-    "?GetNumShots@HamCamShot@@QAAHXZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by scripts/icf_alias_fixpoint.py. T1 byte identity (masked bytes, size and the full (offset, reloc_type) sequence) against the retail split object at the survivor address, with relocation-target NAME equality closed under the already-proven alias equivalence -- the /OPT:ICF fixpoint. Round(s) [1]. ",
    "relabelled": {
     "from": "?GetNumShots@HamCamShot@@QAAHXZ",
@@ -92733,6 +93096,14 @@
      "kind": "CALLEE-UNLOCATED",
      "disposition": "unchanged",
      "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?GetNumShots@HamCamShot@@QAAHXZ",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVHamCamShot@@ RTTI and no \"HamCamShot\" class-name string in band.exe (BandCamShot has both)), so retail holds no instantiation to fold; leaf sizes 200 B retail vs 200 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ?ListNextShots@BandCamShot@@IAA_NAAV?$list@PAVBandCamShot@@V?$StlNodeAlloc@PAVBandCamShot@ vs ours ?ListNextShots@HamCamShot@@IAA_NAAV?$list@PAVHamCamShot@@V?$StlNodeAlloc@PAVHamCamShot@@@s. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: relabelled W16-OS 2026-10-03, rechase_w16os . See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ]
   },
@@ -99083,8 +99454,7 @@
    "address": "0x82772b08",
    "survivor": "??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
    "folded": [
-    "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z",
-    "??$_Param_Construct@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@0@ABV10@@Z"
+    "??$_Param_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@ABV10@@Z"
    ],
    "evidence": "PARTITIONED by the 2026-08-20 retail-anchored partition (arm D-prime): at every usable call site where our code calls this spelling, retail's own resolved bl lands at this address. Withheld classes and the derangement control are in decomp-bench archive/runs/2026-08-20-alias-partition-preland/.",
    "admitted": [
@@ -99116,6 +99486,14 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(??$_Copy_Construct@V?$vector@V?$RangedData@VRGTrill@@@?$RangedDataColl @ 0x82772b08, ??$_Param_Construct@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??0?$vector@UPressRec@@V?$StlNodeAlloc@UPressRec@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z | ours ??0?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$_Param_Construct@V?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@0@ABV10@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "LEAF_CALLEE_LOCATED_ELSEWHERE_ON_RETAIL",
+     "evidence": "Our leaf callee ??0?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z is PROVEN at retail ??0?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z, not at the survivor's callee ??0?$vector@UPressRec@@V?$StlNodeAlloc@UPressRec@@@stlpmtx_std@@@stlpmtx_std@@QA. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??0?$vector@UPressRec@@V?$StlNodeAlloc@UPressRec@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z vs ours ??0?$vector@FV?$StlNodeAlloc@F@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: relabelled W16-QG, rechase_w16os . See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ]
   },
@@ -101677,9 +102055,7 @@
    "name": "_M_allocate_and_copy_PBUXUSER_ACHIEVEMENT",
    "address": "0x82772208",
    "survivor": "??$_M_allocate_and_copy@PBU?$pair@MM@stlpmtx_std@@@?$vector@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU?$pair@MM@1@IPBU21@0@Z",
-   "folded": [
-    "??$_M_allocate_and_copy@PBUXUSER_ACHIEVEMENT@@@?$vector@UXUSER_ACHIEVEMENT@@V?$StlNodeAlloc@UXUSER_ACHIEVEMENT@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUXUSER_ACHIEVEMENT@@IPBU2@0@Z"
-   ],
+   "folded": [],
    "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 62, row addr 0x82772208). \"ours\" spelling ??$_M_allocate_and_copy@PBU?$pair@MM@stlpmtx_std@@@?$vector@U?$pair@MM@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@MM@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU?$pair@MM@1@IPBU21@0@Z is a template/spelling twin of survivor ??$_M_allocate_and_copy@PBUXUSER_ACHIEVEMENT@@@?$vector@UXUSER_ACHIEVEMENT@@V?$StlNodeAlloc@UXUSER_ACHIEVEMENT@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUXUSER_ACHIEVEMENT@@IPBU2@0@Z at retail address 0x82772208. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 4 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 308 B (308 B honest) across ['default/SongData'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
    "relabelled": {
     "from": "??$_M_allocate_and_copy@PBUXUSER_ACHIEVEMENT@@@?$vector@UXUSER_ACHIEVEMENT@@V?$StlNodeAlloc@UXUSER_ACHIEVEMENT@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUXUSER_ACHIEVEMENT@@IPBU2@0@Z",
@@ -101695,6 +102071,14 @@
      "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
      "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
      "evidence": "tools/icf_pair_adjudicate.chase(??$_M_allocate_and_copy@PBU?$pair@MM@stlpmtx_std@@@?$vector@U?$pair@MM @ 0x82772208, ??$_M_allocate_and_copy@PBUXUSER_ACHIEVEMENT@@@?$vector@UXUSER_ACHIEVE): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ??$__uninitialized_copy@PAU?$pair@MM@stlpmtx_std@@PAU12@@stlpmtx_std@@YAPAU?$pair@MM@0@PAU | ours ??$__uninitialized_copy@PBUXUSER_ACHIEVEMENT@@PAU1@@stlpmtx_std@@YAPAUXUSER_ACHIEVEMENT@@P (same operation, our callee not proven at a retail address of its own)"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$_M_allocate_and_copy@PBUXUSER_ACHIEVEMENT@@@?$vector@UXUSER_ACHIEVEMENT@@V?$StlNodeAlloc@UXUSER_ACHIEVEMENT@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUXUSER_ACHIEVEMENT@@IPBU2@0@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_BODY_LOCATED_ELSEWHERE_ON_RETAIL",
+     "evidence": "Our body is PROVEN (clean chase, tools/icf_pair_adjudicate.locate_retail) at retail ??$_M_allocate_and_copy@PAVVector2@@@?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVVector2@@IPAV2@0@Z, not at 0x82772208. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??$__uninitialized_copy@PAU?$pair@MM@stlpmtx_std@@PAU12@@stlpmtx_std@@YAPAU?$pair@MM@0@PAU vs ours ??$__uninitialized_copy@PBUXUSER_ACHIEVEMENT@@PAU1@@stlpmtx_std@@YAPAUXUSER_ACHIEVEMENT@@P. Call sites: 1 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: relabelled W16-OS 2026-10-03, rechase_w16os . See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ]
   },
@@ -104708,9 +105092,7 @@
    "name": "$sort",
    "address": "0x82519f38",
    "survivor": "??$sort@PAPAVFileCacheEntry@@UPriority@@@stlpmtx_std@@YAXPAPAVFileCacheEntry@@0UPriority@@@Z",
-   "folded": [
-    "??$sort@PAPAVMoveDetector@@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@0UMoveDetectorCmp@@@Z"
-   ],
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -104746,6 +105128,14 @@
      "kind": "CALLEE-UNLOCATED",
      "disposition": "unchanged",
      "evidence": "our callee located by neither instrument (body: 0; call sites: {})"
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$sort@PAPAVMoveDetector@@UMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveDetector@@0UMoveDetectorCmp@@@Z",
+     "lane": "W16-TV 2026-10-07",
+     "class": "FOLDED_TYPE_ABSENT_FROM_RETAIL",
+     "evidence": "Our spelling's distinguishing type is not in RB3 retail (no .?AVMoveDetector@@ RTTI and no class-name string in band.exe), so retail holds no instantiation to fold; leaf sizes 252 B retail vs 252 B ours. tools/icf_pair_adjudicate.membership_verdict (W16-TV comparators, fresh memo): REFUTED, depth 1 BYTES-DIFFER: retail ??$__introsort_loop@PAPAVFileCacheEntry@@PAV1@HUPriority@@@stlpmtx_std@@YAXPAPAVFileCacheE vs ours ??$__introsort_loop@PAPAVMoveDetector@@PAV1@HUMoveDetectorCmp@@@stlpmtx_std@@YAXPAPAVMoveD. Call sites: 2 of our callers, 0 pair with a retail body by name, 0 of those call the survivor, 0 call something else. Spelling claimed by 1 group(s). Installed by: relabelled W16-OS 2026-10-03, rechase_w16os . See docs/decomp/W16TV_ALIAS_PROOF_GAPS_CLOSED_2026-10-07.md"
     }
    ]
   },
