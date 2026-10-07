@@ -1002,15 +1002,23 @@ void WahEffectChecks() {
 }
 
 // ---------------------------------------------------------------------------
-// BandPatchMesh::FindXfm (#10, retail fn_823468E8), driven on the shipped patch
-// placement mesh that ProjectPatches would hand it (BandCharDesc::GetPatchMesh):
-// `baseballtee_resource_patch.mesh` in
-// char/main/torso/female/gen/baseballtee_10k.milo_xbox. The patch UV is profile
-// data, so the gate picks the UVs. The reference is plain geometry computed by
-// the gate: the first face (in face order) whose UV triangle holds the point,
-// barycentric interpolation of its positions and normals, and the affine
-// map's UV derivatives. A UV outside every face uses the face owning the
-// nearest edge point (strictly nearer wins, so the first face keeps a tie).
+// BandPatchMesh::FindXfm (#10, retail fn_823468E8). Its only caller is
+// ProjectPatches, for a placed patch (mTexture != -1) on the mesh
+// BandCharacter::GetPatchMesh finds by the patch's mesh name; placements are
+// profile data, so nothing in rb3-render reaches it. The gate drives it on two
+// shipped meshes from char/main/torso/female/gen/baseballtee_10k.milo_xbox:
+//  - baseballtee_resource_patch.mesh stores its verts COMPRESSED, so retail's
+//    loader leaves mVerts empty and FindXfm must take its early-out (that mesh
+//    is most likely the mTexture == -1 mapping placement, which never reaches
+//    FindXfm; it is used here only as a shipped compressed mesh);
+//  - female_tattoo_head.mesh stores plain verts, as a projection target must.
+//    I did not trace which shipped patch names it.
+// The patch UV is profile data, so the gate picks the UVs. The reference is
+// plain geometry computed by the gate: the first face (in face order) whose UV
+// triangle holds the point, barycentric interpolation of its positions and
+// normals, and the affine map's UV derivatives. A UV outside every face uses
+// the face owning the nearest edge point (strictly nearer wins, so the first
+// face keeps a tie).
 struct Bary {
     float l[3];
 };
@@ -1030,10 +1038,9 @@ float Dot3(const Vector3 &a, const Vector3 &b) { return a.x * b.x + a.y * b.y + 
 
 void FindXfmChecks() {
     printf("\n=== W16-TW: BandPatchMesh::FindXfm on a shipped patch placement mesh ===\n");
-    // The placement mesh ProjectPatches would hand FindXfm. Its verts are stored
-    // COMPRESSED in the shipped file (RndMesh::LoadVertices' b58 flag), and the
-    // retail loader then leaves mVerts empty and keeps only the GPU blob, so
-    // retail's FindXfm takes its "has no verts or faces" early-out here.
+    // Verts stored COMPRESSED in the shipped file (RndMesh::LoadVertices' b58
+    // flag): the retail loader leaves mVerts empty and keeps only the GPU blob,
+    // so retail's FindXfm takes its "has no verts or faces" early-out.
     const char *path = "char/main/torso/female/gen/baseballtee_10k.milo_xbox";
     ObjDirPtr<ObjectDir> dir;
     dir.LoadFile(FilePath(path), false, false, kLoadFront, false);
