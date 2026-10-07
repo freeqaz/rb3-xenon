@@ -35,12 +35,16 @@ void SyncStore::Poll() {
     }
 }
 
+// Retail 0x823EA3E0 (40 B) only push_backs. The duplicate-tag scan is a
+// dev-build check (its MILO_FAIL is compiled out); kept natively.
 void SyncStore::AddSyncObj(Synchronizable *sync, String &str) {
+#ifdef HX_NATIVE
     for (int i = 0; i < mSyncObjs.size(); i++) {
         if (str == mSyncObjs[i]->GetUniqueTag()) {
             MILO_FAIL("A sync obj already has the ID %s", str);
         }
     }
+#endif
     mSyncObjs.push_back(sync);
 }
 

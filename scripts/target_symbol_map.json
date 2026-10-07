@@ -10175,6 +10175,7 @@
  "0x823ea238": "?NewNetMessage@SyncObjMsg@@SAPAVNetMessage@@XZ",
  "0x823ea2a8": "??_GSyncObjMsg@@UAAPAXI@Z",
  "0x823ea300": "??0SyncStore@@QAA@XZ",
+ "0x823ea3e0": "?AddSyncObj@SyncStore@@QAAXPAVSynchronizable@@AAVString@@@Z",
  "0x823ea408": "?Resize@MemStream@@QAAXH@Z",
  "0x823ea468": "?Load@SyncObjMsg@@UAAXAAVBinStream@@@Z",
  "0x823ea598": "??0?$reverse_iterator@PAPAVSynchronizable@@@stlpmtx_std@@QAA@ABV01@@Z",
