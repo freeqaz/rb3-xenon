@@ -8132,7 +8132,9 @@
     "?resize@?$vector@V?$Key@VSymbol@@@@V?$StlNodeAlloc@V?$Key@VSymbol@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$Key@VSymbol@@@@@Z",
     "?resize@?$vector@V?$Key@_N@@V?$StlNodeAlloc@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$Key@_N@@@Z",
     "?resize@?$vector@VOldTrigger@@V?$StlNodeAlloc@VOldTrigger@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVOldTrigger@@@Z",
-    "?resize@?$vector@VSeam@MeshAO@OutfitConfig@@V?$StlNodeAlloc@VSeam@MeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVSeam@MeshAO@OutfitConfig@@@Z"
+    "?resize@?$vector@VSeam@MeshAO@OutfitConfig@@V?$StlNodeAlloc@VSeam@MeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVSeam@MeshAO@OutfitConfig@@@Z",
+    "?resize@?$vector@VSpotlightEntry@SpotlightDrawer@@V?$StlNodeAlloc@VSpotlightEntry@SpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVSpotlightEntry@SpotlightDrawer@@@Z",
+    "?resize@?$vector@UMirrorOp@CharMirror@@V?$StlNodeAlloc@UMirrorOp@CharMirror@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUMirrorOp@CharMirror@@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
    "admitted": [
@@ -8165,6 +8167,16 @@
      "spelling": "?resize@?$vector@VSeam@MeshAO@OutfitConfig@@V?$StlNodeAlloc@VSeam@MeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVSeam@MeshAO@OutfitConfig@@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (FOLDPROVE-2 method), lane W16-JE. --chase is CHASED T1 PROVEN with its only CYCLE-ASSUMED leaf the self-recursive slot. (1) MASKED-BODY UNIQUENESS: ?_M_fill_insert_aux@?$vector@VSeam@MeshAO@OutfitConfig@@V?$StlNodeAllo self-recursive on both sides, whole-image census of retail bodies with its masked bytes AND relocation shape = exactly 1 (?_M_fill_insert_aux@?$vector@V?$Key@M@@V?$StlNodeAlloc@V?$Key@M@@@stlp) -- so if retail instantiated our spelling's leaf it can only be the survivor's leaf. (2) HETEROGENEOUS FAN-IN naming our element type: retail 1 call(s) the survivor/leaf chain (e.g. ??$?5VSeam@MeshAO@OutfitConfig@@V?$StlNodeAlloc@VSeam@MeshAO@OutfitConfig@@@stlpmtx_std@@@). The self-recursive slot itself is NOT counted as evidence. Placeholder-slot audit: every tolerated slot re-checked (data globals one address, unnamed callees chase PROVEN), 0 bad."
+    },
+    {
+     "spelling": "?resize@?$vector@VSpotlightEntry@SpotlightDrawer@@V?$StlNodeAlloc@VSpotlightEntry@SpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVSpotlightEntry@SpotlightDrawer@@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x11, SLOT-OK:DATA-ACCEPTED x3, VACUOUS-BUT-IDENTICAL x1). size_gate: extents equal: retail 116 == ours 116. Retail census at the survivor: 1 body/bodies identical including relocation target names, 2 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 2; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_fill_insert_aux@?$vector@VSpotlightEntry@SpotlightDrawer@@V?$StlNodeAlloc@VSpotlightEn) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), ClearLights__15SpotlightDrawerFv calls _M_fill_insert__Q211stlpmtx_std119_Vector_impl<Q215SpotlightDrawer14SpotlightEntry,Us,Q211stlpmtx_std49StlNodeAlloc<Q215SpotlightDrawer14SpotlightEntry>>FPQ215SpotlightDrawer14SpotlightEntryUlRCQ215SpotlightDrawer14SpotlightEntry. Charged row(s): ?ClearLights@SpotlightDrawer@@QAAXXZ (192 B), ?ClearPostProc@NgSpotlightDrawer@@MAAXXZ (160 B)."
+    },
+    {
+     "spelling": "?resize@?$vector@UMirrorOp@CharMirror@@V?$StlNodeAlloc@UMirrorOp@CharMirror@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABUMirrorOp@CharMirror@@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x13, SLOT-OK:DATA-ACCEPTED x3, VACUOUS-BUT-IDENTICAL x1). size_gate: extents equal: retail 116 == ours 116. Retail census at the survivor: 1 body/bodies identical including relocation target names, 2 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 1; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_fill_insert_aux@?$vector@UMirrorOp@CharMirror@@V?$StlNodeAlloc@UMirrorOp@CharMirror@@@) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), SyncBones__10CharMirrorFv calls _M_fill_insert__Q211stlpmtx_std95_Vector_impl<Q210CharMirror8MirrorOp,Us,Q211stlpmtx_std37StlNodeAlloc<Q210CharMirror8MirrorOp>>FPQ210CharMirror8MirrorOpUlRCQ210CharMirror8MirrorOp. Charged row(s): ?SyncBones@CharMirror@@IAAXXZ (556 B)."
     }
    ]
   },
@@ -10046,19 +10058,15 @@
   {
    "name": "clear",
    "address": null,
-   "survivor": "?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@GU?$_Identity@G@2@U?$_SetTraitsT@G@priv@2@V?$StlNodeAlloc@G@2@@stlpmtx_std@@QAAXXZ",
+   "survivor": "?clear@?$_Rb_tree@IU?$less@I@stlpmtx_std@@IU?$_Identity@I@2@U?$_SetTraitsT@I@priv@2@V?$StlNodeAlloc@I@2@@stlpmtx_std@@QAAXXZ",
    "folded": [
-    "?clear@?$_Rb_tree@IU?$less@I@stlpmtx_std@@IU?$_Identity@I@2@U?$_SetTraitsT@I@priv@2@V?$StlNodeAlloc@I@2@@stlpmtx_std@@QAAXXZ",
     "?clear@?$_Rb_tree@PAVDetectFrame@@U?$less@PAVDetectFrame@@@stlpmtx_std@@PAV1@U?$_Identity@PAVDetectFrame@@@3@U?$_SetTraitsT@PAVDetectFrame@@@priv@3@V?$StlNodeAlloc@PAVDetectFrame@@@3@@stlpmtx_std@@QAAXXZ",
-    "?clear@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderGroup@@@stlpmtx_std@@PAV1@U?$_Identity@PAVFaderGroup@@@3@U?$_SetTraitsT@PAVFaderGroup@@@priv@3@V?$StlNodeAlloc@PAVFaderGroup@@@3@@stlpmtx_std@@QAAXXZ",
     "?clear@?$_Rb_tree@PAVMoveDetector@@U?$less@PAVMoveDetector@@@stlpmtx_std@@PAV1@U?$_Identity@PAVMoveDetector@@@3@U?$_SetTraitsT@PAVMoveDetector@@@priv@3@V?$StlNodeAlloc@PAVMoveDetector@@@3@@stlpmtx_std@@QAAXXZ",
     "?clear@?$_Rb_tree@PAVObject@Hmx@@U?$less@PAVObject@Hmx@@@stlpmtx_std@@PAV12@U?$_Identity@PAVObject@Hmx@@@4@U?$_SetTraitsT@PAVObject@Hmx@@@priv@4@V?$StlNodeAlloc@PAVObject@Hmx@@@4@@stlpmtx_std@@QAAXXZ",
     "?clear@?$_Rb_tree@PAVRndText@@U?$less@PAVRndText@@@stlpmtx_std@@PAV1@U?$_Identity@PAVRndText@@@3@U?$_SetTraitsT@PAVRndText@@@priv@3@V?$StlNodeAlloc@PAVRndText@@@3@@stlpmtx_std@@QAAXXZ",
     "?clear@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@QAAXXZ",
     "?clear@?$_Rb_tree@PBVMoveParent@@U?$less@PBVMoveParent@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMoveParent@@@3@U?$_SetTraitsT@PBVMoveParent@@@priv@3@V?$StlNodeAlloc@PBVMoveParent@@@3@@stlpmtx_std@@QAAXXZ",
-    "?clear@?$_Rb_tree@PBVMoveVariant@@U?$less@PBVMoveVariant@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMoveVariant@@@3@U?$_SetTraitsT@PBVMoveVariant@@@priv@3@V?$StlNodeAlloc@PBVMoveVariant@@@3@@stlpmtx_std@@QAAXXZ",
-    "?clear@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4ScoreType@@@3@U?$_SetTraitsT@W4ScoreType@@@priv@3@V?$StlNodeAlloc@W4ScoreType@@@3@@stlpmtx_std@@QAAXXZ",
-    "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@QAAXXZ"
+    "?clear@?$_Rb_tree@PBVMoveVariant@@U?$less@PBVMoveVariant@@@stlpmtx_std@@PBV1@U?$_Identity@PBVMoveVariant@@@3@U?$_SetTraitsT@PBVMoveVariant@@@priv@3@V?$StlNodeAlloc@PBVMoveVariant@@@3@@stlpmtx_std@@QAAXXZ"
    ],
    "evidence": "Partitioned out of the closure at 0x823d9920 by ALIAS-REPAIR 2026-08-19 (UNDER_PARTITIONED_ICF_CLOSURE). These spellings agree with each other on their RESOLVED operands -- resolved through the ICF congruence over our own build -- and disagree with the origin survivor '?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ', so the origin group claimed one fold where the evidence supports two. No retail address is known for this class, so it renders into no map bucket.",
    "repair": {
@@ -10081,8 +10089,42 @@
      "class": "MOVED_FROM_ADDRESSLESS_PARTITION",
      "disposition": "membership moved, group kept",
      "evidence": "Address-less partition class (renders no map line, forgives nothing). Restored to its withdrawn origin group at 0x822dea78 on per-membership retail evidence: The withdrawal's own cure ('withdrawn until an independent channel proves it') is supplied by two channels (W16-JE): the leaf _M_erase masked body + relocation shape is unique image-wide (node size li r3,0x14 at 0x822dd9a0, read on retail bytes), and the charged retail row also calls retail-named set<int> functions (LocalBandMachine::SetProGuitarOrBassSongs / SetAvailableSongs, both taking set<int"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@GU?$_Identity@G@2@U?$_SetTraitsT@G@priv@2@V?$StlNodeAlloc@G@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-SW 2026-10-07",
+     "class": "MOVED_FROM_ADDRESSLESS_PARTITION",
+     "disposition": "membership moved, group kept",
+     "evidence": "Address-less partition class (renders no map line, forgives nothing). Moved to the survivor ?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V? on per-membership retail evidence (W16-SW, see the admitted record there): CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x2). size_gate: extents equal: retail 80 == ours 80. Retail census at the survivor: 1 body/bodies identical including relocation target names, 16 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 2, unpaired-caller 3; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_erase@?$_Rb_tree@GU?$less@G@stlpmtx_std@@GU?$_Identity@G@2@U?$_SetTraitsT@G@priv@2@V?$) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), GetCrossSection__19ChordSha"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4ScoreType@@@3@U?$_SetTraitsT@W4ScoreType@@@priv@3@V?$StlNodeAlloc@W4ScoreType@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-SW 2026-10-07",
+     "class": "MOVED_FROM_ADDRESSLESS_PARTITION",
+     "disposition": "membership moved, group kept",
+     "evidence": "Address-less partition class (renders no map line, forgives nothing). Moved to the survivor ?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V? on per-membership retail evidence (W16-SW, see the admitted record there): CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x2). size_gate: extents equal: retail 80 == ours 80. Retail census at the survivor: 1 body/bodies identical including relocation target names, 16 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 2, unpaired-caller 2; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_erase@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4Sc) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), IsUserOnValidScoreType__14A"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-SW 2026-10-07",
+     "class": "MOVED_FROM_ADDRESSLESS_PARTITION",
+     "disposition": "membership moved, group kept",
+     "evidence": "Address-less partition class (renders no map line, forgives nothing). Moved to the survivor ?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V? on per-membership retail evidence (W16-SW, see the admitted record there): CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x2). size_gate: extents equal: retail 80 == ours 80. Retail census at the survivor: 1 body/bodies identical including relocation target names, 16 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 2, unpaired-caller 3; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_erase@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4Tr) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), __dt__13LocalBandUserFv cal"
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderGroup@@@stlpmtx_std@@PAV1@U?$_Identity@PAVFaderGroup@@@3@U?$_SetTraitsT@PAVFaderGroup@@@priv@3@V?$StlNodeAlloc@PAVFaderGroup@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-SW 2026-10-07",
+     "class": "MOVED_FROM_ADDRESSLESS_PARTITION",
+     "disposition": "membership moved, group kept",
+     "evidence": "Address-less partition class (renders no map line, forgives nothing). Moved to the survivor ?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V? on per-membership retail evidence (W16-SW, see the admitted record there): CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x2). size_gate: extents equal: retail 80 == ours 80. Retail census at the survivor: 1 body/bodies identical including relocation target names, 16 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 1, unpaired-caller 2; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_erase@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderGroup@@@stlpmtx_std@@PAV1@U?$_Identity) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), __dt__5FaderFv calls _M_era"
     }
-   ]
+   ],
+   "repair_w16sw": {
+    "lane": "W16-SW 2026-10-07",
+    "class": "PARTITION_SURVIVOR_MOVED_OUT",
+    "previous_survivor": "?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@GU?$_Identity@G@2@U?$_SetTraitsT@G@priv@2@V?$StlNodeAlloc@G@2@@stlpmtx_std@@QAAXXZ",
+    "evidence": "The previous survivor moved to a retail-addressed group on per-membership evidence; the next member becomes the bookkeeping survivor of this address-less class."
+   }
   },
   {
    "name": "clear",
@@ -10129,16 +10171,23 @@
    "name": "clear",
    "address": null,
    "survivor": "?clear@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@H@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
-   "folded": [
-    "?clear@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ"
-   ],
+   "folded": [],
    "evidence": "Partitioned out of the closure at 0x823d9920 by ALIAS-REPAIR 2026-08-19 (UNDER_PARTITIONED_ICF_CLOSURE). These spellings agree with each other on their RESOLVED operands -- resolved through the ICF congruence over our own build -- and disagree with the origin survivor '?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ', so the origin group claimed one fold where the evidence supports two. No retail address is known for this class, so it renders into no map bucket.",
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",
     "origin_survivor": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@UCatData@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@UCatData@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
     "origin_address": "0x823d9920"
-   }
+   },
+   "withdrawn": [
+    {
+     "spelling": "?clear@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-SW 2026-10-07",
+     "class": "MOVED_FROM_ADDRESSLESS_PARTITION",
+     "disposition": "membership moved, group kept",
+     "evidence": "Address-less partition class (renders no map line, forgives nothing). Moved to the survivor ?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVColor@Hmx@@@2@U?$_Select1st@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_st on per-membership retail evidence (W16-SW, see the admitted record there): CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x2). size_gate: extents equal: retail 80 == ours 80. Retail census at the survivor: 1 body/bodies identical including relocation target names, 16 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 1, unpaired-caller 2; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_erase@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$C) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), __dt__16OverdriveTrackerFv "
+    }
+   ]
   },
   {
    "name": "clear",
@@ -15501,9 +15550,17 @@
    "address": "0x8230be48",
    "survivor": "?Exit@UIComponent@@UAAXXZ",
    "folded": [
-    "?Exit@CharDriver@@UAAXXZ"
+    "?Exit@CharDriver@@UAAXXZ",
+    "?Exit@SongSectionController@@UAAXXZ"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 7, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 7, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "admitted": [
+    {
+     "spelling": "?Exit@SongSectionController@@UAAXXZ",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Retail vtable read: SongSectionController's RndPollable sub-vtable 0x8202e7fc, slot 2 (Exit) -> 0x8230be48 = `b ?Exit@RndPollable@@UAAXXZ` (4 B), byte- and relocation-identical to our SongSectionController::Exit. The previous map name at 0x8230e858 was a different body (the ObjList<ContentPoolMapping> dtor)."
+    }
+   ]
   },
   {
    "name": "$__destroy_range_aux",
@@ -80363,9 +80420,7 @@
    "address": "0x8229ee78",
    "survivor": "??$_Copy_Construct@VOverlay@OutfitConfig@@@stlpmtx_std@@YAXPAVOverlay@OutfitConfig@@ABV12@@Z",
    "folded": [
-    "??$_Param_Construct@VOverlay@OutfitConfig@@V12@@stlpmtx_std@@YAXPAVOverlay@OutfitConfig@@ABV12@@Z",
-    "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
-    "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z"
+    "??$_Param_Construct@VOverlay@OutfitConfig@@V12@@stlpmtx_std@@YAXPAVOverlay@OutfitConfig@@ABV12@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 11 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -80434,6 +80489,20 @@
      "class": "CHASE_CONTRADICTED_MOVED_TO_PARTITION_ADDRESS",
      "disposition": "withdrawn from this group; kept in the partition group, which now carries its retail address 0x827493d0",
      "evidence": "tools/icf_pair_adjudicate.chase(survivor @ 0x8229ee78, this spelling): REFUTED [BYTES-DIFFER/SLOT-REFUTED] at +56: the survivor calls ??0?$ObjPtr@VRndTex@@@@QAA@ABV0@@Z, this spelling calls ??0DataNode@@QAA@ABV0@@Z. Against ??$_Copy_Construct@UVar@ScriptTask@@ @ 0x827493d0 the chase is flat T1 PROVEN (masked bytes and relocation list literally equal), and that retail body is the only one of 12 same-shape retail bodies whose relocation names are identical. The one paired call site of the pair<const Symbol,DataNode> spelling (_Rb_tree<Symbol,pair<const Symbol,DataNode>>::_M_create_node) lands at 0x827493d0. ALIAS-REPAIR 2026-08-19 had already partitioned these three spellings out of this closure but left them folded here as well."
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "class": "CHASE_CONTRADICTED_MOVED_TO_RETAIL_ADDRESS",
+     "disposition": "withdrawn from this group; folded into the new 0x827a3608 group",
+     "evidence": "tools/icf_pair_adjudicate.chase against this survivor: REFUTED [BYTES-DIFFER/SLOT-REFUTED] (W16-ST). Against retail 0x827A3608 the chase is flat T1 PROVEN; that body is the only one of 12 same-shape retail bodies that answers PROVEN (the other 11 REFUTE). The one paired caller of the LightPreset spelling (_M_create_node of slist<pair<const Symbol,vector<LightPreset*>>>) lands at 0x827A3608."
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "class": "CHASE_CONTRADICTED_MOVED_TO_RETAIL_ADDRESS",
+     "disposition": "withdrawn from this group; folded into the new 0x827a3608 group",
+     "evidence": "tools/icf_pair_adjudicate.chase against this survivor: REFUTED [BYTES-DIFFER/SLOT-REFUTED] (W16-ST). Against retail 0x827A3608 the chase is flat T1 PROVEN; that body is the only one of 12 same-shape retail bodies that answers PROVEN (the other 11 REFUTE). The one paired caller of the LightPreset spelling (_M_create_node of slist<pair<const Symbol,vector<LightPreset*>>>) lands at 0x827A3608."
     }
    ],
    "repair": {
@@ -89910,7 +89979,8 @@
    "address": "0x826f93c0",
    "survivor": "?_M_fill_insert@?$vector@VSingerResultsData@@V?$StlNodeAlloc@VSingerResultsData@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSingerResultsData@@IABV3@@Z",
    "folded": [
-    "?_M_fill_insert@?$vector@UHamListRibbonDrawState@@V?$StlNodeAlloc@UHamListRibbonDrawState@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUHamListRibbonDrawState@@IABU3@@Z"
+    "?_M_fill_insert@?$vector@UHamListRibbonDrawState@@V?$StlNodeAlloc@UHamListRibbonDrawState@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUHamListRibbonDrawState@@IABU3@@Z",
+    "?_M_fill_insert@?$vector@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUColorSet@@IABU3@@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
@@ -89919,6 +89989,13 @@
      "lane": "W16-IF 2026-10-01",
      "class": "SURVIVOR_WAS_A_DIFFERENT_FUNCTION",
      "note": "retail callers are Singer code (Singer::PostLoad / ~Singer / AppendToScoreHistory / push_back chains) and the body ranks 99.6-100 against Singer.obj's instantiation for this element type; the previous name was a stand-in pairing against another unit's obj (DepthBuffer3D / CameraManager / CharBones / FlowMathOp)"
+    }
+   ],
+   "admitted": [
+    {
+     "spelling": "?_M_fill_insert@?$vector@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUColorSet@@IABU3@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x8, SLOT-OK:CALLEE-CHASED x4, SLOT-OK:DATA-ACCEPTED x3, VACUOUS-BUT-IDENTICAL x1). size_gate: extents equal: retail 108 == ours 108. Retail census at the survivor: 1 body/bodies identical including relocation target names, 3 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 1, unpaired-caller 1; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_fill_insert_aux@?$vector@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2 (360): ColorPalette::Load -> operator>>(BinStream&, vector<ColorSet>&) (unique retail body, 100) calls this resize, and its non-template co-callee operator>>(BinStream&, ColorSet&) types the element. No Wii function in the Bank-8 link calls a ColorSet vector operation, so this pair rests on the 360 channels alone. Charged row(s): ?resize@?$vector@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_st (124 B)."
     }
    ]
   },
@@ -94433,7 +94510,8 @@
    "survivor": "?insert@?$list@UAccomplishmentCondition@@V?$StlNodeAlloc@UAccomplishmentCondition@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UAccomplishmentCondition@@U?$_Nonconst_traits@UAccomplishmentCondition@@@stlpmtx_std@@@2@U32@ABUAccomplishmentCondition@@@Z",
    "folded": [
     "?insert@?$list@VPlane@@V?$StlNodeAlloc@VPlane@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPlane@@U?$_Nonconst_traits@VPlane@@@stlpmtx_std@@@2@U32@ABVPlane@@@Z",
-    "?insert@?$list@UAccomplishmentTourCondition@@V?$StlNodeAlloc@UAccomplishmentTourCondition@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UAccomplishmentTourCondition@@U?$_Nonconst_traits@UAccomplishmentTourCondition@@@stlpmtx_std@@@2@U32@ABUAccomplishmentTourCondition@@@Z"
+    "?insert@?$list@UAccomplishmentTourCondition@@V?$StlNodeAlloc@UAccomplishmentTourCondition@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UAccomplishmentTourCondition@@U?$_Nonconst_traits@UAccomplishmentTourCondition@@@stlpmtx_std@@@2@U32@ABUAccomplishmentTourCondition@@@Z",
+    "?insert@?$list@UPointTest@Rnd@@V?$StlNodeAlloc@UPointTest@Rnd@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPointTest@Rnd@@U?$_Nonconst_traits@UPointTest@Rnd@@@stlpmtx_std@@@2@U32@ABUPointTest@Rnd@@@Z"
    ],
    "evidence": "COMDAT-identity alias group derived by tools/comdat_fold_gate.py. Evidence tier(s) CF2. Our compiled COMDAT for each folded spelling below has the SAME SIZE as the retail body at 0x8266ad18 and every word compares equal: the words our COFF relocation table does NOT relocate compare as full 32-bit values (not masked), and every word it relocates with a BRANCH relocation has retail's destination resolved through target_symbol_map.json and name-compared. A 16-bit immediate relocation is unresolvable in a linked image and REFUSES the pair rather than being masked away. CF1=retail's map places the folded spelling on the same body or nowhere. CF2=on a different body the image discredits (zero .text fan-in, or no symbols.txt extent). CF3=on a HOMONYM witnessed by dc3's leaked ham_xbox_r.map. 1 folded spelling(s), 2 charged name_check sites. Per spelling: [?insert@?$list@VPlane@@V?$StlNodeAlloc@VPlane@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VPlane@@U?$_Nonconst_traits@VPlane@@@stlpmtx_std@@@2@U32@ABVPlane@@@Z residual CF2, 2 sites: identical: 24/25 words compared as FULL 32-bit values, 1 relocated branch destination(s) resolved through the map and name-equal]",
    "admitted": [
@@ -94441,6 +94519,11 @@
      "spelling": "?insert@?$list@UAccomplishmentTourCondition@@V?$StlNodeAlloc@UAccomplishmentTourCondition@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UAccomplishmentTourCondition@@U?$_Nonconst_traits@UAccomplishmentTourCondition@@@stlpmtx_std@@@2@U32@ABUAccomplishmentTourCondition@@@Z",
      "lane": "W16-LD 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- template-twin, ); 100 B retail / 100 B ours. Leaves include VACUOUS-BUT-IDENTICAL (allocator thunks), discharged by the chase. The map places this spelling at no address of its own. Retail call site(s) reaching the survivor where we call this spelling (bl target read on retail bytes): 0x825a49f0 (in Configure@AccomplishmentTourConditional). Re-admission: this spelling carries ALIAS-CONSOLIDATION 2026-08-19 FABRICATED_CLOSURE_NOT_PARTITION withdrawals, which refused group-closure membership without a per-pair proof. The per-pair chase above, with the retail call-site witness, is that proof for this group only. The withdrawal records are kept."
+    },
+    {
+     "spelling": "?insert@?$list@UPointTest@Rnd@@V?$StlNodeAlloc@UPointTest@Rnd@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UPointTest@Rnd@@U?$_Nonconst_traits@UPointTest@Rnd@@@stlpmtx_std@@@2@U32@ABUPointTest@Rnd@@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (W16-SV row 36, Rnd::TestPoint, left uninstalled there). tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN with no CYCLE-ASSUMED leaf (SLOT-FOLD-OK x4, SLOT-OK:DATA-ACCEPTED x3, VACUOUS-BUT-IDENTICAL x1): the one relocation, _M_create_node<list<PointTest>>, resolves through the proven fold onto _M_create_node<list<Plane>>, which is why FLAT T1 refutes. size_gate: extents equal: retail 100 == ours 100. Retail census at the survivor: 1 body identical including relocation target names, 48 of the same masked bytes and relocation shape. Per-call-site: Rnd::TestPoint (paired) calls it at +180 and retail calls the survivor at the same slot; push_back<list<PointTest>> also calls it. TestPoint keeps one scheduling charge (W16-SV: an stb a slot later), so the row does not reach 100 on this install alone."
     }
    ]
   },
@@ -97767,7 +97850,11 @@
    "folded": [
     "?_M_erase@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGG@2@U?$_Select1st@U?$pair@$$CBGG@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
     "?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
-    "?_M_erase@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z"
+    "?_M_erase@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+    "?_M_erase@?$_Rb_tree@GU?$less@G@stlpmtx_std@@GU?$_Identity@G@2@U?$_SetTraitsT@G@priv@2@V?$StlNodeAlloc@G@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+    "?_M_erase@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4ScoreType@@@3@U?$_SetTraitsT@W4ScoreType@@@priv@3@V?$StlNodeAlloc@W4ScoreType@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+    "?_M_erase@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+    "?_M_erase@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderGroup@@@stlpmtx_std@@PAV1@U?$_Identity@PAVFaderGroup@@@3@U?$_SetTraitsT@PAVFaderGroup@@@priv@3@V?$StlNodeAlloc@PAVFaderGroup@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z"
    ],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 3,
@@ -97801,6 +97888,26 @@
      "spelling": "?_M_erase@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
      "lane": "W16-QK 2026-10-06",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN; 92 B / 92 B; retail body-twins 1. Only CYCLE-ASSUMED leaf is the self-recursive slot itself, image-unique (census = 1). Type witness (retail bytes): the charged retail caller fn_82B9A9F0 is the catch funclet of 0x82b9a920, which the map names _Rb_tree<TrackWidget*,...>::_M_copy (same 0x90 frame; the funclet calls _M_erase(top) then rethrows via _CxxThrowException(0,0))."
+    },
+    {
+     "spelling": "?_M_erase@?$_Rb_tree@GU?$less@G@stlpmtx_std@@GU?$_Identity@G@2@U?$_SetTraitsT@G@priv@2@V?$StlNodeAlloc@G@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07: the CYCLE-ASSUMED leaf of pair 3 (?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbo -> ?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@GU?$_Identity@G@2@U?$_SetTraitsT@G@pri). Retail literal census 1 for this leaf body. The top pair's evidence: Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), GetCrossSection__19ChordShapeGeneratorFfRQ219ChordShapeGenerator8CrossSec calls _M_erase__Q211stlpmtx_std135_Rb_tree<Us,Q211stlpmtx_std8less<Us>,Us,Q211stlpmtx_std13_Identity<Us>,Q29stlp_priv15_SetTraitsT<Us>,Q211stlpmtx_std16StlNodeAlloc<Us>>FPQ211stlpmtx_std18_Rb_tree_node_base."
+    },
+    {
+     "spelling": "?_M_erase@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4ScoreType@@@3@U?$_SetTraitsT@W4ScoreType@@@priv@3@V?$StlNodeAlloc@W4ScoreType@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07: the CYCLE-ASSUMED leaf of pair 4 (?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbo -> ?clear@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identi). Retail literal census 1 for this leaf body. The top pair's evidence: Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), IsUserOnValidScoreType__14AccomplishmentCFP13LocalBandUser calls _M_erase__Q211stlpmtx_std184_Rb_tree<9ScoreType,Q211stlpmtx_std16less<9ScoreType>,9ScoreType,Q211stlpmtx_std21_Identity<9ScoreType>,Q29stlp_priv23_SetTraitsT<9ScoreType>,Q211stlpmtx_std24StlNodeAlloc<9ScoreType>>FPQ211stlpmtx_std18_Rb_tree_node_base; GetRequiredScoreType__14AccomplishmentCFv calls _M_erase__Q211stlpmtx_std184_Rb_tree<9ScoreType,Q211stlpmtx_std16less<9ScoreType>,9ScoreType,Q211stlpmtx_std21_Identity<9ScoreType>,Q29stlp_priv23_SetTraitsT<9ScoreType>,Q211stlpmtx_std24StlNodeAlloc<9ScoreType>>FPQ211stlpmtx_std18_Rb_tree_node_base."
+    },
+    {
+     "spelling": "?_M_erase@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07: the CYCLE-ASSUMED leaf of pair 5 (?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbo -> ?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identi). Retail literal census 1 for this leaf body. The top pair's evidence: Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), __dt__13LocalBandUserFv calls _M_erase__Q211stlpmtx_std184_Rb_tree<9TrackType,Q211stlpmtx_std16less<9TrackType>,9TrackType,Q211stlpmtx_std21_Identity<9TrackType>,Q29stlp_priv23_SetTraitsT<9TrackType>,Q211stlpmtx_std24StlNodeAlloc<9TrackType>>FPQ211stlpmtx_std18_Rb_tree_node_base; Reset__13LocalBandUserFv calls _M_erase__Q211stlpmtx_std184_Rb_tree<9TrackType,Q211stlpmtx_std16less<9TrackType>,9TrackType,Q211stlpmtx_std21_Identity<9TrackType>,Q29stlp_priv23_SetTraitsT<9TrackType>,Q211stlpmtx_std24StlNodeAlloc<9TrackType>>FPQ211stlpmtx_std18_Rb_tree_node_base."
+    },
+    {
+     "spelling": "?_M_erase@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderGroup@@@stlpmtx_std@@PAV1@U?$_Identity@PAVFaderGroup@@@3@U?$_SetTraitsT@PAVFaderGroup@@@priv@3@V?$StlNodeAlloc@PAVFaderGroup@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07: the CYCLE-ASSUMED leaf of pair 24 (?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbo -> ?clear@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderGroup@@@stlpmtx_std@@PAV1@U?$_I). Retail literal census 1 for this leaf body. The top pair's evidence: Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), __dt__5FaderFv calls _M_erase__Q211stlpmtx_std202_Rb_tree<P10FaderGroup,Q211stlpmtx_std19less<P10FaderGroup>,P10FaderGroup,Q211stlpmtx_std24_Identity<P10FaderGroup>,Q29stlp_priv26_SetTraitsT<P10FaderGroup>,Q211stlpmtx_std27StlNodeAlloc<P10FaderGroup>>FPQ211stlpmtx_std18_Rb_tree_node_base."
     }
    ]
   },
@@ -97985,7 +98092,8 @@
    "survivor": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVColor@Hmx@@@2@U?$_Select1st@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
    "folded": [
     "?clear@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@H@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
-    "?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ"
+    "?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ"
    ],
    "evidence": "T1 internal-inconsistency (lane CVEIN-1): the map names the CALLING instantiation with our template argument and the CALLEE with a different one; a template instantiated for T2 cannot call a helper instantiated for T1, so the callee address is a fold survivor. Survivor is map-resident, folded spelling has NO retail address of its own, and our compiled body for the survivor spelling reproduces retail's bytes at that address (tmplscan mapname=CORROBORATED).",
    "retail_fanin": 11,
@@ -98002,6 +98110,11 @@
      "spelling": "?clear@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@H@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
      "lane": "W16-NR 2026-10-02",
      "evidence": "chase PROVEN through a self-recursive CYCLE-ASSUMED leaf, broken by two channels (W16-JE method): every leaf masked body + relocation shape is unique image-wide, and a retail map name witnesses our element type: ??A?$map@UTrackerPlayerID@@HU?$less@UTrackerPlayerID@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlp; ??A?$map@UTrackerPlayerID@@HU?$less@UTrackerPlayerID@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlp; unique among 16 retail masked twins (O chased against every twin, only the survivor PROVEN); 4/4 retail call sites at our spelling's sites (objdiff diff of every paired caller) land at the survivor; extent 80 B both sides (size_gate like-for-like). Slot discharge is the W16-JG strict policy."
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x2). size_gate: extents equal: retail 80 == ours 80. Retail census at the survivor: 1 body/bodies identical including relocation target names, 16 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 1, unpaired-caller 2; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_erase@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$C) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), __dt__16OverdriveTrackerFv calls _M_erase__Q211stlpmtx_std455_Rb_tree<15TrackerPlayerID,Q211stlpmtx_std23less<15TrackerPlayerID>,Q211stlpmtx_std57pair<C15TrackerPlayerID,Q216OverdriveTracker10DeployData>,Q211stlpmtx_std86_Select1st<Q211stlpmtx_std57pair<C15TrackerPlayerID,Q216OverdriveTracker10DeployData>>,Q29stlp_priv87_MapTraitsT<Q211stlpmtx_std57pair<C15TrackerPlayerID,Q216OverdriveTracker10DeployData>>,Q211stlpmtx_std88StlNodeAlloc<Q211stlpmtx_std57pair<C15TrackerPlayerID,Q216OverdriveTracker10DeployData>>>FPQ211stlpmtx_std18_Rb_tree_node_base. Charged row(s): ??1OverdriveTracker@@UAA@XZ (92 B)."
     }
    ],
    "restored": [
@@ -99334,7 +99447,11 @@
    "folded": [
     "?clear@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@QAAXXZ",
     "?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGG@2@U?$_Select1st@U?$pair@$$CBGG@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
-    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@QAAXXZ"
+    "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@HU?$_Identity@H@2@U?$_SetTraitsT@H@priv@2@V?$StlNodeAlloc@H@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@GU?$_Identity@G@2@U?$_SetTraitsT@G@priv@2@V?$StlNodeAlloc@G@2@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4ScoreType@@@3@U?$_SetTraitsT@W4ScoreType@@@priv@3@V?$StlNodeAlloc@W4ScoreType@@@3@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@QAAXXZ",
+    "?clear@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderGroup@@@stlpmtx_std@@PAV1@U?$_Identity@PAVFaderGroup@@@3@U?$_SetTraitsT@PAVFaderGroup@@@priv@3@V?$StlNodeAlloc@PAVFaderGroup@@@3@@stlpmtx_std@@QAAXXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 32, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 27 census sites over 1 functions. [W16-J landing repair 2026-09-14: this group was changed on BOTH sides of the W16-J rebase (main added memberships after the lane's base a8f9e92b; the lane changed the group independently), and the rebase resolver replaced the whole group with the lane's copy instead of three-way merging it. Restored main's memberships verbatim from 22b583d5; the lane's own change is kept.] W16-IC-B: + _Rb_tree<int> (set<int>) clear. icf_pair_adjudicate --chase T1 PROVEN (callee _M_erase slots fold-ok); retail TourCharLocal::SaveDb 0x82B79C00 calls 0x822DEA78 to destroy its local set<int>.",
    "withdrawn": [
@@ -99409,6 +99526,26 @@
      "spelling": "?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGG@2@U?$_Select1st@U?$pair@$$CBGG@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
      "lane": "W16-NR 2026-10-02",
      "evidence": "chase PROVEN through a self-recursive CYCLE-ASSUMED leaf, broken by two channels (W16-JE method): every leaf masked body + relocation shape is unique image-wide, and a retail map name witnesses our element type: ?AddVertProfile@ChordShapeGenerator@@QAAXPAVRndMesh@@ABVTransform@@MABVCrossSec@1@AAV?$map@GGU?$less@G@stlpmtx_std@@V?$S; ?BuildContourCap@ChordShapeGenerator@@QAAXPAVRndMesh@@AAV?$map@GGU?$less@G@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBGG@s; ??A?$map@GGU?$less@G@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@QAAAAGABG@Z; ?AddVertProfile@ChordShapeGenerator@@QAAXPAVRndMesh@@ABVTransform@@MABVCrossSec@1@AAV?$map@GGU?$less@G@stlpmtx_std@@V?$S; unique among 16 retail masked twins (O chased against every twin, only the survivor PROVEN); 8/8 retail call sites at our spelling's sites (objdiff diff of every paired caller) land at the survivor; extent 80 B both sides (size_gate like-for-like). Slot discharge is the W16-JG strict policy."
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@GU?$_Identity@G@2@U?$_SetTraitsT@G@priv@2@V?$StlNodeAlloc@G@2@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x2). size_gate: extents equal: retail 80 == ours 80. Retail census at the survivor: 1 body/bodies identical including relocation target names, 16 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 2, unpaired-caller 3; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_erase@?$_Rb_tree@GU?$less@G@stlpmtx_std@@GU?$_Identity@G@2@U?$_SetTraitsT@G@priv@2@V?$) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), GetCrossSection__19ChordShapeGeneratorFfRQ219ChordShapeGenerator8CrossSec calls _M_erase__Q211stlpmtx_std135_Rb_tree<Us,Q211stlpmtx_std8less<Us>,Us,Q211stlpmtx_std13_Identity<Us>,Q29stlp_priv15_SetTraitsT<Us>,Q211stlpmtx_std16StlNodeAlloc<Us>>FPQ211stlpmtx_std18_Rb_tree_node_base. Charged row(s): ??1CrossSec@ChordShapeGenerator@@QAA@XZ (96 B), ?GetCrossSection@ChordShapeGenerator@@QAAXMAAVCrossSec@1@@Z (424 B)."
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4ScoreType@@@3@U?$_SetTraitsT@W4ScoreType@@@priv@3@V?$StlNodeAlloc@W4ScoreType@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x2). size_gate: extents equal: retail 80 == ours 80. Retail census at the survivor: 1 body/bodies identical including relocation target names, 16 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 2, unpaired-caller 2; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_erase@?$_Rb_tree@W4ScoreType@@U?$less@W4ScoreType@@@stlpmtx_std@@W41@U?$_Identity@W4Sc) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), IsUserOnValidScoreType__14AccomplishmentCFP13LocalBandUser calls _M_erase__Q211stlpmtx_std184_Rb_tree<9ScoreType,Q211stlpmtx_std16less<9ScoreType>,9ScoreType,Q211stlpmtx_std21_Identity<9ScoreType>,Q29stlp_priv23_SetTraitsT<9ScoreType>,Q211stlpmtx_std24StlNodeAlloc<9ScoreType>>FPQ211stlpmtx_std18_Rb_tree_node_base; GetRequiredScoreType__14AccomplishmentCFv calls _M_erase__Q211stlpmtx_std184_Rb_tree<9ScoreType,Q211stlpmtx_std16less<9ScoreType>,9ScoreType,Q211stlpmtx_std21_Identity<9ScoreType>,Q29stlp_priv23_SetTraitsT<9ScoreType>,Q211stlpmtx_std24StlNodeAlloc<9ScoreType>>FPQ211stlpmtx_std18_Rb_tree_node_base. Charged row(s): ?IsUserOnValidScoreType@Accomplishment@@QBA_NPAVLocalBandUser@@@Z (256 B), ?GetRequiredScoreType@Accomplishment@@QBA?AW4ScoreType@@XZ (200 B)."
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4TrackType@@@3@U?$_SetTraitsT@W4TrackType@@@priv@3@V?$StlNodeAlloc@W4TrackType@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x2). size_gate: extents equal: retail 80 == ours 80. Retail census at the survivor: 1 body/bodies identical including relocation target names, 16 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 2, unpaired-caller 3; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_erase@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@W41@U?$_Identity@W4Tr) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), __dt__13LocalBandUserFv calls _M_erase__Q211stlpmtx_std184_Rb_tree<9TrackType,Q211stlpmtx_std16less<9TrackType>,9TrackType,Q211stlpmtx_std21_Identity<9TrackType>,Q29stlp_priv23_SetTraitsT<9TrackType>,Q211stlpmtx_std24StlNodeAlloc<9TrackType>>FPQ211stlpmtx_std18_Rb_tree_node_base; Reset__13LocalBandUserFv calls _M_erase__Q211stlpmtx_std184_Rb_tree<9TrackType,Q211stlpmtx_std16less<9TrackType>,9TrackType,Q211stlpmtx_std21_Identity<9TrackType>,Q29stlp_priv23_SetTraitsT<9TrackType>,Q211stlpmtx_std24StlNodeAlloc<9TrackType>>FPQ211stlpmtx_std18_Rb_tree_node_base. Charged row(s): ?Reset@LocalBandUser@@UAAXXZ (104 B), ??1LocalBandUser@@UAA@XZ (136 B)."
+    },
+    {
+     "spelling": "?clear@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderGroup@@@stlpmtx_std@@PAV1@U?$_Identity@PAVFaderGroup@@@3@U?$_SetTraitsT@PAVFaderGroup@@@priv@3@V?$StlNodeAlloc@PAVFaderGroup@@@3@@stlpmtx_std@@QAAXXZ",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x2). size_gate: extents equal: retail 80 == ours 80. Retail census at the survivor: 1 body/bodies identical including relocation target names, 16 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 1, unpaired-caller 2; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_erase@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderGroup@@@stlpmtx_std@@PAV1@U?$_Identity) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), __dt__5FaderFv calls _M_erase__Q211stlpmtx_std202_Rb_tree<P10FaderGroup,Q211stlpmtx_std19less<P10FaderGroup>,P10FaderGroup,Q211stlpmtx_std24_Identity<P10FaderGroup>,Q29stlp_priv26_SetTraitsT<P10FaderGroup>,Q211stlpmtx_std27StlNodeAlloc<P10FaderGroup>>FPQ211stlpmtx_std18_Rb_tree_node_base. Charged row(s): ??1Fader@@UAA@XZ (112 B)."
     }
    ]
   },
@@ -99563,7 +99700,8 @@
     "??$sort@PAPAVNetSearchResult@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVNetSearchResult@@0P6A_NPBV1@1@Z@Z",
     "??$sort@PAPAVRndDrawable@@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@0P6A_NPAV1@1@Z@Z",
     "??$sort@PAPAVFriend@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@0P6A_NPBV1@1@Z@Z",
-    "??$sort@PAPAVVocalPart@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@0P6A_NPBV1@1@Z@Z"
+    "??$sort@PAPAVVocalPart@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@0P6A_NPBV1@1@Z@Z",
+    "??$sort@PAPAVRndTransformable@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndTransformable@@0P6A_NPBV1@1@Z@Z"
    ],
    "evidence": "W16-AE 2026-09-14: sort<NetSearchResult**,bool(*)(const NetSearchResult*,const NetSearchResult*)> folds onto the map-resident survivor sort<RndPollable**,...> at 0x822bed18 on CHASED T1 (tools/icf_pair_adjudicate.py --chase, 112 B both sides; flat T1 REFUTED as template twin; the __introsort_loop / __adjust_heap / sort_heap / __partial_sort slots are SLOT-FOLD-OK, __introsort_loop self-recursion CYCLE-ASSUMED coinductively). Caller: SessionSearcher::StopSearching.",
    "admitted": [
@@ -99581,6 +99719,11 @@
      "spelling": "??$sort@PAPAVVocalPart@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@0P6A_NPBV1@1@Z@Z",
      "lane": "W16-PH 2026-10-06",
      "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:CALLEE-CHASED x4). (1) leaf ??$__introsort_loop@PAPAVVocalPart@@PAV1@HP6A_NPBV1@0@Z@stlp self-recursive on both sides; unique among 11 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: co-callee: the charged row VocalPlayer::HandlePhraseEnd passes ?FramePhraseMeterFracSorter@VocalPart@@SA_NPBV1@0@Z (100% row) as the comparator -- the Compare template argument bool(*)(const VocalPart*,const VocalPart*) of our spelling. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 112 == ours 112. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 1; none lands elsewhere."
+    },
+    {
+     "spelling": "??$sort@PAPAVRndTransformable@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndTransformable@@0P6A_NPBV1@1@Z@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x4). size_gate: extents equal: retail 112 == ours 112. Retail census at the survivor: 1 body/bodies identical including relocation target names, 16 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 2; none lands elsewhere. The CYCLE-ASSUMED leaf (??$__introsort_loop@PAPAVRndTransformable@@PAV1@HP6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndTra) is the self-recursive helper; channel 1, its retail home is unique: chase-unique against every twin. Channel 1: the leaf __introsort_loop<RndTransformable**> was chased against all 11 same-shape retail __introsort_loop twins; only the survivor's leaf answers PROVEN and the other 10 REFUTE. Channel 2 (360): the comparators passed by DistributeChildren, RndTransformable::HorizontalCmp / VerticalCmp, are unique retail bodies scoring 100. Channel 2W (Wii): DistributeChildren__16RndTransformableFbf calls sort<PP16RndTransformable,PFPC16RndTransformablePC16RndTransformable_b>__11stlpmtx_stdFPP16RndTransformablePP16RndTransformablePFPC16RndTransformablePC16RndTransformable_b_v. Charged row(s): ?DistributeChildren@RndTransformable@@QAAX_NM@Z (384 B)."
     }
    ]
   },
@@ -102582,7 +102725,9 @@
     "?_M_fill_insert@?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VVector2@@@@IABV3@@Z",
     "?_M_fill_insert@?$vector@VSectionInfo@Stats@@V?$StlNodeAlloc@VSectionInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSectionInfo@Stats@@IABV34@@Z",
     "?_M_fill_insert@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCamCatEntry@@IABU3@@Z",
-    "?_M_fill_insert@?$vector@VRGTrill@@V?$StlNodeAlloc@VRGTrill@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVRGTrill@@IABV3@@Z"
+    "?_M_fill_insert@?$vector@VRGTrill@@V?$StlNodeAlloc@VRGTrill@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVRGTrill@@IABV3@@Z",
+    "?_M_fill_insert@?$vector@UGemInProgress@@V?$StlNodeAlloc@UGemInProgress@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUGemInProgress@@IABU3@@Z",
+    "?_M_fill_insert@?$vector@VPhraseState@CommonPhraseCapturer@@V?$StlNodeAlloc@VPhraseState@CommonPhraseCapturer@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVPhraseState@CommonPhraseCapturer@@IABV34@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -102611,6 +102756,16 @@
      "spelling": "?_M_fill_insert@?$vector@VRGTrill@@V?$StlNodeAlloc@VRGTrill@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVRGTrill@@IABV3@@Z",
      "lane": "W16-QK 2026-10-06",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (flat T1 REFUTED only on relocation targets); 112 B retail / 112 B ours; retail body-twins 24. Only CYCLE-ASSUMED leaf is the self-recursive _M_fill_insert_aux, whose masked body + relocation shape is image-unique (census = 1, the survivor's leaf at group 0x827ea060). Type witness (retail bytes): both charged retail callers, SongParser::Reset and SongParser::HandleRGTrillStop, resize the 12-byte-element vector at this+0xd4 (li r9,0xc), the member our layout and the inherited RB3 game source declare std::vector<RGTrill> mRGTrillArray. Retail call sites: Reset idx 209, HandleRGTrillStop idx 65."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@UGemInProgress@@V?$StlNodeAlloc@UGemInProgress@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUGemInProgress@@IABU3@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x12, SLOT-OK:DATA-ACCEPTED x3, VACUOUS-BUT-IDENTICAL x1). size_gate: extents equal: retail 112 == ours 112. Retail census at the survivor: 1 body/bodies identical including relocation target names, 24 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 1, unpaired-caller 2; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_fill_insert_aux@?$vector@UGemInProgress@@V?$StlNodeAlloc@UGemInProgress@@@stlpmtx_std@) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), __ct__16TrackWatcherImplFiRC8UserGuidiP8SongDataP11GameGemListP18TrackWatcherParentP9DataArrayi calls _M_fill_insert__Q211stlpmtx_std79_Vector_impl<13GemInProgress,Us,Q211stlpmtx_std29StlNodeAlloc<13GemInProgress>>FP13GemInProgressUlRC13GemInProgress. Charged row(s): ??0TrackWatcherImpl@@QAA@HABVUserGuid@@HPAVSongData@@PAVGameGemList@@PAVTrackWat (1080 B)."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@VPhraseState@CommonPhraseCapturer@@V?$StlNodeAlloc@VPhraseState@CommonPhraseCapturer@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVPhraseState@CommonPhraseCapturer@@IABV34@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x12, SLOT-OK:DATA-ACCEPTED x3, VACUOUS-BUT-IDENTICAL x1). size_gate: extents equal: retail 112 == ours 112. Retail census at the survivor: 1 body/bodies identical including relocation target names, 24 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 1, unpaired-caller 2; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_fill_insert_aux@?$vector@VPhraseState@CommonPhraseCapturer@@V?$StlNodeAlloc@VPhraseSta) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), ExtendPhraseStates__20CommonPhraseCapturerFi calls _M_fill_insert__Q211stlpmtx_std123_Vector_impl<Q220CommonPhraseCapturer11PhraseState,Us,Q211stlpmtx_std51StlNodeAlloc<Q220CommonPhraseCapturer11PhraseState>>FPQ220CommonPhraseCapturer11PhraseStateUlRCQ220CommonPhraseCapturer11PhraseState. Charged row(s): ?ExtendPhraseStates@CommonPhraseCapturer@@QAAXH@Z (124 B)."
     }
    ]
   },
@@ -104713,7 +104868,9 @@
     "?_M_fill_insert_aux@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVStreakInfo@Stats@@IABV34@ABU__false_type@2@@Z",
     "?_M_fill_insert_aux@?$vector@V?$Key@VSymbol@@@@V?$StlNodeAlloc@V?$Key@VSymbol@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VSymbol@@@@IABV3@ABU__false_type@2@@Z",
     "?_M_fill_insert_aux@?$vector@V?$Key@_N@@V?$StlNodeAlloc@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@_N@@IABV3@ABU__false_type@2@@Z",
-    "?_M_fill_insert_aux@?$vector@VOldTrigger@@V?$StlNodeAlloc@VOldTrigger@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOldTrigger@@IABV3@ABU__false_type@2@@Z"
+    "?_M_fill_insert_aux@?$vector@VOldTrigger@@V?$StlNodeAlloc@VOldTrigger@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOldTrigger@@IABV3@ABU__false_type@2@@Z",
+    "?_M_fill_insert_aux@?$vector@VSpotlightEntry@SpotlightDrawer@@V?$StlNodeAlloc@VSpotlightEntry@SpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSpotlightEntry@SpotlightDrawer@@IABV34@ABU__false_type@2@@Z",
+    "?_M_fill_insert_aux@?$vector@UMirrorOp@CharMirror@@V?$StlNodeAlloc@UMirrorOp@CharMirror@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUMirrorOp@CharMirror@@IABU34@ABU__false_type@2@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -104752,6 +104909,16 @@
      "spelling": "?_M_fill_insert_aux@?$vector@VOldTrigger@@V?$StlNodeAlloc@VOldTrigger@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVOldTrigger@@IABV3@ABU__false_type@2@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "Leaf of the W16-JE cycle proof for ?resize@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakI | ?resize@?$vector@VOldTrigger@@V?$StlNodeAlloc@VOldTrigger@@@: self-recursive on both sides; whole-image census of retail bodies with this masked body and relocation shape = exactly 1, this survivor; every non-self relocation slot chases PROVEN. Channel 2 (via the parent): HETEROGENEOUS FAN-IN naming our element type: retail 1 call(s) the survivor/leaf chain (e.g. ??$?5VOldTrigger@@V?$StlNodeAlloc@VOldTrigger@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$v)."
+    },
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@VSpotlightEntry@SpotlightDrawer@@V?$StlNodeAlloc@VSpotlightEntry@SpotlightDrawer@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSpotlightEntry@SpotlightDrawer@@IABV34@ABU__false_type@2@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07: the CYCLE-ASSUMED leaf of pair 18 (?resize@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_ -> ?resize@?$vector@VSpotlightEntry@SpotlightDrawer@@V?$StlNodeAlloc@VSpotlightEntr). Retail literal census 1 for this leaf body. The top pair's evidence: Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), ClearLights__15SpotlightDrawerFv calls _M_fill_insert__Q211stlpmtx_std119_Vector_impl<Q215SpotlightDrawer14SpotlightEntry,Us,Q211stlpmtx_std49StlNodeAlloc<Q215SpotlightDrawer14SpotlightEntry>>FPQ215SpotlightDrawer14SpotlightEntryUlRCQ215SpotlightDrawer14SpotlightEntry."
+    },
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@UMirrorOp@CharMirror@@V?$StlNodeAlloc@UMirrorOp@CharMirror@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUMirrorOp@CharMirror@@IABU34@ABU__false_type@2@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07: the CYCLE-ASSUMED leaf of pair 20 (?resize@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_ -> ?resize@?$vector@UMirrorOp@CharMirror@@V?$StlNodeAlloc@UMirrorOp@CharMirror@@@st). Retail literal census 1 for this leaf body. The top pair's evidence: Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), SyncBones__10CharMirrorFv calls _M_fill_insert__Q211stlpmtx_std95_Vector_impl<Q210CharMirror8MirrorOp,Us,Q211stlpmtx_std37StlNodeAlloc<Q210CharMirror8MirrorOp>>FPQ210CharMirror8MirrorOpUlRCQ210CharMirror8MirrorOp."
     }
    ]
   },
@@ -104762,7 +104929,9 @@
    "folded": [
     "?_M_fill_insert@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVColor@Hmx@@IABV34@@Z",
     "?_M_fill_insert@?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVUserGuid@@IABV3@@Z",
-    "?_M_fill_insert@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUSpotlightDrawerEntry@LightPreset@@IABU34@@Z"
+    "?_M_fill_insert@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUSpotlightDrawerEntry@LightPreset@@IABU34@@Z",
+    "?_M_fill_insert@?$vector@VSectionData@PerfectSectionTracker@@V?$StlNodeAlloc@VSectionData@PerfectSectionTracker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSectionData@PerfectSectionTracker@@IABV34@@Z",
+    "?_M_fill_insert@?$vector@V?$Key@UWeight@@@@V?$StlNodeAlloc@V?$Key@UWeight@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@UWeight@@@@IABV3@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -104781,6 +104950,16 @@
      "spelling": "?_M_fill_insert@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUSpotlightDrawerEntry@LightPreset@@IABU34@@Z",
      "lane": "W16-NH-NAME 2026-10-02",
      "evidence": "W16-JE two-channel cycle proof. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN with 1 CYCLE-ASSUMED leaf/leaves, each self-recursive on both sides; channel 1: the leaf's masked body+relocation shape occurs at exactly ONE retail address (whole-image census of 3095 dtk target objs). Channel 2 (fan-in: retail caller(s) of the survivor chain named for our element type: ??$?5USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@@Z; ??$PropSync@USpotlightDrawerEntry@LightPreset@@@@YA_NAAV?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z). 108 B retail / 108 B ours. Retail call site(s) reaching the survivor where we call this spelling: 0x824b2ee4, 0x824b3800, 0x824b4d7c, 0x824b8474."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@VSectionData@PerfectSectionTracker@@V?$StlNodeAlloc@VSectionData@PerfectSectionTracker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSectionData@PerfectSectionTracker@@IABV34@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x12, SLOT-OK:DATA-ACCEPTED x3, VACUOUS-BUT-IDENTICAL x1). size_gate: extents equal: retail 108 == ours 108. Retail census at the survivor: 1 body/bodies identical including relocation target names, 12 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 1, unpaired-caller 2; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_fill_insert_aux@?$vector@VSectionData@PerfectSectionTracker@@V?$StlNodeAlloc@VSectionD) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), FirstFrame___21PerfectSectionTrackerFf calls _M_fill_insert__Q211stlpmtx_std125_Vector_impl<Q221PerfectSectionTracker11SectionData,Us,Q211stlpmtx_std52StlNodeAlloc<Q221PerfectSectionTracker11SectionData>>FPQ221PerfectSectionTracker11SectionDataUlRCQ221PerfectSectionTracker11SectionData. Charged row(s): ?FirstFrame_@PerfectSectionTracker@@UAAXM@Z (532 B)."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@V?$Key@UWeight@@@@V?$StlNodeAlloc@V?$Key@UWeight@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@UWeight@@@@IABV3@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x12, SLOT-OK:DATA-ACCEPTED x3, VACUOUS-BUT-IDENTICAL x1). size_gate: extents equal: retail 108 == ours 108. Retail census at the survivor: 1 body/bodies identical including relocation target names, 12 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 1, unpaired-caller 2; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_fill_insert_aux@?$vector@V?$Key@UWeight@@@@V?$StlNodeAlloc@V?$Key@UWeight@@@@@stlpmtx_) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2 (360): the charged row operator>>(BinStream&, vector<Key<Weight>>&) is the only retail body of its shape and is called by operator>>(BinStream&, RndMorph::Pose&), which scores 100; its non-template co-callee operator>>(BinStream&, Key<Weight>&) types the call (W16-PH pair #0 form). Channel 2W (Wii): __rs__FR9BinStreamRQ28RndMorph4Pose calls __rs<12Key<6Weight>,Us>__FR9BinStreamRQ211stlpmtx_std71vector<12Key<6Weight>,Us,Q211stlpmtx_std28StlNodeAlloc<12Key<6Weight>>>_R9BinStream. Charged row(s): ??$?5V?$Key@UWeight@@@@V?$StlNodeAlloc@V?$Key@UWeight@@@@@stlpmtx_std@@@@YAAAVBi (204 B)."
     }
    ]
   },
@@ -104792,7 +104971,8 @@
     "?_M_fill_insert_aux@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVColor@Hmx@@IABV34@ABU__false_type@2@@Z",
     "?_M_fill_insert_aux@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUSpotlightDrawerEntry@LightPreset@@IABU34@ABU__false_type@2@@Z",
     "?_M_fill_insert_aux@?$vector@V?$Key@UWeight@@@@V?$StlNodeAlloc@V?$Key@UWeight@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@UWeight@@@@IABV3@ABU__false_type@2@@Z",
-    "?_M_fill_insert_aux@?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVUserGuid@@IABV3@ABU__false_type@2@@Z"
+    "?_M_fill_insert_aux@?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVUserGuid@@IABV3@ABU__false_type@2@@Z",
+    "?_M_fill_insert_aux@?$vector@VSectionData@PerfectSectionTracker@@V?$StlNodeAlloc@VSectionData@PerfectSectionTracker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSectionData@PerfectSectionTracker@@IABV34@ABU__false_type@2@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -104816,6 +104996,11 @@
      "spelling": "?_M_fill_insert_aux@?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVUserGuid@@IABV3@ABU__false_type@2@@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "Leaf of the W16-JE cycle proof for ?_M_fill_insert@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@ | ?_M_fill_insert@?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGui: self-recursive on both sides; whole-image census of retail bodies with this masked body and relocation shape = exactly 1, this survivor; every non-self relocation slot chases PROVEN. Channel 2 (via the parent): HETEROGENEOUS FAN-IN naming our element type: retail 1 call(s) the survivor/leaf chain (e.g. ??$?5VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$vecto)."
+    },
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@VSectionData@PerfectSectionTracker@@V?$StlNodeAlloc@VSectionData@PerfectSectionTracker@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSectionData@PerfectSectionTracker@@IABV34@ABU__false_type@2@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07: the CYCLE-ASSUMED leaf of pair 9 (?_M_fill_insert@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlp -> ?_M_fill_insert@?$vector@VSectionData@PerfectSectionTracker@@V?$StlNodeAlloc@VSe). Retail literal census 1 for this leaf body. The top pair's evidence: Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), FirstFrame___21PerfectSectionTrackerFf calls _M_fill_insert__Q211stlpmtx_std125_Vector_impl<Q221PerfectSectionTracker11SectionData,Us,Q211stlpmtx_std52StlNodeAlloc<Q221PerfectSectionTracker11SectionData>>FPQ221PerfectSectionTracker11SectionDataUlRCQ221PerfectSectionTracker11SectionData."
     }
    ]
   },
@@ -104825,7 +105010,8 @@
    "survivor": "?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVColor@Hmx@@@2@U?$_Select1st@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVColor@Hmx@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
    "folded": [
     "?_M_erase@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@H@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@H@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
-    "?_M_erase@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z"
+    "?_M_erase@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+    "?_M_erase@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -104839,6 +105025,11 @@
      "spelling": "?_M_erase@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
      "lane": "W16-NR 2026-10-02",
      "evidence": "cycle leaf of ?clear@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$: self-recursive, masked body + relocation shape unique image-wide (retail census over all target objs), the two-channel witness of the parent pair applies; chase PROVEN through a self-recursive CYCLE-ASSUMED leaf, broken by two channels (W16-JE method): every leaf masked body + relocation shape is unique image-wide, and a retail map name witnesses our el"
+    },
+    {
+     "spelling": "?_M_erase@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBUTrackerPlayerID@@VDeployData@OverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07: the CYCLE-ASSUMED leaf of pair 8 (?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVColor@Hmx@@@2@U?$_Select -> ?clear@?$_Rb_tree@UTrackerPlayerID@@U?$less@UTrackerPlayerID@@@stlpmtx_std@@U?$p). Retail literal census 1 for this leaf body. The top pair's evidence: Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), __dt__16OverdriveTrackerFv calls _M_erase__Q211stlpmtx_std455_Rb_tree<15TrackerPlayerID,Q211stlpmtx_std23less<15TrackerPlayerID>,Q211stlpmtx_std57pair<C15TrackerPlayerID,Q216OverdriveTracker10DeployData>,Q211stlpmtx_std86_Select1st<Q211stlpmtx_std57pair<C15TrackerPlayerID,Q216OverdriveTracker10DeployData>>,Q29stlp_priv87_MapTraitsT<Q211stlpmtx_std57pair<C15TrackerPlayerID,Q216OverdriveTracker10DeployData>>,Q211stlpmtx_std88StlNodeAlloc<Q211stlpmtx_std57pair<C15TrackerPlayerID,Q216OverdriveTracker10DeployData>>>FPQ211stlpmtx_std18_Rb_tree_node_base."
     }
    ]
   },
@@ -104901,7 +105092,9 @@
     "?_M_fill_insert_aux@?$vector@V?$Key@VVector2@@@@V?$StlNodeAlloc@V?$Key@VVector2@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VVector2@@@@IABV3@ABU__false_type@2@@Z",
     "?_M_fill_insert_aux@?$vector@VSectionInfo@Stats@@V?$StlNodeAlloc@VSectionInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSectionInfo@Stats@@IABV34@ABU__false_type@2@@Z",
     "?_M_fill_insert_aux@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUNote@MidiParser@@IABU34@ABU__false_type@2@@Z",
-    "?_M_fill_insert_aux@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCamCatEntry@@IABU3@ABU__false_type@2@@Z"
+    "?_M_fill_insert_aux@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCamCatEntry@@IABU3@ABU__false_type@2@@Z",
+    "?_M_fill_insert_aux@?$vector@UGemInProgress@@V?$StlNodeAlloc@UGemInProgress@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUGemInProgress@@IABU3@ABU__false_type@2@@Z",
+    "?_M_fill_insert_aux@?$vector@VPhraseState@CommonPhraseCapturer@@V?$StlNodeAlloc@VPhraseState@CommonPhraseCapturer@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVPhraseState@CommonPhraseCapturer@@IABV34@ABU__false_type@2@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -104925,6 +105118,16 @@
      "spelling": "?_M_fill_insert_aux@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCamCatEntry@@IABU3@ABU__false_type@2@@Z",
      "lane": "W16-NH-NAME 2026-10-02",
      "evidence": "Self-recursive leaf of the cycle in ?_M_fill_insert@?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUCamCatEntry@@IAB's chase. Masked body + relocation shape unique image-wide (one retail address: the survivor); self-call slot is the only undischarged slot and is not consulted. Admitted with the parent membership, whose type witness is: co-callee: the charged retail caller also calls ?OnMidiShot5Cleanup@BandDirector@@QAAXXZ -> ?PickShot@BandDirector@@QAA?AVSymbol@@AAV?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@V2@_N@Z; ?OnMidiShot5Cleanup@BandDirector@@QAAXXZ -> ?PickShot@BandDirector@@QAA?AVSymbol@@AAV?$vector@UCamCatEntry@@V?$StlNodeAlloc@UCamCatEntry@@@stlpmtx_std@@@stlpmtx_std@@V2@_N@Z."
+    },
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@UGemInProgress@@V?$StlNodeAlloc@UGemInProgress@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAUGemInProgress@@IABU3@ABU__false_type@2@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07: the CYCLE-ASSUMED leaf of pair 7 (?_M_fill_insert@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@st -> ?_M_fill_insert@?$vector@UGemInProgress@@V?$StlNodeAlloc@UGemInProgress@@@stlpmt). Retail literal census 1 for this leaf body. The top pair's evidence: Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), __ct__16TrackWatcherImplFiRC8UserGuidiP8SongDataP11GameGemListP18TrackWatcherParentP9DataArrayi calls _M_fill_insert__Q211stlpmtx_std79_Vector_impl<13GemInProgress,Us,Q211stlpmtx_std29StlNodeAlloc<13GemInProgress>>FP13GemInProgressUlRC13GemInProgress."
+    },
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@VPhraseState@CommonPhraseCapturer@@V?$StlNodeAlloc@VPhraseState@CommonPhraseCapturer@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVPhraseState@CommonPhraseCapturer@@IABV34@ABU__false_type@2@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07: the CYCLE-ASSUMED leaf of pair 10 (?_M_fill_insert@?$vector@UNote@MidiParser@@V?$StlNodeAlloc@UNote@MidiParser@@@st -> ?_M_fill_insert@?$vector@VPhraseState@CommonPhraseCapturer@@V?$StlNodeAlloc@VPhr). Retail literal census 1 for this leaf body. The top pair's evidence: Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), ExtendPhraseStates__20CommonPhraseCapturerFi calls _M_fill_insert__Q211stlpmtx_std123_Vector_impl<Q220CommonPhraseCapturer11PhraseState,Us,Q211stlpmtx_std51StlNodeAlloc<Q220CommonPhraseCapturer11PhraseState>>FPQ220CommonPhraseCapturer11PhraseStateUlRCQ220CommonPhraseCapturer11PhraseState."
     }
    ]
   },
@@ -104935,7 +105138,8 @@
    "folded": [
     "?_M_fill_insert@?$vector@VSeam@MeshAO@OutfitConfig@@V?$StlNodeAlloc@VSeam@MeshAO@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVSeam@MeshAO@OutfitConfig@@IABV345@@Z",
     "?_M_fill_insert@?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVStreakInfo@Stats@@IABV34@@Z",
-    "?_M_fill_insert@?$vector@V?$Key@VSymbol@@@@V?$StlNodeAlloc@V?$Key@VSymbol@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VSymbol@@@@IABV3@@Z"
+    "?_M_fill_insert@?$vector@V?$Key@VSymbol@@@@V?$StlNodeAlloc@V?$Key@VSymbol@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VSymbol@@@@IABV3@@Z",
+    "?_M_fill_insert@?$vector@V?$Key@_N@@V?$StlNodeAlloc@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@_N@@IABV3@@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -104954,6 +105158,11 @@
      "spelling": "?_M_fill_insert@?$vector@V?$Key@VSymbol@@@@V?$StlNodeAlloc@V?$Key@VSymbol@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@VSymbol@@@@IABV3@@Z",
      "lane": "W16-PH 2026-10-06",
      "evidence": "Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:DATA-ACCEPTED x3). (1) leaf ?_M_fill_insert_aux@?$vector@V?$Key@VSymbol@@@@V?$StlNodeAll self-recursive on both sides; whole-image census of retail bodies with its masked bytes AND relocation shape = exactly 1 (the survivor's leaf). (2) TYPE WITNESS: fan-in: the charged retail row ?Add@?$Keys@VSymbol@@V1@@@ (Keys<Symbol,Symbol>, base vector<Key<Symbol>>) calls the survivor; that row is itself called by ?SetKey@SymbolKeys@@ and ?CloneKey@SymbolKeys@@ (SymbolKeys is-a Keys<Symbol,Symbol>, names from the PropKeys vtable). The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 108 == ours 108. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 1, unpaired-caller 3; none lands elsewhere."
+    },
+    {
+     "spelling": "?_M_fill_insert@?$vector@V?$Key@_N@@V?$StlNodeAlloc@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@_N@@IABV3@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x12, SLOT-OK:DATA-ACCEPTED x3, VACUOUS-BUT-IDENTICAL x1). size_gate: extents equal: retail 108 == ours 108. Retail census at the survivor: 1 body/bodies identical including relocation target names, 7 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 1, unpaired-caller 3; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_fill_insert_aux@?$vector@V?$Key@_N@@V?$StlNodeAlloc@V?$Key@_N@@@stlpmtx_std@@@stlpmtx_) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2 (360): the charged row Keys<bool,bool>::Add has the class co-callee Keys<bool,bool>::KeyGreaterEq, so the vector it grows is vector<Key<bool>> (W16-PH pair #10 class-relation form). No Wii function in the Bank-8 link calls a Key<bool> vector operation, so this pair rests on the 360 channels alone. Charged row(s): ?Add@?$Keys@_N_N@@QAAHAB_NM_N@Z (216 B)."
     }
    ]
   },
@@ -110826,18 +111035,30 @@
    ]
   },
   {
-   "name": "Exit",
+   "name": "ObjList<ContentPoolMapping>::~ObjList",
    "address": "0x8230e858",
-   "survivor": "?Exit@SongSectionController@@UAAXXZ",
-   "folded": [
-    "??1?$ObjList@VContentPoolMapping@SongSectionController@@@@QAA@XZ"
-   ],
+   "survivor": "??1?$ObjList@VContentPoolMapping@SongSectionController@@@@QAA@XZ",
+   "folded": [],
    "evidence": "Fold group opened by W16-MB 2026-10-01: every membership below is admitted individually on retail bytes by tools/icf_pair_adjudicate.py --chase (see 'admitted').",
    "admitted": [
     {
      "spelling": "??1?$ObjList@VContentPoolMapping@SongSectionController@@@@QAA@XZ",
      "lane": "W16-MB 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED, 0 undischarged slots (flat T1 UNDECIDABLE); 4 B retail / 4 B ours. Retail calls the survivor where we call this spelling in 2 row(s), e.g. fn_8230EFF8, fn_8230F840."
+    }
+   ],
+   "repair_w16sw": {
+    "lane": "W16-SW 2026-10-07",
+    "class": "MAP_NAME_WAS_A_VTABLE_THUNK",
+    "previous_survivor": "?Exit@SongSectionController@@UAAXXZ",
+    "evidence": "Retail 0x8230e858 is `b ?clear@?$_List_base<SongSectionController::ContentPoolMapping>` (4 B), which is the body of ObjList<ContentPoolMapping>::~ObjList in our SongSectionController.obj. It is not SongSectionController::Exit: the SongSectionController vtable's RndPollable sub-vtable at 0x8202e7fc holds 0x8230be48 in slot 2 (Exit), and 0x8230be48 is `b ?Exit@RndPollable@@UAAXXZ`, our SongSectionController::Exit body exactly. No data reference to 0x8230e858 exists in retail; retail literal census of the body is 1. The map row is renamed to the ObjList dtor and SongSectionController::Exit moves to the 0x8230be48 group."
+   },
+   "withdrawn": [
+    {
+     "spelling": "?Exit@SongSectionController@@UAAXXZ",
+     "lane": "W16-SW 2026-10-07",
+     "class": "MOVED_TO_RETAIL_VTABLE_SLOT",
+     "disposition": "moved to the 0x8230be48 group (?Exit@UIComponent@@UAAXXZ)"
     }
    ]
   },
@@ -118756,7 +118977,8 @@
     "??$__introsort_loop@PAPAVRndDrawable@@PAV1@HP6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@00HP6A_NPAV1@1@Z@Z",
     "??$__introsort_loop@PAPAVFriend@@PAV1@HP6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@00HP6A_NPBV1@1@Z@Z",
     "??$__introsort_loop@PAVSymbol@@V1@HP6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@00HP6A_NV1@1@Z@Z",
-    "??$__introsort_loop@PAPAVVocalPart@@PAV1@HP6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@00HP6A_NPBV1@1@Z@Z"
+    "??$__introsort_loop@PAPAVVocalPart@@PAV1@HP6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@00HP6A_NPBV1@1@Z@Z",
+    "??$__introsort_loop@PAPAVRndTransformable@@PAV1@HP6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndTransformable@@00HP6A_NPBV1@1@Z@Z"
    ],
    "evidence": "Created by lane W16-PH: see per-member records in `admitted`.",
    "lane": "W16-PH 2026-10-06",
@@ -118780,6 +119002,11 @@
      "spelling": "??$__introsort_loop@PAPAVVocalPart@@PAV1@HP6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@00HP6A_NPBV1@1@Z@Z",
      "lane": "W16-PH 2026-10-06",
      "evidence": "Leaf membership of pair #18 (??$sort@PAPAVVocalPart@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVV -> survivor ??$sort@PAPAVRndPollable@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPA), lane W16-PH: the self-recursive leaf the chase assumed. Cycle broken by TWO INDEPENDENT CHANNELS (W16-JE method), lane W16-PH. tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 1 CYCLE-ASSUMED leaf/leaves, each the self-recursive slot; placeholder slots discharged under the W16-JG strict policy (SLOT-OK:CALLEE-CHASED x4). (1) leaf ??$__introsort_loop@PAPAVVocalPart@@PAV1@HP6A_NPBV1@0@Z@stlp self-recursive on both sides; unique among 11 retail masked twins (our leaf chased against every twin, only the survivor's leaf PROVEN -- the W16-NR form). (2) TYPE WITNESS: co-callee: the charged row VocalPlayer::HandlePhraseEnd passes ?FramePhraseMeterFracSorter@VocalPart@@SA_NPBV1@0@Z (100% row) as the comparator -- the Compare template argument bool(*)(const VocalPart*,const VocalPart*) of our spelling. The self-recursive slot itself is NOT counted as evidence. size_gate: extents equal: retail 112 == ours 112. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 1; none lands elsewhere."
+    },
+    {
+     "spelling": "??$__introsort_loop@PAPAVRndTransformable@@PAV1@HP6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndTransformable@@00HP6A_NPBV1@1@Z@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07: the CYCLE-ASSUMED leaf of pair 21 (??$sort@PAPAVRndPollable@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndPollable@@0P6A_N -> ??$sort@PAPAVRndTransformable@@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndTransformab). Chased against all 11 same-shape retail twins, only this one answers PROVEN. The top pair's evidence: Channel 1: the leaf __introsort_loop<RndTransformable**> was chased against all 11 same-shape retail __introsort_loop twins; only the survivor's leaf answers PROVEN and the other 10 REFUTE. Channel 2 (360): the comparators passed by DistributeChildren, RndTransformable::HorizontalCmp / VerticalCmp, are unique retail bodies scoring 100. Channel 2W (Wii): DistributeChildren__16RndTransformableFbf calls sort<PP16RndTransformable,PFPC16RndTransformablePC16RndTransformable_b>__11stlpmtx_stdFPP16RndTransformablePP16RndTransformablePFPC16RndTransformablePC16RndTransformable_b_v."
     }
    ]
   },
@@ -119173,6 +119400,126 @@
    ],
    "evidence": "W16-SO 2026-10-07: retail 0x823f2058 (60 B, EH frame, null check, bl ??0MemStream@@QAA@ABV0@@Z at 0x823f1fa0, unwind funclet calls the empty placement delete at 0x826c3888) has four retail call sites: 0x823f2174 (__uninitialized_fill_n<MemStream>) and 0x823f221c (__uninitialized_copy<MemStream>), where STLport source calls _Param_Construct, and 0x823f252c (_M_insert_overflow_aux<MemStream>) and 0x823f262c (push_back<MemStream>), where it calls _Copy_Construct. Both COMDATs are emitted by SessionMessages.obj with identical bodies. tools/icf_pair_adjudicate.py --survivor _Copy_Construct<MemStream> --ours _Param_Construct<MemStream,MemStream> --chase: FLAT T1 PROVEN (retail 60 B / ours 60 B, 1 relocation, targets agree), CHASED T1 PROVEN. The body only exists out of line once MEM_OVERLOAD declares the matching class placement delete (same lane, src/system/utl/MemMgr.h).",
    "lane": "W16-SO 2026-10-07"
+  },
+  {
+   "name": "HasSyncPermission",
+   "address": "0x8257b418",
+   "survivor": "?HasSyncPermission@QuickplayPerformerImpl@@UBA_NXZ",
+   "folded": [
+    "?HasSyncPermission@InterstitialMgr@@UBA_NXZ"
+   ],
+   "lane": "W16-SW 2026-10-07",
+   "evidence": "Created by lane W16-SW: see `admitted`.",
+   "admitted": [
+    {
+     "spelling": "?HasSyncPermission@InterstitialMgr@@UBA_NXZ",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Retail vtable read: InterstitialMgr's Synchronizable sub-vtable 0x820ab33c, slot 3 (HasSyncPermission) -> 0x8257b418 = `b ?IsLeaderLocal@@YA_NXZ` (4 B), byte- and relocation-identical to our InterstitialMgr::HasSyncPermission. The previous map name at 0x825af9e0 is an 8 B body `b ~hashtable<Symbol,hash_map<Symbol,DataArray*>>` + padding, which is the hash_map<Symbol,hash_map<Symbol,DataArray*>> dtor InterstitialMgr.obj defines (its .text references it twice); no data reference to 0x825af9e0 exists in retail."
+    }
+   ]
+  },
+  {
+   "name": "ContentPattern",
+   "address": "0x8252a598",
+   "survivor": "?ContentPattern@Callback@ContentMgr@@UAAPBDXZ",
+   "folded": [
+    "?UserName@NullLocalBandUser@@UBAPBDXZ"
+   ],
+   "lane": "W16-SW 2026-10-07",
+   "evidence": "Created by lane W16-SW: see `admitted`.",
+   "admitted": [
+    {
+     "spelling": "?UserName@NullLocalBandUser@@UBAPBDXZ",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Our UserName is `return \"\"`. Retail 0x8252a598 is `return &lbl_82000C55`, and 0x82000C55 is a NUL byte (the empty string pooled into the tail of \"tour\\0\"); of the 134 retail bodies of this masked shape exactly one references 0x82000C55. Both NullLocalBandUser::UserName vtordisp thunks (`$4PPPPPPPM@A@` 12 B and `$4PPPPPPPM@3` 16 B, map rows 0x8268e5c8 / 0x8268ed20) branch to 0x8252a598 in retail."
+    }
+   ]
+  },
+  {
+   "name": "_Copy_Construct<pair<const Symbol,vector<int>>>",
+   "address": "0x827a3608",
+   "survivor": "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
+   "folded": [
+    "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
+    "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
+    "??$_Copy_Construct@VTrackChannels@@@stlpmtx_std@@YAXPAVTrackChannels@@ABV1@@Z",
+    "??$_Param_Construct@VTrackChannels@@V1@@stlpmtx_std@@YAXPAVTrackChannels@@ABV1@@Z"
+   ],
+   "lane": "W16-SW 2026-10-07",
+   "evidence": "Created by lane W16-SW: see `admitted`.",
+   "admitted": [
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@PAVLightPreset@@V?$StlNodeAlloc@PAVLightPreset@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Retail 0x827A3608 (80 B, in the SongMgr.cpp .text pin) is the pair<const Symbol, vector<int>> copy construct SongMgr.obj defines, chased PROVEN. Every retail call site of 0x827A3608 was read against our aligned callers: 2 x _Copy_Construct<TrackChannels>, 2 x _Param_Construct<TrackChannels>, 1 x the LightPreset spelling; each of these spellings chases T1 PROVEN against 0x827A3608 (80 B == 80 B). With pointer and int vectors the copy is the same 32-bit element copy."
+    },
+    {
+     "spelling": "??$_Copy_Construct@U?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAU?$pair@$$CBVSymbol@@V?$vector@PAVPatchSticker@@V?$StlNodeAlloc@PAVPatchSticker@@@stlpmtx_std@@@stlpmtx_std@@@0@ABU10@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Retail 0x827A3608 (80 B, in the SongMgr.cpp .text pin) is the pair<const Symbol, vector<int>> copy construct SongMgr.obj defines, chased PROVEN. Every retail call site of 0x827A3608 was read against our aligned callers: 2 x _Copy_Construct<TrackChannels>, 2 x _Param_Construct<TrackChannels>, 1 x the LightPreset spelling; each of these spellings chases T1 PROVEN against 0x827A3608 (80 B == 80 B). With pointer and int vectors the copy is the same 32-bit element copy."
+    },
+    {
+     "spelling": "??$_Copy_Construct@VTrackChannels@@@stlpmtx_std@@YAXPAVTrackChannels@@ABV1@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Retail 0x827A3608 (80 B, in the SongMgr.cpp .text pin) is the pair<const Symbol, vector<int>> copy construct SongMgr.obj defines, chased PROVEN. Every retail call site of 0x827A3608 was read against our aligned callers: 2 x _Copy_Construct<TrackChannels>, 2 x _Param_Construct<TrackChannels>, 1 x the LightPreset spelling; each of these spellings chases T1 PROVEN against 0x827A3608 (80 B == 80 B). With pointer and int vectors the copy is the same 32-bit element copy."
+    },
+    {
+     "spelling": "??$_Param_Construct@VTrackChannels@@V1@@stlpmtx_std@@YAXPAVTrackChannels@@ABV1@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Retail 0x827A3608 (80 B, in the SongMgr.cpp .text pin) is the pair<const Symbol, vector<int>> copy construct SongMgr.obj defines, chased PROVEN. Every retail call site of 0x827A3608 was read against our aligned callers: 2 x _Copy_Construct<TrackChannels>, 2 x _Param_Construct<TrackChannels>, 1 x the LightPreset spelling; each of these spellings chases T1 PROVEN against 0x827A3608 (80 B == 80 B). With pointer and int vectors the copy is the same 32-bit element copy."
+    }
+   ]
+  },
+  {
+   "name": "resize",
+   "address": "0x82470738",
+   "survivor": "?resize@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@Z",
+   "folded": [
+    "?resize@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@Z"
+   ],
+   "evidence": "Created by lane W16-SW: see per-member records in `admitted`.",
+   "lane": "W16-SW 2026-10-07",
+   "admitted": [
+    {
+     "spelling": "?resize@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, SLOT-FOLD-OK x17, SLOT-OK:CALLEE-CHASED x3, SLOT-OK:DATA-ACCEPTED x3, VACUOUS-BUT-IDENTICAL x2). size_gate: extents equal: retail 124 == ours 124. Retail census at the survivor: 1 body/bodies identical including relocation target names, 11 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 3; none lands elsewhere. The CYCLE-ASSUMED leaf (?_M_fill_insert_aux@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii): ShrinkKeys__11RndMeshAnimFi calls resize<Key<vector<Vector3>>>, and __rs<Key<vector<Vector3>>> calls _M_fill_insert<Key<vector<Vector3>>> in orig/SZBE69_B8/files/band_r_wii.map; both charged rows are those two functions. Charged row(s): ??$?5V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx (136 B), ?ShrinkKeys@RndMeshAnim@@QAAXH@Z (336 B)."
+    }
+   ]
+  },
+  {
+   "name": "_M_fill_insert_aux",
+   "address": "0x8246f370",
+   "survivor": "?_M_fill_insert_aux@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IABV3@ABU__false_type@2@@Z",
+   "folded": [
+    "?_M_fill_insert_aux@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@IABV3@ABU__false_type@2@@Z"
+   ],
+   "evidence": "Created by lane W16-SW: see per-member records in `admitted`.",
+   "lane": "W16-SW 2026-10-07",
+   "admitted": [
+    {
+     "spelling": "?_M_fill_insert_aux@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@IABV3@ABU__false_type@2@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07: the CYCLE-ASSUMED leaf of pair 14 (?resize@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpm -> ?resize@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_s). Retail literal census 1 for this leaf body. The top pair's evidence: Channel 2W (Wii): ShrinkKeys__11RndMeshAnimFi calls resize<Key<vector<Vector3>>>, and __rs<Key<vector<Vector3>>> calls _M_fill_insert<Key<vector<Vector3>>> in orig/SZBE69_B8/files/band_r_wii.map; both charged rows are those two functions."
+    }
+   ]
+  },
+  {
+   "name": "$__introsort_loop",
+   "address": "0x824bbd40",
+   "survivor": "??$__introsort_loop@PAVCategory@CameraManager@@V12@HU?$less@VCategory@CameraManager@@@stlpmtx_std@@@stlpmtx_std@@YAXPAVCategory@CameraManager@@00HU?$less@VCategory@CameraManager@@@0@@Z",
+   "folded": [
+    "??$__introsort_loop@PAVSpotlightEntry@SpotlightDrawer@@V12@HVByColor@@@stlpmtx_std@@YAXPAVSpotlightEntry@SpotlightDrawer@@00HVByColor@@@Z"
+   ],
+   "evidence": "Created by lane W16-SW: see per-member records in `admitted`.",
+   "lane": "W16-SW 2026-10-07",
+   "admitted": [
+    {
+     "spelling": "??$__introsort_loop@PAVSpotlightEntry@SpotlightDrawer@@V12@HVByColor@@@stlpmtx_std@@YAXPAVSpotlightEntry@SpotlightDrawer@@00HVByColor@@@Z",
+     "lane": "W16-SW 2026-10-07",
+     "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, RETAIL-TAIL-PAD x1, SLOT-FOLD-OK x5). size_gate: extents equal: retail 240 == ours 240. Retail census at the survivor: 1 body/bodies identical including relocation target names, 1 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 1, unpaired-caller 1; none lands elsewhere. The CYCLE-ASSUMED leaf (??$__introsort_loop@PAVSpotlightEntry@SpotlightDrawer@@V12@HVByColor@@@stlpmtx_std@@YAXPAV) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), SortLights__15SpotlightDrawerFv calls sort<PQ215SpotlightDrawer14SpotlightEntry,7ByColor>__11stlpmtx_stdFPQ215SpotlightDrawer14SpotlightEntryPQ215SpotlightDrawer14SpotlightEntry7ByColor_v. Charged row(s): ??$sort@PAVSpotlightEntry@SpotlightDrawer@@VByColor@@@stlpmtx_std@@YAXPAVSpotlig (112 B)."
+    }
+   ]
   }
  ]
 }
