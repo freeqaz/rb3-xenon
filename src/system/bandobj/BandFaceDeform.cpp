@@ -17,7 +17,16 @@ inline void CompressDelta(signed char *out, const Vector3 &pos, const Vector3 &b
     Vector3 d;
     Subtract(pos, base, d);
     for (int i = 0; i < 3; i++) {
+#ifdef HX_NATIVE
+        // Retail fn_822C7040 clamps with two fsel, which pass a NaN through,
+        // converts toward zero to 64 bits (fctidz) and stores the low byte, so
+        // a NaN delta stores 0. Native Clamp turns a NaN into -2 (0x82), and a
+        // double converted straight to unsigned char is undefined when negative.
+        out[i] = d[i] != d[i] ? 0
+                              : (unsigned char)(long long)(Clamp(-2.0f, 2.0f, d[i]) * 63.5 + 0.5);
+#else
         out[i] = (unsigned char)(Clamp(-2.0f, 2.0f, d[i]) * 63.5 + 0.5);
+#endif
     }
 }
 

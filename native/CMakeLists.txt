@@ -2010,6 +2010,30 @@ set(W16TS_LINK_SOURCES
 set_source_files_properties(${W16TS_LINK_SOURCES}
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
 
+# W16-UF: real TUs the phase's fixtures reach (JoypadController's base, the
+# store banner panel's bases).
+set(W16UF_LINK_SOURCES
+    ${REPO_ROOT}/src/system/beatmatch/BeatMatchController.cpp
+    ${REPO_ROOT}/src/system/meta/StoreArtLoaderPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandStorePanel.cpp
+    # AppLabel's Handle reaches StoreMenuPanel::GetCrumbText, which calls this.
+    ${REPO_ROOT}/src/band3/meta_band/StoreMenuProvider.cpp
+    # ... and MetaPerformer, whose typeinfo names its Synchronizable base.
+    ${REPO_ROOT}/src/network/net/Synchronize.cpp
+)
+set_source_files_properties(${W16UF_LINK_SOURCES}
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+# The phase registers the AppLabel, BandCamShot and BandFaceDeform factories (as
+# retail's meta init and BandInit do), which makes AppLabel::Handle, BandCamShot's
+# property table (emitted by BandCharDesc.cpp) and BandFaceDeform's live. Their default arms name `extern
+# Symbol` globals defined nowhere natively; the LOCAL_STATIC arms are the same
+# comparisons with function-local statics.
+set_source_files_properties(
+    ${REPO_ROOT}/src/band3/meta_band/AppLabel.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandCharDesc.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandFaceDeform.cpp
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+
 if(RB3X_BUILD_ENGINE)
     rb3_add_executable(rb3-render
         ${CMAKE_SOURCE_DIR}/src/main_render.cpp
@@ -2050,7 +2074,12 @@ if(RB3X_BUILD_ENGINE)
         # clear, MemHeap's FreeBlock word count, LoadDtz/LoadBmp/CDReadExternal,
         # MemTrack's name stacks), checked on synthetic inputs.
         ${CMAKE_SOURCE_DIR}/src/w16ub_phase.cpp
+        # W16-UF: the rest of lever 2's unentered in-scope rows (keyhand
+        # fingering, IsCymbal, JoypadClient repeats, camshot targets, store
+        # panel, song data, crowd meter, heap, boot config) on shipped data.
+        ${CMAKE_SOURCE_DIR}/src/w16uf_phase.cpp
         ${W16TS_LINK_SOURCES}
+        ${W16UF_LINK_SOURCES}
         ${VOCALTRACK_GAME_SOURCES}
         ${W16SH_LINK_SOURCES}
         ${W16SH_DEP_SOURCES}
@@ -2090,6 +2119,9 @@ set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16ty_phase.cpp
     PROPERTIES COMPILE_OPTIONS "-fno-access-control")
 # W16-UB: same rule (MemHeap's free chain, RndVelocityBuffer, MemTracker).
 set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16ub_phase.cpp
+    PROPERTIES COMPILE_OPTIONS "-fno-access-control")
+# W16-UF: same rule for its driver file.
+set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16uf_phase.cpp
     PROPERTIES COMPILE_OPTIONS "-fno-access-control")
 
 # ---- X20: OutfitConfig's property table needs the LOCAL_STATIC Symbol arm ----
