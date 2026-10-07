@@ -618,6 +618,19 @@ bool Campaign::HasValidUser() const {
 // Retail's FuncInfo (0x820A1EF0) is maxState 1, one unwind entry with a NULL
 // action, no IP-to-state entries. Exactly five retail functions use that shape:
 // this one, SongDB::PostLoad and ModifierMgr::IsHidden/IsActive/IsModifierActive.
+// A NULL action is what this compiler gives a state whose code /Og deleted (a
+// dead static with a non-inline ctor, or a dead destructible temp; see
+// ModifierMgr::IsModifierUnlocked, which reproduces the NULL states of Text and
+// Handle exactly). But when every state of a function is NULL this compiler
+// drops the FuncInfo and the r31 frame together. Constructs tried that all drop
+// it: dead statics and temps at every position relative to early returns, in
+// inlined and __forceinline callees, after store-forwarding and parameter
+// propagation, in in-class inline functions, under __noop/sizeof/typeid, and
+// with inline-constructed statics. None of the 1,268 objects in this build has
+// an all-NULL FuncInfo. Turning off /Og for a function keeps the FuncInfo, but
+// the dead code then stays in the body. GetUser has no such construct: its
+// FuncInfo-bearing caller UpdateEndGameInfoForCurrentCampaignGoal matches
+// retail's unwind table with no extra NULL entry.
 __declspec(noinline) LocalBandUser *Campaign::GetLaunchUser() const {
     LocalBandUser *u = GetUser();
     if (u)

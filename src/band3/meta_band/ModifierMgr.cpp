@@ -123,7 +123,22 @@ bool ModifierMgr::IsActive(int idx) const {
 
 bool ModifierMgr::HasModifier(Symbol s) { return GetModifier(s, false); }
 
-bool ModifierMgr::IsModifierUnlocked(Modifier *) const { return true; }
+// Retail inlines this everywhere (no standalone copy survives) and every inlined
+// copy leaves one exception state with a NULL unwind action and no code: Text
+// (3 inlines) has unwind entries L . . . and Handle (via is_modifier_active) has
+// L L . L L L, both reproduced exactly by the dead static below. A function-local
+// static with a non-inline constructor in code that /Og deletes keeps its state
+// number; a dead destructible temporary does the same, an inline-constructed
+// static does not. Where the caller has no live state of its own (IsHidden,
+// IsActive, IsModifierActive(Symbol)) retail still keeps that one-null-state
+// FuncInfo (0x820A1EF0) and its r31 frame, but this compiler drops both; see
+// the note on Campaign::GetLaunchUser.
+bool ModifierMgr::IsModifierUnlocked(Modifier *) const {
+    if (false) {
+        static Symbol _stripped("");
+    }
+    return true;
+}
 
 // Retail (204 B) broadcasts the change: a function-local static
 // Message("modifier_changed_msg") exported through MsgSource::Export (virtual
