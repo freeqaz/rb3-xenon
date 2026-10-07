@@ -3,7 +3,7 @@
 // W16-SH linked 83 of the 96 in-scope band3/bandobj/synth/dsp files that no
 // native target compiled (CAMPAIGN_STATE_2026-10-07 lever 5) into rb3-render.
 // Linking alone runs only their static initializers (ProfileMgr's is the one
-// with logic). This phase calls into the files whose gap rows have an oracle
+// with logic). This phase calls into the files whose gap rows have a reference answer
 // that does not come from the code under test:
 //
 //   dsp-pitch-*    PitchDetector::AnalyzeBlock and its SndAnalysis helpers

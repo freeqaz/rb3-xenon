@@ -120,9 +120,9 @@ Linking alone runs only static initializers, and under `--gc-sections` the rest 
 dropped: `nm` found no `EQEffect::`, `PitchDetector::` or `DelayEffect::` symbol in the
 linked rb3-render before the phase existed. The phase runs after W16-PX's bandtrack
 phase in the default mode, which is what `native_health.sh` runs. `--no-w16sh` opts
-out. Each gate has an oracle outside the code under test:
+out. Each gate has a reference answer outside the code under test:
 
-| gate | oracle | gap rows it executes |
+| gate | reference | gap rows it executes |
 |---|---|---|
 | dsp-pitch-110/220/440hz | 69 + 12·log2(f/440), ±0.25 semitone, on a synthesized sine | PitchDetector::AnalyzeBlock 1,780; FindCCPeak 920; ShiftedDotProduct 356; RefinePeriod2 352 |
 | dsp-pitch-silence | silence is gated: pitch 0, level 0 | (same) |
@@ -137,7 +137,7 @@ out. Each gate has an oracle outside the code under test:
 | pm-latency | sync offset = −video latency; song-to-taskmgr = video − audio; 3 mic volumes | ProfileMgr::ProfileMgr |
 | tracker-multiplier-map | a DTA threshold table read back by threshold | TrackerMultiplierMap::InitFromDataArray 268 |
 
-**Prediction against measurement.** I wrote the tolerances from the oracles before the
+**Prediction against measurement.** I wrote the tolerances from the reference answers before the
 first run. All 17 passed on the first run, so the gates had not yet been shown to fail.
 I ran two sabotage controls, and both are reverted:
 - Byte-swapping the `vperm` selector (a little-endian emulation) failed all three
