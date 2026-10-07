@@ -14,10 +14,12 @@ FileLoader *SynthSample::sLoader = nullptr;
 SynthSample *SynthSample::sLoading = nullptr;
 bool sDisabled = false;
 
-// File-static: the external ?SampleAlloc@@YAPAXH@Z is synth_xbox/SynthSample.cpp's
-// physical-memory allocator (retail 0x82B6C7A0, PhysicalAllocTracked). This one
-// is MemAlloc(size, 0), which retail ICF-folds into operator new (0x827BD2F0).
-static void *SampleAlloc(int size) {
+// A static member, not a free function: the free ?SampleAlloc@@YAPAXH@Z is
+// synth_xbox/SynthSample.cpp's physical-memory allocator (retail 0x82B6C7A0,
+// PhysicalAllocTracked). This one is MemAlloc(size, 0), byte-identical to the
+// global operator new, and retail ICF-folds it there (0x827BD2F0): Init passes
+// 0x827BD2F0 to SetAllocator.
+void *SynthSample::SampleAlloc(int size) {
     return MemAlloc(size, __FILE__, 0x1C, "Sample Data");
 }
 

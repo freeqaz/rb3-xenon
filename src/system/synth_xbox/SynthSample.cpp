@@ -41,7 +41,8 @@ SynthSample360::SynthSample360() {}
 
 void SynthSample360::Init() {
     Register();
-    SampleData::SetAllocator(SampleAlloc, SampleFree);
+    // ::SampleAlloc: the free physical allocator, not the inherited SynthSample member.
+    SampleData::SetAllocator(::SampleAlloc, SampleFree);
 }
 
 bool SynthSample360::IsXMA() const {
