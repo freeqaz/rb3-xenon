@@ -1437,7 +1437,8 @@ void AOChecks() {
 // table's own mEntries, and Find(a, b) must reach the entry whose key is
 // a | b << 16. The ctor, SetKerning and Load each clear the heads first; the
 // clear has to cover all 32 (0x80 bytes on X360, 0x100 on a 64-bit host).
-//  * shipped: every RndFont kerning table the fixture loaded;
+//  * shipped: every kerning table in the 32 font milos the game ships under
+//             ui/resource/fonts/gen (the vignette fixture holds no font);
 //  * ctor:    a table constructed over memory filled with 0xA5;
 //  * set:     the largest shipped table's pairs (GetKerning) set into a table
 //             whose heads were refilled with 0xA5 after construction, read
