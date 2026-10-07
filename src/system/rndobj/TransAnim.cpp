@@ -263,7 +263,6 @@ void RndTransAnim::MakeTransform(float frame, Transform &tf, bool whole, float b
     if (mKeysOwner != this) {
         mKeysOwner->MakeTransform(frame, tf, whole, blend);
     } else {
-        float f5 = frame;
         Vector3 v4c;
         if (!mTransKeys.empty()) {
             Vector3 v58(0, 0, 0);
@@ -271,7 +270,7 @@ void RndTransAnim::MakeTransform(float frame, Transform &tf, bool whole, float b
                 int iac;
                 float &backFrame = mTransKeys.back().frame;
                 float &frontFrame = mTransKeys.front().frame;
-                f5 = Limit(frontFrame, backFrame, frame, iac);
+                frame = Limit(frontFrame, backFrame, frame, iac);
                 Vector3 &frontVec = mTransKeys.front().value;
                 Vector3 &backVec = mTransKeys.back().value;
                 Subtract(backVec, frontVec, v58);
@@ -280,7 +279,7 @@ void RndTransAnim::MakeTransform(float frame, Transform &tf, bool whole, float b
             if (blend != 1.0f) {
                 Vector3 v64;
                 InterpVector(
-                    mTransKeys, mTransSpline, f5, v64, mFollowPath ? &v4c : nullptr
+                    mTransKeys, mTransSpline, frame, v64, mFollowPath ? &v4c : nullptr
                 );
                 if (mRepeatTrans) {
                     ::Add(v64, v58, v64);
@@ -288,7 +287,7 @@ void RndTransAnim::MakeTransform(float frame, Transform &tf, bool whole, float b
                 Interp(tf.v, v64, blend, tf.v);
             } else {
                 InterpVector(
-                    mTransKeys, mTransSpline, f5, tf.v, mFollowPath ? &v4c : nullptr
+                    mTransKeys, mTransSpline, frame, tf.v, mFollowPath ? &v4c : nullptr
                 );
                 if (mRepeatTrans) {
                     ::Add(tf.v, v58, tf.v);
@@ -303,7 +302,7 @@ void RndTransAnim::MakeTransform(float frame, Transform &tf, bool whole, float b
             const Key<Hmx::Quat> *prev;
             const Key<Hmx::Quat> *next;
             float ref = 0;
-            mRotKeys.AtFrame(f5, prev, next, ref);
+            mRotKeys.AtFrame(frame, prev, next, ref);
             if (mRotSpline)
                 QuatSpline(mRotKeys, prev, next, ref, q80);
             else {
@@ -330,8 +329,6 @@ void RndTransAnim::MakeTransform(float frame, Transform &tf, bool whole, float b
             MakeRotMatrix(q80, tf.m);
         } else if (whole)
             tf.m.Identity();
-        // Retail tests mFollowPath (lbz 0x51) first: v4c is only written by
-        // InterpVector when following the path.
         if (mFollowPath && !mTransKeys.empty()) {
             if (!mRotKeys.empty()) {
                 MakeRotMatrix(v4c, tf.m.z, tf.m);
@@ -341,7 +338,7 @@ void RndTransAnim::MakeTransform(float frame, Transform &tf, bool whole, float b
         }
         if (!mScaleKeys.empty()) {
             Vector3 v9c;
-            InterpVector(mScaleKeys, mScaleSpline, f5, v9c, 0);
+            InterpVector(mScaleKeys, mScaleSpline, frame, v9c, 0);
             if (blend != 1.0f) {
                 Interp(v70, v9c, blend, v9c);
             }

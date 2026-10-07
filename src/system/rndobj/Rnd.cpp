@@ -1219,11 +1219,6 @@ __declspec(noinline) auto _outline_Int(_T* _obj) -> decltype(_obj->Int()) {
 }
 
 float Rnd::DrawTimers(float f) {
-    // Retail (0x82412058) is a plain function-local static of POINTER type: ONE
-    // guard bit (0x82CC2538 bit 0) protecting the store to 0x82CC2534. The two
-    // Symbols are ordinary stack temps inside the initializer -- they get no
-    // guard bits of their own, so the hand-rolled lbl_830A4104 emulation is
-    // wrong on both the guard shape and the reload after the guard.
     static DataArray *timerCfg =
         SystemConfig(Symbol("rnd"))->FindArray(Symbol("timer_script"), false);
 
@@ -1248,6 +1243,10 @@ float Rnd::DrawTimers(float f) {
     float bgLeft = 0.025f;
     float rowSpacing = 0.045f;
     float totalHeight = numTimers * rowSpacing;
+    // The image copies f into its callee-saved row cursor inside the argument
+    // block of the FIRST DrawRectScreen (fmr f24, f23), so y is already live
+    // there; declaring it after that call costs a scheduling row.
+    float y = f;
 
     Hmx::Rect rect(bgLeft, f, 0.95f, totalHeight);
     Hmx::Color bgColor(0.0f, 0.0f, 0.0f, 0.5f);
@@ -1259,13 +1258,16 @@ float Rnd::DrawTimers(float f) {
 
     float scale = 0.019f;
     float barHeight = 0.0268f;
-    float y = f;
 
     rect.h = barHeight;
 
     for (std::list<std::pair<Timer, TimerStats> >::iterator it = timers.begin();
          it != timers.end();
          ++it) {
+        // The image materialises &it->first once per iteration (addi r30, r28, 8)
+        // and reads every Timer member through it, so the timer is a named
+        // reference here rather than a repeated it->first -- bound BEFORE the
+        // Draw() test (w14-a: the addi sits above the cmplwi in the image).
         Timer &timer = it->first;
         if (!timer.Draw()) {
             continue;
@@ -1292,6 +1294,9 @@ float Rnd::DrawTimers(float f) {
             DrawRectScreen(rect, worstExcessColor, nullptr, nullptr, nullptr);
         }
 
+        // w14-a RESIDUAL (99.99): the image stores rect.x (0x70) before
+        // rect.y (0x74) here; we store y first. Inert: `y += ...` hoisted above
+        // the rect.x store, and `rect.y = y += rowSpacing`.
         rect.x = bgLeft;
         y += rowSpacing;
         rect.y = y;
@@ -1322,22 +1327,33 @@ float Rnd::DrawTimers(float f) {
 
         float lastMs = it->first.GetLastMs();
 
-        const char *text;
         if (lastMs >= 0.05f) {
             if (mVerboseTimers && AutoTimer::CollectingStats()) {
                 Symbol name = it->first.Name();
                 TimerStats &stats = it->second;
-                text = MakeString("%s %2.1f (%.2f, %.2f) %.2f", name, lastMs, stats.mAvgMs, stats.mStdDevMs, stats.mMaxMs);
+                DrawStringScreen(
+                    MakeString(
+                        "%s %2.1f (%.2f, %.2f) %.2f",
+                        name,
+                        lastMs,
+                        stats.mAvgMs,
+                        stats.mStdDevMs,
+                        stats.mMaxMs
+                    ),
+                    pos,
+                    barColor,
+                    true
+                );
             } else {
                 Symbol name = it->first.Name();
                 float worstMs = it->first.GetWorstMs();
-                text = MakeString("%s %.2f (%.2f)", name, lastMs, worstMs);
+                DrawStringScreen(
+                    MakeString("%s %.2f (%.2f)", name, lastMs, worstMs), pos, barColor, true
+                );
             }
         } else {
-            text = it->first.Name().Str();
+            DrawStringScreen(it->first.Name().Str(), pos, barColor, true);
         }
-
-        DrawStringScreen(text, pos, barColor, true);
         pos.y += rowSpacing;
     }
 
@@ -1519,17 +1535,13 @@ void Rnd::DrawPreClear() {
 DataNode Rnd::OnToggleHeap(const DataArray *) {
     int numHeaps = MemNumHeaps() + 1;
     RndOverlay *overlay = mHeapOverlay;
-    if (!overlay->Showing()) {
-        overlay->SetShowing(true);
+    if (overlay->Showing() && ++lbl_82F14008 >= numHeaps) {
+        overlay->SetShowingOnly(false);
+        lbl_82F14008 = -1;
     } else {
-        lbl_82F14008++;
-        if (lbl_82F14008 >= numHeaps) {
-            lbl_82F14008 = -1;
-            overlay->SetShowing(false);
-        } else {
-            overlay->SetShowing(true);
-        }
+        overlay->SetShowingOnly(true);
     }
+    overlay->TimerRef().Restart();
     return 0;
 }
 
