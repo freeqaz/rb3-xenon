@@ -130,7 +130,10 @@ int JoypadData::GetVelocityBucket(Symbol axis) const {
 void JoypadTerminateCommon() {
     gJoypadLibInitialized = false;
     RELEASE(gJoypadMsgSource);
+#ifdef HX_NATIVE
+    // Retail 0x82524838 releases only the message source.
     RELEASE(gKeyboardExporter);
+#endif
 }
 
 void JoypadSubscribe(Hmx::Object *obj) {
