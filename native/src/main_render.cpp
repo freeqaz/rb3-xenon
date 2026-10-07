@@ -5178,6 +5178,9 @@ static bool gNoW16TW = false;
 // native/src/w16ty_phase.cpp (W16-TY)
 int RunW16TYPhase(void (*gate)(const char *, bool, const char *));
 static bool gNoW16TY = false;
+// native/src/w16ub_phase.cpp (W16-UB)
+int RunW16UBPhase(void (*gate)(const char *, bool, const char *));
+static bool gNoW16UB = false;
 
 int main(int argc, char **argv) {
     // Line-buffer: a SIGSEGV inside the renderer would otherwise discard the
@@ -5215,6 +5218,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--no-w16ts") == 0) gNoW16TS = true;
         else if (strcmp(argv[i], "--no-w16tw") == 0) gNoW16TW = true;
         else if (strcmp(argv[i], "--no-w16ty") == 0) gNoW16TY = true;
+        else if (strcmp(argv[i], "--no-w16ub") == 0) gNoW16UB = true;
         else if (strcmp(argv[i], "--crowd-all") == 0) gCrowdShowAll = true;
         else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
@@ -5485,6 +5489,11 @@ int main(int argc, char **argv) {
     // default-mode rule; --no-w16ty opts out.
     if (pos.size() == 2 && !gNoW16TY)
         RunW16TYPhase(Gate);
+    // W16-UB: the X360 literal sizes and offsets fixed for a 64-bit host,
+    // checked on synthetic inputs (native/src/w16ub_phase.cpp). Same
+    // default-mode rule; --no-w16ub opts out.
+    if (pos.size() == 2 && !gNoW16UB)
+        RunW16UBPhase(Gate);
 
     printf("\n=== summary ===\n");
     for (size_t i = 0; i < cells.size(); i++) {

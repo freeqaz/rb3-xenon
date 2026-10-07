@@ -165,7 +165,10 @@ MemTracker::MemTracker(int x, int y)
     : mHashMem(nullptr), mHashTable(nullptr), mTimeSlice(0), mCurStatTable(0),
       mFreedInfos(y), mLog(0), mReport(0), mHeap(x) {
     int hashSize = y * 2;
-    mHashMem = DebugHeapAlloc(y * 8);
+    // hashSize AllocInfo* entries. The DC3 form allocated `y * 8` bytes, i.e. two
+    // 4-byte pointers per alloc; on a 64-bit host that is half the table, and the
+    // KeylessHash below writes past the block (W16-UB).
+    mHashMem = DebugHeapAlloc(hashSize * sizeof(AllocInfo *));
     MILO_ASSERT(mHashMem, 0x4E);
     mHashTable = new KeylessHash<void *, AllocInfo *>(
         hashSize, (AllocInfo *)0, (AllocInfo *)-1, (AllocInfo **)mHashMem

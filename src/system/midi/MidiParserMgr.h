@@ -29,6 +29,11 @@ public:
     /** Get the parser with the supplied name. */
     MidiParser *GetParser(Symbol name);
     const char *GetSongName() const { return mSongName.Str(); }
+#ifdef HX_NATIVE
+    // Game::SetPaused writes this flag; retail stores it at this+0x69, which is
+    // a different member on a 64-bit host (W16-UB).
+    void SetPlaybackEnabled(bool b) { mPlaybackEnabled = b; }
+#endif
 
 private:
     /** Strip the end bracket from the input string. (i.e. remove the ']')

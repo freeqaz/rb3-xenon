@@ -1294,7 +1294,12 @@ bool RndBitmap::LoadDIB(BinStream *bs, unsigned int offbits) {
         bs->Read(pixels, pixelBytes);
     } else {
         for (int i = infoheader.biHeight - 1; i >= 0; i--) {
+#ifdef HX_NATIVE
+            // (int)pixels truncates a 64-bit heap pointer (W16-UB).
+            bs->Read((char *)pixels + i * rowBytes, rowBytes);
+#else
             bs->Read((void *)((int)pixels + i * rowBytes), rowBytes);
+#endif
         }
     }
     if (infoheader.biBitCount == 4) {

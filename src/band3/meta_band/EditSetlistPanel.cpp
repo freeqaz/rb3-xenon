@@ -30,6 +30,25 @@ extern "C" unsigned int XStringVerify(
     unsigned int, const char *, unsigned short, const void *, unsigned int, void *, void *
 );
 
+#ifdef HX_NATIVE
+// XStringVerify's buffers, typed. Retail lays them out by hand in 2-byte-packed
+// form: two STRING_DATA {WORD len; WCHAR *str} records 6 bytes apart in a
+// new char[12] (pointers at +2 and +8), a 14-byte STRING_VERIFY_RESPONSE with
+// its result pointer at +2, and a 28-byte XOVERLAPPED. With 8-byte pointers
+// the second record overwrites the high bytes of the first pointer and runs
+// past the 12-byte block, so the native build uses real structs (W16-UB).
+namespace {
+    struct NativeStringData {
+        unsigned short len;
+        unsigned short *str;
+    };
+    struct NativeVerifyResponse {
+        unsigned short numStrings;
+        unsigned int *results;
+    };
+}
+#endif
+
 EditSetlistPanel::EditSetlistPanel()
     : unk50(kScoreBand), unk54(0), unk58(3), unk64(0), unk80(-1), unk84(-1), mProfile(0),
       mEditingSetlist(0), unk90(0), unk94(0), unk98(0), unk9c(0),
@@ -68,7 +87,11 @@ void EditSetlistPanel::Poll() {
         unsigned int status = XGetOverlappedResult((XOVERLAPPED *)unk98, 0, 0);
         if (status != 0x3E4) {
             if (status == 0) {
+#ifdef HX_NATIVE
+                unsigned int *p = ((NativeVerifyResponse *)unk94)->results;
+#else
                 unsigned int *p = *(unsigned int **)((char *)unk94 + 2);
+#endif
                 bool b1 = true, b2 = true;
                 if (p[0])
                     b1 = false;
@@ -102,9 +125,16 @@ void EditSetlistPanel::CleanupStringVerify() {
         unk98 = 0;
     }
     if (unk90) {
+#ifdef HX_NATIVE
+        NativeStringData *sd = (NativeStringData *)unk90;
+        delete[] sd[0].str;
+        delete[] sd[1].str;
+        delete[] sd;
+#else
         delete[] *(unsigned short **)((char *)unk90 + 2);
         delete[] *(unsigned short **)((char *)unk90 + 8);
         delete[] unk90;
+#endif
         unk90 = 0;
     }
     if (unk94) {
@@ -445,6 +475,27 @@ DataNode EditSetlistPanel::OnMsg(const DWCProfanityResultMsg &msg) {
 }
 
 void EditSetlistPanel::VerifyStrings(const char *name, const char *desc) {
+#ifdef HX_NATIVE
+    NativeStringData *sd = new NativeStringData[2];
+    sd[0].str = new unsigned short[strlen(name) + 1];
+    UTF8toUTF16(sd[0].str, name);
+    sd[0].len = wcslen((const wchar_t *)sd[0].str) + 1;
+    sd[1].str = new unsigned short[strlen(desc) + 1];
+    UTF8toUTF16(sd[1].str, desc);
+    sd[1].len = wcslen((const wchar_t *)sd[1].str) + 1;
+    unk90 = (unsigned short **)sd;
+    // The response header, then one result per string (retail: 6 + 2*4 = 14).
+    const unsigned int cbResults = sizeof(NativeVerifyResponse) + 2 * sizeof(unsigned int);
+    unk94 = new char[cbResults];
+    memset(unk94, 0, cbResults);
+    unk98 = new char[sizeof(XOVERLAPPED)];
+    memset(unk98, 0, sizeof(XOVERLAPPED));
+    unsigned int r = XStringVerify(0, "en-us", 2, unk90, cbResults, unk94, unk98);
+    if (r != 0 && r != 0x3E5) {
+        CleanupStringVerify();
+        FailWithReason((FailureReason)7);
+    }
+#else
     unk90 = (unsigned short **)new char[12];
     unsigned short *us = new unsigned short[strlen(name) + 1];
     UTF8toUTF16(us, name);
@@ -463,6 +514,7 @@ void EditSetlistPanel::VerifyStrings(const char *name, const char *desc) {
         CleanupStringVerify();
         FailWithReason((FailureReason)7);
     }
+#endif
 }
 
 void EditSetlistPanel::VerifyStringsComplete(bool b1, bool b2) {

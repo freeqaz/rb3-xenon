@@ -83,7 +83,13 @@ void NextSongPanel::FinishLoad() {
     // OWN members start at 0x238, so 0x1BC is still inside UILabel's tail and
     // stays a byte poke; BandLabel derives UILabel FIRST, so the cast address
     // is unchanged and this is behaviourally identical.
+#ifdef HX_NATIVE
+    // 0x1BC is UILabel::mAlpha on X360 and a different member on a 64-bit host;
+    // SetAlpha is the same plain store (W16-UB).
+    mDir->Find<BandLabel>("highscore_1.lbl", true)->SetAlpha(1.0f);
+#else
     *(float *)((char *)mDir->Find<BandLabel>("highscore_1.lbl", true) + 0x1BC) = 1.0f;
+#endif
     static Symbol details_page_size("details_page_size");
     static Symbol details_footer_size("details_footer_size");
     static Symbol details_scroll_step("details_scroll_step");

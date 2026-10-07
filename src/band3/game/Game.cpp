@@ -682,9 +682,14 @@ void Game::EnableWorldPolling(bool b1) {
     }
     MidiParserMgr *midiParserMgr = mMaster->GetMidiParserMgr();
     if (midiParserMgr && !mProperties.mInPracticeMode && b1) {
-        // Retail: bool at MidiParserMgr+0x69 (behind the
-        // MI vptrs); not yet a named member in our MidiParserMgr.h.
+        // Retail: stb to MidiParserMgr+0x69, which is mPlaybackEnabled (the
+        // compiler's layout of MidiParserMgr puts it there).
+#ifdef HX_NATIVE
+        // 0x69 is a different member on a 64-bit host (W16-UB).
+        midiParserMgr->SetPlaybackEnabled(b1);
+#else
         *(bool *)((char *)midiParserMgr + 0x69) = b1;
+#endif
     }
 }
 
@@ -1832,8 +1837,15 @@ void Game::Poll() {
         // NOT AllowOverdrivePhrases -- that's a separate field at Prop+0x5
         // (this+0x31), proven by GetCommonPhraseID/IsSpotlightGem objdiff.
         if (mProperties.mUnkTU5_movieSync) {
+#ifdef HX_NATIVE
+            // this+0x48 is mUnkTU5GuidePitch and +0x14 its mGuidePitch. On a
+            // 64-bit host both offsets differ (mGuidePitch aligns to 0x18), so
+            // name the members (W16-UB).
+            VocalGuidePitch *syncObj = mUnkTU5GuidePitch->mGuidePitch;
+#else
             VocalGuidePitch *syncObj =
                 *(VocalGuidePitch **)(*(char **)((char *)this + 0x48) + 0x14);
+#endif
             syncObj->Poll(songMs);
         }
         mLastPollMs = songMs;
