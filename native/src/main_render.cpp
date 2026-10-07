@@ -5181,6 +5181,9 @@ static bool gNoW16TY = false;
 // native/src/w16ub_phase.cpp (W16-UB)
 int RunW16UBPhase(void (*gate)(const char *, bool, const char *));
 static bool gNoW16UB = false;
+// native/src/w16uf_phase.cpp (W16-UF)
+int RunW16UFPhase(void (*gate)(const char *, bool, const char *));
+static bool gNoW16UF = false;
 
 int main(int argc, char **argv) {
     // Line-buffer: a SIGSEGV inside the renderer would otherwise discard the
@@ -5219,6 +5222,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--no-w16tw") == 0) gNoW16TW = true;
         else if (strcmp(argv[i], "--no-w16ty") == 0) gNoW16TY = true;
         else if (strcmp(argv[i], "--no-w16ub") == 0) gNoW16UB = true;
+        else if (strcmp(argv[i], "--no-w16uf") == 0) gNoW16UF = true;
         else if (strcmp(argv[i], "--crowd-all") == 0) gCrowdShowAll = true;
         else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
@@ -5494,6 +5498,11 @@ int main(int argc, char **argv) {
     // default-mode rule; --no-w16ub opts out.
     if (pos.size() == 2 && !gNoW16UB)
         RunW16UBPhase(Gate);
+    // W16-UF: the rest of lever 2's in-scope rows native compiles but no target
+    // entered, driven on shipped data (native/src/w16uf_phase.cpp). Same
+    // default-mode rule; --no-w16uf opts out.
+    if (pos.size() == 2 && !gNoW16UF)
+        RunW16UFPhase(Gate);
 
     printf("\n=== summary ===\n");
     for (size_t i = 0; i < cells.size(); i++) {

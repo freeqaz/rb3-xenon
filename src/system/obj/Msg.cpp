@@ -5,6 +5,11 @@
 #include "utl/Str.h"
 #include "utl/Symbol.h"
 #include "world/CameraShot.h"
+#ifdef HX_NATIVE
+#include "obj/Dir.h"
+#include <map>
+#include <utility>
+#endif
 
 Symbol MsgSinks::sCurrentExportEvent(gNullStr);
 
@@ -362,8 +367,108 @@ void MsgSinks::Replace(ObjRef *ref, Hmx::Object *obj) {
 // source's lifetime. On the X360 match build these macros expand to the exact
 // original call tokens (verified match-neutral: Msg.cpp strict count unchanged).
 #ifdef HX_NATIVE
-#define MSGSRC_ADDREF(obj, owner) ((void)0)
-#define MSGSRC_RELEASE(obj, owner) ((void)0)
+// Retail's AddRef(owner) puts the source on the sink's ref list, so a sink's
+// death walks that list and runs MsgSource::Replace, i.e. RemoveSink(dead,
+// Symbol()) (fn_82766EE0), once per reference: a source never exports to a
+// deleted object. (A JoypadController, whose dtor is the bare ~Hmx::Object at
+// fn_8279BC30, leaves the joypad source this way.) The native ring is
+// node-model, so the source holds one ring node per sink object instead,
+// counting the entries (global and per-event) that name it; the node's Replace
+// does the same RemoveSink calls. Without it a deleted sink stayed in the list
+// and the next export called into freed memory.
+namespace {
+class MsgSourceSinkRef : public ObjRef {
+public:
+    MsgSourceSinkRef(MsgSource *src, Hmx::Object *o) : mSource(src), mObject(o), mCount(1) {
+        o->AddRef(this);
+    }
+    virtual ~MsgSourceSinkRef() { Unlink(); }
+    virtual Hmx::Object *RefOwner() const { return mSource; }
+    virtual Hmx::Object *GetObj() const { return mObject; }
+    virtual void Replace(Hmx::Object *);
+    virtual void NullifyObj();
+    void Unlink() {
+        if (!mObject)
+            return;
+        if (ObjectDir::InDeleteObjects() || Hmx::Object::sRingsDirty)
+            SafeReleaseFromRing(this);
+        else
+            mObject->Release(this);
+        mObject = nullptr;
+    }
+    void SinkDied();
+
+    MsgSource *mSource;
+    Hmx::Object *mObject;
+    int mCount;
+};
+
+typedef std::map<std::pair<MsgSource *, Hmx::Object *>, MsgSourceSinkRef *> SinkRefMap;
+// Never freed: sources can outlive static destruction order.
+SinkRefMap &SinkRefs() {
+    static SinkRefMap *m = new SinkRefMap;
+    return *m;
+}
+
+void MsgSourceAddSinkRef(Hmx::Object *o, MsgSource *src) {
+    SinkRefMap::iterator it = SinkRefs().find(std::make_pair(src, o));
+    if (it != SinkRefs().end())
+        it->second->mCount++;
+    else
+        SinkRefs()[std::make_pair(src, o)] = new MsgSourceSinkRef(src, o);
+}
+
+void MsgSourceReleaseSinkRef(Hmx::Object *o, MsgSource *src) {
+    SinkRefMap::iterator it = SinkRefs().find(std::make_pair(src, o));
+    if (it == SinkRefs().end())
+        return;
+    if (--it->second->mCount <= 0) {
+        MsgSourceSinkRef *ref = it->second;
+        SinkRefs().erase(it);
+        delete ref;
+    }
+}
+
+// The sink is dying. Its ring has already been detached by the walk, so drop
+// the map entry first (the RemoveSink releases below then find nothing), take
+// the dead object out of the source once per reference, and free the node.
+void MsgSourceSinkRef::SinkDied() {
+    MsgSource *src = mSource;
+    Hmx::Object *dead = mObject;
+    int n = mCount;
+    SinkRefs().erase(std::make_pair(src, dead));
+    for (int i = 0; i < n; i++)
+        src->RemoveSink(dead, Symbol());
+    mObject = nullptr;
+    delete this;
+}
+
+void MsgSourceSinkRef::Replace(Hmx::Object *) {
+    next = this;
+    prev = this;
+    SinkDied();
+}
+
+void MsgSourceSinkRef::NullifyObj() {
+    ObjRef::NullifyObj();
+    SinkDied();
+}
+
+// ~MsgSource releases every entry it holds; anything left (none, if the counts
+// agree) is freed here so no node outlives its source.
+void MsgSourceDropSinkRefs(MsgSource *src) {
+    SinkRefMap &m = SinkRefs();
+    SinkRefMap::iterator it = m.lower_bound(std::make_pair(src, (Hmx::Object *)nullptr));
+    while (it != m.end() && it->first.first == src) {
+        MsgSourceSinkRef *ref = it->second;
+        m.erase(it++);
+        delete ref;
+    }
+}
+}
+
+#define MSGSRC_ADDREF(obj, owner) MsgSourceAddSinkRef(obj, owner)
+#define MSGSRC_RELEASE(obj, owner) MsgSourceReleaseSinkRef(obj, owner)
 #else
 #define MSGSRC_ADDREF(obj, owner) (obj)->AddRef(owner)
 #define MSGSRC_RELEASE(obj, owner) (obj)->Release(owner)
@@ -401,6 +506,9 @@ MsgSource::~MsgSource() {
                 MSGSRC_RELEASE(o, this);
         }
     }
+#ifdef HX_NATIVE
+    MsgSourceDropSinkRefs(this);
+#endif
 }
 
 void MsgSource::ChainSource(MsgSource *source, MsgSource *othersource) {
