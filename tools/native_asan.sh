@@ -31,6 +31,10 @@
 # RUNTIME OPTIONS, and why:
 #   halt_on_error=0       with -fsanitize-recover=address one run reports every
 #                         finding, not just the first
+#   suppress_equal_pcs=0  ASan otherwise reports one faulting PC once per run, and
+#                         the PC of a bad copy is __asan_memcpy's, shared by every
+#                         call site: with Tessellate's phase-1 use-after-scope
+#                         present, its phase-3 one was never printed (W16-UO S1)
 #   detect_leaks=0        LeakSanitizer is OFF. Every driver exits with its engine
 #                         state still allocated (as retail never tears down), so
 #                         exit-time leak reports measure the harness, not a defect.
@@ -107,7 +111,7 @@ EOF
         n="${t%%:*}"; want="${t##*:}"
         clang++ -fsanitize=address -fsanitize-recover=address -fsanitize-address-use-after-scope \
             -O0 -g -o "$T/$n" "$T/$n.cpp" > "$T/$n.build" 2>&1 || { echo "selftest: cannot build $n"; exit 2; }
-        (ulimit -d unlimited 2>/dev/null; ASAN_OPTIONS=halt_on_error=0:detect_leaks=0 "$T/$n" > "$T/$n.log" 2>&1)
+        (ulimit -d unlimited 2>/dev/null; ASAN_OPTIONS=halt_on_error=0:suppress_equal_pcs=0:detect_leaks=0 "$T/$n" > "$T/$n.log" 2>&1)
         got="$(asan_reports "$T/$n.log" | wc -l)"
         printf '  selftest %-6s want %s report(s), parsed %s  %s\n' "$n" "$want" "$got" \
             "$(asan_reports "$T/$n.log" | head -1 | tr '\t' ' ')"
@@ -189,7 +193,7 @@ if [ "$NOBUILD" = 0 ]; then
 fi
 
 ulimit -d unlimited 2>/dev/null || echo "warning: could not lift the data limit; the shadow map may fail"
-export ASAN_OPTIONS="halt_on_error=0:detect_leaks=0:alloc_dealloc_mismatch=1:new_delete_type_mismatch=1:symbolize=1"
+export ASAN_OPTIONS="halt_on_error=0:suppress_equal_pcs=0:detect_leaks=0:alloc_dealloc_mismatch=1:new_delete_type_mismatch=1:symbolize=1"
 
 # -------------------------------------------------------------------- run --
 total=0; ran=0; clean=0; nrep=0; partial=0; incomplete=0; failed=0
