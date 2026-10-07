@@ -178,7 +178,7 @@ color.blue` to match the other two lines was flat (load order unchanged) and was
     was `r8 = addi 0x3c`, `end()`.
 
   So retail moves the instances to the front of each list and ours moved them to the back. DC3's
-  body has the same correction with the same reasoning; the rb3-Wii text has `end()`. Both
+  body has the same correction with the same reasoning; our previous source had `end()`. Both
   positions are now `begin()`.
 - `targetChars3D = Min((int)totalChars3D, targetChars3D)` replaces the hand-written clamp, as in
   DC3. The value is the same.
@@ -208,7 +208,7 @@ direction vectors. Same values stored.
   `_M_create_node<Content*>` / `<FaderTask*>`). Re-admitting a withdrawn spelling belongs to a name
   lane with the alias tooling and its withdrawal guard, so this lane did not edit
   `symbol_aliases.json`. It is the whole remaining 0.04 pp of the row.
-- DC3's `Fader` is a different revision (no `FaderTask`), so retail was the only oracle here.
+- DC3's `Fader` is a different revision (no `FaderTask`), so retail bytes were the only reference here.
 
 ### 4.14 `Spotlight::BeamDef::Load` (440 B) and 4.20 `WorldCrowd::CharDef::Load` (132 B): EQUAL
 
