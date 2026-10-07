@@ -31,7 +31,7 @@ class Character : public RndDir {
     friend class BandWardrobe; // BandWardrobe.cpp calls OnGetCurrentInterests on its targets
 public:
     struct Lod {
-        Lod(Hmx::Object *owner) : mScreenSize(0), mGroup(owner, 0), mTransGroup(owner, 0) {}
+        Lod(Hmx::Object *owner);
 
         RndGroup *Group() const { return mGroup; }
         RndGroup *TransGroup() const { return mTransGroup; }
