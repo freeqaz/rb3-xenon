@@ -23,7 +23,7 @@ something different:
 |---|---|
 | `RndBitmap::PixelOffset` | the 8-bpp path used the wrong nibble tables, and the DXT block width was wrong; DC3's body agrees with retail |
 | `TransformKeys` | multiplied the scale keys by `v48.x` on every axis; retail scales component-wise, as in `Scale(it->value, v48, it->value)` (DC3) |
-| `Rnd::TestPoint` | an early return on `TheHiResScreen.IsActive()` that retail does not have (retail reads `RndCam::sCurrent` first). Both oracles carry that test, so this is a TU5 difference. The non-native path also returned the wrong way. Our `HX_NATIVE` point-tester hook is kept. |
+| `Rnd::TestPoint` | an early return on `TheHiResScreen.IsActive()` that retail does not have (retail reads `RndCam::sCurrent` first). Both the DC3 source and the RB3 game source carry that test, so this is a TU5 difference. The non-native path also returned the wrong way. Our `HX_NATIVE` point-tester hook is kept. |
 | `SetBloomBlurWeights` | constants went to RB3's pixel-shader slots (`0x1f+i`, `0x2f+i`) from static const tables; the old file-scope mutable tables are gone |
 | `CharClip::LockAndDelete` | now `delete toDelete` (DC3) |
 | `EventTrigger::UnregisterEvents` | called `Hmx::Object::RemoveSink`; retail `dynamic_cast`s `Dir()` to `MsgSource` and calls `MsgSource::RemoveSink`, the mirror of `RegisterEvents` |
@@ -85,14 +85,14 @@ Column key: `B` = fuzzy before, `A` = fuzzy after (graded). Disposition classes:
 | 22 | RndMesh::LoadVertices | 444 | 94.53 | 94.53 | SCHED. `slwi` hoist and member load order. DC3's body does not compile against our Mesh API |
 | 23 | RndMesh::SkinVertex | 436 | 99.25 | 99.25 | SCHED. Register-only |
 | 24 | RndParticleSys::UpdateRelativeXfm | 412 | 99.96 | 99.96 | RECORDED. DC3 w21-bf scheduling residual |
-| 25 | CharLipSync::PlayBack::Set | 408 | 88.88 | 88.88 | SCHED. Retail spills the prop-anim pointer to `0x50` twice and places the String destructor after the next `addi`; we spill the list iterator instead. DC3's function is a different, later algorithm, so it is no oracle |
+| 25 | CharLipSync::PlayBack::Set | 408 | 88.88 | 88.88 | SCHED. Retail spills the prop-anim pointer to `0x50` twice and places the String destructor after the next `addi`; we spill the list iterator instead. DC3's function is a different, later algorithm, so it is no reference for this row |
 | 26 | RndScreenMask::DrawShowing | 404 | 91.64 | 91.64 | SCHED. Colour store order; DC3 body regressed |
 | 27 | vector<SpotMeshEntry>::_M_fill_insert_aux | 396 | 97.12 | 98.59 | PARTIAL. Behaviour fix (count); an r28/r31 swap remains, because retail keeps `old_finish` as the copy destination where we re-derive it from `src + n` |
 | 28 | kdTreeNode::FindSplit_SAH | 388 | 97.99 | 97.99 | SCHED. Same bit-field `rlwimi` shape as 17 |
 | 29 | CharGuitarString::Poll | 376 | 96.84 | 100 | FIXED (DC3) |
 | 30 | CharClip::Transitions::AddNode | 368 | 98.80 | 98.80 | SCHED. Retail forms `resized + size*8` twice (no CSE). Spelling the source as `&nodes[size]` regressed to 94.35 and was reverted |
 | 31 | BoxMapLighting::ApplyLight<Spot> | 360 | 96.72 | 96.72 | RECORDED. DC3's w7-at/w7-bl residual (register permutation plus one store) |
-| 32 | RndText::ComputeCharWidths | 360 | 83.39 | 85.61 | PARTIAL. Retail's markup zero-fill is a counted loop storing `f31` (`stfsu`); ours becomes a `ctr` loop of integer stores. There is no DC3 oracle |
+| 32 | RndText::ComputeCharWidths | 360 | 83.39 | 85.61 | PARTIAL. Retail's markup zero-fill is a counted loop storing `f31` (`stfsu`); ours becomes a `ctr` loop of integer stores. There is no DC3 counterpart |
 | 33 | KerningTable::SetKerning | 352 | 99.98 | 99.98 | SCHED. Swapping the xor operands is inert |
 | 34 | RndText::UpdateMesh | 340 | 98.18 | 98.18 | SCHED. Retail leaves a `clrrwi rX,rX,0` (store-to-load forward residue) |
 | 35 | BoxMapLighting::ApplyLight<Point> | 332 | 81.27 | 87.06 | PARTIAL. Store and register order of the direction triple remain |
