@@ -1430,10 +1430,10 @@ if(EXISTS "${MILO_ENGINE_PATH}/src/platform/NativeSettings.h")
 #                               shim (that would compile and then be ignored).
 #   * CriticalUserListener.cpp -- its flow/FlowManager.cpp scatter-include was
 #                               removed (W16-TX: retail has no Flow system and the
-#                               include paired no retail row); FlowManager's bodies
-#                               still arrive natively through
-#                               bandtrack/GemManager.cpp (CharBonesMeshes reaches
-#                               FlowManager only through it).
+#                               include paired no retail row). W16-TZ then
+#                               removed the GemManager.cpp include too, so
+#                               FlowManager is compiled directly from
+#                               MILO_TARGET_COMMON_SOURCES below.
 set(L4_SCATTER_WIRE
     # --- src/band3/meta_band (RB3 game layer) --------------------------------
     # AccomplishmentProgress drags net/WebSvcMgr.cpp and AccomplishmentTrainer-
@@ -1905,6 +1905,17 @@ set(MILO_TARGET_COMMON_SOURCES
     # -- and it does NOT open synth/ generally (no tomcrypt, no audio device).
     ${REPO_ROOT}/src/system/synth/Pollable.cpp
     ${REPO_ROOT}/src/system/synth/FxSend.cpp
+    # W16-TZ: the Flow system. Retail has none (W16-TU), so the X360 build no
+    # longer scatter-includes it into GemManager, BandDirector, Morph,
+    # EventTrigger and UI. Those includes were also how every native target
+    # got these bodies (UISlider's ObjDirItr<Flow> needs `typeinfo for Flow`,
+    # and the W16-TM flow gates need FlowNode/FlowManager), so they are
+    # compiled here directly.
+    ${REPO_ROOT}/src/system/flow/Flow.cpp
+    ${REPO_ROOT}/src/system/flow/FlowNode.cpp
+    ${REPO_ROOT}/src/system/flow/FlowManager.cpp
+    ${REPO_ROOT}/src/system/flow/FlowQueueable.cpp
+    ${REPO_ROOT}/src/system/flow/FlowTrigger.cpp
     # ---- X7: the band-slot placement TU ---------------------------------
     # X6 ported bandobj/BandConfiguration.cpp and wired it into objects.json
     # (the X360 objdiff build) but NOT into this list, so the native driver

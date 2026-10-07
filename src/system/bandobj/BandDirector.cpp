@@ -2229,17 +2229,3 @@ END_PROPSYNCS
 #include "char/CharClip.cpp"
 #undef gRev
 #undef gAltRev
-
-// sw2 scatter-include (default/BandDirector <- flow/FlowNode.cpp)
-#define gRev gRev_FlowNode
-#define gAltRev gAltRev_FlowNode
-#include "flow/FlowNode.cpp"
-#undef gRev
-#undef gAltRev
-
-// sw2 scatter-include (default/BandDirector <- gesture/SkeletonHistory.cpp)
-#define gRev gRev_SkeletonHistory
-#define gAltRev gAltRev_SkeletonHistory
-#include "gesture/SkeletonHistory.cpp"
-#undef gRev
-#undef gAltRev

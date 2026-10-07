@@ -23,7 +23,6 @@
 #include "ui/InlineHelp.h"
 #include "ui/LabelNumberTicker.h"
 #include "ui/LabelShrinkWrapper.h"
-#include "ui/LocalePanel.h"
 #include "ui/PanelDir.h"
 #include "ui/Screenshot.h"
 #include "ui/UIButton.h"
@@ -1364,29 +1363,3 @@ BEGIN_HANDLERS(Automator)
 END_HANDLERS
 
 #pragma endregion Automator
-
-// Lane-AE b2 scatter-include: retail placed FlowQueueable::RequestStop's COMDAT
-// (4 B -- verified: a bare `b FlowNode::RequestStop` tail call) inside the .text
-// span pinned to default/UI.
-#define gRev gRev_FlowQueueable
-#define gAltRev gAltRev_FlowQueueable
-#include "flow/FlowQueueable.cpp"
-#undef gRev
-#undef gAltRev
-
-// ---------------------------------------------------------------------------
-// SCAFFOLD -- LocalePanel COMDAT donor. Read before removing.
-//
-// Retail's UI unit carries LocalePanel's scalar-deleting dtor, Entry's
-// scalar-deleting dtor and __destroy_aux<LocalePanel::Entry> (all matched at
-// 100). Our TU used to emit them as a side effect of
-// REGISTER_OBJ_FACTORY(LocalePanel) in UIManager::Init -- but retail's Init
-// provably lacks that registration (RegisterFactory is called exactly 10x on
-// both sides and retail's slot is UIProxy; see the note in Init). Removing the
-// arm was correct and bought Init + its funclets; these two never-called
-// donors reproduce the instantiation side effect so the three dtor/destroy
-// COMDATs stay emitted. Retail's true reference site inside this TU is
-// unidentified -- fold these into it when found.
-// ---------------------------------------------------------------------------
-Hmx::Object *UI_LocalePanelComdatDonor() { return new LocalePanel(); }
-void UI_LocalePanelEntryComdatDonor(LocalePanel::Entry *e) { delete e; }

@@ -472,20 +472,4 @@ int GetLoopTick(int tick) {
     int tickOffset;
     return GetLoopTick(tick, tickOffset);
 }
-// sw3 cross-dialect scatter-include (default/band3/game/TrainerPanel <- gesture/SpeechMgr.cpp) [Object owner]
-#ifndef SW_SCATTER_OWNER_INCLUDE
-#define SW_SCATTER_OWNER_INCLUDE
-#define gRev gRev_SpeechMgr
-#define gAltRev gAltRev_SpeechMgr
-// W16-SH: native skips this edge -- SpeechMgr is the Kinect speech layer
-// (360-only); TrainerPanel calls none of it.
-#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
-#include "obj/dialect_object_push.h"
-#include "gesture/SpeechMgr.cpp"
-#include "obj/dialect_object_pop.h"
-#endif
-#undef gRev
-#undef gAltRev
-#undef SW_SCATTER_OWNER_INCLUDE
-#endif
 

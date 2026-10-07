@@ -1666,14 +1666,6 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
 #pragma endregion
 
 
-// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
-// interleaved these owners' COMDATs into this TU's .text span.
-#define gRev gRev_LocalePanel
-#define gAltRev gAltRev_LocalePanel
-#include "ui/LocalePanel.cpp"
-#undef gRev
-#undef gAltRev
-
 // sw2 scatter-include (default/LightPreset <- band3/game/Stats.cpp)
 // ⚠ NATIVE: guarded because band3/game/Stats.cpp is ALSO unconditionally
 // scatter-included by rndobj/EventTrigger.cpp, and it is not compiled
