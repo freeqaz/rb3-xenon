@@ -530,6 +530,19 @@ namespace {
 // 0x82665020). String::mStr is at String+0x8, so the Strings themselves are at
 // 0xB8 / 0xC4 -- confirmed independently by class_layout_report.py
 // (mPrevChunkPath 0xb8, mNextChunkPath 0xc4) and by BandStorePanel.h:94-95.
+#ifdef HX_NATIVE
+// Native (LP64) BandStorePanel is laid out by clang with 8-byte pointers, so
+// the members are NOT at 0xB8 / 0xC4 and the byte offsets above would read the
+// wrong bytes (W16-TS). Reach the same two members by member pointer instead:
+// a derived class may name a protected member, and the pointer it yields is a
+// plain `String BandStorePanel::*`.
+struct ChunkPathAccess : public BandStorePanel {
+    static String BandStorePanel::*Prev() { return &ChunkPathAccess::mPrevChunkPath; }
+    static String BandStorePanel::*Next() { return &ChunkPathAccess::mNextChunkPath; }
+};
+inline const String &PrevChunkPath(const BandStorePanel *p) { return p->*ChunkPathAccess::Prev(); }
+inline const String &NextChunkPath(const BandStorePanel *p) { return p->*ChunkPathAccess::Next(); }
+#else
 inline const String &PrevChunkPath(const BandStorePanel *p) {
     return *reinterpret_cast<const String *>(
         reinterpret_cast<const char *>(p) + 0xB8
@@ -540,6 +553,7 @@ inline const String &NextChunkPath(const BandStorePanel *p) {
         reinterpret_cast<const char *>(p) + 0xC4
     );
 }
+#endif
 }
 
 void StoreOfferProvider::BuildList(DataArray *grouping) {

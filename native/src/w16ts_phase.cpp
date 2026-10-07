@@ -28,6 +28,7 @@
 #include "game/BandUserMgr.h"
 #include "game/GameMode.h"
 #include "meta_band/BandSongMetadata.h"
+#include "meta_band/BandStorePanel.h"
 #include "meta_band/BandSongMgr.h"
 #include "meta_band/ModifierMgr.h"
 #include "meta_band/SongSortMgr.h"
@@ -55,6 +56,7 @@
 
 #include <algorithm>
 #include <cstdarg>
+#include <cstddef>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -779,7 +781,7 @@ void UIStatsChecks() {
         && !ObjectDir::Main()->Find<Hmx::Object>("intro_movie_screen", false);
     bool fixOk = splashDef && introDef && splashGather && splashGather->Int(1) == 0
         && !introGather && symsAgree && fake && namesFree;
-    Gate("us-fixture", fixOk,
+    Gate("uis-fixture", fixOk,
          "shipped splash.dta: splash_screen %s (gather_uistats %d), intro_movie_screen %s "
          "(gather_uistats %s); CHAR_INSTRUMENT_SYMBOLS shipped %d / live %d entries, %s; "
          "fake Server %s",
@@ -862,7 +864,7 @@ void UIStatsChecks() {
     int p1Pub = st->mPublishingPad, p1Drop = st->mLastDroppedScreen, p1Rec = (int)gRecorded.size();
     bool p1 = p1Pub && p1Drop == 2 && padLogRewound() && p1Rec == 0;
     st->mPublishingPad = false;
-    Gate("us-drop", p0 && p1 && padNum == 1,
+    Gate("uis-drop", p0 && p1 && padNum == 1,
          "disconnected: mPublishingPad %d (want 0), dropped %d (want 1), pad log of %d "
          "rewound, %d recorded; splash_screen (gather_uistats FALSE): mPublishingPad %d "
          "(want 1), dropped %d (want 2), %d recorded; local user on pad %d",
@@ -881,7 +883,7 @@ void UIStatsChecks() {
     bool p2 = SamePoint(gRecorded, want2) && st->mPublishingPad && st->mLastDroppedScreen == 0
         && padLogRewound() && st->mLastMode == Symbol("qp_coop")
         && st->mLastBreedString[1] == breed.c_str() && st->mLastRemoteID[0] == OnlineID(xuid);
-    Gate("us-publish", p2,
+    Gate("uis-publish", p2,
          "first publish of intro_movie_screen: one stats/pad_user point {%s}; "
          "mLastDroppedScreen %d (want 0), pad log rewound %d, mLastMode %s",
          gRecorded.empty() ? "" : PairsText(gRecorded[0].pairs).c_str(),
@@ -894,7 +896,7 @@ void UIStatsChecks() {
     std::map<std::string, std::string> want3 = {{"name", "intro_movie_screen"},
                                                 {"remote_user_0", remoteVal}};
     bool p3 = SamePoint(gRecorded, want3) && st->mLastControllerType[0] == kControllerNone;
-    Gate("us-remote-again", p3,
+    Gate("uis-remote-again", p3,
          "second publish, nothing changed: {%s} (want name + remote_user_0 only: the "
          "remote controller type is compared against mLastControllerType[0], which "
          "stays %d)",
@@ -913,7 +915,7 @@ void UIStatsChecks() {
     std::map<std::string, std::string> want5 = want2;
     want5["dropped_screens"] = "1";
     bool p5 = SamePoint(gRecorded, want5) && st->mLastDroppedScreen == 0;
-    Gate("us-reconnect", p4 && p5,
+    Gate("uis-reconnect", p4 && p5,
          "disconnect: %d recorded, mPublishingPad %d, dropped %d; reconnect publish {%s}",
          p4Rec, p4Pub, p4Drop,
          gRecorded.empty() ? "" : PairsText(gRecorded.back().pairs).c_str());
@@ -1306,5 +1308,10 @@ int RunW16TSPhase(GateFn gate) {
     BandDirectorChecks();
     UIStatsChecks();
     SaveLoadManagerChecks();
+    // StoreOfferProvider::BuildList reads these two members of the store panel;
+    // its X360 spelling uses the retail byte offsets. A measurement, not a gate.
+    printf("  note: native BandStorePanel::mPrevChunkPath at 0x%zx, mNextChunkPath at 0x%zx "
+           "(retail 0xb8 / 0xc4)\n",
+           offsetof(BandStorePanel, mPrevChunkPath), offsetof(BandStorePanel, mNextChunkPath));
     return gRan;
 }
