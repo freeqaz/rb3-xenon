@@ -47,13 +47,20 @@ BEGIN_HANDLERS(PreloadPanel)
     HANDLE_SUPERCLASS(UIPanel)
 END_HANDLERS
 
+// Retail's SetTypeDef is a bare forward: the vtordisp thunk (0x827B4258)
+// branches to 0x827B36E0, `this -= 0x3C; b UIPanel::SetTypeDef`, a body ICF
+// shares with every panel whose override only forwards. The CheckTypeDef calls
+// are dev-build warnings, and the max_cache_size read is DC3's (StartCache's
+// SetSize(gMaxCacheSize) is native-only for the same reason).
 void PreloadPanel::SetTypeDef(DataArray *d) {
     UIPanel::SetTypeDef(d);
+#ifdef HX_NATIVE
     d->FindData("max_cache_size", gMaxCacheSize, false);
     CheckTypeDef("song_mgr");
     CheckTypeDef("current_song");
     CheckTypeDef("on_preload_ok");
     CheckTypeDef("preload_files");
+#endif
 }
 
 #pragma endregion
