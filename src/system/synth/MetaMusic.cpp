@@ -11,7 +11,7 @@
 void MetaMusicLoader::DoneLoading() {}
 
 inline MetaMusicLoader::MetaMusicLoader(File *f, int &bytes, unsigned char *buf, int size)
-    : Loader(FilePath(""), kLoadFront), mFile(f), mBytesRead(bytes), mBuf(buf),
+    : Loader("", kLoadFront), mFile(f), mBytesRead(bytes), mBuf(buf),
       mBufSize(size) {
     MILO_ASSERT(mFile, 0x2A);
     mState = &MetaMusicLoader::OpenFile;
