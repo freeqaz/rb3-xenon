@@ -1,0 +1,2220 @@
+[
+ {
+  "A": "0x822716e8",
+  "F": "??0TextStream@@QAA@XZ",
+  "sites": 9,
+  "cls": "TWIN",
+  "unit": "default/TextFileStream",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x82272308",
+  "F": "??$Find@VUIScreen@@@ObjectDir@@QAAPAVUIScreen@@PBD_N@Z",
+  "sites": 16,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/MessageTimer",
+  "disposition": "NOT NAMED: A's row is in default/MessageTimer, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/MusicLibrary', 'default/MusicLibraryStore', 'default/SetlistMergePanel', 'default/Tour', 'default/UI', 'default/UIEvent']"
+ },
+ {
+  "A": "0x82272548",
+  "F": "??$PropSync@VUIPanel@@@@YA_NAAPAVUIPanel@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/MessageTimer",
+  "disposition": "NOT NAMED: A's row is in default/MessageTimer, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/PanelDir', 'default/UISlider']"
+ },
+ {
+  "A": "0x82272b90",
+  "F": "??1UIScreen@@UAA@XZ",
+  "sites": 2,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/CalibrationPanel",
+  "disposition": "NOT NAMED: A's row is in default/CalibrationPanel, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/MetaPanel', 'default/UIScreen', 'default/band3/meta_band/SigninScreen']"
+ },
+ {
+  "A": "0x822784a8",
+  "F": "??$_Copy_Construct@VPatchLayer@@@stlpmtx_std@@YAXPAVPatchLayer@@ABV1@@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/InlineHelp",
+  "disposition": "NOT NAMED: A's row is in default/InlineHelp, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/PatchDir']"
+ },
+ {
+  "A": "0x822784a8",
+  "F": "??$_Param_Construct@VPatchLayer@@V1@@stlpmtx_std@@YAXPAVPatchLayer@@ABV1@@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/InlineHelp",
+  "disposition": "NOT NAMED: A's row is in default/InlineHelp, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/PatchDir']"
+ },
+ {
+  "A": "0x822785c0",
+  "F": "??$__uninitialized_copy@PAVPatchLayer@@PAV1@@stlpmtx_std@@YAPAVPatchLayer@@PAV1@00ABU__false_type@0@@Z",
+  "sites": 4,
+  "cls": "NAMEABLE",
+  "unit": "default/PatchDir",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x822785c0",
+  "F": "??$__uninitialized_copy@PBVPatchLayer@@PAV1@@stlpmtx_std@@YAPAVPatchLayer@@PBV1@0PAV1@ABU__false_type@0@@Z",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/PatchDir",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822a2ea0",
+  "F": "?_M_clear@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/SampleInst",
+  "disposition": "NOT NAMED: A's row is in default/SampleInst, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/ExternalMic', 'default/OutfitConfig', 'default/band3/bandtrack/Gem']"
+ },
+ {
+  "A": "0x822a2ea0",
+  "F": "?_M_clear_after_move@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/SampleInst",
+  "disposition": "NOT NAMED: A's row is in default/SampleInst, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/ExternalMic', 'default/OutfitConfig', 'default/band3/bandtrack/Gem']"
+ },
+ {
+  "A": "0x822b0d48",
+  "F": "??0?$ObjPtr@VEventTrigger@@@@QAA@PAVObject@Hmx@@PAVEventTrigger@@@Z",
+  "sites": 7,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/BandCamShot",
+  "disposition": "NOT NAMED: A's row is in default/BandCamShot, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/Accomplishment', 'default/BandCharDesc', 'default/BandCrowdMeter', 'default/BandStarDisplay', 'default/CharIKFingers', 'default/CrowdMeterIcon']"
+ },
+ {
+  "A": "0x822b7d30",
+  "F": "?insert@?$list@VKeyFrame@EventAnim@@V?$StlNodeAlloc@VKeyFrame@EventAnim@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VKeyFrame@EventAnim@@U?$_Nonconst_traits@VKeyFrame@EventAnim@@@stlpmtx_std@@@2@U32@ABVKeyFrame@EventAnim@@@Z",
+  "sites": 3,
+  "cls": "NAMEABLE",
+  "unit": "default/BandCamShot",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x822bb3c8",
+  "F": "??$__push_heap@PAPAVRndPollable@@HPAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndPollable@@HHPAV1@P6A_NPBV1@2@Z@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/Geo",
+  "disposition": "NOT NAMED: A's row is in default/Geo, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/Anim', 'default/MatAnim', 'default/ShaderOptions', 'default/TrackDir', 'default/UITransitionHandler']"
+ },
+ {
+  "A": "0x822c7a80",
+  "F": "?_M_clear@?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/system/bandobj/BandFaceDeform",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x822c7a80",
+  "F": "?_M_clear_after_move@?$vector@VDeltaArray@BandFaceDeform@@V?$StlNodeAlloc@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/system/bandobj/BandFaceDeform",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822c9048",
+  "F": "??$_Copy_Construct@UObjVersion@@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@Z",
+  "sites": 2,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/CharCollide",
+  "disposition": "NOT NAMED: A's row is in default/CharCollide, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/AmbientOcclusion', 'default/Anim', 'default/BandCamShot', 'default/BandLeadMeter', 'default/BandScoreboard', 'default/BandStarDisplay']"
+ },
+ {
+  "A": "0x822c9048",
+  "F": "??$_Param_Construct@UObjVersion@@U1@@stlpmtx_std@@YAXPAUObjVersion@@ABU1@@Z",
+  "sites": 2,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/CharCollide",
+  "disposition": "NOT NAMED: A's row is in default/CharCollide, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/AmbientOcclusion', 'default/Anim', 'default/BandCamShot', 'default/BandLeadMeter', 'default/BandScoreboard', 'default/BandStarDisplay']"
+ },
+ {
+  "A": "0x822cdb70",
+  "F": "??0?$ObjPtr@VRndMesh@@@@QAA@ABV0@@Z",
+  "sites": 6,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/BandStarDisplay",
+  "disposition": "NOT NAMED: A's row is in default/BandStarDisplay, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/AmbientOcclusion', 'default/Anim', 'default/BandCamShot', 'default/BandPatchMesh', 'default/BandScoreboard', 'default/CharBlendBone']"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear@?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear@?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear@?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjDirPtr@VObjectDir@@@@V?$StlNodeAlloc@V?$ObjDirPtr@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjOwnerPtr@VCharClip@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VCharClip@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjOwnerPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjOwnerPtr@VWaypoint@@@@V?$StlNodeAlloc@V?$ObjOwnerPtr@VWaypoint@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VBandTrack@@@@V?$StlNodeAlloc@V?$ObjPtr@VBandTrack@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VEventTrigger@@@@V?$StlNodeAlloc@V?$ObjPtr@VEventTrigger@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VGemTrackDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VGemTrackDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VObject@Hmx@@@@V?$StlNodeAlloc@V?$ObjPtr@VObject@Hmx@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndAnimatable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndAnimatable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndDir@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndDir@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndGroup@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndGroup@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndMesh@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndMesh@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndPartLauncher@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPartLauncher@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndPropAnim@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndPropAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VRndTransformable@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTransformable@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VSeqInst@@@@V?$StlNodeAlloc@V?$ObjPtr@VSeqInst@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VSequence@@@@V?$StlNodeAlloc@V?$ObjPtr@VSequence@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822ce170",
+  "F": "?_M_clear_after_move@?$vector@VString@@V?$StlNodeAlloc@VString@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/BandScoreboard",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x822d65e8",
+  "F": "??1?$ObjPtr@VRndTransAnim@@@@UAA@XZ",
+  "sites": 7,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_822D6568_text",
+  "disposition": "NOT NAMED: unit default/auto_03_822D6568_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x822d6730",
+  "F": "??1?$ObjPtr@VRndPartLauncher@@@@UAA@XZ",
+  "sites": 3,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_822D6700_text",
+  "disposition": "NOT NAMED: unit default/auto_03_822D6700_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x822d6850",
+  "F": "??1?$ObjPtr@VRndText@@@@UAA@XZ",
+  "sites": 7,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_822D6700_text",
+  "disposition": "NOT NAMED: unit default/auto_03_822D6700_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x822d6b00",
+  "F": "?Load@?$ObjPtr@VRndTransAnim@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
+  "sites": 7,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_822D6B00_text",
+  "disposition": "NOT NAMED: unit default/auto_03_822D6B00_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x822d6cd0",
+  "F": "?Load@?$ObjPtr@VRndPropAnim@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
+  "sites": 9,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_822D6CD0_text",
+  "disposition": "NOT NAMED: unit default/auto_03_822D6CD0_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x822d6db8",
+  "F": "?Load@?$ObjPtr@VRndText@@@@QAA_NAAVBinStream@@_NPAVObjectDir@@@Z",
+  "sites": 7,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_822D6CD0_text",
+  "disposition": "NOT NAMED: unit default/auto_03_822D6CD0_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x822dc828",
+  "F": "?clear@VertVector@RndMesh@@QAAXXZ",
+  "sites": 3,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/ChordShapeGenerator",
+  "disposition": "NOT NAMED: A's row is in default/ChordShapeGenerator, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/Mesh', 'default/NoteTube', 'default/band3/bandtrack/Gem', 'default/band3/bandtrack/GemRepTemplate']"
+ },
+ {
+  "A": "0x8230e5b8",
+  "F": "?clear@?$_List_base@VPracticeSectionMapping@SongSectionController@@V?$StlNodeAlloc@VPracticeSectionMapping@SongSectionController@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
+  "sites": 2,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/Group",
+  "disposition": "NOT NAMED: A's row is in default/Group, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/CharIKFingers', 'default/SongSectionController']"
+ },
+ {
+  "A": "0x82328800",
+  "F": "??$?5VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@AAV?$list@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/LayerDir",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x823474f8",
+  "F": "??$__uninitialized_copy@PAVMeshFace@BandPatchMesh@@PAV12@@stlpmtx_std@@YAPAVMeshFace@BandPatchMesh@@PAV12@00ABU__false_type@0@@Z",
+  "sites": 4,
+  "cls": "NAMEABLE",
+  "unit": "default/BandPatchMesh",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x82359680",
+  "F": "?insert_unique@?$_Rb_tree@KU?$less@K@stlpmtx_std@@U?$pair@$$CBKH@2@U?$_Select1st@U?$pair@$$CBKH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBKH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBKH@stlpmtx_std@@@2@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBKH@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBKH@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBKH@2@@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/TrackPanelDirBase",
+  "disposition": "NOT NAMED: A's row is in default/TrackPanelDirBase, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/QuestManager', 'default/XLSPConnection', 'default/band3/meta_band/SongRecord', 'default/band3/meta_band/ViewSetting']"
+ },
+ {
+  "A": "0x82359680",
+  "F": "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBVSymbol@@H@2@@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/TrackPanelDirBase",
+  "disposition": "NOT NAMED: A's row is in default/TrackPanelDirBase, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/QuestManager', 'default/XLSPConnection', 'default/band3/meta_band/SongRecord', 'default/band3/meta_band/ViewSetting']"
+ },
+ {
+  "A": "0x82359680",
+  "F": "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBVSymbol@@PAVFixedSetlist@@@2@@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/TrackPanelDirBase",
+  "disposition": "NOT NAMED: A's row is in default/TrackPanelDirBase, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/QuestManager', 'default/XLSPConnection', 'default/band3/meta_band/SongRecord', 'default/band3/meta_band/ViewSetting']"
+ },
+ {
+  "A": "0x8235ba70",
+  "F": "?GetTourProgress@Tour@@QBAPAVTourProgress@@XZ",
+  "sites": 44,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/band3/game/Game",
+  "disposition": "NOT NAMED: A's row is in default/band3/game/Game, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/GameMicManager', 'default/Tour']"
+ },
+ {
+  "A": "0x8235ba70",
+  "F": "?GetMicCount@GameMicManager@@QBAHXZ",
+  "sites": 5,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/band3/game/Game",
+  "disposition": "NOT NAMED: A's row is in default/band3/game/Game, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/GameMicManager', 'default/Tour']"
+ },
+ {
+  "A": "0x8235c9a0",
+  "F": "?insert_unique@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V1@U?$_Identity@VSymbol@@@3@U?$_SetTraitsT@VSymbol@@@priv@3@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@VSymbol@@U?$_SetTraitsT@VSymbol@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABVSymbol@@@Z",
+  "sites": 31,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/CharClip",
+  "disposition": "NOT NAMED: A's row is in default/CharClip, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/AccomplishmentConditional', 'default/AccomplishmentDiscSongConditional', 'default/AccomplishmentPlayerConditional', 'default/AccomplishmentSongFilterConditional', 'default/BandSongMgr', 'default/BandSwatch']"
+ },
+ {
+  "A": "0x8235c9a0",
+  "F": "?insert_unique@?$_Rb_tree@PAVTrackWidget@@U?$less@PAVTrackWidget@@@stlpmtx_std@@PAV1@U?$_Identity@PAVTrackWidget@@@3@U?$_SetTraitsT@PAVTrackWidget@@@priv@3@V?$StlNodeAlloc@PAVTrackWidget@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@PAVTrackWidget@@U?$_SetTraitsT@PAVTrackWidget@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABQAVTrackWidget@@@Z",
+  "sites": 6,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/CharClip",
+  "disposition": "NOT NAMED: A's row is in default/CharClip, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/AccomplishmentConditional', 'default/AccomplishmentDiscSongConditional', 'default/AccomplishmentPlayerConditional', 'default/AccomplishmentSongFilterConditional', 'default/BandSongMgr', 'default/BandSwatch']"
+ },
+ {
+  "A": "0x8235c9a0",
+  "F": "?insert_unique@?$_Rb_tree@PAVFaderGroup@@U?$less@PAVFaderGroup@@@stlpmtx_std@@PAV1@U?$_Identity@PAVFaderGroup@@@3@U?$_SetTraitsT@PAVFaderGroup@@@priv@3@V?$StlNodeAlloc@PAVFaderGroup@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@PAVFaderGroup@@U?$_SetTraitsT@PAVFaderGroup@@@priv@stlpmtx_std@@@stlpmtx_std@@_N@2@ABQAVFaderGroup@@@Z",
+  "sites": 2,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/CharClip",
+  "disposition": "NOT NAMED: A's row is in default/CharClip, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/AccomplishmentConditional', 'default/AccomplishmentDiscSongConditional', 'default/AccomplishmentPlayerConditional', 'default/AccomplishmentSongFilterConditional', 'default/BandSongMgr', 'default/BandSwatch']"
+ },
+ {
+  "A": "0x82371d20",
+  "F": "?_M_insert_overflow_aux@?$vector@ULod@Character@@V?$StlNodeAlloc@ULod@Character@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAULod@Character@@ABU34@ABU__false_type@2@I_N@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/Character",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x8239c558",
+  "F": "??$__uninitialized_copy@PAV?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@PAV12@@stlpmtx_std@@YAPAV?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@PAV12@00ABU__false_type@0@@Z",
+  "sites": 2,
+  "cls": "TWIN",
+  "unit": "default/system/char/CharMeshCacheMgr",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8239c558",
+  "F": "??$__uninitialized_copy@PAVSingerResultsData@@PAV1@@stlpmtx_std@@YAPAVSingerResultsData@@PAV1@00ABU__false_type@0@@Z",
+  "sites": 2,
+  "cls": "TWIN",
+  "unit": "default/system/char/CharMeshCacheMgr",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8239c558",
+  "F": "??$__uninitialized_copy@PBV?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@PAV12@@stlpmtx_std@@YAPAV?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@PBV12@0PAV12@ABU__false_type@0@@Z",
+  "sites": 1,
+  "cls": "TWIN",
+  "unit": "default/system/char/CharMeshCacheMgr",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8239c5d8",
+  "F": "?_M_erase@?$vector@UColorSet@@V?$StlNodeAlloc@UColorSet@@@stlpmtx_std@@@stlpmtx_std@@IAAPAUColorSet@@PAU3@0ABU__false_type@2@@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/Text",
+  "disposition": "NOT NAMED: A's row is in default/Text, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/ColorPalette', 'default/Spotlight']"
+ },
+ {
+  "A": "0x823a8cc0",
+  "F": "?_M_insert_overflow_aux@?$vector@UPoint@CharHair@@V?$StlNodeAlloc@UPoint@CharHair@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUPoint@CharHair@@ABU34@ABU__false_type@2@I_N@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharHair",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VRndDrawable@@VObjectDir@@@@QAAXXZ",
+  "sites": 23,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VRndLight@@VObjectDir@@@@QAAXXZ",
+  "sites": 6,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharCollide@@VObjectDir@@@@QAAXXZ",
+  "sites": 4,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VRndMesh@@VObjectDir@@@@QAAXXZ",
+  "sites": 4,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCamShot@@VObjectDir@@@@QAAXXZ",
+  "sites": 3,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharPollable@@VObjectDir@@@@QAAXXZ",
+  "sites": 3,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VRndTransformable@@VObjectDir@@@@QAAXXZ",
+  "sites": 3,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VBandCamShot@@VObjectDir@@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharLookAt@@VObjectDir@@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharWeightable@@VObjectDir@@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharacter@@VObjectDir@@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "NOT FOLDED: map name at ['0x8249d1f0']; its sites at A are charged"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VObjectDir@@V1@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VRndAnimatable@@VObjectDir@@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VRndGroup@@VObjectDir@@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VRndPartLauncher@@VObjectDir@@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VTrackWidget@@VObjectDir@@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VUILabel@@VObjectDir@@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VWaypoint@@VObjectDir@@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VWorldCrowd@@VObjectDir@@@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharBoneOffset@@VObjectDir@@@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharCuff@@VObjectDir@@@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharDriverMidi@@VObjectDir@@@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharHair@@VObjectDir@@@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharIKHand@@VObjectDir@@@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharIKMidi@@VObjectDir@@@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharIKScale@@VObjectDir@@@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharInterest@@VObjectDir@@@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VCharKeyHandMidi@@VObjectDir@@@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823b8618",
+  "F": "?clear@?$ObjPtrList@VOutfitConfig@@VObjectDir@@@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharWeightSetter",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x823c7000",
+  "F": "??1CharUpperTwist@@MAA@XZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharUpperTwist",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x823ea5a8",
+  "F": "?GetAward@AccomplishmentGroup@@QBA?AVSymbol@@XZ",
+  "sites": 3,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_823EA4E8_text",
+  "disposition": "NOT NAMED: unit default/auto_03_823EA4E8_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x823ea5a8",
+  "F": "?GetTourGoldGoal@TourDesc@@QBA?AVSymbol@@XZ",
+  "sites": 3,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_823EA4E8_text",
+  "disposition": "NOT NAMED: unit default/auto_03_823EA4E8_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x823ea5a8",
+  "F": "?GetAdvertisement@CampaignLevel@@QBA?AVSymbol@@XZ",
+  "sites": 1,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_823EA4E8_text",
+  "disposition": "NOT NAMED: unit default/auto_03_823EA4E8_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x823f1898",
+  "F": "?GetUserData@AddUserRequestMsg@@QBAXAAVBinStream@@@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/MemMgr",
+  "disposition": "NOT NAMED: A's row is in default/MemMgr, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/SessionMessages']"
+ },
+ {
+  "A": "0x823f1898",
+  "F": "?GetUserData@NewUserMsg@@QBAXAAVBinStream@@@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/MemMgr",
+  "disposition": "NOT NAMED: A's row is in default/MemMgr, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/SessionMessages']"
+ },
+ {
+  "A": "0x823f1898",
+  "F": "?GetVoiceData@VoiceDataMsg@@QBAXAAVBinStream@@@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/MemMgr",
+  "disposition": "NOT NAMED: A's row is in default/MemMgr, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/SessionMessages']"
+ },
+ {
+  "A": "0x8240b6b8",
+  "F": "?SetMesh@RndMeshDeform@@QAAXPAVRndMesh@@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/MeshDeform",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x8240c660",
+  "F": "??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@IABU12@ABU__false_type@0@@Z",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/MeshDeform",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x824417d8",
+  "F": "?_M_erase@?$vector@V?$Key@VTexPtr@RndMatAnim@@@@V?$StlNodeAlloc@V?$Key@VTexPtr@RndMatAnim@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@VTexPtr@RndMatAnim@@@@PAV3@0ABU__false_type@2@@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/system/rndobj/Utl",
+  "disposition": "NOT NAMED: A's row is in default/system/rndobj/Utl, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/MatAnim', 'default/UITransitionHandler']"
+ },
+ {
+  "A": "0x82442e68",
+  "F": "?_M_erase@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAPAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@PAV3@0ABU__false_type@2@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/MeshAnim",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x8246f020",
+  "F": "??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@IABV1@ABU__false_type@0@@Z",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/MeshAnim",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable@@VObjectDir@@@@@Z",
+  "sites": 17,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VRndMesh@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndMesh@@VObjectDir@@@@@Z",
+  "sites": 6,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VRndTransformable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndTransformable@@VObjectDir@@@@@Z",
+  "sites": 6,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VEventTrigger@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VEventTrigger@@VObjectDir@@@@@Z",
+  "sites": 4,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VRndLight@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndLight@@VObjectDir@@@@@Z",
+  "sites": 3,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VCharWeightSetter@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@@Z",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VRndAnimatable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndAnimatable@@VObjectDir@@@@@Z",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VBandCamShot@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VBandCamShot@@VObjectDir@@@@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VCamShot@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCamShot@@VObjectDir@@@@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VCharPollable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCharPollable@@VObjectDir@@@@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VCharacter@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VCharacter@@VObjectDir@@@@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VRndPartLauncher@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndPartLauncher@@VObjectDir@@@@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VTrackWidget@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VTrackWidget@@VObjectDir@@@@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VUILabel@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VUILabel@@VObjectDir@@@@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8249bbb0",
+  "F": "??$?6VWaypoint@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VWaypoint@@VObjectDir@@@@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/EventTrigger",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x824c3ea0",
+  "F": "??$__uninitialized_copy@PAVCamShotFrame@@PAV1@@stlpmtx_std@@YAPAVCamShotFrame@@PAV1@00ABU__false_type@0@@Z",
+  "sites": 4,
+  "cls": "NAMEABLE",
+  "unit": "default/CameraShot",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x824ce758",
+  "F": "?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVFilePath@@ABV3@ABU__false_type@2@I_N@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/PropSync",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x825122b0",
+  "F": "??$MakeString@PBDPBDPBDPBDPBD@@YAPBDPBD00000@Z",
+  "sites": 2,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/Archive",
+  "disposition": "NOT NAMED: A's row is in default/Archive, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/ConnectionStatusPanel', 'default/HolmesClient', 'default/MemTracker', 'default/MetaMusicScene', 'default/PoolAlloc', 'default/UIFontImporter']"
+ },
+ {
+  "A": "0x825122b0",
+  "F": "??$MakeString@HHHHH@@YAPBDPBDHHHHH@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/Archive",
+  "disposition": "NOT NAMED: A's row is in default/Archive, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/ConnectionStatusPanel', 'default/HolmesClient', 'default/MemTracker', 'default/MetaMusicScene', 'default/PoolAlloc', 'default/UIFontImporter']"
+ },
+ {
+  "A": "0x825459e0",
+  "F": "?IsOnlineEnabled@NetSession@@QBA_NXZ",
+  "sites": 6,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/CharServoBone",
+  "disposition": "NOT NAMED: A's row is in default/CharServoBone, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/GemSmasher', 'default/ProfileMgr', 'default/network/net/NetSession']"
+ },
+ {
+  "A": "0x825459e0",
+  "F": "?GetSecondPedalHiHat@ProfileMgr@@QBA_NXZ",
+  "sites": 5,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/CharServoBone",
+  "disposition": "NOT NAMED: A's row is in default/CharServoBone, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/GemSmasher', 'default/ProfileMgr', 'default/network/net/NetSession']"
+ },
+ {
+  "A": "0x825459e0",
+  "F": "?Glowing@GemSmasher@@QBA_NXZ",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/CharServoBone",
+  "disposition": "NOT NAMED: A's row is in default/CharServoBone, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/GemSmasher', 'default/ProfileMgr', 'default/network/net/NetSession']"
+ },
+ {
+  "A": "0x8260eed8",
+  "F": "??1?$_Slist_base@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVSongStatus@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@QAA@XZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharacterCreatorPanel",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8260eed8",
+  "F": "??1?$_Slist_base@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@QAA@XZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharacterCreatorPanel",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x8260eed8",
+  "F": "??1?$_Slist_base@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@priv@stlpmtx_std@@QAA@XZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharacterCreatorPanel",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8260eed8",
+  "F": "?clear@?$slist@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHPAVUIComponent@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharacterCreatorPanel",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8260eed8",
+  "F": "?clear@?$slist@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/CharacterCreatorPanel",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x826660f0",
+  "F": "??$__make_heap@PAPAVRndTransformable@@P6A_NPBV1@0@ZPAV1@H@stlpmtx_std@@YAXPAPAVRndTransformable@@0P6A_NPBV1@1@Z0PAH@Z",
+  "sites": 1,
+  "cls": "TWIN",
+  "unit": "default/FriendsProvider",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x82666290",
+  "F": "??$__insertion_sort@PAPAVRndTransformable@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndTransformable@@00P6A_NPBV1@1@Z@Z",
+  "sites": 2,
+  "cls": "TWIN",
+  "unit": "default/FriendsProvider",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x82667fc8",
+  "F": "?GetUser@OvershellProfileProvider@@QBAPAVLocalBandUser@@H@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/band3/meta_band/CharProvider",
+  "disposition": "NOT NAMED: A's row is in default/band3/meta_band/CharProvider, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/OvershellSlot']"
+ },
+ {
+  "A": "0x826da438",
+  "F": "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/band3/game/PerfectSectionTracker",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x826da438",
+  "F": "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/band3/game/PerfectSectionTracker",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x826e3e90",
+  "F": "?CanChat@VocalPlayer@@QAA_NXZ",
+  "sites": 3,
+  "cls": "NAMEABLE",
+  "unit": "default/VocalPlayer",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x826fcce8",
+  "F": "??1?$ObjPtr@VSynthSample@@@@UAA@XZ",
+  "sites": 15,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/system/synth/Synth",
+  "disposition": "NOT NAMED: A's row is in default/system/synth/Synth, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/CharMeshHide', 'default/JoypadMsgs', 'default/MidiInstrument', 'default/SampleZone', 'default/Sfx', 'default/SfxMap']"
+ },
+ {
+  "A": "0x8270a9b8",
+  "F": "?resize@?$vector@V?$ObjPtr@VSeqInst@@@@V?$StlNodeAlloc@V?$ObjPtr@VSeqInst@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABV?$ObjPtr@VSeqInst@@@@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/Sequence",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VFader@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 6,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 6,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VRndFont@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 4,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VRndMat@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 3,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VSequence@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 3,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VCharBone@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VRndTexBlendController@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VTask@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VCharMeshHide@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VSeqInst@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8271a138",
+  "F": "?Unlink@?$ObjPtrList@VSfxInst@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/Sfx",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x82741340",
+  "F": "?SetWaitForSplash@Splash@@QAAX_N@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/system/rnddx9/Mat",
+  "disposition": "NOT NAMED: A's row is in default/system/rnddx9/Mat, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/Splash']"
+ },
+ {
+  "A": "0x82766880",
+  "F": "?insert@?$list@UEventSinkElem@MsgSource@@V?$StlNodeAlloc@UEventSinkElem@MsgSource@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@UEventSinkElem@MsgSource@@U?$_Nonconst_traits@UEventSinkElem@MsgSource@@@stlpmtx_std@@@2@U32@ABUEventSinkElem@MsgSource@@@Z",
+  "sites": 3,
+  "cls": "NAMEABLE",
+  "unit": "default/Msg",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x82766880",
+  "F": "?insert@?$list@VHitGem@GemManager@@V?$StlNodeAlloc@VHitGem@GemManager@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@VHitGem@GemManager@@U?$_Nonconst_traits@VHitGem@GemManager@@@stlpmtx_std@@@2@U32@ABVHitGem@GemManager@@@Z",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/Msg",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+  "sites": 8,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@UEdge@RndAmbientOcclusion@@U?$less@UEdge@RndAmbientOcclusion@@@stlpmtx_std@@U12@U?$_Identity@UEdge@RndAmbientOcclusion@@@4@U?$_SetTraitsT@UEdge@RndAmbientOcclusion@@@priv@4@V?$StlNodeAlloc@UEdge@RndAmbientOcclusion@@@4@@stlpmtx_std@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@3@U?$_Select1st@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6A?AVDataNode@@PAVDataArray@@@Z@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDepChecker@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDepChecker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDepChecker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDepChecker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVGigFilter@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVGigFilter@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVQuest@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVQuest@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHH@2@U?$_Select1st@U?$pair@$$CBHH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHW4AnimState@BandList@@@2@U?$_Select1st@U?$pair@$$CBHW4AnimState@BandList@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHW4AnimState@BandList@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHW4AnimState@BandList@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHW4RevealState@BandList@@@2@U?$_Select1st@U?$pair@$$CBHW4RevealState@BandList@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHW4RevealState@BandList@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHW4RevealState@BandList@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBH_N@2@U?$_Select1st@U?$pair@$$CBH_N@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBH_N@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBH_N@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@KU?$less@K@stlpmtx_std@@U?$pair@$$CBKH@2@U?$_Select1st@U?$pair@$$CBKH@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBKH@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBKH@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@3@U?$_Select1st@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@P6APAVObject@Hmx@@XZ@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVTrackWidget@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@H@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827690d0",
+  "F": "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@_N@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@_N@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@_N@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@_N@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/DataUtl",
+  "wave": 3,
+  "commit": "ba085a822",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8276f6f8",
+  "F": "?SetAutoVocals@PlayerTrackConfigList@@QAAX_N@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/system/beatmatch/BeatMaster",
+  "disposition": "NOT NAMED: A's row is in default/system/beatmatch/BeatMaster, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/system/beatmatch/PlayerTrackConfigList']"
+ },
+ {
+  "A": "0x82771dd8",
+  "F": "?FindRangeAtTick@?$RangedDataCollection@I@@QAAPBV?$RangedData@I@1@HH@Z",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/SongData",
+  "wave": 1,
+  "commit": "c4d84cfbf",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x82774148",
+  "F": "??_GMeasureMap@@QAAPAXI@Z",
+  "sites": 3,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/BandSongMgr",
+  "disposition": "NOT NAMED: A's row is in default/BandSongMgr, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/MeshAnim', 'default/MidiReader', 'default/SongData', 'default/SongParser', 'default/UIList', 'default/system/beatmatch/PhraseList']"
+ },
+ {
+  "A": "0x82774148",
+  "F": "??_G?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAAPAXI@Z",
+  "sites": 2,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/BandSongMgr",
+  "disposition": "NOT NAMED: A's row is in default/BandSongMgr, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/MeshAnim', 'default/MidiReader', 'default/SongData', 'default/SongParser', 'default/UIList', 'default/system/beatmatch/PhraseList']"
+ },
+ {
+  "A": "0x82774148",
+  "F": "??_GDifficultyInfo@SongParser@@QAAPAXI@Z",
+  "sites": 2,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/BandSongMgr",
+  "disposition": "NOT NAMED: A's row is in default/BandSongMgr, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/MeshAnim', 'default/MidiReader', 'default/SongData', 'default/SongParser', 'default/UIList', 'default/system/beatmatch/PhraseList']"
+ },
+ {
+  "A": "0x82774148",
+  "F": "??_G?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@QAAPAXI@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/BandSongMgr",
+  "disposition": "NOT NAMED: A's row is in default/BandSongMgr, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/MeshAnim', 'default/MidiReader', 'default/SongData', 'default/SongParser', 'default/UIList', 'default/system/beatmatch/PhraseList']"
+ },
+ {
+  "A": "0x82774148",
+  "F": "??_G?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@QAAPAXI@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/BandSongMgr",
+  "disposition": "NOT NAMED: A's row is in default/BandSongMgr, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/MeshAnim', 'default/MidiReader', 'default/SongData', 'default/SongParser', 'default/UIList', 'default/system/beatmatch/PhraseList']"
+ },
+ {
+  "A": "0x82774148",
+  "F": "??_G?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAAPAXI@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/BandSongMgr",
+  "disposition": "NOT NAMED: A's row is in default/BandSongMgr, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/MeshAnim', 'default/MidiReader', 'default/SongData', 'default/SongParser', 'default/UIList', 'default/system/beatmatch/PhraseList']"
+ },
+ {
+  "A": "0x82774148",
+  "F": "??_G?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAAPAXI@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/BandSongMgr",
+  "disposition": "NOT NAMED: A's row is in default/BandSongMgr, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/MeshAnim', 'default/MidiReader', 'default/SongData', 'default/SongParser', 'default/UIList', 'default/system/beatmatch/PhraseList']"
+ },
+ {
+  "A": "0x82774148",
+  "F": "??_GPhraseList@@QAAPAXI@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/BandSongMgr",
+  "disposition": "NOT NAMED: A's row is in default/BandSongMgr, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/MeshAnim', 'default/MidiReader', 'default/SongData', 'default/SongParser', 'default/UIList', 'default/system/beatmatch/PhraseList']"
+ },
+ {
+  "A": "0x82774330",
+  "F": "??$__destroy_mv_srcs@PAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@0@00@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/SongData",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x82774330",
+  "F": "??$__destroy_range@PAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@V?$StlNodeAlloc@V?$RangedData@U?$pair@HH@stlpmtx_std@@@?$RangedDataCollection@U?$pair@HH@stlpmtx_std@@@@@stlpmtx_std@@@0@00@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/SongData",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x82774388",
+  "F": "??$__destroy_mv_srcs@PAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@00@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/SongData",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x82774388",
+  "F": "??$__destroy_range@PAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@I@?$RangedDataCollection@I@@V?$StlNodeAlloc@V?$RangedData@I@?$RangedDataCollection@I@@@stlpmtx_std@@@0@00@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/SongData",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827743e0",
+  "F": "??$__destroy_mv_srcs@PAV?$vector@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@V?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@V?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@stlpmtx_std@@@0@00@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/SongData",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x827743e0",
+  "F": "??$__destroy_range@PAV?$vector@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@V?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@V?$StlNodeAlloc@V?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@@stlpmtx_std@@@0@00@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/SongData",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x82774438",
+  "F": "??$__destroy_mv_srcs@PAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@00@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/SongData",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x82774438",
+  "F": "??$__destroy_range@PAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@V?$StlNodeAlloc@V?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@@stlpmtx_std@@@0@00@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/SongData",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x82782950",
+  "F": "?ShaderPoolAlloc@RndShaderMgr@@IAAXH@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/VocalNoteList",
+  "disposition": "NOT NAMED: A's row is in default/VocalNoteList, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/system/rndobj/ShaderMgr']"
+ },
+ {
+  "A": "0x8278cd40",
+  "F": "??$__median@MU?$less@M@stlpmtx_std@@@stlpmtx_std@@YAABMABM00U?$less@M@0@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/system/beatmatch/GameGemList",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x8278cd40",
+  "F": "??$__median@VGameGem@@U?$less@VGameGem@@@stlpmtx_std@@@stlpmtx_std@@YAABVGameGem@@ABV1@00U?$less@VGameGem@@@0@@Z",
+  "sites": 1,
+  "cls": "NAMEABLE",
+  "unit": "default/system/beatmatch/GameGemList",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x827b74d0",
+  "F": "??$__destroy_range_aux@V?$reverse_iterator@PAUMarker@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUMarker@@@0@0ABU__false_type@0@@Z",
+  "sites": 2,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/StorePanel",
+  "disposition": "NOT NAMED: A's row is in default/StorePanel, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/StandardStream']"
+ },
+ {
+  "A": "0x827d10e8",
+  "F": "?GetSymbolToIDMap@FixedSizeSaveableStream@@QAAAAV?$hash_map@VSymbol@@HU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@XZ",
+  "sites": 1,
+  "cls": "TWIN",
+  "unit": "default/SongInfoCopy",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827d10f8",
+  "F": "?GetSavedSetlists@BandProfile@@QBAABV?$vector@PAVLocalSavedSetlist@@V?$StlNodeAlloc@PAVLocalSavedSetlist@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+  "sites": 4,
+  "cls": "TWIN",
+  "unit": "default/SongInfoCopy",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827d1100",
+  "F": "?GetDynamicPrereqsSongs@Accomplishment@@QBAABV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+  "sites": 1,
+  "cls": "TWIN",
+  "unit": "default/SongInfoCopy",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827d1108",
+  "F": "?GetActivePlayers@Game@@QAAAAV?$vector@PAVPlayer@@V?$StlNodeAlloc@PAVPlayer@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+  "sites": 7,
+  "cls": "TWIN",
+  "unit": "default/SongInfoCopy",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827e6178",
+  "F": "?SetActive@CrowdRating@@QAAX_N@Z",
+  "sites": 3,
+  "cls": "TWIN",
+  "unit": "default/TrackWidgetImp",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827e6178",
+  "F": "?SetCanFreestyleBeforeGems@PlayerBehavior@@QAAX_N@Z",
+  "sites": 1,
+  "cls": "TWIN",
+  "unit": "default/TrackWidgetImp",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x827e6180",
+  "F": "?GetRawPhrases@PhraseAnalyzer@@QBAABV?$vector@URawPhrase@@V?$StlNodeAlloc@URawPhrase@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+  "sites": 3,
+  "cls": "TWIN",
+  "unit": "default/TrackWidgetImp",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x828070e0",
+  "F": "??$__uninitialized_copy@PAVFilePath@@PAV1@@stlpmtx_std@@YAPAVFilePath@@PAV1@00ABU__false_type@0@@Z",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/PanelDir",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x828070e0",
+  "F": "??$__uninitialized_copy@PBVFilePath@@PAV1@@stlpmtx_std@@YAPAVFilePath@@PBV1@0PAV1@ABU__false_type@0@@Z",
+  "sites": 2,
+  "cls": "NAMEABLE",
+  "unit": "default/PanelDir",
+  "wave": 2,
+  "commit": "7188511f8",
+  "disposition": "FOLDED at A (W16-OU 2026-10-03)"
+ },
+ {
+  "A": "0x82956038",
+  "F": "?Title@BandSongMetadata@@QBAPBDXZ",
+  "sites": 16,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/xdk/xgraphics/ucode/ssm/interface/ssmdevice",
+  "disposition": "NOT NAMED: unit default/xdk/xgraphics/ucode/ssm/interface/ssmdevice has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x82956038",
+  "F": "?GetRequiredMaxPlayers@Accomplishment@@QBAHXZ",
+  "sites": 1,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/xdk/xgraphics/ucode/ssm/interface/ssmdevice",
+  "disposition": "NOT NAMED: unit default/xdk/xgraphics/ucode/ssm/interface/ssmdevice has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x82956040",
+  "F": "?GetNumCompleted@AccomplishmentProgress@@QBAHXZ",
+  "sites": 3,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/xdk/xgraphics/ucode/ssm/interface/ssmdevice",
+  "disposition": "NOT NAMED: unit default/xdk/xgraphics/ucode/ssm/interface/ssmdevice has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x82956040",
+  "F": "?Album@BandSongMetadata@@QBAPBDXZ",
+  "sites": 2,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/xdk/xgraphics/ucode/ssm/interface/ssmdevice",
+  "disposition": "NOT NAMED: unit default/xdk/xgraphics/ucode/ssm/interface/ssmdevice has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x82956048",
+  "F": "?GetGamerpicReward@Accomplishment@@QBAHXZ",
+  "sites": 1,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/xdk/xgraphics/ucode/ssm/interface/ssmdevice",
+  "disposition": "NOT NAMED: unit default/xdk/xgraphics/ucode/ssm/interface/ssmdevice has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x82956050",
+  "F": "?GetAvatarAssetReward@Accomplishment@@QBAHXZ",
+  "sites": 1,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/xdk/xgraphics/ucode/ssm/interface/ssmdevice",
+  "disposition": "NOT NAMED: unit default/xdk/xgraphics/ucode/ssm/interface/ssmdevice has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x82b744e8",
+  "F": "??$__uninitialized_fill_n@PAVViewport@ObjectDir@@IV12@@stlpmtx_std@@YAPAVViewport@ObjectDir@@PAV12@IABV12@ABU__false_type@0@@Z",
+  "sites": 2,
+  "cls": "TWIN",
+  "unit": "default/GranularSynth",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x82b744e8",
+  "F": "??$__uninitialized_fill_n@PAVTriangle@@IV1@@stlpmtx_std@@YAPAVTriangle@@PAV1@IABV1@ABU__false_type@0@@Z",
+  "sites": 1,
+  "cls": "TWIN",
+  "unit": "default/GranularSynth",
+  "wave": 4,
+  "commit": "bd7c9c27a",
+  "disposition": "FOLDED at A (W16-UM 2026-10-07)"
+ },
+ {
+  "A": "0x82b8b670",
+  "F": "??0NgFur@@IAA@XZ",
+  "sites": 1,
+  "cls": "MAPPED-ELSEWHERE",
+  "unit": "default/Lit_NG",
+  "wave": 5,
+  "commit": "cc9562c3d",
+  "disposition": "NAMED (the map name at A)"
+ },
+ {
+  "A": "0x82bac148",
+  "F": "??0Gem@@QAA@ABVGameGem@@IMM_NHH1@Z",
+  "sites": 1,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_82BAC148_text",
+  "disposition": "NOT NAMED: unit default/auto_03_82BAC148_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x82bb34a8",
+  "F": "??$_Copy_Construct@V?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXPAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@0@ABV10@@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/band3/bandtrack/Gem",
+  "disposition": "NOT NAMED: A's row is in default/band3/bandtrack/Gem, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/Mesh']"
+ },
+ {
+  "A": "0x82bb34a8",
+  "F": "??$_Param_Construct@V?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@V12@@stlpmtx_std@@YAXPAV?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@0@ABV10@@Z",
+  "sites": 1,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/band3/bandtrack/Gem",
+  "disposition": "NOT NAMED: A's row is in default/band3/bandtrack/Gem, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/Mesh']"
+ },
+ {
+  "A": "0x82bd4eb0",
+  "F": "?LengthMs@BandSongMetadata@@QBAHXZ",
+  "sites": 2,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_82BD4B94_text",
+  "disposition": "NOT NAMED: unit default/auto_03_82BD4B94_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x82bf5398",
+  "F": "?GetGemManager@GemTrack@@QAAPAVGemManager@@XZ",
+  "sites": 6,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_82BF49F4_text",
+  "disposition": "NOT NAMED: unit default/auto_03_82BF49F4_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x82bf5398",
+  "F": "?GetSpotlightPhrase@VocalPart@@QBAHXZ",
+  "sites": 1,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_82BF49F4_text",
+  "disposition": "NOT NAMED: unit default/auto_03_82BF49F4_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x82c1a608",
+  "F": "?GetCurrentStreak@Stats@@QBAHXZ",
+  "sites": 14,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_82C19F4C_text",
+  "disposition": "NOT NAMED: unit default/auto_03_82C19F4C_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x82c1a608",
+  "F": "?GetNullTexture@Rnd@@QAAPAVRndTex@@XZ",
+  "sites": 1,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_82C19F4C_text",
+  "disposition": "NOT NAMED: unit default/auto_03_82C19F4C_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x82c1a608",
+  "F": "?GetNumLoops@GemTrainerPanel@@QBAHXZ",
+  "sites": 1,
+  "cls": "NO-BASE-OBJ",
+  "unit": "default/auto_03_82C19F4C_text",
+  "disposition": "NOT NAMED: unit default/auto_03_82C19F4C_text has no compiled obj (no source is built for this span), so no name at A can pair its row"
+ },
+ {
+  "A": "0x82c30b58",
+  "F": "OggRealloc",
+  "sites": 9,
+  "cls": "NOT-IN-UNIT-OBJ",
+  "unit": "default/sharedbook",
+  "disposition": "NOT NAMED: A's row is in default/sharedbook, whose obj compiles no spelling of it and no PROVEN twin; the spellings are compiled in ['default/VorbisMem']"
+ }
+]
