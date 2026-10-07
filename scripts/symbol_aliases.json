@@ -6295,9 +6295,17 @@
     "??$__unguarded_linear_insert@PAPAVRndPollable@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndPollable@@PAV1@P6A_NPBV1@2@Z@Z",
     "??$__unguarded_linear_insert@PAPAVRndTransformable@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndTransformable@@PAV1@P6A_NPBV1@2@Z@Z",
     "??$__unguarded_linear_insert@PAPAVVocalPart@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@PAV1@P6A_NPBV1@2@Z@Z",
-    "??$__unguarded_linear_insert@PAVSymbol@@V1@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@V1@P6A_N11@Z@Z"
+    "??$__unguarded_linear_insert@PAVSymbol@@V1@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@V1@P6A_N11@Z@Z",
+    "??$__unguarded_linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@PAV1@P6A_NPBV1@2@Z@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 6, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 3 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 6, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 5 folded spelling(s), 3 census sites over 2 functions.",
+   "admitted": [
+    {
+     "spelling": "??$__unguarded_linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@PAV1@P6A_NPBV1@2@Z@Z",
+     "lane": "W16-TU 2026-10-07",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: FLAT T1 PROVEN and CHASED T1 PROVEN; 84 B / 84 B, relocation targets agree, retail body-twins 1 (one retail body of the shape, our build has 8 identical spellings). Witness on retail bytes: 0x82666160 (__linear_insert, inside FriendsProvider's own code, named for FriendsProvider's Friend** instantiation by W16-TU) calls bl 0x82670F88, and our FriendsProvider.obj spells that call __unguarded_linear_insert<Friend**>. Replaces the forgiveness the held FlowNode** spelling used to give this site."
+    }
+   ]
   },
   {
    "name": "$__uninitialized_copy",
@@ -73438,11 +73446,62 @@
   {
    "name": "$__linear_insert",
    "address": "0x82666160",
-   "survivor": "??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0PAV1@P6A_N11@Z@Z",
+   "survivor": "??$__linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@0PAV1@P6A_NPBV1@2@Z@Z",
    "folded": [
     "??$__linear_insert@PAPAVRndDrawable@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@0PAV1@P6A_N11@Z@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 5, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 5, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
+   "relabelled": {
+    "from": "??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0PAV1@P6A_N11@Z@Z",
+    "to": "??$__linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@0PAV1@P6A_NPBV1@2@Z@Z",
+    "lane": "W16-TU",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here",
+    "held": [
+     {
+      "spelling": "??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0PAV1@P6A_N11@Z@Z",
+      "lane": "W16-TU",
+      "verdict": "UNDECIDABLE",
+      "evidence": "tools/icf_pair_adjudicate.chase(??$__linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAP @ 0x82666160, ??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXP): UNDECIDABLE [MISSING(retail)] depth 0: retail ??$__linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@0PAV1@P6A_ | ours ??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0PAV1@"
+     }
+    ]
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__linear_insert@PAPAVRndDrawable@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@0PAV1@P6A_N11@Z@Z",
+     "role": "folded",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(retail)",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAP @ 0x82666160, ??$__linear_insert@PAPAVRndDrawable@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@Y): UNDECIDABLE [MISSING(retail)] depth 0: retail ??$__linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@0PAV1@P6A_ | ours ??$__linear_insert@PAPAVRndDrawable@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@"
+    },
+    {
+     "spelling": "??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0PAV1@P6A_N11@Z@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(retail)",
+     "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAP @ 0x82666160, ??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXP): UNDECIDABLE [MISSING(retail)] depth 0: retail ??$__linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@0PAV1@P6A_ | ours ??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0PAV1@"
+    }
+   ],
+   "postbuild_rechase_w16tu": {
+    "why": "the rechase_w16os verdicts above were taken before the renamer had applied the new map name to the retail target objs (MISSING(retail)); re-adjudicated on the built tree with tools/icf_pair_adjudicate.py --chase",
+    "verdicts": [
+     {
+      "spelling": "??$__linear_insert@PAPAVRndDrawable@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@0PAV1@P6A_N11@Z@Z",
+      "role": "folded (kept)",
+      "flat_t1_postbuild": "PROVEN",
+      "chased_t1_postbuild": "PROVEN",
+      "retail_bodytwins": 1
+     },
+     {
+      "spelling": "??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0PAV1@P6A_N11@Z@Z",
+      "role": "old-label (held)",
+      "flat_t1_postbuild": "REFUTED",
+      "chased_t1_postbuild": "PROVEN",
+      "retail_bodytwins": 1
+     }
+    ]
+   }
   },
   {
    "name": "1?$ObjPtrList",
@@ -119316,7 +119375,7 @@
   {
    "name": "_M_erase",
    "address": "0x82768f98",
-   "survivor": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@M@3@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+   "survivor": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
    "folded": [
     "?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z"
    ],
@@ -119328,7 +119387,58 @@
      "lane": "W16-QX 2026-10-06",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN; 92 B / 92 B; retail body-twins 1 (only this one body of the shape in the image, while our build has 30 identical _M_erase instantiations). Only CYCLE-ASSUMED leaf is the self-recursive call. Witness on retail bytes: the catch funclet fn_822FA7B8 of _Rb_tree<int,pair<const int,float>>::_M_copy (retail 0x822FA6E8, map-named, our VocalTrackDir.obj spells the <int,float> callee) calls bl 0x82768F98, so retail's <int,float>::_M_erase IS this body."
     }
-   ]
+   ],
+   "relabelled": {
+    "from": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@M@3@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+    "to": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+    "lane": "W16-TU",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here",
+    "held": [
+     {
+      "spelling": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@M@3@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+      "lane": "W16-TU",
+      "verdict": "UNDECIDABLE",
+      "evidence": "tools/icf_pair_adjudicate.chase(?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$ @ 0x82768f98, ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$): UNDECIDABLE [MISSING(retail)] depth 0: retail ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataA | ours ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@M@3@U?$_"
+     }
+    ]
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+     "role": "folded",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(retail)",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$ @ 0x82768f98, ?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Sele): UNDECIDABLE [MISSING(retail)] depth 0: retail ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataA | ours ?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM"
+    },
+    {
+     "spelling": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@M@3@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(retail)",
+     "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$ @ 0x82768f98, ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$): UNDECIDABLE [MISSING(retail)] depth 0: retail ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataA | ours ?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@M@3@U?$_"
+    }
+   ],
+   "postbuild_rechase_w16tu": {
+    "why": "the rechase_w16os verdicts above were taken before the renamer had applied the new map name to the retail target objs (MISSING(retail)); re-adjudicated on the built tree with tools/icf_pair_adjudicate.py --chase",
+    "verdicts": [
+     {
+      "spelling": "?_M_erase@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+      "role": "folded (kept)",
+      "flat_t1_postbuild": "REFUTED",
+      "chased_t1_postbuild": "PROVEN",
+      "retail_bodytwins": 1
+     },
+     {
+      "spelling": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@M@3@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+      "role": "old-label (held)",
+      "flat_t1_postbuild": "REFUTED",
+      "chased_t1_postbuild": "PROVEN",
+      "retail_bodytwins": 1
+     }
+    ]
+   }
   },
   {
    "name": "~map",
