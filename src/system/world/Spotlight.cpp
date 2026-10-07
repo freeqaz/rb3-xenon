@@ -1053,7 +1053,10 @@ void Spotlight::UpdateTransforms() {
     if (mBeam.mBeam) {
         Vector3 ve4(0.0f, mBeam.mOffset, 0.0f);
         mBeam.mBeam->SetLocalPos(ve4);
-        Hmx::Matrix3 m6c(mBeam.mIsCone ? rot : ident);
+        // A cone keeps the identity rotation, anything else takes `rot`.
+        // Retail 824D93CC: `lbz r11, 0x1b8(r31)` (mIsCone), r4 = r29 (ident,
+        // lbl_82CC78A8) when nonzero, else r30 (rot, lbl_82CC7878).
+        Hmx::Matrix3 m6c(mBeam.mIsCone ? ident : rot);
         Hmx::Matrix3 m90;
         MakeRotMatrix(
             Vector3(
