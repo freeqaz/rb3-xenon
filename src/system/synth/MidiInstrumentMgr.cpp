@@ -24,7 +24,12 @@ void MidiInstrumentMgr::UnloadInstrument() {
 void MidiInstrumentMgr::Poll() {
     if (!mInstrument)
         return;
+#ifndef HX_NATIVE
     mInstrument->Poll();
+#endif
+    // Native: MidiInstrument derives SynthPollable there and is polled through
+    // SynthPollable::PollAll (MidiInstrument::SynthPoll); polling it here too
+    // would run each instrument twice per frame. W16-TM.
 }
 
 // Retail Synth::Init (0x82700270) calls this as an empty body (its call site

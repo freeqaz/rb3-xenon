@@ -123,7 +123,8 @@ void SampleInst::SetBankSpeed(float bspd) {
 
 #ifdef HX_NATIVE
 void SampleInst::SynthPoll() {
-    SynthSample *sample = Sample();
+    // DC3 spells this Sample(); in this tree it is the native-only mSample.
+    SynthSample *sample = mSample;
     Hmx::Object *rcvr = GetEventReceiver();
     if (!sample || !rcvr) {
         return;

@@ -707,7 +707,8 @@ bool VorbisReader::DoFileRead() {
         if (mFail)
             return false;
         MILO_ASSERT(bytes > 0, 0x1F9);
-        Decrypt(this, (unsigned char *)mReadBuffer, bytes, mCtrState, mMagicHashA, mMagicHashB);
+        // The file-static Decrypt above; the member Decrypt(uchar*, int) hides it.
+        ::Decrypt(this, (unsigned char *)mReadBuffer, bytes, mCtrState, mMagicHashA, mMagicHashB);
         ogg_sync_wrote(mOggSync, bytes);
         mReadBuffer = 0;
         ret = true;
