@@ -1769,6 +1769,109 @@ set_source_files_properties(${W16TJ_VOCAL_SOURCES}
     ${REPO_ROOT}/src/band3/game/Band.cpp
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
 
+# ---- W16-TM: the VIA-DC3 files no native target compiled ------------------
+# CAMPAIGN_STATE_2026-10-07b lever 4: 27 VIA-DC3 files (16,408 B of gap) that
+# native did not compile. StoreOffer.cpp was linked by W16-TJ in the meantime;
+# meta/StoreEnumeration.cpp (XboxEnumeration: XMarketplace* / XEnumerate /
+# XOverlapped) is the Xbox Live Marketplace backend and native replaces it by
+# rule. The rest are below. rb3-render only. Dispositions, gates and the link
+# rounds: docs/decomp/W16TM_VIA_DC3_NATIVE_LINK_2026-10-07.md.
+set(W16TM_LINK_SOURCES
+    # --- synth: the stream / codec / instrument stack -----------------------
+    ${REPO_ROOT}/src/system/synth/StandardStream.cpp
+    ${REPO_ROOT}/src/system/synth/VorbisReader.cpp
+    ${REPO_ROOT}/src/system/synth/OggMap.cpp
+    ${REPO_ROOT}/src/system/synth/StreamReceiver.cpp
+    ${REPO_ROOT}/src/system/synth/StreamNull.cpp
+    ${REPO_ROOT}/src/system/synth/ByteGrinder.cpp
+    ${REPO_ROOT}/src/system/synth/MetaMusic.cpp
+    ${REPO_ROOT}/src/system/synth/CompressionEffect.cpp
+    ${REPO_ROOT}/src/system/synth/Emitter.cpp
+    ${REPO_ROOT}/src/system/synth/MidiSynth.cpp
+    ${REPO_ROOT}/src/system/synth/MidiInstrument.cpp
+    ${REPO_ROOT}/src/system/synth/SampleInst.cpp
+    ${REPO_ROOT}/src/system/synth/FxSendPitchShift.cpp
+    ${REPO_ROOT}/src/system/synth/Utl.cpp
+    ${REPO_ROOT}/src/system/synth/tomcrypt/aes.c
+    ${REPO_ROOT}/src/system/synth/tomcrypt/ctr.c
+    # --- flow ---------------------------------------------------------------
+    ${REPO_ROOT}/src/system/flow/FlowIf.cpp
+    ${REPO_ROOT}/src/system/flow/FlowSwitchCase.cpp
+    ${REPO_ROOT}/src/system/flow/FlowValueCase.cpp
+    ${REPO_ROOT}/src/system/flow/FlowOnStop.cpp
+    # --- meta / movie -------------------------------------------------------
+    ${REPO_ROOT}/src/system/meta/StorePanel.cpp
+    ${REPO_ROOT}/src/system/meta/HAQManager.cpp
+    ${REPO_ROOT}/src/system/meta/Achievements.cpp
+    ${REPO_ROOT}/src/system/meta/DeJitterPanel.cpp
+    ${REPO_ROOT}/src/system/movie/Movie.cpp
+)
+# What the 25 need that no target compiled either (measured from the link).
+set(W16TM_DEP_SOURCES
+    ${REPO_ROOT}/src/system/synth/tomcrypt/crypt.c
+    # The gates construct a null Synth and FlowIf/FlowNode, whose vtables make
+    # the synth object layer and the flow helpers live (measured: 55 undefined
+    # symbols on the first link with the phase).
+    ${REPO_ROOT}/src/system/synth/Stream.cpp
+    ${REPO_ROOT}/src/system/synth/ADSR.cpp
+    ${REPO_ROOT}/src/system/synth/SynthSample.cpp
+    ${REPO_ROOT}/src/system/synth/SampleZone.cpp
+    ${REPO_ROOT}/src/system/synth/SfxMap.cpp
+    ${REPO_ROOT}/src/system/synth/MoggClip.cpp
+    ${REPO_ROOT}/src/system/synth/MoggClipMap.cpp
+    ${REPO_ROOT}/src/system/synth/MidiInstrumentMgr.cpp
+    ${REPO_ROOT}/src/system/synth/MidiChannel.cpp
+    ${REPO_ROOT}/src/system/synth/StreamReceiverFile.cpp
+    ${REPO_ROOT}/src/system/synth/FxSendReverb.cpp
+    ${REPO_ROOT}/src/system/synth/FxSendMeterEffect.cpp
+    ${REPO_ROOT}/src/system/synth/FxSendFlanger.cpp
+    ${REPO_ROOT}/src/system/synth/FxSendEQ.cpp
+    ${REPO_ROOT}/src/system/synth/FxSendDistortion.cpp
+    ${REPO_ROOT}/src/system/synth/FxSendCompress.cpp
+    ${REPO_ROOT}/src/system/synth/FxSendChorus.cpp
+    ${REPO_ROOT}/src/system/flow/DrivenPropertyEntry.cpp
+    ${REPO_ROOT}/src/system/flow/DrivenPropertyMathOps.cpp
+    ${REPO_ROOT}/src/system/flow/FlowPtr.cpp
+    ${REPO_ROOT}/src/system/flow/FlowLabel.cpp
+    # The in-tree libogg/libvorbis retail ships (the same 18 C TUs objects.json
+    # lists). VorbisReader compiles against these headers, so linking a system
+    # libvorbis would pair them with another version's struct layouts.
+    # OggMalloc/OggFree come from native_link_glue.cpp under HX_NATIVE.
+    ${REPO_ROOT}/src/system/oggvorbis/bitrate.c
+    ${REPO_ROOT}/src/system/oggvorbis/bitwise.c
+    ${REPO_ROOT}/src/system/oggvorbis/block.c
+    ${REPO_ROOT}/src/system/oggvorbis/codebook.c
+    ${REPO_ROOT}/src/system/oggvorbis/envelope.c
+    ${REPO_ROOT}/src/system/oggvorbis/floor0.c
+    ${REPO_ROOT}/src/system/oggvorbis/floor1.c
+    ${REPO_ROOT}/src/system/oggvorbis/framing.c
+    ${REPO_ROOT}/src/system/oggvorbis/info.c
+    ${REPO_ROOT}/src/system/oggvorbis/lsp.c
+    ${REPO_ROOT}/src/system/oggvorbis/mapping0.c
+    ${REPO_ROOT}/src/system/oggvorbis/mdct.c
+    ${REPO_ROOT}/src/system/oggvorbis/psy.c
+    ${REPO_ROOT}/src/system/oggvorbis/res0.c
+    ${REPO_ROOT}/src/system/oggvorbis/sharedbook.c
+    ${REPO_ROOT}/src/system/oggvorbis/smallft.c
+    ${REPO_ROOT}/src/system/oggvorbis/synthesis.c
+    ${REPO_ROOT}/src/system/oggvorbis/window.c
+    # Not a retail TU (retail has no vorbis_lpc_* symbol). The in-tree block.c
+    # carries libvorbis's encoder path, which calls vorbis_lpc_from_data; native
+    # never encodes, but the reference has to resolve.
+    ${REPO_ROOT}/src/system/oggvorbis/lpc.c
+    # Not in objects.json either: the _floor_P/_residue_P/_mapping_P dispatch
+    # tables mapping0.c decodes through. Retail has them; no unit lists this TU.
+    ${REPO_ROOT}/src/system/oggvorbis/registry.c
+)
+set_source_files_properties(${W16TM_LINK_SOURCES} ${W16TM_DEP_SOURCES}
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+# The codec's own <ogg.h>/<os_types.h> includes. Scoped to its 18 TUs: on any
+# wider include path its os.h and info.c names would shadow the engine's.
+set(W16TM_OGGVORBIS_SOURCES ${W16TM_DEP_SOURCES})
+list(FILTER W16TM_OGGVORBIS_SOURCES INCLUDE REGEX "/oggvorbis/")
+set_source_files_properties(${W16TM_OGGVORBIS_SOURCES}
+    PROPERTIES INCLUDE_DIRECTORIES "${REPO_ROOT}/src/system/oggvorbis")
+
 set(MILO_TARGET_COMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/milo_object_factories.cpp
     ${ENGINE_SOURCES}
@@ -1884,11 +1987,16 @@ if(RB3X_BUILD_ENGINE)
         # W16-TJ: VocalTrack::UpdateScrolling, GemManager::SetupGems and
         # CustomizePanel::Handle over a real parsed song and a populated panel.
         ${CMAKE_SOURCE_DIR}/src/w16tj_phase.cpp
+        # W16-TM: crypto, mogg decode, compressor, synth/Utl and FlowIf gates
+        # over the VIA-DC3 files linked below (W16TM_LINK_SOURCES).
+        ${CMAKE_SOURCE_DIR}/src/w16tm_phase.cpp
         ${VOCALTRACK_GAME_SOURCES}
         ${W16SH_LINK_SOURCES}
         ${W16SH_DEP_SOURCES}
         ${W16TJ_LINK_SOURCES}
         ${W16TJ_VOCAL_SOURCES}
+        ${W16TM_LINK_SOURCES}
+        ${W16TM_DEP_SOURCES}
         ${MILO_TARGET_COMMON_SOURCES}
     )
     list(APPEND MILO_TARGETS rb3-render)
