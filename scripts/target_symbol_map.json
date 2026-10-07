@@ -19085,7 +19085,7 @@
  "0x82667838": "?AddCharactersFromProfile@CharProvider@@QAAXPAVBandProfile@@@Z",
  "0x82667af0": "??_GCharProvider@@UAAPAXI@Z",
  "0x82667b48": "?Reload@CharProvider@@QAAXPAVLocalBandUser@@@Z",
- "0x82667fc8": null,
+ "0x82667fc8": "?GetUser@OvershellProfileProvider@@QBAPAVLocalBandUser@@H@Z",
  "0x82667fe0": "?Handle@OvershellProfileProvider@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
  "0x826680d0": "?Text@OvershellProfileProvider@@UBAXHHPAVUIListLabel@@PAVUILabel@@@Z",
  "0x826681a0": "?Reload@OvershellProfileProvider@@QAAXXZ",

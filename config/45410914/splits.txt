@@ -5361,6 +5361,8 @@ FriendsProvider.cpp:
 
 band3/meta_band/OvershellProfileProvider.cpp:
 	.pdata      start:0x8222EA78 end:0x8222EAE0
+	.text       start:0x82667FC8 end:0x82667FD8
+	.text       start:0x82667FD8 end:0x82667FE0
 	.text       start:0x82667FE0 end:0x8266849C
 
 UIList.cpp:
@@ -13856,8 +13858,6 @@ band3/meta_band/FaceHairProvider.cpp:
 band3/meta_band/CharProvider.cpp:
 	.pdata      start:0x8222E948 end:0x8222EA78
 	.text       start:0x82666648 end:0x82667FC8
-	.text       start:0x82667FC8 end:0x82667FD8
-	.text       start:0x82667FD8 end:0x82667FE0
 
 band3/meta_band/BandStoreOffer.cpp:
 	.pdata      start:0x8222F160 end:0x8222F200

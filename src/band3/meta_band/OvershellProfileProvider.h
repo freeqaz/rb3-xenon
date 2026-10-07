@@ -40,10 +40,13 @@ public:
     void Reload();
     const char *GetWiiProfileSelectedName() const;
 
+    // Out of line in OvershellProfileProvider.cpp (retail 0x82667FC8, the
+    // TU's first function); OvershellSlot calls it with a `bl`.
+    LocalBandUser *GetUser(int i) const;
+
     // Retail X360 layout (ctor 0x82668278 / Reload 0x826681A0): the
     // BandUserMgr* at 0x2c and the swappable-profile user list at 0x30,
     // sizeof 0x3c.
-    __declspec(noinline) LocalBandUser *GetUser(int i) const { return mUsers[i]; }
 
     BandUserMgr *mBandUserMgr; // 0x2c
     std::vector<LocalBandUser *> mUsers; // 0x30

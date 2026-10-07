@@ -5,9 +5,11 @@
 #include "obj/ObjMacros.h"
 #include "os/User.h"
 
-// Retail X360 TU at 0x82667FE0-0x8266849C (lane W16-OR; read from
+// Retail X360 TU at 0x82667FC8-0x8266849C (lane W16-OR; read from
 // build/45410914/asm/PropKeys.s, which pinned it before this TU existed):
 //
+//   0x82667FC8   16 B  GetUser           (lane W16-UP: out of line, first;
+//                                         OvershellSlot `bl`s it)
 //   0x82667FE0  200 B  Handle            (secondary, Hmx::Object, table slot 6)
 //   0x826680D0  176 B  Text              (primary table slot 1)
 //   0x826681A0  204 B  Reload
@@ -20,6 +22,8 @@
 // Mat (primary slot 2) and NumData (slot 10) are overrides in retail too, but
 // their bodies are ICF-folded elsewhere: Mat onto the 0x823591E8 `return 0`
 // hub, NumData onto 0x82B7B280 (a 4-byte-element vector size).
+
+LocalBandUser *OvershellProfileProvider::GetUser(int i) const { return mUsers[i]; }
 
 BEGIN_HANDLERS(OvershellProfileProvider)
     HANDLE_EXPR(num_data, NumData())
