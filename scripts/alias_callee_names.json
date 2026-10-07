@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "49d0c8399",
+ "recorded_at": "6dde457dd",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -733,8 +733,8 @@
   "0x82273f48": "??5BinStream@@QAAAAV0@AAH@Z",
   "0x82273fc8": "??0FilePath@@QAA@PBD0@Z",
   "0x82274048": "??1TypeProps@@UAA@XZ",
-  "0x822740c8": "?NewFrame@CameraInput@@QBAPBUSkeletonFrame@@XZ",
-  "0x82274538": "??6@YAAAVBinStream@@AAV0@ABVBAMPhrase@@@Z",
+  "0x822740c8": "?RefOwner@TypeProps@@UBAPAVObject@Hmx@@XZ",
+  "0x82274538": "??6@YAAAVBinStream@@AAV0@ABVPatchDescriptor@@@Z",
   "0x82275120": "??1?$ObjPtr@VRndEnviron@@@@UAA@XZ",
   "0x822756a0": "?PropSync@@YA_NAAHAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
   "0x82275880": "?_Copy_str@exception@std@@AAAXPBD@Z",
@@ -1138,7 +1138,7 @@
   "0x823bf7d8": "??1CharIKFoot@@UAA@XZ",
   "0x823c0078": "??0Point@CharIKHead@@QAA@ABU01@@Z",
   "0x823c2d38": "??1CharPosConstraint@@UAA@XZ",
-  "0x823c3300": "??6@YAAAVBinStream@@AAV0@ABVConstraint@HamIKEffector@@@Z",
+  "0x823c3300": "??6@YAAAVBinStream@@AAV0@ABUConstraintSystem@CharBlendBone@@@Z",
   "0x823c3360": "?Handle@CharForeTwist@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
   "0x823c5310": "??1CharIKRod@@UAA@XZ",
   "0x823c7000": null,
@@ -2058,7 +2058,7 @@
   "0x82768dc0": "?DataSetThis@@YAPAVObject@Hmx@@PAV12@@Z",
   "0x82768ef0": "?DataPopVar@@YAXXZ",
   "0x82768f98": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
-  "0x82768ff8": "?_M_create_node@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_std@@U?$pair@QAVFlowNode@@W4QueueState@1@@3@U?$_Select1st@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@QAVFlowNode@@W4QueueState@1@@2@@Z",
+  "0x82768ff8": "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@PAVDataArray@@@2@@Z",
   "0x827690d0": null,
   "0x82769120": "?DataGetMacro@@YAPAVDataArray@@VSymbol@@@Z",
   "0x8276d050": "??0DirUnloader@@QAA@PAVObjectDir@@@Z",
@@ -3374,7 +3374,7 @@
    }
   },
   "0x822740c8": {
-   "survivor": "?NewFrame@CameraInput@@QBAPBUSkeletonFrame@@XZ",
+   "survivor": "?RefOwner@TypeProps@@UBAPAVObject@Hmx@@XZ",
    "callees": [],
    "verdicts": {
     "?GetDifficulty@BandUser@@QBA?AW4Difficulty@@XZ": "PROVEN",
@@ -3384,11 +3384,12 @@
     "?GetLastResult@Cache@@QAA?AW4CacheResult@@XZ": "PROVEN",
     "?TrackNum@TrackConfig@@QBAHXZ": "PROVEN",
     "?getAAFilter@RateTransposer@soundtouch@@QAAPAVAAFilter@2@XZ": "PROVEN",
-    "?GetIndex@AccomplishmentGroup@@QBAHXZ": "PROVEN"
+    "?GetIndex@AccomplishmentGroup@@QBAHXZ": "PROVEN",
+    "?NewFrame@CameraInput@@QBAPBUSkeletonFrame@@XZ": "PROVEN"
    }
   },
   "0x82274538": {
-   "survivor": "??6@YAAAVBinStream@@AAV0@ABVBAMPhrase@@@Z",
+   "survivor": "??6@YAAAVBinStream@@AAV0@ABVPatchDescriptor@@@Z",
    "callees": [
     "0x827c4d18",
     "0x827c4f58",
@@ -3396,9 +3397,9 @@
     "0x82b8c888"
    ],
    "verdicts": {
-    "??6@YAAAVBinStream@@AAV0@ABVPatchDescriptor@@@Z": "PROVEN",
     "??6@YAAAVBinStream@@AAV0@ABVStreakInfo@Stats@@@Z": "PROVEN",
-    "??6@YAAAVBinStream@@AAV0@ABVSeam@MeshAO@OutfitConfig@@@Z": "PROVEN"
+    "??6@YAAAVBinStream@@AAV0@ABVSeam@MeshAO@OutfitConfig@@@Z": "PROVEN",
+    "??6@YAAAVBinStream@@AAV0@ABVBAMPhrase@@@Z": "PROVEN"
    }
   },
   "0x822750d0": {
@@ -5718,7 +5719,7 @@
    }
   },
   "0x822d16f8": {
-   "survivor": "?push_back@?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVSymbol@@@Z",
+   "survivor": "?push_back@?$vector@W4KeyboardKey@CharKeyHandMidi@@V?$StlNodeAlloc@W4KeyboardKey@CharKeyHandMidi@@@stlpmtx_std@@@stlpmtx_std@@QAAXABW4KeyboardKey@CharKeyHandMidi@@@Z",
    "callees": [
     "0x822d0be8",
     "0x82495838",
@@ -5735,7 +5736,7 @@
     "?push_back@?$vector@W4TrackType@@V?$StlNodeAlloc@W4TrackType@@@stlpmtx_std@@@stlpmtx_std@@QAAXABW4TrackType@@@Z": "PROVEN",
     "?push_back@?$vector@W4CubeFace@RndCubeTex@@V?$StlNodeAlloc@W4CubeFace@RndCubeTex@@@stlpmtx_std@@@stlpmtx_std@@QAAXABW4CubeFace@RndCubeTex@@@Z": "PROVEN",
     "?push_back@?$vector@W4TrackInstrument@@V?$StlNodeAlloc@W4TrackInstrument@@@stlpmtx_std@@@stlpmtx_std@@QAAXABW4TrackInstrument@@@Z": "PROVEN",
-    "?push_back@?$vector@W4KeyboardKey@CharKeyHandMidi@@V?$StlNodeAlloc@W4KeyboardKey@CharKeyHandMidi@@@stlpmtx_std@@@stlpmtx_std@@QAAXABW4KeyboardKey@CharKeyHandMidi@@@Z": "PROVEN"
+    "?push_back@?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVSymbol@@@Z": "PROVEN"
    }
   },
   "0x822d4430": {
@@ -6055,7 +6056,7 @@
    }
   },
   "0x822f0408": {
-   "survivor": "?DeleteAll@?$ObjPtrList@VRndTransformable@@VObjectDir@@@@QAAXXZ",
+   "survivor": "?DeleteAll@?$ObjPtrList@VRndMesh@@VObjectDir@@@@QAAXXZ",
    "callees": [
     "0x8227d0e8",
     "0x825243e0",
@@ -6073,7 +6074,7 @@
     "0x82e06efc"
    ],
    "verdicts": {
-    "?DeleteAll@?$ObjPtrList@VRndMesh@@VObjectDir@@@@QAAXXZ": "PROVEN"
+    "?DeleteAll@?$ObjPtrList@VRndTransformable@@VObjectDir@@@@QAAXXZ": "PROVEN"
    }
   },
   "0x822f0ed8": {
@@ -10546,7 +10547,7 @@
    }
   },
   "0x823c3300": {
-   "survivor": "??6@YAAAVBinStream@@AAV0@ABVConstraint@HamIKEffector@@@Z",
+   "survivor": "??6@YAAAVBinStream@@AAV0@ABUConstraintSystem@CharBlendBone@@@Z",
    "callees": [
     "0x82000c55",
     "0x8229e5d0",
@@ -10558,7 +10559,7 @@
    ],
    "verdicts": {
     "??6@YAAAVBinStream@@AAV0@ABUIKTarget@CharIKHand@@@Z": "PROVEN",
-    "??6@YAAAVBinStream@@AAV0@ABUConstraintSystem@CharBlendBone@@@Z": "PROVEN"
+    "??6@YAAAVBinStream@@AAV0@ABVConstraint@HamIKEffector@@@Z": "PROVEN"
    }
   },
   "0x823c3360": {
@@ -28848,7 +28849,7 @@
    }
   },
   "0x82768ff8": {
-   "survivor": "?_M_create_node@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_std@@U?$pair@QAVFlowNode@@W4QueueState@1@@3@U?$_Select1st@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@QAVFlowNode@@W4QueueState@1@@2@@Z",
+   "survivor": "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@PAVDataArray@@@2@@Z",
    "callees": [
     "0x82273420",
     "0x825243e0",
@@ -28870,7 +28871,8 @@
    "verdicts": {
     "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@H@3@U?$_Select1st@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@H@2@@Z": "PROVEN",
     "?_M_create_node@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVFixedSetlist@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBVSymbol@@PAVFixedSetlist@@@2@@Z": "PROVEN",
-    "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@@Z": "PROVEN"
+    "?_M_create_node@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHVSymbol@@@2@U?$_Select1st@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHVSymbol@@@stlpmtx_std@@@2@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBHVSymbol@@@2@@Z": "PROVEN",
+    "?_M_create_node@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_std@@U?$pair@QAVFlowNode@@W4QueueState@1@@3@U?$_Select1st@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@QAVFlowNode@@W4QueueState@1@@2@@Z": "PROVEN"
    }
   },
   "0x8276c970": {
