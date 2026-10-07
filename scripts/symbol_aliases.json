@@ -119163,6 +119163,16 @@
      "evidence": "Lane W16-ST 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7, W16-PH admission rule). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN, no CYCLE-ASSUMED leaf (SLOT-FOLD-OK x6, SLOT-OK:DATA-ACCEPTED x3, VACUOUS-BUT-IDENTICAL x1). size_gate: extents equal: retail 324 == ours 324. Retail census at the survivor: 1 body/bodies identical including relocation target names, 16 of the same masked bytes and relocation shape. Per-call-site (W17-IKM): paired callers of our spelling: lands-at-survivor 1, unpaired-caller 2; none lands elsewhere. Charged row(s): ?_M_fill_insert@?$vector@VSampleMarker@@V?$StlNodeAlloc@VSampleMarker@ (108 B)."
     }
    ]
+  },
+  {
+   "name": "_Copy_Construct",
+   "address": "0x823f2058",
+   "survivor": "??$_Copy_Construct@VMemStream@@@stlpmtx_std@@YAXPAVMemStream@@ABV1@@Z",
+   "folded": [
+    "??$_Param_Construct@VMemStream@@V1@@stlpmtx_std@@YAXPAVMemStream@@ABV1@@Z"
+   ],
+   "evidence": "W16-SO 2026-10-07: retail 0x823f2058 (60 B, EH frame, null check, bl ??0MemStream@@QAA@ABV0@@Z at 0x823f1fa0, unwind funclet calls the empty placement delete at 0x826c3888) has four retail call sites: 0x823f2174 (__uninitialized_fill_n<MemStream>) and 0x823f221c (__uninitialized_copy<MemStream>), where STLport source calls _Param_Construct, and 0x823f252c (_M_insert_overflow_aux<MemStream>) and 0x823f262c (push_back<MemStream>), where it calls _Copy_Construct. Both COMDATs are emitted by SessionMessages.obj with identical bodies. tools/icf_pair_adjudicate.py --survivor _Copy_Construct<MemStream> --ours _Param_Construct<MemStream,MemStream> --chase: FLAT T1 PROVEN (retail 60 B / ours 60 B, 1 relocation, targets agree), CHASED T1 PROVEN. The body only exists out of line once MEM_OVERLOAD declares the matching class placement delete (same lane, src/system/utl/MemMgr.h).",
+   "lane": "W16-SO 2026-10-07"
   }
  ]
 }

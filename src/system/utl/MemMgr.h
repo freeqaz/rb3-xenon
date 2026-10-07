@@ -509,6 +509,7 @@ void operator delete[](void *mem);
         return MemAlloc(s, __FILE__, line_num, #class_name, 0);                          \
     }                                                                                    \
     static void *operator new(unsigned int s, void *place) { return place; }             \
+    static void operator delete(void *, void *) {}                                       \
     __declspec(noinline) static void operator delete(void *v) {                          \
         MemFree(v, __FILE__, line_num, #class_name);                                      \
     }
