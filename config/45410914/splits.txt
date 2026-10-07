@@ -99,7 +99,6 @@ Object.cpp:
 	.pdata      start:0x8223C750 end:0x8223C760
 	.pdata      start:0x8223C760 end:0x8223C768
 	.pdata      start:0x82261698 end:0x822616A0
-	.text       start:0x82272E3C end:0x82272E68
 	.text       start:0x8227403C end:0x8227409C
 	.text       start:0x8227409C end:0x822740C4
 	.text       start:0x822740D0 end:0x8227411C
@@ -289,6 +288,7 @@ BandScoreboard.cpp:
 	.text       start:0x82274290 end:0x822743EC
 	.text       start:0x8227A6A8 end:0x8227A728
 	.text       start:0x822CD8F4 end:0x822CD90C
+	.text       start:0x822CD90C end:0x822CD9B4
 	.text       start:0x822CD9B4 end:0x822CDA30
 	.text       start:0x822CDA30 end:0x822CDA7C
 	.text       start:0x822CDA7C end:0x822CDB68
@@ -415,7 +415,8 @@ TrackPanelDir.cpp:
 	.pdata      start:0x821FAFC0 end:0x821FAFD8
 	.pdata      start:0x821FAFE8 end:0x821FAFF0
 	.pdata      start:0x821FAFF0 end:0x821FB200
-	.text       start:0x823038A0 end:0x823038B0
+	.text       start:0x822E4A30 end:0x822E4AD4
+	.text       start:0x823038A8 end:0x823038B0
 	.text       start:0x823038B0 end:0x82303A68
 	.text       start:0x82303A68 end:0x82307630
 	.text       start:0x82307630 end:0x82307B74
@@ -442,6 +443,7 @@ TrackPanelDirBase.cpp:
 	.pdata      start:0x821FFBB0 end:0x821FFC48
 	.pdata      start:0x821FFC58 end:0x821FFD30
 	.pdata      start:0x821FFD38 end:0x821FFD40
+	.text       start:0x823038A0 end:0x823038A8
 	.text       start:0x82356E2C end:0x82356EC4
 	.text       start:0x82356EC8 end:0x82356F48
 	.text       start:0x82356F48 end:0x82356F64
@@ -1237,7 +1239,6 @@ BandStarDisplay.cpp:
 	.text       start:0x822CCDC8 end:0x822CCDD0
 	.text       start:0x822CCDD0 end:0x822CD8C0
 	.text       start:0x822CD8C0 end:0x822CD8F4
-	.text       start:0x822CD90C end:0x822CD9B4
 	.text       start:0x822CDB68 end:0x822CDC18
 
 BandRetargetVignette.cpp:
@@ -1264,6 +1265,7 @@ BandRetargetVignette.cpp:
 	.text       start:0x822C5EC8 end:0x822C5F94
 	.text       start:0x822C5F98 end:0x822C6080
 	.text       start:0x822C6080 end:0x822C6A3C
+	.text       start:0x822C6A40 end:0x822C6A90
 	.text       start:0x822C6A90 end:0x822C7040
 
 StreakMeter.cpp:
@@ -2039,7 +2041,6 @@ Instance.cpp:
 	.pdata      start:0x82215970 end:0x82215988
 	.pdata      start:0x82215988 end:0x82215990
 	.pdata      start:0x82215990 end:0x82215C00
-	.text       start:0x822C6A40 end:0x822C6A90
 	.text       start:0x824AA660 end:0x824AA6D8
 	.text       start:0x824EA084 end:0x824EA088
 	.text       start:0x824EA094 end:0x824EA220
@@ -2307,7 +2308,7 @@ Memory_Xbox.cpp:
 StreamNull.cpp:
 	.pdata      start:0x82239150 end:0x822391B0
 	.text       start:0x82719C88 end:0x82719CAC
-	.text       start:0x82719CB0 end:0x8271A0BC
+	.text       start:0x82719CB0 end:0x8271A0B8
 
 CharEyeDartRuleset.cpp:
 	.pdata      start:0x82205820 end:0x82205828
@@ -3554,7 +3555,6 @@ SampleInst.cpp:
 	.pdata      start:0x8223A1D0 end:0x8223A1F0
 	.pdata      start:0x8223A1F0 end:0x8223A1F8
 	.pdata      start:0x8223A1F8 end:0x8223A218
-	.text       start:0x822A2E10 end:0x822A2E78
 	.text       start:0x822A2E78 end:0x822A2F18
 	.text       start:0x822A2F78 end:0x822A2F80
 	.text       start:0x8272A830 end:0x8272A884
@@ -4095,6 +4095,7 @@ ChordShapeGenerator.cpp:
 	.pdata      start:0x821F86C0 end:0x821F8888
 	.pdata      start:0x821F8888 end:0x821F8890
 	.pdata      start:0x821F8890 end:0x821F8998
+	.text       start:0x822DC828 end:0x822DC878
 	.text       start:0x822DC9D0 end:0x822DCA50
 	.text       start:0x822DCA50 end:0x822DCF58
 	.text       start:0x822DCF58 end:0x822DCFB8
@@ -5026,6 +5027,7 @@ Sfx.cpp:
 	.pdata      start:0x822391D8 end:0x82239410
 	.pdata      start:0x82239428 end:0x82239500
 	.pdata      start:0x82239508 end:0x82239610
+	.text       start:0x826FCD78 end:0x826FCDC8
 	.text       start:0x826FCE10 end:0x826FCEA8
 	.text       start:0x826FE080 end:0x826FE4A8
 	.text       start:0x826FE4A8 end:0x826FE514
@@ -5040,6 +5042,7 @@ Sfx.cpp:
 	.text       start:0x82700C98 end:0x82700D18
 	.text       start:0x82700D18 end:0x82700D28
 	.text       start:0x82700D28 end:0x82701368
+	.text       start:0x8271A0B8 end:0x8271A0BC
 	.text       start:0x8271A138 end:0x8271A220
 	.text       start:0x8271A2B0 end:0x8271C1F0
 	.text       start:0x8271C2CC end:0x8271CBD8
@@ -6116,7 +6119,6 @@ Msg.cpp:
 	.text       start:0x822756A0 end:0x82275750
 	.text       start:0x82275750 end:0x82275808
 	.text       start:0x8230DF5C end:0x8230DF88
-	.text       start:0x8238B130 end:0x8238B198
 	.text       start:0x823D9570 end:0x823D95C4
 	.text       start:0x823D9624 end:0x823D9628
 	.text       start:0x8245CC78 end:0x8245CCE0
@@ -7214,6 +7216,7 @@ CharLipSyncDriver.cpp:
 	.pdata      start:0x82203258 end:0x82203260
 	.text       start:0x82274150 end:0x822741B0
 	.text       start:0x8236AEA8 end:0x8236AF28
+	.text       start:0x8238B130 end:0x8238B198
 	.text       start:0x8238B198 end:0x8238BB08
 	.text       start:0x8238BB08 end:0x8238BC14
 	.text       start:0x8238BC18 end:0x8238C740
@@ -7412,10 +7415,6 @@ system/synth_xbox/FxSendReverb.cpp:
 
 MovieSys.cpp:
 	.text       start:0x827A88A8 end:0x827A88E0
-
-FlowOnStop.cpp:
-	.pdata      start:0x821F8480 end:0x821F8488
-	.text       start:0x822DC828 end:0x822DC878
 
 BinkReader.cpp:
 	.text       start:0x82BBAB0C end:0x82BBAB18
@@ -11105,7 +11104,7 @@ GemTrackDir.cpp:
 	.text       start:0x822E3D58 end:0x822E4500
 	.text       start:0x822E4508 end:0x822E4650
 	.text       start:0x822E469C end:0x822E46A0
-	.text       start:0x822E46EC end:0x822E4AD4
+	.text       start:0x822E46EC end:0x822E4A30
 	.text       start:0x822E4AD8 end:0x822E4F70
 	.text       start:0x822E4F70 end:0x822E4FD0
 	.text       start:0x822E4FD0 end:0x822E5038
@@ -12073,7 +12072,8 @@ system/synth/Synth.cpp:
 	.text       start:0x826FC9A8 end:0x826FCA10
 	.text       start:0x826FCA10 end:0x826FCA90
 	.text       start:0x826FCA90 end:0x826FCB28
-	.text       start:0x826FCB28 end:0x826FCE10
+	.text       start:0x826FCB28 end:0x826FCD78
+	.text       start:0x826FCDC8 end:0x826FCE10
 	.text       start:0x826FCEA8 end:0x826FCEB0
 	.text       start:0x826FCEB0 end:0x826FD8D8
 	.text       start:0x826FD8D8 end:0x826FD968
@@ -12275,6 +12275,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A2C70 end:0x822A2CE8
 	.text       start:0x822A2CE8 end:0x822A2D50
 	.text       start:0x822A2D50 end:0x822A2DB8
+	.text       start:0x822A2E10 end:0x822A2E78
 	.text       start:0x822A2F18 end:0x822A2F78
 	.text       start:0x822A2F80 end:0x822A2FA8
 	.text       start:0x822A2FA8 end:0x822A3008
@@ -16115,3 +16116,6 @@ system/beatmatch/Output.cpp:
 
 system/meta/Achievements_Xbox.cpp:
 	.text       start:0x827B8680 end:0x827B86B0
+
+ChecksumData_xbox.cpp:
+	.text       start:0x82272E3C end:0x82272E68

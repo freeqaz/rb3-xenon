@@ -118,7 +118,7 @@ public:
     void SetMasterVolume(float);
     float GetMasterVolume();
     // RB3-era fire-and-forget cue playback (GamePanel::PlayBandDiedCue); dc3's
-    // newer Synth dropped it. Declared decl-only.
+    // newer Synth dropped it. Retail 0x826FE8A8.
     void Play(const char *, float, float, float);
     void ToggleHud();
     const ADSRImpl *DefaultADSR();
