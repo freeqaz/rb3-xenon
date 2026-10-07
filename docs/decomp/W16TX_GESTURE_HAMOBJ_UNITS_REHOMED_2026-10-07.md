@@ -135,8 +135,8 @@ and `_Copy_Construct<set<Symbol>>`, `Tour::HasTourProperty` and `Tour::GetTourPr
 `Stats::Stats(const Stats&)` at `0x826580cc`), which is normal for a COMDAT.
 
 Our `band3/tour/Tour.obj` does not instantiate `vector<Symbol>(const vector&)`. Its 116 B
-`vector<list<int>>` copy constructor differs on bytes. Neither our `Tour.cpp` nor rb3-Wii's copies a
-`vector<Symbol>`; both only declare one local (`Tour.cpp:621`, rb3-Wii `:601`). So retail's Tour TU
+`vector<list<int>>` copy constructor differs on bytes. Neither our `Tour.cpp` nor its Wii-target counterpart copies a
+`vector<Symbol>`; both only declare one local (`Tour.cpp:621`; `:601` in its Wii-target counterpart). So retail's Tour TU
 contains something both decomps lack. The row is pinned to Tour and reads 0, as an honest gap. The
 SongLayout pin read 100 only because a DC3 object that retail lacks happened to instantiate the same
 template. Its funclet (`fn_8235CB54`) does pair in Tour by bytes.
@@ -170,7 +170,7 @@ The owner is still not identified, but there is now a candidate. Retail lays the
 in alphabetical object order: `App` (`0x82270000`), then an unpinned run, then `ChecksumData_xbox`
 (`0x82272E40`), `Main` (`0x82272E68`), `Memory_Xbox`. The run from `0x822716F8` to `0x82272E3C` holds
 only template/inline COMDATs: `TextFileStream`, `Message`, `map<int,float>`, `MakeString<float,float,float>`,
-`sort<float*>` and `vector<int>::resize`. rb3-Wii's root has two TUs that sort between App and
+`sort<float*>` and `vector<int>::resize`. Wii-target source has two TUs that sort between App and
 ChecksumData and use exactly these: `BandOffline.cpp` (`map<int,float>`, `map<String,float>`) and
 `BudgetScreen.cpp` (`TextFileStream`, `sort<float*>`, `MakeString(fmt, min, mean, max)`, `mDist.resize`
 on a `vector<int>`, `Find<UIScreen>`, a static `Message`). Retail has **no** RTTI for either class. That
