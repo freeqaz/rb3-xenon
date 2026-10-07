@@ -44,7 +44,9 @@ STUB_RE = re.compile(
     r"x20_bandpatchmesh_link\.cpp|native_link_glue\.cpp|xdk_shims\.cpp|"
     r"m1_symbols\.cpp|m3_symbols\.cpp|m6_symbols\.cpp|m8_support\.cpp|m10_support\.cpp|"
     r"beatmatch_native_support\.cpp|rb3_render_glue\.cpp|milo_object_factories\.cpp|"
-    r"bandtrack_link_stubs\.cpp|w16sh_link_support\.cpp)\.o$"
+    r"bandtrack_link_stubs\.cpp|w16sh_link_support\.cpp|"
+    # W16-UR: W16-TR's XboxEnumeration/XboxPurchaser aborting stubs and W16-TS's phase link edge.
+    r"w16tr_link_stubs\.cpp|w16ts_link_support\.cpp)\.o$"
 )
 
 # native/src objects that are linked but are NOT stubs: drivers and runtime
@@ -55,7 +57,9 @@ STUB_RE = re.compile(
 # round while STUB_RE did not list them, and the census read clean.
 NON_STUB_RE = re.compile(
     r"/src/(main_[a-z0-9]+\.cpp|bandtrack_phase\.cpp|w16sh_phase\.cpp|"
-    r"w16tf_phase\.cpp|w16tj_phase\.cpp|score_engine\.cpp|cc5_stub_probe\.c)\.o$"
+    r"w16tf_phase\.cpp|w16tj_phase\.cpp|score_engine\.cpp|cc5_stub_probe\.c|"
+    # W16-UR: the gate phases W16-TM .. W16-UJ added to rb3-render (drivers, not stubs).
+    r"w16t[mrswy]_phase\.cpp|w16u[bfj]_phase\.cpp)\.o$"
 )
 NATIVE_SRC_RE = re.compile(r"CMakeFiles/[^/]+\.dir/src/[^/]+\.o$")
 

@@ -128,6 +128,8 @@ def run_all(repo, bdir):
     pdir = os.path.join(bdir, "prof")
     os.makedirs(pdir, exist_ok=True)
     inp["LOGDIR"], inp["SLUG"] = pdir, "prof"
+    # W16-UR: W16-UA/UD added rb3-ark's `--config-dump "$CFG_ARK"`; native_health.sh derives it from LOGDIR/SLUG.
+    inp["CFG_ARK"] = os.path.join(pdir, "native_health_syscfg_ark_prof.txt")
     status = {}
     for name, marker, argv in health_targets(repo):
         exe = os.path.join(bdir, name)
