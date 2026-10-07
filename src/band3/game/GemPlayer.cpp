@@ -187,7 +187,8 @@ GemPlayer::GemPlayer(
         mDrumCymbalPointBonus = drumCfg->FindArray("pro_drum_bonus");
     }
 
-    SongInfoCopy songInfo(TheSongMgr.SongAudioData(MetaPerformer::Current()->Song()));
+    Symbol song = MetaPerformer::Current()->Song();
+    SongInfoCopy songInfo(TheSongMgr.SongAudioData(song));
     mMatcher = new BeatMatcher(
         GetUserGuid(),
         GetSlot(),
@@ -213,17 +214,23 @@ GemPlayer::GemPlayer(
     SetFillLogic(TheGame->GetFillLogic());
     SetTypeDef(SystemConfig("player", "handlers"));
     TrackType ty = mUser->GetTrackType();
-    if (ty - 1U <= 1 && !TheGame->mProperties.mDisableGuitarFx) {
+    if ((ty == kTrackGuitar || ty == kTrackBass)
+        && !TheGame->mProperties.mDisableGuitarFx) {
         mGuitarFx = new GuitarFx(ty);
         mGuitarFx->Load();
         SetGuitarFx();
         // (Wii-only guitar FXCore init removed — retail Xbox has no unk39c member)
     }
-    if (ty - 4U <= 1 && !TheGame->mProperties.mDisableKeysFx) {
+    if ((ty == kTrackKeys || ty == kTrackRealKeys)
+        && !TheGame->mProperties.mDisableKeysFx) {
         mKeysFx = new KeysFx(ty);
         mKeysFx->Load();
     }
+#ifdef HX_NATIVE
+    // Dev-build script hooks: retail has no "enable_deltas" / "print_deltas"
+    // strings and its ctor (0x826C8470) makes no call here.
     DeltaTrackerInit();
+#endif
     if (!TheGame->InDrumTrainer()) {
         DataArray *audioCfg = SystemConfig("beatmatcher", "audio");
         float secs = 0;
