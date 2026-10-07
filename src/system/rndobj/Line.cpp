@@ -514,11 +514,6 @@ void RndLine::UpdateLinePair(RndLine::Point *pt1, RndLine::Point *pt2) {
     }
 }
 
-template <class _T>
-__declspec(noinline) auto _outline_back(_T* _obj) -> decltype(_obj->back()) {
-    return _obj->back();
-}
-
 void RndLine::UpdateLine(RndLine::Point *start, RndLine::Point *end) {
     // Phase 1: Project all points (divide x,z by y in view space)
     for (Point *pt = start; pt <= end; pt++) {
@@ -614,16 +609,15 @@ void RndLine::UpdateLine(RndLine::Point *start, RndLine::Point *end) {
         endSide[1] = -endSide[1];
     }
 
-    // Phase 4: Copy side vectors for points outside the visible range
-    Point *pointsBegin = &mPoints[0];
-    Point *pointsEnd = &_outline_back(&mPoints);
-
-    if (pointsBegin == start) {
+    // Phase 4: Copy side vectors for points outside the visible range.
+    // Retail reads mPoints' begin/end inline here and re-reads both after
+    // the copy, before MapVerts.
+    if (&mPoints[0] == start) {
         // Start is at the beginning; copy end's data to points after end
-        if (end + 1 <= pointsEnd) {
+        if (end + 1 <= &mPoints.back()) {
             int *endSide = &end->unk[8];
             int *endView = &end->unk[0];
-            for (Point *pt = end + 1; pt <= pointsEnd; pt++) {
+            for (Point *pt = end + 1; pt <= &mPoints.back(); pt++) {
                 int *ptData = &pt->unk[0];
                 ptData[8] = endSide[0];
                 ptData[9] = endSide[1];
@@ -633,11 +627,11 @@ void RndLine::UpdateLine(RndLine::Point *start, RndLine::Point *end) {
                 ptData[3] = endView[3];
             }
         }
-    } else if (pointsBegin < start) {
+    } else if (&mPoints[0] < start) {
         // Copy start's side/view data to points before start
         int *startSide2 = &start->unk[8];
         int *startView = &start->unk[0];
-        for (Point *pt = pointsBegin; pt < start; pt++) {
+        for (Point *pt = &mPoints[0]; pt < start; pt++) {
             int *ptData = &pt->unk[0];
             ptData[8] = startSide2[0];
             ptData[9] = startSide2[1];
@@ -649,6 +643,8 @@ void RndLine::UpdateLine(RndLine::Point *start, RndLine::Point *end) {
     }
 
     // Phase 5: Write vertex positions
+    Point *pointsBegin = &mPoints[0];
+    Point *pointsEnd = &mPoints.back();
     VertsMap vmap;
     MapVerts(0, vmap);
 

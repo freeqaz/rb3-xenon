@@ -56,22 +56,34 @@ void NgDOFProc::Set(const RndCam *cam, float focalPlane, float blurDepth, float 
         mBlurDepth = 0.001f;
     }
 
-    float nearPlane = cam->NearPlane();
-    float farPlane = cam->FarPlane();
-
-    float scale = 0.0f;
-    if (focalPlane >= nearPlane) {
-        scale = (farPlane - farPlane / focalPlane * nearPlane) / (farPlane - nearPlane)
-            * (cam->ZRange().y - cam->ZRange().x) + cam->ZRange().x;
+    // Retail reads both camera planes at the top of each of the two depth
+    // computations: the second pair of loads (cam+0x2b4/0x2b8) comes after
+    // the mDepthOfFieldScale store, so the planes are per-block locals.
+    float scale;
+    {
+        float nearPlane = cam->NearPlane();
+        float farPlane = cam->FarPlane();
+        if (focalPlane < nearPlane) {
+            scale = 0.0f;
+        } else {
+            scale = (farPlane - farPlane / focalPlane * nearPlane) / (farPlane - nearPlane)
+                    * (cam->ZRange().y - cam->ZRange().x)
+                + cam->ZRange().x;
+        }
     }
     mDepthOfFieldScale = scale;
 
     float farFocal = focalPlane - focalPlane * mBlurDepth;
 
     float bias = 0.0f;
-    if (farFocal >= nearPlane) {
-        bias = (farPlane - farPlane / farFocal * nearPlane) / (farPlane - nearPlane)
-            * (cam->ZRange().y - cam->ZRange().x) + cam->ZRange().x;
+    {
+        float nearPlane = cam->NearPlane();
+        float farPlane = cam->FarPlane();
+        if (farFocal >= nearPlane) {
+            bias = (farPlane - farPlane / farFocal * nearPlane) / (farPlane - nearPlane)
+                    * (cam->ZRange().y - cam->ZRange().x)
+                + cam->ZRange().x;
+        }
     }
     mDepthOfFieldBias = bias;
 
