@@ -7,7 +7,8 @@
 
 class CharDriverMidi : public CharDriver {
 public:
-    virtual ~CharDriverMidi();
+    // No user-declared destructor: retail's scalar deleting dtor calls
+    // ~CharDriver directly and no standalone ??1CharDriverMidi exists.
     OBJ_CLASSNAME(CharDriverMidi)
     OBJ_SET_TYPE(CharDriverMidi)
     virtual DataNode Handle(DataArray *, bool);

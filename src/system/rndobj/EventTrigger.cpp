@@ -653,7 +653,9 @@ void EventTrigger::RegisterEvents() {
 }
 
 void EventTrigger::UnregisterEvents() {
-    Hmx::Object *src = Dir();
+    // Retail casts to MsgSource and calls MsgSource::RemoveSink, the
+    // mirror of RegisterEvents; Hmx::Object::RemoveSink is a different callee.
+    MsgSource *src = dynamic_cast<MsgSource *>(Dir());
     if (src) {
         FOREACH (it, mTriggerEvents) {
             src->RemoveSink(this, *it);

@@ -409,7 +409,15 @@ void RndGroup::RemoveObject(Hmx::Object *obj) {
 void RndGroup::AddObjectAtFront(Hmx::Object *o) {
     if (!o || o == this)
         return;
-    if (mObjects.find(o) != mObjects.end())
+    // Retail walks with a break-out loop (loop test at the bottom, one
+    // null test after it) and reloads the head for the insert; the
+    // return-from-loop find() keeps the head live instead.
+    ObjPtrList<Hmx::Object>::iterator it = mObjects.begin();
+    for (; it != mObjects.end(); ++it) {
+        if (*it == o)
+            break;
+    }
+    if (it != mObjects.end())
         return;
     mObjects.insert(mObjects.begin(), o);
     RndAnimatable *anim = dynamic_cast<RndAnimatable *>(o);

@@ -758,10 +758,12 @@ void RndText::ComputeCharWidths(float *fp, int i2, const char *cc, Style style) 
             if (i4) {
                 float fVal = i4->CharAdvance(u7, us68) * style.mSize;
                 fp[i] = fVal;
-                u7 = us68;
                 if (fVal < 0)
                     fp[i] = 0;
                 FontKey key = (FontKey)i4;
+                // Retail reloads us68 into u7 after storing key, just before
+                // the map lookup.
+                u7 = us68;
                 mMeshMap[key].displayableChars++;
             } else
                 fp[i] = 0;
