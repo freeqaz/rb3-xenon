@@ -116475,12 +116475,10 @@
    ]
   },
   {
-   "name": "GetName",
+   "name": "GetLocalUser",
    "address": "0x827a4f38",
-   "survivor": "?GetName@Profile@@QBAPBDXZ",
-   "folded": [
-    "?GetLocalUser@Profile@@QBAPAVLocalUser@@XZ"
-   ],
+   "survivor": "?GetLocalUser@Profile@@QBAPAVLocalUser@@XZ",
+   "folded": [],
    "evidence": "Created by lane W16-NH-NAME: see per-member records in `admitted`.",
    "lane": "W16-NH-NAME 2026-10-02",
    "admitted": [
@@ -116488,6 +116486,16 @@
      "spelling": "?GetLocalUser@Profile@@QBAPAVLocalUser@@XZ",
      "lane": "W16-NH-NAME 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED. Retail call site(s) reaching the survivor where we call this spelling: 0x827acbb4. 16 B forwarder (lis; lwz r4,0x10(r3); lwz r3,TheUserMgr; b GetLocalUserFromPadNum), byte-identical to our Profile::GetLocalUser; the retail caller passes its result to PlatformMgr::HasUserSigninChanged. Half its words are relocated, so flat T1 calls it vacuous; admitted on the retail call-site witness."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?GetLocalUser@Profile@@QBAPAVLocalUser@@XZ",
+     "lane": "W16-UH 2026-10-07",
+     "class": "SURVIVOR_WAS_A_MAP_DEFECT",
+     "disposition": "survivor respelled in place; no fold remains",
+     "respelled_to": "?GetLocalUser@Profile@@QBAPAVLocalUser@@XZ",
+     "evidence": "0x827a4f38 is Profile::GetLocalUser, not Profile::GetName. The 07-18 byte-identity sweep (469ea464d) named it GetName and f3ec9592d then rewrote our GetName to return the LocalUser* cast to const char*, so this group's PROVEN compared retail against a GetName fitted to the wrong address (circular). Retail's GetName is 0x827a5018: GetLocalUserFromPadNum(mPadNum)->UserName(), a vcall through the User virtual base; tools/placeholder_callee_census.py found 10 call sites that reach 0x827a5018 where we call GetName. W16-UH maps 0x827a5018 to GetName and 0x827a4f38 to GetLocalUser, so the survivor is respelled to the function that lives there and the membership is no longer a fold. Not pruned, per a745039e."
     }
    ]
   },
