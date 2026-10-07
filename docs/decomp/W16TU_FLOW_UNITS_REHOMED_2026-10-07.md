@@ -200,8 +200,10 @@ same way.
 
 One more Flow spelling remains in the map, outside the 13 units: `0x82768FF8`
 `_Rb_tree<FlowNode*, pair<FlowNode* const, FlowQueueable::QueueState>>::_M_create_node`. It is pinned to
-`band3/meta_band/ViewSetting` and sits inside DataUtl's span. It pairs through ViewSetting's scatter
-include of `CriticalUserListener.cpp`.
+`band3/meta_band/ViewSetting` and sits inside DataUtl's span. It pairs through a chain of scatter
+includes: ViewSetting includes `CriticalUserListener.cpp`, which includes `flow/FlowManager.cpp`
+(`CriticalUserListener.cpp:100`). Both objects define the spelling. So Flow source is still compiled into
+two retail-present units, as pairing scaffolding.
 
 Per-class misses that are not whole systems (`HAQManager`, `ChordPreview`, `LocalePanel`, `PhysicsVolume`,
 …) came from a loose "polymorphic" test and were not adjudicated. `HAQManager` is already known absent
