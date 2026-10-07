@@ -4,8 +4,8 @@
 #include "obj/DataFunc.h"
 #include "os/Timer.h"
 
-// Ported from retail's bytes; the TU has no symbols and no source in any oracle
-// (DC3 dropped the Stage Kit). Retail extent 0x82521B30..0x825227E8. Every name
+// Ported from retail's bytes; the TU has no symbols and no source in this tree
+// or DC3 (DC3 dropped the Stage Kit). Retail extent 0x82521B30..0x825227E8. Every name
 // below is ours; each body cites the retail function it reproduces.
 //
 // State (retail address, initial value):

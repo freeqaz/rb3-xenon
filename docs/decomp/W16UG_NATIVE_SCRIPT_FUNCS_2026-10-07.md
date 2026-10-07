@@ -94,8 +94,8 @@ The gate below fails the first time a target reaches one.
 
 ## The stage-kit TU (`src/system/os/StageKit.cpp`)
 
-No oracle has it: DC3 dropped the Stage Kit, and rb3-Wii only stubs the
-`stagekit_*` cues. It was ported function by function from retail
+No source tree has it: DC3 dropped the Stage Kit, and Wii-target source only
+stubs the `stagekit_*` cues. It was ported function by function from retail
 `0x82521B30`..`0x825227E8`; each body cites its address. Its state:
 
 - a 32-entry raw-command ring (full ring drops its oldest);
