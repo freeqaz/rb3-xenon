@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "7188511f8",
+ "recorded_at": "ba085a822",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -703,7 +703,7 @@
   "0x82270690": "??4?$ObjDirPtr@VObjectDir@@@@QAAAAV0@PAVObjectDir@@@Z",
   "0x82270848": "?LoadFile@?$ObjDirPtr@VObjectDir@@@@QAAXABVFilePath@@_N1W4LoaderPos@@1@Z",
   "0x822709d8": "??1?$ObjDirPtr@VObjectDir@@@@UAA@XZ",
-  "0x822716e8": null,
+  "0x822716e8": "??1TextStream@@UAA@XZ",
   "0x822717c0": "?_M_increment@?$_Rb_global@_N@stlpmtx_std@@SAPAU_Rb_tree_node_base@2@PAU32@@Z",
   "0x82271820": "?_M_decrement@?$_Rb_global@_N@stlpmtx_std@@SAPAU_Rb_tree_node_base@2@PAU32@@Z",
   "0x822718a0": "?_Rotate_left@?$_Rb_global@_N@stlpmtx_std@@SAXPAU_Rb_tree_node_base@2@AAPAU32@@Z",
@@ -1085,7 +1085,7 @@
   "0x8239b670": "??1CharCollide@@UAA@XZ",
   "0x8239bbb8": "??_DCharCollide@@QAAXXZ",
   "0x8239c508": "??$__uninitialized_fill_n@PAVVert@SyncMeshCB@@IV12@@stlpmtx_std@@YAPAVVert@SyncMeshCB@@PAV12@IABV12@ABU__false_type@0@@Z",
-  "0x8239c558": null,
+  "0x8239c558": "??$__uninitialized_copy@PAVVert@SyncMeshCB@@PAV12@@stlpmtx_std@@YAPAVVert@SyncMeshCB@@PAV12@00ABU__false_type@0@@Z",
   "0x8239c5d8": null,
   "0x8239de60": "??1CharCuff@@UAA@XZ",
   "0x8239e220": "??_DCharCuff@@QAAXXZ",
@@ -1764,9 +1764,9 @@
   "0x82660548": "??1Node@@UAA@XZ",
   "0x826605e8": "?Compare@Node@@QBAHPBV1@W4SongNodeType@@@Z",
   "0x82662c00": "??1SortNode@@UAA@XZ",
-  "0x826660f0": null,
+  "0x826660f0": "??$__make_heap@PAPAVFriend@@P6A_NPBV1@0@ZPAV1@H@stlpmtx_std@@YAXPAPAVFriend@@0P6A_NPBV1@1@Z0PAH@Z",
   "0x82666160": "??$__linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@0PAV1@P6A_NPBV1@2@Z@Z",
-  "0x82666290": null,
+  "0x82666290": "??$__insertion_sort@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@00P6A_NPBV1@1@Z@Z",
   "0x82667220": "??$__uninitialized_fill_n@PAVCharacterEntry@CharProvider@@IV12@@stlpmtx_std@@YAPAVCharacterEntry@CharProvider@@PAV12@IABV12@ABU__false_type@0@@Z",
   "0x82668a38": "??$__uninitialized_fill_n@PAVPartSelectEntry@OvershellPartSelectProvider@@IV12@@stlpmtx_std@@YAPAVPartSelectEntry@OvershellPartSelectProvider@@PAV12@IABV12@ABU__false_type@0@@Z",
   "0x8266ac78": "?_M_create_node@?$list@VPlane@@V?$StlNodeAlloc@VPlane@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABVPlane@@@Z",
@@ -2467,7 +2467,7 @@
   "0x82b69868": null,
   "0x82b699e8": null,
   "0x82b74488": "??0?$_Vector_base@UVoice@GranularSynth@Synapse@DSP@@V?$StlNodeAlloc@UVoice@GranularSynth@Synapse@DSP@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@UVoice@GranularSynth@Synapse@DSP@@@1@@Z",
-  "0x82b744e8": null,
+  "0x82b744e8": "??$__uninitialized_fill_n@PAUGranule@GranularSynth@Synapse@DSP@@IU1234@@stlpmtx_std@@YAPAUGranule@GranularSynth@Synapse@DSP@@PAU1234@IABU1234@ABU__false_type@0@@Z",
   "0x82b7fab0": "??1TourChar@@UAA@XZ",
   "0x82b80690": "??1TourCharRemote@@UAA@XZ",
   "0x82b87b70": "??$_M_allocate_and_copy@PAURndPointTest@NgRnd@@@?$vector@URndPointTest@NgRnd@@V?$StlNodeAlloc@URndPointTest@NgRnd@@@stlpmtx_std@@@stlpmtx_std@@IAAPAURndPointTest@NgRnd@@IPAU23@0@Z",
@@ -3195,6 +3195,15 @@
    "verdicts": {
     "??1CompareMoveVariantName@@QAA@XZ": "PROVEN",
     "??1VocalEvent@MidiParser@@QAA@XZ": "PROVEN"
+   }
+  },
+  "0x822716e8": {
+   "survivor": "??1TextStream@@UAA@XZ",
+   "callees": [
+    "0x82000e8c"
+   ],
+   "verdicts": {
+    "??0TextStream@@QAA@XZ": "PROVEN"
    }
   },
   "0x82271d48": {
@@ -9416,6 +9425,17 @@
     "??$__uninitialized_fill_n@PAVSingerResultsData@@IV1@@stlpmtx_std@@YAPAVSingerResultsData@@PAV1@IABV1@ABU__false_type@0@@Z": "PROVEN"
    }
   },
+  "0x8239c558": {
+   "survivor": "??$__uninitialized_copy@PAVVert@SyncMeshCB@@PAV12@@stlpmtx_std@@YAPAVVert@SyncMeshCB@@PAV12@00ABU__false_type@0@@Z",
+   "callees": [
+    "0x8282a900"
+   ],
+   "verdicts": {
+    "??$__uninitialized_copy@PAV?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@PAV12@@stlpmtx_std@@YAPAV?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@PAV12@00ABU__false_type@0@@Z": "PROVEN",
+    "??$__uninitialized_copy@PAVSingerResultsData@@PAV1@@stlpmtx_std@@YAPAVSingerResultsData@@PAV1@00ABU__false_type@0@@Z": "PROVEN",
+    "??$__uninitialized_copy@PBV?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@PAV12@@stlpmtx_std@@YAPAV?$RangedData@VRGRollChord@@@?$RangedDataCollection@VRGRollChord@@@@PBV12@0PAV12@ABU__false_type@0@@Z": "PROVEN"
+   }
+  },
   "0x8239c640": {
    "survivor": "??$_M_allocate_and_copy@PAVFace@RndMesh@@@?$vector@VFace@RndMesh@@V?$StlNodeAlloc@VFace@RndMesh@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVFace@RndMesh@@IPAV23@0@Z",
    "callees": [
@@ -13174,7 +13194,8 @@
     "??$__adjust_heap@PAPAVRndDrawable@@HPAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@HHPAV1@P6A_N11@Z@Z": "PROVEN",
     "??$__adjust_heap@PAPAVRndTransformable@@HPAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndTransformable@@HHPAV1@P6A_NPBV1@2@Z@Z": "PROVEN",
     "??$__adjust_heap@PAPAVVocalPart@@HPAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@HHPAV1@P6A_NPBV1@2@Z@Z": "PROVEN",
-    "??$__adjust_heap@PAVSymbol@@HV1@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@HHV1@P6A_N11@Z@Z": "PROVEN"
+    "??$__adjust_heap@PAVSymbol@@HV1@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@HHV1@P6A_N11@Z@Z": "PROVEN",
+    "??$__adjust_heap@PAPAVFriend@@HPAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@HHPAV1@P6A_NPBV1@2@Z@Z": "PROVEN"
    }
   },
   "0x823f9ae0": {
@@ -24165,6 +24186,16 @@
     "?Stop@SampleInst@@UAAX_N@Z": "UNDECIDABLE"
    }
   },
+  "0x826660f0": {
+   "survivor": "??$__make_heap@PAPAVFriend@@P6A_NPBV1@0@ZPAV1@H@stlpmtx_std@@YAXPAPAVFriend@@0P6A_NPBV1@1@Z0PAH@Z",
+   "callees": [
+    "0x822bb3c8",
+    "0x823f78b0"
+   ],
+   "verdicts": {
+    "??$__make_heap@PAPAVRndTransformable@@P6A_NPBV1@0@ZPAV1@H@stlpmtx_std@@YAXPAPAVRndTransformable@@0P6A_NPBV1@1@Z0PAH@Z": "PROVEN"
+   }
+  },
   "0x82666160": {
    "survivor": "??$__linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@0PAV1@P6A_NPBV1@2@Z@Z",
    "callees": [
@@ -24174,6 +24205,18 @@
    ],
    "verdicts": {
     "??$__linear_insert@PAPAVRndDrawable@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@0PAV1@P6A_N11@Z@Z": "PROVEN"
+   }
+  },
+  "0x82666290": {
+   "survivor": "??$__insertion_sort@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@00P6A_NPBV1@1@Z@Z",
+   "callees": [
+    "0x82666160",
+    "0x82670f88",
+    "0x8282a840",
+    "0x8282a900"
+   ],
+   "verdicts": {
+    "??$__insertion_sort@PAPAVRndTransformable@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndTransformable@@00P6A_NPBV1@1@Z@Z": "PROVEN"
    }
   },
   "0x82667220": {
@@ -31797,6 +31840,34 @@
     "?CompareRangeStarts@?$RangedData@VRGTrill@@@?$RangedDataCollection@VRGTrill@@@@SA_NHABV12@@Z": "PROVEN"
    }
   },
+  "0x827d10e8": {
+   "survivor": "?GetPans@SongInfoCopy@@UBAABV?$vector@MV?$StlNodeAlloc@M@stlpmtx_std@@@stlpmtx_std@@XZ",
+   "callees": [],
+   "verdicts": {
+    "?GetSymbolToIDMap@FixedSizeSaveableStream@@QAAAAV?$hash_map@VSymbol@@HU?$hash@VSymbol@@@stlpmtx_std@@U?$equal_to@VSymbol@@@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@H@stlpmtx_std@@@3@@stlpmtx_std@@XZ": "PROVEN"
+   }
+  },
+  "0x827d10f8": {
+   "survivor": "?GetCrowdChannels@SongInfoCopy@@UBAABV?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@XZ",
+   "callees": [],
+   "verdicts": {
+    "?GetSavedSetlists@BandProfile@@QBAABV?$vector@PAVLocalSavedSetlist@@V?$StlNodeAlloc@PAVLocalSavedSetlist@@@stlpmtx_std@@@stlpmtx_std@@XZ": "PROVEN"
+   }
+  },
+  "0x827d1100": {
+   "survivor": "?GetDrumSoloSamples@SongInfoCopy@@UBAABV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+   "callees": [],
+   "verdicts": {
+    "?GetDynamicPrereqsSongs@Accomplishment@@QBAABV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@XZ": "PROVEN"
+   }
+  },
+  "0x827d1108": {
+   "survivor": "?GetDrumFreestyleSamples@SongInfoCopy@@UBAABV?$vector@VSymbol@@V?$StlNodeAlloc@VSymbol@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+   "callees": [],
+   "verdicts": {
+    "?GetActivePlayers@Game@@QAAAAV?$vector@PAVPlayer@@V?$StlNodeAlloc@PAVPlayer@@@stlpmtx_std@@@stlpmtx_std@@XZ": "PROVEN"
+   }
+  },
   "0x827d1118": {
    "survivor": "?DisabledAlphaScale@UIListWidget@@QBAMXZ",
    "callees": [],
@@ -32387,6 +32458,21 @@
    ],
    "verdicts": {
     "??1?$list@VTextInstance@@V?$StlNodeAlloc@VTextInstance@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ": "PROVEN"
+   }
+  },
+  "0x827e6178": {
+   "survivor": "?SetDirty@CharWidgetImp@@UAAX_N@Z",
+   "callees": [],
+   "verdicts": {
+    "?SetActive@CrowdRating@@QAAX_N@Z": "PROVEN",
+    "?SetCanFreestyleBeforeGems@PlayerBehavior@@QAAX_N@Z": "PROVEN"
+   }
+  },
+  "0x827e6180": {
+   "survivor": "?Instances@CharWidgetImp@@UAAAAV?$list@VTextInstance@@V?$StlNodeAlloc@VTextInstance@@@stlpmtx_std@@@stlpmtx_std@@XZ",
+   "callees": [],
+   "verdicts": {
+    "?GetRawPhrases@PhraseAnalyzer@@QBAABV?$vector@URawPhrase@@V?$StlNodeAlloc@URawPhrase@@@stlpmtx_std@@@stlpmtx_std@@XZ": "PROVEN"
    }
   },
   "0x827ea060": {
@@ -35221,6 +35307,16 @@
     "??0?$_Vector_base@VPatchPair@MeshPair@BandPatchMesh@@V?$StlNodeAlloc@VPatchPair@MeshPair@BandPatchMesh@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@VPatchPair@MeshPair@BandPatchMesh@@@1@@Z": "PROVEN",
     "??0?$_Vector_base@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@V?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@V?$set@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@V?$StlNodeAlloc@VSymbol@@@3@@stlpmtx_std@@@1@@Z": "PROVEN",
     "??0?$_Vector_base@URawPhrase@@V?$StlNodeAlloc@URawPhrase@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@URawPhrase@@@1@@Z": "PROVEN"
+   }
+  },
+  "0x82b744e8": {
+   "survivor": "??$__uninitialized_fill_n@PAUGranule@GranularSynth@Synapse@DSP@@IU1234@@stlpmtx_std@@YAPAUGranule@GranularSynth@Synapse@DSP@@PAU1234@IABU1234@ABU__false_type@0@@Z",
+   "callees": [
+    "0x8282a900"
+   ],
+   "verdicts": {
+    "??$__uninitialized_fill_n@PAVViewport@ObjectDir@@IV12@@stlpmtx_std@@YAPAVViewport@ObjectDir@@PAV12@IABV12@ABU__false_type@0@@Z": "PROVEN",
+    "??$__uninitialized_fill_n@PAVTriangle@@IV1@@stlpmtx_std@@YAPAVTriangle@@PAV1@IABV1@ABU__false_type@0@@Z": "PROVEN"
    }
   },
   "0x82b74538": {
