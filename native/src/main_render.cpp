@@ -5152,6 +5152,9 @@ static bool gNoW16TR = false;
 // native/src/w16ts_phase.cpp (W16-TS)
 int RunW16TSPhase(void (*gate)(const char *, bool, const char *));
 static bool gNoW16TS = false;
+// native/src/w16tw_phase.cpp (W16-TW)
+int RunW16TWPhase(void (*gate)(const char *, bool, const char *));
+static bool gNoW16TW = false;
 
 int main(int argc, char **argv) {
     // Line-buffer: a SIGSEGV inside the renderer would otherwise discard the
@@ -5187,6 +5190,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--no-w16tm") == 0) gNoW16TM = true;
         else if (strcmp(argv[i], "--no-w16tr") == 0) gNoW16TR = true;
         else if (strcmp(argv[i], "--no-w16ts") == 0) gNoW16TS = true;
+        else if (strcmp(argv[i], "--no-w16tw") == 0) gNoW16TW = true;
         else if (strcmp(argv[i], "--crowd-all") == 0) gCrowdShowAll = true;
         else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
@@ -5444,6 +5448,11 @@ int main(int argc, char **argv) {
     // (native/src/w16ts_phase.cpp). Same default-mode rule; --no-w16ts opts out.
     if (pos.size() == 2 && !gNoW16TS)
         RunW16TSPhase(Gate);
+    // W16-TW: the next unentered in-scope rows -- Locale::Init, FileMakePath,
+    // DirLoader::SaveObjects, ... (native/src/w16tw_phase.cpp). Same
+    // default-mode rule; --no-w16tw opts out.
+    if (pos.size() == 2 && !gNoW16TW)
+        RunW16TWPhase(Gate);
 
     printf("\n=== summary ===\n");
     for (size_t i = 0; i < cells.size(); i++) {

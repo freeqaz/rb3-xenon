@@ -412,7 +412,13 @@ TypeProps &TypeProps::operator=(const TypeProps &t) {
     return *this;
 }
 
-#ifndef HX_NATIVE
+// W16-TW: native compiles this retail body too. It used a DC3 editor-era arm
+// (EditMode type-check pass, EditorDir key stashing) that never advanced its key
+// index past an object-valued key whose object is null or has no dir (measured:
+// DirLoader::SaveObjects on the shipped ui/main/gen/attract_overlay.milo spun
+// forever in it), wrote kept keys into the type definition's own array (it reused
+// the FindArray result as the output array), and re-inserted stashed keys after
+// their values. RB3 has no editor, so retail's body is the native one as well.
 // Retail 0x82765F40: no EditMode type-check pass and no EditorDir key stashing.
 // Only a data-dir owner (or a proxy load) filters its keys through the type
 // def's save flags; keys the type def does not declare are dropped.
@@ -455,110 +461,3 @@ void TypeProps::Save(BinStream &bs) {
         bs << (DataArray *)nullptr;
     }
 }
-#else
-void TypeProps::Save(BinStream &bs) {
-    Hmx::Object *owner = RefOwner();
-    if (mMap) {
-        if (TheLoadMgr.EditMode()) {
-            DataArray *typeDef = owner->TypeDef();
-            if (typeDef) {
-                for (int i = 0; mMap && i < mMap->Size();) {
-                    DataArray *arr = typeDef->FindArray(mMap->Sym(i), false);
-                    if (arr && arr->Type(1) != kDataCommand
-                        && !arr->Node(1).CompatibleType(mMap->Type(i + 1))) {
-                        ClearKeyValue(mMap->Sym(i));
-                    } else {
-                        i += 2;
-                    }
-                }
-            }
-        }
-        std::list<Symbol> keys;
-        std::list<Hmx::Object *> values;
-        if (mMap) {
-            for (int j = 0; j < mMap->Size();) {
-                Symbol key = mMap->Sym(j);
-                DataNode &value = mMap->Node(j + 1);
-                if (value.Type() == kDataObject) {
-                    Hmx::Object *valObj = value.GetObj();
-                    if (valObj) {
-                        ObjectDir *valObjDir = valObj->Dir();
-                        if (valObjDir) {
-                            if (valObjDir->ClassName() == "EditorDir") {
-                                keys.push_back(key);
-                                values.push_back(valObj);
-                                mMap->Remove(j);
-                                mMap->Remove(j);
-                            } else {
-                                j += 2;
-                            }
-                        }
-                    }
-                } else {
-                    j += 2;
-                }
-            }
-        }
-        if (mMap && owner->DataDir() == owner && owner->Dir() != owner
-            || gLoadingProxyFromDisk) {
-            DataArray *typeDef = owner->TypeDef();
-            std::list<Symbol> classnames;
-            ObjectDir *ownerDir = dynamic_cast<ObjectDir *>(owner);
-            if (ownerDir) {
-                for (ObjDirItr<ObjectDir> it(ownerDir, false); it != nullptr; ++it) {
-                    DataArrayPtr props = it->GetExposedProperties();
-                    for (int i = 0; i < props->Size(); i++) {
-                        classnames.push_back(props->Array(i)->Sym(0));
-                    }
-                }
-            }
-            if (mMap->Size() > 0) {
-                DataArray *arrToWrite = nullptr;
-                int keyIdx = 0;
-                for (int i = 0; i < mMap->Size(); i += 2) {
-                    Symbol key = mMap->Sym(i);
-                    if (typeDef) {
-                        arrToWrite = typeDef->FindArray(key, false);
-                    }
-                    bool isProxy = false;
-                    bool none = false;
-                    bool proxy = false;
-                    if (arrToWrite) {
-                        GetSaveFlags(arrToWrite, proxy, none);
-                        isProxy = proxy;
-                    }
-                    if (!none && !isProxy && classnames.empty()) {
-                        // something
-                    }
-                    if (!none && isProxy != gLoadingProxyFromDisk) {
-                        if (!arrToWrite) {
-                            arrToWrite = new DataArray(mMap->Size());
-                        }
-                        arrToWrite->Node(keyIdx) = key;
-                        arrToWrite->Node(keyIdx + 1) = mMap->Node(i + 1);
-                        keyIdx += 2;
-                    }
-                }
-                if (arrToWrite && keyIdx > 0) {
-                    arrToWrite->Resize(keyIdx);
-                    bs << arrToWrite;
-                    arrToWrite->Release();
-                } else {
-                    bs << arrToWrite;
-                }
-            } else {
-                bs << mMap;
-            }
-            return;
-        }
-
-        bs << mMap;
-        auto keysIt = keys.begin();
-        auto valsIt = values.begin();
-        for (; keysIt != keys.end(); ++keysIt, ++valsIt) {
-            mMap->Insert(0, *keysIt);
-            mMap->Insert(0, *valsIt);
-        }
-    }
-}
-#endif
