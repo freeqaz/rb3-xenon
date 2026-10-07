@@ -171,9 +171,9 @@ public:
     float mPlatformVideoLatency; // 0x20
     float mInGameExtraVideoLatency; // 0x24
     float mInGameSyncOffsetAdjustment; // 0x28
-    // Retail X360: the inline array is heap-allocated behind a float** pointer.
-    // Each mJoypadExtraLagOffsets[type] is a separately allocated float[kNumLagContexts].
-    // Layout verified from ctor (fn_82534980) and GetPadExtraLag (fn_825323D0).
+    // kJoypadNumTypes heap-allocated rows of float[kNumLagContexts], indexed
+    // [JoypadType][LagContext]. Layout verified from the ctor (0x82548058) and
+    // GetPadExtraLag (0x82545A70, loads JoypadData+0x6c then indexes this+0x2c).
     float **mJoypadExtraLagOffsets; // 0x2c
     int unk30; // 0x30
     ProfileSaveState mGlobalOptionsSaveState; // 0x34
