@@ -2029,6 +2029,9 @@ if(RB3X_BUILD_ENGINE)
         # SaveLoadManager::SetState) over shipped data.
         ${CMAKE_SOURCE_DIR}/src/w16ts_phase.cpp
         ${CMAKE_SOURCE_DIR}/src/w16ts_link_support.cpp
+        # W16-TW: Locale::Init, FileMakePath and DirLoader::SaveObjects (and
+        # the rows below) over shipped data.
+        ${CMAKE_SOURCE_DIR}/src/w16tw_phase.cpp
         ${W16TS_LINK_SOURCES}
         ${VOCALTRACK_GAME_SOURCES}
         ${W16SH_LINK_SOURCES}
@@ -2050,12 +2053,18 @@ if(RB3X_BUILD_ENGINE)
     # above for why the engine does not supply those.
     target_compile_definitions(rb3-render PRIVATE RB3_ENGINE_RENDER=1)
     target_link_libraries(rb3-render PRIVATE milo-engine)
+    # W16-TW: the SaveObjects gate inflates shipped milos itself (zlib), so its
+    # reference does not go through DirLoader or ChunkStream.
+    target_link_libraries(rb3-render PRIVATE ZLIB::ZLIB)
 endif()
 
 # W16-TS: the phase reads members of the objects it drives (BandDirector's
 # cached finds, UIStats' last-published state, SaveLoadManager's state). Access
 # checking is relaxed for that one driver file only; no decomp TU changes.
 set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16ts_phase.cpp
+    PROPERTIES COMPILE_OPTIONS "-fno-access-control")
+# W16-TW: same rule for its driver (Locale's tables, the objects it drives).
+set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16tw_phase.cpp
     PROPERTIES COMPILE_OPTIONS "-fno-access-control")
 
 # ---- X20: OutfitConfig's property table needs the LOCAL_STATIC Symbol arm ----
