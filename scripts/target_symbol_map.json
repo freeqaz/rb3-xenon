@@ -1,4 +1,5 @@
 {
+ "0x824ea298": "?Replace@WorldInstance@@UAAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x8237b208": "?SyncProperty@CharDriver@@$4PPPPPPPM@A@AA_NAAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
  "0x823cede8": "?SetName@CharSleeve@@UAAXPBDPAVObjectDir@@@Z",
  "0x82b8b670": "??0NgFur@@IAA@XZ",
@@ -13838,7 +13839,7 @@
  "0x824eb098": "??1WorldInstance@@UAA@XZ",
  "0x824eb220": "?ClassName@WorldInstance@@UBA?AVSymbol@@XZ",
  "0x824eb250": "?Print@RndTransformable@@$4PPPPPPPM@GI@AAXXZ",
- "0x824eb260": "?PreSave@WorldInstance@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+ "0x824eb260": "?Replace@WorldInstance@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x824eb270": "?ClassName@WorldInstance@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
  "0x824eb280": "?Export@RndDir@@$4PPPPPPPM@BE@AAXPAVDataArray@@_N@Z",
  "0x824eb290": "??_EWorldInstance@@$4PPPPPPPM@A@AAPAXI@Z",

@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "14abe3bc1",
+ "recorded_at": "02780e686",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -7514,7 +7514,8 @@
     "?PostSave@OutfitConfig@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z": "PROVEN",
     "?Replace@BandDirector@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z": "PROVEN",
     "?Save@BandTrack@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z": "PROVEN",
-    "?Save@RndMultiMeshProxy@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z": "PROVEN"
+    "?Save@RndMultiMeshProxy@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z": "PROVEN",
+    "?PreSave@WorldInstance@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z": "PROVEN"
    }
   },
   "0x82356288": {

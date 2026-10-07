@@ -100384,9 +100384,19 @@
     "?PostSave@OutfitConfig@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
     "?Replace@BandDirector@@$4PPPPPPPM@A@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
     "?Save@BandTrack@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
-    "?Save@RndMultiMeshProxy@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
+    "?Save@RndMultiMeshProxy@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+    "?PreSave@WorldInstance@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
    ],
-   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['BandDirector', 312, 2], ['BandSong', 136, 9], ['BandTrack', 280, 8], ['BandTrack', 280, 9], ['BandTrack', 280, 10], ['OutfitConfig', 200, 12], ['RndMultiMeshProxy', 236, 8], ['RndMultiMeshProxy', 236, 9], ['RndMultiMeshProxy', 236, 10], ['RndPollAnim', 72, 1], ['RndPollAnim', 72, 2], ['RndPollAnim', 72, 3], ['Song', 136, 9], ['Waypoint', 272, 0], ['WorldInstance', 500, 11]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x826c3888 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition). [W15-D: `?PreSave@WorldInstance@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z` withheld -- the map places that spelling at a second address; validator refuses a two-homed member, adjudicate that row first.]"
+   "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['BandDirector', 312, 2], ['BandSong', 136, 9], ['BandTrack', 280, 8], ['BandTrack', 280, 9], ['BandTrack', 280, 10], ['OutfitConfig', 200, 12], ['RndMultiMeshProxy', 236, 8], ['RndMultiMeshProxy', 236, 9], ['RndMultiMeshProxy', 236, 10], ['RndPollAnim', 72, 1], ['RndPollAnim', 72, 2], ['RndPollAnim', 72, 3], ['Song', 136, 9], ['Waypoint', 272, 0], ['WorldInstance', 500, 11]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x826c3888 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition). [W15-D: `?PreSave@WorldInstance@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z` withheld -- the map places that spelling at a second address; validator refuses a two-homed member, adjudicate that row first.]",
+   "admitted": [
+    {
+     "spelling": "?PreSave@WorldInstance@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+     "lane": "W16-UN 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "a row W16-UN paired calls this spelling where retail's relocation names the survivor (objdiff diff_arg)",
+     "chase": "tools/icf_pair_adjudicate.chase(?Copy@BandTrack@@$4PPPPPPPM@A@AAXPBVObject@Hmx@@W4CopyType@23@@Z @ 0x8234ebc8, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    }
+   ]
   },
   {
    "name": "thunk-fold 0x823af220",
