@@ -12,21 +12,24 @@
 // GameplayOptions, BandSongMetadata, CharData, TourChar(Local), TourSavable,
 // and the beatmatch M3/M3B sets.
 //
-// What is NOT, and why: every symbol below belongs to the profile / save /
-// session / prefab / UI-panel layer (ProfileMgr, BandProfile, PrefabMgr,
-// CharSync, NetSession, BandUserMgr, MetaPerformer, GamePanel ...). Linking
-// those TUs was MEASURED to fan out into SongMgr, LicenseMgr, Jukebox,
-// SaveLoadManager, RockCentral, UIEventMgr and a second RndText emitter (95
-// undefined + 105 duplicate definitions after adding just PrefabMgr,
-// PracticeSectionProvider and BandUserMgr). None of it is on the track/vocal
-// DRAWING path the phase exercises.
+// What is NOT, and why: the profile / save / session / prefab / UI-panel layer.
+// W16-PX MEASURED that linking those TUs fanned out into SongMgr, LicenseMgr,
+// Jukebox, SaveLoadManager, RockCentral and UIEventMgr (95 undefined + 105
+// duplicate definitions after adding just PrefabMgr, PracticeSectionProvider and
+// BandUserMgr). W16-SH then linked most of that layer for real (W16SH_LINK_SOURCES
+// in native/CMakeLists.txt: ProfileMgr, BandUserMgr, MetaPerformer, GamePanel,
+// SaveLoadManager, SongStatusMgr, BandProfile, ...), which retired those TUs'
+// stubs here. What stays is what is still unlinked: CharSync, NetSession and
+// SessionMgr's sends (network/net, the Quazal session layer), PracticeSection-
+// Provider, PrefabMgr, SendJunkPatchesToAll, RockCentral (the Quazal RB* client)
+// and PlatformMgr::GetOnlineID (PlatformMgr_Xbox.cpp).
 //
 // ★ Every function here FAILS LOUDLY: it prints its own name and aborts. A
 // stub that returned a plausible default would silently replace behaviour;
 // one that aborts can only ever turn a run red. The singletons are null (or,
-// for the one held BY VALUE, zero-filled storage -- calling through it faults),
-// exactly the m6_symbols.cpp convention. Count: 27 aborting stubs, 2 verbatim
-// ProfileMgr bodies (marked below), 8 singletons.
+// for the two held BY VALUE -- TheNet, TheRockCentral -- zero-filled storage;
+// calling through it faults), exactly the m6_symbols.cpp convention.
+// Count: 19 aborting stubs, 7 singletons.
 // Native-only; the X360 build never compiles this file.
 
 #include <cstdio>
@@ -58,7 +61,7 @@
 }
 #define UNREACHED() BandTrackUnreached(__PRETTY_FUNCTION__)
 
-// --- singletons (8) ---------------------------------------------------------
+// --- singletons (7) ---------------------------------------------------------
 CharSync *TheCharSync = nullptr;
 NetSession *TheNetSession = nullptr;
 SessionMgr *TheSessionMgr = nullptr;
@@ -76,7 +79,7 @@ alignas(Net) unsigned char gW16SHNetStorage[sizeof(Net)] __asm__("TheNet");
 alignas(RockCentral) unsigned char gW16SHRockCentralStorage[sizeof(RockCentral)]
     __asm__("TheRockCentral");
 
-// --- functions (27 stubs + 2 real) ---------------------------------------------------------
+// --- functions (19 stubs) ---------------------------------------------------------
 
 void CharSync::UpdateCharCache() { UNREACHED(); }
 

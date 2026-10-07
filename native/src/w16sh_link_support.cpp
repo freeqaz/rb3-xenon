@@ -1,5 +1,7 @@
-// w16sh_link_support.cpp -- the Quazal string surface the band3 data-result
-// layer needs natively (W16-SH). rb3-render ONLY.
+// w16sh_link_support.cpp -- native bodies the W16-SH link needs that no
+// portable TU supplies. rb3-render ONLY. Two parts: the Quazal string surface
+// the band3 data-result layer needs (below), and three VMX128 intrinsics
+// (end of file).
 //
 // net_band/DataResults.cpp (DataResultList, the container every BandProfile,
 // SongStatusMgr and ProfileMgr carries for RockCentral replies) holds its raw
@@ -59,4 +61,49 @@ namespace Quazal {
         m_szContent = CopyWide(src);
         return *this;
     }
+}
+
+// ---------------------------------------------------------------------------
+// The three VMX128 intrinsics dsp/SndAnalysis.cpp's ShiftedDotProduct fast path
+// uses (xdk/LIBCMT/vectorintrinsics.h declares them; on X360 they are
+// instructions, natively nothing defined them). Semantics per the PowerPC ISA:
+//   vmaddfp  d[i] = a[i]*b[i] + c[i]
+//   vspltw   d[i] = a[imm & 3]
+//   vperm    d.byte[k] = (a||b).byte[perm.byte[k] & 0x1F], byte order BIG-ENDIAN
+// vperm is emulated on the big-endian byte image of each word, so a selector
+// like 0x04050607 means "word 1" here exactly as it does on the console.
+// ---------------------------------------------------------------------------
+#include "xdk/LIBCMT/vectorintrinsics.h"
+
+extern "C" {
+XMVECTOR __vmaddfp(XMVECTOR a, XMVECTOR b, XMVECTOR c) {
+    XMVECTOR d;
+    for (int i = 0; i < 4; i++)
+        d.vector4_f32[i] = a.vector4_f32[i] * b.vector4_f32[i] + c.vector4_f32[i];
+    return d;
+}
+
+XMVECTOR __vspltw(XMVECTOR a, unsigned int imm) {
+    XMVECTOR d;
+    for (int i = 0; i < 4; i++)
+        d.vector4_u32[i] = a.vector4_u32[imm & 3];
+    return d;
+}
+
+XMVECTOR __vperm(XMVECTOR a, XMVECTOR b, XMVECTOR perm) {
+    unsigned char src[32], sel[16], out[16];
+    for (int w = 0; w < 4; w++)
+        for (int k = 0; k < 4; k++) {
+            src[w * 4 + k] = (unsigned char)(a.vector4_u32[w] >> (24 - 8 * k));
+            src[16 + w * 4 + k] = (unsigned char)(b.vector4_u32[w] >> (24 - 8 * k));
+            sel[w * 4 + k] = (unsigned char)(perm.vector4_u32[w] >> (24 - 8 * k));
+        }
+    for (int i = 0; i < 16; i++)
+        out[i] = src[sel[i] & 0x1F];
+    XMVECTOR d;
+    for (int w = 0; w < 4; w++)
+        d.vector4_u32[w] = ((unsigned int)out[w * 4] << 24) | ((unsigned int)out[w * 4 + 1] << 16)
+            | ((unsigned int)out[w * 4 + 2] << 8) | (unsigned int)out[w * 4 + 3];
+    return d;
+}
 }

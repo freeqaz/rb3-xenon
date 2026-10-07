@@ -5128,6 +5128,9 @@ namespace {
 // native/src/bandtrack_phase.cpp (W16-PX)
 int RunBandTrackPhase(void (*gate)(const char *, bool, const char *));
 static bool gNoBandTrack = false;
+// native/src/w16sh_phase.cpp (W16-SH)
+int RunW16SHPhase(void (*gate)(const char *, bool, const char *));
+static bool gNoW16SH = false;
 
 int main(int argc, char **argv) {
     // Line-buffer: a SIGSEGV inside the renderer would otherwise discard the
@@ -5157,6 +5160,7 @@ int main(int argc, char **argv) {
             gOnlyMesh = argv[++i];
         else if (strcmp(argv[i], "--dump-tree") == 0) gDumpTree = true;
         else if (strcmp(argv[i], "--no-bandtrack") == 0) gNoBandTrack = true;
+        else if (strcmp(argv[i], "--no-w16sh") == 0) gNoW16SH = true;
         else if (strcmp(argv[i], "--crowd-all") == 0) gCrowdShowAll = true;
         else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
@@ -5378,6 +5382,11 @@ int main(int argc, char **argv) {
     // cell list is a render experiment and skips it. --no-bandtrack opts out.
     if (pos.size() == 2 && !gNoBandTrack)
         RunBandTrackPhase(Gate);
+    // W16-SH: the dsp / synth-effect / ProfileMgr / tracker code that lane
+    // linked (native/src/w16sh_phase.cpp). Same default-mode rule;
+    // --no-w16sh opts out.
+    if (pos.size() == 2 && !gNoW16SH)
+        RunW16SHPhase(Gate);
 
     printf("\n=== summary ===\n");
     for (size_t i = 0; i < cells.size(); i++) {

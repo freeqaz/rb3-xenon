@@ -1692,6 +1692,8 @@ set(W16SH_DEP_SOURCES
     ${REPO_ROOT}/src/system/net/json-c/json_tokener.c
     ${REPO_ROOT}/src/system/net/json-c/linkhash.c
     ${REPO_ROOT}/src/system/net/json-c/printbuf.c
+    ${REPO_ROOT}/src/system/synth/Common_Xbox.cpp
+    ${REPO_ROOT}/src/system/dsp/IIRFilter.cpp
 )
 set_source_files_properties(${W16SH_LINK_SOURCES} ${W16SH_DEP_SOURCES}
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
@@ -1812,6 +1814,8 @@ if(RB3X_BUILD_ENGINE)
         ${CMAKE_SOURCE_DIR}/src/bandtrack_phase.cpp
         ${CMAKE_SOURCE_DIR}/src/bandtrack_link_stubs.cpp
         ${CMAKE_SOURCE_DIR}/src/w16sh_link_support.cpp
+        # W16-SH: gates over the dsp/synth/meta code linked above.
+        ${CMAKE_SOURCE_DIR}/src/w16sh_phase.cpp
         ${VOCALTRACK_GAME_SOURCES}
         ${W16SH_LINK_SOURCES}
         ${W16SH_DEP_SOURCES}
