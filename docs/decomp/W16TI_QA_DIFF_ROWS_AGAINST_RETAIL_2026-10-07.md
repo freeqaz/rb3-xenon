@@ -279,7 +279,12 @@ predict them, which is why Δmasked_equal (+4) equals the surplus and Δhonest i
 
 ## 6. Native gate
 
-(filled in from the run)
+`tools/native_build_gate.sh` in the worktree at `d287a51e5` (all source edits included), run as
+the lane's last build:
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
 
 ## 7. Not done
 
