@@ -2046,6 +2046,10 @@ if(RB3X_BUILD_ENGINE)
         # W16-TY: VIA-DC3 engine rows linked but never entered (mesh utilities,
         # RndScaleObject, Spotlight/LightPreset/CamShot, CharBones, IK, AO).
         ${CMAKE_SOURCE_DIR}/src/w16ty_phase.cpp
+        # W16-UB: X360 literal sizes/offsets fixed for LP64 (velocity buffer
+        # clear, MemHeap's FreeBlock word count, LoadDtz/LoadBmp/CDReadExternal,
+        # MemTrack's name stacks), checked on synthetic inputs.
+        ${CMAKE_SOURCE_DIR}/src/w16ub_phase.cpp
         ${W16TS_LINK_SOURCES}
         ${VOCALTRACK_GAME_SOURCES}
         ${W16SH_LINK_SOURCES}
@@ -2083,6 +2087,9 @@ set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16tw_phase.cpp
 # W16-TY: same rule for its driver file (it reads Spotlight, LightPreset,
 # CamShot, CharIKHand and RndAmbientOcclusion members directly).
 set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16ty_phase.cpp
+    PROPERTIES COMPILE_OPTIONS "-fno-access-control")
+# W16-UB: same rule (MemHeap's free chain, RndVelocityBuffer, MemTracker).
+set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16ub_phase.cpp
     PROPERTIES COMPILE_OPTIONS "-fno-access-control")
 
 # ---- X20: OutfitConfig's property table needs the LOCAL_STATIC Symbol arm ----
