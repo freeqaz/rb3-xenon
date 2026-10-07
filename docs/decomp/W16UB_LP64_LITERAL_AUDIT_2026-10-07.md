@@ -21,9 +21,9 @@ layout and fixed each real one in an `HX_NATIVE` arm.
      (`-Wpointer-to-int-cast`, `-Wint-to-pointer-cast`, `-Wvoid-pointer-to-int-cast`,
      `-Wnontrivial-memcall`, `-Warray-bounds`, `-Winvalid-offsetof`, …).
 - **Findings.**
-  - §2: 16 defects fixed in `HX_NATIVE` arms, 24 edited sites in all (MemHeap 6, EditSetlistPanel 3, MemTrack and NetStream 2 each).
+  - §2: 17 defects fixed in `HX_NATIVE` arms, 25 edited sites in all (MemHeap 6, EditSetlistPanel 3, MemTrack and NetStream 2 each).
     Two of them are byte order, not width, and two are wrong on both builds.
-  - §3: 7 sites already handled by earlier native arms, verified.
+  - §3: 8 sites already handled by earlier native arms, verified.
   - §4: every other hit has a recorded reason, including each of the coordinator's DC3
     candidates.
 - **Behaviour.** 7 native gates in `rb3-render` (§5). A sabotage build putting the X360
@@ -38,6 +38,7 @@ layout and fixed each real one in an `HX_NATIVE` arm.
 | regex: `(cast)x + literal` | 1,960 files | 80 | 55 | — |
 | `clang-query` (3 matchers) | 767 TUs | 331 | 241 | 186 not byte-typed |
 | `-fsyntax-only` warnings | 767 TUs | 1,819 | (compiler-live) | 118 in the cast/memcall/bounds families |
+| regex: allocation sizes `Alloc/malloc/new[](… * 4\|8)` or a literal | 1,960 files | — | 16 | 1 real (#17), 1 already handled (§3) |
 
 - The regex pass came first and was **incomplete**: it missed `*(RndCam**)((u8*)&TheRnd + 0xA4)`
   in `PostProc_NG.cpp`. The AST matcher found the same class with types attached, and
@@ -50,6 +51,10 @@ layout and fixed each real one in an `HX_NATIVE` arm.
   That matches the 1,960 files in the dep-derived list.
 - 76 TUs gave `clang-query` no matches. Two were rerun with stderr visible:
   `0 matches.` and no `error:`. All 767 compile in the native build with these commands.
+- The allocation-size sweep was added **after** the first `native_health` run. That
+  run caught #17: the `ub-memtrack-stacks` child aborted. None of the three
+  instruments above looks at an allocation size computed as `n * 8`, so this was a
+  gap in the census, not a near miss.
 - `-Wshorten-64-to-32` (1,161 hits: `size_t`/`ptrdiff_t` to `int`) was **not** examined
   site by site. It is implicit narrowing of sizes and differences, not a literal layout
   assumption.
@@ -77,6 +82,7 @@ layout and fixed each real one in an `HX_NATIVE` arm.
 | 14 | `os/CDReader.cpp` `CDReadExternal` | **byte order.** `((LONG *)&u)[1]` / `*(PLONG)&l` are the low and high words only on a big-endian host; on x86 the seek went to the high word | `ArkFile::GetFileHandle`, called only by `Movie.cpp`'s Bink path | `ub-cdreadexternal-seek` |
 | 15 | `rndobj/Flare.cpp:213/216` | **not LP64; wrong on both builds.** Copies a 0x40-byte `Transform` into a 0x30-byte `Hmx::Matrix3` local and back, a 16-byte stack overrun. Natively it uses a `Transform` local (rotation rebuilt, translation carried through) | flares with an xfm texgen material | `ub-layout` (premise: `sizeof(Hmx::Matrix3)` = 0x30) |
 | 16 | `utl/GlitchFinder.cpp:361` | **not LP64; wrong on both builds.** `buf[0x400] = '\0'` into `char buf[1024]`; natively `buf[0x401]` | glitch finder spew | none |
+| 17 | `utl/MemTracker.cpp` native ctor | `DebugHeapAlloc(y * 8)` for `y * 2` `AllocInfo *` entries, i.e. half the table natively; the `KeylessHash` ctor clears all entries, writing 8·y bytes past the block. Now `hashSize * sizeof(AllocInfo *)`. The ctor is the native-only arm of an `#ifndef HX_NATIVE`, so no X360 tokens are involved | latent: `MemTrackInit` (as #4) | `ub-memtrack-stacks` (`malloc_usable_size` check) |
 
 Rows 2 and 3 are one class in one file (6 edited sites). Rows 13 and 14 are the
 byte-order cousins. Rows 15 and 16 are overruns on both builds; they surfaced in the
@@ -93,6 +99,7 @@ same census.
 | `bandobj/BandPatchMesh.cpp:53` | 0x3a / 0x2f / 0x40 | native arm derives them with `offsetof` (the `-Winvalid-offsetof` hits are that arm) |
 | `synth/VorbisReader.cpp` `setupCypher` | `(int)masterKey ^ iEval` | native arm calls `KeyChain::getMasher` (#12 copies it) |
 | `utl/ChunkStream.cpp` `DecompressMemHelper` | big-endian size word | native arm drops the `EndianSwap` |
+| `rndobj/MultiMesh.cpp:16` `gTransListAlloc(0x48, …)` | 0x48 list-node size (8 B links + 0x40) | the native `TransformListAlloc::allocate` calls `malloc` and never reaches the pool, whose `int` free list would truncate. Even if it did, `ReclaimableAlloc` rounds 0x48 up to 20 words = 0x50, exactly the native node |
 
 ## 4. Recorded reasons (not changed)
 
@@ -170,6 +177,15 @@ fault fails that gate rather than the run. Run on 2026-10-07 at `23c0cf256`, ass
 [PASS] ub-memtrack-stacks — 64 nested file names pushed and popped, 0 pops restored the wrong name
 ```
 
+That was the first run. It passed with #17 still in the tree. The next
+`native_health` run aborted the `ub-memtrack-stacks` child (`malloc(): invalid size
+(unsorted)`, SIGABRT), which is how #17 was found. After the fix, and with a direct
+check added, `rb3-render` gave rc=0 and `RESULT: ALL GATES PASSED (0 gate failure(s))`:
+
+```
+[PASS] ub-memtrack-stacks — hash block 1032 bytes >= 1024 needed; 64 nested file names pushed and popped, 0 pops restored the wrong name
+```
+
 - `ub-layout` is a premise check, not a behaviour check. It shows that each X360
   offset the old code used names a different member natively, so the old store/read
   hit the wrong field.
@@ -208,6 +224,12 @@ prediction that was imprecise was LoadDtz: the decoded size went negative, and t
 native `MILO_ASSERT` path logs and continues instead of aborting. The verdict was the
 same.
 
+**#17 sabotage**, run separately after it was found: only `DebugHeapAlloc(y * 8)` was
+put back and `rb3-render` was rebuilt. Prediction: FAIL, either the size check or a
+heap abort. Measured: `ub-memtrack-stacks — child killed by signal 6 (Aborted)` on
+**3 of 3** runs. The heap abort fires before the size check is reached; the check
+backs it up for a run where the overrun goes unnoticed, as on the first pass above.
+
 ## 7. X360 A/B
 
 Prediction: Δ0 on every key. Every change sits in an `HX_NATIVE` arm, the X360 arm
@@ -229,6 +251,17 @@ units at 100% [all-rows-fuzzy ruler]: legA 532 -> legB 532  (Δ+0; 0 reached 100
 [control none] Δmatched_code=+0 B Δcode%=+0.000000 (default ruler +0 B)
 ```
 
+#17 came later and was measured separately with
+`--revert 229843677 --label w16ub-memtracker`. Leg B recompiled 1 TU, and the deltas
+are the same Δ0:
+
+```
+leg A: matched=54946 masked=25223 honest=29723 code%=59.314053  (recompiles: 0, settled)
+leg B: matched=54946 masked=25223 honest=29723 code%=59.314053  (recompiles: 1, split=0, patch_steps=6, settle iterations: 2)
+Δmatched=+0  Δmasked_equal=+0  Δhonest=+0  Δcode%=+0.000000pp  Δcode_bytes=+0
+Δfuzzy=+0.000000pp   (legA 64.315216 -> legB 64.315216)
+```
+
 The ruler is `name_check` (from `objdiff.json`) and objdiff-cli was stable across legs
 (`sha256:c1b7d95240a35cd6`). Leg B recompiled 53 TUs, mostly through `MidiParserMgr.h`,
 so the patch was applied and compiled, not absent-vs-absent. The tool restored the
@@ -239,6 +272,8 @@ tree and verified it afterwards.
 - `-Wshorten-64-to-32` (1,161 sites) was counted, not triaged (§1).
 - Byte order was not swept as a class. #13 and #14 surfaced through the subscript and
   stream censuses; other big-endian assumptions can remain.
+- The allocation-size sweep is a regex over native-live lines. It catches `* 4`/`* 8`
+  and literal sizes, not sizes built some other way (for example `n << 3`).
 - Rows 5–9, 11, 12 and 16 have no behaviour gate. 5, 11 and 12 are not linked or not
   reached natively. 6–9 need a live `Game`, `MidiParserMgr` or panel. `ub-layout` checks
   only their premise: the X360 offset names a different member natively.
