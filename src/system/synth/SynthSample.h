@@ -54,6 +54,7 @@ public:
     static void Register() { REGISTER_OBJ_FACTORY(SynthSample) }
     static void Init();
     static void Disable();
+    static void *SampleAlloc(int);
 
 protected:
     SynthSample();
