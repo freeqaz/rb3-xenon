@@ -218,7 +218,7 @@ def do_map(ledger, addrs, dry):
         print("map audits PASS (object-side and name injectivity)")
 
 
-def do_alias(ledger, addrs, write):
+def do_alias(ledger, addrs, write, extra=()):
     from alias_survivor_relabel import Judge, operation
     J = Judge()
     doc = json.loads(LEDGER.read_text())
@@ -230,7 +230,14 @@ def do_alias(ledger, addrs, write):
             for f in g.get("folded", []):
                 folded_at[f].add(g["address"].lower())
     log = []
-    for r in pick(ledger, addrs):
+    work = list(pick(ledger, addrs))
+    for X, f in extra:
+        # a fold spelling a paired row of this wave calls, at an address the map
+        # already names: same admission rule, survivor = the map name there.
+        X = "0x%08x" % int(X, 16)
+        work.append(dict(A=X, survivor=J.retail_name(int(X, 16)), spellings=[f],
+                         sites={f: 0}))
+    for r in work:
         X, S = r["A"], r["survivor"]
         va = int(X, 16)
         assert J.retail_name(va) == S, ("map/target objs not at S yet -- build first", X,
@@ -252,7 +259,16 @@ def do_alias(ledger, addrs, write):
                 rec.update(admitted=False, why="already folded at %s" % sorted(others))
             else:
                 okr, tr = J.raw(S, f)
-                ncyc = sum(1 for t in tr if t[1] == "CYCLE-ASSUMED")
+                # A cycle is accepted only where it is SELF-RECURSION: the assumed
+                # (retail, ours) callee pair is one the chase entered and checked
+                # at a shallower depth (a recursive tree _M_erase).  Any other
+                # assumption counts against admission, as in alias_locate_home.
+                # (the trace truncates names on SLOT-OK rows, so match by prefix)
+                entered = [(t[2], t[3]) for t in tr if t[1] == "SLOT-OK:CALLEE-CHASED"]
+                ncyc = sum(1 for t in tr if t[1] == "CYCLE-ASSUMED"
+                           and not any(t[2] == rn and str(t[3]).startswith(on)
+                                       for rn, on in entered))
+                nrec = sum(1 for t in tr if t[1] == "CYCLE-ASSUMED") - ncyc
                 und = any(t[1].startswith("SLOT-UNDISCHARGED") for t in tr)
                 if not (okr and ncyc == 0 and not und):
                     rec.update(admitted=False, why="chase(%s, f) not clean: ok=%s cycles=%d "
@@ -269,12 +285,17 @@ def do_alias(ledger, addrs, write):
                     g["folded"].append(f)
                     g.setdefault("admitted", []).append({
                         "spelling": f, "lane": LANE, "how": "CENSUS-SITE",
-                        "evidence": "tools/placeholder_callee_census.py (W16-UH): %d aligned call "
-                                    "site(s) where retail calls fn_%08X and ours calls this "
-                                    "spelling; chase(fn_%08X, spelling) PROVEN" % (
-                                        r["sites"][f], va, va),
+                        "evidence": ("tools/placeholder_callee_census.py (W16-UH): %d aligned call "
+                                     "site(s) where retail calls fn_%08X and ours calls this "
+                                     "spelling; chase(fn_%08X, spelling) PROVEN" % (
+                                         r["sites"][f], va, va)) if r["sites"][f] else (
+                                     "a row W16-UM paired calls this spelling where retail's "
+                                     "relocation names the survivor (objdiff diff_arg)"),
                         "chase": "tools/icf_pair_adjudicate.chase(%s @ %s, ours): PROVEN, 0 "
-                                 "cycle-assumed, 0 undischarged" % (S[:70], X)})
+                                 "undischarged, %d cycle(s) assumed%s" % (
+                                     S[:70], X, nrec,
+                                     " (each a self-recursive callee already entered and "
+                                     "checked)" if nrec else "")})
                     folded_at[f].add(X)
                     rec.update(admitted=True)
             log.append(rec)
@@ -290,7 +311,7 @@ def do_alias(ledger, addrs, write):
                                     rec["spelling"][:70], rec.get("why", "")))
     print("admitted %d, refused %d" % (sum(r["admitted"] for r in log),
                                        sum(not r["admitted"] for r in log)))
-    out = Path.home() / "tmp/w16um/alias_log_%s.json" % "_".join(a[2:] for a in addrs[:1])
+    out = Path.home() / ("tmp/w16um/alias_log_%s.json" % "_".join(a[2:] for a in addrs[:1]))
     out.write_text(json.dumps(log, indent=1))
     if write:
         LEDGER.write_text(json.dumps(doc, indent=1, ensure_ascii=False) + "\n")
@@ -306,6 +327,8 @@ def main():
     ap.add_argument("--addrs", default="")
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--write", action="store_true")
+    ap.add_argument("--extra", action="append", default=[], metavar="0xADDR=Spelling",
+                    help="alias: also admit Spelling at the (already named) address")
     a = ap.parse_args()
     addrs = [x for x in re.split(r"[,\s]+", a.addrs) if x]
     if a.mode == "plan":
@@ -314,7 +337,7 @@ def main():
         ap.error("--addrs required")
     if a.mode == "map":
         return do_map(a.ledger, addrs, a.dry_run)
-    return do_alias(a.ledger, addrs, a.write)
+    return do_alias(a.ledger, addrs, a.write, [tuple(e.split("=", 1)) for e in a.extra])
 
 
 if __name__ == "__main__":
