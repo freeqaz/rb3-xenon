@@ -556,7 +556,16 @@ void StorePanelGates() {
          "ids/album/pack parsed %d; pending fill keeps the live list %d; test offers shown -> %zu",
          before, prop, order, pend, sp->mOffers.size());
 
-    // UpdateOffers: a live enumeration (Marketplace product list)
+    // UpdateOffers: a live enumeration (Marketplace product list). It needs
+    // the three offers populate made; without them, fail rather than index.
+    if (sp->mOffers.size() != 3) {
+        Gate("storepanel-update-offers", false, "needs populate's 3 offers, have %zu",
+             sp->mOffers.size());
+        Gate("storepanel-source", false, "not run (no offers)");
+        delete sp;
+        offersFile->Release();
+        return;
+    }
     std::list<EnumProduct> en;
     en.push_back(Prod(0x0123456789ABCDEFull, 1, 160));
     en.push_back(Prod(0xA0001ull, 0, 1200));
@@ -693,7 +702,8 @@ void MidiSynthGates() {
             }
             int got = rb.Read(out, len);
             if ((got != n || memcmp(out, want, n) != 0) && !bad++)
-                snprintf(first, sizeof(first), "op %d Read(%d) -> %d, want %d", i, len, got, n);
+                snprintf(first, sizeof(first), "op %d Read(%d) -> %d (want %d), bytes equal %d", i, len,
+                         got, n, memcmp(out, want, n) == 0);
         } else {
             int got = rb.Peek(out, len);
             if ((got != len || memcmp(out, hist.data() + hist.size() - len, len) != 0) && !bad++)
