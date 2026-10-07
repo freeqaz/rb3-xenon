@@ -420,11 +420,10 @@ void ChordShapeGenerator::BuildEndCap(
     // the contour section on the contour side, short of the base section
     // otherwise.
     for (int i = 0; i < srcVerts.size(); i++) {
-        float sx = srcVerts[i].pos.x;
         if (contour) {
-            if (sx < mContourXVal + kBandTolerance)
+            if (srcVerts[i].pos.x < mContourXVal + kBandTolerance)
                 continue;
-        } else if (sx > mBaseXVal - kBandTolerance)
+        } else if (srcVerts[i].pos.x > mBaseXVal - kBandTolerance)
             continue;
         capMap[i] = vertIt++;
     }
