@@ -1983,6 +1983,13 @@ set(MILO_TARGETS rb3-milo)
 # offset and means something else. main_render.cpp --dump-rnd prints every
 # Rnd/NgRnd member the backend actually reads, so that class of bug is
 # measurable rather than inferred.
+# W16-TS: real TUs the phase's BandDirector reaches (TheCrowdAudio, SetBank).
+set(W16TS_LINK_SOURCES
+    ${REPO_ROOT}/src/system/bandobj/CrowdAudio.cpp
+)
+set_source_files_properties(${W16TS_LINK_SOURCES}
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+
 if(RB3X_BUILD_ENGINE)
     rb3_add_executable(rb3-render
         ${CMAKE_SOURCE_DIR}/src/main_render.cpp
@@ -2012,6 +2019,8 @@ if(RB3X_BUILD_ENGINE)
         # filters, ModifierMgr, BandDirector::OnFileLoaded, UIStats,
         # SaveLoadManager::SetState) over shipped data.
         ${CMAKE_SOURCE_DIR}/src/w16ts_phase.cpp
+        ${CMAKE_SOURCE_DIR}/src/w16ts_link_support.cpp
+        ${W16TS_LINK_SOURCES}
         ${VOCALTRACK_GAME_SOURCES}
         ${W16SH_LINK_SOURCES}
         ${W16SH_DEP_SOURCES}

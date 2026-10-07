@@ -54,11 +54,7 @@
 
 extern DataArray *gSystemConfig;
 
-// utl/Symbols3.h's `extern Symbol hidden`, read by Modifier::IsHidden. rb3-xenon
-// ships the Symbols*.h headers without their .cpp (see m6_symbols.cpp), so a
-// global becomes an undefined reference the moment its reader is linked live.
-// Null until RunW16TSPhase interns it (after Symbol::Init), as m6_symbols does.
-Symbol hidden;
+extern Symbol hidden; // w16ts_link_support.cpp
 
 typedef void (*GateFn)(const char *, bool, const char *);
 
@@ -429,6 +425,199 @@ void ModifierChecks() {
     TheModifierMgr = saved;
 }
 
+// =========================================================== BandDirector ==
+// OnFileLoaded is sent by the world's file merger when the song milo arrives
+// (world/gen/world.milo: world.fm carries a "song" merger, and shared/
+// director.milo holds the BandDirector its keys target by name). The fixture
+// builds that shape: a director named "BandDirector" in the main dir, and a
+// FileMerger with a "song" merger as its `merger`.
+const char *kSongMilo = "songs/20thcenturyboy/gen/20thcenturyboy.milo_xbox";
+const char *kIntensity[] = { "mic_intensity", "bass_intensity", "drum_intensity",
+                             "guitar_intensity", "keyboard_intensity" };
+
+struct KeyInfo {
+    std::string prop;
+    int type;
+    std::string interp;
+    bool isSym;
+    bool clamp;
+    Hmx::Object *target;
+};
+
+std::vector<KeyInfo> WalkKeys(RndPropAnim *a) {
+    std::vector<KeyInfo> out;
+    for (PropKeys *k : a->PropKeysList()) {
+        KeyInfo ki;
+        DataArray *p = k->Prop();
+        ki.prop = p && p->Size() == 1 && p->Type(0) == kDataSymbol ? p->Sym(0).Str() : "?";
+        ki.type = k->KeysType();
+        ki.interp = k->InterpHandler().Str();
+        SymbolKeys *sk = dynamic_cast<SymbolKeys *>(k);
+        ki.isSym = sk != nullptr;
+        ki.clamp = sk && sk->mClampToPrevRange;
+        ki.target = k->Target();
+        out.push_back(ki);
+    }
+    return out;
+}
+
+bool IsIntensity(const std::string &p) {
+    for (const char *s : kIntensity)
+        if (p == s)
+            return true;
+    return false;
+}
+
+DataNode SendFileLoaded(BandDirector *bd, Symbol which, ObjectDir *dir) {
+    return bd->Handle(Message("on_file_loaded", which, DataNode((Hmx::Object *)dir)), true);
+}
+
+void BandDirectorChecks() {
+    BandSongPref::Init();
+    BandDirector *savedBd = TheBandDirector;
+    TheBandDirector = nullptr;
+    BandDirector *bd = new BandDirector();
+    bd->SetName("BandDirector", ObjectDir::Main());
+    FileMerger *fm = Hmx::Object::New<FileMerger>();
+    fm->SetName("w16ts_world.fm", ObjectDir::Main());
+    {
+        FileMerger::Merger m(fm);
+        m.mName = Symbol("song");
+        fm->mMergers.push_back(m);
+    }
+    bd->mMerger = fm;
+
+    // --- the shipped song milo, walked here (iteration, not Find) ---
+    ObjDirPtr<ObjectDir> song;
+    song.LoadFile(FilePath(kSongMilo), false, true, kLoadFront, false);
+    ObjectDir *dir = song.Ptr();
+    RndPropAnim *anim = nullptr;
+    BandSongPref *pref = nullptr;
+    std::map<std::string, CharLipSync *> lips;
+    int objs = 0;
+    for (ObjDirItr<Hmx::Object> it(dir, true); dir && it; ++it) {
+        objs++;
+        if (!strcmp(it->ClassName().Str(), "PropAnim") && !strcmp(it->Name(), "song.anim"))
+            anim = dynamic_cast<RndPropAnim *>(&*it);
+        else if (!strcmp(it->ClassName().Str(), "BandSongPref"))
+            pref = dynamic_cast<BandSongPref *>(&*it);
+        else if (!strcmp(it->ClassName().Str(), "CharLipSync"))
+            lips[it->Name()] = dynamic_cast<CharLipSync *>(&*it);
+    }
+    std::vector<KeyInfo> before = anim ? WalkKeys(anim) : std::vector<KeyInfo>();
+    int onBd = 0, clampBefore = 0;
+    for (const KeyInfo &k : before) {
+        onBd += k.target == bd;
+        clampBefore += k.clamp;
+    }
+    static const char *lipNames[] = { "song.lipsync", "part2.lipsync", "part3.lipsync",
+                                      "part4.lipsync" };
+    bool fixture = dir && anim && pref && lips.size() == 4 && onBd > 0;
+    for (const char *n : lipNames)
+        fixture = fixture && lips[n];
+    Gate("bd-fixture", fixture,
+         "%s: %d objects; song.anim with %d keys (%d targeting the BandDirector by name, %d "
+         "clamped), BandSongPref %s, %d CharLipSync",
+         kSongMilo, objs, (int)before.size(), onBd, clampBefore, pref ? "yes" : "no",
+         (int)lips.size());
+    if (!fixture) {
+        TheBandDirector = savedBd;
+        return;
+    }
+
+    // --- an on_file_loaded for another merger changes nothing ---
+    bd->mEndOfSongSec = 99.0f;
+    SendFileLoaded(bd, Symbol("venue"), dir);
+    bool otherOk = !bd->mPropAnim && bd->mEndOfSongSec == 99.0f && !bd->mSongPref;
+
+    // --- the song milo ---
+    bd->unk110 = true;
+    DataNode r = SendFileLoaded(bd, Symbol("song"), dir);
+    bool finds = bd->mPropAnim == anim && bd->mSongPref == pref && !bd->unk110
+        && bd->mEndOfSongSec == 0.0f && r.Type() == kDataInt && r.Int() == 0;
+    for (int i = 0; i < 4; i++)
+        finds = finds && bd->mLipSyncs[i] == lips[lipNames[i]];
+    Gate("bd-song-finds", otherOk && finds,
+         "on_file_loaded venue leaves the director alone (%s); on_file_loaded song caches "
+         "song.anim, BandSongPref and song/part2/part3/part4.lipsync from the walked dir, "
+         "keeps the shipped anim (no synthesized one), zeroes the end-of-song time: %s",
+         otherOk ? "yes" : "NO", finds ? "yes" : "NO");
+
+    std::vector<KeyInfo> after = WalkKeys(anim);
+    int clampBad = 0, clamped = 0;
+    for (size_t i = 0; i < after.size() && i < before.size(); i++) {
+        bool want = before[i].clamp
+            || (before[i].isSym && before[i].target == bd && IsIntensity(before[i].prop));
+        clamped += after[i].clamp && !before[i].clamp;
+        if (after[i].clamp != want) {
+            printf("  %s: clamp %d, want %d\n", after[i].prop.c_str(), after[i].clamp, want);
+            clampBad++;
+        }
+    }
+    Gate("bd-song-clamp", clampBad == 0 && clamped == 5 && after.size() == before.size(),
+         "the shipped anim's %d keys: exactly the five <instrument>_intensity symbol tracks "
+         "on the director gain clamp-to-previous-range (%d did), %d wrong",
+         (int)after.size(), clamped, clampBad);
+
+    // --- no song milo: the director synthesizes its own song.anim ---
+    bd->mEndOfSongSec = 99.0f;
+    SendFileLoaded(bd, Symbol("song"), nullptr);
+    RndPropAnim *made = bd->mPropAnim;
+    bool cleared = made && made != anim && bd->unk110 && !bd->mSongPref
+        && bd->mEndOfSongSec == 0.0f;
+    for (int i = 0; i < 4; i++)
+        cleared = cleared && !bd->mLipSyncs[i];
+    FileMerger::Merger *sm = fm->FindMerger(Symbol("song"), false);
+    bool owned = made && sm && sm->mLoadedObjects.find(made) != sm->mLoadedObjects.end()
+        && !strcmp(made->Name(), "song.anim") && made->Dir() == fm->Dir()
+        && !strcmp(made->Type().Str(), "song_anim")
+        && made->GetRate() == RndAnimatable::k480_fpb;
+    Gate("bd-null-made", cleared && owned,
+         "on_file_loaded song with no dir clears every cached find (%s) and makes a song.anim "
+         "of type song_anim at 480 fpb in the merger's dir, owned by the song merger (%s)",
+         cleared ? "yes" : "NO", owned ? "yes" : "NO");
+
+    // The synthesized anim against the shipped one: the same director tracks,
+    // the same key types, the same interp handlers.
+    std::map<std::string, KeyInfo> want, got;
+    for (const KeyInfo &k : before)
+        if (k.target == bd)
+            want[k.prop] = k;
+    int notOnBd = 0;
+    for (const KeyInfo &k : made ? WalkKeys(made) : std::vector<KeyInfo>()) {
+        if (k.target != bd)
+            notOnBd++;
+        got[k.prop] = k;
+    }
+    int keyBad = notOnBd;
+    for (auto &w : want) {
+        auto g = got.find(w.first);
+        if (g == got.end()) {
+            printf("  synthesized anim lacks %s\n", w.first.c_str());
+            keyBad++;
+        } else if (g->second.type != w.second.type || g->second.interp != w.second.interp
+                   || g->second.clamp != IsIntensity(w.first)) {
+            printf("  %s: type %d interp '%s' clamp %d; shipped type %d interp '%s'\n",
+                   w.first.c_str(), g->second.type, g->second.interp.c_str(), g->second.clamp,
+                   w.second.type, w.second.interp.c_str());
+            keyBad++;
+        }
+    }
+    for (auto &g : got)
+        if (!want.count(g.first)) {
+            printf("  synthesized anim has %s, the shipped one does not\n", g.first.c_str());
+            keyBad++;
+        }
+    Gate("bd-null-keys", keyBad == 0 && !got.empty(),
+         "the synthesized song.anim's %d tracks vs the shipped 20thcenturyboy song.anim's %d "
+         "director tracks: same property set, key types and interp handlers, clamp only on "
+         "the five intensities; %d differ",
+         (int)got.size(), (int)want.size(), keyBad);
+
+    delete bd;
+    TheBandDirector = savedBd;
+}
+
 } // namespace
 
 int RunW16TSPhase(GateFn gate) {
@@ -440,5 +629,6 @@ int RunW16TSPhase(GateFn gate) {
         FilterChecks();
     }
     ModifierChecks();
+    BandDirectorChecks();
     return gRan;
 }
