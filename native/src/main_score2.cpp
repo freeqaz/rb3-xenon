@@ -57,6 +57,7 @@
 #include "obj/DataUtl.h"
 #include "utl/Symbol.h"
 #include "retail_boot_macros.h"
+#include "retail_system_config.h"
 
 #include "score_engine.h" // M5 transcription, for the cross-check
 
@@ -65,45 +66,16 @@
 #include <string>
 
 extern void InitMakeString();
-extern DataArray *gSystemConfig; // src/system/os/System.cpp
 void DataInit();                 // src/system/obj/Data.cpp
 
 // ---------------------------------------------------------------------------
-// The real scoring.dta layout the Scoring() ctor parses via SystemConfig(
-// "scoring"). Values are the retail config (points / streaks / overdrive) plus
-// the unison_phrase block the ctor requires. Identical to the block M5's
-// ScoreConfig::Load reads through the same DataArray API.
-static const char *kScoringDta =
-    "(scoring"
-    "   (points"
-    "      (drum   (head 25)(tail 12)(chord -1)(pro_bonus 5))"
-    "      (bass   (head 25)(tail 12)(chord -1))"
-    "      (guitar (head 25)(tail 12)(chord -1))"
-    "      (vocals (head 0)(tail 0)(chord -1))"
-    "      (keys   (head 25)(tail 12)(chord -1))"
-    "      (real_guitar (head 60)(tail 30)(chord 120))"
-    "      (real_bass   (head 60)(tail 30)(chord 120)))"
-    "   (streaks"
-    "      (multipliers"
-    "         (guitar       (0 1)(10 2)(20 3)(30 4))"
-    "         (bass         (0 1)(10 2)(20 3)(30 4)(40 5)(50 6))"
-    "         (drum         (0 1)(10 2)(20 3)(30 4))"
-    "         (keys         (0 1)(10 2)(20 3)(30 4))"
-    "         (vocals       (0 1)(10 2)(20 3)(30 4))"
-    "         (default      (0 1)(10 2)(20 3)(30 4)))"
-    "      (energy"
-    "         (default (0 1))))"
-    "   (overdrive"
-    "      (recharge_rate 0.0)"
-    "      (star_phrase 0.25)"
-    "      (common_phrase 0.15)"
-    "      (fill_boost 0.35)"
-    "      (whammy_rate 3.4e-2)"
-    "      (ready_level 0.5)"
-    "      (multiplier 2)"
-    "      (crowd_boost 6))"
-    "   (unison_phrase (reward 0.5)(penalty 0.5))"
-    ")";
+// SystemConfig("scoring") -- what the real Scoring() ctor parses -- and the
+// TRACK_SYMBOLS macro its SymToTrackType reads are retail's post-SystemInit
+// config and macro table, read off the disc (retail_system_config.h, W16-UD).
+// Before W16-UD this driver typed in a (scoring ...) block (with a "guitar"
+// streak list and a 2-entry unison_phrase retail does not have) and a
+// TRACK_SYMBOLS whose 22-fret names were wrong (real_guitar_22fret for retail's
+// real_guitar_22) and three entries short.
 
 // ===========================================================================
 // NativeScorePlayer — concrete subclass of the real Player. Only the pure
@@ -246,16 +218,8 @@ int main(int argc, char **argv) {
     RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
     ObjectDir::PreInit(256, 4096);
 
-    gSystemConfig = DataReadString(kScoringDta);
-
-    // TrackType <-> Symbol mapping: Scoring::Scoring() calls SymToTrackType on
-    // each points-block symbol, which reads the DataArray #define TRACK_SYMBOLS
-    // (obj/DataUtl DataGetMacro). Register it (same 10-entry order as the
-    // TrackType enum) so the real Scoring ctor resolves the instrument rows.
-    DataArray *trackSyms = DataReadString(
-        "(drum guitar bass vocals keys real_keys real_guitar "
-        "real_guitar_22fret real_bass real_bass_22fret)");
-    DataSetMacro(Symbol("TRACK_SYMBOLS"), trackSyms->Array(0));
+    if (int rc = RetailSystemConfig::Boot()) // retail's config + macros, off the disc (W16-UD)
+        return rc;
 
     printf("=== rb3-xenon native M6: REAL Performer/Player/Scoring/Stats object graph ===\n\n");
 
@@ -311,7 +275,7 @@ int main(int argc, char **argv) {
     // Mirror the same sequence through M5's transcription for the cross-check.
     ScoreConfig m5cfg;
     {
-        DataArray *scoringCfg = gSystemConfig->FindArray(Symbol("scoring"));
+        DataArray *scoringCfg = SystemConfig("scoring");
         std::vector<float> starThresh; // unused for the score cross-check
         m5cfg.Load(scoringCfg, TrackName(ty), ty == kTrackBass ? "bass" : "guitar",
                    maxMult, starThresh);

@@ -35,8 +35,6 @@
 #include "game/Game.h"
 #include "game/SongDB.h"
 #include "game/CrowdRating.h"
-#include "crowd_config_dta.h" // W16-PD: real shipped (crowd ...) block
-#include "scoring_config_dta.h" // W16-PJ: real shipped (solo ...) + (coda ...)
 #include "game/GameConfig.h"
 #include <string>
 #include "game/MultiplayerAnalyzer.h" // PlayerScoreInfo
@@ -65,6 +63,7 @@
 #include "utl/FileStream.h"
 #include "utl/Symbol.h"
 #include "retail_boot_macros.h"
+#include "retail_system_config.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -73,7 +72,6 @@
 #include <vector>
 
 extern void InitMakeString();
-extern DataArray *gSystemConfig;
 void DataInit();
 
 // ---- M8 support (native/src/m8_support.cpp) ----
@@ -86,69 +84,15 @@ void NativeSongDBPostLoad(SongDB *, float);
 static const int kNDiff = 4;
 static const int kExpertDiff = 3;
 
-// Combined SystemConfig — identical to M7 (real retail scoring.dta numbers).
-static const char *kConfigDta =
-    "(beatmatcher"
-    "   (parser"
-    "      (player_slot 9)"
-    "      (low_vocal_pitch 36)(high_vocal_pitch 84)"
-    "      (keyboard_range_shift_duration_ms 100.0)"
-    "      (track_mapping"
-    "         (DRUMS  0 0 'PART DRUMS')(BASS 3 2 'PART BASS')"
-    "         (GUITAR 4 1 'PART GUITAR')(VOCALS 6 3 'PART VOCALS')"
-    "         (KEYS 9 4 'PART KEYS'))"
-    "   )"
-    "   (controllers (beatmatch_controller_mapping (guitar guitar)))"
-    "   (audio (submixes))"
-    ")"
-    "(scoring"
-    "   (points"
-    "      (drum   (head 25)(tail 12)(chord -1)(pro_bonus 5))"
-    "      (bass   (head 25)(tail 12)(chord -1))"
-    "      (guitar (head 25)(tail 12)(chord -1))"
-    "      (vocals (head 0)(tail 0)(chord -1))"
-    "      (keys   (head 25)(tail 12)(chord -1))"
-    "      (real_guitar (head 60)(tail 30)(chord 120))"
-    "      (real_bass   (head 60)(tail 30)(chord 120)))"
-    "   (streaks"
-    "      (multipliers"
-    "         (guitar (0 1)(10 2)(20 3)(30 4))"
-    "         (bass   (0 1)(10 2)(20 3)(30 4)(40 5)(50 6))"
-    "         (drum   (0 1)(10 2)(20 3)(30 4))"
-    "         (keys   (0 1)(10 2)(20 3)(30 4))"
-    "         (vocals (0 1)(10 2)(20 3)(30 4))"
-    "         (default (0 1)(10 2)(20 3)(30 4)))"
-    "      (energy (default (0 1))))"
-    "   (overdrive"
-    "      (recharge_rate 0.0)(star_phrase 0.25)(common_phrase 0.15)"
-    "      (fill_boost 0.35)(whammy_rate 3.4e-2)(ready_level 0.5)"
-    "      (multiplier 2)(crowd_boost 6))"
-    "   (band_energy"
-    "      (deploy_beats 32)(deploy_bonus 50)(spotlight_phrase 0.251)"
-    "      (unison_phrase 0.501)(deploy_threshold 0.5)(save_energy 0.5))"
-    "   (bonuses"
-    "      (max_bonus 4)(multiplier (1 2 4 6 8))(crowd_boost (1 6 6 6 6)))"
-    "   (unison_phrase (reward 2.0)(penalty 2.0)(point_bonus 1000))"
-    // W16-PD: the REAL shipped (crowd ...) block (crowd_config_dta.h) is spliced
-    // in at @CROWD@ at startup -- the real CrowdRating::Configure reads it. The
-    // three save/brink keys this used to hand-write (0.3 / 2.0 / 0.1) are in that
-    // block with their shipped values (0.8333 / 3.5 / 0.04).
-    "   @CROWD@"
-    "   (track_graphics (popup_help_intro_duration_ms 5000.0))"
-    // -- REAL star thresholds (config/star_thresholds.dta) so GetNumStars is real
-    "   (star_ratings"
-    "      (new_instrument_thresholds"
-    "         (guitar 6.0e-2 0.12 0.2 0.47 0.78 1.15)"
-    "         (bass 5.0e-2 0.1 0.19 0.47 0.78 1.15)"
-    "         (drum 6.0e-2 0.12 0.2 0.45 0.75 1.09)"
-    "         (vocals 5.0e-2 0.11 0.19 0.46 0.77 1.06)"
-    "         (keys 6.0e-2 0.12 0.2 0.47 0.78 1.15)"
-    "         (real_guitar 6.0e-2 0.12 0.2 0.47 0.78 1.15)"
-    "         (real_bass 5.0e-2 0.1 0.19 0.47 0.78 1.15)"
-    "         (real_keys 6.0e-2 0.12 0.2 0.47 0.78 1.15))"
-    "      (new_num_instruments_multiplier 1.0 1.26 1.52 1.8 1.8)"
-    "      (new_bonus_thresholds 5.0e-2 0.1 0.2 0.3 0.4 0.95 1.0))"
-    ")";
+// ---------------------------------------------------------------- config ----
+// SystemConfig() -- (beatmatcher ...) for the SongParser, (scoring ...) for
+// Scoring / PlayerParams / Band / CrowdRating / the MultiplayerAnalyzer, and
+// every other section -- and the macro table (TRACK_SYMBOLS for SymToTrackType,
+// kDifficulty*) are retail's post-SystemInit config read off the disc
+// (retail_system_config.h, W16-UD). Before W16-UD this driver typed in its own
+// (beatmatcher ...)/(scoring ...) blocks, spliced in crowd/solo/coda blocks cut
+// from a host TEXT extraction, and defined its own TRACK_SYMBOLS; W16-UD's lane
+// doc lists where those disagreed with retail.
 
 class NativeSongInfo : public SongInfo {
 public:
@@ -268,17 +212,8 @@ int main(int argc, char **argv) {
     RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
     ObjectDir::PreInit(256, 4096);
 
-    {
-        std::string cfg(kConfigDta);
-        cfg.replace(cfg.find("@CROWD@"), 7,
-                    std::string(kRealCrowdConfigDta) + kRealSoloConfigDta
-                        + kRealCodaConfigDta);
-        gSystemConfig = DataReadString(cfg.c_str());
-    }
-    DataArray *trackSyms = DataReadString(
-        "(drum guitar bass vocals keys real_keys real_guitar "
-        "real_guitar_22fret real_bass real_bass_22fret)");
-    DataSetMacro(Symbol("TRACK_SYMBOLS"), trackSyms->Array(0));
+    if (int rc = RetailSystemConfig::Boot()) // retail's config + macros, off the disc (W16-UD)
+        return rc;
 
     printf("=== rb3-xenon native M8: full-song run-through (clock-driven) ===\n");
     printf("mid : %s\npart: %s\n\n", midPath, partName);
@@ -311,7 +246,9 @@ int main(int argc, char **argv) {
     MeasureMap *measureMap = nullptr;
     {
         FileStream fs(midPath, FileStream::kRead, false);
-        SongParser parser(songData, kNDiff, tempoMap, measureMap, 2);
+        // As SongData::Load: the parser fills SongData's own maps, so a
+        // vocal callback that reads mTempoMap mid-parse (AddLyricShift) has it.
+        SongParser parser(songData, kNDiff, songData.mTempoMap, songData.mMeasureMap, 2);
         parser.ReadMidiFile(fs, midPath, &songInfo);
         int pumps = 0;
         while (!parser.NoMidiReader() && pumps < 2000000) {
@@ -320,8 +257,8 @@ int main(int argc, char **argv) {
         }
         printf("--- Stage 1: REAL SongParser -> SongData (%d Poll pumps) ---\n", pumps);
     }
-    songData.mTempoMap = tempoMap;
-    songData.mMeasureMap = measureMap;
+    tempoMap = songData.mTempoMap;
+    measureMap = songData.mMeasureMap;
     for (size_t i = 0; i < songData.mGemDBs.size(); i++)
         songData.mGemDBs[i]->MergeChordGems();
 

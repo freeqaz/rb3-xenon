@@ -52,60 +52,25 @@
 #include "utl/FileStream.h"
 #include "utl/Symbol.h"
 #include "retail_boot_macros.h"
+#include "retail_system_config.h"
 
 #include <cstdio>
 #include <vector>
 
 extern void InitMakeString();
-extern DataArray *gSystemConfig; // src/system/os/System.cpp
 void DataInit();                 // src/system/obj/Data.cpp
 
 static const int kNumDifficulties = 4;   // Easy / Medium / Hard / Expert
 static const int kExpert = 3;
 
 // ---------------------------------------------------------------- config ----
-// beatmatcher config read by (a) the SongParser ctor [parser/track_mapping/...]
-// and (b) ControllerTypeToTrackWatcherType [controllers/beatmatch_controller_
-// mapping]. The controller symbol "guitar" maps to watcher type "guitar" ->
-// GuitarTrackWatcherImpl, regardless of whether the track is GUITAR or BASS
-// (bass is played on a guitar controller in RB).
-static const char *kBeatmatcherDta =
-    "(beatmatcher"
-    "   (parser"
-    "      (player_slot 9)"
-    "      (low_vocal_pitch 36)"
-    "      (high_vocal_pitch 84)"
-    "      (keyboard_range_shift_duration_ms 100.0)"
-    "      (track_mapping"
-    "         (DRUMS  0 0 'PART DRUMS')"
-    "         (BASS   3 2 'PART BASS')"
-    "         (GUITAR 4 1 'PART GUITAR')"
-    "         (VOCALS 6 3 'PART VOCALS')"
-    "         (KEYS   9 4 'PART KEYS')"
-    "      )"
-    "   )"
-    "   (controllers"
-    "      (beatmatch_controller_mapping"
-    "         (guitar guitar)"
-    "         (joypad_guitar guitar)"
-    "         (real_guitar real_guitar)"
-    "      )"
-    "   )"
-    "   (audio (submixes))"
-    ")";
-
-// The (watcher ...) block TrackWatcherImpl reads: slop + the required
-// roll_interval_ms / trill_interval_ms arrays. roll_interval_ms is empty (no
-// roll lanes -> GetRollIntervalMs returns 0); trill_interval_ms carries a
-// per-difficulty list (Array(1) then Float(diff)).
-static const char *kWatcherDta =
-    "(watcher"
-    "   (slop 100.0)"
-    "   (roll_interval_ms)"
-    "   (trill_interval_ms (100.0 100.0 100.0 100.0))"
-    "   (pitch_bend_range 2)"
-    "   (ms_to_full_pitch_bend 1000)"
-    ")";
+// SystemConfig("beatmatcher") is read by (a) the SongParser ctor [parser/
+// track_mapping/...], (b) ControllerTypeToTrackWatcherType [controllers/
+// beatmatch_controller_mapping] and (c) TrackWatcherImpl, through the (watcher
+// ...) block BeatMatcher hands TrackWatcher (BeatMatcher.cpp:
+// mCfg->FindArray("watcher", false), mCfg = SystemConfig("beatmatcher")). All of
+// it is retail's post-SystemInit config read off the disc (retail_system_config.h,
+// W16-UD), not blocks written here.
 
 // -------------------------------------------------------------- SongInfo ----
 // Same minimal SongInfo as M3a: SongParser only needs NumChannelsOfTrack +
@@ -261,7 +226,8 @@ int main(int argc, char **argv) {
     RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
     ObjectDir::PreInit(256, 4096);
 
-    gSystemConfig = DataReadString(kBeatmatcherDta);
+    if (int rc = RetailSystemConfig::Boot()) // retail's config, off the disc (W16-UD)
+        return rc;
 
     printf("=== rb3-xenon native M3b: hit detection (BeatMatch scoring) ===\n");
     printf("mid: %s\n\n", midPath);
@@ -290,7 +256,9 @@ int main(int argc, char **argv) {
     printf("--- Stage 1: SongParser -> SongData gem parse ---\n");
     {
         FileStream fs(midPath, FileStream::kRead, false);
-        SongParser parser(songData, kNumDifficulties, tempoMap, measureMap, 2);
+        // As SongData::Load: the parser fills SongData's own maps, so a
+        // vocal callback that reads mTempoMap mid-parse (AddLyricShift) has it.
+        SongParser parser(songData, kNumDifficulties, songData.mTempoMap, songData.mMeasureMap, 2);
         parser.ReadMidiFile(fs, midPath, &songInfo);
         int pumps = 0;
         while (!parser.NoMidiReader() && pumps < 2000000) {
@@ -299,8 +267,8 @@ int main(int argc, char **argv) {
         }
         printf("  drove SongParser in %d Poll() pump(s).\n", pumps);
     }
-    songData.mTempoMap = tempoMap;
-    songData.mMeasureMap = measureMap;
+    tempoMap = songData.mTempoMap;
+    measureMap = songData.mMeasureMap;
     for (size_t i = 0; i < songData.mGemDBs.size(); i++) {
         songData.mGemDBs[i]->MergeChordGems();
         songData.mGemDBs[i]->Finalize();
@@ -394,8 +362,8 @@ int main(int argc, char **argv) {
     printf("\n");
 
     // --- Stage 2: build the TrackWatcher + drive synthetic input ------------
-    DataArray *watcherTop = DataReadString(kWatcherDta);
-    DataArray *watcherCfg = watcherTop->FindArray("watcher");
+    // As BeatMatcher does it: the (watcher ...) block of SystemConfig("beatmatcher").
+    DataArray *watcherCfg = SystemConfig("beatmatcher")->FindArray("watcher", false);
 
     UserGuid guid;
     NativeWatcherParent parent(tempoMap);

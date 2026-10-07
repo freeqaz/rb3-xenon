@@ -57,7 +57,6 @@
 #include <vector>
 
 extern void InitMakeString();
-extern DataArray *gSystemConfig;
 void DataInit();
 void SetTheBeatMap(BeatMap *);
 
@@ -66,6 +65,7 @@ void SetTheBeatMap(BeatMap *);
 #include "utl/SongInfoCopy.h"
 #include "utl/SongInfoAudioType.h"
 #include "retail_boot_macros.h"
+#include "retail_system_config.h"
 class NativeSongInfo : public SongInfo {
 public:
     Symbol GetName() const { return Symbol("native_test"); }
@@ -98,57 +98,15 @@ public:
 static const int kNDiff = 4;
 static const int kExpertDiff = 3;
 
-// ---- the real retail (scoring.dta) vocal scoring block. VocalPart::SetDifficulty-
-// Variables reads (scoring (vocals ...)); values transcribed verbatim from the
-// extracted retail config (config/scoring.dta in the retail archive). Diff
-// arrays are indexed ->Float(diff+1), so index 0 is the key and 1..4 are the four
-// difficulties (easy..expert).
-static const char *kConfigDta =
-    // (beatmatcher ...) — SongParser reads player_slot / vocal pitch range /
-    // track_mapping from here (same block M8 uses).
-    "(beatmatcher"
-    "   (parser"
-    "      (player_slot 9)"
-    // kTrackVocals=3 -> routes the VOCALS track to the vocal-note parser
-    // (mState=kVocalNotes) instead of the gem parser. Without this the vocal
-    // track is (wrongly) read as gems and no VocalNotes are emitted.
-    "      (vocal_style_instruments (3))"
-    "      (low_vocal_pitch 36)(high_vocal_pitch 84)"
-    "      (keyboard_range_shift_duration_ms 100.0)"
-    "      (track_mapping"
-    "         (DRUMS  0 0 'PART DRUMS')(BASS 3 2 'PART BASS')"
-    "         (GUITAR 4 1 'PART GUITAR')(VOCALS 6 3 'PART VOCALS')"
-    "         (KEYS 9 4 'PART KEYS'))"
-    "   )"
-    "   (controllers (beatmatch_controller_mapping (guitar guitar)))"
-    "   (audio (submixes))"
-    ")"
-    "(scoring"
-    "   (vocals"
-    "      (rating_thresholds 0.6 0.75 0.9 0.99)"
-    "      (slop 180 140 120 120)"
-    "      (pitch_margin 3.8 2.6 1.9 1.2)"
-    "      (nonpitch_easy_multiplier 3.0)"
-    "      (nonpitch_energy_threshold 4.5e-4)"
-    "      (nonpitch_stickiness 0.25)"
-    "      (vocal_cap_growth 1.2 1.15 1.15 1.1)"
-    "      (pitch_hit_multiplier 1.7 1.5 1.35 1.25)"
-    "      (nonpitch_hit_multiplier 1.7 1.5 1.35 1.25)"
-    "      (short_note_threshold_ms 166)"
-    "      (short_note_multiplier 1.5 1.4 1.35 1.3)"
-    "      (note_length_factor 1.0 1.0 1.0 1.0)"
-    "      (phrase_value 200 400 800 1000)"
-    "      (part_score_multiplier 1.0 0.1 0.1)"
-    "      (track_wrapping_margin 0.0)"
-    "      (max_detune 1.0)"
-    "      (packet_period 250)"
-    "      (freestyle_deployment_time (500 400))"
-    "      (freestyle_min_duration (600 500))"
-    "      (freestyle_pad (100 50))"
-    "      (synapse_proximity_solo 0.78 0.78 0.78 0.78)"
-    "      (synapse_focus_solo 1.0e-4 1.0e-4 1.0e-4 1.0e-4)"
-    "      (synapse_proximity_harm 0.956 0.956 0.956 0.956)"
-    "      (synapse_focus_harm 1.0e-4 1.0e-4 1.0e-4 1.0e-4)))";
+// ---------------------------------------------------------------- config ----
+// SystemConfig() -- (beatmatcher ...) for the SongParser, (scoring ...) for
+// Scoring / PlayerParams / Band / CrowdRating / the MultiplayerAnalyzer, and
+// every other section -- and the macro table (TRACK_SYMBOLS for SymToTrackType,
+// kDifficulty*) are retail's post-SystemInit config read off the disc
+// (retail_system_config.h, W16-UD). Before W16-UD this driver typed in its own
+// (beatmatcher ...)/(scoring ...) blocks, spliced in crowd/solo/coda blocks cut
+// from a host TEXT extraction, and defined its own TRACK_SYMBOLS; W16-UD's lane
+// doc lists where those disagreed with retail.
 
 // The one shim: bring up a REAL VocalPart without the VocalPlayer-coupled ctor.
 // VocalPart has no virtuals (no vtable), so a zeroed buffer is a valid object;
@@ -203,7 +161,8 @@ int main(int argc, char **argv) {
     DataInit();
     RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
     ObjectDir::PreInit(256, 4096);
-    gSystemConfig = DataReadString(kConfigDta);
+    if (int rc = RetailSystemConfig::Boot()) // retail's config + macros, off the disc (W16-UD)
+        return rc;
 
     printf("=== rb3-xenon native M9: vocal pitch-track run-through ===\n");
     printf("mid : %s\npart: %s\n\n", midPath, partName);

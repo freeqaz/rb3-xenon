@@ -20,7 +20,13 @@ void ScoreConfig::Load(
     // (streaks (multipliers (<list> (0 1)(10 2)...) ...))     [InitializeStreakList]
     DataArray *streaks = scoring->FindArray("streaks");
     DataArray *mults = streaks->FindArray("multipliers");
-    DataArray *list = mults->FindArray(Symbol(streakListName));
+    // Scoring::GetStreakList: the named list, else the "default" one. Retail's
+    // scoring.dta has no guitar / drum / keys list, so those instruments ramp on
+    // "default" in the game (W16-UD: the hand-written config this was first
+    // tested against carried a "guitar" row, which hid the missing fallback).
+    DataArray *list = mults->FindArray(Symbol(streakListName), false);
+    if (!list)
+        list = mults->FindArray("default");
     mStreak.clear();
     for (int j = 1; j < list->Size(); j++) {
         DataArray *row = list->Array(j);
