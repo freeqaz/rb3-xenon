@@ -59,7 +59,7 @@ void Bloom_Downsample(ShaderType shader, RndTex *texSrc, RndTex *texDst) {
     texDst->FinishDrawTarget();
 }
 
-void Bloom_Blur(RndTex *texDst, RndTex *texSrc, BloomBlurStyle style, BloomBlurDirection direction, unsigned int pass, float attenuation, float angle) {
+void Bloom_Blur(RndTex *texSrc, RndTex *texDst, BloomBlurStyle style, BloomBlurDirection direction, unsigned int pass, float attenuation, float angle) {
     MILO_ASSERT(texDst->Width() > 0, 0x1b2);
     MILO_ASSERT(texDst->Height() > 0, 0x1b3);
     MILO_ASSERT(texDst->Width() == texSrc->Width(), 0x1b4);

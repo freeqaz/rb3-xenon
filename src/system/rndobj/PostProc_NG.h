@@ -17,7 +17,7 @@ enum BloomBlurDirection {
 };
 
 void Bloom_Downsample(ShaderType shader, RndTex *texSrc, RndTex *texDst);
-void Bloom_Blur(RndTex *texDst, RndTex *texSrc, BloomBlurStyle style, BloomBlurDirection direction, unsigned int pass, float attenuation, float angle);
+void Bloom_Blur(RndTex *texSrc, RndTex *texDst, BloomBlurStyle style, BloomBlurDirection direction, unsigned int pass, float attenuation, float angle);
 
 class NgPostProc : public RndPostProc {
 public:
