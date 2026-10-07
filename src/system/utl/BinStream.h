@@ -17,6 +17,10 @@ namespace Hmx {
 inline void PushRev(int, Hmx::Object *);
 inline int PopRev(Hmx::Object *);
 
+#ifdef HX_NATIVE
+extern int gNativeFailedStreamReads; // W16-UJ, BinStream.cpp
+#endif
+
 enum EofType {
     NotEof = 0,
     RealEof = 1,

@@ -61,7 +61,20 @@ namespace {
         static StreamAuditState s;
         return s;
     }
+    // W16-UJ: a gate turns the audit on without RB3_STREAM_AUDIT and without
+    // its per-miss log lines (a venue has ~1,000 factory misses).
+    bool gStreamAuditQuiet;
+    int gStreamAuditMissSkips;
 }
+
+// W16-UJ venue-load gate hooks (native/src/w16uj_phase.cpp).
+void NativeStreamAuditBegin() {
+    Audit().enabled = true;
+    gStreamAuditQuiet = true;
+}
+int NativeStreamAuditObjects() { return Audit().objects; }
+int NativeStreamAuditAnomalies() { return Audit().anomalies; }
+int NativeStreamAuditMissSkips() { return gStreamAuditMissSkips; }
 #endif
 bool DirLoader::sPrintTimes;
 bool DirLoader::sCacheMode;
@@ -406,6 +419,14 @@ void ReadDead(BinStream &bs) {
     unsigned char val;
     bs >> val;
     while (true) {
+#ifdef HX_NATIVE
+        // W16-UJ: a failed stream reads zeros forever, so the marker hunt
+        // below never ends -- the big_club_07 "spin" W16-UF recorded. Retail
+        // never reaches it on shipped data; native stops and lets the load
+        // report the failure (BinStream counts the failed reads).
+        if (bs.Fail())
+            return;
+#endif
         if (val == 0xAD) {
             bs >> val;
             if (val == 0xDE) {
@@ -1061,6 +1082,8 @@ void DirLoader::LoadObjs() {
                     if (au.enabled) {
                         int before = mStream->Tell();
                         ReadDead(*mStream);
+                        gStreamAuditMissSkips++;
+                        if (!gStreamAuditQuiet)
                         MILO_LOG("STREAM_AUDIT: MISS-SKIP bytes=%d at off=%d "
                                  "file='%s' proxy='%s'\n",
                                  mStream->Tell() - before, before, mFile.c_str(),

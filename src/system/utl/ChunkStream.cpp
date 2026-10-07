@@ -280,19 +280,29 @@ void ChunkStream::ReadImpl(void *data, int bytes) {
         int chunkSize = *mCurChunk & kChunkSizeMask;
         int available = chunkSize - mCurBufOffset;
         if (available <= 0) {
-            // Current chunk exhausted, advance to next
+            // Current chunk exhausted, advance to next.
+            //
+            // W16-UJ: TempEof is NOT impossible here, and treating it as the
+            // end of the stream failed shipped venue loads (small_club_15,
+            // big_club_07). Eof() issues the read-ahead for the next chunk
+            // only when the buffer holding the old one has been released, and
+            // marks it ready only on a LATER call (ReadDone, then the
+            // decompress or the uncompressed-ready step). So a read that
+            // crosses a whole chunk without a poll in between -- ReadDead
+            // scanning a 131,150 B uncompressed audio chunk byte by byte, for
+            // an object native has no factory for -- reaches the boundary with
+            // the next buffer still kReading. Retail polls `while (Eof() ==
+            // TempEof)` around the same pipeline (ReadChunks above); keep
+            // polling it here, bounded as BinStream::WaitUntilReady is.
             EofType eof = Eof();
-            if (eof == RealEof) {
-                // Past end of stream — zero remaining, mark failed to prevent
-                // infinite caller loops (MILO_FAIL doesn't halt on native)
-                memset(dst, 0, remaining);
-                mTell += remaining;
-                mFail = true;
-                return;
+            for (int polls = 0; eof == TempEof && polls < 100000; polls++) {
+                Timer::Sleep(0);
+                eof = Eof();
             }
-            if (eof == TempEof) {
-                // On native all I/O is synchronous, TempEof should not happen.
-                // Treat as RealEof to prevent infinite spin.
+            if (eof != NotEof) {
+                // A real end of stream, or a read-ahead that never completed:
+                // zero the rest and fail the stream so callers stop
+                // (MILO_FAIL doesn't halt on native).
                 memset(dst, 0, remaining);
                 mTell += remaining;
                 mFail = true;

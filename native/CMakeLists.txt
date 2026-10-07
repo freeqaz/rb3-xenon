@@ -2078,6 +2078,9 @@ if(RB3X_BUILD_ENGINE)
         # fingering, IsCymbal, JoypadClient repeats, camshot targets, store
         # panel, song data, crowd meter, heap, boot config) on shipped data.
         ${CMAKE_SOURCE_DIR}/src/w16uf_phase.cpp
+        # W16-UJ: every shipped venue milo loads and unloads cleanly; float
+        # Min/Max/Clamp follow retail's fsel on NaN.
+        ${CMAKE_SOURCE_DIR}/src/w16uj_phase.cpp
         ${W16TS_LINK_SOURCES}
         ${W16UF_LINK_SOURCES}
         ${VOCALTRACK_GAME_SOURCES}
@@ -2122,6 +2125,9 @@ set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16ub_phase.cpp
     PROPERTIES COMPILE_OPTIONS "-fno-access-control")
 # W16-UF: same rule for its driver file.
 set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16uf_phase.cpp
+    PROPERTIES COMPILE_OPTIONS "-fno-access-control")
+# W16-UJ: same rule (it reads LightPreset::mKeyframes).
+set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16uj_phase.cpp
     PROPERTIES COMPILE_OPTIONS "-fno-access-control")
 
 # ---- X20: OutfitConfig's property table needs the LOCAL_STATIC Symbol arm ----

@@ -893,6 +893,16 @@ public:
     // a stub.
     void SetOwnerObj(T *obj) { SetObjConcrete(obj); }
     void operator=(T *obj) { SetOwnerObj(obj); }
+    // W16-UJ: copy-assign MUST be user-declared here too, exactly as on the
+    // X360 arm below (retail: SetOwnerObj(o.mObject) at every site). Without
+    // it the implicit operator= ALSO memberwise-copies mOwner and mSelfSeed.
+    // Measured on arena_01: a venue Character's mSphereBase (constructed with
+    // itself as owner and seed) was found holding the owner and seed of the
+    // extras template `female_extras03`, freed earlier -- the shape of a
+    // `mSphereBase = c->mSphereBase` assignment, e.g. Character::Copy's
+    // COPY_MEMBER. The ~ObjectDir cascade's seed restore then AddRef'd onto the
+    // dead template: SIGSEGV on every arena and festival unload.
+    void operator=(const ObjOwnerPtr &o) { SetOwnerObj(o.mObject); }
     T *Ptr() const { return mObject; }
 
     /** X16. The ctor's seed pointer, retained so the native ring-teardown
