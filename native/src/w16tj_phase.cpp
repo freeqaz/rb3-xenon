@@ -38,9 +38,17 @@
 #include "beatmatch/TuningOffsetList.h"
 #include "beatmatch/VocalNote.h"
 #include "game/BandUser.h"
+#include "game/Band.h"
 #include "game/BandUserMgr.h"
+#include "game/CrowdRating.h"
 #include "game/Game.h"
 #include "game/GameConfig.h"
+#include "game/GameMicManager.h"
+#include "game/PlayerBehavior.h"
+#include "game/Singer.h"
+#include "game/VocalPart.h"
+#include "game/VocalPlayer.h"
+#include "game/Scoring.h"
 #include "game/SongDB.h"
 #include "meta_band/BandSongMetadata.h"
 #include "meta_band/BandSongMgr.h"
@@ -50,6 +58,8 @@
 #include "obj/Data.h"
 #include "obj/DataFile.h"
 #include "obj/Dir.h"
+#include "net/NetSession.h"
+#include "rndobj/Mesh.h"
 #include "os/File.h"
 #include "utl/BeatMap.h"
 #include "utl/FileStream.h"
@@ -87,7 +97,7 @@ void Gate(const char *name, bool ok, const char *fmt, ...) {
     gRan++;
 }
 
-const char *kSong = "bohemianrhapsody";
+const char *kSong = "antibodies";
 
 // ================================================================ MiniSmf ==
 // A standard MIDI file reader written for this phase: chunk walk, running
@@ -651,6 +661,315 @@ void SetupGemsChecks(Fixture &fx) {
     gm->SetupGems(0);
 }
 
+
+// ================================================ UpdateScrolling gates ==
+
+// MiniSmf's view of PART VOCALS and BEAT.
+// One drawn vocal segment: a sung note, or the glide a "+" lyric draws from
+// the previous note's end into its own note.
+struct RefSeg {
+    int tick, endTick, beginPitch, endPitch;
+};
+bool operator<(const RefSeg &a, const RefSeg &b) { return a.tick < b.tick; }
+
+struct RefVox {
+    std::vector<RefSeg> segs;         // sung notes (36..84) and "+" glides
+    int sung = 0, glides = 0;
+    std::vector<int> tamb;            // tambourine gems (pitch 96), ticks
+    std::vector<std::pair<int, int> > phrases; // phrase markers (pitch 105)
+    std::vector<bool> tambPhrase;     // phrase holds a tambourine gem
+    std::vector<std::pair<int, bool> > beats;  // BEAT track: (tick, downbeat)
+};
+
+RefVox BuildRefVox(const MiniSmf &smf) {
+    RefVox r;
+    const SmfTrack *pv = smf.Track("PART VOCALS");
+    std::vector<RefSeg> sung;
+    for (size_t i = 0; i < pv->notes.size(); i++) {
+        const SmfNote &n = pv->notes[i];
+        if (n.pitch >= 36 && n.pitch <= 84)
+            sung.push_back(RefSeg { n.tick, n.endTick, n.pitch, n.pitch });
+        else if (n.pitch == 96)
+            r.tamb.push_back(n.tick);
+        else if (n.pitch == 105)
+            r.phrases.push_back(std::make_pair(n.tick, n.endTick));
+    }
+    std::sort(sung.begin(), sung.end());
+    r.segs = sung;
+    r.sung = sung.size();
+    for (size_t i = 0; i < pv->texts.size(); i++) {
+        if (pv->texts[i].text != "+")
+            continue;
+        int tick = pv->texts[i].tick;
+        for (size_t k = 1; k < sung.size(); k++) {
+            if (sung[k].tick == tick && sung[k - 1].endTick < tick) {
+                r.segs.push_back(RefSeg { sung[k - 1].endTick, tick, sung[k - 1].endPitch,
+                                          sung[k].beginPitch });
+                r.glides++;
+            }
+        }
+    }
+    std::sort(r.segs.begin(), r.segs.end());
+    std::sort(r.tamb.begin(), r.tamb.end());
+    std::sort(r.phrases.begin(), r.phrases.end());
+    for (size_t i = 0; i < r.phrases.size(); i++) {
+        bool t = false;
+        for (size_t j = 0; j < r.tamb.size(); j++)
+            t |= r.tamb[j] >= r.phrases[i].first && r.tamb[j] < r.phrases[i].second;
+        r.tambPhrase.push_back(t);
+    }
+    const SmfTrack *bt = smf.Track("BEAT");
+    for (size_t i = 0; bt && i < bt->notes.size(); i++)
+        if (bt->notes[i].pitch == 12 || bt->notes[i].pitch == 13)
+            r.beats.push_back(std::make_pair(bt->notes[i].tick, bt->notes[i].pitch == 12));
+    return r;
+}
+
+// Segments scrolled in by the horizon: every segment starting by it, plus the
+// rest of any tube it starts (a tube runs on through segments that abut it
+// end-to-start at the same pitch).
+int RefScrolledIn(const RefVox &ref, const MiniSmf &smf, double look) {
+    int k = 0;
+    while (k < (int)ref.segs.size() && smf.Ms(ref.segs[k].tick) <= look)
+        k++;
+    while (k > 0 && k < (int)ref.segs.size() && ref.segs[k - 1].endTick == ref.segs[k].tick
+           && ref.segs[k - 1].endPitch == ref.segs[k].beginPitch)
+        k++;
+    return k;
+}
+
+void UpdateScrollingChecks(Fixture &fx) {
+    printf("\n=== W16-TJ: VocalTrack::UpdateScrolling over %s PART VOCALS ===\n", kSong);
+    TrackPanelDir *tp = dynamic_cast<TrackPanelDir *>(gTrackPanel.Ptr());
+    VocalTrackDir *vd = tp ? tp->Find<VocalTrackDir>("vocals", false) : nullptr;
+    if (!vd) {
+        Gate("us-dir", false, "no VocalTrackDir 'vocals' in the loaded trackpanel");
+        return;
+    }
+    RefVox ref = BuildRefVox(fx.smf);
+    printf("  MiniSmf: %d sung notes + %d glides, %d tambourine gems, %d phrases (%d with "
+           "tambourine), %d beats\n",
+           ref.sung, ref.glides, (int)ref.tamb.size(), (int)ref.phrases.size(),
+           (int)std::count(ref.tambPhrase.begin(), ref.tambPhrase.end(), true),
+           (int)ref.beats.size());
+
+    // A real VocalPlayer the way rb3-vocal2 builds one (native scoring ctor),
+    // owned by the fixture's vocal user.
+    // The real scoring tables over the spliced config/scoring.dta: the
+    // tambourine manager prices its gems from them in PostLoad.
+    if (!TheScoring)
+        new Scoring();
+    Band *band = new Band(true, 1, true);
+    band->NativeLoadBonuses();
+    VocalPlayer *vp = new VocalPlayer(fx.vocals, 0, band, fx.vocalTrack, 0, 1, kDifficultyExpert, true);
+    band->mActivePlayers.push_back(vp);
+    // (no mCrowd: the crowd meter is a Poll/phrase-end consumer only)
+    vp->mBehavior->SetStreakType(Symbol("vocals"));
+    vp->mBehavior->SetMaxMultiplier(4);
+    vp->PostLoad(true);
+    for (size_t i = 0; i < vp->mVocalParts.size(); i++)
+        vp->mVocalParts[i]->Restart(false);
+    for (size_t i = 0; i < vp->mSingers.size(); i++)
+        vp->mSingers[i]->Restart(false);
+
+    VocalTrack *vt = new VocalTrack(fx.vocals);
+    fx.vocals->SetTrack(vt);
+    vt->SetDir(vd); // VocalTrack::Init
+    vp->mTrack = vt;
+    vt->Restart(vp, 0, 0);
+
+    const VocalNoteList *nl = TheSongDB->GetVocalNoteList(0);
+    printf("  VocalNoteList: %d notes, %d phrases, %d tambourine gems; window %.0f ms over "
+           "%.2f units, scrolling %d\n",
+           (int)nl->mNotes.size(), (int)nl->mPhrases.size(), (int)nl->mTambourineGems.size(),
+           vt->unk74, vt->unk78, (int)vt->IsScrolling());
+    // Fixture: the parsed phrase table against the chart. Table phrase 0 is
+    // the lead-in before the first charted phrase; every charted phrase end is
+    // a table phrase end; any other table phrase is a break inside a rest and
+    // holds no sung note; a phrase is a tambourine phrase iff it holds a gem.
+    const std::vector<VocalPhrase> &tab = nl->mPhrases;
+    int endsMissing = 0, extras = 0, extrasSung = 0, tambWrong = 0;
+    for (size_t m = 0; m < ref.phrases.size(); m++) {
+        double e = fx.smf.Ms(ref.phrases[m].second);
+        bool found = false;
+        for (size_t p = 1; p < tab.size(); p++)
+            found |= std::fabs(tab[p].unk0 + tab[p].unk4 - e) < 2.0;
+        endsMissing += !found;
+    }
+    for (size_t p = 0; p < tab.size(); p++) {
+        int t0 = tab[p].unk8, t1 = tab[p].unk8 + tab[p].unkc;
+        bool charted = false;
+        for (size_t m = 0; m < ref.phrases.size(); m++)
+            charted |= std::fabs(tab[p].unk0 + tab[p].unk4 - fx.smf.Ms(ref.phrases[m].second)) < 2.0;
+        if (p > 0 && !charted) {
+            extras++;
+            for (size_t k = 0; k < ref.segs.size(); k++)
+                extrasSung += ref.segs[k].tick >= t0 && ref.segs[k].tick < t1;
+        }
+        bool hasGem = false;
+        for (size_t k = 0; k < ref.tamb.size(); k++)
+            hasGem |= ref.tamb[k] >= t0 && ref.tamb[k] < t1;
+        tambWrong += hasGem != tab[p].mTambourinePhrase;
+    }
+    bool leadIn = !tab.empty() && !ref.phrases.empty() && tab[0].unk8 == 0
+        && tab[0].unk8 + tab[0].unkc <= ref.phrases[0].first;
+    Gate("us-phrase-table",
+         leadIn && endsMissing == 0 && extrasSung == 0 && tambWrong == 0
+             && (int)nl->mTambourineGems.size() == (int)ref.tamb.size(),
+         "%d table phrases: lead-in %s, %d of %d charted ends missing, %d rest break(s) holding "
+         "%d sung notes, %d wrong tambourine flags; %d/%d tambourine gems",
+         (int)tab.size(), leadIn ? "ok" : "WRONG", endsMissing, (int)ref.phrases.size(), extras,
+         extrasSung, tambWrong, (int)nl->mTambourineGems.size(), (int)ref.tamb.size());
+
+    RndMesh *tplPhrase = vd->Find<RndMesh>("phrase_marker.mesh", true);
+    RndMesh *tplBeat = vd->Find<RndMesh>("beat_marker.mesh", true);
+    RndMesh *tplDown = vd->Find<RndMesh>("downbeat_marker.mesh", true);
+
+    int lastTick = 0;
+    if (!ref.segs.empty())
+        lastTick = ref.segs.back().endTick;
+    if (!ref.tamb.empty())
+        lastTick = std::max(lastTick, ref.tamb.back());
+    if (!ref.phrases.empty())
+        lastTick = std::max(lastTick, ref.phrases.back().second);
+    float endMs = fx.smf.Ms(lastTick) + 2000.0f;
+    int checks = 0, beatChecks = 0, cursorBad = 0, beatCurBad = 0, markBad = 0, tambBad = 0, tambCurBad = 0;
+    int beatMarks = 0, phraseMarks = 0, tambSeen = 0;
+    for (float ms = 0; ms <= endMs; ms += 1000.0f / 30.0f) {
+        vt->UpdateScrolling(ms);
+        if (fmodf(ms, 2000.0f) >= 1000.0f / 30.0f)
+            continue;
+        checks++;
+        double look = vt->unk74 * 2.0 + ms;
+        double build = vt->unk74 * ((vd->mTrackLeftX - vt->unk78) / vt->unk78) + ms;
+        // 1. scroll cursor: every sung note starting by the look-ahead horizon.
+        int wantNote = RefScrolledIn(ref, fx.smf, look);
+        if (vt->mNextScrollNote[0] != wantNote) {
+            if (cursorBad < 3) {
+                printf("  t=%.0f: scroll cursor %d, want %d\n", ms, vt->mNextScrollNote[0], wantNote);
+            }
+            cursorBad++;
+        }
+        // 2. beat cursor: every beat by the horizon.
+        // (Past the BEAT track's last beat the beat map extrapolates; the
+        // chart says nothing there, so those checkpoints are not counted.)
+        int wantBeat = 0;
+        while (wantBeat < (int)ref.beats.size() && fx.smf.Ms(ref.beats[wantBeat].first) <= look)
+            wantBeat++;
+        bool gridCovers = !ref.beats.empty() && fx.smf.Ms(ref.beats.back().first) > look;
+        beatChecks += gridCovers;
+        if (gridCovers && vt->unk108 != wantBeat) {
+            if (beatCurBad < 3)
+                printf("  t=%.0f: beat cursor %d, want %d\n", ms, vt->unk108, wantBeat);
+            beatCurBad++;
+        }
+        // 3. live markers: beats inside tambourine phrases, and phrase ends,
+        // between the build and look-ahead horizons.
+        std::vector<std::pair<double, int> > want; // (ms, 0 phrase / 1 beat / 2 downbeat)
+        // Beats in the gap before a tambourine phrase: the HUD's phrase span
+        // there is not fixed by the chart, so they are not checked.
+        std::vector<double> skip;
+        for (size_t i = 0; i < ref.beats.size(); i++) {
+            double b = fx.smf.Ms(ref.beats[i].first);
+            if (b <= build || b > look)
+                continue;
+            int tick = ref.beats[i].first;
+            int state = 0; // 0 none, 1 drawn, 2 not checked
+            for (size_t p = 0; p < ref.phrases.size(); p++) {
+                if (!ref.tambPhrase[p])
+                    continue;
+                int prevEnd = p > 0 ? ref.phrases[p - 1].second : 0;
+                if (tick >= ref.phrases[p].first && tick <= ref.phrases[p].second)
+                    state = 1;
+                else if (tick >= prevEnd && tick < ref.phrases[p].first)
+                    state = 2;
+            }
+            if (state == 1)
+                want.push_back(std::make_pair(b, ref.beats[i].second ? 2 : 1));
+            else if (state == 2)
+                skip.push_back(b);
+        }
+        // Phrase markers: every phrase boundary after the lead-in (the table
+        // us-phrase-table vouches for).
+        for (size_t p = 1; p < tab.size(); p++) {
+            double e = tab[p].unk0 + tab[p].unk4;
+            if (e > build && e <= look)
+                want.push_back(std::make_pair(e, 0));
+        }
+        std::sort(want.begin(), want.end());
+        std::vector<std::pair<double, int> > got;
+        for (size_t i = 0; i < vt->unk1a0.size(); i++) {
+            RndMesh *m = vt->unk1a0[i].first;
+            int kind = m->GetGeomOwner() == tplPhrase->GetGeomOwner() ? 0
+                : m->GetGeomOwner() == tplDown->GetGeomOwner()        ? 2
+                : m->GetGeomOwner() == tplBeat->GetGeomOwner()        ? 1
+                                                                      : -1;
+            bool skipped = false;
+            for (size_t k = 0; k < skip.size(); k++)
+                skipped |= kind > 0 && std::fabs(skip[k] - vt->unk1a0[i].second) < 2.0;
+            if (skipped)
+                continue;
+            got.push_back(std::make_pair((double)vt->unk1a0[i].second, kind));
+            beatMarks += kind > 0;
+            phraseMarks += kind == 0;
+        }
+        std::sort(got.begin(), got.end());
+        bool same = got.size() == want.size();
+        for (size_t i = 0; same && i < got.size(); i++)
+            same = std::fabs(got[i].first - want[i].first) < 2.0 && got[i].second == want[i].second;
+        if (!same) {
+            if (markBad < 3) {
+                printf("  t=%.0f: %d live markers, want %d:", ms, (int)got.size(), (int)want.size());
+                for (size_t i = 0; i < got.size() && i < 6; i++)
+                    printf(" %.0f/%d", got[i].first, got[i].second);
+                printf(" | want");
+                for (size_t i = 0; i < want.size() && i < 6; i++)
+                    printf(" %.0f/%d", want[i].first, want[i].second);
+                printf("\n");
+            }
+            markBad++;
+        }
+        // 4. tambourine gems shown: every gem from 1 s ago to the horizon.
+        int wantTambCur = 0;
+        while (wantTambCur < (int)ref.tamb.size() && fx.smf.Ms(ref.tamb[wantTambCur]) < look)
+            wantTambCur++;
+        if (vt->unk100 != wantTambCur)
+            tambCurBad++;
+        std::vector<double> wantTamb;
+        for (int i = 0; i < wantTambCur; i++) {
+            double g = fx.smf.Ms(ref.tamb[i]);
+            if (g >= ms - 1000.0)
+                wantTamb.push_back(g);
+        }
+        const std::deque<TambourineGem *> &used = vt->mTambourineGemPool->mUsedGems;
+        bool tambSame = used.size() == wantTamb.size();
+        for (size_t i = 0; tambSame && i < used.size(); i++)
+            tambSame = std::fabs(used[i]->unk0 - wantTamb[i]) < 2.0;
+        tambSeen += used.size();
+        if (!tambSame) {
+            if (tambBad < 3)
+                printf("  t=%.0f: %d tambourine gems, want %d\n", ms, (int)used.size(),
+                       (int)wantTamb.size());
+            tambBad++;
+        }
+    }
+    Gate("us-scroll-cursor", checks > 0 && cursorBad == 0,
+         "%d checkpoints: next-scroll-note cursor = MiniSmf segments (notes + glides, tubes run on) by the look-ahead horizon, %d wrong",
+         checks, cursorBad);
+    Gate("us-beat-cursor", beatChecks > 0 && beatCurBad == 0,
+         "%d checkpoints inside the BEAT grid: beat cursor = BEAT-track beats by the horizon, "
+         "%d wrong",
+         beatChecks, beatCurBad);
+    Gate("us-markers", markBad == 0 && beatMarks > 0 && phraseMarks > 0,
+         "%d checkpoints: live phrase/beat/downbeat markers vs MiniSmf, %d wrong (%d beat, %d "
+         "phrase marker sightings)",
+         checks, markBad, beatMarks, phraseMarks);
+    Gate("us-tambourine", tambBad == 0 && tambCurBad == 0 && tambSeen > 0,
+         "%d checkpoints: tambourine gems shown vs PART VOCALS pitch 96, %d wrong set, %d wrong "
+         "cursor (%d sightings)",
+         checks, tambBad, tambCurBad, tambSeen);
+}
+
 } // namespace
 
 int RunW16TJPhase(GateFn gate) {
@@ -660,5 +979,6 @@ int RunW16TJPhase(GateFn gate) {
     if (!BuildFixture(fx))
         return gRan;
     SetupGemsChecks(fx);
+    UpdateScrollingChecks(fx);
     return gRan;
 }

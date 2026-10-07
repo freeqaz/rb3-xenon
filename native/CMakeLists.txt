@@ -1751,6 +1751,23 @@ set_source_files_properties(${W16TJ_LINK_SOURCES}
 # LOCAL_STATIC arms are the same comparisons with function-local statics.
 set_source_files_properties(${REPO_ROOT}/src/system/ui/UIList.cpp
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+# The VocalPlayer the UpdateScrolling gates construct. Its vtable makes the
+# whole player live (Poll, Handle, the Player/Performer/Band handler tables),
+# which until now only the headless vocal targets linked, against their own
+# symbol TUs. The real TUs for what it names; the scoring TUs' handler tables
+# get the LOCAL_STATIC arms (identical comparisons, function-local statics),
+# which every target linking them accepts.
+set(W16TJ_VOCAL_SOURCES
+    ${REPO_ROOT}/src/system/synth/FxSendSynapse.cpp
+    ${REPO_ROOT}/src/system/synth/FxSendDelay.cpp
+    ${REPO_ROOT}/src/system/synth/SlipTrack.cpp
+)
+set_source_files_properties(${W16TJ_VOCAL_SOURCES}
+    ${REPO_ROOT}/src/band3/game/VocalPlayer.cpp
+    ${REPO_ROOT}/src/band3/game/Player.cpp
+    ${REPO_ROOT}/src/band3/game/Performer.cpp
+    ${REPO_ROOT}/src/band3/game/Band.cpp
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
 
 set(MILO_TARGET_COMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/milo_object_factories.cpp
@@ -1871,6 +1888,7 @@ if(RB3X_BUILD_ENGINE)
         ${W16SH_LINK_SOURCES}
         ${W16SH_DEP_SOURCES}
         ${W16TJ_LINK_SOURCES}
+        ${W16TJ_VOCAL_SOURCES}
         ${MILO_TARGET_COMMON_SOURCES}
     )
     list(APPEND MILO_TARGETS rb3-render)

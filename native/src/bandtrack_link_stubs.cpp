@@ -59,6 +59,9 @@
 #include "game/RGTrainerPanel.h"
 #include "game/RealGuitarGemPlayer.h"
 #include "os/ContentMgr.h"
+#include "game/VocalOverlay.h"
+#include "tour/Tour.h"
+#include "game/TrackerManager.h"
 
 [[noreturn]] static void BandTrackUnreached(const char *fn) {
     fprintf(stderr, "bandtrack_link_stubs: UNREACHED stub called: %s\n", fn);
@@ -154,3 +157,39 @@ const RGState &RealGuitarGemPlayer::GetRGState() const { UNREACHED(); }
 // SongUpgradeMgr and CustomizePanel the W16-TJ phase builds register here.
 static ContentMgr gW16TJContentMgr;
 ContentMgr &TheContentMgr = gW16TJContentMgr;
+// The VocalPlayer the W16-TJ phase builds: its debug overlay (no TU in the
+// tree; mVocalOverlay stays null), the session queries its Poll/end-game paths
+// make, and the tour singleton MetaPerformer consults (no tour here).
+void VocalOverlay::Reset(int) { UNREACHED(); }
+void VocalOverlay::AddPossiblePart(int, VocalPart *) { UNREACHED(); }
+void VocalOverlay::AppendAssignedPart(const Singer *, const std::vector<VocalPart *> &) { UNREACHED(); }
+void VocalOverlay::AppendDeploymentMarker(int) { UNREACHED(); }
+void VocalOverlay::AppendDeploymentTime(int, float) { UNREACHED(); }
+void VocalOverlay::AppendEnergy(int, float, float) { UNREACHED(); }
+void VocalOverlay::AppendPartData(const std::vector<VocalPart *> &) { UNREACHED(); }
+void VocalOverlay::AppendPhraseMeter(float) { UNREACHED(); }
+void VocalOverlay::AppendSingerPitch(int, float) { UNREACHED(); }
+void VocalOverlay::AppendTalkyData(int, bool, bool, float) { UNREACHED(); }
+void VocalOverlay::EqualizeSingerStrings() { UNREACHED(); }
+void VocalOverlay::FinalizeDisplayString() { UNREACHED(); }
+bool NetSession::IsLocal() const { UNREACHED(); }
+bool NetSession::IsInGame() const { UNREACHED(); }
+void NetSession::EndGame(int, bool, float) { UNREACHED(); }
+Tour *TheTour = nullptr;
+// Game's tracker relays (Band/Player energy, save and remote-tracker events).
+// TrackerManager.cpp drags the whole Tracker/TrackerDisplay family; no tracker
+// runs in this driver.
+void TrackerManager::ForceStars(int) { UNREACHED(); }
+void TrackerManager::OnPlayerAddEnergy(Player *, float) { UNREACHED(); }
+void TrackerManager::OnPlayerSaved(Player *) { UNREACHED(); }
+void TrackerManager::OnPlayerQuarantined(Player *) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerFocus(Player *, int, int, int) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerPlayerProgress(Player *, float) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerSectionComplete(Player *, int, int, int) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerPlayerDisplay(Player *, int, int, int) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerDeploy(Player *) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerEndDeployStreak(Player *, int) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerEndStreak(Player *, int, int) { UNREACHED(); }
+// GameMicManager's fake-mic arm compares TheGameMode against it; rb3-render
+// has no TheGameMode, so the symbol is never compared. Never interned.
+Symbol frame_rate;
