@@ -1713,7 +1713,22 @@ What it enforces — the manual steps survive here only as the explanation of
 - **`report.json` + `report.cache` wiped before EVERY read** (stale cache
   inflates); measures parsed **by exact key** — a missing key (e.g. the old
   `.get('masked_equal', 0)` wrong-key bug) REFUSES instead of defaulting to 0.
-- **symbols.txt auto-restored**; patches touching it are refused outright.
+- **symbols.txt auto-restored** (the discarded drift is saved to the run dir).
+  ★ **Carve patches are now MEASURABLE (lane W16-SP, 2026-10-07)** — both
+  refusals that pushed W16-QP/QZ/QI/RC onto hand-run protocols are gone:
+  (1) a patch that edits `symbols.txt` is the **`symbols` kind** (forced
+  re-split, leg B starts from HEAD+patch), refused only when the split
+  **undoes** the edit; (2) a pin whose split **rewrites** `symbols.txt` (a
+  Class-4 merge) no longer dies at the split-guard — for map/splits/symbols
+  kinds the tool owns the fixed-point verdict and sets the guard's own
+  `SPLIT_GUARD_NO_FIXED_POINT_CHECK=1`; for every other kind the guard stays
+  LIVE. When leg B's fixed point differs from the patched file the run saves
+  `legB_symbols_fixed_point.diff` and prints **LANDING**: commit it with the
+  patch, or main's next build fails the guard. Known answers: W16-QP's pins
+  (old tool REFUSED; new +3 / +484 B, fixed-point diff == `a87e436fa`), W16-RC's
+  carve (old REFUSED at classify; new +4 / +508 B, attributed row by row).
+  Under `--from-dirty` a dirty `symbols.txt` is still treated as drift —
+  commit a deliberate carve and use `--pick`/`--revert`/`--patch`.
 - **Map/splits patches force a re-split on BOTH legs** (rm renamer stamp +
   `touch config/45410914/config.yml`) — an un-resplit map edit is INERT
   (`[APPLIED] … 0 files patched`; lane CF-1 lost a whole leg to that
