@@ -971,99 +971,73 @@ void DecodeDxt3Alpha(unsigned char *uc, int i, int j, unsigned char &alpha) {
 }
 
 void DecodeDxt5Alpha(unsigned char *uc, int i, int j, unsigned char &alpha) {
-    // Stack-allocated lookup tables matching target's exact initialization order
-    unsigned char local_60[32];
-
-    // Initialize in the exact order shown in Ghidra
-    local_60[0] = 0;
-    local_60[1] = 0;
-    local_60[2] = 0;
-    local_60[3] = 1;
-    local_60[4] = 1;
-    local_60[5] = 1;
-    local_60[6] = 2;
-    local_60[7] = 2;
-    local_60[8] = 3;
-    local_60[9] = 3;
-    local_60[10] = 3;
-    local_60[11] = 4;
-    local_60[12] = 4;
-    local_60[13] = 4;
-    local_60[14] = 5;
-    local_60[15] = 5;
-
-    local_60[16] = 0;
-    local_60[17] = 3;
-    local_60[18] = 6;
-    local_60[19] = 1;
-    local_60[20] = 4;
-    local_60[21] = 7;
-    local_60[22] = 2;
-    local_60[23] = 5;
-    local_60[24] = 0;
-    local_60[25] = 3;
-    local_60[26] = 6;
-    local_60[27] = 1;
-    local_60[28] = 4;
-    local_60[29] = 7;
-    local_60[30] = 2;
-    local_60[31] = 5;
-
-    // Read alpha values - order matches target: alpha1 first, alpha0 second
-    unsigned char alpha1 = uc[1];
-    unsigned char alpha0 = uc[0];
-
-    int iVar3 = j << 2;
-    unsigned char byteOff = local_60[iVar3 + i];
-    unsigned char bitPos = local_60[i + iVar3 + 16];
-
-    // Calculate adjusted offset
-    unsigned char adjustedOff;
-                                adjustedOff = (!(!((int)(byteOff & 1) == 0))) == 0 ? byteOff + 0xFF : byteOff + 1;
-
-    int index;
-    if (bitPos < 6) {
-        index = (uc[adjustedOff + 2] >> bitPos) & 7;
+    // Retail 0x823FC6B0. The two alpha endpoints live in the block's first
+    // 16-bit word, which the Xbox 360 stores byte-swapped, so a0 is uc[1] and
+    // a1 is uc[0]: `lbz r28, 0x1(r3)` is the value stored for code 0 and
+    // `lbz r27, 0x0(r3)` the one for code 1, and `cmplw r9, r10` / `bgt`
+    // selects the 8-value mode when uc[1] > uc[0], which is DXT5's `a0 > a1`.
+    //
+    // Two behaviour fixes against the previous body, both read off retail:
+    // the second index byte of a straddling 3-bit code is swizzled like the
+    // first (byte + 1 odd -> byte, even -> byte + 2; it read byte + 2 /
+    // byte + 3), and
+    // the 8-value mode has no code 6 / code 7 special cases (retail's `bgt`
+    // lands directly on the `/ 7` interpolation; it returned 0 and 0xFF).
+    unsigned char a0 = uc[1];
+    int code;
+    unsigned char byteOffsets[16] = {
+        0, 0, 0, 1, 1, 1, 2, 2,
+        3, 3, 3, 4, 4, 4, 5, 5,
+    };
+    unsigned char a1 = uc[0];
+    int byte = byteOffsets[i + (j << 2)];
+    unsigned char bitOffsets[16] = {
+        0, 3, 6, 1, 4, 7, 2, 5,
+        0, 3, 6, 1, 4, 7, 2, 5,
+    };
+    unsigned char bit = bitOffsets[i + (j << 2)];
+    // The three-byte index field starts at uc[2] and retail holds a pointer to
+    // it (`addi r9, r3, 0x2`, then `lbzx` off it at each of the three reads).
+    unsigned char *indices = uc + 2;
+    // Xbox 360 stores the DXT5 alpha index bytes byte-swapped within each
+    // 16-bit word, so even/odd byte indices are swapped before the read.
+    // Retail copies and then mutates in place (`mr r10, r11` above the test,
+    // `addi r10, r10, 0xff` / `addi r10, r10, 0x1` in the two arms).
+    unsigned char swizByte = byte;
+    if (byte & 1) {
+        swizByte--;
     } else {
-        unsigned char off2 = byteOff + 1;
-        unsigned char adjustedOff2;
-        if (!((off2 & 1) == 0)) {
-            adjustedOff2 = off2 + 1;
+        swizByte++;
+    }
+    if (bit < 6) {
+        code = (indices[swizByte] >> bit) & 7;
+    } else {
+        unsigned char next = byte + 1;
+        if (next & 1) {
+            next--;
         } else {
-            adjustedOff2 = off2 + 2;
+            next++;
         }
-        if (bitPos == 6) {
-            index = ((uc[adjustedOff2 + 2] & 1) << 2) | (uc[adjustedOff + 2] >> 6);
+        if (bit == 6) {
+            code = ((indices[next] & 1) << 2) | (indices[swizByte] >> 6);
         } else {
-            index = ((uc[adjustedOff2 + 2] & 3) << 1) | (uc[adjustedOff + 2] >> 7);
+            code = ((indices[next] & 3) << 1) | (indices[swizByte] >> 7);
         }
     }
-
-    if (index == 0) {
-        alpha = alpha1;
-    } else if (index == 1) {
-        alpha = alpha0;
-    } else if (!(alpha1 > alpha0)) {
-        if ((int)index == 6) {
+    if (code == 0) {
+        alpha = a0;
+    } else if (code == 1) {
+        alpha = a1;
+    } else if (a0 <= a1) {
+        if (code == 6) {
             alpha = 0;
-            return;
-        } else if (index == 7) {
+        } else if (code == 7) {
             alpha = 0xFF;
         } else {
-            alpha = ((6 - index) * (unsigned int)alpha1
-                     + (index - 1) * (unsigned int)alpha0 + 2)
-                / 5;
+            alpha = (unsigned char)(((unsigned int)(6 - code) * a0 + (unsigned int)(code - 1) * a1 + 2U) / 5U);
         }
     } else {
-        if ((int)index == 6) {
-            alpha = 0;
-        } else if (index == 7) {
-            alpha = 0xFF;
-        } else {
-            alpha = ((8 - index) * (unsigned int)alpha1
-                     + (index - 1) * (unsigned int)alpha0 + 3)
-                / 7;
-        }
+        alpha = (unsigned char)(((unsigned int)(8 - code) * a0 + (unsigned int)(code - 1) * a1 + 3U) / 7U);
     }
 }
 
