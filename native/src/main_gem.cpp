@@ -42,6 +42,7 @@
 #include "utl/FileStream.h"
 #include "utl/Symbol.h"
 #include "retail_boot_macros.h"
+#include "retail_system_config.h"
 
 #include <cstdio>
 #include <map>
@@ -49,7 +50,6 @@
 #include <vector>
 
 extern void InitMakeString();
-extern DataArray *gSystemConfig; // src/system/os/System.cpp
 void DataInit();                 // src/system/obj/Data.cpp
 
 // The number of note difficulties RB3 authors per instrument track.
@@ -57,34 +57,10 @@ static const int kNumDifficulties = 4; // Easy / Medium / Hard / Expert
 static const int kExpert = 3;
 
 // ---------------------------------------------------------------- config ----
-// SystemConfig()->FindArray("beatmatcher") is read by the SongParser ctor:
-//   parser.track_mapping  : <TRACK> -> (audio_type track_type part_sym)
-//   parser.player_slot / low_vocal_pitch / high_vocal_pitch (optional)
-//   parser.keyboard_range_shift_duration_ms (required float)
-//   audio (required array; submixes optional)
-//   watcher (optional)
-// track_mapping keys are the PART-stripped names ("PART BASS" -> "BASS").
-static const char *kBeatmatcherDta =
-    "(beatmatcher"
-    "   (parser"
-    "      (player_slot 9)"
-    "      (low_vocal_pitch 36)"
-    "      (high_vocal_pitch 84)"
-    "      (keyboard_range_shift_duration_ms 100.0)"
-    "      (track_mapping"
-    // Node(0)=stripped key, Int(1)=SongInfoAudioType, Int(2)=TrackType,
-    // Sym(3)=full track name (matched by SongParser::ContainsTrackName). These
-    // int values are the kAudio*/kTrack* enum numbers the retail beatmatch.dta
-    // #defines expand to (kAudioBass=3/kTrackBass=2, etc.).
-    "         (DRUMS  0 0 'PART DRUMS')"
-    "         (BASS   3 2 'PART BASS')"
-    "         (GUITAR 4 1 'PART GUITAR')"
-    "         (VOCALS 6 3 'PART VOCALS')"
-    "         (KEYS   9 4 'PART KEYS')"
-    "      )"
-    "   )"
-    "   (audio (submixes))"
-    ")";
+// SystemConfig("beatmatcher") is read by the SongParser ctor (parser /
+// track_mapping / player_slot / vocal pitch range / keyboard_range_shift_
+// duration_ms / audio). It is retail's post-SystemInit config read off the disc
+// (retail_system_config.h, W16-UD), not a block written here.
 
 // -------------------------------------------------------------- SongInfo ----
 // Minimal concrete SongInfo. SongParser only queries NumChannelsOfTrack (via
@@ -233,8 +209,8 @@ int main(int argc, char **argv) {
     RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
     ObjectDir::PreInit(256, 4096);
 
-    DataArray *cfg = DataReadString(kBeatmatcherDta);
-    gSystemConfig = cfg;
+    if (int rc = RetailSystemConfig::Boot()) // retail's config, off the disc (W16-UD)
+        return rc;
 
     printf("=== rb3-xenon native M3a: beatmatch gem pipeline ===\n");
     printf("mid: %s\n\n", midPath);

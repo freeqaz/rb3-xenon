@@ -54,6 +54,7 @@ DEFAULT_EXE = os.path.join(ROOT, "orig", "45410914", "band.exe")
 SYMBOL_MAP = os.path.join(ROOT, "scripts", "target_symbol_map.json")
 SYMBOLS_TXT = os.path.join(ROOT, "config", "45410914", "symbols.txt")
 PREINIT_CONFIG = "config/band_preinit_keep.dta"
+SYSTEM_CONFIG = "config/band_keep.dta"  # App::App -> SystemInit; decoded by retail_system_config
 
 M_SYSTEM_PREINIT = "?SystemPreInit@@YAXPBD@Z"
 M_PREINIT_SYSTEM = "?PreInitSystem@@YAXPBD@Z"
@@ -61,6 +62,8 @@ M_REGION_INIT = "?RegionInit@PlatformMgr@@QAAXXZ"
 M_DATA_INIT = "?DataInit@@YAXXZ"
 M_DATA_SET_MACRO = "?DataSetMacro@@YAXVSymbol@@PAVDataArray@@@Z"
 M_SYMBOL_CTOR = "??0Symbol@@QAA@PBD@Z"
+M_APP_CTOR = "??0App@@QAA@HPAPAD@Z"
+M_SYSTEM_INIT = "?SystemInit@@YAXPBD@Z"
 
 
 # ---------------------------------------------------------------- the image --
@@ -223,6 +226,26 @@ def retail_boot_macros(exe=DEFAULT_EXE):
     ev.append("PreInitSystem %#x: DataSetMacro(Symbol(<const>)) x%d in order %s, then "
               "the -define loop" % (pis, len(seq), " ".join(seq)))
     return ["REGION_NA"] + seq, ev
+
+
+def retail_system_config(exe=DEFAULT_EXE):
+    """The file App::App passes to SystemInit, decoded from the retail image
+    (the constant in r3 at the `bl SystemInit`). Returns (name, evidence line).
+    Raises unless there is exactly one such call with a constant argument."""
+    img = Image(exe)
+    by_name, sizes = load_names()
+    for n in (M_APP_CTOR, M_SYSTEM_INIT):
+        if n not in by_name:
+            raise RuntimeError("symbol map has no %s" % n)
+    app = by_name[M_APP_CTOR]
+    hits = [(a, r3) for a, tgt, r3, _ in decode_calls(img, app, sizes[app])
+            if tgt == by_name[M_SYSTEM_INIT]]
+    if len(hits) != 1 or hits[0][1] is None:
+        raise RuntimeError("App::App %#x: expected one SystemInit call with a constant "
+                           "argument, found %r" % (app, hits))
+    name = img.cstr(hits[0][1])
+    return name, ("App::App %#x: bl SystemInit at %#x with r3 = \"%s\""
+                  % (app, hits[0][0], name))
 
 
 # --------------------------------------------------------- the DTB loader --
@@ -461,6 +484,53 @@ def read_config(assets, macros, config=PREINIT_CONFIG):
     return cfg, ld
 
 
+def find_array(arr, tag):
+    """DataArray::FindArray(Symbol, false): the first child array tagged `tag`."""
+    for t, v in arr.nodes:
+        if t == ARRAY and v.nodes and v.nodes[0] == (SYMBOL, tag):
+            return v
+    return None
+
+
+def strip_editor_data(cfg):
+    """os/System.cpp StripEditorData, run at the end of InitSystem: every
+    (editor ...) under an (objects <class> ...) entry, and under each of its
+    (types <type> ...) entries, is cut back to its tag."""
+    objs = find_array(cfg, "objects")
+    if objs is None:
+        raise ValueError("no (objects ...) section to strip")
+    for t, cls in objs.nodes[1:]:
+        if t != ARRAY:
+            raise ValueError("(objects ...) entry is not an array")
+        ed = find_array(cls, "editor")
+        if ed is not None:
+            del ed.nodes[1:]
+        types = find_array(cls, "types")
+        if types is not None:
+            for tt, ty in types.nodes[1:]:
+                if tt != ARRAY:
+                    raise ValueError("(types ...) entry is not an array")
+                ed = find_array(ty, "editor")
+                if ed is not None:
+                    del ed.nodes[1:]
+
+
+def read_full_config(assets, macros, system=SYSTEM_CONFIG):
+    """The config after SystemInit: PreInitSystem's read of the preinit file,
+    then InitSystem's read of `system` in the SAME read session (BeginDataRead in
+    PreInitSystem, FinishDataRead at the end of InitSystem), then
+    DataMergeTags(system, preinit) -- tags only the preinit file has are added,
+    the system file wins every other -- then StripEditorData. DataReplaceTags
+    moves the merged contents into the preinit arrays' storage and changes no
+    content, so it has no counterpart here."""
+    ld = Loader(Ark(assets), macros)
+    pre = ld.read_file(PREINIT_CONFIG)
+    cfg = ld.read_file(system)
+    merge_tags(cfg.nodes, pre.nodes)
+    strip_editor_data(cfg)
+    return cfg, ld
+
+
 # ------------------------------------------------------------ the dump --
 def esc(b):
     out = []
@@ -504,10 +574,25 @@ def dump_nodes(nodes, depth, lines):
             lines.append("%s? %d" % (pad, t))
 
 
-def dump(cfg, macros):
+def dump(cfg, macros, table=None):
     lines = ["# boot macros: " + " ".join(sorted(macros))]
     dump_nodes(cfg.nodes, 0, lines)
+    if table is not None:
+        dump_macros(table, lines)
     return lines
+
+
+MACRO_HEADER = "# macro table after the read"
+
+
+def dump_macros(table, lines):
+    """Every macro defined when the read session ends, sorted by name: one
+    `m NAME` line, then its value's nodes one level in. A driver's own
+    DataSetMacro shows up here, so the macro table is held to retail too."""
+    lines.append(MACRO_HEADER)
+    for name in sorted(k for k, v in table.items() if v is not None):
+        lines.append("m " + name)
+        dump_nodes(table[name], 1, lines)
 
 
 # --------------------------------------------------------------- main --
@@ -520,43 +605,77 @@ def main():
     ap.add_argument("--exe", default=DEFAULT_EXE)
     ap.add_argument("--drop", action="append", default=[],
                     help="view only: leave this macro out (to see what it gates)")
+    ap.add_argument("--full", action="store_true",
+                    help="the config after SystemInit (preinit + the file App::App "
+                         "passes to SystemInit, merged, editor data stripped) plus "
+                         "the macro table, instead of the preinit config alone")
+    ap.add_argument("--reference",
+                    help="check only: compare with this earlier `view` output "
+                         "instead of rebuilding it (its macro line and shape are "
+                         "still checked)")
     ap.add_argument("--out")
     a = ap.parse_args()
 
     try:
         macros, ev = retail_boot_macros(a.exe)
+        sysfile, sev = retail_system_config(a.exe)
     except Exception as e:  # noqa: BLE001
-        print("retail_boot_config: cannot derive the boot macros: %s" % e, file=sys.stderr)
+        print("retail_boot_config: cannot derive the boot sequence: %s" % e, file=sys.stderr)
         return 2
     if a.cmd == "macros":
-        for line in ev:
+        for line in ev + [sev]:
             print("  " + line)
         print("retail boot macros, in order: " + " ".join(macros))
+        print("retail system config: " + sysfile)
         return 0
 
-    use = [m for m in macros if m not in a.drop]
-    try:
-        cfg, ld = read_config(a.assets, use)
-    except Exception as e:  # noqa: BLE001
-        print("retail_boot_config: cannot read the shipped config: %s" % e, file=sys.stderr)
-        return 2
-    # An #autorun is a command run at load. One that only defines a script
-    # function ({func ...}, optionally inside {do ...}) adds no config nodes; any
-    # other kind could, and this reader cannot run it.
-    bad = [f for f, n in ld.autoruns if not defines_only(n)]
-    if bad:
-        print("retail_boot_config: #autorun block(s) that do more than define a "
-              "function, in %s; this reader cannot execute them" % ", ".join(bad),
-              file=sys.stderr)
-        return 2
-    want = dump(cfg, use)
+    want = None
+    if a.cmd == "check" and a.reference:
+        try:
+            want = open(a.reference, encoding="latin-1").read().splitlines()
+        except OSError as e:
+            print("retail_boot_config: cannot read reference %s: %s" % (a.reference, e),
+                  file=sys.stderr)
+            return 2
+        # A reference is only a cache of `view`: it must be the full view under
+        # the retail macros, or the comparison is against something else.
+        if (not want or want[0] != "# boot macros: " + " ".join(sorted(macros))
+                or (MACRO_HEADER in want) != a.full):
+            print("retail_boot_config: reference %s is not a%s view under %s"
+                  % (a.reference, " --full" if a.full else "", " ".join(macros)),
+                  file=sys.stderr)
+            return 2
+        nsec = sum(1 for x in want if x == "(")  # informational only
+    else:
+        use = [m for m in macros if m not in a.drop]
+        try:
+            if a.full:
+                cfg, ld = read_full_config(a.assets, use, sysfile)
+            else:
+                cfg, ld = read_config(a.assets, use)
+        except Exception as e:  # noqa: BLE001
+            print("retail_boot_config: cannot read the shipped config: %s" % e,
+                  file=sys.stderr)
+            return 2
+        # An #autorun is a command run at load. One that only defines a script
+        # function ({func ...}, optionally inside {do ...}) adds no config nodes;
+        # any other kind could, and this reader cannot run it.
+        bad = [f for f, n in ld.autoruns if not defines_only(n)]
+        if bad:
+            print("retail_boot_config: #autorun block(s) that do more than define a "
+                  "function, in %s; this reader cannot execute them" % ", ".join(bad),
+                  file=sys.stderr)
+            return 2
+        want = dump(cfg, use, ld.macros if a.full else None)
+        nsec = len(cfg.nodes)
 
     if a.cmd == "view":
         text = "\n".join(want) + "\n"
         if a.out:
             open(a.out, "w").write(text)
-            print("wrote %s (%d lines, %d top-level sections, macros %s)"
-                  % (a.out, len(want), len(cfg.nodes), " ".join(use)))
+            print("wrote %s (%d lines, %d top-level sections, macros %s%s)"
+                  % (a.out, len(want), nsec, " ".join(use),
+                     ", after SystemInit(%s)" % sysfile if a.full else ""))
         else:
             sys.stdout.write(text)
         return 0
@@ -568,14 +687,15 @@ def main():
     if len(got) < 2:
         print("retail_boot_config: native dump %s is empty" % a.native, file=sys.stderr)
         return 2
+    what = "after SystemInit(%s)" % sysfile if a.full else "preinit"
     if got == want:
-        print("CONFIG-VIEW: EQUAL %s -- %d lines, %d top-level sections, macros %s"
-              % (a.native, len(want), len(cfg.nodes), " ".join(macros)))
+        print("CONFIG-VIEW: EQUAL %s -- %d lines, %s, macros %s"
+              % (a.native, len(want), what, " ".join(macros)))
         return 0
     diff = list(difflib.unified_diff(want, got, "retail", "native", n=1, lineterm=""))
     nd = sum(1 for d in diff if d[:1] in "+-" and d[:3] not in ("+++", "---"))
-    print("CONFIG-VIEW: DIFFERENT %s -- %d differing lines (retail %d lines, native %d)"
-          % (a.native, nd, len(want), len(got)))
+    print("CONFIG-VIEW: DIFFERENT %s -- %d differing lines (retail %d lines, native %d), %s"
+          % (a.native, nd, len(want), len(got), what))
     for d in diff[:40]:
         print("  " + d)
     return 1

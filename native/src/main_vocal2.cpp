@@ -25,8 +25,6 @@
 #include "game/PlayerBehavior.h"
 #include "game/Scoring.h"
 #include "game/CrowdRating.h"
-#include "crowd_config_dta.h" // W16-PD: real shipped (crowd ...) block
-#include "scoring_config_dta.h" // W16-PJ: real shipped (coda ...)
 #include "game/GameConfig.h"
 #include "game/SongDB.h"
 #include <string>
@@ -60,7 +58,6 @@
 #include <vector>
 
 extern void InitMakeString();
-extern DataArray *gSystemConfig;
 void DataInit();
 void SetTheBeatMap(BeatMap *);
 
@@ -77,6 +74,7 @@ extern GameMicManager *TheGameMicManager;
 #include "utl/SongInfoCopy.h"
 #include "utl/SongInfoAudioType.h"
 #include "retail_boot_macros.h"
+#include "retail_system_config.h"
 class NativeSongInfo : public SongInfo {
 public:
     Symbol GetName() const { return Symbol("native_test"); }
@@ -109,97 +107,15 @@ public:
 static const int kNDiff = 4;
 static const int kExpertDiff = 3;
 
-// Full retail scoring/vocals config (transcribed from the extracted scoring.dta),
-// now including the scream + tambourine keys the Singer / TambourineDetector ctors
-// read (absent from M9's block because M9 never constructed a Singer).
-static const char *kConfigDta =
-    "(beatmatcher"
-    "   (parser"
-    "      (player_slot 9)"
-    "      (vocal_style_instruments (3))"
-    "      (low_vocal_pitch 36)(high_vocal_pitch 84)"
-    "      (keyboard_range_shift_duration_ms 100.0)"
-    "      (track_mapping"
-    "         (DRUMS  0 0 'PART DRUMS')(BASS 3 2 'PART BASS')"
-    "         (GUITAR 4 1 'PART GUITAR')(VOCALS 6 3 'PART VOCALS')"
-    "         (KEYS 9 4 'PART KEYS'))"
-    "   )"
-    "   (controllers (beatmatch_controller_mapping (guitar guitar)))"
-    "   (audio (submixes))"
-    ")"
-    "(player (handlers))"
-    "(scoring"
-    // Band/Player scoring init (Band::NativeLoadBonuses reads (bonuses ...);
-    // Player streak/energy config reads the rest) — same retail values as M8.
-    "   (points"
-    "      (vocals (head 0)(tail 0)(chord -1)))"
-    "   (streaks"
-    "      (multipliers (vocals (0 1)(1 2)(2 3)(3 4))(default (0 1)(10 2)(20 3)(30 4)))"
-    "      (energy (default (0 1))))"
-    "   (overdrive"
-    "      (recharge_rate 0.0)(star_phrase 0.25)(common_phrase 0.15)"
-    "      (fill_boost 0.35)(whammy_rate 3.4e-2)(ready_level 0.5)"
-    "      (multiplier 2)(crowd_boost 6))"
-    "   (band_energy"
-    "      (deploy_beats 32)(deploy_bonus 50)(spotlight_phrase 0.251)"
-    "      (unison_phrase 0.501)(deploy_threshold 0.5)(save_energy 0.5))"
-    "   (bonuses"
-    "      (max_bonus 4)(multiplier (1 2 4 6 8))(crowd_boost (1 6 6 6 6)))"
-    "   (unison_phrase (reward 2.0)(penalty 2.0)(point_bonus 1000))"
-    // solo/tambourine award table (ComputeTambourinePoints -> GetSoloAward)
-    "   (solo"
-    "      (default"
-    "         (awards (0 0 failed_solo)(60 5 bad_solo)(70 10 okay_solo)"
-    "                 (80 20 solid_solo)(90 30 great_solo)(95 50 awesome_solo)"
-    "                 (100 100 perfect_solo))"
-    "         (reward 1.0)(penalty 1.0))"
-    "      (tambourine"
-    "         (awards (0 0 tamb_rating_1)(1 5 tamb_rating_2)(40 10 tamb_rating_3)"
-    "                 (60 20 tamb_rating_4)(80 50 tamb_rating_5)(100 100 tamb_rating_6))))"
-    // W16-PD: the REAL shipped (crowd ...) block (crowd_config_dta.h) is spliced
-    // in at @CROWD@ at startup -- the real CrowdRating::Configure reads it. The
-    // three save/brink keys this used to hand-write (0.3 / 2.0 / 0.1) are in that
-    // block with their shipped values (0.8333 / 3.5 / 0.04).
-    "   @CROWD@"
-    "   (star_ratings"
-    "      (new_instrument_thresholds"
-    "         (vocals 5.0e-2 0.11 0.19 0.46 0.77 1.06))"
-    "      (new_num_instruments_multiplier 1.0 1.26 1.52 1.8 1.8)"
-    "      (new_bonus_thresholds 5.0e-2 0.1 0.2 0.3 0.4 0.95 1.0))"
-    "   (vocals"
-    "      (rating_thresholds 0.6 0.75 0.9 0.99)"
-    "      (slop 180 140 120 120)"
-    "      (pitch_margin 3.8 2.6 1.9 1.2)"
-    "      (nonpitch_easy_multiplier 3.0)"
-    "      (nonpitch_energy_threshold 4.5e-4)"
-    "      (nonpitch_stickiness 0.25)"
-    "      (vocal_cap_growth 1.2 1.15 1.15 1.1)"
-    "      (pitch_hit_multiplier 1.7 1.5 1.35 1.25)"
-    "      (nonpitch_hit_multiplier 1.7 1.5 1.35 1.25)"
-    "      (short_note_threshold_ms 166)"
-    "      (short_note_multiplier 1.5 1.4 1.35 1.3)"
-    "      (note_length_factor 1.0 1.0 1.0 1.0)"
-    "      (phrase_value 200 400 800 1000)"
-    "      (part_score_multiplier 1.0 0.1 0.1)"
-    "      (track_wrapping_margin 0.0)"
-    "      (max_detune 1.0)"
-    "      (packet_period 250)"
-    "      (scream_energy_threshold 0.3)"
-    "      (tambourine_points 0)"
-    "      (tambourine_crowd_success 0.0 0.0 0.0 0.0)"
-    "      (tambourine_crowd_failure 0.0 0.0 0.0 0.0)"
-    "      (tambourine_energy_rise_threshold 4.0e-2)"
-    "      (tambourine_energy_drop_threshold 2.0e-2)"
-    "      (tambourine_window_ticks 120)"
-    "      (tambourine_ms_offset 24)"
-    "      (tambourine_deployment_suppress_ms 20.0)"
-    "      (freestyle_deployment_time (500 400))"
-    "      (freestyle_min_duration (600 500))"
-    "      (freestyle_pad (100 50))"
-    "      (synapse_proximity_solo 0.78 0.78 0.78 0.78)"
-    "      (synapse_focus_solo 1.0e-4 1.0e-4 1.0e-4 1.0e-4)"
-    "      (synapse_proximity_harm 0.956 0.956 0.956 0.956)"
-    "      (synapse_focus_harm 1.0e-4 1.0e-4 1.0e-4 1.0e-4)))";
+// ---------------------------------------------------------------- config ----
+// SystemConfig() -- (beatmatcher ...) for the SongParser, (scoring ...) for
+// Scoring / PlayerParams / Band / CrowdRating / the MultiplayerAnalyzer, and
+// every other section -- and the macro table (TRACK_SYMBOLS for SymToTrackType,
+// kDifficulty*) are retail's post-SystemInit config read off the disc
+// (retail_system_config.h, W16-UD). Before W16-UD this driver typed in its own
+// (beatmatcher ...)/(scoring ...) blocks, spliced in crowd/solo/coda blocks cut
+// from a host TEXT extraction, and defined its own TRACK_SYMBOLS; W16-UD's lane
+// doc lists where those disagreed with retail.
 
 static const char *RatingName(int r) {
     static const char *n[6] = {"awful", "ok", "good", "great", "awesome", "perfect"};
@@ -219,23 +135,12 @@ int main(int argc, char **argv) {
     DataInit();
     RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
     ObjectDir::PreInit(256, 4096);
-    {
-        std::string cfg(kConfigDta);
-        // W16-PJ: + the real (coda ...) block the real MultiplayerAnalyzer reads.
-        // (This config already carries the shipped (solo default/tambourine).)
-        cfg.replace(cfg.find("@CROWD@"), 7,
-                    std::string(kRealCrowdConfigDta) + kRealCodaConfigDta);
-        gSystemConfig = DataReadString(cfg.c_str());
-    }
+    if (int rc = RetailSystemConfig::Boot()) // retail's config + macros, off the disc (W16-UD)
+        return rc;
 
     printf("=== rb3-xenon native M10: full vocal-gameplay orchestration ===\n");
     printf("mid : %s\n\n", midPath);
 
-    // TRACK_SYMBOLS data-macro (Scoring/TrackType symbol<->enum mapping), as M8.
-    DataArray *trackSyms = DataReadString(
-        "(drum guitar bass vocals keys real_keys real_guitar "
-        "real_guitar_22fret real_bass real_bass_22fret)");
-    DataSetMacro(Symbol("TRACK_SYMBOLS"), trackSyms->Array(0));
 
     new Scoring(); // sets TheScoring (real star-threshold + solo-award machinery)
 
@@ -324,7 +229,7 @@ int main(int argc, char **argv) {
     // VocalTrack render derefs on the Poll/phrase-end path are HX_NATIVE-gated.
     vp->mTrack = (VocalTrack *)std::calloc(1, 4096);
     // mCrowd: the Player scoring-core ctor leaves it null; the phrase-end crowd
-    // meter needs it (the REAL CrowdRating since W16-PD; config spliced from crowd_config_dta.h).
+    // meter needs it (the REAL CrowdRating since W16-PD; its config is (scoring (crowd ...)) off the disc).
     vp->mCrowd = new CrowdRating(0, (Difficulty)kExpertDiff);
     // Streak-multiplier config: retail's ConfigureBehavior sets these from
     // mUser->GetTrackSym(); headless has no BandUser, so set them directly (the

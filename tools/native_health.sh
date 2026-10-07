@@ -91,6 +91,9 @@
 #     Appended by W16-PE: runtime_crashed=<N targets that died on a signal>
 #     runtime_failed=<name:kind,...|none>, kind in
 #     crash|hang|exit|gatefail|nocomplete|nogates.
+#     Appended by W16-UD: retail_config=<EQUAL>/<expected> -- how many of the
+#     ten SYSCFG_TARGETS dumped a system config equal, line for line, to the one
+#     tools/retail_boot_config.py rebuilds from the disc's .dtb files.
 
 set -uo pipefail
 
@@ -101,7 +104,8 @@ emit() {  # verdict link link_ver link_exp link_skip runtime rt_ran rt_tot
          "gates_pass=$9 gates_fail=${10} unrunnable=${11} selftest=${12}" \
          "scatter_unlinked=${13} scatter_dirb=${14} scatter_multihost=${15} rc=${16}" \
          "handpose_controls=${17:--} handpose_baseline_fail=${18:--}" \
-         "runtime_crashed=${19:--} runtime_failed=${20:--}"
+         "runtime_crashed=${19:--} runtime_failed=${20:--}" \
+         "retail_config=${21:--}"
 }
 
 SELFTEST=0
@@ -211,8 +215,9 @@ fi
 # Inputs are DECLARED here instead of being left to each driver's hardcoded
 # default, so a missing file is reported as `nodata` rather than read as a
 # driver abort. All of them are real shipped data (the ark, retail songs.dta,
-# real RB3/RB3DX charts) except rb3-score2 (arithmetic against M5),
-# rb3-save (serialization round-trip) and rb3-frame (GPU clear), which take none.
+# real RB3/RB3DX charts) except rb3-save (serialization round-trip) and
+# rb3-frame (GPU clear), which take none. Since W16-UD the ten SYSCFG_TARGETS
+# also need the ark: their config comes off it (rb3-score2's only input).
 echo
 echo "--- runtime: every native target, run ---"
 NB="$DIR/native/build"
@@ -279,6 +284,17 @@ classify_run() {
     CL_STATUS=OK; CL_KIND=ok; CL_WHY="rc=0"
 }
 
+# W16-UD: the ten drivers that used to compile their scoring/crowd config in.
+# Each now boots retail's post-SystemInit config off the disc
+# (native/src/retail_system_config.h) and stops with rc 2 when there is none.
+SYSCFG_TARGETS=(rb3-gem rb3-hit rb3-score rb3-score2 rb3-score3 rb3-score4
+    rb3-vocal rb3-vocal2 rb3-harmony rb3-crowd)
+is_syscfg_target() {
+    local x; for x in "${SYSCFG_TARGETS[@]}"; do [ "$x" = "$1" ] && return 0; done
+    return 1
+}
+syscfg_dump() { echo "$LOGDIR/native_health_syscfg_full_${1}_$SLUG.txt"; }
+
 run_target() {  # [--gated] NAME MARKER [--needs PATH]... -- ARGV...
     local gated=0
     if [ "${1:-}" = "--gated" ]; then gated=1; shift; fi
@@ -306,11 +322,19 @@ run_target() {  # [--gated] NAME MARKER [--needs PATH]... -- ARGV...
     local trace="$LOGDIR/native_health_files_${name}_$SLUG.trace"
     local ledger="$LOGDIR/native_health_files_${name}_$SLUG.ledger"
     rm -f "$trace" "$ledger"
+    # W16-UD: the drivers that boot retail's config off the disc dump what they
+    # installed; the RETAIL CONFIG section below compares each dump with the
+    # config rebuilt from the shipped .dtb files.
+    local cfgenv=(RB3_ASSETS="$ASSETS")
+    if is_syscfg_target "$name"; then
+        rm -f "$(syscfg_dump "$name")"
+        cfgenv+=(RB3_CONFIG_DUMP="$(syscfg_dump "$name")")
+    fi
     if [ ${#FA_STRACE[@]} -gt 0 ]; then
         classify_run "$log" "$marker" "$gated" "$name" -- \
-            env RB3_FILE_LEDGER="$ledger" "${FA_STRACE[@]}" -o "$trace" -- "$NB/$name" "$@"
+            env "${cfgenv[@]}" RB3_FILE_LEDGER="$ledger" "${FA_STRACE[@]}" -o "$trace" -- "$NB/$name" "$@"
     else
-        classify_run "$log" "$marker" "$gated" "$name" -- "$NB/$name" "$@"
+        classify_run "$log" "$marker" "$gated" "$name" -- env "${cfgenv[@]}" "$NB/$name" "$@"
     fi
     local IFS=$'\x1f'   # paths may hold spaces; fields are re-split on 0x1f
     FA_RUNS+=("$name|$trace|$ledger|${fa_args[*]+${fa_args[*]}}")
@@ -345,20 +369,20 @@ run_target() {  # [--gated] NAME MARKER [--needs PATH]... -- ARGV...
 run_target         rb3-dta     '^Done\. Showed [0-9]+ song'  --needs "$SONGS_DTA"      -- "$SONGS_DTA"
 run_target --gated rb3-song    '^RESULT: ALL GATES PASSED'   --needs "$ASSETS"         -- "$ASSETS"
 run_target --gated rb3-midi    '^RESULT: ALL GATES PASSED'   --needs "$ASSETS"         -- "$ASSETS"
-run_target         rb3-gem     '^Done\.$'                    --needs "$MID_PILLS"      -- "$MID_PILLS"
-run_target         rb3-hit     '^Done\.$'                    --needs "$MID_PILLS"      -- "$MID_PILLS"
-run_target         rb3-score   '^Done\.$'                    --needs "$MID_PILLS"      -- "$MID_PILLS"
-run_target --gated rb3-score2  '^RESULT: OK'                                           --
+run_target         rb3-gem     '^Done\.$'                    --needs "$ASSETS" --needs "$MID_PILLS"      -- "$MID_PILLS"
+run_target         rb3-hit     '^Done\.$'                    --needs "$ASSETS" --needs "$MID_PILLS"      -- "$MID_PILLS"
+run_target         rb3-score   '^Done\.$'                    --needs "$ASSETS" --needs "$MID_PILLS"      -- "$MID_PILLS"
+run_target --gated rb3-score2  '^RESULT: OK'                 --needs "$ASSETS"         --
 # W16-PL: rb3-score3's optional 3rd argument is a band chart; centerfold carries
 # four drums/guitar/keys unison phrases, so the REAL CommonPhraseCapturer's unison
 # path runs on every health check (the band stage prints MISMATCH + rc=1 if it
 # disagrees with the driver's own expectation).
-run_target         rb3-score3  '^Done\.$'                    --needs "$MID_VICARIOUS" --needs "$MID_CENTERFOLD" -- "$MID_VICARIOUS" "PART DRUMS" "$MID_CENTERFOLD"
-run_target         rb3-score4  '^Done\.$'                    --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
-run_target         rb3-vocal   '^  all-off \(\+6\) '         --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
-run_target         rb3-vocal2  '^Done\.$'                    --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
-run_target         rb3-harmony '^Done\.$'                    --needs "$MID_CENTERFOLD" -- "$MID_CENTERFOLD"
-run_target         rb3-crowd   '^=== M12 complete'           --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
+run_target         rb3-score3  '^Done\.$'                    --needs "$ASSETS" --needs "$MID_VICARIOUS" --needs "$MID_CENTERFOLD" -- "$MID_VICARIOUS" "PART DRUMS" "$MID_CENTERFOLD"
+run_target         rb3-score4  '^Done\.$'                    --needs "$ASSETS" --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
+run_target         rb3-vocal   '^  all-off \(\+6\) '         --needs "$ASSETS" --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
+run_target         rb3-vocal2  '^Done\.$'                    --needs "$ASSETS" --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
+run_target         rb3-harmony '^Done\.$'                    --needs "$ASSETS" --needs "$MID_CENTERFOLD" -- "$MID_CENTERFOLD"
+run_target         rb3-crowd   '^=== M12 complete'           --needs "$ASSETS" --needs "$MID_VICARIOUS"  -- "$MID_VICARIOUS"
 run_target         rb3-save    '^=== ALL ROUND-TRIPS OK'                               --
 CFG_ARK="$LOGDIR/native_health_syscfg_ark_$SLUG.txt"; rm -f "$CFG_ARK"
 run_target --gated rb3-ark     '^RESULT: ALL GATES PASSED'   --needs "$ASSETS" --needs "$ARK_REF" -- "$ASSETS" "$ARK_REF" --config-dump "$CFG_ARK"
@@ -425,6 +449,88 @@ for pair in "rb3-ark:$CFG_ARK" "rb3-render:$CFG_RENDER"; do
     *) unrunnable+=("$t:config-view-norun") ;;
     esac
 done
+
+# -------------------------------------------------- RETAIL CONFIG (W16-UD) --
+# The ten SYSCFG_TARGETS take their whole system config -- (beatmatcher ...),
+# (scoring ...) with its crowd/solo/coda blocks, everything else -- and the
+# macro table (TRACK_SYMBOLS, kDifficulty*) from the disc, through
+# native/src/retail_system_config.h: the preinit file, then the real InitSystem
+# on config/band_keep.dta. Until W16-UD they compiled hand-written blocks in,
+# which W16-UC's file audit cannot see because nothing is read. Three checks,
+# each counted as a runtime failure:
+#   1. tools/retail_boot_config.py rebuilds the post-SystemInit config and macro
+#      table from the shipped .dtb files with no engine code (`view --full`;
+#      the SystemInit file name is decoded from App::App in the retail image),
+#      and each target's dump must equal it line for line.
+#   2. every target printed `[PASS] retail-config` (the boot happened).
+#   3. no SYSCFG target's source writes gSystemConfig or the macro table
+#      itself, and each calls RetailSystemConfig::Boot() exactly once -- the
+#      dump is taken right after Boot(), so a later hand edit to the config is
+#      what this check is for.
+echo
+echo "--- retail config: is each driver's config the one the console holds after SystemInit? ---"
+SYSCFG_REF="$LOGDIR/native_health_syscfg_full_retail_$SLUG.txt"
+syscfg_ok=0; syscfg_ran=0; syscfg_ref_ok=0; syscfg_src_ok=0; SYSCFG_EQUAL=()
+python3 "$DIR/tools/retail_boot_config.py" view --full --assets "$ASSETS" --out "$SYSCFG_REF" \
+    > "$SYSCFG_REF.log" 2>&1 && [ -s "$SYSCFG_REF" ] && syscfg_ref_ok=1
+if [ $syscfg_ref_ok -eq 1 ]; then
+    echo "  reference: $(head -1 "$SYSCFG_REF.log")"
+else
+    echo "  UNRUNNABLE reference -- retail_boot_config.py view --full failed: $(tail -1 "$SYSCFG_REF.log")"
+    unrunnable+=("retail-config:noref")
+fi
+# syscfg_source_check FILE... -- prints one line per violation; rc 1 if any.
+syscfg_source_check() {
+    local f bad=0 n
+    for f in "$@"; do
+        if G -nE '\bgSystemConfig\b|DataSetMacro *\(|crowd_config_dta\.h|scoring_config_dta\.h' "$f" \
+             | G -v '^[0-9]*: *//' > "$LOGDIR/native_health_syscfg_src_$SLUG.tmp"; then
+            sed "s|^|    $(basename "$f"):|" "$LOGDIR/native_health_syscfg_src_$SLUG.tmp"; bad=1
+        fi
+        n=$(G -c 'RetailSystemConfig::Boot()' "$f")
+        if [ "${n:-0}" -ne 1 ]; then
+            echo "    $(basename "$f"): calls RetailSystemConfig::Boot() ${n:-0} time(s), want 1"; bad=1
+        fi
+    done
+    return $bad
+}
+syscfg_src=()
+for t in "${SYSCFG_TARGETS[@]}"; do syscfg_src+=("$DIR/native/src/main_${t#rb3-}.cpp"); done
+if syscfg_source_check "${syscfg_src[@]}" > "$LOGDIR/native_health_syscfg_src_$SLUG.log"; then
+    echo "  source: ${#syscfg_src[@]} driver(s) boot retail's config once and never write it"
+    syscfg_src_ok=1
+else
+    echo "  FAIL   source -- a SYSCFG driver writes its own config:"
+    sed 's/^/  /' "$LOGDIR/native_health_syscfg_src_$SLUG.log" | head -8
+    rt_failed+=("syscfg:source")
+fi
+for t in "${SYSCFG_TARGETS[@]}"; do
+    if printf '%s\n' ${unrunnable[@]+"${unrunnable[@]}"} | G -q "^$t:"; then continue; fi
+    syscfg_ran=$((syscfg_ran + 1))
+    tlog="$LOGDIR/native_health_${t}_$SLUG.log"
+    dump="$(syscfg_dump "$t")"
+    if ! G -q '^  \[PASS\] retail-config ' "$tlog" 2>/dev/null; then
+        printf '  %-10s %-12s -- no [PASS] retail-config line\n' FAIL "$t"
+        rt_failed+=("$t:retail-config"); continue
+    fi
+    if [ ! -s "$dump" ]; then
+        printf '  %-10s %-12s -- wrote no config dump at %s\n' FAIL "$t" "$dump"
+        rt_failed+=("$t:retail-config"); continue
+    fi
+    [ $syscfg_ref_ok -eq 1 ] || continue
+    out="$LOGDIR/native_health_cfgview_full_${t}_$SLUG.log"
+    python3 "$DIR/tools/retail_boot_config.py" check "$dump" --full --reference "$SYSCFG_REF" \
+        > "$out" 2>&1
+    case $? in
+    0) syscfg_ok=$((syscfg_ok + 1)); SYSCFG_EQUAL+=("$t") ;;
+    1) printf '  %-10s %-12s -- %s\n' FAIL "$t" "$(head -1 "$out" | cut -c1-110)"
+       rt_failed+=("$t:retail-config") ;;
+    *) printf '  %-10s %-12s -- the comparison could not run: %s\n' UNRUNNABLE "$t" "$(tail -1 "$out")"
+       unrunnable+=("$t:retail-config-norun") ;;
+    esac
+done
+echo "  retail config: $syscfg_ok of $syscfg_ran run target(s) EQUAL to the .dtb rebuild" \
+     "(${#SYSCFG_TARGETS[@]} expected; per-target: $LOGDIR/native_health_cfgview_full_*_$SLUG.log)"
 
 # ------------------------------------------------- FILE SOURCES (W16-UC) --
 # Retail reads every relative path out of the disc archive; the only host files
@@ -706,6 +812,109 @@ if [ $SELFTEST -eq 1 ]; then
         echo "  SKIP  file-undeclared -- rb3-ark's positive run/audit was not clean"
         st_skip=$((st_skip + 1))
     fi
+    # ---- RETAIL CONFIG CONTROLS (W16-UD) -----------------------------------
+    #   syscfg-edit      rb3-crowd's own dump with ONE float in its
+    #                    (scoring (crowd ...)) block changed: the comparison
+    #                    must say DIFFERENT. Proves the comparator reads the
+    #                    values, not just the shape.
+    #   syscfg-drop-xbox rb3-score4 rerun with HX_XBOX left out of the boot
+    #                    macros: the driver reads a different config off the
+    #                    disc, so its dump must differ in CONTENT (more than the
+    #                    macro header line's two diff lines). Proves the dump is
+    #                    the live read. (Not _SHIP: without it the config
+    #                    #includes ui/dev_only/*.dta, which the disc does not
+    #                    ship, and the read crashes before any dump.)
+    #   syscfg-nodisc    rb3-crowd with RB3_ASSETS at an empty dir: rc 2 and
+    #                    `[FAIL] retail-config`. Proves there is no compiled-in
+    #                    fallback to run on.
+    #   syscfg-source    the source check over a copy of main_crowd.cpp with a
+    #                    hand-written config assignment added: it must flag it.
+    # Pair: the base target's positive run was green with an EQUAL dump (for the
+    # source control: the positive source check passed).
+    syscfg_equal() {
+        local x; for x in ${SYSCFG_EQUAL[@]+"${SYSCFG_EQUAL[@]}"}; do [ "$x" = "$1" ] && return 0; done
+        return 1
+    }
+    if was_green rb3-crowd && syscfg_equal rb3-crowd; then
+        label=syscfg-edit
+        log="$LOGDIR/native_health_selftest_${label}_$SLUG.log"
+        awk '/^  s scoring$/ {sc=1} sc && !c && /^    s crowd$/ {c=1} c && !d && /^ *f / {sub(/f .*/, "f 99"); d=1} {print}' \
+            "$(syscfg_dump rb3-crowd)" > "$log.dump"
+        python3 "$DIR/tools/retail_boot_config.py" check "$log.dump" --full --reference "$SYSCFG_REF" \
+            > "$log" 2>&1
+        arc=$?
+        if [ $arc -eq 1 ] && ! cmp -s "$log.dump" "$(syscfg_dump rb3-crowd)"; then
+            echo "  RED   $label -- check rc=1: $(head -1 "$log" | cut -d' ' -f2,4-6) (control WORKS)"
+            st_ok=$((st_ok + 1))
+        else
+            echo "  GREEN $label -- check rc=$arc; a changed (scoring (crowd ...)) value went unnoticed."
+            st_bad=$((st_bad + 1))
+        fi
+        echo "        log: $log"
+    else
+        echo "  SKIP  syscfg-edit -- rb3-crowd's positive run was not green with an EQUAL config"
+        st_skip=$((st_skip + 1))
+    fi
+    if was_green rb3-score4 && syscfg_equal rb3-score4; then
+        label=syscfg-drop-xbox
+        log="$LOGDIR/native_health_selftest_${label}_$SLUG.log"
+        rm -f "$log.dump"
+        timeout -k 10 "$RT_TIMEOUT" env RB3_ASSETS="$ASSETS" RB3_BOOT_MACRO_DROP=HX_XBOX \
+            RB3_CONFIG_DUMP="$log.dump" "$NB/rb3-score4" "$MID_VICARIOUS" > "$log" 2>&1
+        python3 "$DIR/tools/retail_boot_config.py" check "$log.dump" --full --reference "$SYSCFG_REF" \
+            > "$log.view" 2>&1
+        vrc=$?
+        nd=$(head -1 "$log.view" | sed -n 's/.* -- \([0-9]*\) differing lines.*/\1/p')
+        if [ $vrc -eq 1 ] && [ "${nd:-0}" -gt 2 ] && G -q '^  \[FAIL\] boot-macros ' "$log"; then
+            echo "  RED   $label -- [FAIL] boot-macros, and the dump differs on $nd lines (control WORKS)"
+            st_ok=$((st_ok + 1))
+        else
+            echo "  GREEN $label -- view rc=$vrc, ${nd:-0} differing lines; the dump did not follow"
+            echo "        what the driver read off the disc."
+            st_bad=$((st_bad + 1))
+        fi
+        echo "        log: $log"
+    else
+        echo "  SKIP  syscfg-drop-xbox -- rb3-score4's positive run was not green with an EQUAL config"
+        st_skip=$((st_skip + 1))
+    fi
+    if was_green rb3-crowd && syscfg_equal rb3-crowd; then
+        label=syscfg-nodisc
+        log="$LOGDIR/native_health_selftest_${label}_$SLUG.log"
+        nodisc="$LOGDIR/native_health_nodisc_$SLUG"; rm -rf "$nodisc"; mkdir -p "$nodisc"
+        timeout -k 10 "$RT_TIMEOUT" env RB3_ASSETS="$nodisc" "$NB/rb3-crowd" "$MID_VICARIOUS" \
+            > "$log" 2>&1
+        rc=$?
+        if [ $rc -eq 2 ] && G -q '^  \[FAIL\] retail-config ' "$log"; then
+            echo "  RED   $label -- rc=2, [FAIL] retail-config: no disc, no run (control WORKS)"
+            st_ok=$((st_ok + 1))
+        else
+            echo "  GREEN $label -- rc=$rc; a driver ran with no disc to read its config from."
+            st_bad=$((st_bad + 1))
+        fi
+        echo "        log: $log"
+    else
+        echo "  SKIP  syscfg-nodisc -- rb3-crowd's positive run was not green with an EQUAL config"
+        st_skip=$((st_skip + 1))
+    fi
+    if [ $syscfg_src_ok -eq 1 ]; then
+        label=syscfg-source
+        log="$LOGDIR/native_health_selftest_${label}_$SLUG.log"
+        cp "$DIR/native/src/main_crowd.cpp" "$log.main_crowd.cpp"
+        printf '%s\n' 'static void Planted() { gSystemConfig = DataReadString("(scoring)"); }' \
+            >> "$log.main_crowd.cpp"
+        if ! syscfg_source_check "$log.main_crowd.cpp" > "$log" 2>&1 && G -q 'Planted' "$log"; then
+            echo "  RED   $label -- the planted config write was flagged (control WORKS)"
+            st_ok=$((st_ok + 1))
+        else
+            echo "  GREEN $label -- a hand-written config in a driver went unnoticed."
+            st_bad=$((st_bad + 1))
+        fi
+        echo "        log: $log"
+    else
+        echo "  SKIP  syscfg-source -- the positive source check did not pass"
+        st_skip=$((st_skip + 1))
+    fi
     # ---- RUNTIME CLASSIFIER CONTROLS (W16-PE) ------------------------------
     # The all-targets runtime section above is only worth something if its
     # classifier is shown to go red on each failure class it claims to catch.
@@ -929,5 +1138,6 @@ emit "$verdict" "$link_verdict" "$link_ver" "$link_exp" "$link_skip" \
      "$(if [ ${#unrunnable[@]} -gt 0 ]; then IFS=,; echo "${unrunnable[*]}"; else echo none; fi)" \
      "$selftest" "$sc_unlinked" "$sc_b" "$sc_multi" "$rc" "$hp_ctl" "$hp_base" \
      "$rt_crashed" \
-     "$(if [ ${#rt_failed[@]} -gt 0 ]; then IFS=,; echo "${rt_failed[*]}"; else echo none; fi)"
+     "$(if [ ${#rt_failed[@]} -gt 0 ]; then IFS=,; echo "${rt_failed[*]}"; else echo none; fi)" \
+     "$syscfg_ok/${#SYSCFG_TARGETS[@]}"
 exit $rc
