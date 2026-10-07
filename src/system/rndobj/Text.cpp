@@ -1034,6 +1034,9 @@ void RndText::WrapText(const char *text, const Style &style, HX_VECTOR(Line) & l
         // Build Line entries by forward-walking nextIdx from wps[0]. The line start
         // comes from wp->byteIdx directly — wrap points already sit at post-space
         // positions. Trailing whitespace is trimmed off the end pointer.
+        // Retail sets neither startIdx nor endIdx here (no load of
+        // WrapPoint::charIdx, no store to Line+0x2c/+0x30): they stay at Line()'s
+        // 0. Its trim loop reads mEnd[-1] before the mEnd > mStart test.
         {
             WrapPoint *wp = &wps[0];
             while (wp->nextIdx != -1) {
@@ -1042,17 +1045,17 @@ void RndText::WrapText(const char *text, const Style &style, HX_VECTOR(Line) & l
                 tmpLine.lineStyle = wp->style;
                 tmpLine.mStart = text + wp->byteIdx;
                 tmpLine.mEnd = text + ne->byteIdx;
-                tmpLine.startIdx = wp->charIdx;
-                tmpLine.endIdx = ne->charIdx;
                 tmpLine.mWidth = ne->bestLineLen;
-                while (tmpLine.mEnd > tmpLine.mStart) {
+                for (;;) {
                     char p = tmpLine.mEnd[-1];
                     if (p != ' ' && p != '\n' && p != '\t')
+                        break;
+                    if (tmpLine.mEnd <= tmpLine.mStart)
                         break;
                     --tmpLine.mEnd;
                 }
                 lines.push_back(tmpLine);
-                wp = ne;
+                wp = &wps[wp->nextIdx];
             }
         }
 
