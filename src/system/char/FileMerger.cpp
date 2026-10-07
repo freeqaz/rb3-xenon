@@ -657,12 +657,16 @@ void FileMerger::AppendLoader(FileMerger::Merger &merger) {
     if (merger.mPreClear)
         merger.Clear();
     mFilesPending.push_back(&merger);
+#ifdef HX_NATIVE
+    // DC3's edit-mode check_sync message; retail 0x823924F8 (212 B) ends at the
+    // push_back.
     if (TheLoadMgr.EditMode()) {
         static Message checkSync("check_sync", "", "");
         checkSync[0] = merger.loading;
         checkSync[1] = merger.mName;
         HandleType(checkSync);
     }
+#endif
 }
 
 // Retail arity is THREE args, not four -- `PostMerge(Merger *, bool)`, the

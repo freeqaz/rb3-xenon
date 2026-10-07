@@ -8751,6 +8751,7 @@
  "0x82391ec0": "?OnSelect@FileMerger@@IAA?AVDataNode@@PBVDataArray@@@Z",
  "0x82392380": "?Clear@FileMerger@@QAAXXZ",
  "0x82392430": "?ClearSelections@FileMerger@@QAAXXZ",
+ "0x823924f8": "?AppendLoader@FileMerger@@IAAXAAUMerger@1@@Z",
  "0x823925d8": "?FailedLoading@FileMerger@@MAAXPAVLoader@@@Z",
  "0x823927c8": "?NotifyFileLoaded@FileMerger@@IAAPAUMerger@1@PAVLoader@@PAVObjectDir@@@Z",
  "0x82392e18": "?FinishLoading@FileMerger@@MAAXPAVLoader@@@Z",
