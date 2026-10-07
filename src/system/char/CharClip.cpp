@@ -1160,65 +1160,57 @@ float CharClip::SampleToBeat(int sample) const {
     }
 }
 
-void CharClip::LockAndDelete(CharClip **const clips, int remaining, int maxToDelete) {
+void CharClip::LockAndDelete(CharClip **const clips, int numClips, int remaining) {
     int loopIdx;
     CharClip *clip;
 
     MILO_ASSERT(remaining >= 0, 0x42A);
 
-    // Cap maxToDelete at remaining
-    if (remaining < maxToDelete) {
-        maxToDelete = remaining;
+    // Cap the delete budget at the number of clips we actually have.
+    if (numClips < remaining) {
+        remaining = numClips;
     }
 
     loopIdx = 0;
 
     // Phase 1: Partition clips with flag 0x10000 set
-    if (remaining > 0) {
-        CharClip **readPtr = &clips[0];
-        CharClip **writeBackPtr = &clips[remaining];
-        do {
-            readPtr++;
-            clip = readPtr[-1];
-            if ((clip->mPlayFlags & 0x10000) != 0) {
-                writeBackPtr--;
-                remaining--;
-                maxToDelete--;
-                loopIdx--;
-                readPtr[-1] = *writeBackPtr;
-                *writeBackPtr = clip;
-                readPtr--;
-            }
-            loopIdx++;
-        } while (loopIdx < remaining);
+    for (; loopIdx < numClips; loopIdx++) {
+        clip = clips[loopIdx];
+        if ((clip->mPlayFlags & 0x10000) != 0) {
+            numClips--;
+            remaining--;
+            clips[loopIdx] = clips[numClips];
+            clips[numClips] = clip;
+            loopIdx--;
+        }
     }
 
     // Phase 2: Mark additional clips with deletion flag
-    if (maxToDelete > 0) {
-        int cnt = maxToDelete;
-        CharClip **markPtr = &clips[remaining];
-        remaining -= maxToDelete;
+    if (remaining > 0) {
+        int cnt = remaining;
+        CharClip **markPtr = &clips[numClips];
+        numClips -= remaining;
         do {
-            markPtr--;
-            (*markPtr)->mPlayFlags |= 0x10000;
+            // Naming the loaded clip is what lets the flag read/write reuse the
+            // `lwzu` result; `(*--markPtr)->mPlayFlags |= ...` reloads it.
+            CharClip *marked = *--markPtr;
+            marked->mPlayFlags |= 0x10000;
             cnt--;
         } while (cnt != 0);
     }
 
-    // Phase 3: Release all marked clips
-    if (remaining > 0) {
-        CharClip **releasePtr = &clips[remaining];
+    // Phase 3: Delete all marked clips.
+    if (numClips > 0) {
+        CharClip **releasePtr = &clips[numClips];
         do {
-            releasePtr--;
-            CharClip *clip = *releasePtr;
-            remaining--;
-            if ((unsigned int)clip) {
-#ifdef HX_NATIVE
-                clip->Release((ObjRef *)1);
-#else
-                clip->Release((ObjRefOwner *)1);
-#endif
-            }
-        } while (remaining > 0);
+            CharClip *toDelete = *--releasePtr;
+            numClips--;
+            // The image calls vtable slot 0 with r4 = 1 -- the scalar deleting
+            // destructor -- behind an UNSIGNED null test that MSVC generates for
+            // `delete` itself. The hand-written `if ((unsigned int)clip)
+            // clip->Release((ObjRef *)1);` produced a signed test and inlined a
+            // ring unlink instead of the call.
+            delete toDelete;
+        } while (numClips > 0);
     }
 }

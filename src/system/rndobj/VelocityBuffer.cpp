@@ -51,36 +51,45 @@ bool RndXfmCache::CacheXfms(
         int startIndex = unk1b580;
 
         // Copy bone transform floats (12 floats/ints per bone = 3 float4 rows)
-        unsigned int totalFloats = numBones * 12;
-        unsigned int count = 0;
+        // w16-a: a plain indexed loop; MSVC derives the image's
+        // `boneFloats - dst` cursor itself (canonical unchanged, 96.296; the
+        // old spelling truncated both pointers through `int`).
         float *dst = (float *)&unk1f40[startIndex * 12];
-        if (totalFloats != 0) {
-            int diff = (int)boneFloats - (int)dst;
-            do {
-                count++;
-                *dst = *(float *)((int)dst + diff);
-                dst++;
-            } while (count < totalFloats);
+        for (unsigned int i = 0; i < numBones * 12; i++) {
+            dst[i] = boneFloats[i];
         }
 
-        // Store mesh pointers (one per bone slot) and per-bone indices
+        // Store mesh pointers (one per bone slot) and per-bone indices.
+        //
+        // w7-bt (82.2 -> 96.3 canonical): the image's mesh-pointer loop is a
+        // counted `for` -- it carries the CTR pass's own dead zero guard
+        // (0x826B1658 `cmplwi r6, 0x0` / 0x826B165C `beq` INTO the index
+        // loop's body, unreachable because the 0x826B1644 `cmplwi cr6` guard
+        // already excluded zero) where a do/while gets no guard at all.  The
+        // index loop is the `subic.`/`bne` down-counter (0x826B1670), which it
+        // only stays if `m` is declared BEFORE the `for` (declared between the
+        // loops it takes the CTR instead, 90.6); the post-increment `*indices++`
+        // keeps the strength-reducer's own `subi r8, r10, 0x4` (0x826B164C)
+        // where an explicit `--indices` folds into `addi ..., 0x658f`.
+        // Refuted: two `for`s in one `if` (83.2, loop 2 takes CTR with an
+        // unfolded guard), a pointer-compare `for` (68.7, never CTR),
+        // `while (m--)` (90.6), indexing `mMeshPtrs[startIndex + i]` with no
+        // local (85.6).
+        // RESIDUAL (w7-bt, 96.3 canonical): the image schedules that `subi r8`
+        // before the mesh-pointer loop and we sink it to the index loop's
+        // preheader (1 insert + 1 delete), and r9/r10/r11 rotate from the
+        // 0x826B15F4 reload of unk1b580 onward.
         {
             int *indices = &unk19640[startIndex];
             const RndMesh **meshPtrs = &mMeshPtrs[startIndex];
+            int idx = 0;
             if (numBones != 0) {
-                --indices;
                 unsigned int m = numBones;
-                --meshPtrs;
-                int idx = 0;
-                unsigned int n = numBones;
+                for (unsigned int i = 0; i < numBones; i++) {
+                    meshPtrs[i] = mesh;
+                }
                 do {
-                    ++meshPtrs;
-                    *meshPtrs = mesh;
-                } while (--n != 0);
-                do {
-                    ++indices;
-                    *indices = idx;
-                    idx++;
+                    *indices++ = idx++;
                 } while (--m != 0);
             }
         }

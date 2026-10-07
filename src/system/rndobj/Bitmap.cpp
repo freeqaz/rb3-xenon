@@ -357,16 +357,18 @@ int RndBitmap::PixelOffset(int x, int y, bool &nibble) const {
         0x6d, 0x75, 0x7d, 0x47, 0x4f, 0x57, 0x5f, 0x67, 0x6f, 0x77, 0x7f
     };
 
-    auto& _ref3 = mHeight;
-    auto& _ref0 = mOrder;
-    if (_ref0 & 4) {
+    if (mOrder & 4) {
         if (mBpp == 8) {
             int yHalf = y >> 1;
             int xHalf = x >> 1;
             int doubleRowStride = (int)mRowBytes * 2;
             int returnBase = ((yHalf & 0xFFFFFFFE) * doubleRowStride) + ((xHalf & 0x3FFFFFF8) * 4);
-            int lookupIdx = (y % 4) * 0x10 + (x % 16);
-            int lookupOffset = (unsigned char)(((y >> 2) % 4) & 1 ? hbytes13 : hbytes02)[lookupIdx];
+            int lookupOffset;
+            if (((y >> 2) % 4) & 1) {
+                lookupOffset = (unsigned char)bytes13[(y % 4) * 0x10 + (x % 16)];
+            } else {
+                lookupOffset = (unsigned char)bytes02[(y % 4) * 0x10 + (x % 16)];
+            }
             if (lookupOffset > 0x1F) {
                 lookupOffset = (lookupOffset + doubleRowStride) - 0x20;
             }
@@ -374,22 +376,27 @@ int RndBitmap::PixelOffset(int x, int y, bool &nibble) const {
         }
         int yQuadMod = (y >> 2) % 4;
         int tiledOffsetX, tiledOffsetY, tiledStride;
-        if ((mWidth > 0x80U) && (_ref3 > 0x80U)) {
+        if ((mWidth > 0x80U) && (mHeight > 0x80U)) {
             tiledOffsetX = (((int)(y - ((y / 128) << 7)) >> 1) & 0xFFFFFFF8)
                 + ((x >> 1) & 0xFFFFFFC0);
             tiledOffsetY = (((int)(x - ((x / 128) << 7)) >> 2) & 0xFFFFFFF8)
                 + ((y >> 2) & 0xFFFFFFE0) + (yQuadMod * 2);
-            tiledStride = (((_ref3 - (((int)_ref3 / 128) << 7)) & 0xFFFFFFF0)
+            int heightVal = mHeight;
+            tiledStride = (((heightVal - ((heightVal / 128) << 7)) & 0xFFFFFFF0)
                            + (mWidth & 0xFFFFFF80))
                 * 2;
         } else {
             tiledOffsetX = (y >> 1) & 0xFFFFFFF8;
             tiledOffsetY = ((x >> 2) & 0xFFFFFFF8) + (yQuadMod * 2);
-            tiledStride = (int)_ref3 * 2;
+            tiledStride = mHeight * 2;
         }
-        int lookupIdx2 = ((y % 4) << 5) + (x - ((x / 32) << 5));
         int tiledBase = (tiledStride * tiledOffsetY) + (tiledOffsetX * 4);
-        int nibbleOffset = (unsigned char)(yQuadMod & 1 ? hbytes13 : hbytes02)[lookupIdx2];
+        int nibbleOffset;
+        if (yQuadMod & 1) {
+            nibbleOffset = (unsigned char)hbytes13[((y % 4) << 5) + (x % 32)];
+        } else {
+            nibbleOffset = (unsigned char)hbytes02[((y % 4) << 5) + (x % 32)];
+        }
         nibble = nibbleOffset & 1;
         int offsetShifted = nibbleOffset >> 1;
         if (offsetShifted > 0x1F) {
@@ -397,28 +404,26 @@ int RndBitmap::PixelOffset(int x, int y, bool &nibble) const {
         }
         return offsetShifted + tiledBase;
     }
-    if (_ref0 & 0x40) {
+    if (mOrder & 0x40) {
         unsigned char bpp = mBpp;
         int blockSize = 8;
         if (bpp != 4) {
             blockSize = 4;
         }
-        unsigned short width = mWidth;
-        int bppOffset = bpp - 0x10;
-        nibble = x & 1;
-        int blockWidth = (((bppOffset - bppOffset) - !(bppOffset >> 31)) & 4) + 4;
+        int width = mWidth;
+        int blockWidth = bpp < 0x10 ? 8 : 4;
         int pixelScale = (((bpp - 0x20) == 0) & 1) + 1;
-        int xModBlockWidth = x % blockWidth;
+        nibble = x & 1;
         int tiledBaseOffset =
-            ((((((int)width / blockWidth) * (y / blockSize)) + (x / blockWidth))
+            (((((width / blockWidth) * (y / blockSize)) + (x / blockWidth))
               * pixelScale * blockSize)
              + (y % blockSize))
-            * blockWidth;
+            * blockWidth + x % blockWidth;
         unsigned int scaledWidth = width * pixelScale;
-        int offsetMod = (int)(mBpp * ((tiledBaseOffset + xModBlockWidth) % scaledWidth))
+        int offsetMod = (int)(mBpp * (tiledBaseOffset % scaledWidth))
             >> (pixelScale + 2);
         int rowOffset =
-            mRowBytes * ((unsigned int)(tiledBaseOffset + xModBlockWidth) / scaledWidth);
+            mRowBytes * ((unsigned int)tiledBaseOffset / scaledWidth);
         return offsetMod + rowOffset;
     }
     nibble = x & 1;
