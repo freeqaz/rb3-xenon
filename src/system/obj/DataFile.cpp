@@ -628,10 +628,18 @@ DataArray *LoadDtz(const char *c, int i) {
     decompSize = 0;
     // the decompressed size is the last 4 bytes, little-endian
     const char *sizeBytes = &c[i - 4];
+#ifdef HX_NATIVE
+    // The X360 arm stores the bytes most-significant first, which reads the
+    // trailer as little-endian only on a big-endian host (W16-UB).
+    decompSize = (int)((unsigned char)sizeBytes[0] | ((unsigned char)sizeBytes[1] << 8)
+                       | ((unsigned char)sizeBytes[2] << 16)
+                       | ((unsigned int)(unsigned char)sizeBytes[3] << 24));
+#else
     ((unsigned char *)&decompSize)[0] = sizeBytes[3];
     ((unsigned char *)&decompSize)[1] = sizeBytes[2];
     ((unsigned char *)&decompSize)[2] = sizeBytes[1];
     ((unsigned char *)&decompSize)[3] = sizeBytes[0];
+#endif
     MILO_ASSERT(decompSize > 0, 0x456);
     void *pDecompBuf = MemAlloc(decompSize, __FILE__, 0x459, "LoadDtz", 0);
     MILO_ASSERT(pDecompBuf, 0x45b);

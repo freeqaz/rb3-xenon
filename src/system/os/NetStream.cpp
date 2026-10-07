@@ -36,7 +36,11 @@ void NetStream::ReadImpl(void *v, int i) {
             break;
         }
 
+#ifdef HX_NATIVE
+        v = (void *)((const char *)v + bytes); // (uint)v truncates a 64-bit pointer (W16-UB)
+#else
         v = (void *)((uint)v + bytes);
+#endif
         i -= bytes;
     }
     if (!mFail) {
@@ -57,7 +61,11 @@ void NetStream::WriteImpl(const void *v, int i) {
             break;
         }
 
+#ifdef HX_NATIVE
+        v = (void *)((const char *)v + bytes); // (uint)v truncates a 64-bit pointer (W16-UB)
+#else
         v = (void *)((uint)v + bytes);
+#endif
         i -= bytes;
     }
     if (!mFail) {

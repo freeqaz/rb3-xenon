@@ -144,7 +144,14 @@ bool CDReadExternal(void *&v, int i, u64 u) {
         u64 l = u;
         // Retail reads the low word back out of u's home slot rather than
         // truncating the register (std r5 / lwz r4,+4).
+#ifdef HX_NATIVE
+        // ((LONG *)&u)[1] and *(PLONG)&l are u's low and high words only on a
+        // big-endian host; on x86 they are swapped (W16-UB).
+        LONG high = (LONG)(l >> 32);
+        SetFilePointer(v, (LONG)(u & 0xFFFFFFFF), &high, 0);
+#else
         SetFilePointer(v, ((LONG *)&u)[1], (PLONG)&l, 0);
+#endif
         return true;
     }
 }

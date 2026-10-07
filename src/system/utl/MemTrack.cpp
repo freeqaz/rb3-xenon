@@ -37,7 +37,14 @@ String gMemTrackSourceObject;
 // by an int stack position counter. This ensures counter is at array_base + 0x104 so the
 // compiler can access it as lwz r11, 0x104(r_array_base).
 struct MemTrackStack {
+#ifdef HX_NATIVE
+    // 65 slots of one pointer each. A literal 260 holds only 32 eight-byte
+    // pointers on a 64-bit host, so slots 32..64 would overwrite `pos` and the
+    // other stack (W16-UB).
+    char ptrs[65 * sizeof(void *)];
+#else
     char ptrs[260]; // (STACK_SIZE+1) * sizeof(void*) = 65 * 4 = 260 bytes
+#endif
     int pos;        // stack position, at offset 0x104 from ptrs base
 };
 static MemTrackStack s_MemTrackObjectNameStack; // MemTrackObjectName + s_MemTrackObjectNameStackPos
@@ -350,15 +357,17 @@ void MemTrackInit(int heap, int numAllocs) {
     // DC3-era tail; RB3-360 retail returns after registering the DataFuncs.
     MemTrackReport(0, false);
     AllocInfoInit();
-    int i = 0;
-    do {
+    // One 0x80-byte name buffer per slot, slots 0..STACK_SIZE. Index the slots as
+    // pointers: the DC3 form walked a byte offset `i += 4` up to 0x100 through
+    // `(int)CharArrayArray + i`, which truncates the address to 32 bits and steps
+    // half a pointer at a time on a 64-bit host (W16-UB).
+    for (int i = 0; i <= STACK_SIZE; i++) {
         void *mem = MemAlloc(0x80, __FILE__, 0x9a, "MemTrackStack", 0);
-        *(void **)((int)CharArrayArray + i) = mem;
+        ((void **)CharArrayArray)[i] = mem;
         memset(mem, 0, 0x80);
         mem = MemAlloc(0x80, __FILE__, 0x9c, "MemTrackStack", 0);
-        *(void **)((int)MemTrackObjectName + i) = mem;
+        ((void **)MemTrackObjectName)[i] = mem;
         memset(mem, 0, 0x80);
-        i += 4;
-    } while (i <= 0x100);
+    }
 #endif
 }

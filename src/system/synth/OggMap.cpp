@@ -85,6 +85,14 @@ static void SetupCypher(int version) {
     char script[256];
     unsigned char masterKey[256];
     int cipher = register_cipher(&rijndael_desc);
+#ifdef HX_NATIVE
+    // The X360 arm passes masterKey's address through a DTA int and a letter
+    // DataFunc (Synth.cpp returnMasterKey) copies the masher there. A 64-bit
+    // address does not fit an int, and native Synth::InitSecurity does not
+    // register those letter functions, so fetch the masher directly, as
+    // VorbisReader::setupCypher does natively (W16-UB).
+    KeyChain::getMasher(masterKey);
+#else
     DataArray *arr = DataReadString("{Na 42 'O32'}");
     unsigned int iEval = arr->Evaluate(0).Int();
     arr->Release();
@@ -96,6 +104,7 @@ static void SetupCypher(int version) {
     DataArray *scriptArr = DataReadString(script);
     scriptArr->Evaluate(0);
     scriptArr->Release();
+#endif
 
     KeyChain::getKey(gKeyIndex, gKey, masterKey);
     ByteGrinder grinder;

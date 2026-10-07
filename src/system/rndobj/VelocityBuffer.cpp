@@ -102,7 +102,14 @@ bool RndXfmCache::CacheXfms(
 RndVelocityBuffer::RndVelocityBuffer()
     : unk36be8(0), mActiveXfmCacheIndex(0), mFrame(0), mVelocityTex(nullptr), mMat(nullptr),
       mLastFrameCamera(nullptr) {
+#ifdef HX_NATIVE
+    // Clear mViewProjXfm through mCam. Retail clears a literal 0xa4 (0x8..0xac),
+    // which ends at the last byte of the 4-byte mCam pointer. On a 64-bit host
+    // mCam is 8 bytes, so 0xa4 leaves its upper half uninitialised (W16-UB).
+    memset(&mViewProjXfm, 0, (char *)(&mCam + 1) - (char *)&mViewProjXfm);
+#else
     memset(&mViewProjXfm, 0, 0xa4);
+#endif
 }
 
 void RndVelocityBuffer::CacheCameraSettings(RndCam *camera) {

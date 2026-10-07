@@ -191,7 +191,12 @@ void TrainerPanel::InitSections() {
         TheGameMode->Property("midi_parser", true)->Sym()
     );
     // MidiParser::mEvents is private; access via offset to avoid header edit.
+#ifdef HX_NATIVE
+    // mEvents is not at +0x18 on a 64-bit host; Events() returns it (W16-UB).
+    InternalInitSections(parser->Events());
+#else
     InternalInitSections(*(DataEventList **)((char *)parser + 0x18));
+#endif
     if (mSections.size() == 0) {
         InternalInitSections(TheGame->GetBeatMaster()->GetMidiParserMgr()->GetEventsList());
     }
