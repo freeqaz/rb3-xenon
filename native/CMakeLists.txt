@@ -2023,14 +2023,15 @@ set(W16UF_LINK_SOURCES
 )
 set_source_files_properties(${W16UF_LINK_SOURCES}
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
-# The phase registers the AppLabel and BandCamShot factories (as retail's meta
-# init and BandInit do), which makes AppLabel::Handle and BandCamShot's property
-# table (emitted by BandCharDesc.cpp) live. Their default arms name `extern
+# The phase registers the AppLabel, BandCamShot and BandFaceDeform factories (as
+# retail's meta init and BandInit do), which makes AppLabel::Handle, BandCamShot's
+# property table (emitted by BandCharDesc.cpp) and BandFaceDeform's live. Their default arms name `extern
 # Symbol` globals defined nowhere natively; the LOCAL_STATIC arms are the same
 # comparisons with function-local statics.
 set_source_files_properties(
     ${REPO_ROOT}/src/band3/meta_band/AppLabel.cpp
     ${REPO_ROOT}/src/system/bandobj/BandCharDesc.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandFaceDeform.cpp
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
 
 if(RB3X_BUILD_ENGINE)
