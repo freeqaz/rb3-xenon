@@ -39,6 +39,7 @@
 // lane-time sample-by-sample comparison against ffmpeg.
 
 #include "flow/FlowIf.h"
+#include "flow/FlowSwitchCase.h"
 #include "obj/Data.h"
 #include "obj/Dir.h"
 #include "os/File.h"
@@ -46,11 +47,13 @@
 #include "synth/CompressionEffect.h"
 #include "synth/Faders.h"
 #include "synth/StandardStream.h"
+#include "synth/StreamNull.h"
 #include "synth/Synth.h"
 #include "synth/Utl.h"
 #include "synth/tomcrypt/mycrypt.h"
 #include "utl/Symbol.h"
 
+#include <chrono>
 #include <cmath>
 #include <cstdarg>
 #include <cstdio>
@@ -489,6 +492,101 @@ void FlowGates() {
          runs, symOk ? "false" : "TRUE", first);
 }
 
+// ---------------------------------------------------------------------------
+// FlowSwitchCase::IsValidCase
+// ---------------------------------------------------------------------------
+struct ProbeSwitch : public FlowSwitchCase {
+    void Set(const DataNode &to, const DataNode &from, int op, bool useLast) {
+        mToValue = to;
+        mFromValue = from;
+        mOperator = (OperatorType)op;
+        mUseLastValue = useLast;
+    }
+};
+
+void SwitchCaseGates() {
+    ProbeSwitch *sc = new ProbeSwitch(); // never deleted: ~FlowSwitchCase needs TheFlowMgr
+    struct Case {
+        DataNode cur, to;
+        double x, y;
+    };
+    Case cases[] = { { DataNode(3), DataNode(5), 3, 5 },
+                     { DataNode(5), DataNode(5), 5, 5 },
+                     { DataNode(7), DataNode(5), 7, 5 },
+                     { DataNode(2.5f), DataNode(-1.0f), 2.5, -1 },
+                     { DataNode(4), DataNode(4.0f), 4, 4 },
+                     { DataNode(4), DataNode(4.5f), 4, 4.5 } };
+    DataNode none(0);
+    int bad = 0, runs = 0;
+    char first[160] = "";
+    for (auto &c : cases) {
+        bool want[6] = { c.x == c.y, c.x != c.y, c.x > c.y, c.x >= c.y, c.x < c.y, c.x <= c.y };
+        for (int op = 0; op < 6; op++) {
+            sc->Set(c.to, none, op, false);
+            DataNode cur = c.cur;
+            bool got = sc->IsValidCase(nullptr, &cur, &none, false);
+            runs++;
+            if (got != want[op]) {
+                if (!bad)
+                    snprintf(first, sizeof(first), "first miss: %g op%d %g -> %d", c.x, op,
+                             c.y, got);
+                bad++;
+            }
+        }
+    }
+    DataNode sym(Symbol("w16tm"));
+    sc->Set(DataNode(1), none, 2, false);
+    bool symOk = !sc->IsValidCase(nullptr, &sym, &none, false);
+    // use_last_value: the case compares against the previous value instead
+    sc->Set(DataNode(0), none, 0, true);
+    DataNode seven(7), last7(7);
+    bool lastOk = sc->IsValidCase(nullptr, &seven, &last7, true);
+    Gate("flow-switchcase-operators", bad == 0 && symOk && lastOk,
+         "%d/%d cases wrong, symbol > 1 %s, use_last_value 7==7 %s; %s", bad, runs,
+         symOk ? "false" : "TRUE", lastOk ? "true" : "FALSE", first);
+
+    // kTransition: current must equal to_value AND last must equal from_value,
+    // and unlike the ordering operators the types must match exactly.
+    DataNode c5(5), l3(3), l4(4), c5f(5.0f);
+    sc->Set(DataNode(5), DataNode(3), 6, false);
+    bool t1 = sc->IsValidCase(nullptr, &c5, &l3, true);   // 3 -> 5: yes
+    bool t2 = sc->IsValidCase(nullptr, &c5, &l4, true);   // 4 -> 5: no
+    bool t3 = sc->IsValidCase(nullptr, &c5f, &l3, true);  // 3 -> 5.0f: type differs
+    sc->Set(DataNode(5), DataNode(3), 7, false);
+    bool t4 = sc->IsValidCase(nullptr, &c5, &l3, true);   // kDefault never matches
+    Gate("flow-switchcase-transition", t1 && !t2 && !t3 && !t4,
+         "3->5 %d (want 1), 4->5 %d (want 0), 3->5.0f %d (want 0), default op %d (want 0)", t1,
+         t2, t3, t4);
+}
+
+// ---------------------------------------------------------------------------
+// StreamNull: the stream Synth hands out when there is no real one
+// ---------------------------------------------------------------------------
+void StreamNullGates() {
+    StreamNull *s = new StreamNull(250.0f);
+    bool idle = s->IsReady() && s->IsFinished() && !s->IsPlaying() && s->GetNumChannels() == 0;
+    float t0 = s->GetTime();
+    s->Play();
+    bool playing = s->IsPlaying() && !s->IsFinished();
+    float t1 = s->GetTime();
+    auto spinUntil = std::chrono::steady_clock::now() + std::chrono::milliseconds(20);
+    while (std::chrono::steady_clock::now() < spinUntil) {
+    }
+    float t2 = s->GetTime();
+    s->SetSpeed(2.0f);
+    float speed = s->GetSpeed();
+    s->Resync(100.0f);
+    bool resync = !s->IsPlaying() && s->GetTime() == 100.0f;
+    bool faders = true;
+    for (int i = 0; i < 20; i++)
+        faders = faders && s->ChannelFaders(i) && (i == 0 || s->ChannelFaders(i) != s->ChannelFaders(i - 1));
+    delete s;
+    Gate("synth-streamnull",
+         idle && t0 == 250.0f && playing && t1 >= 250.0f && t2 > t1 && speed == 2.0f && resync && faders,
+         "idle %d, start %g ms, playing %d, %g -> %g ms over 20 ms, speed %g, resync(100) %d, 20 faders %d",
+         idle, t0, playing, t1, t2, speed, resync, faders);
+}
+
 } // namespace
 
 int RunW16TMPhase(void (*gate)(const char *, bool, const char *)) {
@@ -499,5 +597,7 @@ int RunW16TMPhase(void (*gate)(const char *, bool, const char *)) {
     CompressGates();
     UtlGates();
     FlowGates();
+    SwitchCaseGates();
+    StreamNullGates();
     return 0;
 }

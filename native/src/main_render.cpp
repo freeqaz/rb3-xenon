@@ -111,6 +111,7 @@ extern "C" __attribute__((weak)) int __llvm_profile_write_file(void);
 #include "os/Archive.h"
 #include "os/Debug.h"
 #include "os/File.h"
+#include "os/Timer.h"
 #include "boot_invariants.h"
 #include "os/System.h"
 #include "rndobj/Cam.h"
@@ -5251,6 +5252,9 @@ int main(int argc, char **argv) {
     // a synthesised `objects` section, because Rnd::PreInit reads it) and
     // StandUpRenderer().
     InitMakeString();
+    // The game sets the timebase-to-ms factors in Timer::Init (SystemPreInit);
+    // without it every Timer, and so every VarTimer, reads 0 ms. W16-TM.
+    Timer::Init();
     Symbol::Init();
     // ⛔ X8: intern the 248 hand-defined Symbol globals that HANDLE_ACTION /
     // SYNC_PROP dispatch on. They were default-constructed (the NULL symbol),

@@ -1833,6 +1833,7 @@ set(W16TM_DEP_SOURCES
     ${REPO_ROOT}/src/system/flow/DrivenPropertyMathOps.cpp
     ${REPO_ROOT}/src/system/flow/FlowPtr.cpp
     ${REPO_ROOT}/src/system/flow/FlowLabel.cpp
+    ${REPO_ROOT}/src/system/flow/PropertyEventListener.cpp
     # The in-tree libogg/libvorbis retail ships (the same 18 C TUs objects.json
     # lists). VorbisReader compiles against these headers, so linking a system
     # libvorbis would pair them with another version's struct layouts.
