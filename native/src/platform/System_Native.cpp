@@ -97,26 +97,21 @@ void NativeDetectDataDir() {
     printf("  Set DC3_DATA env var or run from the repo root.\n");
 }
 
-// Find the DTA overlay directory (native/dta/ relative to repo root).
-// Overlay files shadow the archive — used for native-only DTA patches.
+// The DTA overlay directory: files there shadow the archive (native-only DTA
+// patches). It is a read from OUTSIDE the disc image, so it is OPT-IN, named
+// explicitly by RB3_OVERLAY_DIR (lane W16-UC). It used to be guessed from
+// "<dataDir>/../native/dta" or "native/dta" under the working directory, which
+// meant the same binary read different game data depending on where it was
+// started from. tools/native_file_audit.py fails any run that reads it unless
+// the overlay is allow-listed for that run.
 void NativeDetectOverlayDir() {
-    const char *dataDir = NativeGetDataDir();
-    // dataDir is typically "orig-assets" relative to repo root.
-    // Overlay dir is "native/dta/" relative to repo root = "<dataDir>/../native/dta/"
-    char buf[512];
-    snprintf(buf, sizeof(buf), "%s/../native/dta", dataDir);
-    if (FileExistsRaw(buf)) {
-        NativeSetOverlayDir(buf);
-        printf("DC3 Native: overlay dir=%s\n", buf);
+    const char *env = getenv("RB3_OVERLAY_DIR");
+    if (env && *env && FileExistsRaw(env)) {
+        NativeSetOverlayDir(env);
+        printf("DC3 Native: overlay dir=%s (RB3_OVERLAY_DIR)\n", env);
         return;
     }
-    // Also check "native/dta" directly (running from repo root with dataDir=".")
-    if (FileExistsRaw("native/dta")) {
-        NativeSetOverlayDir("native/dta");
-        printf("DC3 Native: overlay dir=native/dta\n");
-        return;
-    }
-    printf("DC3 Native: no overlay dir found (optional)\n");
+    printf("DC3 Native: no overlay dir (set RB3_OVERLAY_DIR to use one)\n");
 }
 
 // Native archive initialization - simplified from ArchiveInit()

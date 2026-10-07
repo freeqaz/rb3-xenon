@@ -1,0 +1,50 @@
+# Allow-list for tools/native_file_audit.py (lane W16-UC).
+#
+# A native run may open a host file only if it is (a) on the disc image
+# (--assets), (b) an input the harness declared with --input, (c) opened
+# write-only, or (d) matched by a line here. Everything else is a VIOLATION.
+#
+# Format: <category> <absolute glob>   ('*' crosses '/'; '~' is expanded)
+#
+# Keep this list to things that are NOT game data. A game file (config, milo,
+# texture, chart, song list) must never be allowed here: retail reads all of
+# them from the disc, and the point of the check is that native does too.
+
+# The dynamic loader and the C/C++ runtime.
+system /etc/ld.so.cache
+system /etc/ld.so.preload
+system /usr/lib/*
+system /usr/lib64/*
+system /lib/*
+system /lib64/*
+system /usr/share/locale/*
+system /usr/share/zoneinfo/*
+system /etc/localtime
+system /proc/*
+system /sys/*
+system /dev/*
+
+# The GPU stack (Dawn -> Vulkan loader -> driver), rb3-render and rb3-frame.
+gpu /usr/share/vulkan/*
+gpu /etc/vulkan/*
+gpu /usr/share/glvnd/*
+gpu /usr/share/egl/*
+gpu /usr/share/drirc.d/*
+gpu /etc/drirc
+gpu ~/.drirc
+gpu ~/.local/share/vulkan/*
+gpu ~/.config/vulkan/*
+gpu ~/.cache/mesa_shader_cache*
+gpu ~/.cache/radv_builtin_shaders*
+gpu ~/.cache/nvidia/*
+gpu ~/.nv/*
+gpu /etc/egl/*
+gpu /etc/glvnd/*
+gpu /etc/xdg/vulkan/*
+gpu /usr/local/share/vulkan/*
+gpu /etc/nvidia/*
+gpu /usr/share/nvidia/*
+gpu ~/.nvidia-aftermath-rc
+gpu /opt/cuda/*
+# TLS config that a linked network library reads at load time.
+system /etc/gnutls/*

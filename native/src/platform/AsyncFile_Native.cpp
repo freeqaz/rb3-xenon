@@ -15,6 +15,9 @@
 #include "platform/WebAssets.h"
 #endif
 
+void NativeFileLedger(const char *fmt, ...); // FileLedger_Native.cpp
+bool NativeFileIsDevicePath(const char *file);  // File_Native.cpp
+
 // Native async file - actually synchronous (good enough for initial port)
 class AsyncFileNative : public AsyncFile {
 public:
@@ -33,6 +36,17 @@ protected:
         if (mMode & 0x100) fmode = "w+b";
 
         // mFilename is already qualified by AsyncFile::Init()
+        // A device path ("devkit:/locale_keep.dta") keeps its device through
+        // qualification. Retail opens it on that device, which a retail
+        // console does not have, so the open fails. Fail it the same way
+        // rather than handing "devkit:/..." to fopen as a path relative to
+        // the process's working directory (lane W16-UC).
+        if (NativeFileIsDevicePath(mFilename.c_str())) {
+            NativeFileLedger("HOST\t%s\t%s\tfail\tnodevice",
+                             (mMode & FILE_OPEN_READ) ? "r" : "w", mFilename.c_str());
+            mFail = true;
+            return;
+        }
         mFp = fopen(mFilename.c_str(), fmode);
 #ifdef __EMSCRIPTEN__
         // On-demand fetch: if file isn't in MEMFS, try fetching from server
@@ -42,6 +56,8 @@ protected:
             }
         }
 #endif
+        NativeFileLedger("HOST\t%s\t%s\t%s", (mMode & FILE_OPEN_READ) ? "r" : "w",
+                         mFilename.c_str(), mFp ? "ok" : "fail");
         if (!mFp) {
             MILO_LOG("AsyncFile: failed to open '%s'\n", mFilename.c_str());
             mFail = true;

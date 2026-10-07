@@ -67,47 +67,6 @@ const char *FileRoot() { return gRoot; }
 const char *FileExecRoot() { return gExecRoot; }
 const char *FileSystemRoot() { return gSystemRoot; }
 
-#ifdef HX_NATIVE
-extern const char *NativeGetDataDir();
-
-static bool NativeDirExists(const char *path) {
-    struct stat st;
-    return path && *path && stat(path, &st) == 0 && S_ISDIR(st.st_mode);
-}
-
-static void NativeSetCanonicalPath(char *dst, size_t dstSize, const char *path) {
-    char resolved[PATH_MAX];
-    if (path && *path && realpath(path, resolved)) {
-        strncpy(dst, resolved, dstSize - 1);
-    } else if (path) {
-        strncpy(dst, path, dstSize - 1);
-    } else {
-        *dst = '\0';
-        return;
-    }
-    dst[dstSize - 1] = '\0';
-}
-
-static void NativeInitSystemRoot() {
-    char extractedSystemRun[PATH_MAX];
-    const char *dataDir = NativeGetDataDir();
-    if (dataDir && *dataDir) {
-        snprintf(
-            extractedSystemRun,
-            sizeof(extractedSystemRun),
-            "%s/extracted/(..)/(..)/system/run",
-            dataDir
-        );
-        if (NativeDirExists(extractedSystemRun)) {
-            NativeSetCanonicalPath(gSystemRoot, sizeof(gSystemRoot), extractedSystemRun);
-            return;
-        }
-    }
-
-    NativeSetCanonicalPath(gSystemRoot, sizeof(gSystemRoot), "../../system/run");
-}
-#endif
-
 // Retail 0x82516440: the release and the three root clears only.
 void FileTerminate() {
     RELEASE(gOpenCaptureFile);
@@ -426,11 +385,16 @@ DataNode OnEnumerateFrameRateResults(DataArray *da) {
 void FileInit() {
     strcpy(gRoot, ".");
     strcpy(gExecRoot, ".");
-#ifdef HX_NATIVE
-    NativeInitSystemRoot();
-#else
+    // Native too (lane W16-UC). The HX_NATIVE branch realpath()ed this
+    // against the process's WORKING DIRECTORY and, whenever that existed,
+    // stored an ABSOLUTE host path -- which FileIsLocal sends to the host, so
+    // FileSystemRoot()-based loads (rndobj cylinder/sphere, chartest, shaders)
+    // would read whatever tree sat two levels above the cwd instead of the
+    // disc. Retail's value is the relative "../../system/run", which resolves
+    // in the archive (the ark keys its 43 system files that way). Its other
+    // arm probed "<data>/extracted/(..)/(..)/system/run", a dc3-scaffold
+    // layout nothing in this tree produces; it went with it.
     strcpy(gSystemRoot, FileMakePath(gExecRoot, "../../system/run"));
-#endif
     FilePath::Root().Set(gRoot, gRoot);
     DataRegisterFunc("file_root", OnFileRoot);
     DataRegisterFunc("file_exec_root", OnFileExecRoot);
