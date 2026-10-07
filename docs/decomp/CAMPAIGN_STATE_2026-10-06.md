@@ -1,5 +1,7 @@
 # Campaign state — 2026-10-06 (after W16-PB…PL)
 
+> **SUPERSEDED** for numbers and priorities by [CAMPAIGN_STATE_2026-10-07.md](CAMPAIGN_STATE_2026-10-07.md) (main `24d250690`: in-scope gap 209,164 B, 94.56% matched; 91.00% of the ceiling). Kept as a method record; 10-07 reruns this method with updated disposition buckets and adds a VIA-DC3 table.
+
 Eighth edition of the single current-state doc. Supersedes `CAMPAIGN_STATE_2026-10-03b.md` for numbers and
 priorities. That doc and `CAMPAIGN_STATE_2026-10-03.md` (W16-OV) remain the method record, and this edition reruns
 their method unchanged. Nine lanes landed in between. Five moved the match build (W16-PB, PC, PF, PH, PI), and four
