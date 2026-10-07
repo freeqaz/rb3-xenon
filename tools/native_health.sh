@@ -92,8 +92,11 @@
 #     runtime_failed=<name:kind,...|none>, kind in
 #     crash|hang|exit|gatefail|nocomplete|nogates.
 #     Appended by W16-UD: retail_config=<EQUAL>/<expected> -- how many of the
-#     ten SYSCFG_TARGETS dumped a system config equal, line for line, to the one
-#     tools/retail_boot_config.py rebuilds from the disc's .dtb files.
+#     SYSCFG_TARGETS (ten at W16-UD, twelve since W16-UG) dumped a system config
+#     equal, line for line, to the one tools/retail_boot_config.py rebuilds from
+#     the disc's .dtb files.
+#     Appended by W16-UG: unhandled_calls=<N> -- "not function or object" lines
+#     (a script call with no handler) summed over every run target's log.
 
 set -uo pipefail
 
@@ -105,7 +108,7 @@ emit() {  # verdict link link_ver link_exp link_skip runtime rt_ran rt_tot
          "scatter_unlinked=${13} scatter_dirb=${14} scatter_multihost=${15} rc=${16}" \
          "handpose_controls=${17:--} handpose_baseline_fail=${18:--}" \
          "runtime_crashed=${19:--} runtime_failed=${20:--}" \
-         "retail_config=${21:--}"
+         "retail_config=${21:--} unhandled_calls=${22:--}"
 }
 
 SELFTEST=0
@@ -236,7 +239,7 @@ if command -v strace > /dev/null 2>&1; then
     FA_STRACE=(strace -f -qq --seccomp-bpf -y -s 4096
                -e trace=open,openat,openat2,creat,chdir,fchdir -e signal=none)
 fi
-gates_pass=0; gates_fail=0; rt_ran=0; rt_total=0; unrunnable=(); green=()
+gates_pass=0; gates_fail=0; rt_ran=0; rt_total=0; unrunnable=(); green=(); RT_NAMES=()
 rt_crashed=0; rt_failed=()
 
 # classify_run LOG MARKER GATED NAME -- cmd...
@@ -284,11 +287,12 @@ classify_run() {
     CL_STATUS=OK; CL_KIND=ok; CL_WHY="rc=0"
 }
 
-# W16-UD: the ten drivers that used to compile their scoring/crowd config in.
-# Each now boots retail's post-SystemInit config off the disc
+# W16-UD: the ten drivers that used to compile their scoring/crowd config in;
+# W16-UG added rb3-midi and rb3-song, which used one-entry stand-in configs.
+# Each boots retail's post-SystemInit config off the disc
 # (native/src/retail_system_config.h) and stops with rc 2 when there is none.
 SYSCFG_TARGETS=(rb3-gem rb3-hit rb3-score rb3-score2 rb3-score3 rb3-score4
-    rb3-vocal rb3-vocal2 rb3-harmony rb3-crowd)
+    rb3-vocal rb3-vocal2 rb3-harmony rb3-crowd rb3-midi rb3-song)
 is_syscfg_target() {
     local x; for x in "${SYSCFG_TARGETS[@]}"; do [ "$x" = "$1" ] && return 0; done
     return 1
@@ -309,7 +313,7 @@ run_target() {  # [--gated] NAME MARKER [--needs PATH]... -- ARGV...
         else fa_args+=(--input "$need"); fi
     done
     [ "${1:-}" = "--" ] && shift
-    rt_total=$((rt_total + 1))
+    rt_total=$((rt_total + 1)); RT_NAMES+=("$name")
     if [ ! -x "$NB/$name" ]; then
         printf '  %-10s %-12s -- no executable (the link gate is the authority on why)\n' UNRUNNABLE "$name"
         unrunnable+=("$name:nobinary"); return
@@ -451,7 +455,7 @@ for pair in "rb3-ark:$CFG_ARK" "rb3-render:$CFG_RENDER"; do
 done
 
 # -------------------------------------------------- RETAIL CONFIG (W16-UD) --
-# The ten SYSCFG_TARGETS take their whole system config -- (beatmatcher ...),
+# The SYSCFG_TARGETS take their whole system config -- (beatmatcher ...),
 # (scoring ...) with its crowd/solo/coda blocks, everything else -- and the
 # macro table (TRACK_SYMBOLS, kDifficulty*) from the disc, through
 # native/src/retail_system_config.h: the preinit file, then the real InitSystem
@@ -487,9 +491,9 @@ syscfg_source_check() {
              | G -v '^[0-9]*: *//' > "$LOGDIR/native_health_syscfg_src_$SLUG.tmp"; then
             sed "s|^|    $(basename "$f"):|" "$LOGDIR/native_health_syscfg_src_$SLUG.tmp"; bad=1
         fi
-        n=$(G -c 'RetailSystemConfig::Boot()' "$f")
+        n=$(G -c 'RetailSystemConfig::Boot(' "$f")
         if [ "${n:-0}" -ne 1 ]; then
-            echo "    $(basename "$f"): calls RetailSystemConfig::Boot() ${n:-0} time(s), want 1"; bad=1
+            echo "    $(basename "$f"): calls RetailSystemConfig::Boot ${n:-0} time(s), want 1"; bad=1
         fi
     done
     return $bad
@@ -531,6 +535,37 @@ for t in "${SYSCFG_TARGETS[@]}"; do
 done
 echo "  retail config: $syscfg_ok of $syscfg_ran run target(s) EQUAL to the .dtb rebuild" \
      "(${#SYSCFG_TARGETS[@]} expected; per-target: $LOGDIR/native_health_cfgview_full_*_$SLUG.log)"
+
+# ------------------------------------------- UNHANDLED SCRIPT CALLS (W16-UG) --
+# DataArray::Execute prints "<name> not function or object (file F, line L)"
+# when shipped script calls a name with no C++ function, no script func and no
+# object behind it. Retail registers the script functions its config calls
+# (tools/retail_script_funcs.py lists them off the image); a native target that
+# prints this line reached one it lacks. Counted over EVERY run target's log;
+# any line fails that target. Each SYSCFG target must also have printed
+# `[PASS] retail-script-funcs` (RetailSystemConfig::RegisterScriptFuncs ran).
+unhandled_count() { G -ac ' not function or object (' "$1" 2>/dev/null || true; }
+echo
+echo "--- unhandled script calls: does any target call a script function it lacks? ---"
+unhandled_total=0; unhandled_targets=0
+for t in ${RT_NAMES[@]+"${RT_NAMES[@]}"}; do
+    if printf '%s\n' ${unrunnable[@]+"${unrunnable[@]}"} | G -q "^$t:\(nobinary\|nodata\)"; then
+        continue
+    fi
+    tlog="$LOGDIR/native_health_${t}_$SLUG.log"
+    n=$(unhandled_count "$tlog"); n=${n:-0}
+    if [ "$n" -gt 0 ]; then
+        unhandled_total=$((unhandled_total + n)); unhandled_targets=$((unhandled_targets + 1))
+        printf '  %-10s %-12s -- %s unhandled call line(s), e.g. %s\n' FAIL "$t" "$n" \
+            "$(G -a ' not function or object (' "$tlog" | sort | uniq -c | sort -rn | head -1 | sed 's/^ *//' | cut -c1-90)"
+        rt_failed+=("$t:unhandled-call")
+    fi
+    if is_syscfg_target "$t" && ! G -q '^  \[PASS\] retail-script-funcs ' "$tlog" 2>/dev/null; then
+        printf '  %-10s %-12s -- no [PASS] retail-script-funcs line\n' FAIL "$t"
+        rt_failed+=("$t:script-funcs")
+    fi
+done
+echo "  unhandled calls: $unhandled_total line(s) in $unhandled_targets of ${#RT_NAMES[@]} target log(s)"
 
 # ------------------------------------------------- FILE SOURCES (W16-UC) --
 # Retail reads every relative path out of the disc archive; the only host files
@@ -897,6 +932,37 @@ if [ $SELFTEST -eq 1 ]; then
         echo "  SKIP  syscfg-nodisc -- rb3-crowd's positive run was not green with an EQUAL config"
         st_skip=$((st_skip + 1))
     fi
+    # ---- UNHANDLED SCRIPT CALL CONTROLS (W16-UG) ---------------------------
+    #   scriptfunc-drop-ui        rb3-vocal2 rerun with (ui (init ...))'s {func}
+    #                             commands skipped: retail's player handlers
+    #                             call {frac ...}, so the run must print
+    #                             "frac not function or object" again.
+    #   scriptfunc-drop-stagekit  rb3-gem rerun without StageKitInit: config/
+    #                             midi_parsers.dta asks {stagekit_present}.
+    # Pair: the base target's positive run was green with 0 unhandled lines.
+    for ctl in "scriptfunc-drop-ui:rb3-vocal2:ui_init:frac:$MID_VICARIOUS" \
+               "scriptfunc-drop-stagekit:rb3-gem:stagekit:stagekit_present:$MID_PILLS"; do
+        IFS=: read -r label base drop want input <<< "$ctl"
+        blog="$LOGDIR/native_health_${base}_$SLUG.log"
+        if was_green "$base" && [ "$(unhandled_count "$blog")" = 0 ]; then
+            log="$LOGDIR/native_health_selftest_${label}_$SLUG.log"
+            timeout -k 10 "$RT_TIMEOUT" env RB3_ASSETS="$ASSETS" RB3_SCRIPT_FUNC_DROP="$drop" \
+                "$NB/$base" "$input" > "$log" 2>&1
+            n=$(unhandled_count "$log")
+            if [ "${n:-0}" -gt 0 ] && G -aq "^$want not function or object (" "$log"; then
+                echo "  RED   $label -- $n unhandled line(s), $want among them (control WORKS)"
+                st_ok=$((st_ok + 1))
+            else
+                echo "  GREEN $label -- ${n:-0} unhandled line(s) with $drop dropped; the gate"
+                echo "        cannot see a missing script function."
+                st_bad=$((st_bad + 1))
+            fi
+            echo "        log: $log"
+        else
+            echo "  SKIP  $label -- $base's positive run was not green with 0 unhandled calls"
+            st_skip=$((st_skip + 1))
+        fi
+    done
     if [ $syscfg_src_ok -eq 1 ]; then
         label=syscfg-source
         log="$LOGDIR/native_health_selftest_${label}_$SLUG.log"
@@ -1139,5 +1205,5 @@ emit "$verdict" "$link_verdict" "$link_ver" "$link_exp" "$link_skip" \
      "$selftest" "$sc_unlinked" "$sc_b" "$sc_multi" "$rc" "$hp_ctl" "$hp_base" \
      "$rt_crashed" \
      "$(if [ ${#rt_failed[@]} -gt 0 ]; then IFS=,; echo "${rt_failed[*]}"; else echo none; fi)" \
-     "$syscfg_ok/${#SYSCFG_TARGETS[@]}"
+     "$syscfg_ok/${#SYSCFG_TARGETS[@]}" "$unhandled_total"
 exit $rc
