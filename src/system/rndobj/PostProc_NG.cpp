@@ -20,7 +20,6 @@
 #include "utl/MakeString.h"
 #include <math.h>
 
-extern void merged_ObjPtrListPopBack(void *);
 void SetBloomBlurWeights(bool, float, float);
 void SetBloomBlurWeightsStreak(bool, float, float, float, int, float);
 
@@ -380,8 +379,8 @@ void NgPostProc::DoVelocity() {
         ShaderFunc func = *(ShaderFunc*)((u8*)shaderMgrVTable + 0x40);
         func(&TheShaderMgr, 0x7A, sp50);
     }
-    if (*(int*)((u8*)this + 0x220) != 0) {
-        merged_ObjPtrListPopBack((u8*)this + 0x21C);
+    if (mMotionBlurDrawList.size() != 0) {
+        mMotionBlurDrawList.clear();
     }
 }
 #endif

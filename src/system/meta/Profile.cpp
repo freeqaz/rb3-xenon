@@ -34,16 +34,16 @@ bool Profile::HasValidSaveData() const {
 
 ProfileSaveState Profile::GetSaveState() const { return mState; }
 
-// Retail's actual body (per Ghidra: a bare tail call, no vcall/UserName()
-// chain, no ThePlatformMgr reference at all) is a straight forward of
-// TheUserMgr->GetLocalUserFromPadNum(mPadNum) reinterpreted as const char*.
-#pragma auto_inline(off)
+// Retail 0x827A5018: the associated LocalUser's UserName(), a vcall through
+// the User virtual base, with the user lookup inlined.  Callers that want the
+// LocalUser itself call GetLocalUser() (0x827A4F38).
 const char *Profile::GetName() const {
-    return (const char *)TheUserMgr->GetLocalUserFromPadNum(mPadNum);
+    return TheUserMgr->GetLocalUserFromPadNum(mPadNum)->UserName();
 }
 
-// The same body, typed: MemcardMgr's SigninChangedMsg handler calls 0x827A4F38
-// and hands the result to PlatformMgr::HasUserSigninChanged.
+// Retail 0x827A4F38, a 16-byte forwarder.  MemcardMgr's SigninChangedMsg
+// handler calls it and hands the result to PlatformMgr::HasUserSigninChanged.
+#pragma auto_inline(off)
 LocalUser *Profile::GetLocalUser() const {
     return TheUserMgr->GetLocalUserFromPadNum(mPadNum);
 }
