@@ -29,6 +29,10 @@
 #include "utl/Locale.h"
 #include "utl/MemStream.h"
 #include "ui/PanelDir.h"
+#include "synth/WahEffect.h"
+#include "bandobj/BandPatchMesh.h"
+#include "rndobj/Mesh.h"
+#include <cmath>
 
 #include <zlib.h>
 
@@ -901,6 +905,354 @@ void JoypadChecks() {
     gJoyCfg = nullptr;
     cfg->Release();
 }
+
+// ---------------------------------------------------------------------------
+// WahEffect::Process (#20, retail fn_82BB6578). No shipped data reaches it: no
+// FxSendWah exists in any of the 4,455 shipped milos, so the parameters are the
+// retail ctor's (gain 7, 1000-5000 Hz, resonance 1.35, sweep rate -1, sweep
+// range 0.5) and the input is a fixed synthetic signal. Each check is a
+// consequence of the retail body read off the asm, not of our source:
+//  - state lives per channel (stack arrays at 0x50/0x58 indexed by channel), so
+//    a silent right channel stays exactly silent and the left channel matches a
+//    mono run bit for bit;
+//  - with sweep rate < 0 the phase step is resonance * 1.308997e-4
+//    (lbl_821A1C74), accumulated per sample and wrapped once by 2*pi
+//    (lbl_820498E8) at the end of the call;
+//  - the soft clip is (1+k)*y / (1+k*|y|) with k = 2r/(1-r), so |out| < (1+k)/k;
+//  - zero in with zero state gives exactly zero out;
+//  - a gain below 1 is stored back as 1.
+void WahEffectChecks() {
+    printf("\n=== W16-TW: WahEffect::Process (no shipped parameters; retail ctor defaults) ===\n");
+    const int N = 4096;
+    std::vector<float> sig(N);
+    for (int i = 0; i < N; i++)
+        sig[i] = 0.6f * sinf(i * 0.031f) + 0.3f * sinf(i * 0.173f) + ((i / 97) & 1 ? 0.2f : -0.2f);
+
+    {
+        WahEffect w(nullptr);
+        std::vector<float> buf(2 * N, 0.0f);
+        w.Process(buf.data(), N, 2);
+        int nonzero = 0;
+        for (float f : buf)
+            if (f != 0.0f)
+                nonzero++;
+        Gate("tw-wah-silence", nonzero == 0, "%d stereo frames of silence: %d nonzero output samples",
+             N, nonzero);
+    }
+    {
+        WahEffect mono(nullptr), st(nullptr);
+        std::vector<float> m(sig), s2(2 * N, 0.0f);
+        for (int i = 0; i < N; i++)
+            s2[2 * i] = sig[i];
+        mono.Process(m.data(), N, 1);
+        st.Process(s2.data(), N, 2);
+        int rightNonzero = 0, leftDiffer = 0;
+        for (int i = 0; i < N; i++) {
+            if (s2[2 * i + 1] != 0.0f)
+                rightNonzero++;
+            if (s2[2 * i] != m[i])
+                leftDiffer++;
+        }
+        Gate("tw-wah-channels", rightNonzero == 0 && leftDiffer == 0,
+             "stereo with a silent right channel: right nonzero %d, left differs from mono in %d of "
+             "%d samples",
+             rightNonzero, leftDiffer, N);
+    }
+    {
+        WahEffect w(nullptr);
+        const int frames[] = { 1000, 40000 }; // the second crosses 2*pi
+        float phase = w.mPhase;
+        int wrong = 0;
+        std::string detail;
+        for (int n : frames) {
+            std::vector<float> buf(n);
+            for (int i = 0; i < n; i++)
+                buf[i] = sig[i % N];
+            float step = w.mResonance * 1.0f * 1.308997e-4f;
+            float want = phase;
+            for (int i = 0; i < n; i++)
+                want = step + want;
+            if (want > 6.2831855f)
+                want = want - 6.2831855f;
+            w.Process(buf.data(), n, 1);
+            if (w.mPhase != want)
+                wrong++;
+            detail += MakeString(" %d frames -> %.7f (want %.7f);", n, w.mPhase, want);
+            phase = w.mPhase;
+        }
+        Gate("tw-wah-phase", wrong == 0, "phase after%s %d wrong", detail.c_str(), wrong);
+    }
+    {
+        WahEffect w(nullptr);
+        std::vector<float> buf(N);
+        for (int i = 0; i < N; i++)
+            buf[i] = (i / 40) & 1 ? 10.0f : -10.0f;
+        w.mGain = 0.5f;
+        float r = w.mSweepRange;
+        float k = 2.0f * r / (1.0f - r);
+        float bound = (1.0f + k) / k;
+        w.Process(buf.data(), N, 1);
+        float peak = 0;
+        for (float f : buf)
+            peak = std::max(peak, fabsf(f));
+        Gate("tw-wah-clip", peak < bound && peak > 0.5f * bound && w.mGain == 1.0f,
+             "+/-10 square wave: peak %.5f, bound (1+k)/k = %.5f (k %.3f); gain 0.5 stored back as %.3f",
+             peak, bound, k, w.mGain);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// BandPatchMesh::FindXfm (#10, retail fn_823468E8), driven on the shipped patch
+// placement mesh that ProjectPatches would hand it (BandCharDesc::GetPatchMesh):
+// `baseballtee_resource_patch.mesh` in
+// char/main/torso/female/gen/baseballtee_10k.milo_xbox. The patch UV is profile
+// data, so the gate picks the UVs. The reference is plain geometry computed by
+// the gate: the first face (in face order) whose UV triangle holds the point,
+// barycentric interpolation of its positions and normals, and the affine
+// map's UV derivatives. A UV outside every face uses the face owning the
+// nearest edge point (strictly nearer wins, so the first face keeps a tie).
+struct Bary {
+    float l[3];
+};
+bool UvBary(const RndMesh::Vert &a, const RndMesh::Vert &b, const RndMesh::Vert &c, float u,
+            float v, Bary &out) {
+    float x0 = a.tex.x, y0 = a.tex.y, x1 = b.tex.x, y1 = b.tex.y, x2 = c.tex.x, y2 = c.tex.y;
+    double det = (double)(y1 - y2) * (x0 - x2) + (double)(x2 - x1) * (y0 - y2);
+    if (fabs(det) < 1e-12)
+        return false;
+    out.l[0] = (float)(((y1 - y2) * (double)(u - x2) + (x2 - x1) * (double)(v - y2)) / det);
+    out.l[1] = (float)(((y2 - y0) * (double)(u - x2) + (x0 - x2) * (double)(v - y2)) / det);
+    out.l[2] = 1.0f - out.l[0] - out.l[1];
+    return true;
+}
+float Len(const Vector3 &v) { return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z); }
+float Dot3(const Vector3 &a, const Vector3 &b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
+
+void FindXfmChecks() {
+    printf("\n=== W16-TW: BandPatchMesh::FindXfm on a shipped patch placement mesh ===\n");
+    // The placement mesh ProjectPatches would hand FindXfm. Its verts are stored
+    // COMPRESSED in the shipped file (RndMesh::LoadVertices' b58 flag), and the
+    // retail loader then leaves mVerts empty and keeps only the GPU blob, so
+    // retail's FindXfm takes its "has no verts or faces" early-out here.
+    const char *path = "char/main/torso/female/gen/baseballtee_10k.milo_xbox";
+    ObjDirPtr<ObjectDir> dir;
+    dir.LoadFile(FilePath(path), false, false, kLoadFront, false);
+    RndMesh *place = dir.Ptr() ? dir->Find<RndMesh>("baseballtee_resource_patch.mesh", false) : nullptr;
+    if (place) {
+        Transform untouched;
+        untouched.v.Set(1234.0f, 5678.0f, 9.0f);
+        Transform x = untouched;
+        Vector2 uv(0.5f, 0.5f);
+        bool compressed = place->Verts().size() == 0 && place->mNumCompressedVerts > 0;
+        bool ok = BandPatchMesh::FindXfm(place, uv, x);
+        Gate("tw-xfm-placement", compressed && !place->mKeepMeshData && !ok && x.v.x == 1234.0f
+                 && x.v.y == 5678.0f,
+             "%s baseballtee_resource_patch.mesh: %d plain verts, %d compressed, keep_mesh_data %d, "
+             "%d faces; FindXfm returned %d, xfm %s",
+             path, (int)place->Verts().size(), place->mNumCompressedVerts, place->mKeepMeshData,
+             (int)place->Faces().size(), ok, x.v.x == 1234.0f ? "untouched" : "WRITTEN");
+    } else
+        Gate("tw-xfm-placement", false, "%s: placement mesh %s", path,
+             dir.Ptr() ? "MISSING" : "dir NOT LOADED");
+
+    // Geometry: the first shipped mesh in tracksystem_meshes (loaded by the
+    // render cell) and then the torso dir whose verts are stored plain, with
+    // enough faces and a UV layout.
+    RndMesh *mesh = nullptr;
+    const char *meshPath = "";
+    const char *geoPaths[] = { "ui/track/gen/tracksystem_meshes.milo_xbox", path };
+    std::vector<ObjDirPtr<ObjectDir> > keep;
+    for (const char *gp : geoPaths) {
+        ObjDirPtr<ObjectDir> d;
+        d.LoadFile(FilePath(gp), false, false, kLoadFront, false);
+        if (!d.Ptr())
+            continue;
+        keep.push_back(d);
+        for (ObjDirItr<RndMesh> it(d.Ptr(), true); it != nullptr; ++it) {
+            RndMesh *m = it;
+            if (m->Verts().size() < 8 || m->Faces().size() < 32)
+                continue;
+            float umin = 1e30f, umax = -1e30f, vmin = 1e30f, vmax = -1e30f;
+            for (int i = 0; i < m->Verts().size(); i++) {
+                umin = std::min(umin, m->Verts(i).tex.x);
+                umax = std::max(umax, m->Verts(i).tex.x);
+                vmin = std::min(vmin, m->Verts(i).tex.y);
+                vmax = std::max(vmax, m->Verts(i).tex.y);
+            }
+            if (umax - umin < 0.05f || vmax - vmin < 0.05f)
+                continue;
+            if (!mesh || m->Faces().size() > mesh->Faces().size()) {
+                mesh = m;
+                meshPath = gp;
+            }
+        }
+        if (mesh)
+            break;
+    }
+    int nv = mesh ? mesh->Verts().size() : 0;
+    int nf = mesh ? (int)mesh->Faces().size() : 0;
+    Gate("tw-xfm-fixture", mesh && nv > 0 && nf > 0, "geometry mesh %s in %s: %d plain verts, %d faces",
+         mesh ? mesh->Name() : "NONE FOUND", meshPath, nv, nf);
+    if (!mesh)
+        return;
+
+    // Inside: face centroids, first face in order holding the point.
+    int tried = 0, ambiguous = 0, wrong = 0;
+    float worst = 0;
+    std::string firstBad;
+    std::vector<RndMesh::Face> &faces = mesh->Faces();
+    auto check = [&](float u, float v, int fi, const char *what) {
+        RndMesh::Face &f = faces[fi];
+        const RndMesh::Vert &a = mesh->Verts(f[0]), &b = mesh->Verts(f[1]), &c = mesh->Verts(f[2]);
+        Bary bc;
+        UvBary(a, b, c, u, v, bc);
+        Vector3 wantV, wantN;
+        wantV.x = bc.l[0] * a.pos.x + bc.l[1] * b.pos.x + bc.l[2] * c.pos.x;
+        wantV.y = bc.l[0] * a.pos.y + bc.l[1] * b.pos.y + bc.l[2] * c.pos.y;
+        wantV.z = bc.l[0] * a.pos.z + bc.l[1] * b.pos.z + bc.l[2] * c.pos.z;
+        wantN.x = bc.l[0] * a.norm.x + bc.l[1] * b.norm.x + bc.l[2] * c.norm.x;
+        wantN.y = bc.l[0] * a.norm.y + bc.l[1] * b.norm.y + bc.l[2] * c.norm.y;
+        wantN.z = bc.l[0] * a.norm.z + bc.l[1] * b.norm.z + bc.l[2] * c.norm.z;
+        float nl = Len(wantN);
+        wantN.x /= nl; wantN.y /= nl; wantN.z /= nl;
+        // dP/du, dP/dv of the affine map through the three UV->pos pairs
+        double du1 = b.tex.x - a.tex.x, dv1 = b.tex.y - a.tex.y;
+        double du2 = c.tex.x - a.tex.x, dv2 = c.tex.y - a.tex.y;
+        double det = du1 * dv2 - du2 * dv1;
+        Vector3 e1(b.pos.x - a.pos.x, b.pos.y - a.pos.y, b.pos.z - a.pos.z);
+        Vector3 e2(c.pos.x - a.pos.x, c.pos.y - a.pos.y, c.pos.z - a.pos.z);
+        Vector3 dPdu((float)((e1.x * dv2 - e2.x * dv1) / det), (float)((e1.y * dv2 - e2.y * dv1) / det),
+                     (float)((e1.z * dv2 - e2.z * dv1) / det));
+        Vector3 dPdv((float)((e2.x * du1 - e1.x * du2) / det), (float)((e2.y * du1 - e1.y * du2) / det),
+                     (float)((e2.z * du1 - e1.z * du2) / det));
+        Transform x;
+        Vector2 uv(u, v);
+        bool ok = BandPatchMesh::FindXfm(mesh, uv, x);
+        // FindXfm inverts the UV matrix in float, so its error grows as the UV
+        // triangle shrinks; position error is measured against the triangle's
+        // own size in position space.
+        float edge = std::max({ Len(e1), Len(e2), Len(Vector3(c.pos.x - b.pos.x, c.pos.y - b.pos.y,
+                                                              c.pos.z - b.pos.z)) });
+        float ev = Len(Vector3(x.v.x - wantV.x, x.v.y - wantV.y, x.v.z - wantV.z))
+            / std::max(edge, 1e-6f);
+        float en = Len(Vector3(x.m.z.x - wantN.x, x.m.z.y - wantN.y, x.m.z.z - wantN.z));
+        float ex = fabsf(Len(x.m.x) - 0.5f * Len(dPdu)) / std::max(1e-6f, 0.5f * Len(dPdu));
+        float ey = fabsf(Len(x.m.y) - 0.5f * Len(dPdv)) / std::max(1e-6f, 0.5f * Len(dPdv));
+        float lx = std::max(Len(x.m.x), 1e-12f), ly = std::max(Len(x.m.y), 1e-12f);
+        float ortho = std::max({ fabsf(Dot3(x.m.x, x.m.z)) / lx, fabsf(Dot3(x.m.y, x.m.z)) / ly,
+                                 fabsf(Dot3(x.m.x, x.m.y)) / (lx * ly) });
+        float e = std::max({ ev, en, ex, ey, ortho });
+        worst = std::max(worst, e);
+        if (getenv("W16TW_XFM_TRACE"))
+            printf("    xfm %s face %d: dv %.2g dn %.2g dx %.2g dy %.2g ortho %.2g uvdet %.2g\n", what,
+                   fi, ev, en, ex, ey, ortho, det);
+        if (!ok || e > 1e-2f) {
+            wrong++;
+            if (firstBad.empty()) {
+                char fb[320];
+                snprintf(fb, sizeof fb,
+                         " first: %s face %d uv (%.4f,%.4f) ok %d dv %.2g dn %.2g dx %.2g dy %.2g "
+                         "ortho %.2g (uv det %.2g, edge %.3g);",
+                         what, fi, u, v, ok, ev, en, ex, ey, ortho, det, edge);
+                firstBad = fb;
+            }
+        }
+    };
+    // FindXfm inverts the UV matrix in float, so a tiny UV triangle loses
+    // precision (measured: |uv det| x relative error <= 4e-5 over every face
+    // tried). The gate samples the faces with the largest UV area, where that
+    // loss stays far below the 1% of an edge a wrong face or formula would show.
+    std::vector<std::pair<float, int> > byArea;
+    for (int fi = 0; fi < nf; fi++) {
+        RndMesh::Face &g = faces[fi];
+        const RndMesh::Vert &a = mesh->Verts(g[0]), &b = mesh->Verts(g[1]), &c = mesh->Verts(g[2]);
+        float d = (b.tex.x - a.tex.x) * (c.tex.y - a.tex.y) - (c.tex.x - a.tex.x) * (b.tex.y - a.tex.y);
+        byArea.push_back(std::make_pair(-fabsf(d), fi));
+    }
+    std::sort(byArea.begin(), byArea.end());
+    const int samples = std::min(nf, 64);
+    for (int s = 0; s < samples; s++) {
+        int k = byArea[s].second;
+        RndMesh::Face &f = faces[k];
+        const RndMesh::Vert &a = mesh->Verts(f[0]), &b = mesh->Verts(f[1]), &c = mesh->Verts(f[2]);
+        float u = (a.tex.x + b.tex.x + c.tex.x) / 3.0f, v = (a.tex.y + b.tex.y + c.tex.y) / 3.0f;
+        int first = -1;
+        bool amb = false;
+        for (int fi = 0; fi < nf; fi++) {
+            RndMesh::Face &g = faces[fi];
+            Bary bc;
+            if (!UvBary(mesh->Verts(g[0]), mesh->Verts(g[1]), mesh->Verts(g[2]), u, v, bc))
+                continue;
+            float mn = std::min({ bc.l[0], bc.l[1], bc.l[2] });
+            if (fabsf(mn) < 1e-4f)
+                amb = true;
+            if (mn >= 0 && first < 0)
+                first = fi;
+        }
+        tried++;
+        if (amb || first < 0 || first > k) {
+            ambiguous++;
+            continue;
+        }
+        check(u, v, first, "inside");
+    }
+
+    // Outside: the far side of a UV boundary edge, owned by one face.
+    int outTried = 0;
+    for (int si = 0; si < nf && outTried < 8; si++) {
+        RndMesh::Face &f = faces[byArea[si].second];
+        for (int j = 0; j < 3 && outTried < 8; j++) {
+            const RndMesh::Vert &p = mesh->Verts(f[j]), &q = mesh->Verts(f[(j + 1) % 3]),
+                                &o = mesh->Verts(f[(j + 2) % 3]);
+            float mx = 0.5f * (p.tex.x + q.tex.x), my = 0.5f * (p.tex.y + q.tex.y);
+            float ex = q.tex.x - p.tex.x, ey = q.tex.y - p.tex.y;
+            float nx = -ey, ny = ex;
+            if (nx * (o.tex.x - mx) + ny * (o.tex.y - my) > 0) {
+                nx = -nx;
+                ny = -ny;
+            }
+            float nl = sqrtf(nx * nx + ny * ny);
+            if (nl < 1e-6f)
+                continue;
+            float u = mx + nx / nl * 0.02f, v = my + ny / nl * 0.02f;
+            // must lie in no face, and the nearest edge point must be unique
+            bool inside = false;
+            float best = 1e30f, second = 1e30f;
+            int bestFace = -1;
+            for (int gi = 0; gi < nf && !inside; gi++) {
+                RndMesh::Face &g = faces[gi];
+                Bary bc;
+                if (UvBary(mesh->Verts(g[0]), mesh->Verts(g[1]), mesh->Verts(g[2]), u, v, bc)
+                    && std::min({ bc.l[0], bc.l[1], bc.l[2] }) >= -1e-4f)
+                    inside = true;
+                for (int e = 0; e < 3; e++) {
+                    const RndMesh::Vert &a = mesh->Verts(g[e]), &b = mesh->Verts(g[(e + 1) % 3]);
+                    float sx = b.tex.x - a.tex.x, sy = b.tex.y - a.tex.y;
+                    float t = (sx * (u - a.tex.x) + sy * (v - a.tex.y)) / (sx * sx + sy * sy);
+                    t = std::min(1.0f, std::max(0.0f, t));
+                    float cx = a.tex.x + sx * t - u, cy = a.tex.y + sy * t - v;
+                    float d = cx * cx + cy * cy;
+                    if (d < best) {
+                        if (gi != bestFace)
+                            second = best;
+                        best = d;
+                        bestFace = gi;
+                    } else if (gi != bestFace && d < second)
+                        second = d;
+                }
+            }
+            if (inside || bestFace < 0 || second < best * 1.01f)
+                continue;
+            outTried++;
+            check(u, v, bestFace, "outside");
+        }
+    }
+    Gate("tw-xfm", wrong == 0 && tried - ambiguous >= 16 && outTried >= 4,
+         "centroids of the %d largest-UV-area faces (%d skipped: within 1e-4 of some face's edge "
+         "in UV) + %d points outside a UV boundary edge: worst error %.2g (of an edge / relative), "
+         "%d over 1e-2;%s",
+         tried, ambiguous, outTried, worst, wrong, firstBad.c_str());
+}
 } // namespace
 
 int RunW16TWPhase(GateFn gate) {
@@ -910,5 +1262,7 @@ int RunW16TWPhase(GateFn gate) {
     LocaleChecks();
     SaveObjectsChecks();
     JoypadChecks();
+    WahEffectChecks();
+    FindXfmChecks();
     return gRan;
 }
