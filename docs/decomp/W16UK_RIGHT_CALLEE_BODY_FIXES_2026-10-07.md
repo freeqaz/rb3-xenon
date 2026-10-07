@@ -88,7 +88,7 @@ Three of the 20 rows do not reach retail's body. Each has a recorded reason.
 - **`0x823F2F08` `QuazalSession::QuazalSession` (OUT-NET): not attempted.**
   - Retail's 216 B constructor polls until a global is set and allocates a 32 B `Quazal::RootObject`.
   - It then calls about five Quazal functions that are not named in our map (`0x82A936C8`, ...).
-  - No source exists for it: the rb3-Wii file is an empty stub and DC3 has no Quazal.
+  - No source exists for it: its Wii-target counterpart is an empty stub and DC3 has no Quazal.
   - Writing it means reverse-engineering Quazal, which the standing scope directive rules out ("QUAZAL = LOW VALUE").
 - **`0x82725298` `opaquePredicate` (OUT-360-OTHER, the `keygen_xbox` `/Od` island): not reproduced.**
   - Retail increments a `.data` word at `0x82E03E1C`. It forms that address with `lis`+`addi` and then loads at offset 0, and it does so twice: once for the load and once for the store.
