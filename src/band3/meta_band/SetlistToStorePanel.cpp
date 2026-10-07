@@ -5,6 +5,7 @@
 #include "meta_band/MusicLibrary.h"
 #include "meta_band/SavedSetlist.h"
 #include "meta/StorePanel.h"
+#include "obj/Dir.h"
 #include "obj/Msg.h"
 #include "obj/ObjMacros.h"
 #include "os/Debug.h"
@@ -12,6 +13,7 @@
 #include "os/System.h"
 #include "ui/UI.h"
 #include "ui/UIPanel.h"
+#include "ui/UIScreen.h"
 #include "utl/MakeString.h"
 #include "utl/Std.h"
 #include "utl/Symbols3.h"
@@ -91,19 +93,14 @@ void SetlistToStorePanel::LoadSongMetadata() {
  * A caller cannot tell the two apart -- only that callee body can -- which is
  * why this file previously spelled them int. */
 
-/** Retail's timeout-screen lookup (fn_82272308).  It begins exactly where
- *  ?FindSym@DataArray@@ ends, so it is a Find*-family sibling in obj/Data.cpp:
- *  called on a cached global with a literal key, returning the screen to jump
- *  to.  The return type is pinned by the compiler, not by header order --
- *  retail dispatches at UIManager own-vtable offset 0x10, and MSVC emits an
- *  overload set into the vtable in REVERSE declaration order, so 0x10 is the
- *  UIScreen* overload (measured: calling the const char* overload emits 0x14).
- *  That offset is a literal, not a relocation, so it is score-visible.
- *  Decl-only; the exact retail symbol is unidentified. */
-class UIScreen;
-extern DataArray *gStoreScreenCfg;
-UIScreen *FindStoreScreen(DataArray *, const char *, bool);
-
+/* The timeout-screen lookup is ObjectDir::Main()->Find<UIScreen>: retail's
+ * call goes to 0x82272308, which is ??$Find@VUIScreen@@@ObjectDir@@ (our
+ * compiled body chases PROVEN there; 15 other call sites load the same
+ * ObjectDir::sMainDir global into r3 before calling it).  This file used to
+ * call a decl-only FindStoreScreen(DataArray *, const char *, bool) on a
+ * made-up gStoreScreenCfg global; that cost nothing while 0x82272308 was an
+ * unnamed placeholder and charged this Poll (1,196 B) once lane W16-UP named
+ * it. */
 void SetlistToStorePanel::Poll() {
     UIPanel::Poll();
     unk58.Split();
@@ -111,8 +108,9 @@ void SetlistToStorePanel::Poll() {
         // Bound to a named local on purpose: written as a nested call, MSVC
         // hoists the TheUI load and its vptr into callee-saved registers ahead
         // of the lookup.  Retail evaluates the lookup first, then loads TheUI.
-        UIScreen *screen =
-            FindStoreScreen(gStoreScreenCfg, "setlist_to_store_screen_timeout", true);
+        UIScreen *screen = ObjectDir::Main()->Find<UIScreen>(
+            "setlist_to_store_screen_timeout", true
+        );
         TheUI->GotoScreen(screen, false, false);
         return;
     }

@@ -89791,7 +89791,7 @@
   {
    "name": "_ERhythmDetector",
    "address": "0x82667fc8",
-   "survivor": "fn_82667FC8",
+   "survivor": "?GetUser@OvershellProfileProvider@@QBAPAVLocalBandUser@@H@Z",
    "folded": [
     "?IxToLeaderboardIx@LeaderboardShortcutProvider@@QBAHH@Z"
    ],
@@ -89804,12 +89804,6 @@
      "evidence": "tools/icf_pair_adjudicate.chase(fn_82667FC8 @ 0x82667fc8, ??_ERhythmDetector@@$4PPPPPPPM@MBM@AAPAXI@Z): REFUTED [BODY:BYTES-DIFFER] depth 0: retail fn_82667FC8 | ours ??_ERhythmDetector@@$4PPPPPPPM@MBM@AAPAXI@Z; anchor ?IxToLeaderboardIx@LeaderboardShortcutProvider@@QBAHH@Z PROVEN here"
     }
    ],
-   "relabelled": {
-    "from": "??_ERhythmDetector@@$4PPPPPPPM@MBM@AAPAXI@Z",
-    "to": "fn_82667FC8",
-    "lane": "W16-OS 2026-10-03",
-    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
-   },
    "rechase_w16os": [
     {
      "spelling": "?IxToLeaderboardIx@LeaderboardShortcutProvider@@QBAHH@Z",
@@ -89826,6 +89820,46 @@
      "kind": "BODY:BYTES-DIFFER",
      "disposition": "withdrawn",
      "evidence": "tools/icf_pair_adjudicate.chase(fn_82667FC8 @ 0x82667fc8, ??_ERhythmDetector@@$4PPPPPPPM@MBM@AAPAXI@Z): REFUTED [BODY:BYTES-DIFFER] depth 0: retail fn_82667FC8 | ours ??_ERhythmDetector@@$4PPPPPPPM@MBM@AAPAXI@Z; anchor ?IxToLeaderboardIx@LeaderboardShortcutProvider@@QBAHH@Z PROVEN here"
+    }
+   ],
+   "relabelled_history": [
+    {
+     "from": "??_ERhythmDetector@@$4PPPPPPPM@MBM@AAPAXI@Z",
+     "to": "fn_82667FC8",
+     "lane": "W16-OS 2026-10-03",
+     "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+    }
+   ],
+   "relabelled": {
+    "from": "fn_82667FC8",
+    "to": "?GetUser@OvershellProfileProvider@@QBAPAVLocalBandUser@@H@Z",
+    "lane": "W16-UP 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here",
+    "held": [
+     {
+      "spelling": "fn_82667FC8",
+      "lane": "W16-UP 2026-10-07",
+      "verdict": "UNDECIDABLE",
+      "evidence": "tools/icf_pair_adjudicate.chase(?GetUser@OvershellProfileProvider@@QBAPAVLocalBandUser@@H@Z @ 0x82667fc8, fn_82667FC8): UNDECIDABLE [MISSING(ours)] depth 0: retail ?GetUser@OvershellProfileProvider@@QBAPAVLocalBandUser@@H@Z | ours fn_82667FC8"
+     }
+    ]
+   },
+   "rechase_w16up": [
+    {
+     "spelling": "?IxToLeaderboardIx@LeaderboardShortcutProvider@@QBAHH@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?GetUser@OvershellProfileProvider@@QBAPAVLocalBandUser@@H@Z @ 0x82667fc8, ?IxToLeaderboardIx@LeaderboardShortcutProvider@@QBAHH@Z): PROVEN [CHASED] retail 16 B / ours 16 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "fn_82667FC8",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "held as a record (UNDECIDABLE; folding it would activate forgiveness)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?GetUser@OvershellProfileProvider@@QBAPAVLocalBandUser@@H@Z @ 0x82667fc8, fn_82667FC8): UNDECIDABLE [MISSING(ours)] depth 0: retail ?GetUser@OvershellProfileProvider@@QBAPAVLocalBandUser@@H@Z | ours fn_82667FC8"
     }
    ]
   },
@@ -123008,6 +123042,25 @@
      "how": "CENSUS-SITE",
      "evidence": "a row W16-UN paired calls this spelling where retail's relocation names the survivor (objdiff diff_arg)",
      "chase": "tools/icf_pair_adjudicate.chase(??0?$vector@GV?$StlNodeAlloc@G@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z @ 0x82bb3430, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    }
+   ]
+  },
+  {
+   "name": "MakeString",
+   "address": "0x825122b0",
+   "survivor": "??$MakeString@PBDPBDPBDPBDPBD@@YAPBDPBD00000@Z",
+   "folded": [
+    "??$MakeString@HHHHH@@YAPBDPBDHHHHH@Z"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-UP: W16-UH's census proved each folded spelling is the callee retail reaches at this address (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??$MakeString@HHHHH@@YAPBDPBDHHHHH@Z",
+     "lane": "W16-UP",
+     "how": "CENSUS-SITE",
+     "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_825122B0 and ours calls this spelling; chase(fn_825122B0, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(??$MakeString@PBDPBDPBDPBDPBD@@YAPBDPBD00000@Z @ 0x825122b0, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
     }
    ]
   }

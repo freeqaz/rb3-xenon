@@ -268,7 +268,7 @@ RndMesh *ChordShapeGenerator::BuildChordMesh() {
     GetCrossSection(mContourXVal, sec1);
     RndMesh *mesh = NewCopyMesh(_ref0);
     mesh->SetMutable(0x3F);
-    mesh->Verts().resize(0);
+    mesh->Verts().clear();
     mesh->Faces().clear();
     mesh->Verts().resize(kMaxVerts);
     mesh->Faces().resize(kMaxFaces, RndMesh::Face());
