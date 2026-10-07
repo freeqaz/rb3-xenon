@@ -1682,28 +1682,29 @@ void MakeNormals(RndMesh *m) {
     int numVerts = m->Verts().size();
     std::vector<int> repVerts(numVerts);
     for (int i = 0; i < m->Verts().size(); i++) {
-        const Vector3 &pos = m->Verts()[i].pos;
-        int rep = i;
-        for (int j = 0; j < i; j++) {
+        // The target re-derives Verts() for both vertices inside the j loop: there
+        // is no hoisted `pos` reference and no `rep` local (the loop counter itself
+        // is what gets stored). Caching either costs an extra callee-saved GPR.
+        int j;
+        for (j = 0; j < i; j++) {
             const Vector3 &otherPos = m->Verts()[j].pos;
-            if (fabsf(pos.x - otherPos.x) <= 0.001f && fabs(pos.y - otherPos.y) <= 0.001f
+            const Vector3 &pos = m->Verts()[i].pos;
+            if (fabs(pos.x - otherPos.x) <= 0.001f && fabs(pos.y - otherPos.y) <= 0.001f
                 && fabs(pos.z - otherPos.z) <= 0.001f) {
-                rep = j;
                 break;
             }
         }
-        repVerts[i] = rep;
+        repVerts[i] = j;
     }
 
     for (int i = 0; i < m->Verts().size(); i++) {
         m->Verts()[i].norm.Zero();
 
-        int rep = repVerts[i];
         for (int f = 0; f < m->Faces().size(); f++) {
             RndMesh::Face &face = m->Faces()[f];
             int k;
             for (k = 0; k < 3; k++) {
-                if (repVerts[face[k]] == rep)
+                if (repVerts[face[k]] == repVerts[i])
                     break;
             }
             if (k != 3) {
@@ -1731,12 +1732,45 @@ void MakeNormals(RndMesh *m) {
                             float angle = (float)acos((double)(e2.x * e1.x + e2.y * e1.y
                                                                + e2.z * e1.z));
 
-                            crossProd.x *= angle;
-                            crossProd.y *= angle;
-                            crossProd.z *= angle;
-                            m->Verts()[i].norm.x += crossProd.x;
-                            m->Verts()[i].norm.y += crossProd.y;
-                            m->Verts()[i].norm.z += crossProd.z;
+                            Vector3 weighted;
+                            Scale(crossProd, angle, weighted);
+                            // 99.98797, 9 rows, two clusters, both commutative
+                            // /scheduling ties with no source lever left:
+                            //  * [222]/[223] -- the crossProd fmuls/fmsubs
+                            //    multiply operands are the same two registers in
+                            //    the other order (f9/f13, f9/f0). The plain
+                            //    two-term same-register swap is the documented
+                            //    backend floor (stream3_fmuls_operand_order).
+                            //  * [249]/[250] + [265]..[270] -- the Add() below.
+                            //    The target adds and stores x, y, z; we add and
+                            //    store x, z, y, and the y/z halves of `weighted`
+                            //    land in the other FPR. The x row [265] is a bare
+                            //    commutative swap: the target emits
+                            //    norm.x + weighted.x (v1 first, as written), we
+                            //    emit weighted.x + norm.x.
+                            // Measured INERT (w7-m): swapping this call's first
+                            // two arguments to Add(weighted, norm, norm). The
+                            // object is byte-identical -- same 9 rows, same
+                            // registers -- which is the stop signal for the
+                            // commutative-order lever: the backend picks the
+                            // operand order here and source cannot reach it.
+                            // REFUTED (w9-f) -- and it is the y/z ORDER, not
+                            // Vec.h, that the four offset rows report.  Add()
+                            // ends in `dst.Set(v1.x+v2.x, v1.y+v2.y, v1.z+v2.z)`
+                            // and Vector3::Set assigns x, then y, then z, so the
+                            // source order is ALREADY the image's; MSVC reorders
+                            // the y and z halves on our side while inlining.
+                            // Expanding the call by hand to dodge the 3-argument
+                            // Set --
+                            //     Vector3 &norm = m->Verts()[i].norm;
+                            //     norm.x = norm.x + weighted.x;  (y, z likewise)
+                            // -- costs a callee-saved GPR for the reference and
+                            // collapses the function: 99.98799 -> 94.5 canonical,
+                            // 9 rows -> 86, the whole repVerts loop reallocated.
+                            // Do NOT reach for math/Vec.h here either: its order
+                            // is correct, it is PCH-reached, and there is nothing
+                            // in it to change.
+                            Add(m->Verts()[i].norm, weighted, m->Verts()[i].norm);
                         }
                     }
                 }
@@ -1745,10 +1779,7 @@ void MakeNormals(RndMesh *m) {
         Normalize(m->Verts()[i].norm, m->Verts()[i].norm);
 
         if (leftHanded) {
-            Vector3 &norm = m->Verts()[i].norm;
-            norm.x = -norm.x;
-            norm.y = -norm.y;
-            norm.z = -norm.z;
+            Negate(m->Verts()[i].norm, m->Verts()[i].norm);
         }
     }
     m->Sync(0x1F);
