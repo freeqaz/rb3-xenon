@@ -130,6 +130,15 @@ the run dir before the first mutation, which is the only recovery a SIGKILL
 can have. --keep-applied opts out and prints a banner naming every file left
 modified; --restore is now a deprecated no-op.
 
+"As it was found" means the RUN'S changes are undone, not the caller's
+(lane W16-UI, 2026-10-07). A new untracked file is removed only if it is under
+src/ config/ scripts/ tools/ or named by the patch; a file written elsewhere
+during the run (a lane doc), or a tracked file outside those dirs first edited
+during the run, is KEPT and listed. Every file the restore removes or reverts
+is copied to <run dir>/restore_backup/ first, and each removed file is named
+on the console with its copy. Four lanes (W12-B, W13-B, W16-TS, W16-UG) lost a
+lane doc to the old rule, which removed every new untracked file.
+
 ONE change per run. Repeating --patch/--pick/--revert is REFUSED: argparse's
 mutually-exclusive group fires only across DIFFERENT options, so repeating the
 SAME one silently keeps the LAST value and the tool would price it alone and
@@ -1470,37 +1479,63 @@ def diff_paths(diff_text):
     return out
 
 
+def diff_chunks(diff_text):
+    """PURE: {path: that file's whole `diff --git` chunk} for a `git diff`
+    text, keyed on the b/ side."""
+    out = {}
+    for c in re.split(r"(?m)^(?=diff --git )", diff_text or ""):
+        m = DIFF_PATH_RE.match(c)
+        if m:
+            out[m.group(2)] = c
+    return out
+
+
 def diff_residual_paths(want_diff, got_diff):
     """PURE: the paths whose per-file diff differs between two `git diff`
     texts -- i.e. what a restore that aimed at `want_diff` left wrong. A plain
     symmetric difference of the path SETS would miss a file present in both
     with different content, which is exactly the half-restored case."""
-    def chunks(t):
-        out = {}
-        for c in re.split(r"(?m)^(?=diff --git )", t or ""):
-            m = DIFF_PATH_RE.match(c)
-            if m:
-                out[m.group(2)] = c
-        return out
-    a, b = chunks(want_diff), chunks(got_diff)
+    a, b = diff_chunks(want_diff), diff_chunks(got_diff)
     return {p for p in set(a) | set(b) if a.get(p) != b.get(p)}
+
+
+def is_build_relevant(path):
+    return path.startswith(BUILD_RELEVANT_DIRS)
 
 
 def plan_restore(pre_diff, cur_diff, pre_untracked, cur_untracked,
                  patch_diff=""):
-    """PURE decision: how to put the worktree back exactly as the run found it.
+    """PURE decision: how to put the worktree back as the run found it,
+    WITHOUT destroying anything the run did not put there.
 
     Extracted (like check_legb_counts and check_tool_freshness) so --selftest
     can drive every branch with no git and no build.
 
-    Returns {"action", "checkout_paths", "remove_paths", "reapply"}.
+    Returns {"action", "checkout_paths", "remove_paths", "reapply",
+             "keep_untracked", "keep_tracked"}.
 
-      * action "none"     — the tree already IS the pre-run state.
-      * action "restore"  — check out the union of every path either state
+      * action "none"     -- nothing the run owns differs from the pre-run
+        state (kept paths may still differ; they are not the run's).
+      * action "restore"  -- check out the union of every path either state
         names (never a bare `.`: a pathspec-limited checkout cannot touch a
         file neither the run nor the caller had any business in), delete the
         untracked files the run introduced, then re-apply the caller's own
         pre-run diff verbatim.
+
+    ⛔ WHAT COUNTS AS "INTRODUCED BY THE RUN" (lane W16-UI, 2026-10-07). This
+    used to be EVERY untracked file that appeared during the run, and FOUR
+    lanes lost a lane doc they wrote in parallel with a run (W12-B, W13-B,
+    W16-TS, W16-UG): the tool cannot tell its own files from the caller's, so
+    it deleted both. The run only ever creates build-relevant files (the patch,
+    and what the build writes under src/ config/ scripts/ tools/), and
+    preflight REFUSES a run that starts with untracked files there, so:
+
+      * removed: a new untracked file under BUILD_RELEVANT_DIRS, or one the
+        measured PATCH names (wherever it is);
+      * KEPT:    every other new untracked file (keep_untracked), and every
+        tracked file that became modified during the run outside
+        BUILD_RELEVANT_DIRS, was clean pre-run and is not named by the patch
+        (keep_tracked) -- that is the caller editing a doc, not the run.
 
     `patch_diff` (the measured patch) only WIDENS the checkout set; a path the
     patch touched must be reverted even if it ended the run byte-identical to
@@ -1508,15 +1543,25 @@ def plan_restore(pre_diff, cur_diff, pre_untracked, cur_untracked,
     """
     pre_untracked = set(pre_untracked or ())
     cur_untracked = set(cur_untracked or ())
+    patch_paths = diff_paths(patch_diff)
     added = sorted(cur_untracked - pre_untracked)
-    if (pre_diff or "") == (cur_diff or "") and not added:
+    remove = [p for p in added if is_build_relevant(p) or p in patch_paths]
+    keep_untracked = [p for p in added if p not in remove]
+    pre_paths, cur_paths = diff_paths(pre_diff), diff_paths(cur_diff)
+    keep_tracked = sorted(p for p in cur_paths - pre_paths - patch_paths
+                          if not is_build_relevant(p))
+    owned_residual = diff_residual_paths(pre_diff, cur_diff) - set(keep_tracked)
+    if not owned_residual and not remove:
         return {"action": "none", "checkout_paths": [], "remove_paths": [],
-                "reapply": False}
-    paths = diff_paths(pre_diff) | diff_paths(cur_diff) | diff_paths(patch_diff)
+                "reapply": False, "keep_untracked": keep_untracked,
+                "keep_tracked": keep_tracked}
+    paths = (pre_paths | cur_paths | patch_paths) - set(keep_tracked)
     return {"action": "restore",
             "checkout_paths": sorted(paths),
-            "remove_paths": added,
-            "reapply": bool((pre_diff or "").strip())}
+            "remove_paths": remove,
+            "reapply": bool((pre_diff or "").strip()),
+            "keep_untracked": keep_untracked,
+            "keep_tracked": keep_tracked}
 
 
 def check_source_arity(patch, pick, revert):
@@ -1591,6 +1636,8 @@ class TreeGuard:
         self.pre_diff = ""
         self.pre_untracked = []
         self.pre_path = self.rundir / "pre_run_state.diff"
+        # Every file the restore deletes or overwrites is copied here first.
+        self.backup_dir = self.rundir / "restore_backup"
         self.patch_diff = ""
         self.patch_new_dirs = []
         self.outcome = None
@@ -1661,6 +1708,21 @@ class TreeGuard:
                         "killed with SIGKILL (no cleanup possible), "
                         f"`git -C {self.wt} apply {self.pre_path}` restores it.")
 
+    def _backup(self, rel, kind):
+        """Copy `rel` (as it is NOW) to <rundir>/restore_backup/<kind>/<rel>.
+        Returns the backup path, or None if the file is absent. Raises on a
+        failed copy -- the caller must then NOT destroy the original."""
+        src = self.wt / rel
+        if not (src.is_file() or src.is_symlink()):
+            return None
+        dst = self.backup_dir / kind / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dst, follow_symlinks=False)
+        if not (dst.is_symlink() or
+                (dst.is_file() and dst.read_bytes() == src.read_bytes())):
+            raise OSError(f"backup of {rel} did not verify")
+        return dst
+
     def restore(self):
         """Idempotent; never raises. Returns the outcome dict."""
         if not self.armed:
@@ -1670,11 +1732,15 @@ class TreeGuard:
             # the class docstring). check=False: a fixture repo has no such
             # file, and a missing path must not abort the real restore below.
             git(self.wt, "checkout", "--", SYMBOLS_REL, check=False)
-            plan = plan_restore(self.pre_diff, self._diff(),
+            cur_diff = self._diff()
+            plan = plan_restore(self.pre_diff, cur_diff,
                                 self.pre_untracked, self._untracked(),
                                 self.patch_diff)
+            kept_u, kept_t = plan["keep_untracked"], plan["keep_tracked"]
             if plan["action"] == "none":
                 self.outcome = {"ok": True, "action": "none",
+                                "kept_untracked": kept_u,
+                                "kept_tracked": kept_t,
                                 "note": "tree already in its pre-run state"}
                 return self.outcome
             # ⛔ Only paths the INDEX knows go to `checkout --` (lane W16-JI,
@@ -1687,6 +1753,25 @@ class TreeGuard:
             # and W16-JC (89, then 101). A patch-added file is untracked, so
             # the removal step below is what undoes it, not the checkout.
             checkout = self._tracked_subset(plan["checkout_paths"])
+            # ⛔ NOTHING IS DESTROYED UNCOPIED (lane W16-UI, 2026-10-07).
+            # Every file the restore overwrites (checkout) or deletes
+            # (removal) is first copied to <rundir>/restore_backup/. A failed
+            # copy means that file is NOT touched -- the verify below then
+            # fails loudly instead of the content vanishing.
+            tracked_backup = {}
+            for rel in checkout:
+                try:
+                    dst = self._backup(rel, "tracked")
+                except OSError as e:
+                    self.outcome = {
+                        "ok": False, "action": "backup_failed",
+                        "snapshot": str(self.pre_path),
+                        "note": f"could not back up {rel} before checkout "
+                                f"({e!r}); NOTHING was checked out or removed",
+                        "kept_untracked": kept_u, "kept_tracked": kept_t}
+                    return self.outcome
+                if dst is not None:
+                    tracked_backup[rel] = dst
             if checkout:
                 # -- 'checkout --' is safe here ONLY because staged changes are
                 # refused in preflight: with index == HEAD for these paths it
@@ -1699,19 +1784,22 @@ class TreeGuard:
                     self.outcome = {
                         "ok": False, "action": "checkout_failed",
                         "snapshot": str(self.pre_path),
+                        "backup_dir": str(self.backup_dir),
                         "git_output": out[-2000:],
                         "checked_out": checkout,
                         "residual": sorted(diff_paths(self._diff()))}
                     return self.outcome
-            removed = []
+            removed, not_removed = [], []
             for rel in plan["remove_paths"]:
                 p = self.wt / rel
                 try:
-                    if p.is_file() or p.is_symlink():
-                        p.unlink()
-                        removed.append(rel)
-                except OSError:
-                    pass
+                    dst = self._backup(rel, "untracked")
+                    if dst is None:
+                        continue                  # already gone
+                    p.unlink()
+                    removed.append({"path": rel, "backup": str(dst)})
+                except OSError as e:
+                    not_removed.append({"path": rel, "error": repr(e)})
             # Directories the PATCH created (recorded before it was applied)
             # go too, if the removal emptied them. A directory that existed
             # before the patch is never in this list.
@@ -1725,53 +1813,132 @@ class TreeGuard:
                 if rc != 0:
                     self.outcome = {
                         "ok": False, "action": "reapply_failed",
-                        "snapshot": str(self.pre_path), "git_output": out[-2000:]}
+                        "snapshot": str(self.pre_path),
+                        "backup_dir": str(self.backup_dir),
+                        "git_output": out[-2000:]}
                     return self.outcome
+            # Tracked files whose content the checkout actually changed (the
+            # backup holds the bytes they had before it).
+            overwritten = sorted(
+                rel for rel, dst in tracked_backup.items()
+                if not (self.wt / rel).exists() or dst.is_symlink()
+                or (self.wt / rel).read_bytes() != dst.read_bytes())
             # Verify by re-reading, never by assuming the commands worked.
             #
             # ⛔ The tracked diff ALONE is not a verification. This restore
-            # DELETES untracked files the run introduced, and a tracked-diff
-            # comparison cannot fail in that direction by construction -- so
-            # `verified: true` used to be reported over a lane's deleted
-            # deliverable. Two lanes lost work that way (W12-B and W13-B,
-            # 2026-09-13) before anyone noticed, because the console line
-            # counted only `checked_out`. A check that cannot fail where the
-            # damage happens is the vacuity class CLAUDE.md catalogues.
+            # DELETES untracked files, and a tracked-diff comparison cannot
+            # fail in that direction by construction -- so `verified: true`
+            # used to be reported over a lane's deleted deliverable (W12-B and
+            # W13-B, 2026-09-13). A check that cannot fail where the damage
+            # happens is the vacuity class CLAUDE.md catalogues.
             #
+            # WHAT IS CHECKED NOW (W16-UI) -- it is no longer "the tree equals
+            # the pre-run tree", because kept files are deliberately left:
+            #   * tracked: every path's diff equals its PRE-RUN diff, except a
+            #     kept path, whose diff must equal what it was when the
+            #     restore STARTED (proves the restore did not touch it);
+            #   * untracked: the set equals pre-run + kept, exactly -- so a
+            #     run-owned file left behind, a removal that failed, or a
+            #     pre-run file that went missing all still fail it;
+            #   * backups: every removed file's copy exists in the run dir.
             # `_untracked()` reads `git ls-files --others --exclude-standard`,
             # which respects .gitignore, so build artifacts do not enter this
             # set and the equality is safe to require.
             now = self._diff()
             untracked_now = self._untracked()
-            diff_ok = (now == self.pre_diff)
-            untracked_ok = (set(untracked_now) == set(self.pre_untracked))
-            ok = diff_ok and untracked_ok
+            pre_c, start_c, now_c = (diff_chunks(self.pre_diff),
+                                     diff_chunks(cur_diff), diff_chunks(now))
+            kept_t_set = set(kept_t)
+            bad_tracked = sorted(
+                q for q in set(pre_c) | set(start_c) | set(now_c)
+                if now_c.get(q) != (start_c if q in kept_t_set
+                                    else pre_c).get(q))
+            diff_ok = not bad_tracked
+            want_untracked = set(self.pre_untracked) | set(kept_u)
+            untracked_ok = (set(untracked_now) == want_untracked)
+            backups_ok = all(Path(r["backup"]).exists() for r in removed)
+            ok = diff_ok and untracked_ok and backups_ok and not not_removed
             self.outcome = {"ok": ok, "action": "restored",
                             "verified": ok,
                             "verified_tracked_diff": diff_ok,
                             "verified_untracked_set": untracked_ok,
+                            "verified_backups": backups_ok,
+                            "verification_scope": (
+                                "tracked diff == pre-run except kept paths "
+                                "(== their state at restore start); "
+                                "untracked set == pre-run + kept"),
                             "snapshot": str(self.pre_path),
+                            "backup_dir": str(self.backup_dir),
                             "checked_out": checkout,
-                            "removed": removed}
+                            "overwritten": overwritten,
+                            "removed": removed,
+                            "not_removed": not_removed,
+                            "kept_untracked": kept_u,
+                            "kept_tracked": kept_t}
             if not ok:
                 self.outcome["residual"] = sorted(
-                    diff_residual_paths(self.pre_diff, now)
-                    | (set(untracked_now) ^ set(self.pre_untracked)))
+                    set(bad_tracked)
+                    | (set(untracked_now) ^ want_untracked))
                 why = []
                 if not diff_ok:
-                    why.append("post-restore diff still differs from the "
-                               "captured pre-run diff")
+                    why.append("post-restore diff differs from the pre-run "
+                               f"diff (kept paths excepted): {bad_tracked}")
                 if not untracked_ok:
                     why.append(
-                        "untracked set differs from pre-run: still-present "
-                        f"{sorted(set(untracked_now) - set(self.pre_untracked))}, "
-                        f"missing {sorted(set(self.pre_untracked) - set(untracked_now))}")
+                        "untracked set differs from pre-run + kept: "
+                        "still-present "
+                        f"{sorted(set(untracked_now) - want_untracked)}, "
+                        f"missing {sorted(want_untracked - set(untracked_now))}")
+                if not_removed:
+                    why.append("left in place because the backup or unlink "
+                               f"failed: {not_removed}")
+                if not backups_ok:
+                    why.append("a backup copy is missing from the run dir")
                 self.outcome["note"] = "; ".join(why)
             return self.outcome
         except Exception as e:                      # never let cleanup escape
             self.outcome = {"ok": False, "action": "error", "error": repr(e),
                             "snapshot": str(self.pre_path)}
             return self.outcome
+
+    def _report_files(self, res):
+        """Print what the restore DELETED (with where each copy went), what
+        it OVERWROTE, and what it deliberately KEPT. Silence here reads as
+        "nothing happened", and four lanes lost a lane doc behind it."""
+        removed = res.get("removed") or []
+        if removed:
+            print("\n  ┏━━ UNTRACKED FILES REMOVED BY THE RESTORE (copied first) "
+                  "━━━━")
+            for r in removed:
+                print(f"  ┃  D {r['path']}")
+                print(f"  ┃      copy: {r['backup']}")
+            print("  ┃  Each was created during the run under a build-relevant "
+                  "dir (src/ config/")
+            print("  ┃  scripts/ tools/) or named by the patch. Recover one "
+                  "with cp from its copy.")
+            print("  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                  "━━━━━━")
+        for r in res.get("not_removed") or []:
+            print(f"  [tree] ⚠ NOT removed (backup/unlink failed, file left "
+                  f"in place): {r['path']} -- {r['error']}")
+        over = res.get("overwritten") or []
+        if over:
+            print(f"  [tree] {len(over)} tracked file(s) reverted by checkout; "
+                  "their pre-restore content is saved under "
+                  f"{self.backup_dir / 'tracked'}")
+            for q in over:
+                if not is_build_relevant(q):
+                    print(f"  [tree]   reverted outside build-relevant dirs: "
+                          f"{q}")
+        kept = ([("??", q) for q in res.get("kept_untracked") or []]
+                + [(" M", q) for q in res.get("kept_tracked") or []])
+        if kept:
+            print("  [tree] KEPT (appeared during the run outside src/ "
+                  "config/ scripts/ tools/ and not")
+            print("  [tree]   named by the patch -- treated as yours, not "
+                  "the run's):")
+            for st, q in kept:
+                print(f"  [tree]   {st} {q}")
 
     def finish(self, keep_applied, exit_note=""):
         """Terminal step: restore (or deliberately don't), and ALWAYS say which.
@@ -1797,28 +1964,24 @@ class TreeGuard:
             print("  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
             return self.outcome
         res = self.restore()
+        # Name every file the restore deleted or left, on EVERY outcome --
+        # a failed verify can still have removed files.
+        self._report_files(res)
         if res.get("ok") and res.get("action") == "none":
-            print("  [tree] restored: already in its pre-run state")
+            print("  [tree] restored: already in its pre-run state"
+                  + (" (kept files above are not the run's)"
+                     if res.get("kept_untracked") or res.get("kept_tracked")
+                     else ""))
         elif res.get("ok"):
             n = len(res.get("checked_out", []))
-            print(f"  [tree] restored to the pre-run state ({n} path(s), "
-                  "verified by re-reading the diff AND the untracked set)")
-            # Say what was DELETED. Untracked files created during a run are
-            # frequently a lane's entire deliverable, and silence here reads
-            # as "nothing happened".
-            removed = res.get("removed") or []
-            if removed:
-                print("\n  ┏━━ ⚠ UNTRACKED FILES DELETED BY THE RESTORE "
-                      "━━━━━━━━━━━━━━━━")
-                for r in removed:
-                    print(f"  ┃  D {r}")
-                print("  ┃  These were created DURING the run, so the restore "
-                      "removed them.")
-                print("  ┃  If any was your deliverable, it is GONE -- write "
-                      "run-time deliverables")
-                print("  ┃  to ~/tmp and copy them in afterwards.")
-                print("  ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-                      "━━━━━")
+            nk = (len(res.get("kept_untracked") or [])
+                  + len(res.get("kept_tracked") or []))
+            print(f"  [tree] restored to the pre-run state ({n} path(s) "
+                  "checked out; verified by re-reading: tracked diff == "
+                  "pre-run, untracked set == pre-run"
+                  + (f", except {nk} kept file(s) the run did not create"
+                     if nk else "")
+                  + "; every removed file has a backup)")
         else:
             print("\n  ┏━━ ⚠⚠ COULD NOT RESTORE THE WORKTREE ⚠⚠ "
                   "━━━━━━━━━━━━━━━━━━━", file=sys.stderr)
@@ -3996,12 +4159,57 @@ def selftest():
     _t("THE --from-dirty CASE: caller's work present pre-run, tree now clean "
        "(EE2-B / DTOR-A / Ctrl-C) -> RE-APPLY the caller's diff",
        _pr(D_A, ""), "restore", ["src/a.cpp"], True)
-    _t("a file the run created is deleted, one it did not is left alone",
-       _pr("", "", ("keep.txt",), ("keep.txt", "made.txt")), "restore",
-       None, False, ["made.txt"]),
+    _t("a file the run created under src/ is deleted, a pre-run one is "
+       "left alone",
+       _pr("", "", ("keep.txt",), ("keep.txt", "src/made.cpp")), "restore",
+       None, False, ["src/made.cpp"]),
     _t("the measured patch WIDENS the checkout set: a path can end the run "
        "byte-identical to HEAD and still need reverting (split rewrites)",
        _pr("", D_A, patch=D_B), "restore", ["src/a.cpp", "src/b.cpp"], False)
+
+    # ---- W16-UI: the restore must not delete what the run did not create --
+    # Each non-control case below FAILS under the pre-W16-UI planner, which
+    # put EVERY new untracked file in remove_paths (W12-B, W13-B, W16-TS,
+    # W16-UG each lost a lane doc that way) and checked out every modified
+    # path. The controls assert only keys both planners return, and PASS on
+    # both -- so the fixture is not failing on everything.
+    def _ui(name, got, **want):
+        ok = all(got.get(k) == v for k, v in want.items())
+        print(("  PASS" if ok else "  FAIL") + f"  [W16-UI] {name}: {got}")
+        if not ok:
+            fails.append(f"W16-UI {name}")
+
+    LANE_DOC = "docs/decomp/W16XX_LANE_2026-10-07.md"
+    _ui("a lane doc written in parallel with a run is KEPT, not deleted "
+        "(old: remove_paths=[doc])",
+        _pr("", D_A, (), (LANE_DOC,), patch=D_A),
+        action="restore", remove_paths=[], keep_untracked=[LANE_DOC],
+        checkout_paths=["src/a.cpp"])
+    _ui("...and when it is the ONLY change, no restore is needed at all",
+        _pr("", "", (), (LANE_DOC,)),
+        action="none", remove_paths=[], keep_untracked=[LANE_DOC])
+    D_DOC = ("diff --git a/docs/notes.md b/docs/notes.md\n@@ -1 +1 @@\n"
+             "-n\n+lane edit\n")
+    _ui("a TRACKED doc edited mid-run (clean pre-run, not in the patch) is "
+        "KEPT, not checked out (old: reverted)",
+        _pr("", D_A + D_DOC, (), (), patch=D_A),
+        action="restore", checkout_paths=["src/a.cpp"],
+        keep_tracked=["docs/notes.md"])
+    _ui("control: a new file under a BUILD-RELEVANT dir is still removed",
+        _pr("", "", (), ("tools/new.py", "scripts/x.json")),
+        action="restore", remove_paths=["scripts/x.json", "tools/new.py"])
+    D_NEWDOC = ("diff --git a/docs/added.md b/docs/added.md\nnew file mode "
+                "100644\n@@ -0,0 +1 @@\n+x\n")
+    _ui("a file the PATCH names is removed even outside the build-relevant "
+        "dirs, while a lane doc beside it is kept (old: both removed)",
+        _pr("", "", (), ("docs/added.md", LANE_DOC), patch=D_NEWDOC),
+        action="restore", remove_paths=["docs/added.md"],
+        keep_untracked=[LANE_DOC])
+    _ui("control: a doc the CALLER had dirty pre-run (--from-dirty, reset for "
+        "leg A) is still checked out and re-applied, not 'kept'",
+        _pr(D_DOC, "", (), (), patch=D_DOC),
+        action="restore", checkout_paths=["docs/notes.md"], reapply=True,
+        remove_paths=[])
 
     # ---- source-flag ARITY (lane EE2-C) ----------------------------------
     # argparse's mutually-exclusive group fires only across DIFFERENT options;
@@ -4221,6 +4429,148 @@ def selftest():
         "control: a modify-only patch (the case the old code already got "
         "right) still restores -- the fixture is not failing on everything",
         {"src/a.cpp": "a\nPATCHED\n"})
+
+    # ---- W16-UI, BEHAVIOURAL: real TreeGuard, real scratch repo ----------
+    # These read the TREE, the RUN DIR and the CONSOLE afterwards, never the
+    # guard's own claim. Each was run against the pre-W16-UI TreeGuard and
+    # FAILS there (see the W16-UI commit message); the control passes on both.
+    import contextlib as _ctx
+    import io as _io
+
+    def _ui_fixture(name, *, patch_files, during_run=None, check,
+                    sabotage_backup=False):
+        try:
+            with tempfile.TemporaryDirectory() as td:
+                wt = Path(td) / "wt"
+                wt.mkdir()
+                run_d = Path(td) / "run"
+                run_d.mkdir()
+
+                def g(*a):
+                    return subprocess.run(
+                        ["git", "-C", str(wt), *a], check=True,
+                        capture_output=True, text=True).stdout
+                g("init", "-q")
+                for rel, txt in {"src/a.cpp": "a\n", "docs/notes.md": "n\n",
+                                 "config/splits.txt": "s\n"}.items():
+                    (wt / rel).parent.mkdir(parents=True, exist_ok=True)
+                    (wt / rel).write_text(txt)
+                g("add", "-A")
+                g("-c", "user.email=t@t", "-c", "user.name=t", "commit",
+                  "-qm", "base")
+                fake = _types.SimpleNamespace(wt=wt, rundir=run_d,
+                                              say=lambda *a, **k: None)
+                guard = TreeGuard(fake)
+                guard.capture()
+                for rel, txt in patch_files.items():
+                    (wt / rel).parent.mkdir(parents=True, exist_ok=True)
+                    (wt / rel).write_text(txt)
+                g("add", "-N", *patch_files)
+                patch = g("diff", "--", *patch_files)
+                g("reset", "-q", "--", *patch_files)
+                for rel in patch_files:
+                    if g("ls-files", "--", rel):
+                        g("checkout", "--", rel)
+                    else:
+                        (wt / rel).unlink()
+                guard.note_patch(patch)
+                pf = Path(td) / "p.diff"
+                pf.write_text(patch)
+                g("apply", str(pf))
+                for rel, txt in (during_run or {}).items():
+                    (wt / rel).parent.mkdir(parents=True, exist_ok=True)
+                    (wt / rel).write_text(txt)
+                if sabotage_backup:
+                    # a FILE where a backup dir must go: those copies fail
+                    blk = run_d / "restore_backup"
+                    if sabotage_backup == "untracked":
+                        blk.mkdir()
+                        blk = blk / "untracked"
+                    blk.write_text("in the way\n")
+                buf = _io.StringIO()
+                with _ctx.redirect_stdout(buf), _ctx.redirect_stderr(buf):
+                    res = guard.finish(keep_applied=False)
+                ok, detail = check(wt, run_d, res, buf.getvalue(), g)
+        except Exception as e:                    # an old guard may crash
+            ok, detail = False, f"fixture raised {e!r}"
+        print(("  PASS" if ok else "  FAIL") + f"  [W16-UI] {name}: {detail}")
+        if not ok:
+            fails.append(f"W16-UI {name}")
+
+    def _chk_lane_doc(wt, run_d, res, out, g):
+        doc = wt / "docs/decomp/LANE.md"
+        doc_ok = doc.exists() and doc.read_text() == "my lane doc\n"
+        notes_ok = (wt / "docs/notes.md").read_text() == "n\nlane edit\n"
+        patch_gone = (wt / "src/a.cpp").read_text() == "a\n"
+        named = "docs/decomp/LANE.md" in out and "KEPT" in out
+        ok = (doc_ok and notes_ok and patch_gone and named
+              and res.get("ok") is True)
+        return ok, (f"lane_doc_survived={doc_ok} tracked_doc_edit_survived="
+                    f"{notes_ok} patch_reverted={patch_gone} "
+                    f"named_as_kept={named} ok={res.get('ok')}")
+    _ui_fixture(
+        "a lane doc (untracked) and a tracked doc edit written DURING the run "
+        "survive the restore, and the patch is still reverted",
+        patch_files={"src/a.cpp": "a\nPATCHED\n"},
+        during_run={"docs/decomp/LANE.md": "my lane doc\n",
+                    "docs/notes.md": "n\nlane edit\n"},
+        check=_chk_lane_doc)
+
+    def _chk_backup(wt, run_d, res, out, g):
+        gone = not (wt / "src/stray.cpp").exists()
+        bak = run_d / "restore_backup" / "untracked" / "src/stray.cpp"
+        bak_ok = bak.is_file() and bak.read_text() == "stray\n"
+        named = "src/stray.cpp" in out and str(bak) in out
+        ok = gone and bak_ok and named and res.get("ok") is True
+        return ok, (f"removed={gone} backup_in_run_dir={bak_ok} "
+                    f"named_with_backup_path_on_console={named} "
+                    f"ok={res.get('ok')}")
+    _ui_fixture(
+        "a build-relevant file the run introduced is removed, but COPIED into "
+        "the run dir first and named with that copy on the console",
+        patch_files={"src/a.cpp": "a\nPATCHED\n"},
+        during_run={"src/stray.cpp": "stray\n"},
+        check=_chk_backup)
+
+    def _chk_sabotage(wt, run_d, res, out, g):
+        kept = (wt / "src/stray.cpp").exists()
+        honest = res.get("ok") is False
+        return kept and honest, (f"file_left_when_backup_impossible={kept} "
+                                 f"restore_reported_failure={honest} "
+                                 f"action={res.get('action')}")
+    _ui_fixture(
+        "when the backup CANNOT be written the file is NOT deleted and the "
+        "restore reports failure (the verify can fail)",
+        patch_files={"src/a.cpp": "a\nPATCHED\n"},
+        during_run={"src/stray.cpp": "stray\n"},
+        sabotage_backup="all", check=_chk_sabotage)
+
+    def _chk_sabotage_u(wt, run_d, res, out, g):
+        kept = (wt / "src/stray.cpp").exists()
+        reverted = (wt / "src/a.cpp").read_text() == "a\n"
+        honest = (res.get("ok") is False and res.get("verified") is False
+                  and res.get("verified_untracked_set") is False)
+        warned = "NOT removed" in out and "COULD NOT RESTORE" in out
+        return kept and reverted and honest and warned, (
+            f"file_left={kept} patch_reverted={reverted} "
+            f"verify_failed_on_untracked_set={honest} warned={warned}")
+    _ui_fixture(
+        "when only the UNTRACKED backup fails, the patch is still reverted, "
+        "the file is left, and the verify FAILS on the untracked set",
+        patch_files={"src/a.cpp": "a\nPATCHED\n"},
+        during_run={"src/stray.cpp": "stray\n"},
+        sabotage_backup="untracked", check=_chk_sabotage_u)
+
+    def _chk_control(wt, run_d, res, out, g):
+        ok = (g("diff") == "" and g("ls-files", "--others",
+                                    "--exclude-standard") == ""
+              and res.get("ok") is True)
+        return ok, f"clean_tree_back={ok} action={res.get('action')}"
+    _ui_fixture(
+        "control: a patch that adds a TU and modifies one, with nothing "
+        "written alongside, still restores to a clean tree",
+        patch_files={"src/a.cpp": "a\nPATCHED\n", "src/new.cpp": "x\n"},
+        check=_chk_control)
 
     r = diff_residual_paths(
         "diff --git a/x b/x\n+1\n", "diff --git a/x b/x\n+2\n")
