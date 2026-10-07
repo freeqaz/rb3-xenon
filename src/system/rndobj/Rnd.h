@@ -59,6 +59,9 @@ public:
         kWidescreen,
         kLetterbox
     };
+    // Retail Rnd::CreateDefaults (0x824126C8) builds kDefaultTex_Max = 8
+    // textures, and Rnd::GetNullTexture (0x82C1A608) is `lwz r3,0xcc(r3)`,
+    // i.e. mDefaultTex[7] (mDefaultTex at 0xb0): kDefaultTex_Error is 7.
     enum DefaultTextureType {
         kDefaultTex_Black = 0,
         kDefaultTex_White = 1,
@@ -75,6 +78,13 @@ public:
     // Rnd::Mode).  The rename is FORCED to come with the accessor rename
     // below: a member function `DrawMode()` cannot coexist with a nested
     // type of the same name.
+    // ⚠ These values are the native renderer's, not RB3 retail's. In retail the
+    // velocity pass is mode 5: DxMesh::DrawShowing (0x82738E38) loads
+    // mDrawMode (+0xfc) and takes the velocity-buffer path on `cmpwi 5`, and
+    // RndShader::SelectConfig (0x824A5740) picks the shadowmap shader on 1.
+    // The match build therefore compares raw retail values at each site
+    // (Shader.cpp, VelocityBuffer.cpp, Crowd.cpp, rnddx9/Mesh.cpp) instead of
+    // these names.
     enum Mode {
         kDrawNormal = 0,
         kDrawShadowDepth = 1,

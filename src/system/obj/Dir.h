@@ -405,6 +405,11 @@ class ObjectDir : public virtual Hmx::Object {
     );
 
 public:
+    // Seven stored viewports: retail ObjectDir::ResetEditorState (0x827530D0)
+    // resizes mViewports with `li r4,0x7`. kNumViewports itself is also a
+    // viewport id: PanelDir::PostLoad calls SetCurViewport(kNumViewports, cam)
+    // for a panel with no camera of its own, and that id has no stored
+    // Viewport, so CurViewport() is out of range while it is current.
     enum ViewportId {
         kNumViewports = 7
     };
