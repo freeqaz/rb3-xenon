@@ -493,8 +493,7 @@ void CamShotFrame::BuildTransform(RndCam *cam, Transform &tf, bool b3) const {
         if (0.0f < mCamShot->mClampHeight && mTargets.size() == 1) {
             RndTransformable *target = mTargets.front();
             if (target) {
-                // z + height: retail's fadds takes the world z first.
-                float clampZ = target->WorldXfm().v.z + mCamShot->mClampHeight;
+                float clampZ = mCamShot->mClampHeight + target->WorldXfm().v.z;
                 if (clampZ > tf.v.z) {
                     tf.v.z = clampZ;
                 }
