@@ -136,10 +136,14 @@ class Coff:
         s = self.secs[si]
         if s["ch"] & SCN_CODE:
             return None
-        if s["ptr"] == 0:                      # .bss: uninitialised, mutable
-            return b"", set(), False
         nxt = [v for v in self.by_sec[si] if v > val]
         end = nxt[0] if nxt else s["size"]
+        if s["ptr"] == 0:
+            # .bss: zero-initialised, mutable.  Return the zeros of its real extent
+            # so an address-of (`addi`) compares too -- returning b"" here made
+            # every addi of a .bss static skip as `extent`, which hid exactly the
+            # co-addressed statics and arrays a retail .data value sits behind.
+            return bytes(end - val), set(), False
         data = self.d[s["ptr"] + val:s["ptr"] + end]
         mask = set()
         for r in s["relocs"]:

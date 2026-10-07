@@ -130,7 +130,9 @@ void FaceCenter(RndMesh *mesh, RndMesh::Face *face, Vector3 &center) {
 }
 
 bool RndMesh::sRawCollide;
-int RndMesh::sLastCollide;
+// Retail .data 0x82C6FC20 holds -1 (CollideShowing resets it to -1 before its
+// loop; BandPatchMesh::ProjectPatches reads it).
+int RndMesh::sLastCollide = -1;
 // Retail's .data carries this as a byte with value 0x01, between sLastCollide and
 // the `static int REV = 0x26` below -- so it is initialized TRUE, not false. (The
 // `= false` initializer is #ifdef HX_NATIVE only and never reaches the

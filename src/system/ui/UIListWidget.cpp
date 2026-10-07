@@ -143,10 +143,11 @@ INIT_REVS(2, 0)
 // RB3 retail (fn_828210C8): the packed rev is split into two TU shorts in one
 // aligned aggregate (alt at +0, rev at +4) and every field is read through the
 // plain BinStream -- no BinStreamRev (the MeterDisplay::PreLoad form).
+// Retail keeps this aggregate in .bss (zero); Load fills it before any read.
 static struct {
     __declspec(align(4)) unsigned short altRev;
     __declspec(align(4)) unsigned short rev;
-} gRevs_UIListWidget = { 0, 2 };
+} gRevs_UIListWidget = { 0, 0 };
 
 void UIListWidget::Load(BinStream &bs) {
     int revs;

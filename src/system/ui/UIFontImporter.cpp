@@ -188,7 +188,9 @@ END_PROPSYNCS
 // immediate: the target emits `lis/lwz lbl_82C793C0` where SAVE_REVS(10,4)'s
 // constexpr packRevs() gives us `lis 0x4 / ori 0xa` (= 0x4000A).  The RB3 source
 // carries a file-scope `int gREV` and asserts against it on load.
-static int gSaveRev = (4 << 16) | 10; // packRevs(alt=4, rev=10)
+// Retail .data 0x82C793C0 holds 9 (rev 9, alt 0), the RB3 gREV; DC3's alt=4 /
+// rev=10 is newer. Load handles nothing above rev 9.
+static int gSaveRev = 9;
 
 BEGIN_SAVES(UIFontImporter)
     bs << gSaveRev;

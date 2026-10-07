@@ -1929,12 +1929,14 @@ void CamShot::UnHide() {
 
 RndCam *CamShot::GetCam() {
     RndCam *ret = 0;
-    // retail casts Dir() directly; GetCrowdDir()'s mParentDir check is absent
-    WorldDir *crowdDir = dynamic_cast<WorldDir *>(Dir());
-    if (crowdDir) {
-        ret = crowdDir->Cam();
+    // Retail casts Dir() to PanelDir, not WorldDir: the __RTDynamicCast target
+    // descriptor at 0x82C6CF4C names `.?AVPanelDir@@`.  A WorldDir cast returned
+    // no camera for a plain PanelDir.  GetCrowdDir()'s mParentDir check is absent.
+    PanelDir *pdir = dynamic_cast<PanelDir *>(Dir());
+    if (pdir) {
+        ret = pdir->Cam();
         if (ret == 0) {
-            MILO_NOTIFY_ONCE("%s: paneldir but no cam", PathName(crowdDir));
+            MILO_NOTIFY_ONCE("%s: paneldir but no cam", PathName(pdir));
         }
     } else {
         MILO_NOTIFY_ONCE("%s: no worlddir, so no cam", PathName(this));

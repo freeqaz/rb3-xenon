@@ -111,10 +111,11 @@ INIT_REVS(1, 0)
 // RB3 retail (fn_8280DDB8): the packed rev is split into two TU shorts in one
 // aligned aggregate (alt at +0, rev at +4), no BinStreamRev and no version guard,
 // and the rev is pushed BEFORE RndDir::PreLoad -- the MeterDisplay::PreLoad form.
+// Retail keeps this aggregate in .bss (zero); PreLoad fills it before any read.
 static struct {
     __declspec(align(4)) unsigned short altRev;
     __declspec(align(4)) unsigned short rev;
-} gRevs_UIListDir = { 0, 1 };
+} gRevs_UIListDir = { 0, 0 };
 
 void UIListDir::PreLoad(BinStream &bs) {
     int revs;

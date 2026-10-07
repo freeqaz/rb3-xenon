@@ -70,11 +70,12 @@ END_LOADS
 #undef INIT_REVS
 #undef LOAD_REVS
 #undef ASSERT_REVS
+// Retail keeps this aggregate in .bss (zero); LOAD_REVS fills it before any read.
 #define INIT_REVS(r_, a_)                                                                \
     static struct {                                                                      \
         __declspec(align(4)) unsigned short altRev;                                      \
         __declspec(align(4)) unsigned short rev;                                         \
-    } gRevs_MeterDisplay = { a_, r_ };
+    } gRevs_MeterDisplay = { 0, 0 };
 #define LOAD_REVS(bs)                                                                    \
     int rev;                                                                             \
     bs >> rev;                                                                           \
