@@ -4393,7 +4393,9 @@ CharBlendBone.cpp:
 	.text       start:0x823B40DC end:0x823B40E0
 	.text       start:0x823B40F0 end:0x823B40F8
 	.text       start:0x823C3300 end:0x823C3354
+	.text       start:0x823C3454 end:0x823C3458
 	.text       start:0x823C3458 end:0x823C35CC
+	.text       start:0x823C35CC end:0x823C35D8
 	.text       start:0x823C35D8 end:0x823C3728
 	.text       start:0x823C3728 end:0x823C3828
 	.text       start:0x823C3828 end:0x823C38E8
@@ -4451,6 +4453,7 @@ CharForeTwist.cpp:
 	.pdata      start:0x82206128 end:0x82206130
 	.pdata      start:0x82206130 end:0x82206138
 	.text       start:0x823793C8 end:0x8237940C
+	.text       start:0x823C3354 end:0x823C3360
 	.text       start:0x823C3360 end:0x823C3454
 	.text       start:0x823C4608 end:0x823C4618
 	.text       start:0x823C47FC end:0x823C4800
@@ -7234,9 +7237,6 @@ CharPosConstraint.cpp:
 	.pdata      start:0x82205DB0 end:0x82205DD8
 	.text       start:0x823C26A0 end:0x823C30C0
 	.text       start:0x823C30C0 end:0x823C3300
-	.text       start:0x823C3354 end:0x823C3360
-	.text       start:0x823C3454 end:0x823C3458
-	.text       start:0x823C35CC end:0x823C35D8
 
 Screenshot.cpp:
 	.pdata      start:0x822062C0 end:0x822062D8
