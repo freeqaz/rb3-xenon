@@ -1083,17 +1083,3 @@ void stlpmtx_std::swap<class Key<class ObjectStage> >(class Key<class ObjectStag
 #include "rndobj/Utl.cpp"
 #undef gRev
 #undef gAltRev
-
-// sw2 scatter-include (default/PropKeys <- hamobj/StarsDisplay.cpp)
-#define gRev gRev_StarsDisplay
-#define gAltRev gAltRev_StarsDisplay
-#include "hamobj/StarsDisplay.cpp"
-#undef gRev
-#undef gAltRev
-
-// sw2 scatter-include (default/PropKeys <- hamobj/FilterQueue.cpp)
-#define gRev gRev_FilterQueue
-#define gAltRev gAltRev_FilterQueue
-#include "hamobj/FilterQueue.cpp"
-#undef gRev
-#undef gAltRev

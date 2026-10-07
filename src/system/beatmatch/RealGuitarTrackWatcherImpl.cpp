@@ -276,10 +276,3 @@ bool RealGuitarTrackWatcherImpl::InTrill(int i) const {
         Track(), mSongData->GetTempoMap()->GetLoopTick(i), trill
     );
 }
-
-// sw2 scatter-include (default/RealGuitarTrackWatcherImpl <- hamobj/HamRibbon.cpp)
-#define gRev gRev_HamRibbon
-#define gAltRev gAltRev_HamRibbon
-#include "hamobj/HamRibbon.cpp"
-#undef gRev
-#undef gAltRev

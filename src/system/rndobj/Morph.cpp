@@ -252,12 +252,3 @@ DataNode RndMorph::OnSetPoseWeight(const DataArray *arr) {
     }
     return 0;
 }
-
-
-// COMDAT-scatter owner-TU includes (sw scatter-scan): retail linker
-// interleaved these owners' COMDATs into this TU's .text span.
-#define gRev gRev_HamMove
-#define gAltRev gAltRev_HamMove
-#include "hamobj/HamMove.cpp"
-#undef gRev
-#undef gAltRev

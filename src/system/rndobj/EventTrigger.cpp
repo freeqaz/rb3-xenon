@@ -959,13 +959,6 @@ void EventTrigger::ConvertParticleTriggerType() {
 }
 
 
-// sw2 scatter-include (default/EventTrigger <- gesture/SkeletonClip.cpp)
-#define gRev gRev_SkeletonClip
-#define gAltRev gAltRev_SkeletonClip
-#include "gesture/SkeletonClip.cpp"
-#undef gRev
-#undef gAltRev
-
 // sw2 scatter-include (default/EventTrigger <- band3/game/Stats.cpp)
 #define gRev gRev_Stats
 #define gAltRev gAltRev_Stats

@@ -744,6 +744,7 @@ BandList.cpp:
 	.pdata      start:0x821FE3D0 end:0x821FE3D8
 	.pdata      start:0x821FE3D8 end:0x821FE3E8
 	.pdata      start:0x821FE3E8 end:0x821FE420
+	.pdata      start:0x821FE420 end:0x821FE428
 	.pdata      start:0x821FE428 end:0x821FE430
 	.pdata      start:0x821FE430 end:0x821FE440
 	.pdata      start:0x821FE440 end:0x821FE448
@@ -787,6 +788,7 @@ BandList.cpp:
 	.text       start:0x8233C480 end:0x8233C4E0
 	.text       start:0x8233C4E0 end:0x8233C850
 	.text       start:0x8233C850 end:0x8233CAB8
+	.text       start:0x8233CAB8 end:0x8233CB58
 	.text       start:0x8233CB58 end:0x8233CC00
 	.text       start:0x8233CC00 end:0x8233CCB0
 	.text       start:0x8233CCB0 end:0x8233CD20
@@ -1634,7 +1636,6 @@ FileChecksum.cpp:
 	.text       start:0x82C45580 end:0x82C455B0
 
 Rot.cpp:
-	.pdata      start:0x821FE420 end:0x821FE428
 	.pdata      start:0x821FEB90 end:0x821FEB98
 	.pdata      start:0x821FF938 end:0x821FF948
 	.pdata      start:0x821FFB20 end:0x821FFB28
@@ -1647,7 +1648,6 @@ Rot.cpp:
 	.pdata      start:0x82215C70 end:0x82215CA0
 	.pdata      start:0x82215CA0 end:0x82215D28
 	.pdata      start:0x82215D38 end:0x82215D40
-	.text       start:0x8233CAB8 end:0x8233CB58
 	.text       start:0x82345520 end:0x823455B0
 	.text       start:0x823455B0 end:0x82345634
 	.text       start:0x823556E0 end:0x82355758
@@ -5754,7 +5754,7 @@ TransAnim.cpp:
 	.text       start:0x82471D2C end:0x82471D38
 
 PropKeys.cpp:
-	.pdata      start:0x821F1628 end:0x821F1638
+	.pdata      start:0x821F1628 end:0x821F1630
 	.pdata      start:0x821F1650 end:0x821F1658
 	.pdata      start:0x821F1760 end:0x821F1778
 	.pdata      start:0x821F1778 end:0x821F1790
@@ -5764,13 +5764,10 @@ PropKeys.cpp:
 	.pdata      start:0x8220BCD0 end:0x8220BD00
 	.pdata      start:0x8222D7A0 end:0x8222D7A8
 	.pdata      start:0x8222D7C8 end:0x8222D7D8
-	.pdata      start:0x82231100 end:0x82231108
-	.pdata      start:0x82231108 end:0x82231110
 	.pdata      start:0x82231D80 end:0x82231D88
 	.pdata      start:0x822614A0 end:0x822614A8
 	.pdata      start:0x822614A8 end:0x822614D8
-	.text       start:0x822702F0 end:0x822703A4
-	.text       start:0x82270418 end:0x82270438
+	.text       start:0x822702F0 end:0x82270340
 	.text       start:0x822704C0 end:0x82270510
 	.text       start:0x82270560 end:0x82270580
 	.text       start:0x822717C0 end:0x82271B08
@@ -5783,8 +5780,6 @@ PropKeys.cpp:
 	.text       start:0x8263FD2C end:0x8263FD30
 	.text       start:0x82656180 end:0x82656350
 	.text       start:0x82656630 end:0x82656800
-	.text       start:0x8268C920 end:0x8268C978
-	.text       start:0x8268C998 end:0x8268C9E8
 	.text       start:0x82698B20 end:0x82698B98
 	.text       start:0x82C3EDDC end:0x82C3EDF0
 	.text       start:0x82C3EE48 end:0x82C3EEA0
@@ -5804,6 +5799,7 @@ LocalePanel.cpp:
 
 App.cpp:
 	.pdata      start:0x821F1600 end:0x821F1610
+	.pdata      start:0x821F1630 end:0x821F1638
 	.pdata      start:0x821F1638 end:0x821F1648
 	.pdata      start:0x821F1648 end:0x821F1650
 	.pdata      start:0x821F1678 end:0x821F1680
@@ -5811,7 +5807,9 @@ App.cpp:
 	.pdata      start:0x821F16C8 end:0x821F1700
 	.pdata      start:0x821F1700 end:0x821F1748
 	.text       start:0x82270000 end:0x82270188
+	.text       start:0x82270340 end:0x822703A4
 	.text       start:0x822703A8 end:0x82270414
+	.text       start:0x82270418 end:0x82270438
 	.text       start:0x82270438 end:0x822704C0
 	.text       start:0x82270690 end:0x822707C0
 	.text       start:0x82270848 end:0x82270B1C
@@ -10210,13 +10208,17 @@ BandUser.cpp:
 	.pdata      start:0x82230F50 end:0x82230F78
 	.pdata      start:0x82230F78 end:0x82230FA8
 	.pdata      start:0x82230FA8 end:0x82231100
+	.pdata      start:0x82231100 end:0x82231108
+	.pdata      start:0x82231108 end:0x82231110
 	.pdata      start:0x82231110 end:0x82231368
 	.text       start:0x825238F0 end:0x825238F8
 	.text       start:0x82523BF8 end:0x82523EB8
 	.text       start:0x8268AA04 end:0x8268AC08
 	.text       start:0x8268AC08 end:0x8268AEC4
 	.text       start:0x8268AEC8 end:0x8268C920
+	.text       start:0x8268C920 end:0x8268C978
 	.text       start:0x8268C978 end:0x8268C998
+	.text       start:0x8268C998 end:0x8268C9E8
 	.text       start:0x8268C9E8 end:0x8268F144
 
 Leaderboard.cpp:
