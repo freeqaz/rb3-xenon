@@ -201,7 +201,7 @@ Where the in-scope bytes came from:
 
 Each in-scope gap row (599 / 209,164 B) goes to the first bucket that fits (`dispo3.py`). **"Native-compiled"** means
 the row's source file is compiled into at least one target of main's native build (`native/build/build.ninja`,
-regenerated 01:44 today): **451 `src/` files**, 418 at 10-06 + 36 linked by W16-PX − 3 that a native lane moved to an
+regenerated 01:44 today): **451 `src/` files**, 418 at 10-06, + 36 new `src/` files (W16-PX's merge says 37 linked), − 3 that a native lane moved to an
 explicit exclude list (`GemRepTemplate`, `AccomplishmentProgress`, `HamLabel`).
 
 | disposition | rows | bytes | % | CORE | SOON | RB3ENG | native-compiled |
@@ -251,7 +251,8 @@ specific record wins, in this order:
 against our `__real@42940000` (74.0). W16-PW §"two instrument findings" shows retail loads 74.0 at `0x82091FC0`:
 dtk keeps the containing label `0x82091FBC` and drops the +4 addend. Our constant is right and the row cannot
 close by source. It is the only in-scope row whose sole non-placeholder name charge is `__real@` against `__real@`;
-whole-binary there are two more, both FFT rows in OUT-360-OTHER (1,620 B).
+whole-binary, two FFT rows in OUT-360-OTHER (1,620 B) have only `__real@` pairs among their name charges, but they
+also carry instruction charges (class I4/I1).
 
 ### 4.2 How it adds up
 
@@ -276,7 +277,7 @@ template rows (452 B).
 ### 4.3 Native relevance
 
 - **111,824 B (53.5%) of the in-scope gap is in a file the native build compiles today** (10-06: 41%). The share rose
-  because W16-PX linked 36 track and vocal drawing files, not because those rows moved. The native-compiled files
+  because W16-PX linked the track and vocal drawing files, not because those rows moved. The native-compiled files
   with the most gap are VocalTrack.cpp (11,532 B), Geo.cpp (6,308), Dir.cpp (3,624), NoteTube.cpp (3,576),
   ChordShapeGenerator.cpp (3,536) and VocalPart.cpp (3,496).
 - **97,340 B sits in 96 in-scope files native does not compile yet.** The largest are BandPatchMesh (7,584 B),
@@ -334,7 +335,8 @@ the ring's own lanes first (`dispo_via.py`):
 | **total** | **573** | **214,104** | 100% | **121,908** |
 
 "In W16-PU/QF's population" is not "read". W16-QF gave a stop reason to all 309 of its rows ("none of them is a
-behaviour difference in our source"). W16-PU's §3 table opens about 25 of its 438 and lists the rest as not opened.
+behaviour difference in our source"). W16-PU opened about 25 of its 438 rows (§2's five plus §3's table) and names a further size-mismatch list it did not
+open. Its other 201 op-equal rows it calls codegen-only by construction.
 Split by whether any doc since 10-06 names the row:
 
 - **Source-class: 82 of the 149 rows / 32,476 B (18,852 native-compiled) are named by no lane since 10-06**, all in
@@ -342,9 +344,10 @@ Split by whether any doc since 10-06 names the row:
   `BuildVisit` 1,344 (+44), `MakeNormals` 1,332, `RndMeshDeform::Reskin` 1,232,
   `RndTransformable::ApplyDynamicConstraint` 1,224, `TessellateMesh` 1,176, `RndLine::UpdateLinePair` 1,076 (+56),
   `kdTreeNode::Pack` 972 (+24) and `RndText::ParseMarkup` 924.
-- **Register/reorder: 76 of the 119 / 36,520 B (21,860 native-compiled) are named by none**, led by
-  `RndScaleObject` 3,112 and `CharBones::RotateBy` 1,420. W16-QK names the latter without `::`, so the count is an
-  upper bound.
+- **Register/reorder: 71 of the 119 / 34,916 B (20,804 native-compiled) are named by none and not body-compared by W16-QA**, led by
+  `RndScaleObject` 3,112. The second largest, `CharBones::RotateBy` (1,420), is in fact named by W16-QK and W16-RF,
+  in a form the overlay does not key on (a bare `RotateBy` in a slash-separated list). So the count is an upper
+  bound.
 - Retail's body is at least 16 B larger than ours on 19 VIA-DC3 rows / 26,868 B, against 6 rows / 4,344 B in scope.
   W16-PU ranks size mismatches second among what found behaviour in this ring (`RndText::WrapText`).
 - The ring's gap by directory: rndobj 245 rows / 104,236 B, char 137 / 50,320, world 49 / 32,568, synth 69 / 15,056.
@@ -371,11 +374,16 @@ VIA-DC3 rows are ranked with in-scope rows now that the ring is funded.
 2. **[A] Wrong-callee rows: 33 rows / 2,812 B (2,228 B native-compiled).** 8 in scope (288 B) and 25 in VIA-DC3
    (2,524 B). The charged callee's retail body differs from the one we call (chase REFUTED_BODIES_DIFFER) or we have no
    body (OURS_NO_BODY).
-   - Examples: `PatchSticker::MakeLoader` casts to `FileLoader` where retail's RTTI operand is `Loader` (92 B); two
-     `RndMeshAnim` `_M_insert_overflow_aux` rows copy `Key<vector<Vector2>>` where retail copies
-     `Key<vector<Vector3>>` (324 B each); `CharHair::CharHair` references another class's vbtable (476 B).
-   - Some will be folds the chase cannot prove. The ones that are wrong instantiations are type errors native
-     executes. W16-QJ fixed seven of this kind.
+   - Examples:
+     - `PatchSticker::MakeLoader` (92 B): our RTTI operand is `FileLoader`, retail's is `Loader`.
+     - Two `RndMeshAnim` `_M_insert_overflow_aux` rows (324 B each) whose retail helpers are another element
+       type's: the `Vector2` row calls `Vector3` helpers, and the `Color` row calls `Vector2` helpers. That one-type
+       shift looks more like a map or fold artifact than two wrong types.
+     - `CharHair::CharHair` (476 B) references `PreloadPanel`'s vbtable where we reference our own. That is
+       probably a data fold of identical vbtables.
+   - Expect many folds and map-name errors among them. W16-QJ cleared rows of this kind by correcting
+     wrong-instantiation map names (+7 fns / +1,472 B). The ones that are genuinely wrong types are behaviour that
+     native executes.
 3. **[A] The 4 in-scope no-record source rows: 2,060 B, all native-compiled** (§4.2). Effectively
    `SuperFormatString::SuperFormatString` (1,608, 94.33) and three template rows. Small, and the last unattempted
    in-scope surface.
@@ -392,8 +400,8 @@ VIA-DC3 rows are ranked with in-scope rows now that the ring is funded.
    (1,176 B). The proven ones need W16-PH's two-channel install. The rest need a new witness rule with its own
    controls.
 8. **[C] Tooling.**
-   - dtk drops relocation addends on split target objs (W16-PW). That is 1 in-scope row (448 B) plus 2 OUT rows
-     (1,620 B) whose last charge is the artifact. It also misleads any reader of retail through relocations.
+   - dtk drops relocation addends on split target objs (W16-PW). It is the only charge left on 1 in-scope row (448 B), and
+     the only name charge on 2 OUT rows (1,620 B). It also misleads any reader of retail through relocations.
    - `ab_measure` refuses pins that make `symbols.txt` merge (W16-QP, QZ, QI, RC). Each of those lanes hand-ran the
      measurement. W16-QI lists 6 carve rows blocked on it.
 
