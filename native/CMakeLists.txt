@@ -1665,6 +1665,15 @@ set(W16SH_LINK_SOURCES
     ${REPO_ROOT}/src/band3/meta_band/StoreSongSortNode.cpp
     ${REPO_ROOT}/src/system/beatmatch/BeatMaster.cpp
     ${REPO_ROOT}/src/band3/net_band/DataResults.cpp
+    ${REPO_ROOT}/src/band3/meta_band/ViewSetting.cpp
+    ${REPO_ROOT}/src/band3/game/GamePanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/MusicLibrary.cpp
+    ${REPO_ROOT}/src/system/dsp/PitchDetector.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SaveLoadManager.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongSort.cpp
+    ${REPO_ROOT}/src/band3/game/TrainerPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/InterstitialMgr.cpp
+    ${REPO_ROOT}/src/band3/tour/Tour.cpp
 )
 # Their link closure: TUs outside the 96 that the linked files need.
 set(W16SH_DEP_SOURCES
@@ -1686,6 +1695,14 @@ set(W16SH_DEP_SOURCES
 )
 set_source_files_properties(${W16SH_LINK_SOURCES} ${W16SH_DEP_SOURCES}
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+# ViewSetting and MusicLibrary call UILabel::SetDisplayText, which UILabel.h
+# declares protected. Retail's cl accepted it (both TUs build in the X360
+# match build unchanged); clang does not. Relaxing access checking in these two
+# TUs changes no codegen, and editing UILabel.h would touch every UI TU.
+set_source_files_properties(
+    ${REPO_ROOT}/src/band3/meta_band/ViewSetting.cpp
+    ${REPO_ROOT}/src/band3/meta_band/MusicLibrary.cpp
+    PROPERTIES COMPILE_OPTIONS "-fno-access-control")
 
 set(MILO_TARGET_COMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/milo_object_factories.cpp

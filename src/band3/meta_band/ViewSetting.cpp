@@ -635,9 +635,13 @@ END_HANDLERS
 #define SW_SCATTER_OWNER_INCLUDE
 #define gRev gRev_CharIKScale
 #define gAltRev gAltRev_CharIKScale
+// W16-SH: native skips this edge -- rb3-render compiles char/CharIKScale.cpp
+// standalone, so this second emitter is a duplicate definition.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "obj/dialect_object_push.h"
 #include "char/CharIKScale.cpp"
 #include "obj/dialect_object_pop.h"
+#endif
 #undef gRev
 #undef gAltRev
 #undef SW_SCATTER_OWNER_INCLUDE

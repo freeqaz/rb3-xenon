@@ -477,9 +477,13 @@ int GetLoopTick(int tick) {
 #define SW_SCATTER_OWNER_INCLUDE
 #define gRev gRev_SpeechMgr
 #define gAltRev gAltRev_SpeechMgr
+// W16-SH: native skips this edge -- SpeechMgr is the Kinect speech layer
+// (360-only); TrainerPanel calls none of it.
+#if !HX_NATIVE  // native: skip X360 scatter/COMDAT-pairing include
 #include "obj/dialect_object_push.h"
 #include "gesture/SpeechMgr.cpp"
 #include "obj/dialect_object_pop.h"
+#endif
 #undef gRev
 #undef gAltRev
 #undef SW_SCATTER_OWNER_INCLUDE

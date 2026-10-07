@@ -24,6 +24,15 @@
 #include <math.h>
 #include <string.h>
 
+// The match build spells MemAlloc as retail's 2-arg (size, align); that
+// overload exists only for X360 (utl/MemMgr.h), so native passes the 5-arg
+// debug form. Token-identical to the old call sites on X360.
+#ifdef HX_NATIVE
+#define PD_MEM_ALLOC(size, align) MemAlloc((size), __FILE__, __LINE__, "PitchDetector", (align))
+#else
+#define PD_MEM_ALLOC(size, align) (MemAlloc)(size, align)
+#endif
+
 // Defined in dsp/SndAnalysis.cpp; there is no SndAnalysis.h, so these are
 // forward-declared here -- with OUR signatures.
 void ShiftedDotProduct(const float *buf, int len, float *ss, bool fast);
@@ -327,9 +336,9 @@ void PitchDetector::SetSampleRate(int sampleRate) {
         // below are `li r4,0x10` at 0x82B81050/0x82B8106C/0x82B81088, and the
         // unparenthesized form emitted `li r4,0` at all three -- the only
         // non-relocation difference in this body.
-        mDecimBuf = (float *)(MemAlloc)(mFrameSize * 4, 0x10);
-        mCorrBuf = (float *)(MemAlloc)(mFrameSize * 4, 0x10);
-        mPeakBuf = (float *)(MemAlloc)(mFrameSize * 4, 0x10);
+        mDecimBuf = (float *)PD_MEM_ALLOC(mFrameSize * 4, 0x10);
+        mCorrBuf = (float *)PD_MEM_ALLOC(mFrameSize * 4, 0x10);
+        mPeakBuf = (float *)PD_MEM_ALLOC(mFrameSize * 4, 0x10);
         memset(mDecimBuf, 0, mFrameSize * 4);
         memset(mCorrBuf, 0, mFrameSize * 4);
         memset(mPeakBuf, 0, mFrameSize * 4);

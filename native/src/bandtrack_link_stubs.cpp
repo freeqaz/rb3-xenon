@@ -60,7 +60,6 @@
 
 // --- singletons (8) ---------------------------------------------------------
 CharSync *TheCharSync = nullptr;
-GamePanel *TheGamePanel = nullptr;
 NetSession *TheNetSession = nullptr;
 SessionMgr *TheSessionMgr = nullptr;
 SongDB *TheSongDB = nullptr;
@@ -81,7 +80,6 @@ alignas(RockCentral) unsigned char gW16SHRockCentralStorage[sizeof(RockCentral)]
 
 void CharSync::UpdateCharCache() { UNREACHED(); }
 
-void GamePanel::SetPlayingTrackIntroUntil(float) { UNREACHED(); }
 
 
 bool NetSession::HasUser(const User *) const { UNREACHED(); }
