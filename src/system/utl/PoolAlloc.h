@@ -116,6 +116,7 @@ void PoolFree(int idx, void *mem);
 #define POOL_OVERLOAD(class_name, line_num)                                              \
     static void *operator new(unsigned int s) { return PoolAlloc(s, s); }                \
     static void *operator new(unsigned int s, void *place) { return place; }             \
+    static void operator delete(void *, void *) {}                                       \
     static void operator delete(void *v) { PoolFree(sizeof(class_name), v); }
 #endif
 
