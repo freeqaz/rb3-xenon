@@ -169,4 +169,9 @@ re-homing, which is not neutral. Out of scope for this lane.
 
 ## Native gate
 
-W4_GATE
+`tools/native_build_gate.sh` at `2513b562f` (the only source change is
+`src/system/world/Instance.{h,cpp}`):
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0 failed=0 rc=0
+```
