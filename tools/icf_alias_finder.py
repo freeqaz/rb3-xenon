@@ -62,6 +62,7 @@ import argparse
 import glob
 import json
 import os
+import re
 import struct
 import subprocess
 import sys
@@ -123,9 +124,53 @@ def target_map_names() -> set:
     return {v for k, v in raw.items() if k.lower().startswith("0x")}
 
 
+# Non-graph objs excluded by the last compiled_obj_paths() call (reported).
+_NONGRAPH_EXCLUDED: list = []
+
+
+def ninja_graph_obj_outputs():
+    """Every `build/45410914/src/**.obj` the ninja graph declares as an output,
+    or None if the graph cannot be read (then the caller falls back to the glob
+    and says so).  `ninja -t targets all` is ~13 ms and authoritative; parsing
+    build.ninja by hand is not (63 of 1,266 edges wrap their output path onto
+    a continuation line)."""
+    try:
+        out = subprocess.run(["ninja", "-t", "targets", "all"], cwd=PROJECT_ROOT,
+                             capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if out.returncode != 0:
+        return None
+    objs = set()
+    for line in out.stdout.splitlines():
+        path = line.rsplit(": ", 1)[0]
+        if path.startswith("build/45410914/src/") and path.endswith(".obj"):
+            objs.add(os.path.normpath(str(PROJECT_ROOT / path)))
+    return objs or None
+
+
 def compiled_obj_paths() -> list:
-    """Our compiled objs. Superset of objdiff.json's `base_path` set (measured)."""
-    return glob.glob(str(PROJECT_ROOT / "build/45410914/src/**/*.obj"), recursive=True)
+    """Our compiled objs: the recursive glob, restricted to objs the ninja graph
+    still produces.  Superset of objdiff.json's `base_path` set (measured).
+
+    ⚠ The glob alone also read ORPHANS -- objs whose source has moved or been
+    deleted, which no build edge regenerates and nothing prunes (lane W16-RY,
+    2026-10-07: hamobj/MeterDisplay.obj + hamobj/MiniLeaderboardDisplay.obj,
+    left by 0b8ec763c's hamobj/ -> bandobj/ move, were the SOLE referencers of 8
+    alias spellings).  A tree reflinked from one that carries them counts those
+    spellings live; a clean build dir does not -- a history dependence, not a
+    property of the source."""
+    globbed = glob.glob(str(PROJECT_ROOT / "build/45410914/src/**/*.obj"), recursive=True)
+    graph = ninja_graph_obj_outputs()
+    _NONGRAPH_EXCLUDED.clear()
+    if graph is None:
+        print("!! compiled side: ninja graph unreadable -- using the raw glob, "
+              "which may include orphaned objs", file=sys.stderr)
+        return globbed
+    kept = []
+    for p in globbed:
+        (kept if os.path.normpath(p) in graph else _NONGRAPH_EXCLUDED).append(p)
+    return kept
 
 
 def authoritative_base_obj_paths() -> list:
@@ -147,12 +192,89 @@ def authoritative_base_obj_paths() -> list:
 
 
 def compiled_obj_symbol_index(paths=None) -> dict:
-    """name -> list of compiled-obj stems referencing it."""
+    """name -> list of compiled-obj PATHS referencing it.  Paths, not stems:
+    stems collide (rnddx9/Utl vs rndobj/Utl, rnddx9/Rnd vs rndobj/Rnd), and
+    compiled_host_hash_carriers() counts distinct objs."""
     idx = defaultdict(list)
     for p in (compiled_obj_paths() if paths is None else paths):
         for s in coff_referenced_symbols(Path(p).read_bytes()):
-            idx[s].append(Path(p).stem)
+            idx[s].append(str(p))
     return idx
+
+
+# ---------------------------------------------------------------------------
+# BUILD-HOST anonymous-namespace hashes (lane W16-RY, 2026-10-07)
+# ---------------------------------------------------------------------------
+# MSVC spells an anonymous namespace `?A0x<8 hex>@@`, and the hash is a
+# function of the ABSOLUTE PATH the compile ran from (plus the pinned computer
+# name) -- NOT of the source text.  scripts/obj_anon_ns_patcher.py rewrites it
+# to retail's value wherever retail's paired object carries one, which makes
+# those hashes root-independent.  Where retail has NO anonymous-namespace hash
+# to copy (86 compiled objs at 2b280289f -- DepthBuffer3D, JoypadMsgs, Rot,
+# AmbientOcclusion, ...), the patcher SKIPs and the raw, root-dependent value
+# survives into the obj.
+#
+# objcache keys on compiler + flags + source + deps, NOT on the compile root,
+# so whichever worktree first compiles a given content POPULATES the cache and
+# every other root -- main included -- is then served that worktree's hash.
+# Measured: DepthBuffer3D.obj (it scatter-includes rndobj/Env_NG.cpp) carries
+# ?A0x07a67bbc compiled from the main repo root, ?A0x68bc3f2e compiled from
+# ~/tmp/wt-w16ry, and ?A0x0d205712 as cache-served to main after W16-RW's
+# Rnd.cpp edit (which it #includes) was first compiled in a lane worktree.
+#
+# A literal name test therefore answered "which worktree populated the cache",
+# and six groups whose folded spellings are DepthBuffer3D's copies of the
+# Env_NG light helpers flipped OK <-> STALE_SPELLING across landings that
+# changed no map or alias data (1918/146 <-> 1912/152).  So the stale test
+# compares such spellings by TEMPLATE: a hash that appears in no retail
+# spelling (target objs + target_symbol_map.json) is blanked on both sides.
+# Retail-attested hashes are compared literally, exactly as before.
+ANON_HASH_RE = re.compile(r"\?A0x[0-9a-f]{8}")
+HOST_HASH_BLANK = "?A0x########"
+
+
+def retail_anon_hashes(*name_sets) -> set:
+    """Every `?A0x<h>` spelled by retail (target objs and/or the target map)."""
+    out = set()
+    for names in name_sets:
+        for n in names:
+            if isinstance(n, str) and "?A0x" in n:
+                out.update(ANON_HASH_RE.findall(n))
+    return out
+
+
+def host_hash_template(name: str, retail_hashes: set):
+    """`name` with every NON-retail anon-namespace hash blanked, or None when it
+    carries none (then the literal name is the only honest key)."""
+    if "?A0x" not in name:
+        return None
+    hit = False
+
+    def sub(m):
+        nonlocal hit
+        if m.group(0) in retail_hashes:
+            return m.group(0)
+        hit = True
+        return HOST_HASH_BLANK
+    t = ANON_HASH_RE.sub(sub, name)
+    return t if hit else None
+
+
+def compiled_host_hash_carriers(compiled, retail_hashes: set) -> dict:
+    """template -> set of compiled objs emitting a name of that template.
+
+    `compiled` maps name -> objs (compiled_obj_symbol_index).  MSVC hashes only
+    the PRIMARY .cpp's path, so one obj carries ONE build-host hash (measured:
+    all 14 occurrences in DepthBuffer3D.obj -- from its own body and the
+    scatter-included UIList/Rnd/Env_NG -- share one value).  k distinct
+    spellings of one template can therefore be live together only in k
+    distinct objs, which is what the stale test below relies on."""
+    out = defaultdict(set)
+    for n, objs in compiled.items():
+        t = host_hash_template(n, retail_hashes)
+        if t is not None:
+            out[t].update(objs)
+    return out
 
 
 def live_target_obj_paths() -> list:
@@ -231,8 +353,12 @@ TOLERATED = {
 }
 
 
-def classify_group(g, tmap, compiled, target_objs):
-    """-> (verdict, detail). verdict is 'OK', a TOLERATED key, or 'CONTRADICTED'."""
+def classify_group(g, tmap, compiled, target_objs, host=None):
+    """-> (verdict, detail). verdict is 'OK', a TOLERATED key, or 'CONTRADICTED'.
+
+    `host` = (retail_hashes, compiled_templates) enables the build-host-hash
+    template comparison for the STALE test (see ANON_HASH_RE); None = literal.
+    """
     survivor = g["survivor"]
     folded = g.get("folded", [])
     named = [s for s in (survivor, *folded) if target_objs.get(s, 0) > 0]
@@ -263,10 +389,43 @@ def classify_group(g, tmap, compiled, target_objs):
         return "SURVIVOR_MISLABELED", f"target objs name {named[0]}, not the survivor"
     if survivor not in tmap:
         return "CONTRADICTED", f"survivor {survivor} NOT in target_symbol_map.json"
-    stale = [f for f in folded if f not in compiled]
+    stale = stale_folded_spellings(folded, compiled, host)
     if stale:
         return "STALE_SPELLING", f"{len(stale)}/{len(folded)} folded spelling(s) unreferenced"
     return "OK", ""
+
+
+def stale_folded_spellings(folded, compiled, host=None) -> list:
+    """Folded spellings referenced by no compiled obj.
+
+    Retail-attested names (and names with no anon hash) are tested LITERALLY.
+    A name carrying a build-host hash is NEVER tested literally -- its literal
+    presence says which worktree populated objcache, not anything about the
+    source (see ANON_HASH_RE).  Instead, per template T, the group's k distinct
+    spellings of T need k distinct compiled objs emitting T; any excess is
+    stale.  WHICH of them is stale is root-dependent and deliberately not
+    claimed: the excess count is reported against the tail of the list.  This
+    errs toward OK only where every spelling COULD be live in some build of
+    this source, and is identical on every root (measured: 1936/128 on four
+    snapshots spanning 774f9fe86, 2b280289f cache-served and 2b280289f
+    compiled cold from ~/tmp/wt-w16ry).
+    """
+    if host is None:
+        return [f for f in folded if f not in compiled]
+    retail_hashes, carriers = host
+    stale, by_template = [], defaultdict(list)
+    for f in dict.fromkeys(folded):
+        t = host_hash_template(f, retail_hashes)
+        if t is None:
+            if f not in compiled:
+                stale.append(f)
+        else:
+            by_template[t].append(f)
+    for t, spellings in by_template.items():
+        live = len(carriers.get(t, ()))
+        if len(spellings) > live:
+            stale.extend(spellings[live:])
+    return stale
 
 
 # ---------------------------------------------------------------------------
@@ -460,8 +619,21 @@ def cmd_validate(args=None) -> int:
     buckets = defaultdict(list)
     classified = 0
     spellings_looked_up = 0
+    retail_hashes = retail_anon_hashes(target_objs, tmap)
+    host = (retail_hashes, compiled_host_hash_carriers(compiled, retail_hashes))
+    # Report how much of the population is judged by template, and how many of
+    # those a LITERAL test would have answered differently on this tree -- the
+    # root-dependent residue this rule removes from the counts.
+    host_spellings = host_disagree = 0
     for g in groups:
-        verdict, detail = classify_group(g, tmap, compiled, target_objs)
+        folded = list(dict.fromkeys(g.get("folded", [])))
+        templ_stale = set(stale_folded_spellings(folded, compiled, host))
+        for f in folded:
+            if host_hash_template(f, retail_hashes) is not None:
+                host_spellings += 1
+                host_disagree += (f in templ_stale) != (f not in compiled)
+    for g in groups:
+        verdict, detail = classify_group(g, tmap, compiled, target_objs, host)
         buckets[verdict].append((g.get("name", g["survivor"]), g["address"], detail))
         classified += 1
         spellings_looked_up += 1 + len(g.get("folded", []))
@@ -511,6 +683,15 @@ def cmd_validate(args=None) -> int:
           f"{mangled} mangled names indexed")
     print(f"  compiled side: {len(compiled_paths)} compiled objs, {len(compiled)} "
           f"symbols indexed (floor: {len(base_paths)} objdiff.json base objs, all reached)")
+    if _NONGRAPH_EXCLUDED:
+        print(f"  compiled side: {len(_NONGRAPH_EXCLUDED)} on-disk obj(s) EXCLUDED as "
+              f"not produced by the ninja graph (orphans), e.g. "
+              f"{os.path.relpath(_NONGRAPH_EXCLUDED[0], PROJECT_ROOT)}")
+    print(f"  build-host anon hashes: {host_spellings} folded spellings carry a "
+          f"`?A0x` hash retail never spells (root-dependent, see ANON_HASH_RE) and are "
+          f"judged by template; a literal test would answer {host_disagree} of them "
+          f"differently on THIS tree ({len(retail_hashes)} retail hashes compared "
+          f"literally)")
     # ⚠ NOT "grounded" -- RENAMED 2026-08-14 (lane GROUNDED-1). This bucket means
     # ONLY: the survivor is map-resident and every spelling is referenced. It says
     # NOTHING about whether retail's linker folded anything, and the word "grounded"
@@ -625,6 +806,35 @@ def _selftest() -> int:
     check("truncation-to-nonempty is NOT refused (count is not monotonic; "
           "7/52 historical commits legitimately shrink the population)",
           run(groups=_HEALTHY["groups"][:1]) == [])
+
+    # ── BUILD-HOST HASH STALE TEST (lane W16-RY) ───────────────────────────────
+    # Frozen names. R = a retail-attested hash, compared literally; h1/h2/h3 are
+    # build-host hashes from three different compile roots.
+    R, R2 = "?A0x8e417309", "?A0x951deeb9"
+    h1, h2, h3 = "?A0x07a67bbc", "?A0x0d205712", "?A0x68bc3f2e"
+    rh = {R, R2}
+
+    def stale(folded, names):
+        comp = {n: [o] for n, o in names}
+        host = (rh, compiled_host_hash_carriers(comp, rh))
+        return stale_folded_spellings(folded, comp, host)
+
+    one_obj = [(f"?F@{h2}@@YAXXZ", "/d.obj"), (f"?F@{R}@@YAXXZ", "/e.obj")]
+    check("host-hash spelling from ANOTHER root is live when one obj emits its "
+          "template (the DepthBuffer3D flip)",
+          stale([f"?F@{h1}@@YAXXZ"], one_obj) == [])
+    check("...and the verdict is identical under a THIRD root's hash",
+          stale([f"?F@{h1}@@YAXXZ"], [(f"?F@{h3}@@YAXXZ", "/d.obj")]) == [])
+    check("two distinct host spellings need two emitting objs (one is stale)",
+          len(stale([f"?F@{h1}@@YAXXZ", f"?F@{h3}@@YAXXZ"], one_obj)) == 1)
+    check("a host spelling whose template NO obj emits is stale",
+          stale([f"?G@{h1}@@YAXXZ"], one_obj) == [f"?G@{h1}@@YAXXZ"])
+    check("a retail-attested hash is compared LITERALLY (no wildcard)",
+          stale([f"?F@{R}@@YAXXZ"], [(f"?F@{R2}@@YAXXZ", "/e.obj")])
+          == [f"?F@{R}@@YAXXZ"])
+    check("host=None keeps the old literal test (control: it DOES flip)",
+          stale_folded_spellings([f"?F@{h1}@@YAXXZ"],
+                                 {f"?F@{h2}@@YAXXZ": ["/d.obj"]}) != [])
 
     print("SELFTEST:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
