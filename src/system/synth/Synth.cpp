@@ -259,8 +259,13 @@ Stream *Synth::NewBufStream(
     const void *buf, int size, Symbol ext, float f1, bool floatSamples, bool pollingEnabled
 ) {
 #ifdef HX_NATIVE
+    // f1 is the start time in ms. Retail Synth360::NewBufStream (0x82B5B608)
+    // builds StandardStream(BufFile, startMs, 0.0f, ...): the buffer length is
+    // 0, which StandardStream::Init replaces with synth stream_buf_size. This
+    // used to pass (0, f1), so a start point became the buffer length in
+    // seconds and the stream started at 0 (W16-TR, metamusic-start-point).
     File *file = new BufFile(buf, size);
-    return new StandardStream(file, 0, f1, ext, floatSamples, pollingEnabled);
+    return new StandardStream(file, f1, 0.0f, ext, floatSamples, pollingEnabled);
 #else
     return new StreamNull(f1);
 #endif
