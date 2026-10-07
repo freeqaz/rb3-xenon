@@ -62,6 +62,7 @@
 #include "game/VocalOverlay.h"
 #include "tour/Tour.h"
 #include "game/TrackerManager.h"
+#include "gesture/GestureMgr.h"
 
 [[noreturn]] static void BandTrackUnreached(const char *fn) {
     fprintf(stderr, "bandtrack_link_stubs: UNREACHED stub called: %s\n", fn);
@@ -193,3 +194,8 @@ void TrackerManager::OnRemoteTrackerEndStreak(Player *, int, int) { UNREACHED();
 // GameMicManager's fake-mic arm compares TheGameMode against it; rb3-render
 // has no TheGameMode, so the symbol is never compared. Never interned.
 Symbol frame_rate;
+// ui/UIScreen.cpp's native Exit() leaves the gesture system's voice mode
+// (a Dance Central path). The W16-TJ stand-in UIManager links UIScreen; no
+// screen is entered or exited in this driver.
+GestureMgr *TheGestureMgr = nullptr;
+void GestureMgr::SetInVoiceMode(bool) { UNREACHED(); }

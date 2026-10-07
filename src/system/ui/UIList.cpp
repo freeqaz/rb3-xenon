@@ -726,9 +726,13 @@ bool UIList::SetSelectedSimulateScroll(Symbol sym, bool b) {
 void UIList::Update() {
     if (!gLoading) {
         UIComponent::Update();
-        mListDir = dynamic_cast<UIListDir *>(mResource->Dir());
 #ifdef HX_NATIVE
+        // native: a driver that never runs UIManager::InitResources leaves the
+        // list without its type resource; treat that like a missing list dir.
+        mListDir = mResource ? dynamic_cast<UIListDir *>(mResource->Dir()) : nullptr;
         if (!mListDir) return;
+#else
+        mListDir = dynamic_cast<UIListDir *>(mResource->Dir());
 #endif
         MILO_ASSERT(mListDir, 0x238);
         mListDir->CreateElements(this, mWidgets, mListState.NumDisplay());

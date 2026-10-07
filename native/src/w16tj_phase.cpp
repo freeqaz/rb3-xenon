@@ -54,6 +54,13 @@
 #include "meta_band/BandSongMgr.h"
 #include "meta_band/SongUpgradeMgr.h"
 #include "meta_band/CustomizePanel.h"
+#include "meta_band/MakeupProvider.h"
+#include "os/JoypadMsgs.h"
+#include "ui/PanelDir.h"
+#include "ui/UI.h"
+#include "ui/UITrigger.h"
+#include "bandobj/BandList.h"
+#include "ui/UIComponent.h"
 #include "meta_band/MetaPerformer.h"
 #include "obj/Data.h"
 #include "obj/DataFile.h"
@@ -73,10 +80,12 @@
 #include <cstdlib>
 #include <cstring>
 #include <map>
+#include <new>
 #include <string>
 #include <vector>
 
 extern DataArray *gSystemConfig;
+extern bool gSendFocusMsg; // ui/PanelDir.cpp
 void SetTheBeatMap(BeatMap *);
 
 typedef void (*GateFn)(const char *, bool, const char *);
@@ -970,6 +979,371 @@ void UpdateScrollingChecks(Fixture &fx) {
          checks, tambBad, tambCurBad, tambSeen);
 }
 
+// ======================================================= CustomizePanel ==
+// A CustomizePanel holding the shipped panel dir (ui/customize/gen/
+// customize.milo: the real buttons and lists) and a real MakeupProvider. The
+// panel is driven only through CustomizePanel::Handle, by the messages the
+// shipped script ui/customize/customize.dta sends. It gets no typedef, so
+// set_state does not run the script's update_state handler (that handler
+// drives camera shots and triggers of the character screen, which this driver
+// does not build), and no ClosetMgr, so only arms that leave the closet alone
+// are sent.
+//
+// THE REFERENCE is the shipped script and locale, read here as data:
+//   * the focus table: setup_default_focus_components, one
+//     {$this set_focus_component STATE NAME} per state;
+//   * the clothing states: the update_state cases that fire
+//     browse_clothing.trg (the script's own notion of a clothing browser);
+//   * the boutiques: the script's BOUTIQUES macro;
+//   * the patch-menu return: the script's patch-entry sequences
+//     (set_patch_menu_return_state R, set_state PatchMenu);
+//   * the makeup lists: the <gender>_makeup_<eyes|lips>_N keys of the shipped
+//     English locale.
+
+DataArray *FindHead(DataArray *a, Symbol head) {
+    if (!a)
+        return nullptr;
+    if (a->Size() > 0 && a->Type(0) == kDataSymbol && a->Sym(0) == head)
+        return a;
+    for (int i = 0; i < a->Size(); i++) {
+        DataType t = a->Type(i);
+        if (t == kDataArray || t == kDataCommand || t == kDataProperty) {
+            DataArray *r = FindHead(a->Node(i).UncheckedArray(), head);
+            if (r)
+                return r;
+        }
+    }
+    return nullptr;
+}
+
+// {X trigger} anywhere under a, X a symbol named trg.
+bool FiresTrigger(DataArray *a, const char *trg) {
+    for (int i = 0; i < a->Size(); i++) {
+        DataType t = a->Type(i);
+        if (t == kDataCommand) {
+            DataArray *c = a->Node(i).UncheckedArray();
+            if (c->Size() == 2 && c->Type(0) == kDataSymbol && c->Type(1) == kDataSymbol
+                && !strcmp(c->Sym(0).Str(), trg) && !strcmp(c->Sym(1).Str(), "trigger"))
+                return true;
+        }
+        if (t == kDataArray || t == kDataCommand) {
+            if (FiresTrigger(a->Node(i).UncheckedArray(), trg))
+                return true;
+        }
+    }
+    return false;
+}
+
+// A state as the script spells it: an int, or a kCustomizeState_* macro.
+int ScriptState(DataArray *a, int i) {
+    if (a->Type(i) == kDataInt)
+        return a->Int(i);
+    if (a->Type(i) == kDataSymbol) {
+        DataArray *m = DataGetMacro(a->Sym(i));
+        if (m && m->Size() > 0 && m->Type(0) == kDataInt)
+            return m->Int(0);
+    }
+    return -1;
+}
+// Every state the script moves the panel to: {$this set_state S}.
+void CollectSetStates(DataArray *a, std::vector<bool> &out) {
+    if (!a)
+        return;
+    for (int i = 0; i < a->Size(); i++) {
+        DataType t = a->Type(i);
+        if (t != kDataArray && t != kDataCommand)
+            continue;
+        DataArray *c = a->Node(i).UncheckedArray();
+        if (t == kDataCommand && c->Size() == 3 && c->Type(1) == kDataSymbol
+            && !strcmp(c->Sym(1).Str(), "set_state")) {
+            int st = ScriptState(c, 2);
+            if (st >= 0 && st < (int)out.size())
+                out[st] = true;
+        }
+        CollectSetStates(c, out);
+    }
+}
+int MacroInt(const char *name) {
+    DataArray *m = DataGetMacro(name);
+    return m && m->Size() > 0 && m->Type(0) == kDataInt ? m->Int(0) : -1;
+}
+
+DataNode Send(Hmx::Object *o, DataArray *msg) { return o->Handle(msg, true); }
+
+ObjDirPtr<ObjectDir> gCustomizeDir;
+
+void CustomizePanelChecks() {
+    printf("\n=== W16-TJ: CustomizePanel::Handle over the shipped customize panel ===\n");
+    // The classes customize.milo names that rb3-render's factory table lacks.
+    // Retail registers them in UIManager::Init / BandInit, whose resource
+    // preloads (TheUI->InitResources) need a UIManager this driver does not
+    // build, so the factories alone, as RegisterTrackFactories does.
+    // InlineHelp stays unregistered: MEASURED, its PostLoad calls Update(),
+    // which reads its type resource (UIResource::Dir) and faults without the
+    // preload. The loader skips the 7 help bars; none is a focus target.
+    REGISTER_OBJ_FACTORY(PanelDir)
+    REGISTER_OBJ_FACTORY(UITrigger)
+    BandList::Register();
+    gCustomizeDir.LoadFile(FilePath("ui/customize/gen/customize.milo_xbox"), false, false,
+                           kLoadFront, false);
+    PanelDir *pd = dynamic_cast<PanelDir *>(gCustomizeDir.Ptr());
+    DataArray *script = DataReadFile("ui/customize/customize.dta", true);
+    if (MacroInt("kCustomizeState_COUNT") < 0)
+        DataReadFile("config/macros.dta", true); // defines the state macros
+    int count = MacroInt("kCustomizeState_COUNT");
+    int patchMenu = MacroInt("kCustomizeState_PatchMenu");
+    int mainMenu = MacroInt("kCustomizeState_MainMenu");
+
+    // The focus table.
+    struct FocusRow {
+        int state;
+        std::string name;
+        UIComponent *comp;
+    };
+    std::vector<FocusRow> rows;
+    int unresolved = 0;
+    DataArray *setup = FindHead(script, "setup_default_focus_components");
+    for (int i = 1; setup && i < setup->Size(); i++) {
+        if (setup->Type(i) != kDataCommand)
+            continue;
+        DataArray *c = setup->Node(i).UncheckedArray();
+        if (c->Size() != 4 || c->Type(1) != kDataSymbol
+            || strcmp(c->Sym(1).Str(), "set_focus_component"))
+            continue;
+        FocusRow r;
+        r.state = ScriptState(c, 2);
+        r.name = c->Type(3) == kDataSymbol ? c->Sym(3).Str() : "";
+        r.comp = nullptr;
+        // Resolve the name by walking the loaded dir ourselves (not Find).
+        if (pd)
+            for (ObjDirItr<UIComponent> it(pd, true); it; ++it)
+                if (r.name == it->Name())
+                    r.comp = it;
+        if (r.state < 0 || !r.comp)
+            unresolved++;
+        rows.push_back(r);
+    }
+    // The clothing states: update_state cases that fire browse_clothing.trg,
+    // among the states the script enters ({$this set_state S}). The script's
+    // BrowseTshirts case fires browse_clothing.trg but nothing sets that state
+    // (boutique_tshirts.btn enters BrowseTorso), so it is a dead case.
+    std::vector<bool> entered(count > 0 ? count : 0, false);
+    CollectSetStates(script, entered);
+    std::vector<bool> clothing(count > 0 ? count : 0, false);
+    int clothingN = 0, deadClothing = 0;
+    DataArray *upd = FindHead(script, "update_state");
+    DataArray *sw = upd ? FindHead(upd, "switch") : nullptr;
+    for (int i = 2; sw && i < sw->Size(); i++) {
+        if (sw->Type(i) != kDataArray)
+            continue;
+        DataArray *cs = sw->Array(i);
+        int st = ScriptState(cs, 0);
+        if (st >= 0 && st < count && FiresTrigger(cs, "browse_clothing.trg")) {
+            if (!entered[st]) {
+                deadClothing++;
+                continue;
+            }
+            clothing[st] = true;
+            clothingN++;
+        }
+    }
+    DataArray *boutiques = DataGetMacro("BOUTIQUES");
+    Gate("cp-fixture",
+         pd && count > 0 && patchMenu > 0 && mainMenu > 0 && rows.size() > 0
+             && unresolved == 0 && clothingN > 0 && boutiques && boutiques->Size() > 0,
+         "panel dir %s (%s), %d states, %d focus rows from the script (%d unresolved), %d "
+         "clothing cases, %d boutiques",
+         pd ? pd->Name() : "<none>", pd ? pd->ClassName().Str() : "-", count,
+         (int)rows.size(), unresolved, clothingN, boutiques ? boutiques->Size() : 0);
+    if (!pd || count <= 0 || rows.empty() || unresolved)
+        return;
+
+    CustomizePanel *cp = new CustomizePanel();
+    cp->SetLoadedDir(pd, true);
+
+    // cp-focus: the script's table, then every state's focus component.
+    for (const FocusRow &r : rows)
+        Send(cp, Message("set_focus_component", r.state, Symbol(r.name.c_str())));
+    std::vector<UIComponent *> want(count, nullptr);
+    for (const FocusRow &r : rows)
+        want[r.state] = r.comp;
+    int focusBad = 0, stateBad = 0;
+    for (int s = 0; s < count; s++) {
+        Send(cp, Message("set_state", s));
+        if (Send(cp, Message("get_state")).Int() != s)
+            stateBad++;
+        Hmx::Object *got = Send(cp, Message("get_focus_component")).GetObj();
+        if (got != want[s]) {
+            if (focusBad < 3)
+                printf("  state %d: focus %s, script says %s\n", s,
+                       got ? got->Name() : "<null>", want[s] ? want[s]->Name() : "<none>");
+            focusBad++;
+        }
+    }
+    Gate("cp-focus", focusBad == 0 && stateBad == 0,
+         "%d states: get_focus_component = the script's set_focus_component table (%d rows), "
+         "%d wrong; get_state after set_state %d wrong",
+         count, (int)rows.size(), focusBad, stateBad);
+
+    // cp-focus-store: focus another component through the UIPanel arm, store
+    // it for this state, read it back. The buttons' SetState asks
+    // TheUI->InTransition(); this driver has no UIManager, so a constructed,
+    // never-Init()ed one (zeroed first: the ctor leaves mTransitionState
+    // unset, as retail's does) stands in, and the focus-change broadcast that
+    // would walk its screens is off for the duration.
+    UIManager *savedUI = TheUI;
+    void *uiMem = calloc(1, sizeof(UIManager));
+    TheUI = new (uiMem) UIManager();
+    gSendFocusMsg = false;
+    int storeBad = 0, storeN = 0;
+    for (size_t i = 0; i < rows.size(); i++) {
+        UIComponent *other = rows[(i + 1) % rows.size()].comp;
+        Send(cp, Message("set_state", rows[i].state));
+        Send(cp, Message("set_focus", static_cast<Hmx::Object *>(other)));
+        Send(cp, Message("store_focus_component"));
+        Hmx::Object *got = Send(cp, Message("get_focus_component")).GetObj();
+        storeN++;
+        if (got != other)
+            storeBad++;
+    }
+    gSendFocusMsg = true;
+    TheUI = savedUI; // the stand-in is left allocated: objects may still point at it
+    for (const FocusRow &r : rows) // restore the script's table
+        Send(cp, Message("set_focus_component", r.state, Symbol(r.name.c_str())));
+    Gate("cp-focus-store", storeN > 0 && storeBad == 0,
+         "%d states: set_focus X, store_focus_component, get_focus_component = X, %d wrong",
+         storeN, storeBad);
+
+    // cp-clothing.
+    int clothBad = 0;
+    for (int s = 0; s < count; s++) {
+        Send(cp, Message("set_state", s));
+        if ((Send(cp, Message("in_clothing_state")).Int() != 0) != clothing[s])
+            clothBad++;
+    }
+    Gate("cp-clothing", clothBad == 0,
+         "%d states: in_clothing_state = the entered update_state cases firing "
+         "browse_clothing.trg (%d of them; %d such case never entered), %d wrong",
+         count, clothingN, deadClothing, clothBad);
+
+    // cp-boutique: at the main menu (no asset browser, so no provider update).
+    Send(cp, Message("set_state", mainMenu));
+    int boutBad = 0;
+    for (int i = 0; i < boutiques->Size(); i++) {
+        Symbol b = boutiques->Sym(i);
+        Send(cp, Message("set_current_boutique", b));
+        if (Send(cp, Message("get_current_boutique")).Sym() != b)
+            boutBad++;
+    }
+    Send(cp, Message("clear_current_boutique"));
+    Symbol cleared = Send(cp, Message("get_current_boutique")).Sym();
+    bool clearedIsNone = true;
+    for (int i = 0; i < boutiques->Size(); i++)
+        if (cleared == boutiques->Sym(i))
+            clearedIsNone = false;
+    Gate("cp-boutique", boutBad == 0 && clearedIsNone,
+         "%d BOUTIQUES: set_current_boutique / get_current_boutique round trip, %d wrong; "
+         "after clear_current_boutique '%s' (no boutique)",
+         boutiques->Size(), boutBad, cleared.Str());
+
+    // cp-patch-return: the script's patch-entry sequence, then back out.
+    std::vector<int> returns;
+    returns.push_back(MacroInt("kCustomizeState_HairAndMakeup"));
+    returns.push_back(MacroInt("kCustomizeState_TattoosMenu"));
+    DataArray *browse = DataGetMacro("BROWSE_STATES");
+    for (int i = 0; browse && i < browse->Size(); i++) {
+        int st = ScriptState(browse, i);
+        if (st >= 0 && st < patchMenu)
+            returns.push_back(st);
+    }
+    int retBad = 0;
+    for (int r : returns) {
+        Send(cp, Message("set_patch_menu_return_state", r));
+        Send(cp, Message("set_state", patchMenu));
+        bool ok = Send(cp, Message("get_patch_menu_return_state")).Int() == r;
+        DataNode left = Send(cp, Message("leave_state", 0));
+        ok = ok && left.Type() == kDataInt && left.Int() == 1
+            && Send(cp, Message("get_state")).Int() == r;
+        if (!ok)
+            retBad++;
+    }
+    Gate("cp-patch-return", returns.size() > 2 && retBad == 0,
+         "%d return states: set_patch_menu_return_state R, set_state PatchMenu, leave_state "
+         "-> state R, %d wrong",
+         (int)returns.size(), retBad);
+
+    // cp-waiting: the flag, and a button press while waiting to leave is
+    // swallowed before the panel looks at its closet.
+    Send(cp, Message("set_is_waiting_to_leave", 1));
+    bool waitOn = Send(cp, Message("is_waiting_to_leave")).Int() != 0;
+    ButtonDownMsg press(nullptr, kPad_Xbox_B, kAction_Cancel, 0);
+    DataNode pressed = Send(cp, press);
+    int stateAfter = Send(cp, Message("get_state")).Int();
+    Send(cp, Message("set_is_waiting_to_leave", 0));
+    bool waitOff = Send(cp, Message("is_waiting_to_leave")).Int() == 0;
+    Gate("cp-waiting",
+         waitOn && waitOff && pressed.Type() == kDataInt && pressed.Int() == 1
+             && stateAfter == returns.back(),
+         "is_waiting_to_leave follows set_is_waiting_to_leave (%d, %d); a cancel press while "
+         "waiting is handled (%s) and leaves the state at %d",
+         waitOn, waitOff, pressed.Type() == kDataInt ? "1" : "unhandled", stateAfter);
+
+    // cp-makeup: a real MakeupProvider per gender against the locale's keys.
+    DataArray *loc = DataReadFile("ui/locale/eng/locale_keep.dta", true);
+    int makeBad = 0, makeN = 0;
+    const char *genders[] = { "female", "male" };
+    const char *types[] = { "eyes", "lips" };
+    for (const char *g : genders) {
+        MakeupProvider *mp = new MakeupProvider(g);
+        cp->mMakeupProvider = mp;
+        for (const char *t : types) {
+            char pre[64];
+            snprintf(pre, sizeof(pre), "%s_makeup_%s_", g, t);
+            std::vector<std::string> keys;
+            for (int i = 0; loc && i < loc->Size(); i++) {
+                if (loc->Type(i) != kDataArray)
+                    continue;
+                DataArray *e = loc->Array(i);
+                if (e->Size() < 1 || e->Type(0) != kDataSymbol)
+                    continue;
+                const char *k = e->Sym(0).Str();
+                size_t n = strlen(pre);
+                if (strncmp(k, pre, n) || !k[n] || strspn(k + n, "0123456789") != strlen(k + n))
+                    continue;
+                keys.push_back(k);
+            }
+            Send(cp, Message("update_makeup_provider", Symbol(t)));
+            Hmx::Object *got = Send(cp, Message("makeup_provider")).GetObj();
+            bool ok = got == static_cast<Hmx::Object *>(mp) && !keys.empty()
+                && mp->NumData() == (int)keys.size() + 1
+                && !strcmp(mp->DataSymbol(0).Str(), "none_makeup");
+            for (int i = 1; ok && i < mp->NumData(); i++)
+                ok = std::find(keys.begin(), keys.end(), mp->DataSymbol(i).Str())
+                    != keys.end();
+            printf("  %s %s: %d locale keys, provider lists %d after none_makeup\n", g, t,
+                   (int)keys.size(), mp->NumData() - 1);
+            makeN++;
+            if (!ok)
+                makeBad++;
+        }
+        cp->mMakeupProvider = nullptr;
+        delete mp;
+    }
+    Gate("cp-makeup", loc && makeN == 4 && makeBad == 0,
+         "%d gender x type lists: update_makeup_provider + makeup_provider return the panel's "
+         "provider listing none_makeup then exactly the locale's makeup keys, %d wrong",
+         makeN, makeBad);
+
+    // cp-super: arms CustomizePanel does not handle reach UIPanel and Object.
+    Hmx::Object *dirGot = Send(cp, Message("loaded_dir")).GetObj();
+    Send(cp, Message("set", Symbol("pending_state"), patchMenu));
+    int pend = Send(cp, Message("get", Symbol("pending_state"))).Int();
+    Gate("cp-super", dirGot == pd && pend == patchMenu,
+         "loaded_dir (UIPanel) = the loaded panel dir: %s; set/get pending_state (Object "
+         "property path) = %d, want %d",
+         dirGot == pd ? "yes" : "no", pend, patchMenu);
+}
+
 } // namespace
 
 int RunW16TJPhase(GateFn gate) {
@@ -980,5 +1354,6 @@ int RunW16TJPhase(GateFn gate) {
         return gRan;
     SetupGemsChecks(fx);
     UpdateScrollingChecks(fx);
+    CustomizePanelChecks();
     return gRan;
 }
