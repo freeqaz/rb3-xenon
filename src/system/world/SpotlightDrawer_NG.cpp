@@ -115,9 +115,6 @@ void NgSpotlightDrawer::SpotlightResources::Clear() {
 }
 
 
-static float sSheetIntensity = 8.0f; // RB3 retail 0x82C71194 = 8.0f
-static float sSheetW = 0.5f; // RB3 retail 0x82C71198 = 0.5f
-
 #ifdef HX_NATIVE
 void NgSpotlightDrawer::SetupFogDensityMap() {}
 void NgSpotlightDrawer::RenderFogProxy() {}
@@ -205,6 +202,10 @@ void NgSpotlightDrawer::RenderSphere(Spotlight *sl) {
 }
 
 void NgSpotlightDrawer::RenderSheet(Spotlight *sl) {
+    // Function-local, as in DC3: a file-scope static pair here is co-addressed
+    // from one base register, while retail gives each its own lis.
+    static float sSheetIntensity = 8.0f; // RB3 retail 0x82C71194 = 8.0f
+    static float sSheetW = 0.5f; // RB3 retail 0x82C71198 = 0.5f
     SetXSectionTexture(sl->mBeam);
 
     float brighten = sl->mBeam.mBrighten;
@@ -554,10 +555,10 @@ void NgSpotlightDrawer::SetupFogDensityState() {
     TheShaderMgr.SetPConstant((PShaderConstant)0x7F, fogParams);
 }
 
-static float sBlurAmount = 1.0f; // RB3 retail 0x82C711C0 = 1.0f
-static bool sSeparateBlurPasses = true; // RB3 retail 0x82C711C4 = 0x01
-
 void NgSpotlightDrawer::BlurRT() {
+    // Function-local for the same reason as RenderSheet's pair.
+    static float sBlurAmount = 1.0f; // RB3 retail 0x82C711C0 = 1.0f
+    static bool sSeparateBlurPasses = true; // RB3 retail 0x82C711C4 = 0x01
     D3DDevice_SetDepthStencilSurface(TheDxRnd.Device(), 0);
     if (sSeparateBlurPasses) {
         BlurRT(sBlurAmount, 0.0f);
@@ -566,8 +567,6 @@ void NgSpotlightDrawer::BlurRT() {
         BlurRT(sBlurAmount, sBlurAmount);
     }
 }
-
-static float sFogScale = 0.125f; // RB3 retail 0x82C711CC = 0.125f
 
 #ifndef HX_NATIVE
 void NgSpotlightDrawer::BlurRT(float amountX, float amountY) {
@@ -624,6 +623,7 @@ void NgSpotlightDrawer::BlurRT(float amountX, float amountY) {
 }
 
 void NgSpotlightDrawer::RenderScene() {
+    static float sFogScale = 0.125f; // RB3 retail 0x82C711CC = 0.125f
     START_AUTO_TIMER("world_draw");
 
     sActiveFrame = false;
