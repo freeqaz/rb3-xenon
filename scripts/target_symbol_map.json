@@ -1,4 +1,7 @@
 {
+ "0x82272308": "??$Find@VUIScreen@@@ObjectDir@@QAAPAVUIScreen@@PBD_N@Z",
+ "0x82272548": "??$PropSync@VUIPanel@@@@YA_NAAPAVUIPanel@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
+ "0x82272b90": "??1UIScreen@@UAA@XZ",
  "0x822784a8": "??$_Copy_Construct@VPatchLayer@@@stlpmtx_std@@YAXPAVPatchLayer@@ABV1@@Z",
  "0x822a2ea0": "?_M_clear@?$vector@VOverlay@OutfitConfig@@V?$StlNodeAlloc@VOverlay@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
  "0x822bb3c8": "??$__push_heap@PAPAVRndDrawable@@HPAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVRndDrawable@@HHPAV1@P6A_N11@Z@Z",

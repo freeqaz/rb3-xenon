@@ -1551,7 +1551,7 @@ system/beatmatch/JoypadGuitarController.cpp:
 CalibrationPanel.cpp:
 	.pdata      start:0x821F1820 end:0x821F1830
 	.pdata      start:0x821F1838 end:0x821F1840
-	.pdata      start:0x821F1840 end:0x821F1858
+	.pdata      start:0x821F1840 end:0x821F1848
 	.pdata      start:0x82228488 end:0x82228490
 	.pdata      start:0x82228490 end:0x82228498
 	.pdata      start:0x82228498 end:0x822286D8
@@ -1562,7 +1562,7 @@ CalibrationPanel.cpp:
 	.pdata      start:0x82228758 end:0x822287D8
 	.text       start:0x822728E0 end:0x82272A60
 	.text       start:0x82272AD0 end:0x82272B20
-	.text       start:0x82272B20 end:0x82272C00
+	.text       start:0x82272B20 end:0x82272B88
 	.text       start:0x82608D34 end:0x82608D90
 	.text       start:0x82608D90 end:0x82608E44
 	.text       start:0x82608E48 end:0x8260BD18
@@ -2028,9 +2028,11 @@ ScrollSelect.cpp:
 	.text       start:0x82C4A538 end:0x82C4A558
 
 UIScreen.cpp:
+	.pdata      start:0x821F1848 end:0x821F1858
 	.pdata      start:0x82244BC8 end:0x82244D58
 	.pdata      start:0x82244D58 end:0x82244DC8
 	.pdata      start:0x82244DC8 end:0x82244DD0
+	.text       start:0x82272B88 end:0x82272C00
 	.text       start:0x827EFF08 end:0x827F1AC0
 	.text       start:0x827F1AC0 end:0x827F20EC
 	.text       start:0x827F20EC end:0x827F213C
@@ -3173,6 +3175,7 @@ MeterEffect.cpp:
 	.text       start:0x82C43390 end:0x82C43420
 
 UI.cpp:
+	.pdata      start:0x821F17E8 end:0x821F17F0
 	.pdata      start:0x82245D40 end:0x82245D60
 	.pdata      start:0x82245D60 end:0x82245D70
 	.pdata      start:0x82245D70 end:0x82245D78
@@ -3188,6 +3191,7 @@ UI.cpp:
 	.pdata      start:0x82245E90 end:0x82245E98
 	.pdata      start:0x82245E98 end:0x82246018
 	.pdata      start:0x82246018 end:0x82246128
+	.text       start:0x82272308 end:0x822723AC
 	.text       start:0x828023A0 end:0x828024B0
 	.text       start:0x828024B0 end:0x82802530
 	.text       start:0x82802530 end:0x82802588
@@ -6570,6 +6574,7 @@ PreloadPanel.cpp:
 	.text       start:0x82C49F00 end:0x82C49F60
 
 PanelDir.cpp:
+	.pdata      start:0x821F17F8 end:0x821F1808
 	.pdata      start:0x82214470 end:0x82214498
 	.pdata      start:0x822145F8 end:0x82214610
 	.pdata      start:0x82214610 end:0x82214618
@@ -6580,6 +6585,7 @@ PanelDir.cpp:
 	.pdata      start:0x822462C8 end:0x82246398
 	.pdata      start:0x82246398 end:0x822463A0
 	.pdata      start:0x822463A0 end:0x822463C8
+	.text       start:0x82272540 end:0x82272634
 	.text       start:0x824CF890 end:0x824CFA78
 	.text       start:0x824D0EF0 end:0x824D1120
 	.text       start:0x824D1120 end:0x824D11A0
@@ -12882,15 +12888,14 @@ band3/meta_band/PassiveMessenger.cpp:
 	.text       start:0x82C46588 end:0x82C46688
 
 MessageTimer.cpp:
-	.pdata      start:0x821F17E0 end:0x821F17F0
-	.pdata      start:0x821F17F8 end:0x821F1808
+	.pdata      start:0x821F17E0 end:0x821F17E8
 	.pdata      start:0x821F1808 end:0x821F1810
 	.pdata      start:0x821F1858 end:0x821F1868
 	.pdata      start:0x821F1868 end:0x821F1870
 	.pdata      start:0x821F1870 end:0x821F1878
-	.text       start:0x822722B0 end:0x82272404
+	.text       start:0x822722B0 end:0x82272308
+	.text       start:0x822723AC end:0x82272404
 	.text       start:0x82272408 end:0x822724E8
-	.text       start:0x82272540 end:0x82272634
 	.text       start:0x82272638 end:0x822726A8
 	.text       start:0x82272C00 end:0x82272CF8
 	.text       start:0x82272CF8 end:0x82272DB4
