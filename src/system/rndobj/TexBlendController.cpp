@@ -126,18 +126,34 @@ RndTexBlendController::GetBlendState(float &blend, float influence) const {
             state = kBlendCustom;
         } else {
             float dist;
-            if (GetCurrentDistance(dist) && (bool)(mReferenceDistance > 0.0f)) {
-                if (dist < mReferenceDistance) {
-                    float denom = mReferenceDistance - mMinDistance;
-                    if (denom > 0.0f) {
-                        state = kBlendNear;
-                        blend = (mReferenceDistance - Max(dist, mMinDistance)) / denom;
-                    }
-                } else if (dist > mReferenceDistance) {
-                    float denom = mMaxDistance - mReferenceDistance;
-                    if (denom > 0.0f) {
-                        state = kBlendFar;
-                        blend = (Min(dist, mMaxDistance) - mReferenceDistance) / denom;
+            if (GetCurrentDistance(dist)) {
+                // Both arms of this test assign a float and a bool: retail's
+                // false arm carries a dead `fmr f0, f31` (refDist = 0.0f)
+                // alongside `li r11, 0`, which is why it branches here instead
+                // of using the preset-and-clear bool idiom.  Same shape as
+                // IsValid()'s `distValid` above.
+                float refDist;
+                bool refValid;
+                if (mReferenceDistance > 0.0f) {
+                    refDist = mReferenceDistance;
+                    refValid = true;
+                } else {
+                    refDist = 0.0f;
+                    refValid = false;
+                }
+                if (refValid) {
+                    if (dist < refDist) {
+                        float denom = refDist - mMinDistance;
+                        if (denom > 0.0f) {
+                            state = kBlendNear;
+                            blend = (refDist - Max(dist, mMinDistance)) / denom;
+                        }
+                    } else if (dist > refDist) {
+                        float denom = mMaxDistance - refDist;
+                        if (denom > 0.0f) {
+                            state = kBlendFar;
+                            blend = (Min(dist, mMaxDistance) - refDist) / denom;
+                        }
                     }
                 }
             }
