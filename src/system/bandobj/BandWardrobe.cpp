@@ -1004,10 +1004,13 @@ DataNode BandWardrobe::OnGetMatchingDude(DataArray *da) {
     BandCharacter *target = da->Obj<BandCharacter>(2);
     for (int i = 0; i < 4; i++) {
         BandCharacter *bc = GetCharacter(i);
-        if (bc && bc->Driver() && bc != target
-            && BandCharDesc::GetAnimInstrument(bc->mInstrumentType)
-                == BandCharDesc::GetAnimInstrument(target->mInstrumentType))
-            return DataNode(bc);
+        if (bc && bc->Driver() && bc != target) {
+            Symbol inst = bc->mInstrumentType;
+            Symbol targetInst = target->mInstrumentType;
+            if (BandCharDesc::GetAnimInstrument(inst)
+                == BandCharDesc::GetAnimInstrument(targetInst))
+                return DataNode(bc);
+        }
     }
     return DataNode((Hmx::Object *)0);
 }
