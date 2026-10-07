@@ -52,6 +52,8 @@
 #include "utl/BeatMap.h"
 #include "utl/Loader.h"
 #include "utl/TempoMap.h"
+#include "utl/MemTrack.h"
+#include "utl/MemTracker.h"
 
 #include <chrono>
 #include <climits>
@@ -65,8 +67,13 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <csignal>
+#include <sys/wait.h>
+#include <unistd.h>
 
 extern DataArray *gSystemConfig;
+extern MemTracker *gMemTracker; // utl/MemTrack.cpp, not in a header
+DataNode MemTrackLogDF(DataArray *); // utl/MemTrack.cpp, registered as "mem_log"
 
 // W16-TW's scripted pad back end (native/src/w16tw_phase.cpp): strong
 // ReadSingleJoypad / requestBreedWrite that stay inert unless gScripted is set.
@@ -1699,6 +1706,119 @@ void ClosetChecks() {
         EnterClosetChecks(w, gClosetClips.Ptr());
 }
 
+// ============================================================ StopLog ==
+// Retail fn_827C46A0 (StopLog) calls fn_827D4508 (MemTracker::StopLog) on
+// gMemTracker, then, when the file static gLog is set, deletes it through
+// vtable slot 0 and stores 0. fn_827D4508 writes lbl_8204BD5C = ")" to the
+// tracker's log at +0x1818C and stores 0 there, with no null test.
+// MemTracker::StartLog writes "(elf <arg0>)\n(data\n", TextFileStream turns
+// each "\n" into "\r\n", and StartLog names the file <base>_%03i.txt with the
+// first number that does not exist yet.
+// So "mem_log 1" then "mem_log 0" must leave a closed file whose bytes are
+// "(elf <arg0>)\r\n(data\r\n)" and a null tracker log, and a second
+// "mem_log 1" opens the next number (gLog was cleared). MemTrackInit hooks
+// every allocation from then on, so this runs in a forked child.
+std::string ReadLocal(const char *name) {
+    std::string out;
+    File *f = NewFile(name, 0x10002);
+    if (!f)
+        return "<missing>";
+    char buf[256];
+    int n;
+    while ((n = f->Read(buf, sizeof(buf))) > 0)
+        out.append(buf, n);
+    delete f;
+    return out;
+}
+
+bool StopLogChild(std::string &why) {
+    if (TheSystemArgs.empty()) {
+        static char arg0[] = "rb3-render";
+        TheSystemArgs.push_back(arg0);
+    }
+    const char *names[] = { "mem_log_000.txt", "mem_log_001.txt", "mem_log_002.txt" };
+    for (const char *n : names)
+        if (FileExists(n, 0x10002)) {
+            why = std::string("fixture: ") + n + " already exists";
+            return false;
+        }
+    MemTrackInit(0, 64, false);
+    if (!gMemTracker) {
+        why = "fixture: MemTrackInit left gMemTracker null";
+        return false;
+    }
+    DataArray *on = new DataArray(2);
+    on->Node(0) = Symbol("mem_log");
+    on->Node(1) = 1;
+    DataArray *off = new DataArray(2);
+    off->Node(0) = Symbol("mem_log");
+    off->Node(1) = 0;
+    std::string want = std::string("(elf ") + TheSystemArgs.front() + ")\r\n(data\r\n)";
+    char s[512];
+    bool ok = true;
+    MemTrackLogDF(on);
+    bool opened = gMemTracker->mLog != nullptr;
+    MemTrackLogDF(off);
+    bool cleared = gMemTracker->mLog == nullptr;
+    std::string got0 = ReadLocal(names[0]);
+    MemTrackLogDF(on);
+    bool next = FileExists(names[1], 0x10002);
+    MemTrackLogDF(off);
+    std::string got1 = ReadLocal(names[1]);
+    ok = opened && cleared && got0 == want && next && got1 == want;
+    std::string g0 = got0, g1 = got1, wantShown = want;
+    for (std::string *g : { &g0, &g1, &wantShown })
+        for (char &c : *g)
+            if (c == '\r')
+                c = '|';
+            else if (c == '\n')
+                c = '/';
+    snprintf(s, sizeof(s),
+             "opened %d cleared %d, %s = '%s', second log at %s %d = '%s' (want '%s' with | = CR, / = LF)",
+             opened, cleared, names[0], g0.c_str(), names[1], next, g1.c_str(),
+             wantShown.c_str());
+    why = s;
+    for (const char *n : names)
+        FileDelete(n);
+    return ok;
+}
+
+void StopLogChecks() {
+    fflush(stdout);
+    fflush(stderr);
+    int fds[2];
+    if (pipe(fds) != 0) {
+        Gate("uf-stoplog", false, "pipe failed");
+        return;
+    }
+    pid_t pid = fork();
+    if (pid == 0) {
+        close(fds[0]);
+        alarm(60);
+        std::string why;
+        bool ok = StopLogChild(why);
+        (void)!write(fds[1], why.data(), why.size());
+        close(fds[1]);
+        _exit(ok ? 0 : 1);
+    }
+    close(fds[1]);
+    std::string why;
+    char buf[512];
+    ssize_t n;
+    while ((n = read(fds[0], buf, sizeof(buf))) > 0)
+        why.append(buf, n);
+    close(fds[0]);
+    int status = 0;
+    waitpid(pid, &status, 0);
+    bool ok = WIFEXITED(status) && WEXITSTATUS(status) == 0;
+    if (WIFSIGNALED(status))
+        why += std::string(" [child killed by signal ") + strsignal(WTERMSIG(status)) + "]";
+    Gate("uf-stoplog", ok,
+         "mem_log 1 / mem_log 0 twice in a forked child after MemTrackInit: the tracker log "
+         "opened then cleared, the closed file ends in \")\", the next log takes the next number: %s",
+         why.c_str());
+}
+
 } // namespace
 
 int RunW16UFPhase(GateFn gate) {
@@ -1723,6 +1843,7 @@ int RunW16UFPhase(GateFn gate) {
     CrowdChecks();
     AppendDeltasChecks();
     ClosetChecks();
+    StopLogChecks();
     Hmx::Object::sFactories = savedFactories;
     return gRan;
 }
