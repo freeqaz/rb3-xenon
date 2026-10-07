@@ -80,9 +80,11 @@ public:
         kdTriList *mTriList; // LP64: separate 8-byte pointer
         union {
             float real;
+            // Little-endian hosts allocate bit-fields from the LSB, so the
+            // order is reversed here to keep index in the float's low 2 bits.
             struct {
-                unsigned int unused : 30;
                 unsigned int index : 2;
+                unsigned int unused : 30;
             };
         } mData;
         kdTriList *GetTriList() const { return mTriList; }
@@ -100,7 +102,24 @@ public:
         kdTriList *GetTriList() const { return mData.triList; }
         void SetTriList(kdTriList *p) { mData.triList = p; }
 #endif
-        unsigned short mFlags;
+        // The kdTree ctor writes the low 15 bits with `rlwimi r8, r11, 0, 17, 31`,
+        // a bit-field store. Xenon bit-fields are MSB-first, so mIsLeaf (declared
+        // first) is 0x8000 and mIndex is the low 15 bits.
+        union {
+            unsigned short mFlags;
+#ifdef HX_NATIVE
+            // LSB-first on little-endian hosts: same bit positions as Xenon.
+            struct {
+                unsigned short mIndex : 15;
+                unsigned short mIsLeaf : 1;
+            };
+#else
+            struct {
+                unsigned short mIsLeaf : 1;
+                unsigned short mIndex : 15;
+            };
+#endif
+        };
 
         unsigned short GetIsLeaf() const { return mFlags & 0x8000; }
 
@@ -164,11 +183,13 @@ public:
                 mData.index = 2;
             }
 
-            unsigned int axis = mData.index;
-            mData.real = (box.mMax[axis] - box.mMin[axis]) * 0.5f + box.mMin[axis];
-            mData.index = axis;
-
+            float idxDiff = box.mMax[mData.index] - box.mMin[mData.index];
+            float midSplit = idxDiff / 2.0f + box.mMin[mData.index];
+            unsigned char splitAxis = mData.index;
             unsigned int numContains = 0;
+            mData.real = midSplit;
+            mData.index = splitAxis;
+
             double fsum = 0.0;
             FOREACH (it, items) {
                 Triangle *cur = *it;
@@ -192,9 +213,9 @@ public:
                 }
             }
             if (numContains != 0) {
-                unsigned int idx = mData.index;
+                unsigned char meanAxis = mData.index;
                 mData.real = (float)(fsum / numContains);
-                mData.index = idx;
+                mData.index = meanAxis;
             }
             return true;
         }
@@ -215,7 +236,8 @@ public:
         mNodes = new kdTreeNode[0x8000];
         // the low 15 bits of each node's flags hold its own index
         for (u16 i = 0; i < 0x8000; i++) {
-            mNodes[i].mFlags = (mNodes[i].mFlags & 0x8000) | (i & 0x7FFF);
+            kdTreeNode &node = mNodes[i];
+            node.mIndex = i;
         }
     }
     ~kdTree() { delete[] mNodes; }
@@ -242,16 +264,11 @@ void kdTree<T>::kdTreeNode::Pack(
     kdTreeNode *pBase,
     unsigned char uc
 ) {
-    if (uc < 0xF) {
-        typename std::list<Triangle *>::iterator it = items.begin();
-        if (it != items.end()) {
-            unsigned int uCount = 0;
-            do {
-                ++it;
-                uCount++;
-            } while (it != items.end());
-
-            if (uCount >= 10) {
+    // items.size() is STLport's distance(begin(), end()); its by-value
+    // iterator copy is retail's home store at 0x54(r31).
+    if (uc < 0xF && items.size() >= 10) {
+        typename std::list<Triangle *>::iterator it;
+        {
             bool bFound = false;
             if (s == 0) {
                 bFound = FindSplit_Mean(inDimensions, items);
@@ -325,7 +342,6 @@ void kdTree<T>::kdTreeNode::Pack(
                     }
                 }
             }
-        }
         }
     }
 

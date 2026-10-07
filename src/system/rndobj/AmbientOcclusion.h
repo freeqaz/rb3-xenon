@@ -15,9 +15,12 @@ public:
         kQuality_Max = 2
     };
     struct Edge {
-        short v0;
-        short v1;
-        short midpoint;
+        // Unsigned, like RndMesh::Face's indices: TessellateMesh seeds
+        // `midpoint = -1` as 0x0000FFFF (lis 0 / ori 0xffff) and stores the
+        // running vertex count with no extsh.
+        unsigned short v0;
+        unsigned short v1;
+        unsigned short midpoint;
         bool operator<(const Edge &) const;
     };
 
