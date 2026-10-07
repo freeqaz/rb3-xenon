@@ -12,9 +12,15 @@ CLAUDE.md "Whole-binary A/B measurement"):
 
   1. Preflight: target must be a LINKED WORKTREE (never the shared main
      repo), with clean tracked state. `config/45410914/symbols.txt` drift is
-     auto-restored (footgun: drift breaks the split).
-  2. Classify the patch by touched paths: map / splits / configgen / source.
-     A patch touching symbols.txt is refused outright. A patch touching no
+     auto-restored (footgun: drift breaks the split); the discarded drift is
+     saved to the run dir first, so a deliberate edit is never lost silently.
+  2. Classify the patch by touched paths: map / splits / symbols / configgen /
+     source. A patch touching symbols.txt is the `symbols` kind (a deliberate
+     carve repair, lane W16-SP) -- it used to be refused outright, which forced
+     four lanes (W16-QP, QZ, QI, RC) to hand-run their carve measurements. Under
+     --from-dirty a dirty symbols.txt is still treated as drift (the tool cannot
+     tell drift from intent there); commit a deliberate edit and use
+     --pick/--revert/--patch. A patch touching no
      build-relevant path is refused (an inert A/B measures nothing) unless
      --allow-inert.
   3. SETTLE: build until a build performs ZERO work (no MSVC/SPLIT/PATCH
@@ -28,7 +34,10 @@ CLAUDE.md "Whole-binary A/B measurement"):
      measures BY EXACT KEY (a missing key is an ERROR, never a default 0 —
      `measures.get('masked_equal', 0)` once read as "no masked functions").
   5. APPLY the patch; verify it actually changed tracked files.
-  6. FORCE what the change kind needs: map/splits => restore symbols.txt,
+  6. FORCE what the change kind needs: map/splits/symbols => restore
+     symbols.txt to the COMMITTED file BEFORE applying (so a symbols patch's
+     own hunks land on the file they were written against and are NOT then
+     reverted),
      rm the renamer stamp, touch config.yml (a map edit is INERT without a
      forced re-split: lane CF-1 lost a leg to "[APPLIED] ... 0 files
      patched"); configgen => bump configure.py's mtime so leg B's ninja
@@ -176,6 +185,16 @@ CONFIG_YML_REL = f"config/{TITLE}/config.yml"
 TOOL_REL = "tools/ab_measure.py"
 
 MAP_PATHS = {"scripts/target_symbol_map.json", "scripts/symbol_aliases.json"}
+# Kinds whose legs this tool drives to a SPLIT FIXED POINT itself (forced
+# re-split + resplit_fixed_point on BOTH legs). For exactly these kinds the
+# tool OWNS the "is the split a fixed point of its input?" verdict -- see
+# fixed_point_env() for why that matters to the split-guard.
+SPLIT_FORCING_KINDS = frozenset({"map", "splits", "symbols"})
+# scripts/verify_split_current.py's switch for callers that own the
+# fixed-point verdict (it is the guard's own documented interface; an env var
+# because the split rule's command line is baked into build.ninja).
+NO_FIXED_POINT_ENV = "SPLIT_GUARD_NO_FIXED_POINT_CHECK"
+SPLIT_GUARD_REWROTE_MARK = "[split-guard] THE SPLIT REWROTE ITS OWN INPUT"
 SPLIT_PATHS = {f"config/{TITLE}/splits.txt", CONFIG_YML_REL}
 # ⚠ THIS SET IS HAND-MAINTAINED AND HAS DRIFTED FROM THE ACTUAL BUILD INPUTS
 # ONCE ALREADY. A configgen path that is missing here does NOT merely mislabel
@@ -277,12 +296,59 @@ def unresolved_headings(log_text):
             (UNRESOLVED_LINE_RE.match(l) for l in log_text.splitlines()) if m]
 
 
-def build_env():
+def build_env(owns_fixed_point=False):
     """Environment for every build this tool runs: the caller's, minus the
-    unresolved-splits escape hatch."""
+    unresolved-splits escape hatch, with the split-guard's fixed-point check
+    set by THIS TOOL and never inherited (see fixed_point_env)."""
     env = dict(os.environ)
     env.pop(ALLOW_UNRESOLVED_ENV, None)
+    env.pop(NO_FIXED_POINT_ENV, None)
+    env.update(fixed_point_env(owns_fixed_point))
     return env
+
+
+def fixed_point_env(owns_fixed_point):
+    """PURE: the split-guard env this tool's builds run under.
+
+    WHY (lane W16-SP, 2026-10-07). The split-guard
+    (scripts/verify_split_current.py --complete, added AFTER lane ABSPLIT-1
+    built resplit_fixed_point) fails the SPLIT edge with rc=1 whenever the
+    split rewrites symbols.txt. A pin that brings both halves of a dtk
+    mis-carve into one pinned unit makes jeff's Class-4 merge do exactly that
+    on leg B's FIRST split -- so the leg-B build failed, the tool refused, and
+    the fixed-point iteration that exists for precisely this case never ran.
+    W16-QP hit it (`20261006-144832-w16qp-notetube-62809`), and every carve
+    lane since hand-ran its A/B.
+
+    For SPLIT_FORCING_KINDS the tool drives BOTH legs to a fixed point itself
+    and REFUSES one that does not converge or oscillates, so it owns the very
+    verdict the guard enforces -- the case the guard's NO_FIXED_POINT_ENV
+    exists for. For every OTHER kind nothing here re-splits to convergence, so
+    the guard stays LIVE and a tree whose split rewrites its input is still
+    refused (split_guard_refusal names it). The caller's own setting is never
+    inherited: build_env() scrubs it first.
+    """
+    return {NO_FIXED_POINT_ENV: "1"} if owns_fixed_point else {}
+
+
+def split_guard_refusal(log_text, owns_fixed_point):
+    """PURE: a specific refusal reason when a failed build was the split-guard
+    firing, else None (the caller falls back to the generic build refusal)."""
+    if SPLIT_GUARD_REWROTE_MARK not in (log_text or ""):
+        return None
+    if owns_fixed_point:
+        return ("the split-guard fired although this run set "
+                f"{NO_FIXED_POINT_ENV}=1 -- the switch did not reach the "
+                "split rule (build.ninja's split command changed?). Not "
+                "measurable until that is understood.")
+    return ("the SPLIT REWROTE ITS OWN INPUT (config/<title>/symbols.txt) "
+            "on a run whose patch kind does not re-split to a fixed point, so "
+            "the guard is LIVE here and refused the build. The tree being "
+            "measured is not a split fixed point: its committed symbols.txt "
+            "is not what the split writes. Fix the TREE first (build once, "
+            "commit the symbols.txt the split wrote), then measure. A "
+            "splits/map/symbols patch would be driven to the fixed point "
+            "instead; this one is not, by design.")
 
 # Required top-level measures keys. Per-unit measures legitimately omit
 # zero-valued keys (serde skips defaults; 3,005/3,914 units omit
@@ -633,12 +699,15 @@ def classify_patch(numstat_paths):
     relevant = []
     for p in numstat_paths:
         if p == SYMBOLS_REL:
-            raise Refusal(
-                "classify",
-                f"patch touches {SYMBOLS_REL}. symbols.txt is derived "
-                "split-state drift and must never be part of a measured change.",
-            )
-        if p in MAP_PATHS:
+            # A deliberate carve repair (lane W16-SP). It used to be REFUSED
+            # as "derived split-state drift", but a hand carve fix is an
+            # INPUT the split preserves, and refusing it pushed four lanes
+            # (W16-QP, QZ, QI, RC) onto hand-run protocols. It is measured
+            # like a splits patch (forced re-split, both legs at a fixed
+            # point) and check_symbols_fixed_point() refuses the case the old
+            # rule was guarding against: an edit the split simply undoes.
+            kinds.add("symbols"); relevant.append(p)
+        elif p in MAP_PATHS:
             kinds.add("map"); relevant.append(p)
         elif p in SPLIT_PATHS:
             kinds.add("splits"); relevant.append(p)
@@ -660,6 +729,14 @@ class ABMeasure:
         # symbols.txt content the most recent forced split CONSUMED; the input
         # half of the fixed-point test. Set by force_split(), never elsewhere.
         self._split_input_sha = None
+        # Set by main() from the patch kind, BEFORE the first build: True only
+        # when both legs are driven to a split fixed point by this tool (see
+        # fixed_point_env). Never True for a plain source run.
+        self.owns_split_fixed_point = False
+        # Full shas, per leg: the committed/patched file each leg's first
+        # forced split consumed, and the fixed point it converged to.
+        self.split_start_sha = {}
+        self.fixed_point_sha = {}
         self.say = verbose_print
         self.ninja = self.wt / "tools" / "ninja-locked"
         self.evidence = {}   # verification evidence, goes into result.json
@@ -674,7 +751,7 @@ class ABMeasure:
         log = self.rundir / log_name
         t0 = time.time()
         rc, out = run(cmd, cwd=self.wt, log_path=log, check=False,
-                      env=build_env())
+                      env=build_env(self.owns_split_fixed_point))
         dt = time.time() - t0
         counts = count_lines(out)
         if rc != 0:
@@ -693,6 +770,9 @@ class ABMeasure:
                     "`base_path: None` and can never pair; fix the patch "
                     f"rather than setting {ALLOW_UNRESOLVED_ENV} (this tool "
                     "scrubs it from every build).")
+            guard_why = split_guard_refusal(out, self.owns_split_fixed_point)
+            if guard_why:
+                raise Refusal("split-guard", f"{guard_why} (log: {log})")
             tail = "\n".join(out.splitlines()[-30:])
             raise Refusal("build",
                           f"ninja failed rc={rc} (log: {log})\n--- tail ---\n{tail}")
@@ -752,6 +832,7 @@ class ABMeasure:
             max_resplits=self.max_resplit,
             stage=f"leg{leg}-resplit",
             leg=leg)
+        self.fixed_point_sha[leg] = res["shas"][-1]
         self.evidence[f"leg{leg}_split_resplits_to_fixed_point"] = res["resplits"]
         self.evidence[f"leg{leg}_split_shas"] = [s[:12] for s in res["shas"]]
         if res["resplits"]:
@@ -845,7 +926,20 @@ class ABMeasure:
         # so a stale runner costs seconds instead of a hand-rolled protocol.
         self.tool_freshness(allow_stale=allow_stale_tool)
         # symbols.txt drift is expected and auto-restored; anything else dirty
-        # makes the A leg unattributable.
+        # makes the A leg unattributable. The discarded content is SAVED first
+        # (lane W16-SP): a --from-dirty caller's deliberate carve edit used to
+        # vanish here without a word.
+        _, sym_drift = git(self.wt, "diff", "--", SYMBOLS_REL)
+        if sym_drift.strip():
+            keep = self.rundir / "discarded_symbols_drift.diff"
+            keep.write_text(sym_drift)
+            self.evidence["discarded_symbols_drift"] = str(keep)
+            self.say(f"  [preflight] symbols.txt was modified; restoring the "
+                     f"committed file (saved -> {keep}). If that was a "
+                     "DELIBERATE carve edit rather than split drift, commit "
+                     "it and measure with --pick/--revert/--patch: the "
+                     "symbols kind is measured from a commit or diff, never "
+                     "from --from-dirty, where drift and intent look alike.")
         self.restore_symbols()
         _, status = git(self.wt, "status", "--porcelain")
         dirty, untracked = [], []
@@ -956,8 +1050,10 @@ class ABMeasure:
                      "=> both legs must be measured in freshly-split state)")
             # symbols.txt was already restored just above, unconditionally, so
             # the sha force_split() records is the COMMITTED file — the same
-            # starting point leg B gets in apply_patch().
+            # starting point leg B gets in apply_patch() (plus, for a symbols
+            # patch, the patch's own hunks).
             self.force_split()
+            self.split_start_sha["A"] = self._split_input_sha
         # ⚠ NO restore_symbols() below this point — see the docstring: it is a
         # discovered dep of the SPLIT edge AND a split output, so restoring
         # inside the loop re-dirties the graph and the loop cannot converge.
@@ -1082,27 +1178,39 @@ class ABMeasure:
         return self.gen_ruler(name, objdiff_bin, "none")
 
     def apply_patch(self, patch_path, kinds):
+        split_forcing = bool(kinds & SPLIT_FORCING_KINDS)
+        if split_forcing:
+            # Restore the COMMITTED symbols.txt BEFORE applying, never after
+            # (lane W16-SP). Leg A's split left the file at leg A's fixed
+            # point; a symbols patch must apply to the file it was written
+            # against, and a restore AFTER `git apply` would silently revert
+            # that patch's own hunks -- leg B would then measure HEAD's carve
+            # under a symbols label. For a patch that does not touch
+            # symbols.txt the order is immaterial (one file, untouched by it).
+            self.restore_symbols()
         rc, out = git(self.wt, "apply", "--check", str(patch_path), check=False)
         if rc != 0:
             raise Refusal("apply", f"patch does not apply cleanly:\n{out}")
         git(self.wt, "apply", str(patch_path))
         _, status = git(self.wt, "status", "--porcelain")
         changed = [l[3:] for l in status.splitlines() if not l.startswith("??")]
-        changed_non_symbols = [p for p in changed if p != SYMBOLS_REL]
-        if not changed_non_symbols:
+        applied = [p for p in changed
+                   if p != SYMBOLS_REL or "symbols" in kinds]
+        if not applied:
             raise Refusal("apply",
                           "patch applied but git sees NO modified tracked files "
                           "— absent-vs-absent leg; refusing.")
-        self.evidence["applied_files"] = changed_non_symbols
-        self.say(f"  [apply] patch applied; modified: {changed_non_symbols}")
+        self.evidence["applied_files"] = applied
+        self.say(f"  [apply] patch applied; modified: {applied}")
         # Force what the change kind needs (footgun 2: map edit inert
         # without a re-split).
-        if kinds & {"map", "splits"}:
-            self.say("  [force] map/splits change: restore symbols.txt, rm "
-                     "renamer stamp, touch config.yml (forces re-split; without "
-                     "it the leg is INERT: '[APPLIED] ... 0 files patched')")
-            self.restore_symbols()
+        if split_forcing:
+            self.say("  [force] map/splits/symbols change: committed "
+                     "symbols.txt restored BEFORE apply, rm renamer stamp, "
+                     "touch config.yml (forces re-split; without it the leg is "
+                     "INERT: '[APPLIED] ... 0 files patched')")
             self.force_split()
+            self.split_start_sha["B"] = self._split_input_sha
         if "configgen" in kinds:
             # ⛔ Do NOT run configure.py here (lane W16-NG). It would run
             # BEFORE the split, reading build/<title>/config.json -- the
@@ -1169,9 +1277,42 @@ class ABMeasure:
         # matters twice over: the assertions must see the build immediately
         # after apply (footgun 3), and a patch that fails them must refuse
         # CHEAPLY rather than after N more re-splits.
-        if kinds & {"map", "splits"}:
+        if kinds & SPLIT_FORCING_KINDS:
             self.converge_split("B", "legB_build")
+            self.symbols_outcome(kinds)
         return res
+
+    def symbols_outcome(self, kinds):
+        """After leg B's fixed point: decide (pure) and REPORT what landing
+        this patch actually requires. Saves leg B's fixed-point symbols.txt
+        as a diff against HEAD whenever it is not HEAD's file, because a
+        patch whose split rewrites symbols.txt is INCOMPLETE without that
+        rewrite: landed alone, main's next build fails the split-guard."""
+        out = check_symbols_fixed_point(
+            kinds, self.split_start_sha.get("A"), self.fixed_point_sha.get("A"),
+            self.split_start_sha.get("B"), self.fixed_point_sha.get("B"))
+        _, d = git(self.wt, "diff", "--", SYMBOLS_REL)
+        if d.strip():
+            keep = self.rundir / "legB_symbols_fixed_point.diff"
+            keep.write_text(d)
+            out["legB_fixed_point_diff_vs_head"] = str(keep)
+        self.evidence["symbols_fixed_point"] = out
+        if not out["legA_start_is_fixed_point"]:
+            self.say("  [symbols] ⚠ leg A's COMMITTED symbols.txt is NOT a "
+                     "split fixed point (leg A converged away from it): the "
+                     "base tree itself fails the split-guard on a plain build. "
+                     "Both legs are still read at their fixed points.")
+        if out["patch_is_fixed_point"]:
+            self.say("  [symbols] leg B's starting symbols.txt IS its split "
+                     "fixed point: the patch is complete as written.")
+        else:
+            self.say("  [symbols] ⚠ PATCH IS NOT A SPLIT FIXED POINT: the "
+                     "split rewrote leg B's symbols.txt (e.g. a Class-4 "
+                     "merge). Leg B was measured AT the fixed point, which is "
+                     "what main reaches after one build. To LAND it, commit "
+                     "leg B's fixed-point symbols.txt with the patch — saved "
+                     f"as a diff vs HEAD: "
+                     f"{out.get('legB_fixed_point_diff_vs_head')}")
 
 
 DIFF_PATH_RE = re.compile(r"^diff --git a/(.+?) b/(.+)$", re.M)
@@ -1290,8 +1431,13 @@ class TreeGuard:
     unchanged, and if it ever cannot, it says so in a banner it is impossible
     to miss. Opt out with --keep-applied (which still prints the banner).
 
-    symbols.txt is DELIBERATELY EXCLUDED: it is derived split-state drift the
-    tool already owns and auto-restores, never caller content.
+    symbols.txt is DELIBERATELY EXCLUDED from the diff comparison: it is
+    split-state the tool owns, never caller content (preflight restores it
+    to HEAD BEFORE capture(), saving any discarded drift to the run dir). It
+    IS put back to HEAD by restore() (lane W16-SP): a map/splits run used to
+    hand the tree back with splits/map at leg A but symbols.txt at LEG B's
+    fixed point -- an inconsistent pair whose next build re-split from a
+    file no committed state ever held.
     """
 
     def __init__(self, ab):
@@ -1377,6 +1523,10 @@ class TreeGuard:
         if not self.armed:
             return {"ok": True, "action": "not_armed"}
         try:
+            # Tool-owned; its pre-run content is HEAD's by construction (see
+            # the class docstring). check=False: a fixture repo has no such
+            # file, and a missing path must not abort the real restore below.
+            git(self.wt, "checkout", "--", SYMBOLS_REL, check=False)
             plan = plan_restore(self.pre_diff, self._diff(),
                                 self.pre_untracked, self._untracked(),
                                 self.patch_diff)
@@ -1561,6 +1711,38 @@ class TreeGuard:
         return res
 
 
+def check_symbols_fixed_point(kinds, a_start, a_fixed, b_start, b_fixed):
+    """PURE: what the two legs' split fixed points say about the patch.
+
+    REFUSES the case the old blanket symbols.txt refusal existed for: a patch
+    whose only build-relevant change is symbols.txt and whose split converges
+    back to leg A's fixed point -- the split UNDID the edit, so leg B measures
+    leg A's state under a symbols label (absent-vs-absent). Any other kind
+    present (splits/map) can legitimately leave symbols.txt where leg A's is,
+    so it is not refused on that ground.
+    """
+    if not (a_start and a_fixed and b_start and b_fixed):
+        raise Refusal("symbols-fixed-point",
+                      "a leg has no recorded split start/fixed-point sha — "
+                      "the fixed-point bookkeeping did not run; refusing "
+                      "rather than describing a state nobody measured.")
+    relevant = set(kinds) & {"map", "splits", "symbols", "configgen", "source"}
+    if relevant == {"symbols"} and b_fixed == a_fixed:
+        raise Refusal(
+            "symbols-fixed-point",
+            "symbols.txt-only patch, but leg B's split converged to EXACTLY "
+            "leg A's fixed point: the split UNDID the edit (it rewrites what "
+            "it disagrees with), so leg B is leg A again and the A/B would "
+            "measure nothing. Check the edit against the split's own carve "
+            "rules (a .pdata BeginAddress, a Class-4 merge, a size that ends "
+            "inside a symbol) — the split, not this patch, decides the carve.")
+    return {"legA_start_is_fixed_point": a_start == a_fixed,
+            "patch_is_fixed_point": b_start == b_fixed,
+            "legB_fixed_point_equals_legA": b_fixed == a_fixed,
+            "shas": {"legA_start": a_start[:12], "legA_fixed": a_fixed[:12],
+                     "legB_start": b_start[:12], "legB_fixed": b_fixed[:12]}}
+
+
 def check_legb_counts(kinds, counts):
     """Pure leg-B application assertions. Extracted from leg_b_build so the
     selftest can DRIVE EVERY REFUSAL BRANCH without a build — in particular
@@ -1583,10 +1765,10 @@ def check_legb_counts(kinds, counts):
             "are still leg A's, so leg B would measure leg A's generated "
             "output (a vacuous A/B).",
         )
-    if kinds & {"map", "splits"} and counts["split"] == 0:
+    if kinds & SPLIT_FORCING_KINDS and counts["split"] == 0:
         raise Refusal(
             "legB-build",
-            "map/splits patch but the SPLIT step did not run in leg B — "
+            "map/splits/symbols patch but the SPLIT step did not run in leg B — "
             "the target objs are unchanged and the A/B is measuring nothing.",
         )
     if "map" in kinds:
@@ -2173,6 +2355,9 @@ def main():
             "source": "expect MSVC recompiles in leg B",
             "map": "will force re-split; renamer must report >0 files patched",
             "splits": "will force re-split; BOTH legs measured in fresh-split state",
+            "symbols": "deliberate symbols.txt edit: forced re-split on BOTH "
+                       "legs, leg B starting from HEAD+patch; refused if the "
+                       "split undoes it",
             "configgen": "leg B's build regenerates build.ninja via ninja's "
                          "generator edge (after the split, if one runs)",
         }
@@ -2180,7 +2365,18 @@ def main():
             print(f"  [classify] {k}: {expect[k]}")
 
         # --- settle + leg A ---
-        ab.settle(presplit=bool(kinds & {"map", "splits"}))
+        # Who owns the split fixed-point verdict is decided ONCE, from the
+        # kind, before the first build of either leg -- so both legs build
+        # under the same split-guard setting.
+        ab.owns_split_fixed_point = bool(kinds & SPLIT_FORCING_KINDS)
+        ab.evidence["owns_split_fixed_point"] = ab.owns_split_fixed_point
+        print(f"  [split-guard] fixed-point check "
+              + (f"handed to this tool ({NO_FIXED_POINT_ENV}=1): both legs "
+                 "are iterated to a split fixed point here and refused if "
+                 "they do not converge" if ab.owns_split_fixed_point else
+                 "LIVE: this patch kind does not re-split to a fixed point, "
+                 "so a split that rewrites its input is refused"))
+        ab.settle(presplit=ab.owns_split_fixed_point)
         # Pin the RULER before leg A is read, re-check after leg B (below).
         ruler_a = ruler_identity(ab.wt)
         print(f"  [ruler] default report edge scores on "
@@ -2291,7 +2487,7 @@ def main():
               f"(recompiles: {legb_counts['msvc']}, split={legb_counts['split']}, "
               f"patch_steps={legb_counts['patch']}, "
               f"settle iterations: {legb_res['attempts']})")
-        if kinds & {"map", "splits"}:
+        if kinds & SPLIT_FORCING_KINDS:
             # Leg-DEPENDENT data, so it is printed per leg, not as one number:
             # a leg whose committed symbols.txt is already the split's own
             # output converges in 0, while the other needs N (lane ABSPLIT-1's
@@ -2303,6 +2499,12 @@ def main():
                   f"{ab.evidence.get('legB_split_resplits_to_fixed_point')} "
                   "— BOTH read at a fixed point (one split per leg under-"
                   "reports bytes: measured +0 vs +120 B on ab5ebed3)")
+            sfp = ab.evidence.get("symbols_fixed_point") or {}
+            if sfp and not sfp.get("patch_is_fixed_point"):
+                print("  ⚠ LANDING: the patch is NOT a split fixed point; "
+                      "commit leg B's fixed-point symbols.txt with it "
+                      f"({sfp.get('legB_fixed_point_diff_vs_head')}), or "
+                      "main's next build fails the split-guard")
         print(f"  Δmatched={delta['matched_functions']:+d}  "
               f"Δmasked_equal={delta['masked_equal_functions']:+d}  "
               f"Δhonest={delta['honest']:+d}  "
@@ -2493,8 +2695,13 @@ def selftest():
               lambda: read_measures_strict(p_bad), expect_refusal=True)
         check("strict read REFUSES missing matched_functions",
               lambda: read_measures_strict(p_bad2), expect_refusal=True)
-        check("classify REFUSES a symbols.txt patch",
-              lambda: classify_patch([SYMBOLS_REL]), expect_refusal=True)
+        # W16-SP: a symbols.txt patch is the `symbols` kind now, not a refusal.
+        _k, _r = classify_patch([SYMBOLS_REL])
+        ok = _k == {"symbols"} and _r == [SYMBOLS_REL]
+        print(("  PASS" if ok else "  FAIL") + f"  [W16-SP] classify: a "
+              f"symbols.txt patch is kind {sorted(_k)} (want ['symbols'])")
+        if not ok:
+            fails.append("W16-SP classify symbols")
 
         # --- SAME-RULER guard (lane CZ-4) ----------------------------------
         # The objdiff-cli binary is not a ninja input, so swapping it between
@@ -2668,15 +2875,96 @@ def selftest():
         if not ok:
             fails.append(f"splits classify {paths}")
 
-    check("splits patch that also touches symbols.txt REFUSES",
-          lambda: classify_patch(["config/45410914/splits.txt", SYMBOLS_REL]),
+    _k, _ = classify_patch(["config/45410914/splits.txt", SYMBOLS_REL])
+    ok = _k == {"splits", "symbols"}
+    print(("  PASS" if ok else "  FAIL") + f"  [W16-SP] splits+symbols.txt "
+          f"patch classifies {sorted(_k)} (was a refusal before W16-SP)")
+    if not ok:
+        fails.append("W16-SP classify splits+symbols")
+
+    # ---- W16-SP: who owns the split-guard's fixed-point verdict ------------
+    # Each branch is driven both ways, so neither check can pass vacuously.
+    _old = os.environ.get(NO_FIXED_POINT_ENV)
+    try:
+        os.environ[NO_FIXED_POINT_ENV] = "1"      # a CALLER trying to bypass
+        e_src = build_env(False)
+        os.environ.pop(NO_FIXED_POINT_ENV, None)
+        e_spl = build_env(True)
+    finally:
+        if _old is None:
+            os.environ.pop(NO_FIXED_POINT_ENV, None)
+        else:
+            os.environ[NO_FIXED_POINT_ENV] = _old
+    ok = NO_FIXED_POINT_ENV not in e_src and e_spl.get(NO_FIXED_POINT_ENV) == "1"
+    print(("  PASS" if ok else "  FAIL") + "  [W16-SP] build_env: a non-split "
+          "run SCRUBS the caller's guard bypass (guard stays live), a "
+          f"split-forcing run sets it (src={NO_FIXED_POINT_ENV in e_src}, "
+          f"split={e_spl.get(NO_FIXED_POINT_ENV)})")
+    if not ok:
+        fails.append("W16-SP build_env guard ownership")
+    _glog = ("[1/9] SPLIT orig/45410914/default.xex\nFAILED: x\n"
+             + SPLIT_GUARD_REWROTE_MARK + " -- its output is not ...\n")
+    ok = (split_guard_refusal(_glog, False) is not None
+          and "LIVE" in split_guard_refusal(_glog, False)
+          and split_guard_refusal(_glog, True) is not None
+          and split_guard_refusal("FAILED: cl.exe error C2065", False) is None)
+    print(("  PASS" if ok else "  FAIL") + "  [W16-SP] split_guard_refusal "
+          "names the guard on its marker (either ownership) and stays None on "
+          "an ordinary compile failure")
+    if not ok:
+        fails.append("W16-SP split_guard_refusal")
+
+    # ---- W16-SP: the symbols kind's fixed-point adjudication ---------------
+    H, M, X = "a" * 64, "b" * 64, "c" * 64
+    check("[W16-SP] symbols-only patch whose split converges back to leg A's "
+          "fixed point REFUSES (the split undid the edit: inert)",
+          lambda: check_symbols_fixed_point({"symbols"}, H, H, X, H),
           expect_refusal=True)
+    check("[W16-SP] symbols-only patch whose fixed point differs from leg A "
+          "PASSES",
+          lambda: check_symbols_fixed_point({"symbols"}, H, H, X, X),
+          expect_refusal=False)
+    check("[W16-SP] splits patch with leg B fixed point == leg A's PASSES "
+          "(a pin need not move symbols.txt)",
+          lambda: check_symbols_fixed_point({"splits"}, H, H, H, H),
+          expect_refusal=False)
+    check("[W16-SP] missing fixed-point bookkeeping REFUSES",
+          lambda: check_symbols_fixed_point({"splits"}, H, H, None, H),
+          expect_refusal=True)
+    _o1 = check_symbols_fixed_point({"splits"}, H, H, H, M)   # QP merge shape
+    _o2 = check_symbols_fixed_point({"symbols"}, H, H, X, X)  # RC carve shape
+    ok = (_o1["patch_is_fixed_point"] is False
+          and _o1["legA_start_is_fixed_point"] is True
+          and _o2["patch_is_fixed_point"] is True)
+    print(("  PASS" if ok else "  FAIL") + "  [W16-SP] patch_is_fixed_point "
+          "is False for a pin whose split merges (W16-QP shape) and True for "
+          "a carve the split keeps (W16-RC shape)")
+    if not ok:
+        fails.append("W16-SP patch_is_fixed_point")
+    # SHAPE: apply_patch restores symbols.txt BEFORE `git apply`, never after,
+    # or a symbols patch's own hunks are reverted and leg B measures HEAD.
+    _src = inspect.getsource(ABMeasure.apply_patch).splitlines()
+    _code = [l for l in _src if not l.strip().startswith("#")]
+    _ri = [i for i, l in enumerate(_code) if "self.restore_symbols()" in l]
+    _ai = [i for i, l in enumerate(_code)
+           if '"apply", str(patch_path)' in l and "--check" not in l]
+    ok = len(_ri) == 1 and len(_ai) == 1 and _ri[0] < _ai[0]
+    print(("  PASS" if ok else "  FAIL") + "  [W16-SP] apply_patch restores "
+          f"symbols.txt exactly once, BEFORE git apply (restore at {_ri}, "
+          f"apply at {_ai})")
+    if not ok:
+        fails.append("W16-SP apply_patch restore order")
 
     # leg-B application assertions, every branch, no build required.
     base = {"msvc": 0, "split": 0, "patch": 0, "other_work": 0, "work": 0,
             "renamer_patched": None}
     check("legB splits patch with split=0 REFUSES (target objs unchanged)",
           lambda: check_legb_counts({"splits"}, dict(base)), expect_refusal=True)
+    check("[W16-SP] legB symbols patch with split=0 REFUSES",
+          lambda: check_legb_counts({"symbols"}, dict(base)), expect_refusal=True)
+    check("[W16-SP] legB symbols patch with split=1 PASSES",
+          lambda: check_legb_counts({"symbols"}, dict(base, split=1, work=1)),
+          expect_refusal=False)
     check("legB splits patch with split=1 PASSES",
           lambda: check_legb_counts({"splits"}, dict(base, split=1, work=1)),
           expect_refusal=False)
@@ -2770,7 +3058,10 @@ def selftest():
     _src = inspect.getsource(ABMeasure.apply_patch)
     _code = "\n".join(l.split("#", 1)[0] for l in _src.splitlines())
     ok = ('"configure.py"' not in _code and "CONFIGURE_TOUCH_REL" in _code
-          and "env=build_env()" in inspect.getsource(ABMeasure._ninja))
+          # W16-SP: build_env now takes the fixed-point ownership flag; the
+          # scrub of ALLOW_UNRESOLVED_ENV is unconditional inside it.
+          and "env=build_env(self.owns_split_fixed_point)"
+          in inspect.getsource(ABMeasure._ninja))
     print(("  PASS" if ok else "  FAIL") +
           "  apply_patch does NOT hand-run configure.py (it would run BEFORE "
           "the split); _ninja builds with the scrubbed env")
