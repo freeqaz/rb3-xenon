@@ -1,7 +1,7 @@
 // w16ts_link_support.cpp -- the link edge of W16-TS's phase (rb3-render only).
 //
 // native/src/w16ts_phase.cpp constructs a BandDirector and a ModifierMgr, which
-// makes their vtables, and through them three references nothing in the tree
+// makes their vtables, and through them references nothing in the tree
 // defines, reachable under --gc-sections:
 //
 //   * `Symbol hidden` (utl/Symbols3.h), read by Modifier::IsHidden. rb3-xenon
@@ -12,10 +12,9 @@
 //     BandDirector's hide-characters handler. Retail's 360 StartAnim lost the
 //     reader (BandCamShot.cpp's StartAnim note) but kept the zero-initialized
 //     static; nothing in the tree defines its storage.
-//   * StageKitConnected / StageKitSetFog, declared in BandDirector.cpp. The Stage
-//     Kit is an Xbox 360 USB peripheral. Natively none is connected, which is a
-//     real answer, not a stub: BandDirector's stagekit_fog handler asks first and
-//     then never sets the fog. SetFog is therefore unreachable here and says so.
+//
+//   StageKitConnected / StageKitSetFog were stubbed here until W16-UG. They are
+//   now the real Stage Kit driver, src/system/os/StageKit.cpp, in every target.
 //
 //   * PlatformMgr::CanSeeUserCreatedContent, reached from TourCharRemote's
 //     GetTexAtPatchIndex once the UIStats fixture's RemoteBandUser constructs a
@@ -56,13 +55,6 @@
 Symbol hidden;
 
 int BandCamShot::sHideAllCharactersHack = 0;
-
-bool StageKitConnected() { return false; }
-
-void StageKitSetFog(bool) {
-    fprintf(stderr, "W16-TS: StageKitSetFog reached with no Stage Kit connected\n");
-    abort();
-}
 
 bool PlatformMgr::CanSeeUserCreatedContent(const OnlineID *) const {
     fprintf(stderr, "W16-TS: PlatformMgr::CanSeeUserCreatedContent is XPrivilegeCheck-only\n");

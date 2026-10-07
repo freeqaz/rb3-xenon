@@ -7,6 +7,7 @@
 #include "obj/Msg.h"
 #include "obj/Object.h"
 #include "os/Debug.h"
+#include "os/StageKit.h"
 #include "rndobj/Anim.h"
 #include "rndobj/Cam.h"
 #include "rndobj/Env.h"
@@ -724,20 +725,10 @@ void LightPreset::RemoveSpotlightDrawer(int idx) {
     mSpotlightDrawers.erase(mSpotlightDrawers.begin() + idx);
 }
 
-#ifndef HX_NATIVE
-// StageKit driver entry points (retail 0x82521xxx). They live in an unported
-// TU, so they are declared here and not defined; this path is match-build only.
-// Channels: 0 blue, 1 green, 2 yellow, 3 red.
-void StageKitSetLedPattern(int channel, int pattern); // 0x82521BF0
-void StageKitSetLedState(int channel, int state); // 0x82521B98
-void StageKitSetStrobe(int setting); // 0x82522028
-void StageKitUpdateLeds(); // 0x82521E20
-
-#endif
 
 // Retail 0x824AAE10: push this keyframe's StageKit LED and strobe state.
+// The driver entry points are os/StageKit.cpp. Banks: 0 blue, 1 green, 2 yellow, 3 red.
 void LightPreset::Keyframe::ApplyStageKit() const {
-#ifndef HX_NATIVE
     StageKitSetLedPattern(0, mLedBluePattern);
     StageKitSetLedState(0, mLedBlue);
     StageKitSetLedPattern(1, mLedGreenPattern);
@@ -748,7 +739,6 @@ void LightPreset::Keyframe::ApplyStageKit() const {
     StageKitSetLedState(3, mLedRed);
     StageKitSetStrobe(mStrobeSetting);
     StageKitUpdateLeds();
-#endif
 }
 
 void LightPreset::ApplyState(const LightPreset::Keyframe &k) {

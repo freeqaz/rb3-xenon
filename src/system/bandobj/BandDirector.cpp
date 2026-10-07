@@ -8,6 +8,7 @@
 #include "obj/Data.h"
 #include "obj/Object.h"
 #include "obj/Task.h"
+#include "os/StageKit.h" // SetFog: StageKitConnected 0x82521C80, StageKitSetFog 0x82521D80
 #include "rndobj/Group.h"
 #include "rndobj/PostProc.h"
 #include "bandobj/CrowdAudio.h"
@@ -35,20 +36,6 @@ static struct {
 
 // Forward decl for stub defined at end-of-file (used by OnLightPresetKeyframeInterp).
 __declspec(noinline) int SymToPstKeyframe(Symbol);
-
-/** Xbox-360 Rock Band Stage Kit fog control (see BandDirector::SetFog).
- *  SetFog drives the Stage Kit -- a 360-only
- *  USB peripheral with a fog machine and LEDs -- and
- *  the shape below is read off retail.
- *  Retail BandDirector::SetFog is fn_8228CFF0 (0x6C bytes) and calls:
- *    fn_82521C80 -> bool: `return fn_82524D40() != -1;` (device id probe)
- *    fn_82521D80 -> void(bool): sends the command (fn_82521B30(0, b ? 1 : 2))
- *                   and caches the state in the byte at 0x82CCB1B0
- *  Both live in an unported 0x8252xxxx TU, so they are declared and not defined.
- *  That is safe here: this TU is compiled to .obj only for matching and is
- *  excluded from the native build (native/CMakeLists.txt:1110). */
-bool StageKitConnected();
-void StageKitSetFog(bool);
 
 const char *gVenues[5] = { "arena", "big_club", "festival", "small_club", "video" };
 

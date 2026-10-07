@@ -25,12 +25,12 @@
 #include "os/Memcard_Xbox.h"
 #include "os/Platform.h"
 #include "os/PlatformMgr.h"
+#include "os/StageKit.h"
 #include "os/ThreadCall.h"
 #include "os/Timer.h"
 #include "os/VirtualKeyboard.h"
 #include "utl/CacheMgr.h"
 #include "utl/Cheats.h"
-#include "utl/GlitchFinder.h"
 #include "utl/DataPointMgr.h"
 #include "utl/Licenses.h"
 #include "utl/Loader.h"
@@ -291,10 +291,6 @@ int SystemMs() {
     return gSystemMs;
 }
 
-#ifndef HX_NATIVE
-void StageKitPoll(); // retail 0x82521ED0, body not in source
-#endif
-
 void SystemPoll(bool b1) {
 #ifdef HX_NATIVE
     static Timer *_t = AutoTimer::GetTimer("system_poll");
@@ -329,12 +325,11 @@ void SystemPoll(bool b1) {
     ThePlatformMgr.Poll();
     TheVirtualKeyboard.Poll();
     TheContentMgr.PollRefresh();
+    StageKitPoll(); // retail's last call, as below
 #else
     // RB3 retail 0x82510270: no system_poll AutoTimer, no gUsingCD-gated
     // HolmesClientPoll and no WebSvcMgr poll (DC3-era, kept for native).
-    // Retail ends with a stage-kit poll (fn_82521ED0, which feeds
-    // JoypadStageKitSetRaw from a 32-entry ring). Its body has no source here
-    // and its retail name is unknown; StageKitPoll below stands for it.
+    // Retail ends with the stage-kit poll (0x82521ED0, os/StageKit.cpp).
     Timer::ClearSlowFrame();
     SystemMs();
     TheDebug.Poll();
@@ -690,6 +685,7 @@ void SystemInit(const char *config) {
     CheatsInit();
     FileCache::Init();
     TheContentMgr.Init();
+    StageKitInit(); // registers the stagekit_* script functions, as below
     TheDebug.AddExitCallback(SystemTerminate);
 #else
     gSystemTitles = SystemConfig("system", "titles");
@@ -711,7 +707,10 @@ void SystemInit(const char *config) {
     ThePlatformMgr.Init();
     TheVirtualKeyboard.Init();
     TheContentMgr.Init();
-    GlitchFinder::Init();
+    // Retail 0x825113E0 calls the stage-kit init (0x82522608), which registers
+    // the thirteen stagekit_* script functions. RB3 retail has no GlitchFinder:
+    // band.exe holds none of its glitch_find* names.
+    StageKitInit();
     TheDebug.AddExitCallback(SystemTerminate);
 #endif
 }
