@@ -67902,11 +67902,16 @@
    "name": "1AsyncFileHolmes",
    "address": "0x82535708",
    "survivor": "??1AsyncFileWin@@UAA@XZ",
-   "folded": [
-    "??1AsyncFileHolmes@@UAA@XZ"
-   ],
+   "folded": [],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
-   "withdrawn": [],
+   "withdrawn": [
+    {
+     "spelling": "??1AsyncFileHolmes@@UAA@XZ",
+     "lane": "W16-TZ (coordinator, 2026-10-07)",
+     "verdict": "REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 REFUTED, SLOT-UNDISCHARGED:VTABLE-OURS-CLASS-NOT-IN-RETAIL at vftable_8208DE24 (retail RTTI .?AVAsyncFileWin@@; retail has no AsyncFileHolmes). Only AsyncFileHolmes.obj defines this dtor and W16-TZ removed that split unit, so no pairable caller depends on the membership."
+    }
+   ],
    "repair": {
     "class": "UNDER_PARTITIONED_ICF_CLOSURE",
     "lane": "ALIAS-REPAIR 2026-08-19",

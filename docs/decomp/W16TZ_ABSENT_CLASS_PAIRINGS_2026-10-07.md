@@ -118,7 +118,7 @@ after a build.
 | `EnterFlowMsg`, `JoinEntryPointEvent` | 6 + 1 | WaitingUserGate | **False positive: present in retail** as `.?AVEnterFlowMsg@?A0x5b3730ba@@` and `.?AVJoinEntryPointEvent@?A0x5b3730ba@@`. Our copies are outside the anonymous namespace; the classes are retail's. |
 | `FixedString` | 4 | Str | **Not testable by RTTI**: the class has no virtual functions. The rows are retail bytes at 100 in Str's region. Whether RB3 called the class `FixedString` (a DC3 name) is unknown. |
 | `StringStoppedMsg` | 1 | UsbMidiGuitarMsgs | **Not testable by RTTI**: a `DECLARE_MESSAGE` class with no virtual functions of its own. The row is its static `Type()`, which retail has. |
-| `BinkMovieSys` | 2 | BinkMovieSys_Xbox | `PlatformStoreCache` (40 B, `0x82746128`) and `PlatformInit` (24 B, `0x82746150`) are static functions. Their bodies match only `BinkMovieSys_Xbox.obj`. They sit in the Movie/TexMovie region. Retail has no `BinkMovieSys` descriptor, but no oracle names these two functions, so there is nothing to re-home them to. Kept. |
+| `BinkMovieSys` | 2 | BinkMovieSys_Xbox | `PlatformStoreCache` (40 B, `0x82746128`) and `PlatformInit` (24 B, `0x82746150`) are static functions. Their bodies match only `BinkMovieSys_Xbox.obj`. They sit in the Movie/TexMovie region. Retail has no `BinkMovieSys` descriptor, but no source in this tree or DC3 names these two functions, so there is nothing to re-home them to. Kept. |
 
 Re-running the sweep on the final tree finds exactly these 50 rows / 4,936 B: 58 found originally,
 minus the 8 fixed.
