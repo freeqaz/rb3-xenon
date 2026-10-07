@@ -32,7 +32,17 @@ static unsigned short gRev = 0;
 // shipped venue RndText crashed in Find for the pair 0x20/0x52, bucket 18).
 // sizeof(mTable) is the constant 0x80 on X360, so the match build is unchanged.
 KerningTable::KerningTable() : mNumEntries(0), mEntries(0) { memset(mTable, 0, sizeof(mTable)); }
-KerningTable::~KerningTable() { delete mEntries; }
+// W16-UO: mEntries comes from `new Entry[]` (Load). Retail frees it with the
+// scalar delete (fn_8240DDB0, an ICF-folded ??3) and allocates with the scalar
+// ??2 (0x827BD2F0); both reach MemAlloc/MemFree, so the mix is harmless there.
+// Natively new[] and delete are different libstdc++ operators (ASan
+// alloc-dealloc-mismatch), so the native build frees with delete[].
+#ifdef HX_NATIVE
+#define KERNING_DELETE_ENTRIES(p) delete[] (p)
+#else
+#define KERNING_DELETE_ENTRIES(p) delete (p)
+#endif
+KerningTable::~KerningTable() { KERNING_DELETE_ENTRIES(mEntries); }
 
 KerningTable::Entry *KerningTable::Find(unsigned short us1, unsigned short us2) {
     if (mNumEntries == 0) {
@@ -119,7 +129,7 @@ void KerningTable::Load(BinStream &bs, RndFont *f) {
         bs >> num;
         if (num != mNumEntries) {
             mNumEntries = num;
-            delete mEntries;
+            KERNING_DELETE_ENTRIES(mEntries);
             mEntries = new Entry[mNumEntries];
         }
         memset(&mTable, 0, sizeof(mTable));

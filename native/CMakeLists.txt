@@ -13,6 +13,39 @@ set(CMAKE_C_STANDARD 11)
 
 set(REPO_ROOT ${CMAKE_SOURCE_DIR}/..)
 
+# --- Sanitizer build (W16-UO) -------------------------------------------------
+# RB3X_SANITIZE=address builds every target (and the add_subdirectory'd engine,
+# which is configured after this line) under AddressSanitizer. Default empty: the
+# normal build and native_build_gate.sh never see these flags.
+# Driven by tools/native_asan.sh, which configures native/build-asan and runs every
+# native target there, failing on any sanitizer report.
+#   -mllvm -asan-globals=0  global-variable metadata references every global, so
+#                           --gc-sections (rb3-song/score2-4/vocal*/harmony/crowd/
+#                           render) can no longer drop sections whose undefined
+#                           references nothing reachable needs: 567 undefined
+#                           symbols at link (measured by W16-UL). Heap and stack
+#                           checks are unaffected; only global overflows go
+#                           unchecked.
+#   -fsanitize-recover=address  with ASAN_OPTIONS=halt_on_error=0 one run reports
+#                           every finding, not just the first.
+#   -g, and NO -O           the same -O0 the shipping native build uses (it sets
+#                           no build type). At -O1 the optimizer keeps short-lived
+#                           locals in registers, and ASan then cannot see a stack
+#                           use-after-scope like Tessellate's (W16-UO: a toy of
+#                           that bug reports at -O0 and is silent at -O1).
+# At runtime the shadow mapping needs `ulimit -d unlimited` on this box (32 GB data
+# limit); native_asan.sh sets it.
+set(RB3X_SANITIZE "" CACHE STRING "Sanitizer build: empty (off) or 'address'")
+if(RB3X_SANITIZE STREQUAL "address")
+    message(STATUS "RB3X_SANITIZE=address: building every target under AddressSanitizer")
+    add_compile_options(-fsanitize=address -fsanitize-recover=address
+                        -fno-omit-frame-pointer -fsanitize-address-use-after-scope
+                        "SHELL:-mllvm -asan-globals=0" -g)
+    add_link_options(-fsanitize=address -fsanitize-recover=address)
+elseif(NOT RB3X_SANITIZE STREQUAL "")
+    message(FATAL_ERROR "RB3X_SANITIZE='${RB3X_SANITIZE}': only 'address' is supported")
+endif()
+
 # --- MSVC-compat + decomp flags (mirrors dc3-decomp native build) ---
 set(MS_COMPAT_FLAGS
     -fms-extensions

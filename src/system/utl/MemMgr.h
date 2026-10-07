@@ -370,13 +370,29 @@ void operator delete[](void *mem) noexcept;
 
 // W16-UL: the native operator delete of every Hmx::Object class. Inside a
 // cascading ~ObjectDir it defers the free to the end of the cascade, like the
-// cascade's own DeleteObjects; otherwise it is MemFree. Defined in obj/Dir.cpp.
+// cascade's own DeleteObjects; otherwise it is ::operator delete. Defined in
+// obj/Dir.cpp.
 void NativeObjMemFree(void *v, const char *file, int line, const char *name);
+// W16-UO: the native operator new of every Hmx::Object class, macro or hand-
+// written (CharClip, PatchDir, StarDisplay, MiniLeaderboardDisplay): the global
+// new, so ~ObjectDir's ::operator delete frees it in the right family. See
+// OBJ_MEM_OVERLOAD below.
+inline void *NativeObjAlloc(size_t s) { return ::operator new(s); }
 
+// W16-UO: ONE ALLOCATOR FAMILY FOR CLASS OVERLOADS, as in retail. Retail's global
+// operator new/delete ARE MemAlloc/MemFree (utl/MemMgr.cpp), so a class overload,
+// the global operators and the cascade's frees all reach one allocator and may be
+// mixed freely: a class with only DELETE_OVERLOAD is allocated by the global new
+// and freed by MemFree, and ~ObjectDir frees every object it destroys, whatever
+// its class overloads. Natively MemAlloc/MemFree are malloc/free while the global
+// operators are libstdc++'s, so each of those pairings was an allocation-family
+// mismatch (ASan alloc-dealloc-mismatch; valgrind "Mismatched free() / delete /
+// delete []"). Every native class overload below therefore uses the GLOBAL
+// operators, and the cascade frees with ::operator delete (obj/Dir.h), so any
+// object, overloaded or not, is freed by the family that allocated it. Direct
+// MemAlloc/MemFree calls stay malloc/free.
 #define OBJ_MEM_OVERLOAD(line_num)                                                       \
-    static void *operator new(size_t s) {                                                \
-        return MemAlloc(s, __FILE__, line_num, StaticClassName().Str(), 0);              \
-    }                                                                                    \
+    static void *operator new(size_t s) { return NativeObjAlloc(s); }                    \
     static void *operator new(size_t s, void *place) { return place; }                   \
     static void operator delete(void *v) {                                               \
         NativeObjMemFree(v, __FILE__, line_num, StaticClassName().Str());                \
@@ -391,26 +407,18 @@ void NativeObjMemFree(void *v, const char *file, int line, const char *name);
 // OBJ_NEW_OVERLOAD -- only the operator new half of OBJ_MEM_OVERLOAD; the class
 // keeps whatever operator delete it already declares. See the match-build note.
 #define OBJ_NEW_OVERLOAD                                                                 \
-    static void *operator new(size_t s) {                                                \
-        return MemAlloc(s, __FILE__, 0, StaticClassName().Str(), 0);                     \
-    }                                                                                    \
+    static void *operator new(size_t s) { return NativeObjAlloc(s); }                    \
     static void *operator new(size_t s, void *place) { return place; }
 
 #define MEM_OVERLOAD(class_name, line_num)                                               \
-    static void *operator new(size_t s) {                                                \
-        return MemAlloc(s, __FILE__, line_num, #class_name, 0);                          \
-    }                                                                                    \
+    static void *operator new(size_t s) { return ::operator new(s); }                    \
     static void *operator new(size_t s, void *place) { return place; }                   \
-    static void operator delete(void *v) { MemFree(v, __FILE__, line_num, #class_name); }
+    static void operator delete(void *v) { ::operator delete(v); }
 
 #define MEM_ARRAY_OVERLOAD(class_name, line_num)                                         \
-    static void *operator new[](size_t s) {                                              \
-        return MemAlloc(s, __FILE__, line_num, #class_name, 0);                          \
-    }                                                                                    \
+    static void *operator new[](size_t s) { return ::operator new[](s); }                \
     static void *operator new[](size_t s, void *place) { return place; }                 \
-    static void operator delete[](void *v) {                                             \
-        MemFree(v, __FILE__, line_num, #class_name);                                     \
-    }
+    static void operator delete[](void *v) { ::operator delete[](v); }
 // MEM_OVERLOAD with an inlinable operator delete -- identical on native for the
 // same reason as OBJ_MEM_OVERLOAD_INLINE_DEL above. See the match definition.
 #define MEM_OVERLOAD_INLINE_DEL(class_name, line_num) MEM_OVERLOAD(class_name, line_num)
@@ -546,14 +554,16 @@ void operator delete[](void *mem);
 // dc3 only exposes MEM_OVERLOAD/OBJ_MEM_OVERLOAD; Fader.h uses the
 // terser spelling, so provide it for header compatibility.
 #ifdef HX_NATIVE
+// W16-UO: the global operators, for the reason given at OBJ_MEM_OVERLOAD above.
+// The TrackWidgetImp family declares DELETE_OVERLOAD alone and is allocated by
+// the global new (TrackWidget::SyncImp); its MemFree was free() on an
+// operator-new block.
 #define NEW_OVERLOAD                                                                     \
-    static void *operator new(size_t s) {                                                \
-        return MemAlloc(s, __FILE__, 0, "unknown", 0);                                   \
-    }                                                                                    \
+    static void *operator new(size_t s) { return ::operator new(s); }                    \
     static void *operator new(size_t s, void *place) { return place; }
 
 #define DELETE_OVERLOAD                                                                  \
-    static void operator delete(void *v) { MemFree(v, __FILE__, 0, "unknown"); }
+    static void operator delete(void *v) { ::operator delete(v); }
 #define DELETE_OVERLOAD_INLINE DELETE_OVERLOAD
 #else
 #define NEW_OVERLOAD                                                                     \

@@ -155,12 +155,11 @@ public:
     // bit + ctor), fn_827BCD38 is the real 2-arg heap allocator.
 #if HX_NATIVE
     // Native: operator new must take size_t (unsigned long on LP64).
-    static void *operator new(size_t s) {
-        (void)RndDir::StaticClassName().Str();
-        return MemAlloc(s, __FILE__, __LINE__, "PatchDir", 0);
-    }
+    // W16-UO: the native Hmx::Object pair (utl/MemMgr.h), so ~ObjectDir's free
+    // and this delete agree on the allocation family.
+    static void *operator new(size_t s) { return NativeObjAlloc(s); }
     static void *operator new(size_t s, void *place) { return place; }
-    static void operator delete(void *v) { (MemFree)(v); }
+    static void operator delete(void *v) { NativeObjMemFree(v, __FILE__, __LINE__, "PatchDir"); }
 #else
     static void *operator new(unsigned int s) {
         (void)RndDir::StaticClassName().Str();

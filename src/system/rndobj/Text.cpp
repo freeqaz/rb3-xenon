@@ -730,8 +730,19 @@ bool canBreak(const char *cc, int i) {
 
 inline float segmentLength(int i1, int i2, int i3, int i4, float *f5, const char *c6) {
     float lineLen = 0;
+#ifdef HX_NATIVE
+    // W16-UO: test the bound before the byte. Retail (inlined in WrapText,
+    // 0x82457F70) loads c6[i2 - 1] first and compares i1 < i2 second, so a
+    // segment of only spaces that starts at byte 0 reads c6[-1], one byte before
+    // the string (ASan heap-buffer-overflow, rb3-render). The && result is the
+    // same either way: once i1 < i2 is false the byte cannot change it. Natively
+    // the string is a heap block, so the read itself is the defect.
+    for (; i1 < i2 && c6[i2 - 1] == ' '; i2--, i4--)
+        ;
+#else
     for (; c6[i2 - 1] == ' ' && i1 < i2; i2--, i4--)
         ;
+#endif
     for (int i = i3; i < i4; i++) {
         lineLen += f5[i];
     }
