@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "ba085a822",
+ "recorded_at": "14abe3bc1",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -1386,7 +1386,7 @@
   "0x8249bb38": "??$?6VSequence@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VSequence@@VObjectDir@@@@@Z",
   "0x8249bbb0": "??$?6VRndDrawable@@@@YAAAVBinStream@@AAV0@ABV?$ObjPtrList@VRndDrawable@@VObjectDir@@@@@Z",
   "0x8249d120": "??1?$ObjPtrList@VRndPartLauncher@@VObjectDir@@@@UAA@XZ",
-  "0x8249d1f0": "?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ",
+  "0x8249d1f0": "?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ",
   "0x8249d6a8": "?Load@?$ObjPtrList@VSequence@@VObjectDir@@@@QAA_NAAVBinStream@@_N@Z",
   "0x8249f3b0": "??1?$ObjPtrList@VSequence@@VObjectDir@@@@UAA@XZ",
   "0x8249f438": "??1?$ObjPtrList@VTask@@VObjectDir@@@@UAA@XZ",
@@ -1859,6 +1859,7 @@
   "0x826d98d8": "??$_M_find@H@?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABH@Z",
   "0x826da078": null,
   "0x826da1f0": "?_M_create_node@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@2@@Z",
+  "0x826da438": "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ",
   "0x826da488": "?_M_insert@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@AAA?AU?$_Rb_tree_iterator@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@2@@2@PAU_Rb_tree_node_base@2@ABU?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@2@00@Z",
   "0x826da558": "?insert_unique@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$pair@U?$_Rb_tree_iterator@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@2@@stlpmtx_std@@_N@2@ABU?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@2@@Z",
   "0x826da9a8": "?insert_unique@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA?AU?$_Rb_tree_iterator@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@2@@2@U32@ABU?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@2@@Z",
@@ -10455,7 +10456,8 @@
     "?clear@?$ObjPtrList@VCharIKScale@@VObjectDir@@@@QAAXXZ": "PROVEN",
     "?clear@?$ObjPtrList@VCharInterest@@VObjectDir@@@@QAAXXZ": "PROVEN",
     "?clear@?$ObjPtrList@VCharKeyHandMidi@@VObjectDir@@@@QAAXXZ": "PROVEN",
-    "?clear@?$ObjPtrList@VOutfitConfig@@VObjectDir@@@@QAAXXZ": "PROVEN"
+    "?clear@?$ObjPtrList@VOutfitConfig@@VObjectDir@@@@QAAXXZ": "PROVEN",
+    "?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ": "PROVEN"
    }
   },
   "0x823ba1f0": {
@@ -16781,7 +16783,7 @@
    }
   },
   "0x8249d1f0": {
-   "survivor": "?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ",
+   "survivor": "?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ",
    "callees": [
     "0x825243e0",
     "0x82524420",
@@ -16811,8 +16813,7 @@
     "?clear@?$ObjPtrList@VSfxInst@@VObjectDir@@@@QAAXXZ": "PROVEN",
     "?clear@?$ObjPtrList@VCharMeshHide@@VObjectDir@@@@QAAXXZ": "PROVEN",
     "?clear@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@QAAXXZ": "PROVEN",
-    "?clear@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@QAAXXZ": "PROVEN",
-    "?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ": "PROVEN"
+    "?clear@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@QAAXXZ": "PROVEN"
    }
   },
   "0x824a0528": {
@@ -21121,7 +21122,8 @@
    ],
    "verdicts": {
     "??1?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ": "PROVEN",
-    "?clear@?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ": "PROVEN"
+    "?clear@?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ": "PROVEN",
+    "??1?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@H@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ": "PROVEN"
    }
   },
   "0x82597ed0": {
@@ -21482,6 +21484,18 @@
    "callees": [],
    "verdicts": {
     "?splice@?$slist@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXV?$_Slist_iterator@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@U?$_Nonconst_traits@U?$pair@$$CBVSymbol@@VString@@@stlpmtx_std@@@2@@priv@2@AAV12@@Z": "PROVEN"
+   }
+  },
+  "0x825aee78": {
+   "survivor": "??1?$slist@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+   "callees": [
+    "0x8260eed8",
+    "0x827badb0",
+    "0x827bc430",
+    "0x827bca50"
+   ],
+   "verdicts": {
+    "??1?$slist@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ": "PROVEN"
    }
   },
   "0x825af110": {
@@ -27141,6 +27155,17 @@
    ],
    "verdicts": {
     "?clear@?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectOverdriveTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAAXXZ": "PROVEN"
+   }
+  },
+  "0x826dab90": {
+   "survivor": "??1?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
+   "callees": [
+    "0x826da078",
+    "0x826da438",
+    "0x827bca50"
+   ],
+   "verdicts": {
+    "??1?$map@W4TrackType@@VPlayerStreakData@PerfectSectionTracker@@U?$less@W4TrackType@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@5@@stlpmtx_std@@QAA@XZ": "PROVEN"
    }
   },
   "0x826dab98": {

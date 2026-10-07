@@ -3652,7 +3652,7 @@
   {
    "name": "clear",
    "address": "0x8249d1f0",
-   "survivor": "?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ",
+   "survivor": "?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ",
    "folded": [
     "?clear@?$ObjPtrList@VCharBone@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VFader@@VObjectDir@@@@QAAXXZ",
@@ -3666,8 +3666,7 @@
     "?clear@?$ObjPtrList@VSfxInst@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharMeshHide@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ"
+    "?clear@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@QAAXXZ"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 34, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 46 folded spelling(s), 16 census sites over 4 functions.",
    "withdrawn": [
@@ -3775,6 +3774,12 @@
      "class": "PLACEHOLDER_SLOT_CALLEE_LOCATED_ELSEWHERE",
      "disposition": "membership withdrawn, group kept",
      "evidence": "tools/alias_placeholder_slot_audit.py: a relocation slot whose retail target is unnamed was tolerated on trust when this membership was admitted. Decided on retail bytes: CALLEE-LOCATED-ELSEWHERE @+0x2c retail fn_8271A138 vs ours ?Unlink@?$ObjPtrList@VUILabel@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z -- our ?Unlink@?$ObjPtrList@VUILabel@@VObjectDir@@@@AAAPA is PROVEN to be retail fn_8227D0E8, not fn_8271A138; SLOT-CONTRADICTED:CALLEE-LOCATED-ELSEWHERE @+? retail fn_8271A138 vs ours ?Unlink@?$ObjPtrList@VUILabel@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z | o -- in strict chase at depth 1"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UN 2026-10-07",
+     "class": "WRONG_VBASE_UNLINK",
+     "evidence": "Retail's body here calls ?Unlink@?$ObjPtrList@VMoggClipMap@@ (0x8271a138), which passes the node's object to Hmx::Object::Release unadjusted: the Unlink for a T whose Object base is non-virtual. EventTrigger derives from virtual Hmx::Object (all three source trees), so our clear<EventTrigger> calls the Unlink with the virtual-base step, which chase-proves at 0x8227d0e8 and is BYTES-DIFFER against 0x8271a138. chase(clear<Task> @ 0x8249d1f0, clear<EventTrigger>) is REFUTED at that slot; chase(clear<CharWeightSetter> @ 0x823b8618, clear<EventTrigger>) is PROVEN, and retail's own ~ObjPtrList<EventTrigger> (0x8230d238) and Load (0x8230c8e0) call 0x823b8618. alias_survivor_relabel carried this old label as UNDECIDABLE (its callee anchor only reads map-resident callees); withdrawn here and admitted at 0x823b8618."
     }
    ],
    "repair": {
@@ -3994,6 +3999,126 @@
      "lane": "W17-PRAC 2026-09-30",
      "verdict": "FOLD -- PROVEN on retail bytes, FLAT T1 (tools/icf_pair_adjudicate.py --chase; 96 B vs 96 B, one tolerated placeholder relocation)",
      "evidence": "Retail 0x8249f438, whose stored vtable 0x820734f4 resolves (retail_rtti) to .?AV?$ObjPtrList@VTask@@VObjectDir@@@@ and which is renamed ~ObjPtrList<Task,ObjectDir> in the same commit, calls this body at +0x2c where our compiled dtor calls ObjPtrList<Task>::clear. Joins the group's 28 other ObjPtrList<T>::clear spellings on the one body."
+    }
+   ],
+   "relabelled": {
+    "from": "?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ",
+    "to": "?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ",
+    "lane": "W16-UN 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16un": [
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharBone@@VObjectDir@@@@QAAXXZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VCharBone@@VObjectDir@@@@QAAXXZ): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VFader@@VObjectDir@@@@QAAXXZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VFader@@VObjectDir@@@@QAAXXZ): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@QAAXXZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@QAAXXZ): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@QAAXXZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VNoteVoiceInst@@VObjectDir@@@@QAAXXZ): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndFont@@VObjectDir@@@@QAAXXZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VRndFont@@VObjectDir@@@@QAAXXZ): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndMat@@VObjectDir@@@@QAAXXZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VRndMat@@VObjectDir@@@@QAAXXZ): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndTexBlendController@@VObjectDir@@@@QAAXXZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VRndTexBlendController@@VObjectDir@@@@QAAXXZ): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VSeqInst@@VObjectDir@@@@QAAXXZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VSeqInst@@VObjectDir@@@@QAAXXZ): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VSequence@@VObjectDir@@@@QAAXXZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VSequence@@VObjectDir@@@@QAAXXZ): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VSfxInst@@VObjectDir@@@@QAAXXZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VSfxInst@@VObjectDir@@@@QAAXXZ): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VCharMeshHide@@VObjectDir@@@@QAAXXZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VCharMeshHide@@VObjectDir@@@@QAAXXZ): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@QAAXXZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VObject@Hmx@@VObjectDir@@@@QAAXXZ): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@QAAXXZ",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VRndMeshDeform@@VObjectDir@@@@QAAXXZ): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "CALLEE-UNANCHORED:BYTES-DIFFER",
+     "disposition": "folded (carried: UNDECIDABLE, the map name was already in this bucket)",
+     "evidence": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VTask@@VObjectDir@@@@QAAXXZ @ 0x8249d1f0, ?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ): UNDECIDABLE [CALLEE-UNANCHORED:BYTES-DIFFER] depth 1: retail ?Unlink@?$ObjPtrList@VMoggClipMap@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z | ours ?Unlink@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@AAAPAUNode@1@PAU21@@Z (same operation, our callee not proven at a retail address of its own)"
     }
    ]
   },
@@ -121025,9 +121150,19 @@
    "survivor": "??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
    "folded": [
     "??1?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
-    "?clear@?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ"
+    "?clear@?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ",
+    "??1?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@H@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ"
    ],
-   "evidence": "W16-TH (2026-10-07): retail 0x825971f0 is the single word `b` to _Rb_tree<int,float>::clear (0x827690D0). Our compiler emits all three spellings (map<int,float> dtor, map<int,float>::clear, _Rb_tree<int,float> dtor) as that same 4-byte body with the same relocation target name (SongSortMgr.obj, VocalTrack.obj, MusicLibrary.obj, ...), so they fold under /OPT:ICF. The survivor is the spelling SongSortMgr.obj defines, which is the unit whose span holds the address."
+   "evidence": "W16-TH (2026-10-07): retail 0x825971f0 is the single word `b` to _Rb_tree<int,float>::clear (0x827690D0). Our compiler emits all three spellings (map<int,float> dtor, map<int,float>::clear, _Rb_tree<int,float> dtor) as that same 4-byte body with the same relocation target name (SongSortMgr.obj, VocalTrack.obj, MusicLibrary.obj, ...), so they fold under /OPT:ICF. The survivor is the spelling SongSortMgr.obj defines, which is the unit whose span holds the address.",
+   "admitted": [
+    {
+     "spelling": "??1?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@H@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@H@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-UN 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "a row W16-UN paired calls this spelling where retail's relocation names the survivor (objdiff diff_arg)",
+     "chase": "tools/icf_pair_adjudicate.chase(??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U @ 0x825971f0, ours): PROVEN, 0 undischarged, 1 cycle(s) assumed (each a self-recursive callee already entered and checked)"
+    }
+   ]
   },
   {
    "name": "__destroy_range_aux@V?$reverse_iterator@",
@@ -121505,7 +121640,8 @@
     "?clear@?$ObjPtrList@VCharIKScale@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharInterest@@VObjectDir@@@@QAAXXZ",
     "?clear@?$ObjPtrList@VCharKeyHandMidi@@VObjectDir@@@@QAAXXZ",
-    "?clear@?$ObjPtrList@VOutfitConfig@@VObjectDir@@@@QAAXXZ"
+    "?clear@?$ObjPtrList@VOutfitConfig@@VObjectDir@@@@QAAXXZ",
+    "?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ"
    ],
    "withdrawn": [],
    "evidence": "Opened by W16-UM 2026-10-07: W16-UH's census proved each folded spelling is the callee retail reaches at this address (see 'admitted').",
@@ -121711,6 +121847,13 @@
      "lane": "W16-UM 2026-10-07",
      "how": "CENSUS-SITE",
      "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_823B8618 and ours calls this spelling; chase(fn_823B8618, spelling) PROVEN",
+     "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    },
+    {
+     "spelling": "?clear@?$ObjPtrList@VEventTrigger@@VObjectDir@@@@QAAXXZ",
+     "lane": "W16-UN 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "a row W16-UN paired calls this spelling where retail's relocation names the survivor (objdiff diff_arg)",
      "chase": "tools/icf_pair_adjudicate.chase(?clear@?$ObjPtrList@VCharWeightSetter@@VObjectDir@@@@QAAXXZ @ 0x823b8618, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
     }
    ]
@@ -122389,6 +122532,44 @@
      "how": "CENSUS-SITE",
      "evidence": "tools/placeholder_callee_census.py (W16-UH): 1 aligned call site(s) where retail calls fn_82B744E8 and ours calls this spelling; chase(fn_82B744E8, spelling) PROVEN",
      "chase": "tools/icf_pair_adjudicate.chase(??$__uninitialized_fill_n@PAUGranule@GranularSynth@Synapse@DSP@@IU1234 @ 0x82b744e8, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    }
+   ]
+  },
+  {
+   "name": "??1",
+   "address": "0x826dab90",
+   "survivor": "??1?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@3@U?$_Select1st@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@3@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$map@W4TrackType@@VPlayerStreakData@PerfectSectionTracker@@U?$less@W4TrackType@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@5@@stlpmtx_std@@QAA@XZ"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-UN 2026-10-07: W16-UH's census proved each folded spelling is the callee retail reaches at this address (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??1?$map@W4TrackType@@VPlayerStreakData@PerfectSectionTracker@@U?$less@W4TrackType@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBW4TrackType@@VPlayerStreakData@PerfectSectionTracker@@@stlpmtx_std@@@5@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-UN 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "a row W16-UN paired calls this spelling where retail's relocation names the survivor (objdiff diff_arg)",
+     "chase": "tools/icf_pair_adjudicate.chase(??1?$_Rb_tree@W4TrackType@@U?$less@W4TrackType@@@stlpmtx_std@@U?$pair@ @ 0x826dab90, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
+    }
+   ]
+  },
+  {
+   "name": "??1",
+   "address": "0x825aee78",
+   "survivor": "??1?$slist@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$slist@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ"
+   ],
+   "withdrawn": [],
+   "evidence": "Opened by W16-UN 2026-10-07: W16-UH's census proved each folded spelling is the callee retail reaches at this address (see 'admitted').",
+   "admitted": [
+    {
+     "spelling": "??1?$slist@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVUIScreen@@@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-UN 2026-10-07",
+     "how": "CENSUS-SITE",
+     "evidence": "a row W16-UN paired calls this spelling where retail's relocation names the survivor (objdiff diff_arg)",
+     "chase": "tools/icf_pair_adjudicate.chase(??1?$slist@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@V?$StlNode @ 0x825aee78, ours): PROVEN, 0 undischarged, 0 cycle(s) assumed"
     }
    ]
   }
