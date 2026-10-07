@@ -52,6 +52,12 @@ CLAUDE.md "Whole-binary A/B measurement"):
      BYTES: the landed +1 fn / +120 B fixture read +1 fn / +0 B under one
      split per leg, with `matched_functions` moving either way. A leg that
      does not converge is REFUSED, never priced.
+     The split also re-derives splits.txt (.pdata follows .text). That is
+     not a convergence input, but it IS landing (lane W16-TD): when leg B's
+     split rewrites the patched splits.txt, the run saves
+     legB_splits_rederived.diff (the lines to commit with the patch) and
+     prints LANDING, as it does for symbols.txt. W16-TB landed a .text move
+     without them and main's next build stopped at the split-guard.
   7. LEG B build — SETTLED, exactly like leg A (lane DT-3). The recompile
      count comes from THESE builds' logs, before any report generation
      (run_objdiff-style flows hide the compile, so a later count reads 0 and
