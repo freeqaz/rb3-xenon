@@ -233,10 +233,12 @@ void Synth360::Poll() {
     VorbisReader::SignalDecodeThread();
 }
 
-// Retail @82B2DF00 (0x1C4).
+// Retail 0x82B5CA50 (0x1C4).
 void Synth360::Terminate() {
+    // Retail (0x82B5CA50) calls 0x82B69868 per send: FxSend360::Cleanup, the
+    // callee ~FxSend360 also reaches for each chain entry.
     for (unsigned int i = 0; i < mFxSends.size(); i++) {
-        mFxSends[i]->CleanChain();
+        mFxSends[i]->Cleanup();
     }
     TheXboxSynth = nullptr;
     Synth::Terminate();

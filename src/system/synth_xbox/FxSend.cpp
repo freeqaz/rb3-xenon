@@ -9,10 +9,19 @@ FxSend360::FxSend360(FxSend *fx) : unk4(0), mThis(fx), unk30(true) {
     MILO_ASSERT(mThis, 0x19);
 }
 
+// Retail 0x82B699E8 (372 B) cleans the chain inline: a local vector filled by
+// FxSend::BuildChainVector (vtable +0x60), walked from the back, each entry
+// dynamic_cast to FxSend360 and Cleanup()'d (0x82B69868). There is no
+// out-of-line CleanChain; Synth360::Terminate calls Cleanup directly.
 FxSend360::~FxSend360() {
     if (TheXboxSynth)
         TheXboxSynth->RemoveFxSend(this);
-    CleanChain();
+    std::vector<FxSend *> sends;
+    mThis->BuildChainVector(sends);
+    for (int i = sends.size() - 1; i >= 0; i--) {
+        FxSend360 *send360 = dynamic_cast<FxSend360 *>(sends[i]);
+        send360->Cleanup();
+    }
 }
 
 // Declared virtual in FxSend.h and called from Voice.cpp, but never defined in
@@ -34,3 +43,4 @@ void FxSend360::RemoveOwnerVoice(Voice *v) {
 }
 
 void FxSend360::AddOwnerVoice(Voice *v) { mOwnerVoices.push_back(v); }
+
