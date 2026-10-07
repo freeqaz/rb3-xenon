@@ -5762,7 +5762,6 @@ PropKeys.cpp:
 	.pdata      start:0x8220B988 end:0x8220BC98
 	.pdata      start:0x8220BCA0 end:0x8220BCD0
 	.pdata      start:0x8220BCD0 end:0x8220BD00
-	.pdata      start:0x8222B678 end:0x8222B690
 	.pdata      start:0x8222D7A0 end:0x8222D7A8
 	.pdata      start:0x8222D7C8 end:0x8222D7D8
 	.pdata      start:0x82231100 end:0x82231108
@@ -5781,7 +5780,6 @@ PropKeys.cpp:
 	.text       start:0x82421758 end:0x82425BC8
 	.text       start:0x82425C28 end:0x82425FCC
 	.text       start:0x82425FD0 end:0x824265F8
-	.text       start:0x82638C10 end:0x82638CC0
 	.text       start:0x8263FD2C end:0x8263FD30
 	.text       start:0x82656180 end:0x82656350
 	.text       start:0x82656630 end:0x82656800
@@ -8759,12 +8757,14 @@ band3/meta_band/AssetStore.cpp:
 band3/meta_band/StoreInfoPanel.cpp:
 	.pdata      start:0x8222B660 end:0x8222B668
 	.pdata      start:0x8222B668 end:0x8222B678
+	.pdata      start:0x8222B678 end:0x8222B690
 	.pdata      start:0x8222B690 end:0x8222B698
 	.pdata      start:0x8222B698 end:0x8222B6A8
 	.pdata      start:0x8222B6A8 end:0x8222B860
 	.text       start:0x82638B50 end:0x82638B54
 	.text       start:0x82638B60 end:0x82638BB0
 	.text       start:0x82638BB0 end:0x82638C10
+	.text       start:0x82638C10 end:0x82638CC0
 	.text       start:0x82638CC0 end:0x82638D04
 	.text       start:0x82638D04 end:0x82638D58
 	.text       start:0x82638D58 end:0x8263A718

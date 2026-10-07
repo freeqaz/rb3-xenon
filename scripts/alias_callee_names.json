@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "de3f14051",
+ "recorded_at": "150276e42",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -1604,7 +1604,7 @@
   "0x825800e0": "??1MetaPerformer@@UAA@XZ",
   "0x825857a8": "?GetLeaderUser@SessionMgr@@QBAPAVBandUser@@XZ",
   "0x82585860": "?IsLeaderLocal@SessionMgr@@QBA_NXZ",
-  "0x8258fde8": "??$for_each@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@0@0U1@@Z",
+  "0x8258fde8": "??$for_each@U?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits@PAVGamerAwardStatus@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits@PAVGamerAwardStatus@@@stlpmtx_std@@@0@0U1@@Z",
   "0x825914e0": "??1AccomplishmentProgress@@UAA@XZ",
   "0x82592df8": "?HasActiveDialogEvent@UIEventMgr@@QBA_NXZ",
   "0x82592ef8": "?HasDialogEvent@UIEventMgr@@QBA_NVSymbol@@@Z",
@@ -2314,7 +2314,7 @@
   "0x82813630": "?Handle@UIPanel@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
   "0x82814120": "?Unload@UIPanel@@UAAXXZ",
   "0x82814358": "??1UIPanel@@UAA@XZ",
-  "0x82815040": "??$for_each@PAPAVPoseElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVPoseElement@@0U1@@Z",
+  "0x82815040": "??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIListSlotElement@@0U1@@Z",
   "0x828152f0": "?Handle@UIListSlot@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
   "0x82815750": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$vector@V?$ObjPtr@VUIColor@@@@V?$StlNodeAlloc@V?$ObjPtr@VUIColor@@@@@stlpmtx_std@@@stlpmtx_std@@@0@0ABU__false_type@0@@Z",
   "0x82815cb0": "?CancelLoading@UIPicture@@IAAXXZ",
@@ -20788,10 +20788,11 @@
    }
   },
   "0x8258fde8": {
-   "survivor": "??$for_each@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@0@0U1@@Z",
+   "survivor": "??$for_each@U?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits@PAVGamerAwardStatus@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits@PAVGamerAwardStatus@@@stlpmtx_std@@@0@0U1@@Z",
    "callees": [],
    "verdicts": {
-    "??$for_each@U?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@0@0U1@@Z": "PROVEN"
+    "??$for_each@U?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@0@0U1@@Z": "PROVEN",
+    "??$for_each@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@0@0U1@@Z": "PROVEN"
    }
   },
   "0x825920f0": {
@@ -23582,7 +23583,7 @@
    }
   },
   "0x82638c10": {
-   "survivor": "??1Entry@LocalePanel@@QAA@XZ",
+   "survivor": "??1RecommendedEntry@StoreInfoPanel@@QAA@XZ",
    "callees": [
     "0x82000e8c",
     "0x82117728",
@@ -23592,7 +23593,7 @@
     "0x827bdf38"
    ],
    "verdicts": {
-    "??1RecommendedEntry@StoreInfoPanel@@QAA@XZ": "PROVEN"
+    "??1Entry@LocalePanel@@QAA@XZ": "PROVEN"
    }
   },
   "0x82638e50": {
@@ -33288,7 +33289,7 @@
    }
   },
   "0x82815040": {
-   "survivor": "??$for_each@PAPAVPoseElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVPoseElement@@0U1@@Z",
+   "survivor": "??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIListSlotElement@@0U1@@Z",
    "callees": [],
    "verdicts": {
     "??$for_each@PAPAVDynamicTex@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVDynamicTex@@0U1@@Z": "PROVEN",
@@ -33310,8 +33311,8 @@
     "??$for_each@PAPAVUIColor@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIColor@@0U1@@Z": "PROVEN",
     "??$for_each@PAPAVUIEvent@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIEvent@@0U1@@Z": "PROVEN",
     "??$for_each@PAPAVUIGridSubProvider@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIGridSubProvider@@0U1@@Z": "PROVEN",
-    "??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIListSlotElement@@0U1@@Z": "PROVEN",
-    "??$for_each@PAPAVUIListWidget@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIListWidget@@0U1@@Z": "PROVEN"
+    "??$for_each@PAPAVUIListWidget@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIListWidget@@0U1@@Z": "PROVEN",
+    "??$for_each@PAPAVPoseElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVPoseElement@@0U1@@Z": "PROVEN"
    }
   },
   "0x82817050": {

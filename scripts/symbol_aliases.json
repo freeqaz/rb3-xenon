@@ -13509,7 +13509,7 @@
   {
    "name": "$for_each",
    "address": "0x82815040",
-   "survivor": "??$for_each@PAPAVPoseElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVPoseElement@@0U1@@Z",
+   "survivor": "??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIListSlotElement@@0U1@@Z",
    "folded": [
     "??$for_each@PAPAVDynamicTex@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVDynamicTex@@0U1@@Z",
     "??$for_each@PAPAVFader@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVFader@@0U1@@Z",
@@ -13530,19 +13530,211 @@
     "??$for_each@PAPAVUIColor@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIColor@@0U1@@Z",
     "??$for_each@PAPAVUIEvent@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIEvent@@0U1@@Z",
     "??$for_each@PAPAVUIGridSubProvider@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIGridSubProvider@@0U1@@Z",
-    "??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIListSlotElement@@0U1@@Z",
-    "??$for_each@PAPAVUIListWidget@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIListWidget@@0U1@@Z"
+    "??$for_each@PAPAVUIListWidget@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIListWidget@@0U1@@Z",
+    "??$for_each@PAPAVPoseElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVPoseElement@@0U1@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 22, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 21 folded spelling(s), 2 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 22, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 21 folded spelling(s), 2 census sites over 2 functions.",
+   "relabelled": {
+    "from": "??$for_each@PAPAVPoseElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVPoseElement@@0U1@@Z",
+    "to": "??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIListSlotElement@@0U1@@Z",
+    "lane": "W16-TZ 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$for_each@PAPAVDynamicTex@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVDynamicTex@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVDynamicTex@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAV): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVFader@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVFader@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVFader@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVFader): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVFilterVersion@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVFilterVersion@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVFilterVersion@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PA): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVHamPlayerData@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVHamPlayerData@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVHamPlayerData@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PA): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVLocalSavedSetlist@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVLocalSavedSetlist@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVLocalSavedSetlist@@UDelete@@@stlpmtx_std@@YA?AUDelete): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVMic@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVMic@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVMic@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVMic@@0U): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVNetSavedSetlist@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVNetSavedSetlist@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVNetSavedSetlist@@UDelete@@@stlpmtx_std@@YA?AUDelete@@): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVOvershellSlotState@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVOvershellSlotState@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVOvershellSlotState@@UDelete@@@stlpmtx_std@@YA?AUDelet): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVRndMat@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVRndMat@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVRndMat@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVRndM): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVRndTex@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVRndTex@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVRndTex@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVRndT): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVSampleInst@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVSampleInst@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVSampleInst@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAV): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVStoreMenuProvider@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVStoreMenuProvider@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVStoreMenuProvider@@UDelete@@@stlpmtx_std@@YA?AUDelete): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVStoreOffer@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVStoreOffer@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVStoreOffer@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAV): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVStreamReceiver@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVStreamReceiver@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVStreamReceiver@@UDelete@@@stlpmtx_std@@YA?AUDelete@@P): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVTail@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVTail@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVTail@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVTail@@): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVTrack@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVTrack@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVTrack@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVTrack): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVUIColor@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIColor@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVUIColor@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIC): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVUIEvent@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIEvent@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVUIEvent@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIE): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVUIGridSubProvider@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIGridSubProvider@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVUIGridSubProvider@@UDelete@@@stlpmtx_std@@YA?AUDelete): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVUIListWidget@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVUIListWidget@@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVUIListWidget@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAP): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@PAPAVPoseElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPAVPoseElement@@0U1@@Z",
+     "role": "old-label",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "folded (PROVEN)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@PAPAVUIListSlotElement@@UDelete@@@stlpmtx_std@@YA?AUDelete @ 0x82815040, ??$for_each@PAPAVPoseElement@@UDelete@@@stlpmtx_std@@YA?AUDelete@@PAPA): PROVEN [CHASED] retail 84 B / ours 84 B, 0 cycle-assumed"
+    }
+   ]
   },
   {
    "name": "1Entry",
    "address": "0x82638c10",
-   "survivor": "??1Entry@LocalePanel@@QAA@XZ",
+   "survivor": "??1RecommendedEntry@StoreInfoPanel@@QAA@XZ",
    "folded": [
-    "??1RecommendedEntry@StoreInfoPanel@@QAA@XZ"
+    "??1Entry@LocalePanel@@QAA@XZ"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 2 census sites over 1 functions.",
+   "relabelled": {
+    "from": "??1Entry@LocalePanel@@QAA@XZ",
+    "to": "??1RecommendedEntry@StoreInfoPanel@@QAA@XZ",
+    "lane": "W16-TZ 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??1Entry@LocalePanel@@QAA@XZ",
+     "role": "old-label",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "folded (PROVEN)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??1RecommendedEntry@StoreInfoPanel@@QAA@XZ @ 0x82638c10, ??1Entry@LocalePanel@@QAA@XZ): PROVEN [CHASED] retail 80 B / ours 80 B, 0 cycle-assumed"
+    }
+   ]
   },
   {
    "name": "0DancerSequence",
@@ -16257,11 +16449,36 @@
   {
    "name": "$for_each",
    "address": "0x8258fde8",
-   "survivor": "??$for_each@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@0@0U1@@Z",
+   "survivor": "??$for_each@U?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits@PAVGamerAwardStatus@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits@PAVGamerAwardStatus@@@stlpmtx_std@@@0@0U1@@Z",
    "folded": [
-    "??$for_each@U?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@0@0U1@@Z"
+    "??$for_each@U?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@0@0U1@@Z",
+    "??$for_each@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@0@0U1@@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 5, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T2. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 5, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "relabelled": {
+    "from": "??$for_each@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@0@0U1@@Z",
+    "to": "??$for_each@U?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits@PAVGamerAwardStatus@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits@PAVGamerAwardStatus@@@stlpmtx_std@@@0@0U1@@Z",
+    "lane": "W16-TZ 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$for_each@U?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@0@0U1@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@U?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits @ 0x8258fde8, ??$for_each@U?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVConte): PROVEN [CHASED] retail 104 B / ours 104 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$for_each@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@stlpmtx_std@@UDelete@@@stlpmtx_std@@YA?AUDelete@@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PAVWebSvcRequest@@@stlpmtx_std@@@0@0U1@@Z",
+     "role": "old-label",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "folded (PROVEN)",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$for_each@U?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits @ 0x8258fde8, ??$for_each@U?$_List_iterator@PAVWebSvcRequest@@U?$_Nonconst_traits@PA): PROVEN [CHASED] retail 104 B / ours 104 B, 0 cycle-assumed"
+    }
+   ]
   },
   {
    "name": "CheckContextSong",
