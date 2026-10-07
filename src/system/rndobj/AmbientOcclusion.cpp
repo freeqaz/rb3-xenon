@@ -1728,7 +1728,9 @@ Triangle* vector<Triangle, StlNodeAlloc<Triangle>>::_M_erase(
 ) {
     Triangle* __pos = __first;
     Triangle* __src = __last;
-    int __count = (int)((this->_M_finish - __src) / (unsigned int)sizeof(Triangle));
+    // Element count: retail is a single srawi. of the byte span. Dividing the
+    // pointer difference by sizeof again moved only 1/64 of the tail.
+    int __count = (int)(this->_M_finish - __src);
 
     for (; __count > 0; __count--) {
         memcpy(__pos, __src, sizeof(Triangle));
