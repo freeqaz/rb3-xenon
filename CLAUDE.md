@@ -1239,16 +1239,18 @@ across this lane's sabotage cycles. Two clean builds here do not differ at all.
   four thresholds so it stays visibly one: `thr≤4 = 0 units · ≤5 = 0 · ≤6 = 104
   · ≤7 = 104`. Scaffold bytes are stable (179,948 B / 104 units vs 08-17's
   180,196 / 105 — one unit of legitimate drift, not a methodology change).
-  ✅✅✅ **RE-MEASURED 2026-10-06 at main `7e5a99800` (after W16-PL): ceiling
-  64.624% (6,622,548 B, byte-identical to 10-03b), `matched_code` 5,925,876 B =
-  57.826% = 89.48% OF THE CEILING, gap 696,672 B; IN-SCOPE (native port, XDK +
-  Quazal excluded) gap 263,644 B, 93.10% matched, 41% of it in files the native
-  build compiles today.** The ceiling jumped +2.879 pp on 10-02/03 because Quazal
-  scaffold TUs gained bodies, not because anything was re-pinned for it.
+  ✅✅✅ **RE-MEASURED 2026-10-07 at main `24d250690` (after W16-RV): ceiling
+  64.853% (6,646,064 B), `matched_code` 6,047,896 B = 59.016% = 91.00% OF THE
+  CEILING, gap 598,168 B; IN-SCOPE (native port, XDK + Quazal excluded) gap
+  209,164 B, 94.56% matched, 53.5% of it in files the native build compiles
+  today; the VIA-DC3 gap (214,104 B) is now the larger.** The ceiling rose
+  +23,516 B because code left `auto_*` for named units. The ceiling jumped
+  +2.879 pp on 10-02/03 because Quazal scaffold TUs gained bodies.
   Earlier readings: 09-30 61.537% / 74.18%, 10-01 61.537% / 74.51%, 10-02
-  61.745% / 88.36%, 10-03b 64.624% / 88.96% (in-scope gap 295,552 B).
-  Current-state doc: `docs/decomp/CAMPAIGN_STATE_2026-10-06.md` (one disposition
-  per in-scope gap row, levers ranked by native relevance). Re-measure; do not inherit.
+  61.745% / 88.36%, 10-03b 64.624% / 88.96%, 10-06 64.624% / 89.48% (in-scope
+  gap 263,644 B).
+  Current-state doc: `docs/decomp/CAMPAIGN_STATE_2026-10-07.md` (one disposition
+  per in-scope and VIA-DC3 gap row, levers ranked by native relevance). Re-measure; do not inherit.
   ⚠ **`tools/ceiling_recompute.py` takes FOUR positional args** —
   `main(report_path, objdiff_path, root, label)`. Fewer raises a bare
   `IndexError: list index out of range`, which reads like a data problem and is
