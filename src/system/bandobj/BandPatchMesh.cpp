@@ -815,10 +815,10 @@ void BandPatchMesh::WorkVerts::SpreadEdges(int i) {
 }
 
 int BandPatchMesh::WorkVerts::AddUvs(MeshVert *mv1, MeshVert *mv2, const Vector2 *v2) {
-    unsigned short *faceidxptr = (unsigned short *)((char *)mv2 + kMVFaceList);
     int ret = 0;
     for (int i = 0; i < mv2->unk30; i++) {
-        RndMesh::Face &curface = mMesh->Faces()[faceidxptr[i]];
+        int faceidx = ((unsigned short *)((char *)mv2 + kMVFaceList))[i];
+        RndMesh::Face &curface = mMesh->Faces()[faceidx];
         for (int j = 0; j < 3; j++) {
             MeshVert *curmv = (MeshVert *)mMeshVerts[curface[j]];
             if (curmv != mv2 && curmv->mVert != 0 && curmv->unk24 != unk0) {
