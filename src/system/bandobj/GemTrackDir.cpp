@@ -1185,8 +1185,13 @@ float GemTrackDir::GetKeyOffset() { return mKeyOffset; }
 void GemTrackDir::UpdateFingerFeedback(const RGState &state) {
     // A DEV build can substitute/cycle a fake RGState here via the
     // MILO_DEBUG-only members; retail passes the caller's state straight through.
-    if (mFingerShape)
-        mFingerShape->Update(state, true, false);
+    // Retail 0x822E36B8 does not test mFingerShape: `lwz r3,0x760(r3)` then a
+    // tail call to FingerShape::Update. The null test is kept natively only.
+#ifdef HX_NATIVE
+    if (!mFingerShape)
+        return;
+#endif
+    mFingerShape->Update(state, true, false);
 }
 
 void GemTrackDir::UpdateLeftyFlip(bool b) {

@@ -16,6 +16,7 @@
 
 #ifndef HX_NATIVE
 void MemcardXbox::Init() { Memcard::Init(); }
+void MemcardXbox::Terminate() { Memcard::Terminate(); }
 #endif
 
 MemcardXbox TheMC;

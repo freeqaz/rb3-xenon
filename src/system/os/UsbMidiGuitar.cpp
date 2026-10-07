@@ -234,9 +234,12 @@ void UsbMidiGuitar::UpdateStringStrummed(int pad, int str) {
 
 Queue::Queue(int i) : mArrayStart(0) { Initialize(i); }
 
+// Retail 0x8251A018 enters and leaves the section around the delete with no
+// EH frame: explicit Enter/Exit, not a CritSecTracker.
 Queue::~Queue() {
-    CritSecTracker tracker(&gCritSection);
+    gCritSection.Enter();
     delete[] mArrayStart;
+    gCritSection.Exit();
 }
 
 void Queue::Initialize(int i) {

@@ -75,6 +75,10 @@ void FileQualifiedFilename(char *out, int, const char *in) {
     }
 }
 
+// Retail 0x825219A0 (396 B): a non-local path goes straight to the archive (no
+// UsingCD / Holmes split), a failed FindFirstFileA returns without the
+// GetLastError report, and every entry is formatted "%s/%s" (no "." special
+// case). Those three DC3 additions are kept natively.
 void FileEnumerate(
     const char *dir,
     void (*cb)(const char *, const char *),
@@ -82,18 +86,25 @@ void FileEnumerate(
     const char *pattern,
     bool b2
 ) {
+#ifdef HX_NATIVE
     bool local = FileIsLocal(dir);
     if (UsingCD() && !local)
         TheArchive->Enumerate(dir, cb, recurse, pattern);
     else if (!UsingCD() && !local)
         HolmesClientEnumerate(dir, cb, recurse, pattern, b2);
     else {
+#else
+    if (!FileIsLocal(dir))
+        TheArchive->Enumerate(dir, cb, recurse, pattern);
+    else {
+#endif
         char qualified[256];
         FileQualifiedFilename(qualified, 0x100, dir);
         WIN32_FIND_DATAA lpFindFileData;
         HANDLE hFindFile =
             FindFirstFileA(MakeString("%s\\*", qualified), &lpFindFileData);
         if (hFindFile == (HANDLE)-1) {
+#ifdef HX_NATIVE
             DWORD err = GetLastError();
             switch (err) {
             case ERROR_FILE_NOT_FOUND:
@@ -113,12 +124,16 @@ void FileEnumerate(
                 );
                 break;
             }
+#endif
         } else {
             char buf150[256];
             while (true) {
+#ifdef HX_NATIVE
                 if (strcmp(qualified, ".") == 0) {
                     sprintf(buf150, "%s", lpFindFileData.cFileName);
-                } else {
+                } else
+#endif
+                {
                     sprintf(buf150, "%s/%s", qualified, lpFindFileData.cFileName);
                 }
                 if (lpFindFileData.dwFileAttributes & 0x10) {

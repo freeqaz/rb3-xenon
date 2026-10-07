@@ -232,7 +232,9 @@ public:
     NEW_OBJ(BandCharDesc);
     static unsigned short gRev;
     static unsigned short gAltRev;
-    NEW_OVERLOAD;
+    // Retail NewObject (0x823399C0) inlines operator new as StaticClassName()
+    // then MemAlloc(0x260, 0): the OBJ_NEW_OVERLOAD shape.
+    OBJ_NEW_OVERLOAD;
     DELETE_OVERLOAD_INLINE;
 
     Symbol mPrefab; // 0xc

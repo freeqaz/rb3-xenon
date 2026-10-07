@@ -1046,28 +1046,30 @@ void ObjPtrList<T1, T2>::operator=(const ObjPtrList &other) {
         return;
     while (mSize > other.mSize)
         pop_back();
+#ifdef HX_NATIVE
     Node *otherNodes = other.mNodes;
     for (Node *n = mNodes; n != nullptr; n = n->next, otherNodes = otherNodes->next) {
-#ifdef HX_NATIVE
         *n = *otherNodes;
-#else
-        // Thin X360 node has no operator=; replace the held object in place,
-        // keeping the existing links, with list-as-ref Release/AddRef on `this`
-        // (as operator= calling Set()). Retail X360's single
-        // folded body (0x8248aee8) is the Set(node, obj) shape: the
-        // source referent is read into a local FIRST, and the AddRef is on
-        // that local, not on a re-read of n->mObject.
-        T1 *obj = otherNodes->mObject;
-        if (n->mObject)
-            n->mObject->Release(this);
-        n->mObject = obj;
-        if (obj)
-            obj->AddRef(this);
-#endif
     }
     for (; otherNodes != nullptr; otherNodes = otherNodes->next) {
         push_back(otherNodes->Obj());
     }
+#else
+    // Retail replaces each held object through Set(iterator, obj). For a T
+    // whose Object base is virtual Set stays out of line: the 16 spellings
+    // folded at 0x8230C628 (220 B) call ?Set@?$ObjPtrList@VCharCollide@@...
+    // there. For Hmx::Object Set inlines and the body is 0x8248AEE8.
+    // Still different at 0x8230C628: retail passes the iterator through a
+    // stack temp (stw n,0x50(r1); lwz r4,0x50(r1)) and guards the first loop
+    // at the top instead of jumping to its test. Neither `Set(iterator(n), ..)`
+    // nor `Set(it++, ..)` reproduces the temp.
+    iterator it = begin();
+    iterator oit = other.begin();
+    for (; it != end(); ++it, ++oit)
+        Set(it, *oit);
+    for (; oit != other.end(); ++oit)
+        push_back(*oit);
+#endif
 }
 
 #ifndef HX_NATIVE

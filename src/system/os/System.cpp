@@ -887,7 +887,7 @@ void SystemTerminate() {
     NetCacheMgrTerminate();
     FileCache::Terminate();
     TheLocale.Terminate();
-    TheMC.Memcard::Terminate();
+    TheMC.Terminate();
     CheatsTerminate();
     KeyboardTerminate();
     JoypadTerminate();

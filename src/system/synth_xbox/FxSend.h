@@ -47,7 +47,6 @@ public:
     void SyncEffectParams();
     void UpdateVolumes();
     void Cleanup();
-    void CleanChain();
     void Refresh(std::vector<FxSend *> &);
 
     int unk4;

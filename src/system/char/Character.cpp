@@ -74,6 +74,12 @@ private:
     ObjPtr<RndTransformable> mParent; // 0x90
 };
 
+// Out of line, ahead of its callers: retail ObjVector<Lod>::resize (0x82373F80)
+// keeps `this` and the size in r8/r7 across the call, which MSVC only does
+// when it has already compiled the leaf ctor (0x8236E7D0) in this TU.
+Character::Lod::Lod(Hmx::Object *owner)
+    : mScreenSize(0), mGroup(owner, 0), mTransGroup(owner, 0) {}
+
 #pragma region Hmx::Object
 
 Character::Character()
@@ -516,7 +522,11 @@ void Character::Enter() {
 }
 
 void Character::Exit() {
+    // Retail 0x8236D3F8 (12 B) is `mPollState = kCharExited; b RndDir::Exit`:
+    // no current-character scope (a DC3 addition, kept natively).
+#ifdef HX_NATIVE
     AutoSetCurrentCharacter scope(this);
+#endif
     mPollState = kCharExited;
     RndDir::Exit();
 }

@@ -15,8 +15,12 @@ JsonObject::EType JsonObject::GetType() const {
         return kType_Null;
 }
 
+// Retail 0x82B81F40 is `lwz r3,4(r3); b json_object_get_string`: the type
+// query is native-only, as in Int() and Double().
 char const *JsonObject::Str() const {
+#ifdef HX_NATIVE
     MILO_ASSERT(GetType() == kType_String, 0x20);
+#endif
     return json_object_get_string(mObject);
 }
 

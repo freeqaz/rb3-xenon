@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "83b469609",
+ "recorded_at": "bd8f532e0",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -377,7 +377,6 @@
   "0x82086014": null,
   "0x82086074": null,
   "0x820860cc": null,
-  "0x82087c1c": null,
   "0x820889ac": null,
   "0x8208a5bc": null,
   "0x8208a5d4": null,
@@ -392,8 +391,6 @@
   "0x8208a664": null,
   "0x8208b3ac": null,
   "0x8208bbdc": null,
-  "0x8208bc6c": null,
-  "0x8208de24": null,
   "0x8208dfdc": null,
   "0x8208e638": null,
   "0x8208f47c": null,
@@ -1520,7 +1517,6 @@
   "0x8251e528": "?RefreshInProgress@ContentMgr@@QAA_NXZ",
   "0x8251eb70": "?UnregisterCallback@ContentMgr@@QAAXPAVCallback@1@_N@Z",
   "0x82520150": "?_M_create_node@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@IAAPAU_List_node_base@2@ABQAVContent@@@Z",
-  "0x825231e8": "?GetLocalUserFromPadNum@UserMgr@@QBAPAVLocalUser@@H@Z",
   "0x82523470": "?GetLocalUsers@UserMgr@@QBAXAAV?$vector@PAVLocalUser@@V?$StlNodeAlloc@PAVLocalUser@@@stlpmtx_std@@@stlpmtx_std@@@Z",
   "0x82523758": "?GetLocalUser@LocalUser@@UAAPAV1@XZ",
   "0x825238f0": "?GetRemoteUser@RemoteUser@@UAAPAV1@XZ",
@@ -1530,7 +1526,6 @@
   "0x825249b0": "?JoypadSetVibrate@@YAXH_N@Z",
   "0x82524a60": "AssociateUserAndPad",
   "0x82524a78": "ResetAllUsersPads",
-  "0x82524af8": "JoypadGetUserFromPadNum",
   "0x82524b40": "JoypadIsCalbertGuitar",
   "0x82524ee8": "?IsJoypadDetectMatch@?A0x47b254f1@@YA_NPAVDataArray@@ABVJoypadData@@@Z",
   "0x82525940": "?JoypadIsControllerTypePadNum@@YA_NHVSymbol@@@Z",
@@ -1539,8 +1534,6 @@
   "0x82529ab0": "?JoypadReset@@YAXXZ",
   "0x8252b9fc": null,
   "0x8252c330": "?clear@?$_List_base@VAsyncTask@@V?$StlNodeAlloc@VAsyncTask@@@stlpmtx_std@@@stlpmtx_std@@QAAXXZ",
-  "0x8252d140": "?Terminate@AsyncFile@@IAAXXZ",
-  "0x8252d7e8": "??1AsyncFile@@UAA@XZ",
   "0x8252e038": "?Tell@ArkFile@@UAAHXZ",
   "0x8252e068": "?Size@ArkFile@@UAAHXZ",
   "0x8252e070": "?UncompressedSize@ArkFile@@UAAHXZ",
@@ -19330,32 +19323,6 @@
     "?OnReqFinished@WebSvcMgr@@UAAXPAVWebSvcRequest@@@Z": "PROVEN"
    }
   },
-  "0x82535708": {
-   "survivor": "??1AsyncFileWin@@UAA@XZ",
-   "callees": [
-    "0x82000e8c",
-    "0x82087c1c",
-    "0x8208bc6c",
-    "0x8208de24",
-    "0x82117728",
-    "0x82273470",
-    "0x825243e0",
-    "0x82524420",
-    "0x8252d140",
-    "0x8252d7e8",
-    "0x827bbd88",
-    "0x827bc430",
-    "0x827bca50",
-    "0x827bdf38",
-    "0x827c44b8",
-    "0x8282aed0",
-    "0x82e06ba8",
-    "0x82e06e08"
-   ],
-   "verdicts": {
-    "??1AsyncFileHolmes@@UAA@XZ": "UNDECIDABLE"
-   }
-  },
   "0x825371f8": {
    "survivor": "??_DNetPushScreenMsg@@QAAXXZ",
    "callees": [
@@ -30054,18 +30021,6 @@
     "?push_back@?$vector@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@V?$StlNodeAlloc@UNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUNode@?$ObjPtrVec@VSpotlight@@VObjectDir@@@@@Z": "UNDECIDABLE"
    }
   },
-  "0x827a4f38": {
-   "survivor": "?GetName@Profile@@QBAPBDXZ",
-   "callees": [
-    "0x825231e8",
-    "0x82524af8",
-    "0x82ccb26c",
-    "0x82ccb2c8"
-   ],
-   "verdicts": {
-    "?GetLocalUser@Profile@@QBAPAVLocalUser@@XZ": "PROVEN"
-   }
-  },
   "0x827a4f48": {
    "survivor": "?SaveLoadComplete@Profile@@UAAXW4ProfileSaveState@@@Z",
    "callees": [],
@@ -34166,7 +34121,8 @@
     "?push_back@?$vector@PAVStreamReceiver@@V?$StlNodeAlloc@PAVStreamReceiver@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVStreamReceiver@@@Z": "PROVEN",
     "?push_back@?$vector@PAVChannelData@@V?$StlNodeAlloc@PAVChannelData@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVChannelData@@@Z": "PROVEN",
     "?push_back@?$vector@PAVRndMultiMesh@@V?$StlNodeAlloc@PAVRndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVRndMultiMesh@@@Z": "PROVEN",
-    "?push_back@?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVDataNetLoader@@@Z": "PROVEN"
+    "?push_back@?$vector@PAVDataNetLoader@@V?$StlNodeAlloc@PAVDataNetLoader@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVDataNetLoader@@@Z": "PROVEN",
+    "?push_back@?$vector@PAVSynchronizable@@V?$StlNodeAlloc@PAVSynchronizable@@@stlpmtx_std@@@stlpmtx_std@@QAAXABQAVSynchronizable@@@Z": "PROVEN"
    }
   },
   "0x82b5f878": {

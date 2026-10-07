@@ -33,10 +33,6 @@ DECLARE_MESSAGE(SmartGlassMsg, "smart_glass_msg")
     SmartGlassMsg(int id, DataArray *a) : Message(Type(), id, a) {}
 END_MESSAGE
 
-// Forward declarations for merged functions
-extern void* merged_DataArrayNode(void*, int);
-extern void* merged_82610090(const void*, unsigned int*);
-
 // XSTORAGE_ENUMERATE_RESULTS is a TYPEDEF of struct _XSTORAGE_ENUMERATE_RESULTS
 // (xdk/xonline/xonline.h), now reachable via xdk/xparty/xparty.h; the old
 // `struct XSTORAGE_ENUMERATE_RESULTS;` forward decl declared a DIFFERENT tag.
@@ -697,10 +693,9 @@ namespace {
                             break;
                         }
                         default: {
-                            unsigned int t = type;
-                            const char* msg = "DtaToJson can't handle type %d r";
-                            const char* formatted = (const char*)merged_82610090(&msg, &t);
-                            TheDebug.Notify(formatted);
+                            // DC3's text. This SmartGlass code has no retail
+                            // counterpart (see the note at the top of the file).
+                            MILO_NOTIFY("DtaToJson can't handle type %d right now", type);
                             XJSONWriteNullValue(writer);
                             break;
                         }
