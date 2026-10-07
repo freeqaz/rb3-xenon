@@ -34,12 +34,14 @@ public:
     Vector2 &Range() { return mRange; }
     int GetSteps() const { return mSteps; }
     void SetVisible(bool v) { mVisible = v; }
+    bool GetVisible() const { return mVisible; }
     void SetSteps(int steps);
     void SetPointTest(bool);
     bool GetPointTest() const { return mPointTest; }
     bool GetAreaTest() const { return mAreaTest; }
     Hmx::Rect &GetArea() { return mArea; }
     void SetOcclusionResult(float f) { mOcclusionResult = f; }
+    float GetOcclusionResult() const { return mOcclusionResult; }
     void SetOcclusionReady(bool b) { mOcclusionReady = b; }
 
 protected:

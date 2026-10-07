@@ -112,6 +112,7 @@ extern "C" __attribute__((weak)) void rb3_stub_probe_dump(void);
 #include "rndobj/Dir.h"
 #include "rndobj/Draw.h"
 #include "rndobj/Env.h"
+#include "rndobj/Flare.h"
 #include "rndobj/PostProc.h"
 #include "rndobj/Lit.h"
 #include "rndobj/Mat.h"
@@ -2198,6 +2199,7 @@ namespace {
         int meshes = 0;
         int drawn = 0;
         int crowdDrawn = 0; // X6: WorldCrowd::Draw() calls issued
+        int flaresDrawn = 0; // W16-RW: RndFlare::DrawShowing() calls issued
         int skinned = 0;
         int withMat = 0;
         int withTex = 0;
@@ -4300,6 +4302,18 @@ namespace {
         // Nothing here places anything. The transforms come from
         // WorldCrowd::Load (world/Crowd.cpp:361-368), which deserializes a
         // std::list<Transform> per CharData straight into mMMesh->Instances().
+        // W16-RW: the scene's RndFlares, drawn after the meshes and the crowd.
+        // Same driver defect as the crowd below: the flat mesh list never
+        // reached RndFlare::DrawShowing, so no flare drew and nothing ever
+        // called Rnd::TestPoint. Retail draws them through the drawable tree;
+        // here they go last, so their point tests (answered by the engine's
+        // occlusion queries at EndDrawing, one frame later) see the frame's
+        // finished depth. RB3_NO_FLARE_DRAW restores the old flare-less draw.
+        std::vector<RndFlare *> flares;
+        if (deep && getenv("RB3_NO_FLARE_DRAW") == nullptr) flares = CollectDeep<RndFlare>(dir);
+        printf("  flares: %d RndFlare(s)%s\n", (int)flares.size(),
+               getenv("RB3_NO_FLARE_DRAW") ? " (RB3_NO_FLARE_DRAW: not collected)" : "");
+
         std::vector<WorldCrowd *> crowds;
         bool drawCrowd = getenv("RB3_NO_CROWD_DRAW") == nullptr;
         if (drawCrowd && deep) {
@@ -4853,14 +4867,36 @@ namespace {
                     }
                 }
             }
+            // W16-RW: flares last (see the collection above).
+            for (size_t fi = 0; fi < flares.size(); fi++) {
+                RndFlare *fl = flares[fi];
+                if (!fl->Showing()) continue;
+                if (gOnlyMesh && !strstr(fl->Name(), gOnlyMesh)) continue;
+                fl->DrawShowing();
+                r.flaresDrawn++;
+            }
             TheRnd.EndDrawing();
+        }
+        // W16-RW: each flare's last answer. `occ` is the area query's visible
+        // pixel count; DrawShowing scales the flare by occ / (rect w * h), and a
+        // flare whose point test failed fades out.
+        for (size_t fi = 0; fi < flares.size(); fi++) {
+            RndFlare *fl = flares[fi];
+            const Hmx::Rect &a = fl->GetArea();
+            const float rectArea = a.w * a.h;
+            printf("  flare %-24s showing=%d point=%d visible=%d occ=%8.1f rect=%4.0fx%-4.0f "
+                   "at (%5.0f,%5.0f) ratio=%.3f\n",
+                   fl->Name(), fl->Showing() ? 1 : 0, fl->GetPointTest() ? 1 : 0,
+                   fl->GetVisible() ? 1 : 0, fl->GetOcclusionResult(), a.w, a.h, a.x, a.y,
+                   rectArea > 0.0f ? fl->GetOcclusionResult() / rectArea : 0.0f);
         }
         {
             char d[128];
             snprintf(d, sizeof(d),
                      "%d of %d meshes issued a draw, %d frame(s); crowd: %d placed "
-                     "draw(s)",
-                     r.drawn, r.meshes, frames, r.crowdDrawn / (frames ? frames : 1));
+                     "draw(s); flares: %d",
+                     r.drawn, r.meshes, frames, r.crowdDrawn / (frames ? frames : 1),
+                     r.flaresDrawn / (frames ? frames : 1));
             Gate("draws-issued", r.drawn > 0, d);
         }
 
