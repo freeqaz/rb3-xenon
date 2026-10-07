@@ -44,6 +44,7 @@
 #include "utl/Symbol.h"
 
 #include "ark_verify.h"
+#include "retail_boot_macros.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -116,16 +117,21 @@ int main(int argc, char **argv) {
         maxSongs = atoi(positional[posIdx]);
     if (maxSongs <= 0)
         maxSongs = 20;
-    // 138 is the retail RB3 disc song count, independently established by the
-    // rb3-ark driver and by tools/ark_extract.py's DTB extraction.
+    // 130 is the song count a console reads from the shipped songs.dtb, with
+    // retail's boot macros defined (RetailBootMacros::Define below). The file
+    // holds 138 top-level songs, but eight are dev/test charts inside
+    // `#ifndef _SHIP`; the 138 this used to expect was measured before the
+    // native drivers defined _SHIP. tools/retail_boot_config.py, which reads
+    // the .dtb without the engine, gives 130 entries, all 130 with a song_id.
     if (expectSongs < 0)
-        expectSongs = arkMode ? 138 : 0; // 0 => "no expectation" in loose mode
+        expectSongs = arkMode ? 130 : 0; // 0 => "no expectation" in loose mode
 
     Gates g;
 
     InitMakeString();
     Symbol::Init();
     InitM1Symbols(); // must follow Symbol::Init() (interns the Symbol globals)
+    { g.total++; g.failures += RetailBootMacros::Define(); } // retail's boot DTA macros (W16-UA)
     gSystemConfig = MakeMinimalSystemConfig();
 
     printf("=== rb3-xenon native M14: BandSongMgr fed from the .ark ===\n");

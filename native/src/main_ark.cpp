@@ -14,6 +14,11 @@
 //   --dump <path> write the ark-read bytes out so an EXTERNAL tool (coreutils
 //                 sha256sum) can verify them independently of the SHA-256
 //                 implementation in this file.
+//   --config-dump <path>
+//                 write config/band_preinit_keep.dta, read as retail's
+//                 PreInitSystem reads it, in tools/retail_boot_config.py's
+//                 canonical form; that tool compares it with the config it
+//                 rebuilds from the shipped .dtb files (W16-UA).
 //
 // WHY THIS FILE IS THE ORACLE, not a plausible-looking printout:
 //   songs/gen/songs.dtb lives ~3.34 GB into the logical archive, i.e. past
@@ -35,6 +40,8 @@
 #include "utl/Symbol.h"
 
 #include "ark_verify.h"
+#include "retail_boot_macros.h"
+#include "os/Joypad.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -73,11 +80,79 @@ namespace {
     }
 }
 
+// ---------------------------------------------------------------------------
+// W16-UA: config/band_preinit_keep.dta as retail's PreInitSystem reads it:
+// with REGION_NA, HX_XBOX, HX_WIN, HX_NG and _SHIP defined (main() calls
+// RetailBootMacros::Define() right after Symbol::Init), inside one
+// BeginDataRead session, after DataInit (whose script functions the config's
+// #autorun needs). The gates check what each content-bearing macro selects in
+// the shipped data; the full comparison is tools/retail_boot_config.py over
+// --config-dump.
+namespace {
+    DataArray *Sub(DataArray *a, const char *tag) {
+        return a ? a->FindArray(Symbol(tag), false) : nullptr;
+    }
+
+    int DetectType(DataArray *controllers, const char *name) {
+        DataArray *c = Sub(controllers, name);
+        DataArray *t = Sub(Sub(c, "detect"), "type");
+        return t && t->Size() > 1 && t->Node(1).Type() == kDataInt ? t->Int(1) : -1;
+    }
+
+    void ConfigChecks(const char *dumpPath) {
+        printf("\n--- config/band_preinit_keep.dta as PreInitSystem reads it ---\n");
+        DataInit();
+        std::string boot = RetailBootMacros::TableNames();
+        BeginDataRead();
+        DataArray *cfg = DataReadFile("config/band_preinit_keep.dta", true);
+        FinishDataRead();
+        char d[256];
+        snprintf(d, sizeof(d), "%d top-level sections; macros before the read: %s",
+                 cfg ? cfg->Size() : -1, boot.c_str());
+        Gate("preinit-config", cfg != nullptr, d);
+        if (!cfg)
+            return;
+        if (dumpPath) {
+            bool ok = RetailBootMacros::DumpConfig(cfg, boot, dumpPath);
+            Gate("config-dump", ok, dumpPath);
+        }
+
+        // HX_XBOX: the system joypad.dta's Xbox controllers block, merged under
+        // the game's joypad.dta. The detect types are Joypad.h's enum.
+        DataArray *joy = Sub(cfg, "joypad");
+        DataArray *ctl = Sub(joy, "controllers");
+        int gType = DetectType(ctl, "strat_xbox_rb2");
+        int dType = DetectType(ctl, "hx_drums_xbox");
+        snprintf(d, sizeof(d), "%d controller entries; strat_xbox_rb2 type %d (want %d), "
+                 "hx_drums_xbox type %d (want %d)", ctl ? ctl->Size() - 1 : -1, gType,
+                 kJoypadXboxHxGuitarRb2, dType, kJoypadXboxDrums);
+        Gate("joypad-controllers", ctl && gType == kJoypadXboxHxGuitarRb2
+                 && dType == kJoypadXboxDrums, d);
+
+        // The game's empty (ignore) wins the #merge over the system's
+        // (ignore 1 2 3 4 5 6 7).
+        DataArray *ign = Sub(joy, "ignore");
+        snprintf(d, sizeof(d), "(ignore) has %d entr%s", ign ? ign->Size() - 1 : -1,
+                 ign && ign->Size() == 2 ? "y" : "ies");
+        Gate("joypad-ignore-empty", ign && ign->Size() == 1, d);
+
+        // _SHIP: three dev-only blocks a console never reads.
+        bool breed = Sub(joy, "breed_data_string_mappings") != nullptr;
+        bool hosts = Sub(cfg, "hostnames") != nullptr;
+        bool cheat = Sub(Sub(cfg, "ui"), "cheat_init") != nullptr;
+        snprintf(d, sizeof(d), "joypad/breed_data_string_mappings %s, hostnames %s, "
+                 "ui/cheat_init %s", breed ? "PRESENT" : "absent",
+                 hosts ? "PRESENT" : "absent", cheat ? "PRESENT" : "absent");
+        Gate("ship-dev-blocks-absent", !breed && !hosts && !cheat, d);
+    }
+}
+
 int main(int argc, char **argv) {
     const char *dataDir = nullptr;
     const char *refPath = nullptr;
     const char *arkPath = "songs/gen/songs.dtb";
     const char *dumpPath = nullptr;
+    const char *configDumpPath = nullptr;
     bool corrupt = false;
 
     std::vector<const char *> pos;
@@ -86,6 +161,8 @@ int main(int argc, char **argv) {
             corrupt = true;
         } else if (strcmp(argv[i], "--dump") == 0 && i + 1 < argc) {
             dumpPath = argv[++i];
+        } else if (strcmp(argv[i], "--config-dump") == 0 && i + 1 < argc) {
+            configDumpPath = argv[++i];
         } else {
             pos.push_back(argv[i]);
         }
@@ -93,7 +170,7 @@ int main(int argc, char **argv) {
     if (pos.size() < 2) {
         fprintf(stderr,
                 "usage: %s <dataDir> <referenceFile> [arkPath] "
-                "[--corrupt] [--dump <path>]\n", argv[0]);
+                "[--corrupt] [--dump <path>] [--config-dump <path>]\n", argv[0]);
         return 1;
     }
     dataDir = pos[0];
@@ -103,6 +180,7 @@ int main(int argc, char **argv) {
     // ---- engine bring-up -------------------------------------------------
     InitMakeString();
     Symbol::Init(); // mandatory before any Symbol is interned
+    gFailures += RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
 
     NativeSetDataDir(dataDir);
 
@@ -244,7 +322,15 @@ int main(int argc, char **argv) {
         }
         printf("  printed %d song entries\n", shown);
     }
-    Gate("song-count == 138", songCount == 138, "");
+    // 130 under retail's boot macros. songs.dtb holds 138 top-level songs, but
+    // eight (coldasice_nobass and seven test charts: _budget_test,
+    // _invalid_version_test, runs_16s, sustains, _bre_test, framerate,
+    // vocaltrainertest) sit inside `#ifndef _SHIP`, which a console never
+    // reads. The 138 this gate used to expect was measured before the native
+    // drivers defined _SHIP (W16-UA); tools/retail_boot_config.py gives 130.
+    Gate("song-count == 130", songCount == 130, "");
+
+    ConfigChecks(configDumpPath);
 
     printf("\nRESULT: %s", gFailures == 0 ? "ALL GATES PASSED\n" : "FAILED\n");
     if (gFailures) printf("  %d gate(s) failed\n", gFailures);

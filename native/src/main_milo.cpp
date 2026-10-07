@@ -71,6 +71,7 @@
 #include "utl/Loader.h"
 #include "utl/Str.h"
 #include "utl/Symbol.h"
+#include "retail_boot_macros.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -351,6 +352,7 @@ int main(int argc, char **argv) {
     // flips DirLoader::SetCacheMode(true) under UsingCD(), which is what makes
     // DirLoader::CachedPath resolve "foo.milo" to "gen/foo.milo_xbox".
     DataInit();
+    gFailures += RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
 
     NativeArchiveInit();
     if (!TheArchive) {

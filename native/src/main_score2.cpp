@@ -56,6 +56,7 @@
 #include "obj/DataFile.h"
 #include "obj/DataUtl.h"
 #include "utl/Symbol.h"
+#include "retail_boot_macros.h"
 
 #include "score_engine.h" // M5 transcription, for the cross-check
 
@@ -242,6 +243,7 @@ int main(int argc, char **argv) {
     InitMakeString();
     Symbol::Init();
     DataInit();
+    RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
     ObjectDir::PreInit(256, 4096);
 
     gSystemConfig = DataReadString(kScoringDta);

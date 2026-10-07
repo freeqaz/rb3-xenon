@@ -588,10 +588,14 @@ void PreInitSystem(const char *config) {
         gUsingCD = false;
         TheArchive = nullptr;
     }
+    // Retail's four, in retail's order (0x82510BB8; W16-UA). _SHIP was missing
+    // here, so a native boot read the shipped config's `#ifndef _SHIP` dev
+    // blocks, which a console never reads.
     DataArrayPtr ptr(1);
     DataSetMacro("HX_XBOX", ptr);
     DataSetMacro("HX_WIN", ptr);
     DataSetMacro("HX_NG", ptr);
+    DataSetMacro("_SHIP", ptr);
     while (true) {
         const char *str = OptionStr("define", nullptr);
         if (!str)

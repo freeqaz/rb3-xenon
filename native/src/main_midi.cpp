@@ -75,6 +75,7 @@
 #include "utl/TimeConversion.h"
 
 #include "ark_verify.h"
+#include "retail_boot_macros.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -293,6 +294,7 @@ int main(int argc, char **argv) {
     InitMakeString();
     Symbol::Init();
     DataInit();                     // data funcs + script engine
+    { g.total++; g.failures += RetailBootMacros::Define(); } // retail's boot DTA macros (W16-UA)
     ObjectDir::PreInit(256, 4096);  // sMainDir + DataSetThis(main)
     gSystemConfig = MakeSystemConfig();
 

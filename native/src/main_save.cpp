@@ -36,6 +36,7 @@
 #include "meta_band/StandIn.h"
 #include "utl/Symbol.h"
 #include "utl/HxGuid.h"
+#include "retail_boot_macros.h"
 
 #include <cstdio>
 #include <cstring>
@@ -286,6 +287,7 @@ int main(int argc, char **argv) {
     InitMakeString();
     Symbol::Init();
     DataInit();
+    RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
 
     // Publish the global save version + symbol-table capacity, exactly as
     // SaveLoadManager::Init does before any profile serialization.
