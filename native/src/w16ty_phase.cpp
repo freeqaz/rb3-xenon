@@ -32,6 +32,7 @@
 #include "rndobj/Draw.h"
 #include "rndobj/Env.h"
 #include "rndobj/Flare.h"
+#include "rndobj/Font.h"
 #include "rndobj/Lit.h"
 #include "rndobj/Mesh.h"
 #include "rndobj/Part.h"
@@ -52,6 +53,7 @@
 #include <cstring>
 #include <functional>
 #include <map>
+#include <new>
 #include <set>
 #include <string>
 #include <vector>
@@ -74,6 +76,7 @@ void Gate(const char *name, bool ok, const char *fmt, ...) {
     va_end(ap);
     gGate(name, ok, gBuf);
     gRan++;
+    fflush(stdout); // a later fault must not swallow the verdicts already reached
 }
 
 bool Near(float a, float b, float tol) { return std::fabs(a - b) <= tol; }
@@ -1428,6 +1431,129 @@ void AOChecks() {
     }
 }
 
+// ======================================================== KerningTable ==
+// KerningTable hashes each pair into 32 bucket heads, mTable[(a ^ b) & 31],
+// chained through Entry::next. Every bucket head must be null or one of the
+// table's own mEntries, and Find(a, b) must reach the entry whose key is
+// a | b << 16. The ctor, SetKerning and Load each clear the heads first; the
+// clear has to cover all 32 (0x80 bytes on X360, 0x100 on a 64-bit host).
+//  * shipped: every RndFont kerning table the fixture loaded;
+//  * ctor:    a table constructed over memory filled with 0xA5;
+//  * set:     the largest shipped table's pairs (GetKerning) set into a table
+//             whose heads were refilled with 0xA5 after construction, read
+//             back through Kerning().
+static bool HeadsValid(const KerningTable *t) {
+    for (int i = 0; i < 32; i++) {
+        const KerningTable::Entry *e = t->mTable[i];
+        if (e && (e < t->mEntries || e >= t->mEntries + t->mNumEntries))
+            return false;
+    }
+    return true;
+}
+
+// Every font milo the game ships under ui/resource/fonts/gen.
+const char *kFontMilos[] = {
+    "buttons", "chapter_diff_icons", "convection_symbol", "default", "dev", "gangly",
+    "hamilton", "icons_esrb", "icons_property", "icons_quest", "icons_tour", "icons_tour_z",
+    "instrument_icons_in_game", "instrument_icons_small", "instruments_icons",
+    "monospace_numbers_shadow", "pentatonic_bold", "pentatonic_boldsmall", "pentatonic_display",
+    "pentatonic", "pentatonic_mononumerals", "pentatonic_outline", "pentatonic_regularcond",
+    "pentatonic_regularsmall", "rats", "real_guitar_numbers_chord", "real_guitar_numbers",
+    "relay_black", "rockband-outline(bld37)", "stainless_ext_blk", "stainless_ext_reg",
+    "stainless"
+};
+std::vector<ObjDirPtr<ObjectDir> > gFontDirs;
+
+void KerningChecks() {
+    // The ctor first: loading the font milos runs RndText::Load, which kerns
+    // through these tables, so an uncleared head can fault before any later
+    // gate prints.
+    alignas(16) unsigned char buf[sizeof(KerningTable)];
+    memset(buf, 0xA5, sizeof(buf));
+    KerningTable *k = ::new (buf) KerningTable;
+    int dirty = 0;
+    for (int i = 0; i < 32; i++)
+        if (k->mTable[i])
+            dirty++;
+    Gate("ty-kerning-ctor", k->mNumEntries == 0 && dirty == 0,
+         "table built over 0xA5 bytes: %d of 32 bucket heads not cleared", dirty);
+    std::vector<RndFont *> fonts;
+    int milos = 0;
+    gFontDirs.reserve(sizeof(kFontMilos) / sizeof(*kFontMilos)); // no copies once loaded
+    for (const char *name : kFontMilos) {
+        char path[128];
+        snprintf(path, sizeof(path), "ui/resource/fonts/gen/%s.milo_xbox", name);
+        gFontDirs.push_back(ObjDirPtr<ObjectDir>());
+        gFontDirs.back().LoadFile(FilePath(path), false, true, kLoadFront, false);
+        ObjectDir *d = gFontDirs.back().Ptr();
+        if (!d)
+            continue;
+        milos++;
+        std::set<RndFont *> seen;
+        for (ObjDirItr<RndFont> it(d, true); it; ++it)
+            if (seen.insert(&*it).second)
+                fonts.push_back(&*it);
+    }
+    int tables = 0, entries = 0, badHeads = 0, badFind = 0, dupes = 0;
+    KerningTable *largest = nullptr;
+    std::string first;
+    for (RndFont *f : fonts) {
+        KerningTable *t = f->mKerningTable;
+        if (!t)
+            continue;
+        tables++;
+        if (!HeadsValid(t)) {
+            if (!badHeads++)
+                first = std::string(f->Name()) + ": a bucket head outside mEntries";
+            continue; // Find would follow it
+        }
+        // Each entry is pushed on the front of its chain, so where a key
+        // occurs twice the later entry is the one Find returns.
+        std::map<int, int> last;
+        for (int i = 0; i < t->mNumEntries; i++)
+            last[t->mEntries[i].key] = i;
+        dupes += t->mNumEntries - (int)last.size();
+        for (int i = 0; i < t->mNumEntries; i++, entries++) {
+            int key = t->mEntries[i].key;
+            if (t->Find(key & 0xFFFF, (unsigned int)key >> 16) != &t->mEntries[last[key]] && !badFind++
+                && first.empty())
+                first = std::string(f->Name()) + ": Find misses an entry";
+        }
+        if (!largest || t->mNumEntries > largest->mNumEntries)
+            largest = t;
+    }
+    Gate("ty-kerning-shipped", milos == (int)(sizeof(kFontMilos) / sizeof(*kFontMilos)) && tables > 0 && entries > 0 && badHeads == 0 && badFind == 0,
+         "%d of %zu shipped font milos, %zu fonts, %d kerning tables, %d pairs (%d repeat a key): "
+         "%d tables with a bucket head outside their entries, %d pairs Find does not resolve to "
+         "the key's last entry%s%s",
+         milos, sizeof(kFontMilos) / sizeof(*kFontMilos), fonts.size(), tables, entries, dupes, badHeads, badFind, first.empty() ? "" : "; first: ",
+         first.c_str());
+
+    if (!largest || dirty) {
+        k->~KerningTable();
+        return;
+    }
+    std::vector<RndFont::KernInfo> info;
+    largest->GetKerning(info);
+    memset(k->mTable, 0xA5, sizeof(k->mTable));
+    k->SetKerning(info, nullptr);
+    int wrong = 0;
+    bool heads = HeadsValid(k);
+    if (heads) {
+        std::map<std::pair<int, int>, float> want; // a repeated pair reads its last value
+        for (const RndFont::KernInfo &ki : info)
+            want[std::make_pair((int)ki.mFirstChar, (int)ki.mSecondChar)] = ki.kerning;
+        for (auto &kv : want)
+            if (k->Kerning(kv.first.first, kv.first.second) != kv.second)
+                wrong++;
+    }
+    Gate("ty-kerning-set", heads && wrong == 0 && k->mNumEntries == (int)info.size(),
+         "%zu shipped pairs set into a table whose heads held 0xA5: heads %s, %d pairs read back "
+         "wrong",
+         info.size(), heads ? "all null or own entries" : "NOT cleared", wrong);
+    k->~KerningTable();
+}
+
 // =================================================== CalcBoundingSphere ==
 // Character::CalcBoundingSphere on the shipped characters. With the local
 // transform reset to identity: a 0.1 sphere at each of bone_head, both ankles
@@ -1436,7 +1562,7 @@ void AOChecks() {
 // local transform is restored bit for bit.
 void BoundingChecks() {
     std::vector<Character *> chars = All<Character>("Character");
-    int n = 0, bad = 0, restoredBad = 0, fallback = 0, arms = 0;
+    int n = 0, bad = 0, restoredBad = 0, fallback = 0, arms = 0, armSensitive[2] = { 0, 0 };
     std::string first;
     static const char *names[5] = { "bone_head.mesh", "bone_R-ankle.mesh", "bone_L-ankle.mesh",
                                     "bone_R-toe.mesh", "bone_L-toe.mesh" };
@@ -1456,15 +1582,25 @@ void BoundingChecks() {
         }
         const char *cl[2] = { "bone_L-clavicle", "bone_R-clavicle" };
         const char *hd[2] = { "bone_L-hand", "bone_R-hand" };
+        // alt[k] is the same recipe with arm k's sphere one unit smaller: it
+        // differs from `want` only where that arm's sphere is not already
+        // inside the union, i.e. where this character can show its 7.0 at all.
+        Sphere alt[2] = { want, want };
         for (int s = 0; s < 2; s++) {
             RndTransformable *a = CharUtlFindBoneTrans(cl[s], c), *h = a ? CharUtlFindBoneTrans(hd[s], c) : nullptr;
             if (a && h) {
                 Vector3 v = a->WorldXfm().v;
                 v.z += Len(Sub(v, h->WorldXfm().v));
                 want.GrowToContain(Sphere(v, 7.0f));
+                for (int k = 0; k < 2; k++)
+                    alt[k].GrowToContain(Sphere(v, k == s ? 6.0f : 7.0f));
                 arms++;
             }
         }
+        for (int k = 0; k < 2; k++)
+            if (want.GetRadius() != 0
+                && (!NearV(alt[k].center, want.center, 1e-3f) || !Near(alt[k].radius, want.radius, 1e-3f)))
+                armSensitive[k]++;
         c->DirtyLocalXfm() = before;
         if (want.GetRadius() == 0) {
             fallback++;
@@ -1479,11 +1615,11 @@ void BoundingChecks() {
             first = b;
         }
     }
-    Gate("ty-char-bounding", n > 0 && arms > 0 && bad == 0 && restoredBad == 0,
-         "%zu shipped characters: %d on the bone recipe (%d clavicle arms), %d on the "
-         "all-bones fallback (not compared); %d off the recipe, %d local transforms not "
-         "restored%s%s",
-         chars.size(), n, arms, fallback, bad, restoredBad, first.empty() ? "" : "; first: ",
+    Gate("ty-char-bounding", n > 0 && arms > 0 && armSensitive[0] > 0 && bad == 0 && restoredBad == 0,
+         "%zu shipped characters: %d on the bone recipe (%d clavicle arms; the arm radius "
+         "visible on %d left, %d right), %d on the all-bones fallback (not compared); %d off the recipe, %d "
+         "local transforms not restored%s%s",
+         chars.size(), n, arms, armSensitive[0], armSensitive[1], fallback, bad, restoredBad, first.empty() ? "" : "; first: ",
          first.c_str());
 }
 
@@ -1592,6 +1728,7 @@ int RunW16TYPhase(GateFn gate) {
     ScaleChecks();
     BoundingChecks();
     PropAnimChecks();
+    KerningChecks();
     AOChecks(); // last: it moves geometry (Tessellate, TessellateMesh)
     {
         int bsp = 0;
