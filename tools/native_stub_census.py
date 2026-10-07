@@ -55,7 +55,7 @@ STUB_RE = re.compile(
 # round while STUB_RE did not list them, and the census read clean.
 NON_STUB_RE = re.compile(
     r"/src/(main_[a-z0-9]+\.cpp|bandtrack_phase\.cpp|w16sh_phase\.cpp|"
-    r"w16tf_phase\.cpp|score_engine\.cpp|cc5_stub_probe\.c)\.o$"
+    r"w16tf_phase\.cpp|w16tj_phase\.cpp|score_engine\.cpp|cc5_stub_probe\.c)\.o$"
 )
 NATIVE_SRC_RE = re.compile(r"CMakeFiles/[^/]+\.dir/src/[^/]+\.o$")
 

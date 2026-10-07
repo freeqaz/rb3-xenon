@@ -1478,9 +1478,20 @@ void VocalTrack::UpdateScrolling(float ms) {
 
         int &itPRef = lead ? unkf4 : (part == 1 ? unkf8 : unkfc);
         int *itPPtr = &itPRef;
+#ifdef HX_NATIVE
+        // native: these cursors legitimately sit one past the last note once
+        // every note is scrolled in, and the lists may be empty. Retail's
+        // `&v[i]` is plain pointer arithmetic there; the native library's
+        // operator[] asserts i < size() and aborts, so form the same pointers
+        // from data().
+        const VocalNote *itT = noteVec.data() + *itPPtr;
+        const VocalNote *altIt =
+            altNotes ? altNotes->mNotes.data() + unkfc : noteVec.end();
+#else
         const VocalNote *itT = &noteVec[*itPPtr];
         const VocalNote *altIt =
             altNotes ? &altNotes->mNotes[unkfc] : noteVec.end();
+#endif
         if (itT == noteVec.end()
             && (!altNotes || altIt == altNotes->mNotes.end()))
             continue;
@@ -1573,7 +1584,11 @@ void VocalTrack::UpdateScrolling(float ms) {
                     while (altIt != altNotes->mNotes.end() && !(altIt->mMs > phEndMs)) {
                         altIt++;
                     }
+#ifdef HX_NATIVE
+                    unkfc = (int)(altIt - altNotes->mNotes.data());
+#else
                     unkfc = (int)(altIt - &altNotes->mNotes[0]);
+#endif
                 }
                 int *curDeployPtr = &mNextDeployZone[std::min(part, 1)];
                 while (*curDeployPtr < freestyles.size()
@@ -1652,7 +1667,11 @@ void VocalTrack::UpdateScrolling(float ms) {
                         }
                         altIt++;
                     }
+#ifdef HX_NATIVE
+                    unkfc = (int)(altIt - altNotes->mNotes.data());
+#else
                     unkfc = (int)(altIt - &altNotes->mNotes[0]);
+#endif
                 }
 
                 if (itT->mMs > phEndMs)
@@ -1747,7 +1766,11 @@ void VocalTrack::UpdateScrolling(float ms) {
                     }
                     altIt++;
                 }
+#ifdef HX_NATIVE
+                unkfc = (int)(altIt - altNotes->mNotes.data());
+#else
                 unkfc = (int)(altIt - &altNotes->mNotes[0]);
+#endif
             }
 
             if (staticLyrics && plates.size() != 0) {
@@ -1757,7 +1780,11 @@ void VocalTrack::UpdateScrolling(float ms) {
             }
             (*curPhPtr)++;
         }
+#ifdef HX_NATIVE
+        *itPPtr = (int)(itT - noteVec.data());
+#else
         *itPPtr = (int)(itT - &noteVec[0]);
+#endif
 
         int colorBase = (staticLyrics ? 8 : 0) | (lead ? 4 : 0);
         Hmx::Color activeColor = mDir->GetLyricColor(colorBase | 1);

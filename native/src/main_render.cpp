@@ -5139,6 +5139,9 @@ static bool gNoW16SH = false;
 // native/src/w16tf_phase.cpp (W16-TF)
 int RunW16TFPhase(void (*gate)(const char *, bool, const char *));
 static bool gNoW16TF = false;
+// native/src/w16tj_phase.cpp (W16-TJ)
+int RunW16TJPhase(void (*gate)(const char *, bool, const char *));
+static bool gNoW16TJ = false;
 
 int main(int argc, char **argv) {
     // Line-buffer: a SIGSEGV inside the renderer would otherwise discard the
@@ -5170,6 +5173,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--no-bandtrack") == 0) gNoBandTrack = true;
         else if (strcmp(argv[i], "--no-w16sh") == 0) gNoW16SH = true;
         else if (strcmp(argv[i], "--no-w16tf") == 0) gNoW16TF = true;
+        else if (strcmp(argv[i], "--no-w16tj") == 0) gNoW16TJ = true;
         else if (strcmp(argv[i], "--crowd-all") == 0) gCrowdShowAll = true;
         else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
@@ -5402,6 +5406,12 @@ int main(int argc, char **argv) {
     // rule; --no-w16tf opts out.
     if (pos.size() == 2 && !gNoW16TF)
         RunW16TFPhase(Gate);
+    // W16-TJ: VocalTrack::UpdateScrolling and GemManager::SetupGems over a
+    // shipped song parsed by the real SongParser, and CustomizePanel::Handle
+    // over a populated panel (native/src/w16tj_phase.cpp). Same default-mode
+    // rule; --no-w16tj opts out.
+    if (pos.size() == 2 && !gNoW16TJ)
+        RunW16TJPhase(Gate);
 
     printf("\n=== summary ===\n");
     for (size_t i = 0; i < cells.size(); i++) {

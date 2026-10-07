@@ -1706,6 +1706,69 @@ set_source_files_properties(
     ${REPO_ROOT}/src/band3/meta_band/MusicLibrary.cpp
     PROPERTIES COMPILE_OPTIONS "-fno-access-control")
 
+# ---- W16-TJ: what the three W16-TJ gates reach ------------------------------
+# native/src/w16tj_phase.cpp constructs a CustomizePanel and a GemManager.
+# Until then both were compiled into rb3-render and dropped by --gc-sections,
+# so their link closure had never been resolved. These are the real TUs that
+# closure names (measured from the first link: 81 undefined references).
+# rb3-render only.
+set(W16TJ_LINK_SOURCES
+    ${REPO_ROOT}/src/band3/bandtrack/GraphicsUtl.cpp
+    ${REPO_ROOT}/src/band3/meta_band/ClosetMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AssetTypes.cpp
+    ${REPO_ROOT}/src/band3/meta_band/Asset.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AssetProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/NewAssetProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CurrentOutfitProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/MakeupProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/InstrumentFinishProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/ProfileAssets.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CharCache.cpp
+    ${REPO_ROOT}/src/band3/meta_band/UIEventMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/MetaPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/PrefabMgr.cpp
+    ${REPO_ROOT}/src/system/meta/SongMetadata.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandSongMgr.cpp
+    ${REPO_ROOT}/src/band3/game/GemTrainerPanel.cpp
+    # Second round: BandSongMgr's base and its cache/licence members, the UI
+    # event queue ClosetMgr and UIEventMgr post to, and the asset store.
+    ${REPO_ROOT}/src/system/meta/SongMgr.cpp
+    ${REPO_ROOT}/src/system/meta/DataArraySongInfo.cpp
+    ${REPO_ROOT}/src/system/meta/Jukebox.cpp
+    ${REPO_ROOT}/src/band3/meta_band/LicenseMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/UIEvent.cpp
+    ${REPO_ROOT}/src/band3/meta_band/Award.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AssetStore.cpp
+    ${REPO_ROOT}/src/band3/meta_band/NetSync.cpp
+    # StorePurchaseable, the base of the (stubbed) AssetOffer.
+    ${REPO_ROOT}/src/system/meta/StoreOffer.cpp
+)
+set_source_files_properties(${W16TJ_LINK_SOURCES}
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+# ui/UIList.cpp scatter-includes bandtrack/GemTrack.cpp, whose handler table
+# becomes live once w16tj_phase.cpp gives a BandUser a real GemTrack. Its
+# default HANDLE arms name the undefined utl/Symbols*.h globals; the
+# LOCAL_STATIC arms are the same comparisons with function-local statics.
+set_source_files_properties(${REPO_ROOT}/src/system/ui/UIList.cpp
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+# The VocalPlayer the UpdateScrolling gates construct. Its vtable makes the
+# whole player live (Poll, Handle, the Player/Performer/Band handler tables),
+# which until now only the headless vocal targets linked, against their own
+# symbol TUs. The real TUs for what it names; the scoring TUs' handler tables
+# get the LOCAL_STATIC arms (identical comparisons, function-local statics),
+# which every target linking them accepts.
+set(W16TJ_VOCAL_SOURCES
+    ${REPO_ROOT}/src/system/synth/FxSendSynapse.cpp
+    ${REPO_ROOT}/src/system/synth/FxSendDelay.cpp
+    ${REPO_ROOT}/src/system/synth/SlipTrack.cpp
+)
+set_source_files_properties(${W16TJ_VOCAL_SOURCES}
+    ${REPO_ROOT}/src/band3/game/VocalPlayer.cpp
+    ${REPO_ROOT}/src/band3/game/Player.cpp
+    ${REPO_ROOT}/src/band3/game/Performer.cpp
+    ${REPO_ROOT}/src/band3/game/Band.cpp
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+
 set(MILO_TARGET_COMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/milo_object_factories.cpp
     ${ENGINE_SOURCES}
@@ -1818,9 +1881,14 @@ if(RB3X_BUILD_ENGINE)
         ${CMAKE_SOURCE_DIR}/src/w16sh_phase.cpp
         # W16-TF: gates over engine math/utl rows no native target entered.
         ${CMAKE_SOURCE_DIR}/src/w16tf_phase.cpp
+        # W16-TJ: VocalTrack::UpdateScrolling, GemManager::SetupGems and
+        # CustomizePanel::Handle over a real parsed song and a populated panel.
+        ${CMAKE_SOURCE_DIR}/src/w16tj_phase.cpp
         ${VOCALTRACK_GAME_SOURCES}
         ${W16SH_LINK_SOURCES}
         ${W16SH_DEP_SOURCES}
+        ${W16TJ_LINK_SOURCES}
+        ${W16TJ_VOCAL_SOURCES}
         ${MILO_TARGET_COMMON_SOURCES}
     )
     list(APPEND MILO_TARGETS rb3-render)

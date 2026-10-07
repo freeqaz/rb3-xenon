@@ -53,6 +53,16 @@
 #include "net/Net.h"
 #include "net_band/RockCentral.h"
 #include "os/PlatformMgr.h"
+#include "synth/Synth.h"
+#include "meta_band/AssetStore.h"
+#include "meta_band/BandUI.h"
+#include "game/RGTrainerPanel.h"
+#include "game/RealGuitarGemPlayer.h"
+#include "os/ContentMgr.h"
+#include "game/VocalOverlay.h"
+#include "tour/Tour.h"
+#include "game/TrackerManager.h"
+#include "gesture/GestureMgr.h"
 
 [[noreturn]] static void BandTrackUnreached(const char *fn) {
     fprintf(stderr, "bandtrack_link_stubs: UNREACHED stub called: %s\n", fn);
@@ -66,7 +76,8 @@ CharSync *TheCharSync = nullptr;
 NetSession *TheNetSession = nullptr;
 SessionMgr *TheSessionMgr = nullptr;
 SongDB *TheSongDB = nullptr;
-BandSongMgr *TheSongMgrPtr = nullptr;
+// W16-TJ: TheSongMgrPtr is now the real one (meta_band/BandSongMgr.cpp, which
+// W16TJ_LINK_SOURCES links), pointing at the real gSongMgr.
 // W16-SH: Net is held BY VALUE (net/NetCore.h: `extern Net TheNet`). The real
 // TU (network/net/Net.cpp) is the Quazal session layer, out of scope; same
 // zero-filled-storage convention TheProfileMgr used before ProfileMgr.cpp was
@@ -96,9 +107,7 @@ void NetSession::SendMsgToAll(NetMessage &, PacketType) { UNREACHED(); }
 
 const PracticeSection &PracticeSectionProvider::GetSection(int) const { UNREACHED(); }
 
-void PrefabMgr::GetPrefabs(std::vector<PrefabChar *> &) const { UNREACHED(); }
-PrefabChar *PrefabMgr::GetDefaultPrefab(int) const { UNREACHED(); }
-PrefabMgr *PrefabMgr::GetPrefabMgr() { UNREACHED(); }
+// W16-TJ: PrefabMgr's three stubs retired; meta_band/PrefabMgr.cpp is linked.
 
 void SendJunkPatchesToAll() { UNREACHED(); }
 
@@ -113,4 +122,80 @@ void RockCentral::RecordScore(int, int, std::vector<PlayerScore> &, int, int, bo
 // W16-SH: the body is PlatformMgr_Xbox.cpp (XUser online-ID query, platform-only).
 void PlatformMgr::GetOnlineID(int, OnlineID *) const { UNREACHED(); }
 
+// W16-TJ: the edge of the CustomizePanel / ClosetMgr / BandSongMgr closure
+// (W16TJ_LINK_SOURCES). Synth::Play is the audio device (synth/Synth.cpp is
+// not linked; ClosetMgr plays its finish cues through it), SyncAvailableSongs
+// is another RockCentral call, and XBackgroundDownloadSetMode is the XDK
+// background-download switch CustomizePanel::Enter/Exit flip.
+void Synth::Play(const char *, float, float, float) { UNREACHED(); }
+void RockCentral::SyncAvailableSongs(const std::vector<BandProfile *> &, const std::vector<int> &,
+                                     const std::vector<int> &, Hmx::Object *) { UNREACHED(); }
+DWORD XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE) { UNREACHED(); }
+// The "show asset names" debug toggle AssetProvider reads; no TU in the tree
+// defines it. Off, as in a retail session.
+bool gShowAssetName = false;
+// TheBandUI is held BY VALUE (meta_band/BandUI.h: `extern BandUI TheBandUI`);
+// BandUI.cpp is the whole front-end shell. Zero-filled storage, as for TheNet:
+// UIEvent's transition path reads it; a virtual call through it faults.
+alignas(BandUI) unsigned char gW16TJBandUIStorage[sizeof(BandUI)] __asm__("TheBandUI");
+// AssetStore's store-offer parse and download poll, and NetSync's transition
+// checks. AssetOffer has no TU in this tree.
+AssetOffer::AssetOffer(DataArray *) { UNREACHED(); }
+extern "C" DWORD XMarketplaceGetDownloadStatus(DWORD, unsigned long long, DWORD *) { UNREACHED(); }
+bool NetSession::IsBusy() const { UNREACHED(); }
+void RockCentral::FailAllOutstandingCalls() { UNREACHED(); }
+// The real-guitar trainer and the real-guitar player (GemManager::Poll and
+// GemTrack::Poll's pro-guitar arms; neither TU is linked).
+RGTrainerPanel *TheRGTrainerPanel = nullptr;
+bool RGTrainerPanel::GetLegendMode() const { UNREACHED(); }
+const RGState &RealGuitarGemPlayer::GetRGState() const { UNREACHED(); }
 
+
+// TheContentMgr is a REFERENCE (os/ContentMgr.h); the DTA link stub gives
+// it 128 zero bytes, i.e. a null reference, so any registration faults.
+// Bind it to a base ContentMgr: no content packages, no refresh in flight
+// (mState kDone), every IsMounted true -- an on-disc-only session. The
+// SongUpgradeMgr and CustomizePanel the W16-TJ phase builds register here.
+static ContentMgr gW16TJContentMgr;
+ContentMgr &TheContentMgr = gW16TJContentMgr;
+// The VocalPlayer the W16-TJ phase builds: its debug overlay (no TU in the
+// tree; mVocalOverlay stays null), the session queries its Poll/end-game paths
+// make, and the tour singleton MetaPerformer consults (no tour here).
+void VocalOverlay::Reset(int) { UNREACHED(); }
+void VocalOverlay::AddPossiblePart(int, VocalPart *) { UNREACHED(); }
+void VocalOverlay::AppendAssignedPart(const Singer *, const std::vector<VocalPart *> &) { UNREACHED(); }
+void VocalOverlay::AppendDeploymentMarker(int) { UNREACHED(); }
+void VocalOverlay::AppendDeploymentTime(int, float) { UNREACHED(); }
+void VocalOverlay::AppendEnergy(int, float, float) { UNREACHED(); }
+void VocalOverlay::AppendPartData(const std::vector<VocalPart *> &) { UNREACHED(); }
+void VocalOverlay::AppendPhraseMeter(float) { UNREACHED(); }
+void VocalOverlay::AppendSingerPitch(int, float) { UNREACHED(); }
+void VocalOverlay::AppendTalkyData(int, bool, bool, float) { UNREACHED(); }
+void VocalOverlay::EqualizeSingerStrings() { UNREACHED(); }
+void VocalOverlay::FinalizeDisplayString() { UNREACHED(); }
+bool NetSession::IsLocal() const { UNREACHED(); }
+bool NetSession::IsInGame() const { UNREACHED(); }
+void NetSession::EndGame(int, bool, float) { UNREACHED(); }
+Tour *TheTour = nullptr;
+// Game's tracker relays (Band/Player energy, save and remote-tracker events).
+// TrackerManager.cpp drags the whole Tracker/TrackerDisplay family; no tracker
+// runs in this driver.
+void TrackerManager::ForceStars(int) { UNREACHED(); }
+void TrackerManager::OnPlayerAddEnergy(Player *, float) { UNREACHED(); }
+void TrackerManager::OnPlayerSaved(Player *) { UNREACHED(); }
+void TrackerManager::OnPlayerQuarantined(Player *) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerFocus(Player *, int, int, int) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerPlayerProgress(Player *, float) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerSectionComplete(Player *, int, int, int) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerPlayerDisplay(Player *, int, int, int) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerDeploy(Player *) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerEndDeployStreak(Player *, int) { UNREACHED(); }
+void TrackerManager::OnRemoteTrackerEndStreak(Player *, int, int) { UNREACHED(); }
+// GameMicManager's fake-mic arm compares TheGameMode against it; rb3-render
+// has no TheGameMode, so the symbol is never compared. Never interned.
+Symbol frame_rate;
+// ui/UIScreen.cpp's native Exit() leaves the gesture system's voice mode
+// (a Dance Central path). The W16-TJ stand-in UIManager links UIScreen; no
+// screen is entered or exited in this driver.
+GestureMgr *TheGestureMgr = nullptr;
+void GestureMgr::SetInVoiceMode(bool) { UNREACHED(); }

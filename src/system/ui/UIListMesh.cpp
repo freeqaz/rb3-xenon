@@ -30,9 +30,12 @@ bool DebugChooseModeMesh() {
 #pragma region UIListMesh
 
 // Retail inlines ObjPtr<RndMesh>(this) but calls ObjPtr<RndMat>'s ctor
-// out-of-line; the declared-only specialization forces that call.
+// out-of-line; the declared-only specialization forces that call. Native
+// links no definition of it, so the native build uses the template.
+#ifndef HX_NATIVE
 template <>
 ObjPtr<RndMat>::ObjPtr(Hmx::Object *, RndMat *);
+#endif
 
 UIListMesh::UIListMesh() : mMesh(this), mDefaultMat(this) {}
 
