@@ -32,6 +32,14 @@
 #include "meta_band/ModifierMgr.h"
 #include "meta_band/SongSortMgr.h"
 #include "meta_band/SongUpgradeMgr.h"
+#include "meta_band/UIStats.h"
+#include "net/NetCore.h"
+#include "net/Server.h"
+#include "obj/DataUtl.h"
+#include "os/Joypad.h"
+#include "os/OnlineID.h"
+#include "ui/UIScreen.h"
+#include "utl/DataPointMgr.h"
 #include "obj/Data.h"
 #include "obj/DataFile.h"
 #include "obj/Dir.h"
@@ -46,6 +54,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cstdint>
 #include <functional>
 #include <map>
 #include <set>
@@ -618,6 +627,314 @@ void BandDirectorChecks() {
     TheBandDirector = savedBd;
 }
 
+// ================================================== UIStats::MaybePublish ==
+// The fixture, every piece real code except the Server:
+//   * two UIScreens typed by the shipped ui/splash/splash.dta definitions
+//     ({new BandScreen splash_screen ... (gather_uistats FALSE)} and
+//     {new BandScreen intro_movie_screen ...}, no gather_uistats); the type is
+//     set through Hmx::Object::SetTypeDef, so UIScreen's panel lookup is skipped;
+//   * a LocalBandUser on pad 1 (gJoypadData[1].mUser, a core-guitar type with ten
+//     EEPROM bytes) that is not participating -- a participating local user would
+//     ask PlatformMgr::GetOnlineID, which is XUser-only (bandtrack_link_stubs);
+//   * a participating RemoteBandUser on drums with a valid OnlineID;
+//   * a GameMode whose mMode is "qp_coop", and TheDataPointMgr's recorder hook.
+// THE SERVER is the one fake. Server::Server and Server's vtable live in
+// network/net/Server.cpp, which also defines the global gXboxServer (a dynamic
+// initializer rb3-render must not run). MaybePublish makes exactly one Server
+// call, the virtual IsConnected(); the fake object is Server-sized zeroed
+// storage whose vptr points at a table holding, in IsConnected's slot (read off
+// &Server::IsConnected, Itanium ABI), Server.h's own inline body
+// `mLoginState == 2`, and in every other slot a trap that aborts.
+//
+// THE REFERENCE is the retail body (fn_8255F9D0), read off the target asm:
+//   * one `bl RecordDataPoint` -- only stats/pad_user is ever recorded, and only
+//     when it carries more than its name;
+//   * mLastControllerType (UIStats+0xe8, walked by r15) is LOADED once per remote
+//     user and never stored, so a participating remote user whose controller type
+//     is not kControllerNone is re-reported on every publish;
+//   * the drop arms: disconnected clears mPublishingPad, a gather_uistats FALSE
+//     screen does not; both bump mLastDroppedScreen and rewind the pad log.
+// Expected breed strings are formatted here from the joypad bytes this fixture
+// wrote; the controller symbol is read from the shipped config/macros.dta.
+
+struct Recorded {
+    std::string type;
+    std::map<std::string, std::string> pairs;
+};
+std::vector<Recorded> gRecorded;
+
+void RecordHook(DataPoint &dp, bool) {
+    Recorded r;
+    r.type = dp.mType.Str();
+    for (std::map<Symbol, DataNode>::iterator it = dp.mNameValPairs.begin();
+         it != dp.mNameValPairs.end(); ++it) {
+        const DataNode &n = it->second;
+        std::string v;
+        if (n.Type() == kDataInt) {
+            char b[32];
+            snprintf(b, sizeof(b), "%d", n.Int());
+            v = b;
+        } else
+            v = n.Str();
+        r.pairs[it->first.Str()] = v;
+    }
+    gRecorded.push_back(r);
+}
+
+std::string PairsText(const std::map<std::string, std::string> &m) {
+    std::string s;
+    for (auto &kv : m)
+        s += (s.empty() ? "" : " ") + kv.first + "=" + kv.second;
+    return s;
+}
+
+bool SamePoint(const std::vector<Recorded> &got, const std::map<std::string, std::string> &want) {
+    if (got.size() != 1) {
+        printf("  recorded %d points, want 1\n", (int)got.size());
+        return false;
+    }
+    if (got[0].type != "stats/pad_user" || got[0].pairs != want) {
+        printf("  got  %s {%s}\n  want stats/pad_user {%s}\n", got[0].type.c_str(),
+               PairsText(got[0].pairs).c_str(), PairsText(want).c_str());
+        return false;
+    }
+    return true;
+}
+
+void FakeServerTrap() {
+    fprintf(stderr, "W16-TS fake Server: a virtual other than IsConnected was called\n");
+    abort();
+}
+bool FakeServerIsConnected(Server *self) { return self->mLoginState == 2; } // Server.h:24
+void *gFakeServerVtbl[256];
+alignas(Server) unsigned char gFakeServerStorage[sizeof(Server)];
+
+Server *MakeFakeServer() {
+    bool (Server::*mfp)() = &Server::IsConnected;
+    struct {
+        uintptr_t ptr;
+        ptrdiff_t adj;
+    } rep;
+    static_assert(sizeof(rep) == sizeof(mfp), "Itanium member pointer");
+    memcpy(&rep, &mfp, sizeof(rep));
+    if (!(rep.ptr & 1) || rep.adj != 0 || (rep.ptr - 1) / sizeof(void *) >= 256)
+        return nullptr;
+    for (int i = 0; i < 256; i++)
+        gFakeServerVtbl[i] = (void *)&FakeServerTrap;
+    gFakeServerVtbl[(rep.ptr - 1) / sizeof(void *)] = (void *)&FakeServerIsConnected;
+    memset(gFakeServerStorage, 0, sizeof(gFakeServerStorage));
+    void **vptr = (void **)gFakeServerStorage;
+    *vptr = gFakeServerVtbl;
+    return (Server *)gFakeServerStorage;
+}
+
+// {new BandScreen <name> ...} anywhere in a loaded file.
+DataArray *FindScreenDef(DataArray *a, const char *name) {
+    for (int i = 0; i < a->Size(); i++) {
+        if (a->Type(i) != kDataArray && a->Type(i) != kDataCommand)
+            continue;
+        DataArray *c = a->UncheckedArray(i); // Array() would EXECUTE a command
+        if (c->Size() > 2 && c->Type(0) == kDataSymbol && !strcmp(c->Sym(0).Str(), "new")
+            && c->Type(2) == kDataSymbol && !strcmp(c->Sym(2).Str(), name))
+            return c;
+        if (DataArray *r = FindScreenDef(c, name))
+            return r;
+    }
+    return nullptr;
+}
+
+std::string Hex2(int v) {
+    char b[8];
+    snprintf(b, sizeof(b), "%02x", v & 0xff);
+    return b;
+}
+
+void UIStatsChecks() {
+    // A DTB's #defines are applied while it loads (DataArray::Load), so the live
+    // macro is copied BEFORE the shipped file is read, and the shipped value is
+    // the macro as that read leaves it.
+    std::vector<Symbol> liveBefore;
+    if (DataArray *m = DataGetMacro("CHAR_INSTRUMENT_SYMBOLS"))
+        for (int i = 0; i < m->Size(); i++)
+            liveBefore.push_back(m->Sym(i));
+    DataArray *splashFile = DataReadFile("ui/splash/splash.dta", true);
+    DataArray *macros = DataReadFile("config/macros.dta", true);
+    DataArray *splashDef = splashFile ? FindScreenDef(splashFile, "splash_screen") : nullptr;
+    DataArray *introDef = splashFile ? FindScreenDef(splashFile, "intro_movie_screen") : nullptr;
+    DataArray *shippedSyms = macros ? DataGetMacro("CHAR_INSTRUMENT_SYMBOLS") : nullptr;
+    static Symbol gather("gather_uistats");
+    DataArray *splashGather = splashDef ? splashDef->FindArray(gather, false) : nullptr;
+    DataArray *introGather = introDef ? introDef->FindArray(gather, false) : nullptr;
+    bool symsAgree = shippedSyms && shippedSyms->Size() == (int)liveBefore.size()
+        && shippedSyms->Size() == kNumControllerTypes + 1; // ... and "none"
+    for (int i = 0; symsAgree && i < shippedSyms->Size(); i++)
+        symsAgree = shippedSyms->Sym(i) == liveBefore[i];
+    Server *fake = MakeFakeServer();
+
+    bool namesFree = !ObjectDir::Main()->Find<Hmx::Object>("splash_screen", false)
+        && !ObjectDir::Main()->Find<Hmx::Object>("intro_movie_screen", false);
+    bool fixOk = splashDef && introDef && splashGather && splashGather->Int(1) == 0
+        && !introGather && symsAgree && fake && namesFree;
+    Gate("us-fixture", fixOk,
+         "shipped splash.dta: splash_screen %s (gather_uistats %d), intro_movie_screen %s "
+         "(gather_uistats %s); CHAR_INSTRUMENT_SYMBOLS shipped %d / live %d entries, %s; "
+         "fake Server %s",
+         splashDef ? "found" : "MISSING", splashGather ? splashGather->Int(1) : -1,
+         introDef ? "found" : "MISSING", introGather ? "PRESENT" : "absent",
+         shippedSyms ? shippedSyms->Size() : -1, (int)liveBefore.size(),
+         symsAgree ? "agree" : "DIFFER", fake ? "built" : "NOT BUILT");
+    if (!fixOk) {
+        if (splashFile) splashFile->Release();
+        if (macros) macros->Release();
+        return;
+    }
+
+    // ---- fixture install (everything saved, everything restored) ----
+    Server *savedServer = TheNet.mServer;
+    GameMode *savedMode = TheGameMode;
+    BandUserMgr *savedMgr = TheBandUserMgr;
+    DataPointRecordFunc *savedRec = TheDataPointMgr.SetDataPointRecorder(&RecordHook);
+    JoypadData *pad1 = JoypadGetPadData(1);
+    LocalUser *savedPadUser = pad1->mUser;
+    JoypadType savedPadType = pad1->mType;
+    unsigned char savedEeprom[0x10];
+    memcpy(savedEeprom, pad1->mEepromData, sizeof(savedEeprom));
+
+    GameMode *mode = (GameMode *)calloc(1, sizeof(GameMode));
+    mode->mMode = Symbol("qp_coop");
+    TheGameMode = mode;
+    TheNet.mServer = fake;
+
+    UIScreen *splash = new UIScreen();
+    UIScreen *intro = new UIScreen();
+    splash->SetName("splash_screen", ObjectDir::Main());
+    intro->SetName("intro_movie_screen", ObjectDir::Main());
+    splash->Hmx::Object::SetTypeDef(splashDef);
+    intro->Hmx::Object::SetTypeDef(introDef);
+
+    LocalBandUser *local = new LocalBandUser();
+    RemoteBandUser *remote = new RemoteBandUser();
+    pad1->mUser = local;
+    pad1->mType = kJoypadXboxCoreGuitar;
+    for (int i = 0; i < 10; i++)
+        pad1->mEepromData[i] = (unsigned char)(0xa0 + 7 * i);
+    remote->mParticipating = true;
+    remote->mControllerType = kControllerDrum;
+    unsigned long long xuid = 0x0009000012345678ULL;
+    remote->mOnlineID->SetXUID(xuid);
+    BandUserMgr *mgr = (BandUserMgr *)calloc(1, sizeof(BandUserMgr));
+    mgr->mUsers.push_back(local);
+    mgr->mUsers.push_back(remote);
+    TheBandUserMgr = mgr;
+
+    std::string breed = Hex2(kJoypadXboxCoreGuitar);
+    for (int i = 0; i < 10; i++)
+        breed += Hex2(0xa0 + 7 * i);
+    char xuidText[32];
+    snprintf(xuidText, sizeof(xuidText), "%016llx", xuid);
+    std::string remoteVal = std::string(shippedSyms->Sym(kControllerDrum).Str()) + ":" + xuidText;
+
+    UIStats *st = new UIStats();
+    st->Init();
+    auto padLogRewound = [&]() {
+        return st->mPadLogCount == 0 && st->mPadLogWritePtr == st->mPadLogBuffer;
+    };
+    int padNum = local->GetPadNum();
+
+    // P0: disconnected, a gathering screen, with pad events logged.
+    st->EventLog(0, 3, 0);
+    st->EventLog(0, 3, 1);
+    int loggedBefore = st->mPadLogCount;
+    st->mPublishingPad = true;
+    gRecorded.clear();
+    st->MaybePublish(intro);
+    int p0Pub = st->mPublishingPad, p0Drop = st->mLastDroppedScreen, p0Rec = (int)gRecorded.size();
+    bool p0 = !p0Pub && p0Drop == 1 && padLogRewound() && p0Rec == 0 && loggedBefore == 2;
+    // P1: connected, the gather_uistats FALSE screen; mPublishingPad set by hand
+    // so the arm's "leave it alone" is visible.
+    ((Server *)gFakeServerStorage)->mLoginState = 2;
+    st->mPublishingPad = true;
+    st->MaybePublish(splash);
+    int p1Pub = st->mPublishingPad, p1Drop = st->mLastDroppedScreen, p1Rec = (int)gRecorded.size();
+    bool p1 = p1Pub && p1Drop == 2 && padLogRewound() && p1Rec == 0;
+    st->mPublishingPad = false;
+    Gate("us-drop", p0 && p1 && padNum == 1,
+         "disconnected: mPublishingPad %d (want 0), dropped %d (want 1), pad log of %d "
+         "rewound, %d recorded; splash_screen (gather_uistats FALSE): mPublishingPad %d "
+         "(want 1), dropped %d (want 2), %d recorded; local user on pad %d",
+         p0Pub, p0Drop, loggedBefore, p0Rec, p1Pub, p1Drop, p1Rec, padNum);
+
+    // P2: first publish since the drops.
+    st->EventLog(1, 5, 0);
+    st->EventLog(1, 5, 1);
+    st->EventLog(1, 6, 0);
+    gRecorded.clear();
+    st->MaybePublish(intro);
+    std::map<std::string, std::string> want2 = {{"name", "intro_movie_screen"},
+                                                {"pad_1", breed},
+                                                {"remote_user_0", remoteVal},
+                                                {"dropped_screens", "2"}};
+    bool p2 = SamePoint(gRecorded, want2) && st->mPublishingPad && st->mLastDroppedScreen == 0
+        && padLogRewound() && st->mLastMode == Symbol("qp_coop")
+        && st->mLastBreedString[1] == breed.c_str() && st->mLastRemoteID[0] == OnlineID(xuid);
+    Gate("us-publish", p2,
+         "first publish of intro_movie_screen: one stats/pad_user point {%s}; "
+         "mLastDroppedScreen %d (want 0), pad log rewound %d, mLastMode %s",
+         gRecorded.empty() ? "" : PairsText(gRecorded[0].pairs).c_str(),
+         st->mLastDroppedScreen, padLogRewound() ? 1 : 0, st->mLastMode.Str());
+
+    // P3: nothing changed. Retail never writes mLastControllerType back, so the
+    // drummer is reported again; the guitar's breed is not.
+    gRecorded.clear();
+    st->MaybePublish(intro);
+    std::map<std::string, std::string> want3 = {{"name", "intro_movie_screen"},
+                                                {"remote_user_0", remoteVal}};
+    bool p3 = SamePoint(gRecorded, want3) && st->mLastControllerType[0] == kControllerNone;
+    Gate("us-remote-again", p3,
+         "second publish, nothing changed: {%s} (want name + remote_user_0 only: the "
+         "remote controller type is compared against mLastControllerType[0], which "
+         "stays %d)",
+         gRecorded.empty() ? "" : PairsText(gRecorded[0].pairs).c_str(),
+         st->mLastControllerType[0]);
+
+    // P4/P5: a disconnect drops one screen and clears mPublishingPad, so the next
+    // publish resets the per-pad memory and reports the guitar again.
+    ((Server *)gFakeServerStorage)->mLoginState = 0;
+    gRecorded.clear();
+    st->MaybePublish(intro);
+    int p4Rec = (int)gRecorded.size(), p4Pub = st->mPublishingPad, p4Drop = st->mLastDroppedScreen;
+    bool p4 = p4Rec == 0 && !p4Pub && p4Drop == 1;
+    ((Server *)gFakeServerStorage)->mLoginState = 2;
+    st->MaybePublish(intro);
+    std::map<std::string, std::string> want5 = want2;
+    want5["dropped_screens"] = "1";
+    bool p5 = SamePoint(gRecorded, want5) && st->mLastDroppedScreen == 0;
+    Gate("us-reconnect", p4 && p5,
+         "disconnect: %d recorded, mPublishingPad %d, dropped %d; reconnect publish {%s}",
+         p4Rec, p4Pub, p4Drop,
+         gRecorded.empty() ? "" : PairsText(gRecorded.back().pairs).c_str());
+
+    // ---- restore ----
+    st->Terminate();
+    delete st;
+    TheBandUserMgr = savedMgr;
+    std::vector<BandUser *>().swap(mgr->mUsers);
+    free(mgr);
+    pad1->mUser = savedPadUser;
+    pad1->mType = savedPadType;
+    memcpy(pad1->mEepromData, savedEeprom, sizeof(savedEeprom));
+    delete local;
+    delete remote;
+    delete splash;
+    delete intro;
+    TheNet.mServer = savedServer;
+    TheGameMode = savedMode;
+    free(mode);
+    TheDataPointMgr.SetDataPointRecorder(savedRec);
+    splashFile->Release();
+    macros->Release();
+}
+
 } // namespace
 
 int RunW16TSPhase(GateFn gate) {
@@ -630,5 +947,6 @@ int RunW16TSPhase(GateFn gate) {
     }
     ModifierChecks();
     BandDirectorChecks();
+    UIStatsChecks();
     return gRan;
 }

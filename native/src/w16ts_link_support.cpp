@@ -17,10 +17,17 @@
 //     real answer, not a stub: BandDirector's stagekit_fog handler asks first and
 //     then never sets the fog. SetFog is therefore unreachable here and says so.
 //
-// CrowdAudio (TheCrowdAudio, SetBank) is linked as its real TU, not stubbed
-// (W16TS_LINK_SOURCES in native/CMakeLists.txt).
+//   * PlatformMgr::CanSeeUserCreatedContent, reached from TourCharRemote's
+//     GetTexAtPatchIndex once the UIStats fixture's RemoteBandUser constructs a
+//     TourCharRemote. The body is PlatformMgr_Xbox.cpp (an XPrivilegeCheck on the
+//     user's XUID), which no native target compiles. Nothing in the phase asks for
+//     a remote character's patch textures, so it aborts if reached.
+//
+// CrowdAudio (TheCrowdAudio, SetBank) and TourCharRemote are linked as their
+// real TUs, not stubbed (W16TS_LINK_SOURCES in native/CMakeLists.txt).
 
 #include "bandobj/BandCamShot.h"
+#include "os/PlatformMgr.h"
 #include "utl/Symbol.h"
 
 #include <cstdio>
@@ -34,5 +41,10 @@ bool StageKitConnected() { return false; }
 
 void StageKitSetFog(bool) {
     fprintf(stderr, "W16-TS: StageKitSetFog reached with no Stage Kit connected\n");
+    abort();
+}
+
+bool PlatformMgr::CanSeeUserCreatedContent(const OnlineID *) const {
+    fprintf(stderr, "W16-TS: PlatformMgr::CanSeeUserCreatedContent is XPrivilegeCheck-only\n");
     abort();
 }

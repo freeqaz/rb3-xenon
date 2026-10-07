@@ -1986,6 +1986,8 @@ set(MILO_TARGETS rb3-milo)
 # W16-TS: real TUs the phase's BandDirector reaches (TheCrowdAudio, SetBank).
 set(W16TS_LINK_SOURCES
     ${REPO_ROOT}/src/system/bandobj/CrowdAudio.cpp
+    # RemoteBandUser's ctor news a TourCharRemote (UIStats::MaybePublish fixture).
+    ${REPO_ROOT}/src/band3/tour/TourCharRemote.cpp
 )
 set_source_files_properties(${W16TS_LINK_SOURCES}
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
