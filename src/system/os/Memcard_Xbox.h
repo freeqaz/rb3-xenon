@@ -55,7 +55,13 @@ public:
     // SystemInit calls rather than inlining).
     virtual void Init();
 #endif
+#ifdef HX_NATIVE
     virtual void Terminate() { Memcard::Terminate(); }
+#else
+    // Out of line in RB3 retail (0x8252A8A0, a `b Memcard::Terminate` thunk
+    // right after Init's), called directly by SystemTerminate.
+    virtual void Terminate();
+#endif
     virtual void Poll();
     virtual void SetContainerName(const char *);
     virtual void SetContainerDisplayName(const wchar_t *);

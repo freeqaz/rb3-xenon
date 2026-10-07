@@ -43,7 +43,11 @@ DataNode VirtualKeyboard::OnShowKeyboardUI(const DataArray *array) {
     return ShowKeyboardUI(user, i3, s4, s5, s6, i8);
 }
 
-void VirtualKeyboard::Terminate() {}
+// Retail: `b PlatformTerminate`, whose Xbox body is empty and folds into the
+// shared empty function. ICF then folds this 4-byte forwarder with
+// MemcardXbox::Terminate at 0x8252A8A0, which is the address SystemTerminate
+// calls for TheVirtualKeyboard.Terminate().
+void VirtualKeyboard::Terminate() { PlatformTerminate(); }
 
 void VirtualKeyboard::ClearKeyboardCallback() { mPobjKeyboardCallback = nullptr; }
 
@@ -51,6 +55,8 @@ void VirtualKeyboard::ClearKeyboardCallback() { mPobjKeyboardCallback = nullptr;
 void VirtualKeyboard::PlatformPoll() {
     // Xbox keyboard not available on native
 }
+
+void VirtualKeyboard::PlatformTerminate() {}
 
 const char *VirtualKeyboard::GetInputString() {
     return "";

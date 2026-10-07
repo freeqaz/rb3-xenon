@@ -15,6 +15,8 @@ namespace {
     wchar_t gDescrptionText[512];
 }
 
+void VirtualKeyboard::PlatformTerminate() {}
+
 // Retail 0x82532DC8. There is no "check pending" flag: the live overlapped
 // block is the flag, and once the UI completes both buffers are freed.
 void VirtualKeyboard::PlatformPoll() {
