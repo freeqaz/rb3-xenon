@@ -899,23 +899,28 @@ void RndAmbientOcclusion::SmoothResults(RndMesh *mesh) const {
     if (mesh->Faces().size() != 0) {
         float oneThird = 1.0f / 3.0f;
         do {
-            RndMesh::Vert *verts = &mesh->Verts(0);
             RndMesh::Face &face = mesh->Faces(f);
             unsigned short i0 = face.v1;
             unsigned short i1 = face.v2;
             unsigned short i2 = face.v3;
+            const Vector3 &p0 = mesh->Verts(i0).pos;
+            const Vector3 &p1 = mesh->Verts(i1).pos;
+            const Vector3 &p2 = mesh->Verts(i2).pos;
+            const Vector3 &n0 = mesh->Verts(i0).norm;
+            const Vector3 &n1 = mesh->Verts(i1).norm;
+            const Vector3 &n2 = mesh->Verts(i2).norm;
 
             // Average position of the 3 face vertices
             Vector3 center;
-            center.z = ((verts[i2].pos.z + (verts[i1].pos.z + verts[i0].pos.z))) * oneThird;
-            center.y = ((verts[i2].pos.y + (verts[i1].pos.y + verts[i0].pos.y))) * oneThird;
-            center.x = ((verts[i2].pos.x + (verts[i1].pos.x + verts[i0].pos.x))) * oneThird;
+            center.z = ((p2.z + (p1.z + p0.z))) * oneThird;
+            center.y = ((p2.y + (p1.y + p0.y))) * oneThird;
+            center.x = ((p2.x + (p1.x + p0.x))) * oneThird;
 
             // Average normal of the 3 face vertices
             Vector3 faceNorm;
-            faceNorm.z = verts[i2].norm.z + verts[i1].norm.z + verts[i0].norm.z;
-            faceNorm.y = verts[i2].norm.y + verts[i1].norm.y + verts[i0].norm.y;
-            faceNorm.x = verts[i2].norm.x + verts[i1].norm.x + verts[i0].norm.x;
+            faceNorm.z = n2.z + n1.z + n0.z;
+            faceNorm.y = n2.y + n1.y + n0.y;
+            faceNorm.x = n2.x + n1.x + n0.x;
             Normalize(faceNorm, faceNorm);
 
             // Transform to world space and calculate AO
@@ -937,11 +942,12 @@ void RndAmbientOcclusion::SmoothResults(RndMesh *mesh) const {
         do {
             int equiv = 0;
             if (0 < v) {
-                RndMesh::Vert *verts = &mesh->Verts(0);
                 do {
-                    float dx = verts[v].pos.x - verts[equiv].pos.x;
-                    float dy = verts[v].pos.y - verts[equiv].pos.y;
-                    float dz = verts[v].pos.z - verts[equiv].pos.z;
+                    const Vector3 &pv = mesh->Verts(v).pos;
+                    const Vector3 &pe = mesh->Verts(equiv).pos;
+                    float dx = pv.x - pe.x;
+                    float dy = pv.y - pe.y;
+                    float dz = pv.z - pe.z;
                     if (dx * dx + dy * dy + dz * dz <= 0.001f)
                         break;
                     equiv++;
@@ -976,15 +982,13 @@ void RndAmbientOcclusion::SmoothResults(RndMesh *mesh) const {
                     unsigned short *fvPtr = faceVerts;
                     do {
                         if (vertMap[*fvPtr] == *mapPtr) {
-                            RndMesh::Vert *verts = &mesh->Verts(0);
-
                             // Get the two edges adjacent to this vertex
                             int cur = j % 3;
                             int next = (j + 1) % 3;
                             int prev = (j + 2) % 3;
-                            RndMesh::Vert *vCur = &verts[faceVerts[cur]];
-                            RndMesh::Vert *vNext = &verts[faceVerts[next]];
-                            RndMesh::Vert *vPrev = &verts[faceVerts[prev]];
+                            RndMesh::Vert *vCur = &mesh->Verts(faceVerts[cur]);
+                            RndMesh::Vert *vNext = &mesh->Verts(faceVerts[next]);
+                            RndMesh::Vert *vPrev = &mesh->Verts(faceVerts[prev]);
 
                             Vector3 edge1;
                             edge1.x = vNext->pos.x - vCur->pos.x;
@@ -1133,19 +1137,17 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
         totalBudget += mesh->Faces().size() * mTessellateTriLimit;
     }
 
-    // NOTE: retail's call list has NO MakeString / TextStream::operator<< in this
-    // function -- all four progress prints below are MILO_LOG in the original.
-    // Converting them is correct (measured 64.2 -> 69.9 with the float fixes) but
-    // shrinks our frame 0x4d0 -> 0x4c0 (retail 0x4e0), which re-pairs this
-    // function's two unwind funclets (fn_82492C74/fn_82492D14) 99.8 -> 99.3/99.4.
-    // Kept as TheDebug until the frame-size gap is understood.
+    // Retail's call list has no MakeString / TextStream::operator<< in this
+    // function, so the four progress prints are MILO_LOG: retail prints nothing
+    // here.  The frame-size gap (ours smaller than retail's 0x4e0) is the
+    // home-slot pattern: retail stores ~40 more dead values into 0x50(r31).
 
     // Process each mesh
     for (std::vector<RndMesh *>::iterator meshIt = mObjectsTessellate.begin();
          meshIt != mObjectsTessellate.end(); ++meshIt) {
         RndMesh *mesh = *meshIt;
         char *name = (char *)mesh->Name();
-        TheDebug << MakeString("RndAmbientOcclusion: Tessellating '%s'...\n", name);
+        MILO_LOG("RndAmbientOcclusion: Tessellating '%s'...\n", name);
         const Transform &xfm = mesh->WorldXfm();
 
         unsigned int totalNewFaces = 0;
@@ -1165,24 +1167,20 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
             std::vector<RndMesh::Vert> newVerts;
 
             // Reserve capacity for output
-            RndMesh *geomOwner = mesh->GetGeomOwner();
-            newFaces.reserve(geomOwner->Faces().size() * 3);
+            newFaces.reserve(mesh->Faces().size() * 3);
             newVerts.reserve(mesh->GetGeomOwner()->NumVerts() * 3);
 
             std::vector<FacePriority> priorities;
             unsigned int numVerts = mesh->GetGeomOwner()->NumVerts();
-            geomOwner = mesh->GetGeomOwner();
-            priorities.reserve(geomOwner->Faces().size());
+            priorities.reserve(mesh->Faces().size());
 
             // Phase 1: Classify each face by error and perimeter
             unsigned int faceIdx = 0;
-            RndMesh *geomOwnerClassify = mesh->GetGeomOwner();
-            if ((unsigned int)geomOwnerClassify->Faces().size() != 0) {
+            if ((unsigned int)mesh->Faces().size() != 0) {
                 int faceOffset = 0;
                 do {
-                    geomOwnerClassify = mesh->GetGeomOwner();
-                    RndMesh::Vert *vertsBase = &geomOwnerClassify->Verts(0);
-                    RndMesh::Face *facesBase = &geomOwnerClassify->Faces()[0];
+                    RndMesh::Vert *vertsBase = &mesh->Verts(0);
+                    RndMesh::Face *facesBase = &mesh->Faces()[0];
                     RndMesh::Face *face = (RndMesh::Face *)((char *)facesBase + faceOffset);
                     unsigned short i0 = face->v1;
                     unsigned short i1 = face->v2;
@@ -1211,8 +1209,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                     bool smallError = totalError <= mTessellateTriError;
 
                     // Compute world-space perimeter
-                    geomOwnerClassify = mesh->GetGeomOwner();
-                    RndMesh::Vert *vertsPos = &geomOwnerClassify->Verts(0);
+                    RndMesh::Vert *vertsPos = &mesh->Verts(0);
                     Vector3 wp0, wp1, wp2;
                     Multiply(vertsPos[i0].pos, xfm, wp0);
                     Multiply(vertsPos[i1].pos, xfm, wp1);
@@ -1248,11 +1245,10 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                     }
                     priorities.push_back(*pFP);
                 nextFace:
-                    geomOwnerClassify = mesh->GetGeomOwner();
                     faceIdx++;
                     faceOffset += 6;
                 } while (faceIdx
-                         < (unsigned int)geomOwnerClassify->Faces().size());
+                         < (unsigned int)mesh->Faces().size());
             }
 
             // Sort priorities (most negative = highest priority first)
@@ -1267,10 +1263,9 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
             if (priCount != 0) {
                 FacePriority *pPtr = priBegin;
                 do {
-                    geomOwner = mesh->GetGeomOwner();
-                    RndMesh::Vert *vertBase = &geomOwner->Verts(0);
+                    RndMesh::Vert *vertBase = &mesh->Verts(0);
                     unsigned short *facePtr =
-                        (unsigned short *)&geomOwner->Faces()[pPtr->faceIndex];
+                        (unsigned short *)&mesh->Faces()[pPtr->faceIndex];
                     unsigned short fv0 = facePtr[0];
                     unsigned short fv1 = facePtr[1];
                     unsigned short fv2 = facePtr[2];
@@ -1355,21 +1350,13 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
 
                     // Create 4 new faces
                     RndMesh::Face f1;
-                    f1.v1 = facePtr[0];
-                    f1.v2 = mid01;
-                    f1.v3 = mid20;
+                    f1.Set(facePtr[0], mid01, mid20);
                     RndMesh::Face f2;
-                    f2.v1 = mid20;
-                    f2.v2 = mid01;
-                    f2.v3 = mid12;
+                    f2.Set(mid20, mid01, mid12);
                     RndMesh::Face f3;
-                    f3.v1 = mid01;
-                    f3.v2 = facePtr[1];
-                    f3.v3 = mid12;
+                    f3.Set(mid01, facePtr[1], mid12);
                     RndMesh::Face f4;
-                    f4.v1 = mid12;
-                    f4.v2 = facePtr[2];
-                    f4.v3 = mid20;
+                    f4.Set(mid12, facePtr[2], mid20);
                     newFaces.push_back(f1);
                     newFaces.push_back(f2);
                     newFaces.push_back(f3);
@@ -1384,14 +1371,12 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
             // Assign Phase 2 faces to mesh geometry
             RndMesh::Face *savedFaces = &newFaces[0];
             RndMesh::Face *savedFacesEnd = &newFaces[0] + newFaces.size();
-            geomOwner = mesh->GetGeomOwner();
-            geomOwner->Faces().assign(newFaces.begin(), newFaces.end());
+            mesh->Faces().assign(newFaces.begin(), newFaces.end());
 
             RndMesh::Vert *savedVerts = &newVerts[0];
             RndMesh::Vert *savedVertsEnd = &newVerts[0] + newVerts.size();
-            geomOwner = mesh->GetGeomOwner();
-            geomOwner->Verts().resize(
-                (savedVertsEnd - savedVerts) + geomOwner->Verts().size()
+            mesh->Verts().resize(
+                (savedVertsEnd - savedVerts) + mesh->Verts().size()
             );
 
             // Copy new verts into mesh
@@ -1401,7 +1386,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                 RndMesh::Vert *src = savedVerts;
                 do {
                     memcpy(
-                        (char *)&mesh->GetGeomOwner()->Verts(0) + offset,
+                        (char *)&mesh->Verts(0) + offset,
                         src, 0x60
                     );
                     count--;
@@ -1412,8 +1397,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
 
             // Clear and re-reserve for Phase 3
             newFaces.erase(newFaces.begin(), newFaces.end());
-            geomOwner = mesh->GetGeomOwner();
-            newFaces.reserve(geomOwner->Faces().size() * 2);
+            newFaces.reserve(mesh->Faces().size() * 2);
 
             if (savedVerts != savedVertsEnd) {
                 newVerts.erase(newVerts.begin(), newVerts.end());
@@ -1421,17 +1405,16 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
             newVerts.reserve(mesh->GetGeomOwner()->NumVerts());
 
             // Phase 3: Refine remaining faces based on split edges
-            geomOwner = mesh->GetGeomOwner();
             unsigned int fIdx = 0;
-            unsigned int numVertsPhase3 = geomOwner->NumVerts();
+            unsigned int numVertsPhase3 = mesh->GetGeomOwner()->NumVerts();
             unsigned int oldNumVerts3 = numVertsPhase3;
-            if (geomOwner->Faces().size() != 0) {
+            if (mesh->Faces().size() != 0) {
                 int fOff = 0;
                 do {
                     int splitCount = 0;
                     unsigned int lastSplitEdge = 0;
                     RndMesh::Face *curFace =
-                        (RndMesh::Face *)((char *)&geomOwner->Faces()[0] + fOff);
+                        (RndMesh::Face *)((char *)&mesh->Faces()[0] + fOff);
 
                     unsigned short cv0 = curFace->v1;
                     unsigned short cv1 = curFace->v2;
@@ -1470,21 +1453,13 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                     } else if (splitCount == 3) {
                         // All 3 edges split: 4 new faces
                         RndMesh::Face fa;
-                        fa.v1 = cv0;
-                        fa.v2 = mids[0];
-                        fa.v3 = mids[2];
+                        fa.Set(cv0, mids[0], mids[2]);
                         RndMesh::Face fb;
-                        fb.v1 = mids[0];
-                        fb.v2 = cv1;
-                        fb.v3 = mids[1];
+                        fb.Set(mids[0], cv1, mids[1]);
                         RndMesh::Face fc;
-                        fc.v1 = mids[1];
-                        fc.v2 = cv2;
-                        fc.v3 = mids[2];
+                        fc.Set(mids[1], cv2, mids[2]);
                         RndMesh::Face fd;
-                        fd.v1 = mids[0];
-                        fd.v2 = mids[1];
-                        fd.v3 = mids[2];
+                        fd.Set(mids[0], mids[1], mids[2]);
                         newFaces.push_back(fa);
                         newFaces.push_back(fb);
                         newFaces.push_back(fc);
@@ -1494,36 +1469,23 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                         unsigned short mid = mids[lastSplitEdge];
                         RndMesh::Face fa, fb;
                         if (lastSplitEdge == 0) {
-                            fa.v1 = cv2;
-                            fa.v2 = cv0;
-                            fa.v3 = mid;
-                            fb.v1 = cv2;
-                            fb.v2 = mid;
-                            fb.v3 = cv1;
+                            fa.Set(cv2, cv0, mid);
+                            fb.Set(cv2, mid, cv1);
                         } else if (lastSplitEdge != 1) {
-                            fa.v1 = cv1;
-                            fa.v2 = cv2;
-                            fa.v3 = mid;
-                            fb.v1 = cv1;
-                            fb.v2 = mid;
-                            fb.v3 = cv0;
+                            fa.Set(cv1, cv2, mid);
+                            fb.Set(cv1, mid, cv0);
                         } else {
-                            fa.v1 = cv0;
-                            fa.v2 = cv1;
-                            fa.v3 = mid;
-                            fb.v1 = cv0;
-                            fb.v2 = mid;
-                            fb.v3 = cv2;
+                            fa.Set(cv0, cv1, mid);
+                            fb.Set(cv0, mid, cv2);
                         }
                         newFaces.push_back(fa);
                         newFaces.push_back(fb);
                     } else if (splitCount == 2) {
                         // 2 edges split: create blend vert + faces
-                        RndMesh *geomSplit = mesh->GetGeomOwner();
                         unsigned short uv0 = curFace->v1;
                         unsigned short uv1 = curFace->v2;
                         unsigned short uv2 = curFace->v3;
-                        RndMesh::Vert *vBase = &geomSplit->Verts(0);
+                        RndMesh::Vert *vBase = &mesh->Verts(0);
 
                         RndMesh::Vert blendA;
                         RndMesh::Vert blendB;
@@ -1543,20 +1505,14 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                         RndMesh::Face *pFace;
                         if (mids[0] == 0xffff) {
                             RndMesh::Face tmpA;
-                            tmpA.v1 = blendIdx;
-                            tmpA.v2 = curFace->v1;
-                            tmpA.v3 = curFace->v2;
+                            tmpA.Set(blendIdx, curFace->v1, curFace->v2);
                             pFace = &tmpA;
                         } else {
                             RndMesh::Face tmpA;
-                            tmpA.v1 = blendIdx;
-                            tmpA.v2 = curFace->v1;
-                            tmpA.v3 = mids[0];
+                            tmpA.Set(blendIdx, curFace->v1, mids[0]);
                             newFaces.push_back(tmpA);
                             RndMesh::Face tmpB;
-                            tmpB.v1 = blendIdx;
-                            tmpB.v2 = mids[0];
-                            tmpB.v3 = curFace->v2;
+                            tmpB.Set(blendIdx, mids[0], curFace->v2);
                             pFace = &tmpB;
                         }
                         newFaces.push_back(*pFace);
@@ -1564,20 +1520,14 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                         // Edge 1 (v1-v2)
                         if (mids[1] == 0xffff) {
                             RndMesh::Face tmpA;
-                            tmpA.v1 = blendIdx;
-                            tmpA.v2 = curFace->v2;
-                            tmpA.v3 = curFace->v3;
+                            tmpA.Set(blendIdx, curFace->v2, curFace->v3);
                             pFace = &tmpA;
                         } else {
                             RndMesh::Face tmpA;
-                            tmpA.v1 = blendIdx;
-                            tmpA.v2 = curFace->v2;
-                            tmpA.v3 = mids[1];
+                            tmpA.Set(blendIdx, curFace->v2, mids[1]);
                             newFaces.push_back(tmpA);
                             RndMesh::Face tmpB;
-                            tmpB.v1 = blendIdx;
-                            tmpB.v2 = mids[1];
-                            tmpB.v3 = curFace->v3;
+                            tmpB.Set(blendIdx, mids[1], curFace->v3);
                             pFace = &tmpB;
                         }
                         newFaces.push_back(*pFace);
@@ -1585,20 +1535,14 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                         // Edge 2 (v2-v0)
                         if (mids[2] == 0xffff) {
                             RndMesh::Face tmpA;
-                            tmpA.v1 = blendIdx;
-                            tmpA.v2 = curFace->v3;
-                            tmpA.v3 = curFace->v1;
+                            tmpA.Set(blendIdx, curFace->v3, curFace->v1);
                             pFace = &tmpA;
                         } else {
                             RndMesh::Face tmpA;
-                            tmpA.v1 = blendIdx;
-                            tmpA.v2 = curFace->v3;
-                            tmpA.v3 = mids[2];
+                            tmpA.Set(blendIdx, curFace->v3, mids[2]);
                             newFaces.push_back(tmpA);
                             RndMesh::Face tmpB;
-                            tmpB.v1 = blendIdx;
-                            tmpB.v2 = mids[2];
-                            tmpB.v3 = curFace->v1;
+                            tmpB.Set(blendIdx, mids[2], curFace->v1);
                             pFace = &tmpB;
                         }
                         newFaces.push_back(*pFace);
@@ -1607,21 +1551,18 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                         numVertsPhase3++;
                     }
 
-                    geomOwner = mesh->GetGeomOwner();
                     fIdx++;
                     fOff += 6;
-                } while (fIdx < (unsigned int)geomOwner->Faces().size());
+                } while (fIdx < (unsigned int)mesh->Faces().size());
             }
 
             // Assign Phase 3 faces to mesh
             savedFaces = &newFaces[0];
-            geomOwner = mesh->GetGeomOwner();
-            geomOwner->Faces().assign(newFaces.begin(), newFaces.end());
+            mesh->Faces().assign(newFaces.begin(), newFaces.end());
 
             savedVerts = &newVerts[0];
-            geomOwner = mesh->GetGeomOwner();
-            geomOwner->Verts().resize(
-                (int)newVerts.size() + geomOwner->Verts().size()
+            mesh->Verts().resize(
+                (int)newVerts.size() + mesh->Verts().size()
             );
 
             // Copy Phase 3 new verts into mesh
@@ -1631,7 +1572,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                 RndMesh::Vert *src = savedVerts;
                 do {
                     memcpy(
-                        (char *)&mesh->GetGeomOwner()->Verts(0) + offset,
+                        (char *)&mesh->Verts(0) + offset,
                         src, 0x60
                     );
                     count--;
@@ -1651,7 +1592,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
             // Debug output
             if (newFacesThisIter != 0) {
                 passNum++;
-                TheDebug << MakeString(
+                MILO_LOG(
                     "RndAmbientOcclusion: Tessellation pass %d: %d new faces, %d total\n",
                     (unsigned long)passNum, (unsigned long)newFacesThisIter, (long)totalNewFaces
                 );
@@ -1661,7 +1602,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
 
     // Print tessellation time
     float tessTime = timer.SplitMs() * 0.001f;
-    TheDebug << MakeString(
+    MILO_LOG(
         "RndAmbientOcclusion: Tessellation complete in %0.2f seconds.  Patching...\n",
         tessTime
     );
@@ -1688,7 +1629,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
 
     // Print patching time
     float patchTime = timer.SplitMs() * 0.001f;
-    TheDebug << MakeString(
+    MILO_LOG(
         "RndAmbientOcclusion: Patching complete in %0.2f seconds.\n", patchTime
     );
     if (outPatchTime)
