@@ -2824,7 +2824,7 @@
   {
    "name": "erase",
    "address": "0x82772870",
-   "survivor": "?erase@?$vector@UJumpInstance@@V?$StlNodeAlloc@UJumpInstance@@@stlpmtx_std@@@stlpmtx_std@@QAAPAUJumpInstance@@PAU3@0@Z",
+   "survivor": "?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVRangeSection@@PAV3@0@Z",
    "folded": [
     "?erase@?$vector@UPhrase@@V?$StlNodeAlloc@UPhrase@@@stlpmtx_std@@@stlpmtx_std@@QAAPAUPhrase@@PAU3@0@Z",
     "?erase@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAAPAUSpotlightDrawerEntry@LightPreset@@PAU34@0@Z",
@@ -2832,13 +2832,116 @@
     "?erase@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVColor@Hmx@@PAV34@0@Z",
     "?erase@?$vector@VGigData@@V?$StlNodeAlloc@VGigData@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVGigData@@PAV3@0@Z",
     "?erase@?$vector@VMoveChoiceSet@@V?$StlNodeAlloc@VMoveChoiceSet@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVMoveChoiceSet@@PAV3@0@Z",
-    "?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVRangeSection@@PAV3@0@Z",
     "?erase@?$vector@VRect@Hmx@@V?$StlNodeAlloc@VRect@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVRect@Hmx@@PAV34@0@Z",
     "?erase@?$vector@VSectionData@PerfectSectionTracker@@V?$StlNodeAlloc@VSectionData@PerfectSectionTracker@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVSectionData@PerfectSectionTracker@@PAV34@0@Z",
     "?erase@?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVUserGuid@@PAV3@0@Z",
     "?erase@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVVector3@@PAV3@0@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 11 folded spelling(s), 24 census sites over 5 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 11 folded spelling(s), 24 census sites over 5 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?erase@?$vector@UJumpInstance@@V?$StlNodeAlloc@UJumpInstance@@@stlpmtx_std@@@stlpmtx_std@@QAAPAUJumpInstance@@PAU3@0@Z",
+     "lane": "W16-SN 2026-10-07",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx @ 0x82772870, ?erase@?$vector@UJumpInstance@@V?$StlNodeAlloc@UJumpInstance@@@stlpmtx): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@ | ours ?erase@?$vector@UJumpInstance@@V?$StlNodeAlloc@UJumpInstance@@@stlpmtx_std@@@stlpmtx_std@@; anchor ?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@ PROVEN here"
+    }
+   ],
+   "relabelled": {
+    "from": "?erase@?$vector@UJumpInstance@@V?$StlNodeAlloc@UJumpInstance@@@stlpmtx_std@@@stlpmtx_std@@QAAPAUJumpInstance@@PAU3@0@Z",
+    "to": "?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVRangeSection@@PAV3@0@Z",
+    "lane": "W16-SN 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?erase@?$vector@UPhrase@@V?$StlNodeAlloc@UPhrase@@@stlpmtx_std@@@stlpmtx_std@@QAAPAUPhrase@@PAU3@0@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx @ 0x82772870, ?erase@?$vector@UPhrase@@V?$StlNodeAlloc@UPhrase@@@stlpmtx_std@@@stlpm): PROVEN [CHASED] retail 92 B / ours 92 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?erase@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAAPAUSpotlightDrawerEntry@LightPreset@@PAU34@0@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx @ 0x82772870, ?erase@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USp): PROVEN [CHASED] retail 92 B / ours 92 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?erase@?$vector@V?$Key@UWeight@@@@V?$StlNodeAlloc@V?$Key@UWeight@@@@@stlpmtx_std@@@stlpmtx_std@@QAAPAV?$Key@UWeight@@@@PAV3@0@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx @ 0x82772870, ?erase@?$vector@V?$Key@UWeight@@@@V?$StlNodeAlloc@V?$Key@UWeight@@@@@s): PROVEN [CHASED] retail 92 B / ours 92 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?erase@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVColor@Hmx@@PAV34@0@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx @ 0x82772870, ?erase@?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@): PROVEN [CHASED] retail 92 B / ours 92 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?erase@?$vector@VGigData@@V?$StlNodeAlloc@VGigData@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVGigData@@PAV3@0@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx @ 0x82772870, ?erase@?$vector@VGigData@@V?$StlNodeAlloc@VGigData@@@stlpmtx_std@@@stl): PROVEN [CHASED] retail 92 B / ours 92 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?erase@?$vector@VMoveChoiceSet@@V?$StlNodeAlloc@VMoveChoiceSet@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVMoveChoiceSet@@PAV3@0@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx @ 0x82772870, ?erase@?$vector@VMoveChoiceSet@@V?$StlNodeAlloc@VMoveChoiceSet@@@stlpm): PROVEN [CHASED] retail 92 B / ours 92 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?erase@?$vector@VRect@Hmx@@V?$StlNodeAlloc@VRect@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVRect@Hmx@@PAV34@0@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx @ 0x82772870, ?erase@?$vector@VRect@Hmx@@V?$StlNodeAlloc@VRect@Hmx@@@stlpmtx_std@@@s): PROVEN [CHASED] retail 92 B / ours 92 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?erase@?$vector@VSectionData@PerfectSectionTracker@@V?$StlNodeAlloc@VSectionData@PerfectSectionTracker@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVSectionData@PerfectSectionTracker@@PAV34@0@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx @ 0x82772870, ?erase@?$vector@VSectionData@PerfectSectionTracker@@V?$StlNodeAlloc@VS): PROVEN [CHASED] retail 92 B / ours 92 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?erase@?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVUserGuid@@PAV3@0@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx @ 0x82772870, ?erase@?$vector@VUserGuid@@V?$StlNodeAlloc@VUserGuid@@@stlpmtx_std@@@s): PROVEN [CHASED] retail 92 B / ours 92 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?erase@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@QAAPAVVector3@@PAV3@0@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx @ 0x82772870, ?erase@?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stl): PROVEN [CHASED] retail 92 B / ours 92 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "?erase@?$vector@UJumpInstance@@V?$StlNodeAlloc@UJumpInstance@@@stlpmtx_std@@@stlpmtx_std@@QAAPAUJumpInstance@@PAU3@0@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "BODY:BYTES-DIFFER",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx @ 0x82772870, ?erase@?$vector@UJumpInstance@@V?$StlNodeAlloc@UJumpInstance@@@stlpmtx): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@ | ours ?erase@?$vector@UJumpInstance@@V?$StlNodeAlloc@UJumpInstance@@@stlpmtx_std@@@stlpmtx_std@@; anchor ?erase@?$vector@VRangeSection@@V?$StlNodeAlloc@VRangeSection@@@stlpmtx_std@@@stlpmtx_std@@ PROVEN here"
+    }
+   ]
   },
   {
    "name": "GetAccomplishmentProgress",
@@ -21212,12 +21315,43 @@
   {
    "name": "$_Destroy_Range",
    "address": "0x822a9b70",
-   "survivor": "??$_Destroy_Range@PAUEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@0@Z",
+   "survivor": "??$_Destroy_Range@PAVOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOption@@0@Z",
    "folded": [
-    "??$_Destroy_Range@PAVOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOption@@0@Z",
     "??$__destroy_range@PAVOldColorOption@@V1@@stlpmtx_std@@YAXPAVOldColorOption@@00@Z"
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions."
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 1 census sites over 2 functions.",
+   "withdrawn": [
+    {
+     "spelling": "??$_Destroy_Range@PAUEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@0@Z",
+     "lane": "W16-SN 2026-10-07",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_Destroy_Range@PAVOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOptio @ 0x822a9b70, ??$_Destroy_Range@PAUEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@Loca): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$_Destroy_Range@PAVOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOption@@0@Z | ours ??$_Destroy_Range@PAUEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@0@Z; anchor ??$_Destroy_Range@PAVOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOption@@0@Z PROVEN here"
+    }
+   ],
+   "relabelled": {
+    "from": "??$_Destroy_Range@PAUEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@0@Z",
+    "to": "??$_Destroy_Range@PAVOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOption@@0@Z",
+    "lane": "W16-SN 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__destroy_range@PAVOldColorOption@@V1@@stlpmtx_std@@YAXPAVOldColorOption@@00@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_Destroy_Range@PAVOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOptio @ 0x822a9b70, ??$__destroy_range@PAVOldColorOption@@V1@@stlpmtx_std@@YAXPAVOldColorO): PROVEN [CHASED] retail 80 B / ours 80 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_Destroy_Range@PAUEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@0@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "BODY:BYTES-DIFFER",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_Destroy_Range@PAVOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOptio @ 0x822a9b70, ??$_Destroy_Range@PAUEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@Loca): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$_Destroy_Range@PAVOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOption@@0@Z | ours ??$_Destroy_Range@PAUEntry@LocalePanel@@@stlpmtx_std@@YAXPAUEntry@LocalePanel@@0@Z; anchor ??$_Destroy_Range@PAVOldColorOption@@@stlpmtx_std@@YAXPAVOldColorOption@@0@Z PROVEN here"
+    }
+   ]
   },
   {
    "name": "SetInCoda",
@@ -21818,11 +21952,33 @@
   {
    "name": "_M_erase",
    "address": "0x8276fa80",
-   "survivor": "?_M_erase@?$vector@VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVCtrlPoint@RndSpline@@PAV34@ABU__false_type@2@@Z",
-   "folded": [
-    "?_M_erase@?$vector@VPlayerTrackConfig@@V?$StlNodeAlloc@VPlayerTrackConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPlayerTrackConfig@@PAV3@ABU__false_type@2@@Z"
+   "survivor": "?_M_erase@?$vector@VPlayerTrackConfig@@V?$StlNodeAlloc@VPlayerTrackConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPlayerTrackConfig@@PAV3@ABU__false_type@2@@Z",
+   "folded": [],
+   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions.",
+   "withdrawn": [
+    {
+     "spelling": "?_M_erase@?$vector@VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVCtrlPoint@RndSpline@@PAV34@ABU__false_type@2@@Z",
+     "lane": "W16-SN 2026-10-07",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(?_M_erase@?$vector@VPlayerTrackConfig@@V?$StlNodeAlloc@VPlayerTrackCon @ 0x8276fa80, ?_M_erase@?$vector@VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@Rn): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ?_M_erase@?$vector@VPlayerTrackConfig@@V?$StlNodeAlloc@VPlayerTrackConfig@@@stlpmtx_std@@@ | ours ?_M_erase@?$vector@VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_st; anchor ?_M_erase@?$vector@VPlayerTrackConfig@@V?$StlNodeAlloc@VPlayerTrackConfig@@@stlpmtx_std@@@ PROVEN here"
+    }
    ],
-   "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size None, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 1 census sites over 1 functions."
+   "relabelled": {
+    "from": "?_M_erase@?$vector@VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVCtrlPoint@RndSpline@@PAV34@ABU__false_type@2@@Z",
+    "to": "?_M_erase@?$vector@VPlayerTrackConfig@@V?$StlNodeAlloc@VPlayerTrackConfig@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVPlayerTrackConfig@@PAV3@ABU__false_type@2@@Z",
+    "lane": "W16-SN 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?_M_erase@?$vector@VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_std@@@stlpmtx_std@@IAAPAVCtrlPoint@RndSpline@@PAV34@ABU__false_type@2@@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "BODY:BYTES-DIFFER",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(?_M_erase@?$vector@VPlayerTrackConfig@@V?$StlNodeAlloc@VPlayerTrackCon @ 0x8276fa80, ?_M_erase@?$vector@VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@Rn): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ?_M_erase@?$vector@VPlayerTrackConfig@@V?$StlNodeAlloc@VPlayerTrackConfig@@@stlpmtx_std@@@ | ours ?_M_erase@?$vector@VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_st; anchor ?_M_erase@?$vector@VPlayerTrackConfig@@V?$StlNodeAlloc@VPlayerTrackConfig@@@stlpmtx_std@@@ PROVEN here"
+    }
+   ]
   },
   {
    "name": "_M_erase",
@@ -80443,10 +80599,9 @@
   {
    "name": "$_Destroy_Range",
    "address": "0x82371148",
-   "survivor": "??$_Destroy_Range@PAUIKTarget@CharIKHand@@@stlpmtx_std@@YAXPAUIKTarget@CharIKHand@@0@Z",
+   "survivor": "??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@@0@Z",
    "folded": [
-    "??$__destroy_range@PAULod@Character@@U12@@stlpmtx_std@@YAXPAULod@Character@@00@Z",
-    "??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@@0@Z"
+    "??$__destroy_range@PAULod@Character@@U12@@stlpmtx_std@@YAXPAULod@Character@@00@Z"
    ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 4, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 1 folded spelling(s), 0 census sites over 1 functions.",
    "admitted": [
@@ -80454,6 +80609,38 @@
      "spelling": "??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@@0@Z",
      "lane": "W16-NH-NAME 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 PROVEN); 80 B retail / 80 B ours; retail body-twins 4. Retail call site(s) reaching the survivor where we call this spelling: 0x823715c8, 0x82371c8c. Previously the survivor of the group at 0x822a3f58, whose retail body it does not match (re-homed)."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$_Destroy_Range@PAUIKTarget@CharIKHand@@@stlpmtx_std@@YAXPAUIKTarget@CharIKHand@@0@Z",
+     "lane": "W16-SN 2026-10-07",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@ @ 0x82371148, ??$_Destroy_Range@PAUIKTarget@CharIKHand@@@stlpmtx_std@@YAXPAUIKTarget): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@@0@Z | ours ??$_Destroy_Range@PAUIKTarget@CharIKHand@@@stlpmtx_std@@YAXPAUIKTarget@CharIKHand@@0@Z; anchor ??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@@0@Z PROVEN here"
+    }
+   ],
+   "relabelled": {
+    "from": "??$_Destroy_Range@PAUIKTarget@CharIKHand@@@stlpmtx_std@@YAXPAUIKTarget@CharIKHand@@0@Z",
+    "to": "??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@@0@Z",
+    "lane": "W16-SN 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__destroy_range@PAULod@Character@@U12@@stlpmtx_std@@YAXPAULod@Character@@00@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@ @ 0x82371148, ??$__destroy_range@PAULod@Character@@U12@@stlpmtx_std@@YAXPAULod@Chara): PROVEN [CHASED] retail 80 B / ours 80 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$_Destroy_Range@PAUIKTarget@CharIKHand@@@stlpmtx_std@@YAXPAUIKTarget@CharIKHand@@0@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "BODY:BYTES-DIFFER",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@ @ 0x82371148, ??$_Destroy_Range@PAUIKTarget@CharIKHand@@@stlpmtx_std@@YAXPAUIKTarget): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@@0@Z | ours ??$_Destroy_Range@PAUIKTarget@CharIKHand@@@stlpmtx_std@@YAXPAUIKTarget@CharIKHand@@0@Z; anchor ??$_Destroy_Range@PAULod@Character@@@stlpmtx_std@@YAXPAULod@Character@@0@Z PROVEN here"
     }
    ]
   },
@@ -99826,11 +100013,33 @@
   {
    "name": "destroy_range_DistEntry",
    "address": "0x82634690",
-   "survivor": "??$__destroy_range@PAUDistEntry@@U1@@stlpmtx_std@@YAXPAUDistEntry@@00@Z",
-   "folded": [
-    "??$__destroy_range@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@0@00@Z"
+   "survivor": "??$__destroy_range@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@0@00@Z",
+   "folded": [],
+   "evidence": "W16-GV 2026-09-30: FCNP-tail adjudication, pair #24 from the W16-GQ scout (docs/decomp/W16GQ_FCNP_NONMEMBER_ADJUDICATION_2026-09-30.md). __destroy_range<pair<vector<int,StlNodeAlloc<int>>,int>>::__destroy_range and __destroy_range<DistEntry>::__destroy_range are template twins of the STLport array-destroy-range helper over trivially-destructible element types (a pointer-pair aggregate vs a POD struct). FLAT T1 REFUTED (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 6 named relocations compared, 0 SLOT-REFUTED / 0 BYTES-DIFFER / 0 CYCLE-ASSUMED, 0 placeholder relocations. 'ours' spelling not map-resident at its own address; no prior co-withdrawal with the retail spelling. See docs/decomp/W16GV_FCNP_TAIL_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_range@PAUDistEntry@@U1@@stlpmtx_std@@YAXPAUDistEntry@@00@Z",
+     "lane": "W16-SN 2026-10-07",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__destroy_range@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@ @ 0x82634690, ??$__destroy_range@PAUDistEntry@@U1@@stlpmtx_std@@YAXPAUDistEntry@@00@): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$__destroy_range@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stl | ours ??$__destroy_range@PAUDistEntry@@U1@@stlpmtx_std@@YAXPAUDistEntry@@00@Z; anchor ??$__destroy_range@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stl PROVEN here"
+    }
    ],
-   "evidence": "W16-GV 2026-09-30: FCNP-tail adjudication, pair #24 from the W16-GQ scout (docs/decomp/W16GQ_FCNP_NONMEMBER_ADJUDICATION_2026-09-30.md). __destroy_range<pair<vector<int,StlNodeAlloc<int>>,int>>::__destroy_range and __destroy_range<DistEntry>::__destroy_range are template twins of the STLport array-destroy-range helper over trivially-destructible element types (a pointer-pair aggregate vs a POD struct). FLAT T1 REFUTED (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 6 named relocations compared, 0 SLOT-REFUTED / 0 BYTES-DIFFER / 0 CYCLE-ASSUMED, 0 placeholder relocations. 'ours' spelling not map-resident at its own address; no prior co-withdrawal with the retail spelling. See docs/decomp/W16GV_FCNP_TAIL_2026-09-30.md."
+   "relabelled": {
+    "from": "??$__destroy_range@PAUDistEntry@@U1@@stlpmtx_std@@YAXPAUDistEntry@@00@Z",
+    "to": "??$__destroy_range@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stlpmtx_std@@U12@@stlpmtx_std@@YAXPAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@0@00@Z",
+    "lane": "W16-SN 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__destroy_range@PAUDistEntry@@U1@@stlpmtx_std@@YAXPAUDistEntry@@00@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "BODY:BYTES-DIFFER",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__destroy_range@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@ @ 0x82634690, ??$__destroy_range@PAUDistEntry@@U1@@stlpmtx_std@@YAXPAUDistEntry@@00@): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$__destroy_range@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stl | ours ??$__destroy_range@PAUDistEntry@@U1@@stlpmtx_std@@YAXPAUDistEntry@@00@Z; anchor ??$__destroy_range@PAU?$pair@V?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@H@stl PROVEN here"
+    }
+   ]
   },
   {
    "name": "list_Dep_CharPollableSorter_ctor",
@@ -99967,9 +100176,8 @@
   {
    "name": "scalar_deleting_dtor_Key_Vector3",
    "address": "0x8274bb88",
-   "survivor": "??_G?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@QAAPAXI@Z",
+   "survivor": "??_GDataNode@@QAAPAXI@Z",
    "folded": [
-    "??_GDataNode@@QAAPAXI@Z",
     "??_GVocalEvent@MidiParser@@QAAPAXI@Z"
    ],
    "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x8274bb88). \"ours\" spelling ??_GDataNode@@QAAPAXI@Z is a template/spelling twin of survivor ??_G?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@QAAPAXI@Z at retail address 0x8274bb88. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 1 VACUOUS-BUT-IDENTICAL, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 5 row(s) / 1276 B (1276 B honest) across ['default/DataNode'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md.",
@@ -99978,6 +100186,38 @@
      "spelling": "??_GVocalEvent@MidiParser@@QAAPAXI@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 92 B retail / 92 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x827ebb64."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??_G?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@QAAPAXI@Z",
+     "lane": "W16-SN 2026-10-07",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??_GDataNode@@QAAPAXI@Z @ 0x8274bb88, ??_G?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??_GDataNode@@QAAPAXI@Z | ours ??_G?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@QAAP; anchor ??_GDataNode@@QAAPAXI@Z PROVEN here"
+    }
+   ],
+   "relabelled": {
+    "from": "??_G?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@QAAPAXI@Z",
+    "to": "??_GDataNode@@QAAPAXI@Z",
+    "lane": "W16-SN 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??_GVocalEvent@MidiParser@@QAAPAXI@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??_GDataNode@@QAAPAXI@Z @ 0x8274bb88, ??_GVocalEvent@MidiParser@@QAAPAXI@Z): PROVEN [CHASED] retail 92 B / ours 92 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??_G?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@QAAPAXI@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "BODY:BYTES-DIFFER",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??_GDataNode@@QAAPAXI@Z @ 0x8274bb88, ??_G?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??_GDataNode@@QAAPAXI@Z | ours ??_G?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@QAAP; anchor ??_GDataNode@@QAAPAXI@Z PROVEN here"
     }
    ]
   },
@@ -100274,12 +100514,43 @@
   {
    "name": "__uninitialized_fill_n_RndMeshDeform",
    "address": "0x8240c5c8",
-   "survivor": "??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@IABU12@ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_copy@PAUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@00ABU__false_type@0@@Z",
    "folded": [
-    "??$__uninitialized_copy@PAUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@00ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PBUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PBU12@0PAU12@ABU__false_type@0@@Z"
    ],
-   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x8240c5c8). \"ours\" spelling ??$__uninitialized_copy@PAUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@IABU12@ABU__false_type@0@@Z at retail address 0x8240c5c8. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 720 B (720 B honest) across ['default/MeshDeform'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md. W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 14, row addr 0x8240c5c8). \"ours\" spelling ??$__uninitialized_copy@PBUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PBU12@0PAU12@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@IABU12@ABU__false_type@0@@Z at retail address 0x8240c5c8. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 424 B (424 B honest) across ['default/MeshDeform'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md."
+   "evidence": "W16-HA 2026-09-30: FRESH alias-pair adjudication (census: W16-GY alias-only sub-100 scouting report (uncommitted lane artifact, worktree wt-w16-gy branch w16-gy off main 451f6dcb0; not present under docs/decomp/), row addr 0x8240c5c8). \"ours\" spelling ??$__uninitialized_copy@PAUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@IABU12@ABU__false_type@0@@Z at retail address 0x8240c5c8. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 720 B (720 B honest) across ['default/MeshDeform'] unit(s). See docs/decomp/W16HA_FRESH_ALIAS_PAIRS_2026-09-30.md. W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 14, row addr 0x8240c5c8). \"ours\" spelling ??$__uninitialized_copy@PBUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PBU12@0PAU12@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@IABU12@ABU__false_type@0@@Z at retail address 0x8240c5c8. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 2 row(s) / 424 B (424 B honest) across ['default/MeshDeform'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
+   "withdrawn": [
+    {
+     "spelling": "??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@IABU12@ABU__false_type@0@@Z",
+     "lane": "W16-SN 2026-10-07",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__uninitialized_copy@PAUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@ @ 0x8240c5c8, ??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$__uninitialized_copy@PAUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@@YAPAUBoneDesc@RndMe | ours ??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std@@YAPAUBoneDesc@RndM; anchor ??$__uninitialized_copy@PAUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@@YAPAUBoneDesc@RndMe PROVEN here"
+    }
+   ],
+   "relabelled": {
+    "from": "??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@IABU12@ABU__false_type@0@@Z",
+    "to": "??$__uninitialized_copy@PAUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@00ABU__false_type@0@@Z",
+    "lane": "W16-SN 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__uninitialized_copy@PBUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PBU12@0PAU12@ABU__false_type@0@@Z",
+     "role": "folded",
+     "verdict": "PROVEN",
+     "kind": "CHASED",
+     "disposition": "kept",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__uninitialized_copy@PAUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@ @ 0x8240c5c8, ??$__uninitialized_copy@PBUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@): PROVEN [CHASED] retail 96 B / ours 96 B, 0 cycle-assumed"
+    },
+    {
+     "spelling": "??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std@@YAPAUBoneDesc@RndMeshDeform@@PAU12@IABU12@ABU__false_type@0@@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "BODY:BYTES-DIFFER",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__uninitialized_copy@PAUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@ @ 0x8240c5c8, ??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$__uninitialized_copy@PAUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@@YAPAUBoneDesc@RndMe | ours ??$__uninitialized_fill_n@PAUBoneDesc@RndMeshDeform@@IU12@@stlpmtx_std@@YAPAUBoneDesc@RndM; anchor ??$__uninitialized_copy@PAUBoneDesc@RndMeshDeform@@PAU12@@stlpmtx_std@@YAPAUBoneDesc@RndMe PROVEN here"
+    }
+   ]
   },
   {
    "name": "__uninitialized_copy_BandIKEffector",
@@ -103625,10 +103896,8 @@
   {
    "name": "_M_insert_overflow_aux",
    "address": "0x8263b468",
-   "survivor": "?_M_insert_overflow_aux@?$vector@UPoint@CharHair@@V?$StlNodeAlloc@UPoint@CharHair@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUPoint@CharHair@@ABU34@ABU__false_type@2@I_N@Z",
-   "folded": [
-    "?_M_insert_overflow_aux@?$vector@VNewReleaseEntry@StoreMainPanel@@V?$StlNodeAlloc@VNewReleaseEntry@StoreMainPanel@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVNewReleaseEntry@StoreMainPanel@@ABV34@ABU__false_type@2@I_N@Z"
-   ],
+   "survivor": "?_M_insert_overflow_aux@?$vector@VNewReleaseEntry@StoreMainPanel@@V?$StlNodeAlloc@VNewReleaseEntry@StoreMainPanel@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVNewReleaseEntry@StoreMainPanel@@ABV34@ABU__false_type@2@I_N@Z",
+   "folded": [],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
    "admitted": [
@@ -103636,6 +103905,30 @@
      "spelling": "?_M_insert_overflow_aux@?$vector@VNewReleaseEntry@StoreMainPanel@@V?$StlNodeAlloc@VNewReleaseEntry@StoreMainPanel@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVNewReleaseEntry@StoreMainPanel@@ABV34@ABU__false_type@2@I_N@Z",
      "lane": "W16-JE 2026-10-01",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: masked bodies match but relocation TARGETS disagree -- templ); 328 B retail / 328 B ours; retail body-twins 2. Retail call site(s) reaching the survivor where we call this spelling: 0x8263bd44."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@UPoint@CharHair@@V?$StlNodeAlloc@UPoint@CharHair@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUPoint@CharHair@@ABU34@ABU__false_type@2@I_N@Z",
+     "lane": "W16-SN 2026-10-07",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(?_M_insert_overflow_aux@?$vector@VNewReleaseEntry@StoreMainPanel@@V?$S @ 0x8263b468, ?_M_insert_overflow_aux@?$vector@UPoint@CharHair@@V?$StlNodeAlloc@UPoi): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ?_M_insert_overflow_aux@?$vector@VNewReleaseEntry@StoreMainPanel@@V?$StlNodeAlloc@VNewRele | ours ?_M_insert_overflow_aux@?$vector@UPoint@CharHair@@V?$StlNodeAlloc@UPoint@CharHair@@@stlpmt; anchor ?_M_insert_overflow_aux@?$vector@VNewReleaseEntry@StoreMainPanel@@V?$StlNodeAlloc@VNewRele PROVEN here"
+    }
+   ],
+   "relabelled": {
+    "from": "?_M_insert_overflow_aux@?$vector@UPoint@CharHair@@V?$StlNodeAlloc@UPoint@CharHair@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUPoint@CharHair@@ABU34@ABU__false_type@2@I_N@Z",
+    "to": "?_M_insert_overflow_aux@?$vector@VNewReleaseEntry@StoreMainPanel@@V?$StlNodeAlloc@VNewReleaseEntry@StoreMainPanel@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVNewReleaseEntry@StoreMainPanel@@ABV34@ABU__false_type@2@I_N@Z",
+    "lane": "W16-SN 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "?_M_insert_overflow_aux@?$vector@UPoint@CharHair@@V?$StlNodeAlloc@UPoint@CharHair@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAUPoint@CharHair@@ABU34@ABU__false_type@2@I_N@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "BODY:BYTES-DIFFER",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(?_M_insert_overflow_aux@?$vector@VNewReleaseEntry@StoreMainPanel@@V?$S @ 0x8263b468, ?_M_insert_overflow_aux@?$vector@UPoint@CharHair@@V?$StlNodeAlloc@UPoi): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ?_M_insert_overflow_aux@?$vector@VNewReleaseEntry@StoreMainPanel@@V?$StlNodeAlloc@VNewRele | ours ?_M_insert_overflow_aux@?$vector@UPoint@CharHair@@V?$StlNodeAlloc@UPoint@CharHair@@@stlpmt; anchor ?_M_insert_overflow_aux@?$vector@VNewReleaseEntry@StoreMainPanel@@V?$StlNodeAlloc@VNewRele PROVEN here"
     }
    ]
   },
@@ -115763,10 +116056,8 @@
   {
    "name": "$__destroy_range_aux",
    "address": "0x827ebad0",
-   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z",
-   "folded": [
-    "??$__destroy_range_aux@V?$reverse_iterator@PAUVocalEvent@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUVocalEvent@MidiParser@@@0@0ABU__false_type@0@@Z"
-   ],
+   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAUVocalEvent@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUVocalEvent@MidiParser@@@0@0ABU__false_type@0@@Z",
+   "folded": [],
    "evidence": "Created by lane W16-NR: see per-member records in `admitted`.",
    "lane": "W16-NR 2026-10-02",
    "admitted": [
@@ -115774,6 +116065,30 @@
      "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAUVocalEvent@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUVocalEvent@MidiParser@@@0@0ABU__false_type@0@@Z",
      "lane": "W16-NR 2026-10-02",
      "evidence": "chase PROVEN with 0 CYCLE-ASSUMED; unique among 7 retail masked twins (O chased against every twin, only the survivor PROVEN); 2/2 retail call sites at our spelling's sites (objdiff diff of every paired caller) land at the survivor; extent 100 B both sides (size_gate like-for-like). Slot discharge is the W16-JG strict policy."
+    }
+   ],
+   "withdrawn": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z",
+     "lane": "W16-SN 2026-10-07",
+     "class": "FORMER_SURVIVOR_LABEL_REFUTED",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__destroy_range_aux@V?$reverse_iterator@PAUVocalEvent@MidiParser@@@ @ 0x827ebad0, ??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector3): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$__destroy_range_aux@V?$reverse_iterator@PAUVocalEvent@MidiParser@@@stlpmtx_std@@@stlpmt | ours ??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VV; anchor ??$__destroy_range_aux@V?$reverse_iterator@PAUVocalEvent@MidiParser@@@stlpmtx_std@@@stlpmt PROVEN here"
+    }
+   ],
+   "relabelled": {
+    "from": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z",
+    "to": "??$__destroy_range_aux@V?$reverse_iterator@PAUVocalEvent@MidiParser@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAUVocalEvent@MidiParser@@@0@0ABU__false_type@0@@Z",
+    "lane": "W16-SN 2026-10-07",
+    "why": "survivor was not the map's name at this address (tools/alias_survivor_drift.py); relabelled and every membership re-chased against the body here"
+   },
+   "rechase_w16os": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z",
+     "role": "old-label",
+     "verdict": "REFUTED",
+     "kind": "BODY:BYTES-DIFFER",
+     "disposition": "withdrawn",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__destroy_range_aux@V?$reverse_iterator@PAUVocalEvent@MidiParser@@@ @ 0x827ebad0, ??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector3): REFUTED [BODY:BYTES-DIFFER] depth 0: retail ??$__destroy_range_aux@V?$reverse_iterator@PAUVocalEvent@MidiParser@@@stlpmtx_std@@@stlpmt | ours ??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VV; anchor ??$__destroy_range_aux@V?$reverse_iterator@PAUVocalEvent@MidiParser@@@stlpmtx_std@@@stlpmt PROVEN here"
     }
    ]
   },
@@ -118649,6 +118964,16 @@
     "??_8CharHair@@7BRndHighlightable@@@"
    ],
    "evidence": "W16-SG 2026-10-07: DATA fold (read-only COMDAT, /OPT:ICF). Retail 0x8204b8f8 holds the 8-byte vbtable {-4, 0x78} and is referenced (lis/addi) by BOTH ??0CharHair@@IAA@XZ (0x823aa724) and ??0PreloadPanel@@QAA@XZ (0x827b3fc0). Our CharHair.obj ??_8CharHair@@7BRndHighlightable@@@ and PreloadPanel.obj ??_8PreloadPanel@@7B@ are both exactly {-4, 0x78} with no relocations, so the two COMDATs are byte-identical and fold. CharHair's other vbtable {-4, 0x70} is the separate retail object at 0x8204b8f0."
+  },
+  {
+   "name": "_M_clear",
+   "address": "0x8263b1f8",
+   "survivor": "?_M_clear@?$vector@VNewReleaseEntry@StoreMainPanel@@V?$StlNodeAlloc@VNewReleaseEntry@StoreMainPanel@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
+   "folded": [
+    "?_M_clear_after_move@?$vector@VNewReleaseEntry@StoreMainPanel@@V?$StlNodeAlloc@VNewReleaseEntry@StoreMainPanel@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ"
+   ],
+   "evidence": "W16-SN 2026-10-07: retail 0x8263b1f8 (map name _M_clear<NewReleaseEntry>) has two retail callers, vector<NewReleaseEntry>::reserve (0x8263b66c, STLport source calls _M_clear) and _M_insert_overflow_aux<NewReleaseEntry> (0x8263b594, STLport source calls _M_clear_after_move). Body: __destroy_range_aux<reverse_iterator<NewReleaseEntry*>> over [begin,end) then MemOrPoolFreeSTL of the 0x3c-stride capacity. tools/icf_pair_adjudicate.py --survivor _M_clear --ours _M_clear_after_move --chase: FLAT T1 PROVEN (retail 116 B / ours 116 B, 2 relocations, targets agree), CHASED T1 PROVEN. Same fold as the existing EyeDesc group at 0x823879b0.",
+   "lane": "W16-SN 2026-10-07"
   }
  ]
 }
