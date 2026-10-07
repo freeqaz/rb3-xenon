@@ -202,6 +202,11 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    // Retail reads the preinit config before any other data (PreInitSystem),
+    // so this does too: the macro table then holds the boot macros and nothing
+    // a later file #defines (songs.dta defines three COMMON_* macros).
+    ConfigChecks(configDumpPath);
+
     // ---- where does the engine think this file lives? --------------------
     // Print the resolved (ark part, offset-within-part) so a digest mismatch is
     // debuggable rather than just "wrong".
@@ -330,7 +335,6 @@ int main(int argc, char **argv) {
     // drivers defined _SHIP (W16-UA); tools/retail_boot_config.py gives 130.
     Gate("song-count == 130", songCount == 130, "");
 
-    ConfigChecks(configDumpPath);
 
     printf("\nRESULT: %s", gFailures == 0 ? "ALL GATES PASSED\n" : "FAILED\n");
     if (gFailures) printf("  %d gate(s) failed\n", gFailures);
