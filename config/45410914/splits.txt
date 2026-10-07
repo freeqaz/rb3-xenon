@@ -1256,7 +1256,7 @@ BandRetargetVignette.cpp:
 	.text       start:0x822707C0 end:0x82270848
 	.text       start:0x82270B20 end:0x82270B84
 	.text       start:0x8227A4A8 end:0x8227A528
-	.text       start:0x822C5884 end:0x822C59D4
+	.text       start:0x822C5880 end:0x822C59D4
 	.text       start:0x822C59D4 end:0x822C5AF0
 	.text       start:0x822C5AF0 end:0x822C5C30
 	.text       start:0x822C5C30 end:0x822C5E68
@@ -1424,12 +1424,11 @@ GuitarController.cpp:
 	.pdata      start:0x8223FC40 end:0x8223FC58
 	.pdata      start:0x8223FC58 end:0x8223FCC0
 	.pdata      start:0x82240038 end:0x82240040
-	.text       start:0x8279C404 end:0x8279C630
+	.text       start:0x8279C4A8 end:0x8279C630
 	.text       start:0x8279C630 end:0x8279C7C0
 	.text       start:0x8279C7C0 end:0x8279C85C
 	.text       start:0x8279C85C end:0x8279CE28
 	.text       start:0x8279CE28 end:0x8279D6A0
-	.text       start:0x827A2400 end:0x827A2458
 
 TrackWatcher.cpp:
 	.pdata      start:0x8223FCC0 end:0x8223FD78
@@ -1507,7 +1506,7 @@ JoypadController.cpp:
 	.text       start:0x8279BD28 end:0x8279BDC8
 	.text       start:0x8279BDC8 end:0x8279BE54
 	.text       start:0x8279BE54 end:0x8279C284
-	.text       start:0x8279C284 end:0x8279C404
+	.text       start:0x8279C284 end:0x8279C4A8
 
 system/beatmatch/JoypadMidiController.cpp:
 	.pdata      start:0x8223F7B0 end:0x8223F890
@@ -7049,7 +7048,7 @@ Achievements.cpp:
 	.pdata      start:0x82240040 end:0x82240048
 	.pdata      start:0x82240048 end:0x82240058
 	.pdata      start:0x82240058 end:0x82240098
-	.text       start:0x827A2458 end:0x827A2564
+	.text       start:0x827A2400 end:0x827A2564
 	.text       start:0x827A2564 end:0x827A25AC
 	.text       start:0x827A25B0 end:0x827A28B8
 	.text       start:0x82C40DA8 end:0x82C40DB8
@@ -7510,7 +7509,7 @@ BandIKEffector.cpp:
 	.text       start:0x822C2934 end:0x822C5580
 	.text       start:0x822C5580 end:0x822C5758
 	.text       start:0x822C5758 end:0x822C57B8
-	.text       start:0x822C57B8 end:0x822C5884
+	.text       start:0x822C57B8 end:0x822C5880
 
 MidiInstrument.cpp:
 	.pdata      start:0x82238AA8 end:0x82238C28
