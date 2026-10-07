@@ -21,9 +21,19 @@
 
 void BuildSphereStratified(unsigned int, std::vector<Vector3> &);
 
-// Quality parameters: [samples_q0, samples_q1, splitPlane_q0, splitPlane_q1]
-// Values are guesses; exact values in .rdata at 0x820A658C (16 bytes)
+// Quality parameters: [samples_q0, samples_q1, splitPlane_q0, splitPlane_q1].
+// Retail's table is at 0x82070E04 and holds exactly these four words;
+// BuildTrees reads [quality] and [quality + 2] from it.
 static const int kQualityLUT[] = { 300, 150, 2, 0 };
+
+// The base pointer of a Tessellate scratch vector, which may be empty on a pass
+// that splits nothing. Retail's STLport `&v[0]` on an empty vector is just the
+// begin pointer; libstdc++'s operator[] asserts on it, so native takes data().
+#ifdef HX_NATIVE
+#define AO_VEC_BASE(v) ((v).data())
+#else
+#define AO_VEC_BASE(v) (&(v)[0])
+#endif
 
 // PPC: Edge::operator< lives in Utl.cpp (matching original link unit).
 // Native: define it here since AmbientOcclusion.cpp is the natural home.
@@ -1369,12 +1379,12 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
             }
 
             // Assign Phase 2 faces to mesh geometry
-            RndMesh::Face *savedFaces = &newFaces[0];
-            RndMesh::Face *savedFacesEnd = &newFaces[0] + newFaces.size();
+            RndMesh::Face *savedFaces = AO_VEC_BASE(newFaces);
+            RndMesh::Face *savedFacesEnd = AO_VEC_BASE(newFaces) + newFaces.size();
             mesh->Faces().assign(newFaces.begin(), newFaces.end());
 
-            RndMesh::Vert *savedVerts = &newVerts[0];
-            RndMesh::Vert *savedVertsEnd = &newVerts[0] + newVerts.size();
+            RndMesh::Vert *savedVerts = AO_VEC_BASE(newVerts);
+            RndMesh::Vert *savedVertsEnd = AO_VEC_BASE(newVerts) + newVerts.size();
             mesh->Verts().resize(
                 (savedVertsEnd - savedVerts) + mesh->Verts().size()
             );
@@ -1557,10 +1567,10 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
             }
 
             // Assign Phase 3 faces to mesh
-            savedFaces = &newFaces[0];
+            savedFaces = AO_VEC_BASE(newFaces);
             mesh->Faces().assign(newFaces.begin(), newFaces.end());
 
-            savedVerts = &newVerts[0];
+            savedVerts = AO_VEC_BASE(newVerts);
             mesh->Verts().resize(
                 (int)newVerts.size() + mesh->Verts().size()
             );

@@ -6,9 +6,9 @@
 // plus the executed VIA-DC3 rows no gate checked (W16-TF section 6). This phase
 // drives the largest of them on shipped data, in rb3-render's default mode,
 // after W16-TS. The fixture is the shipped vignette
-// world/vignette/transition/gen/tv11_a.milo_xbox (15,765 objects: 2,517 meshes,
-// 8 Spotlights, 13 AmbientOcclusion objects, 3 ParticleSys, 41 Characters,
-// 695 CharClips, cams, lights, environs, trans anims).
+// world/vignette/transition/gen/tv11_a.milo_xbox and the character milos it
+// loads (8 Spotlights, 3 ParticleSys, 17 lights, 7 environs, characters, clips,
+// meshes, AmbientOcclusion objects, PropAnims).
 //
 // THE REFERENCE. Every expected value is computed in this file from the shipped
 // object's own members, read directly, or from closed forms read off retail's
@@ -18,12 +18,16 @@
 
 #include "char/CharBones.h"
 #include "char/CharClip.h"
+#include "char/CharUtl.h"
+#include "char/Character.h"
 #include "math/Mtx.h"
 #include "math/Rot.h"
 #include "math/Vec.h"
 #include "obj/Data.h"
 #include "obj/Dir.h"
+#include "obj/DataFile.h"
 #include "obj/DirLoader.h"
+#include "rndobj/AmbientOcclusion.h"
 #include "rndobj/Cam.h"
 #include "rndobj/Draw.h"
 #include "rndobj/Env.h"
@@ -31,6 +35,8 @@
 #include "rndobj/Lit.h"
 #include "rndobj/Mesh.h"
 #include "rndobj/Part.h"
+#include "rndobj/PropAnim.h"
+#include "rndobj/PropKeys.h"
 #include "rndobj/Trans.h"
 #include "rndobj/TransAnim.h"
 #include "rndobj/Utl.h"
@@ -93,20 +99,25 @@ ObjDirPtr<ObjectDir> gVignette;
 std::map<std::string, std::vector<Hmx::Object *> > gByClass;
 int gObjects = 0;
 
+// ObjDirItr(d, true) already descends into subdirectories, and each subdir is
+// walked again in its own right, so objects are deduplicated here.
 void Walk(ObjectDir *root) {
     std::vector<ObjectDir *> todo(1, root);
     std::set<ObjectDir *> seen;
+    std::set<Hmx::Object *> objs;
     while (!todo.empty()) {
         ObjectDir *d = todo.back();
         todo.pop_back();
         if (!seen.insert(d).second)
             continue;
         for (ObjDirItr<Hmx::Object> it(d, true); it; ++it) {
-            gByClass[it->ClassName().Str()].push_back(&*it);
-            gObjects++;
             ObjectDir *sub = dynamic_cast<ObjectDir *>(&*it);
             if (sub && sub != d)
                 todo.push_back(sub);
+            if (!objs.insert(&*it).second)
+                continue;
+            gByClass[it->ClassName().Str()].push_back(&*it);
+            gObjects++;
         }
     }
 }
@@ -131,16 +142,20 @@ bool LoadFixture() {
         Walk(gVignette.Ptr());
     int nMesh = gByClass["Mesh"].size(), nSpot = gByClass["Spotlight"].size();
     int nAO = gByClass["AmbientOcclusion"].size(), nPart = gByClass["ParticleSys"].size();
-    int nClip = gByClass["CharClip"].size();
-    // The class counts are the ones the first clean load of this file printed
-    // (Mesh 2,517, Spotlight 8, AmbientOcclusion 13, ParticleSys 3, CharClip
-    // 695); a load that stops short or mis-reads a class changes them.
-    bool ok = gVignette.Ptr() && nMesh == 2517 && nSpot == 8 && nAO == 13 && nPart == 3
-        && nClip == 695 && sizeof(RndMesh::Vert) == 0x60;
+    int nClip = gByClass["CharClip"].size(), nLight = gByClass["Light"].size();
+    int nEnv = gByClass["Environ"].size(), nTA = gByClass["TransAnim"].size();
+    // Spotlight 8, ParticleSys 3, Light 17, Environ 7 and TransAnim 2 are the
+    // entries of those classes in the file's own directory tables, counted from
+    // the decompressed shipped bytes; no subdirectory it loads adds any. The
+    // other classes come mostly from the character milos it loads.
+    bool ok = gVignette.Ptr() && nSpot == 8 && nPart == 3 && nLight == 17 && nEnv == 7
+        && nTA == 2 && nMesh > 300 && nClip > 100 && sizeof(RndMesh::Vert) == 0x60;
     Gate("ty-fixture", ok,
-         "%s: %d objects in %.0f ms; Mesh %d, Spotlight %d, AmbientOcclusion %d, "
-         "ParticleSys %d, CharClip %d; sizeof(RndMesh::Vert) 0x%zx (X360 0x60)",
-         path, gObjects, ms, nMesh, nSpot, nAO, nPart, nClip, sizeof(RndMesh::Vert));
+         "%s: %d objects in %.0f ms; Spotlight %d, ParticleSys %d, Light %d, Environ %d, "
+         "TransAnim %d (file tables: 8, 3, 17, 7, 2); Mesh %d, AmbientOcclusion %d, CharClip %d; "
+         "sizeof(RndMesh::Vert) 0x%zx (X360 0x60)",
+         path, gObjects, ms, nSpot, nPart, nLight, nEnv, nTA, nMesh, nAO, nClip,
+         sizeof(RndMesh::Vert));
     return ok;
 }
 
@@ -1039,6 +1054,530 @@ void CharBonesChecks() {
     }
 }
 
+
+// ============================================================ AO family ==
+// One shipped AmbientOcclusion object, its lists set by hand to bounded shipped
+// meshes: up to 8,000 cast triangles, one receiver R (100-400 faces) that also
+// casts. BuildTrees(quality 0) asks for 300 directions, a 17 x 17 stratified
+// grid (round(sqrt(300)) = 17), so 289.
+//  ty-ao-open-sky:  above everything, facing +z, nothing occludes: the SH
+//                   terms are the hemisphere integrals, DC 0.28209*pi = 0.886,
+//                   z 0.48860*2pi/3 = 1.023 clamped to 1, x and y 0 -> 0.5.
+//  ty-ao-occluded:  1 cm in front of the largest cast triangle, facing it: DC
+//                   under a third of the open-sky value.
+//  ty-ao-smooth:    SmoothResults(R) against the rule: each vertex colour
+//                   becomes (angle-weighted mean of its weld class's face AO +
+//                   old colour) / 2, the weld class being positions within
+//                   squared distance 0.001 of the lowest index; face AO is the
+//                   AO at the face centroid along its summed vertex normal.
+//  ty-ao-tessellate: Tessellate on R after its vertex AO is set: original
+//                   verts unchanged; indices valid and distinct; summed vector
+//                   area and summed absolute area preserved (no flipped or
+//                   overlapping face); open-edge length preserved (no
+//                   T-junction); every new vertex has a unit normal and AO
+//                   values in [0,1]; faces were added.
+RndAmbientOcclusion *gAO = nullptr;
+
+// Faces all index real vertices (a mesh whose vertices stay compressed has
+// faces and an empty vertex array).
+bool Indexable(RndMesh *m) {
+    int nv = m->Verts().size();
+    if (nv == 0)
+        return false;
+    for (const RndMesh::Face &f : m->Faces())
+        if (f.v1 >= nv || f.v2 >= nv || f.v3 >= nv)
+            return false;
+    return true;
+}
+
+double TotalArea(RndMesh *m, Vector3 *vecSum, double *openEdge) {
+    double a = 0;
+    double vx = 0, vy = 0, vz = 0;
+    std::map<std::pair<int, int>, int> edges;
+    for (const RndMesh::Face &f : m->Faces()) {
+        const Vector3 &p0 = m->Verts()[f.v1].pos, &p1 = m->Verts()[f.v2].pos, &p2 = m->Verts()[f.v3].pos;
+        Vector3 c = CrossV(Sub(p1, p0), Sub(p2, p0));
+        a += 0.5 * Len(c);
+        vx += 0.5 * c.x, vy += 0.5 * c.y, vz += 0.5 * c.z;
+        int id[3] = { f.v1, f.v2, f.v3 };
+        for (int k = 0; k < 3; k++) {
+            int u = id[k], v = id[(k + 1) % 3];
+            edges[std::make_pair(std::min(u, v), std::max(u, v))]++;
+        }
+    }
+    *vecSum = Vector3(vx, vy, vz);
+    double open = 0;
+    for (auto &e : edges)
+        if (e.second == 1)
+            open += Len(Sub(m->Verts()[e.first.first].pos, m->Verts()[e.first.second].pos));
+    *openEdge = open;
+    return a;
+}
+
+void AOChecks() {
+    std::vector<RndAmbientOcclusion *> aos = All<RndAmbientOcclusion>("AmbientOcclusion");
+    if (aos.empty())
+        return;
+    gAO = aos[0];
+    RndAmbientOcclusion *ao = gAO;
+    ao->Clean();
+    // receiver: a mid-size owned unskinned mesh, the first by name
+    std::vector<RndMesh *> cands;
+    for (RndMesh *m : All<RndMesh>("Mesh"))
+        if (m->GetGeomOwner() == m && !m->IsSkinned() && m->Faces().size() >= 100
+            && m->Faces().size() <= 400 && Indexable(m))
+            cands.push_back(m);
+    std::sort(cands.begin(), cands.end(), [](RndMesh *a, RndMesh *b) { return strcmp(a->Name(), b->Name()) < 0; });
+    if (cands.size() < 2) {
+        Gate("ty-ao-fixture", false, "no shipped receiver mesh");
+        return;
+    }
+    RndMesh *R = cands[0];
+    RndMesh *T = cands[1]; // TessellateMesh's mesh, kept apart from R
+    int tris = 0;
+    ao->mObjectsCast.push_back(R);
+    tris += R->Faces().size();
+    RndMesh *bigMesh = nullptr;
+    int bigFace = -1;
+    float bigArea = 0;
+    for (RndMesh *m : All<RndMesh>("Mesh")) {
+        if (m == R || m->GetGeomOwner() != m || m->IsSkinned() || m->Faces().size() > 2000
+            || !Indexable(m))
+            continue;
+        if (tris + (int)m->Faces().size() > 8000)
+            break;
+        ao->mObjectsCast.push_back(m);
+        tris += m->Faces().size();
+    }
+    std::vector<RndMesh *> cast = ao->mObjectsCast;
+    // the largest cast triangle, world space
+    Vector3 bigC, bigN;
+    for (RndMesh *m : cast) {
+        const Transform &x = m->WorldXfm();
+        for (int i = 0; i < (int)m->Faces().size(); i++) {
+            const RndMesh::Face &f = m->Faces()[i];
+            Vector3 p0, p1, p2;
+            Multiply(m->Verts()[f.v1].pos, x, p0);
+            Multiply(m->Verts()[f.v2].pos, x, p1);
+            Multiply(m->Verts()[f.v3].pos, x, p2);
+            Vector3 c = CrossV(Sub(p1, p0), Sub(p2, p0));
+            if (0.5f * Len(c) > bigArea) {
+                bigArea = 0.5f * Len(c), bigMesh = m, bigFace = i;
+                bigC = Vector3((p0.x + p1.x + p2.x) / 3, (p0.y + p1.y + p2.y) / 3, (p0.z + p1.z + p2.z) / 3);
+                bigN = Unit(c);
+            }
+        }
+    }
+    ao->mObjectsReceive.push_back(R);
+    auto t0 = std::chrono::steady_clock::now();
+    ao->BuildTrees((RndAmbientOcclusion::Quality)0);
+    double buildMs = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - t0).count();
+    bool fix = ao->mTree && ao->mSampleDirs.size() == 289 && ao->mTriList.size() > 1000;
+    Gate("ty-ao-fixture", fix,
+         "AO %s: %zu cast meshes, %d faces -> %zu tree triangles in %.0f ms, %zu sample "
+         "directions; receiver %s (%d faces, %d verts)",
+         ao->Name(), cast.size(), tris, ao->mTriList.size(), buildMs, ao->mSampleDirs.size(),
+         R->Name(), (int)R->Faces().size(), (int)R->Verts().size());
+    if (!fix)
+        return;
+
+    {
+        float top = -1e30f;
+        for (RndMesh *m : cast) {
+            const Transform &x = m->WorldXfm();
+            for (int i = 0; i < (int)m->Verts().size(); i++) {
+                Vector3 p;
+                Multiply(m->Verts()[i].pos, x, p);
+                top = std::max(top, p.z);
+            }
+        }
+        float r[4];
+        ao->CalculateAOAtPoint(Vector3(0, 0, top + 10), Vector3(0, 0, 1), r);
+        bool ok = Near(r[0], 0.8862f, 0.03f) && Near(r[1], 0.5f, 0.03f) && Near(r[2], 1.0f, 1e-6f)
+            && Near(r[3], 0.5f, 0.03f);
+        Gate("ty-ao-open-sky", ok,
+             "unoccluded point facing +z: SH (%.4f %.4f %.4f %.4f), want (0.886 0.5 1.0 0.5)",
+             r[0], r[1], r[2], r[3]);
+        float q[4];
+        Vector3 at = Axpy(bigC, 0.01f, bigN);
+        ao->CalculateAOAtPoint(at, Vector3(-bigN.x, -bigN.y, -bigN.z), q);
+        Gate("ty-ao-occluded", q[0] < r[0] / 3,
+             "1 cm in front of %s face %d (area %.0f), facing it: DC %.4f, open sky %.4f",
+             bigMesh->Name(), bigFace, bigArea, q[0], r[0]);
+    }
+
+    // vertex AO, the way CalculateAO sets it, then SmoothResults
+    const Transform &xfm = R->WorldXfm();
+    for (int i = 0; i < (int)R->Verts().size(); i++) {
+        RndMesh::Vert &v = R->Verts()[i];
+        Vector3 wp, wn;
+        Multiply(v.pos, xfm, wp);
+        ao->TransformNormal(v.norm, xfm.m, wn);
+        ao->CalculateAOAtPoint(wp, wn, (float *)&v.color);
+    }
+    {
+        int nv = R->Verts().size(), nf = R->Faces().size();
+        std::vector<Hmx::Color> c0(nv);
+        for (int i = 0; i < nv; i++)
+            c0[i] = R->Verts()[i].color;
+        std::vector<Hmx::Color> fao(nf);
+        for (int f = 0; f < nf; f++) {
+            const RndMesh::Face &fc = R->Faces()[f];
+            const RndMesh::Vert &a = R->Verts()[fc.v1], &b = R->Verts()[fc.v2], &c = R->Verts()[fc.v3];
+            Vector3 cen((a.pos.x + b.pos.x + c.pos.x) / 3, (a.pos.y + b.pos.y + c.pos.y) / 3,
+                        (a.pos.z + b.pos.z + c.pos.z) / 3);
+            Vector3 n = Unit(Vector3(a.norm.x + b.norm.x + c.norm.x, a.norm.y + b.norm.y + c.norm.y,
+                                     a.norm.z + b.norm.z + c.norm.z));
+            Vector3 wc, wn;
+            Multiply(cen, xfm, wc);
+            ao->TransformNormal(n, xfm.m, wn);
+            ao->CalculateAOAtPoint(wc, wn, (float *)&fao[f]);
+        }
+        std::vector<int> rep(nv);
+        for (int i = 0; i < nv; i++) {
+            int j = 0;
+            for (; j < i; j++) {
+                Vector3 d = Sub(R->Verts()[i].pos, R->Verts()[j].pos);
+                if (DotV(d, d) <= 0.001f)
+                    break;
+            }
+            rep[i] = j;
+        }
+        std::vector<Hmx::Color> want(c0);
+        int welded = 0;
+        for (int i = 0; i < nv; i++) {
+            if (rep[i] != i)
+                welded++;
+            double acc[4] = { 0, 0, 0, 0 }, tot = 0;
+            for (int f = 0; f < nf; f++) {
+                const RndMesh::Face &fc = R->Faces()[f];
+                int id[3] = { fc.v1, fc.v2, fc.v3 };
+                for (int k = 0; k < 3; k++) {
+                    if (rep[id[k]] != rep[i])
+                        continue;
+                    Vector3 e1 = Unit(Sub(R->Verts()[id[(k + 1) % 3]].pos, R->Verts()[id[k]].pos));
+                    Vector3 e2 = Unit(Sub(R->Verts()[id[(k + 2) % 3]].pos, R->Verts()[id[k]].pos));
+                    float ang = std::acos((double)DotV(e1, e2));
+                    tot += ang;
+                    acc[0] += ang * fao[f].red, acc[1] += ang * fao[f].green;
+                    acc[2] += ang * fao[f].blue, acc[3] += ang * fao[f].alpha;
+                }
+            }
+            if (tot > 0)
+                want[i] = Hmx::Color((acc[0] / tot + c0[i].red) * 0.5, (acc[1] / tot + c0[i].green) * 0.5,
+                                     (acc[2] / tot + c0[i].blue) * 0.5, (acc[3] / tot + c0[i].alpha) * 0.5);
+        }
+        ao->SmoothResults(R);
+        int bad = 0, moved = 0;
+        std::string first;
+        for (int i = 0; i < nv; i++) {
+            const Hmx::Color &g = R->Verts()[i].color;
+            if (memcmp(&g, &c0[i], sizeof(g)))
+                moved++;
+            if (!(Near(g.red, want[i].red, 1e-4f) && Near(g.green, want[i].green, 1e-4f)
+                  && Near(g.blue, want[i].blue, 1e-4f) && Near(g.alpha, want[i].alpha, 1e-4f))
+                && !bad++) {
+                char b[200];
+                snprintf(b, sizeof(b), "v%d (%g %g %g %g) want (%g %g %g %g)", i, g.red, g.green,
+                         g.blue, g.alpha, want[i].red, want[i].green, want[i].blue, want[i].alpha);
+                first = b;
+            }
+        }
+        Gate("ty-ao-smooth", bad == 0 && moved > nv / 2,
+             "%s: %d verts (%d welded to a lower index), %d colours changed, %d off the "
+             "angle-weighted rule%s%s",
+             R->Name(), nv, welded, moved, bad, first.empty() ? "" : "; first: ", first.c_str());
+    }
+    {
+        int nv0 = R->Verts().size(), nf0 = R->Faces().size();
+        std::vector<RndMesh::Vert> v0(R->Verts().begin(), R->Verts().end());
+        Vector3 vs0, vs1;
+        double open0, open1;
+        double a0 = TotalArea(R, &vs0, &open0);
+        // Tessellate thresholds: the shipped object's, with the large-face
+        // perimeter set to R's median so the size arm runs too.
+        std::vector<float> per;
+        for (const RndMesh::Face &f : R->Faces()) {
+            const Vector3 &p0 = R->Verts()[f.v1].pos, &p1 = R->Verts()[f.v2].pos, &p2 = R->Verts()[f.v3].pos;
+            per.push_back(Len(Sub(p0, p1)) + Len(Sub(p1, p2)) + Len(Sub(p2, p0)));
+        }
+        std::sort(per.begin(), per.end());
+        float oldLarge = ao->mTessellateTriLarge, oldSmall = ao->mTessellateTriSmall;
+        int oldLimit = ao->mTessellateTriLimit;
+        ao->mTessellateTriLarge = per[per.size() / 2];
+        ao->mTessellateTriSmall = std::min(oldSmall, per[per.size() / 4]);
+        ao->mTessellateTriLimit = std::max(oldLimit, 2);
+        ao->mObjectsTessellate.clear();
+        ao->mObjectsTessellate.push_back(R);
+        ao->Tessellate(nullptr, nullptr);
+        ao->mTessellateTriLarge = oldLarge, ao->mTessellateTriSmall = oldSmall;
+        ao->mTessellateTriLimit = oldLimit;
+        int nv1 = R->Verts().size(), nf1 = R->Faces().size();
+        double a1 = TotalArea(R, &vs1, &open1);
+        std::string why;
+        for (int i = 0; i < nv0 && why.empty(); i++)
+            if (memcmp(&R->Verts()[i].pos, &v0[i].pos, sizeof(Vector3))
+                || memcmp(&R->Verts()[i].norm, &v0[i].norm, sizeof(Vector3))
+                || memcmp(&R->Verts()[i].tex, &v0[i].tex, sizeof(Vector2)))
+                why = "an original vertex changed";
+        for (const RndMesh::Face &f : R->Faces())
+            if (f.v1 >= nv1 || f.v2 >= nv1 || f.v3 >= nv1 || f.v1 == f.v2 || f.v2 == f.v3 || f.v1 == f.v3)
+                why = "invalid face";
+        for (int i = nv0; i < nv1; i++) {
+            const RndMesh::Vert &v = R->Verts()[i];
+            if (!Near(Len(v.norm), 1, 1e-3f))
+                why = "new vertex normal not unit";
+            float *c = (float *)&v.color;
+            for (int k = 0; k < 4; k++)
+                if (!(c[k] >= 0 && c[k] <= 1))
+                    why = "new vertex AO out of [0,1]";
+        }
+        if (std::fabs(a1 - a0) > 1e-4 * a0)
+            why = "area changed";
+        if (Len(Sub(vs1, vs0)) > 1e-4f * (float)a0)
+            why = "vector area changed";
+        if (std::fabs(open1 - open0) > 1e-4 * (open0 + 1))
+            why = "open-edge length changed (T-junction)";
+        if (nf1 <= nf0)
+            why = "no faces added";
+        Gate("ty-ao-tessellate", why.empty(),
+             "%s: %d faces / %d verts -> %d / %d; area %.4f -> %.4f, open-edge length %.4f -> "
+             "%.4f, |vector area| %.4f -> %.4f%s%s",
+             R->Name(), nf0, nv0, nf1, nv1, a0, a1, open0, open1, Len(vs0), Len(vs1),
+             why.empty() ? "" : "; ", why.c_str());
+    }
+    ao->Clean();
+
+    // ---------------------------------------------------- TessellateMesh --
+    // Exact: each face (a,b,c) becomes (a,m_ab,m_ca) (m_ca,m_ab,m_bc)
+    // (m_ab,b,m_bc) (m_bc,c,m_ca), one midpoint per undirected edge numbered in
+    // order of first use; a midpoint vertex is BlendVert(first, second): the
+    // first vertex's bytes with pos and tex the half sums, normal and tangent
+    // xyz the normalised sums, colour zero.
+    {
+        int nv0 = T->Verts().size();
+        std::vector<RndMesh::Vert> v0(T->Verts().begin(), T->Verts().end());
+        std::vector<RndMesh::Face> f0 = T->Faces();
+        std::map<std::pair<int, int>, int> mid;
+        std::vector<RndMesh::Face> wantF;
+        std::vector<RndMesh::Vert> wantV;
+        int next = nv0;
+        auto M = [&](int a, int b) {
+            auto key = std::make_pair(std::min(a, b), std::max(a, b));
+            auto it = mid.find(key);
+            if (it != mid.end())
+                return it->second;
+            RndMesh::Vert o = v0[a];
+            const RndMesh::Vert &q = v0[b];
+            o.pos = Vector3((q.pos.x + o.pos.x) * 0.5f, (q.pos.y + o.pos.y) * 0.5f, (q.pos.z + o.pos.z) * 0.5f);
+            o.tex = Vector2((o.tex.x + q.tex.x) * 0.5f, (o.tex.y + q.tex.y) * 0.5f);
+            o.norm = Unit(Vector3(q.norm.x + o.norm.x, q.norm.y + o.norm.y, q.norm.z + o.norm.z));
+            Vector3 t = Unit(Vector3(o.tangent.x + q.tangent.x, o.tangent.y + q.tangent.y, o.tangent.z + q.tangent.z));
+            o.tangent.Set(t.x, t.y, t.z, o.tangent.w);
+            o.color = Hmx::Color(0, 0, 0, 0);
+            wantV.push_back(o);
+            mid[key] = next;
+            return next++;
+        };
+        for (const RndMesh::Face &f : f0) {
+            int a = f.v1, b = f.v2, c = f.v3;
+            int ab = M(a, b), bc = M(b, c), ca = M(c, a);
+            RndMesh::Face x;
+            x.Set(a, ab, ca), wantF.push_back(x);
+            x.Set(ca, ab, bc), wantF.push_back(x);
+            x.Set(ab, b, bc), wantF.push_back(x);
+            x.Set(bc, c, ca), wantF.push_back(x);
+        }
+        TessellateMesh(T);
+        std::string why;
+        if ((int)T->Faces().size() != (int)wantF.size() || (int)T->Verts().size() != next)
+            why = "counts";
+        for (size_t i = 0; why.empty() && i < wantF.size(); i++)
+            if (T->Faces()[i].v1 != wantF[i].v1 || T->Faces()[i].v2 != wantF[i].v2 || T->Faces()[i].v3 != wantF[i].v3)
+                why = "face " + std::to_string(i);
+        for (int i = 0; why.empty() && i < nv0; i++)
+            if (memcmp(&T->Verts()[i], &v0[i], sizeof(RndMesh::Vert)))
+                why = "original vertex " + std::to_string(i);
+        for (int i = nv0; why.empty() && i < next; i++) {
+            const RndMesh::Vert &g = T->Verts()[i], &w = wantV[i - nv0];
+            // Vector3 is 16 bytes with an unused fourth word, so components are
+            // compared, not bytes.
+            if (g.pos.x != w.pos.x || g.pos.y != w.pos.y || g.pos.z != w.pos.z
+                || g.tex.x != w.tex.x || g.tex.y != w.tex.y
+                || !NearV(g.norm, w.norm, 1e-5f) || !Near(g.tangent.x, w.tangent.x, 1e-5f)
+                || !Near(g.tangent.y, w.tangent.y, 1e-5f) || !Near(g.tangent.z, w.tangent.z, 1e-5f)
+                || g.tangent.w != w.tangent.w || g.color.red != 0 || g.color.green != 0
+                || g.color.blue != 0 || g.color.alpha != 0
+                || memcmp(&g.boneWeights, &w.boneWeights, sizeof(g.boneWeights))
+                || memcmp(g.boneIndices, w.boneIndices, sizeof(g.boneIndices))) {
+                char b[400];
+                snprintf(b, sizeof(b),
+                         "midpoint vertex %d: pos (%g %g %g) want (%g %g %g), tex (%g %g) want (%g %g), "
+                         "norm (%g %g %g) want (%g %g %g), tan (%g %g %g %g) want (%g %g %g %g), col (%g %g %g %g)",
+                         i, g.pos.x, g.pos.y, g.pos.z, w.pos.x, w.pos.y, w.pos.z, g.tex.x, g.tex.y,
+                         w.tex.x, w.tex.y, g.norm.x, g.norm.y, g.norm.z, w.norm.x, w.norm.y, w.norm.z,
+                         g.tangent.x, g.tangent.y, g.tangent.z, g.tangent.w, w.tangent.x, w.tangent.y,
+                         w.tangent.z, w.tangent.w, g.color.red, g.color.green, g.color.blue, g.color.alpha);
+                why = b;
+            }
+        }
+        Gate("ty-tessellate-mesh", why.empty(),
+             "%s: %zu faces / %d verts -> %zu / %d against the 4-way split rule%s%s", T->Name(),
+             f0.size(), nv0, T->Faces().size(), (int)T->Verts().size(),
+             why.empty() ? "" : "; first difference: ", why.c_str());
+    }
+}
+
+// =================================================== CalcBoundingSphere ==
+// Character::CalcBoundingSphere on the shipped characters. With the local
+// transform reset to identity: a 0.1 sphere at each of bone_head, both ankles
+// and both toes (.mesh), then, per side, a 7.0 sphere at the clavicle raised
+// in z by the clavicle-to-hand distance; spheres merged in that order. The
+// local transform is restored bit for bit.
+void BoundingChecks() {
+    std::vector<Character *> chars = All<Character>("Character");
+    int n = 0, bad = 0, restoredBad = 0, fallback = 0, arms = 0;
+    std::string first;
+    static const char *names[5] = { "bone_head.mesh", "bone_R-ankle.mesh", "bone_L-ankle.mesh",
+                                    "bone_R-toe.mesh", "bone_L-toe.mesh" };
+    for (Character *c : chars) {
+        Transform before = c->LocalXfm();
+        c->CalcBoundingSphere();
+        if (memcmp(&c->LocalXfm(), &before, sizeof(Transform)))
+            restoredBad++;
+        Sphere got = c->mBounding;
+        c->DirtyLocalXfm().Reset();
+        Sphere want;
+        want.Zero();
+        for (const char *nm : names) {
+            RndTransformable *t = c->Find<RndTransformable>(nm, false);
+            if (t)
+                want.GrowToContain(Sphere(t->WorldXfm().v, 0.1f));
+        }
+        const char *cl[2] = { "bone_L-clavicle", "bone_R-clavicle" };
+        const char *hd[2] = { "bone_L-hand", "bone_R-hand" };
+        for (int s = 0; s < 2; s++) {
+            RndTransformable *a = CharUtlFindBoneTrans(cl[s], c), *h = a ? CharUtlFindBoneTrans(hd[s], c) : nullptr;
+            if (a && h) {
+                Vector3 v = a->WorldXfm().v;
+                v.z += Len(Sub(v, h->WorldXfm().v));
+                want.GrowToContain(Sphere(v, 7.0f));
+                arms++;
+            }
+        }
+        c->DirtyLocalXfm() = before;
+        if (want.GetRadius() == 0) {
+            fallback++;
+            continue;
+        }
+        n++;
+        if ((!NearV(got.center, want.center, 1e-3f) || !Near(got.radius, want.radius, 1e-3f)) && !bad++) {
+            char b[200];
+            snprintf(b, sizeof(b), "%s (%g %g %g r %g) want (%g %g %g r %g)", c->Name(), got.center.x,
+                     got.center.y, got.center.z, got.radius, want.center.x, want.center.y,
+                     want.center.z, want.radius);
+            first = b;
+        }
+    }
+    Gate("ty-char-bounding", n > 0 && arms > 0 && bad == 0 && restoredBad == 0,
+         "%zu shipped characters: %d on the bone recipe (%d clavicle arms), %d on the "
+         "all-bones fallback (not compared); %d off the recipe, %d local transforms not "
+         "restored%s%s",
+         chars.size(), n, arms, fallback, bad, restoredBad, first.empty() ? "" : "; first: ",
+         first.c_str());
+}
+
+// ====================================================== ForeachKeyframe ==
+// {foreach_keyframe target prop $k $v cmds...} on every key set of every
+// shipped PropAnim. The commands count keys, sum frames and (float, colour,
+// bool keys) sum values; the expected totals are summed from the keys
+// directly. Then on float keys replace_keyframe {* $v 2} and replace_frame
+// {+ $k 1} must double every value and shift every frame by 1; the keys are
+// restored from a copy afterwards.
+DataArray *Parse(const char *src) {
+    DataArray *top = DataReadString(src);
+    return top;
+}
+
+void PropAnimChecks() {
+    std::vector<RndPropAnim *> anims = All<RndPropAnim>("PropAnim");
+    int sets = 0, keys = 0, bad = 0, replaced = 0, rbad = 0;
+    int types[8] = { 0 };
+    std::string first;
+    for (RndPropAnim *a : anims) {
+        for (PropKeys *pk : a->mPropKeys) {
+            if (!pk->mTarget || !pk->mProp)
+                continue;
+            int t = pk->KeysType();
+            bool sumValues = t == PropKeys::kFloat || t == PropKeys::kColor || t == PropKeys::kBool;
+            DataVariable("tyn") = DataNode(0);
+            DataVariable("tyf") = DataNode(0.0f);
+            DataVariable("tyv") = DataNode(0.0f);
+            DataVariable("tyanim") = DataNode(a);
+            DataArray *top = Parse(sumValues
+                ? "(0 foreach_keyframe 0 0 $tyk $tyval {set $tyn {+ $tyn 1}} {set $tyf {+ $tyf $tyk}} {set $tyv {+ $tyv $tyval}})"
+                : "(0 foreach_keyframe 0 0 $tyk $tyval {set $tyn {+ $tyn 1}} {set $tyf {+ $tyf $tyk}})");
+            DataArray *msg = top->Size() > 0 && top->Type(0) == kDataArray ? top->Array(0) : top;
+            msg->Node(0) = DataNode(a);
+            msg->Node(2) = DataNode(pk->mTarget.Ptr());
+            msg->Node(3) = DataNode(pk->mProp, kDataArray);
+            a->Handle(msg, true);
+            top->Release();
+            int n = pk->NumKeys();
+            double fs = 0, vs = 0;
+            for (int i = 0; i < n; i++) {
+                float fr = 0;
+                pk->FrameFromIndex(i, fr);
+                fs += fr;
+                if (t == PropKeys::kFloat)
+                    vs += (*pk->AsFloatKeys())[i].value;
+                else if (t == PropKeys::kColor)
+                    vs += (*pk->AsColorKeys())[i].value.Pack();
+                else if (t == PropKeys::kBool)
+                    vs += (*pk->AsBoolKeys())[i].value ? 1 : 0;
+            }
+            sets++;
+            keys += n;
+            types[t & 7]++;
+            int gn = DataVariable("tyn").Int();
+            float gf = DataVariable("tyf").Float(), gv = DataVariable("tyv").Float();
+            if ((gn != n || !Near(gf, fs, 1e-3f * (1 + std::fabs(fs)))
+                 || (sumValues && !Near(gv, vs, 1e-3f * (1 + std::fabs(vs)))))
+                && !bad++) {
+                char b[200];
+                snprintf(b, sizeof(b), "%s key set %d: %d keys, frames %g, values %g; want %d, %g, %g",
+                         a->Name(), sets, gn, gf, gv, n, fs, vs);
+                first = b;
+            }
+            if (t == PropKeys::kFloat && n > 0) {
+                Keys<float, float> saved = *pk->AsFloatKeys();
+                DataArray *top2 = Parse("(0 foreach_keyframe 0 0 $tyk $tyval {$tyanim replace_keyframe {* $tyval 2}} {$tyanim replace_frame {+ $tyk 1}})");
+                DataArray *m2 = top2->Size() > 0 && top2->Type(0) == kDataArray ? top2->Array(0) : top2;
+                m2->Node(0) = DataNode(a);
+                m2->Node(2) = DataNode(pk->mTarget.Ptr());
+                m2->Node(3) = DataNode(pk->mProp, kDataArray);
+                a->Handle(m2, true);
+                top2->Release();
+                Keys<float, float> &now = *pk->AsFloatKeys();
+                replaced++;
+                bool ok = now.size() == saved.size();
+                for (size_t i = 0; ok && i < saved.size(); i++)
+                    if (now[i].value != saved[i].value * 2 || now[i].frame != saved[i].frame + 1)
+                        ok = false;
+                if (!ok && !rbad++ && first.empty())
+                    first = std::string(a->Name()) + ": replace pass";
+                now = saved;
+            }
+        }
+    }
+    Gate("ty-propanim-foreach", sets > 0 && bad == 0 && rbad == 0 && replaced > 0,
+         "%zu shipped PropAnims, %d key sets (float %d, colour %d, object %d, bool %d, quat %d, "
+         "vector3 %d, symbol %d), %d keys: %d sets off the direct key totals; %d float sets "
+         "through replace_keyframe/replace_frame, %d wrong%s%s",
+         anims.size(), sets, types[0], types[1], types[2], types[3], types[4], types[5], types[6],
+         keys, bad, replaced, rbad, first.empty() ? "" : "; first: ", first.c_str());
+}
+
 } // namespace
 
 int RunW16TYPhase(GateFn gate) {
@@ -1051,5 +1590,15 @@ int RunW16TYPhase(GateFn gate) {
     CharBonesChecks();
     NormalsChecks();
     ScaleChecks();
+    BoundingChecks();
+    PropAnimChecks();
+    AOChecks(); // last: it moves geometry (Tessellate, TessellateMesh)
+    {
+        int bsp = 0;
+        for (RndMesh *m : All<RndMesh>("Mesh"))
+            if (m->GetGeomOwner() == m && m->GetBSPTree())
+                bsp++;
+        printf("  W16-TY census: %d shipped meshes in the vignette carry a BSP tree\n", bsp);
+    }
     return gRan;
 }
