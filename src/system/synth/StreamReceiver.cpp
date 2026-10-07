@@ -100,32 +100,31 @@ void StreamReceiver::Poll() {
         mDoneBufferCounter++;
     }
 #else
-    // Retail RB3-360 (0x8272a5b8): a switch on the state, 0xC000-byte send
-    // blocks (hence divw, not a shift) and a 100000 wrap limit.
-    switch ((unsigned int)mState) {
-    case kInit:
+    // Retail RB3-360 (0x8272a5b8): 0xC000-byte send blocks (hence divw, not a
+    // shift) and a 100000 wrap limit. The state test is an if-chain, not a
+    // switch: retail dispatches `cmplwi 1; blt` (kInit), `beq` (kReady),
+    // `cmplwi 4; bge` (out of range), the shape this chain lowers to. A switch
+    // lowers to `cmplwi 0; beq; cmplwi 1; ble; cmplwi 3; bgt`.
+    if ((unsigned int)mState >= kReady) {
+        if ((unsigned int)mState == kReady) {
+            // Already primed; nothing to poll.
+        } else if ((unsigned int)mState >= kStopped + 1) {
+            MILO_FAIL("bad state logic.\n");
+        } else {
+            int playCursor = GetPlayCursor();
+            int activeBuf = playCursor / kStreamRcvrSendSize;
+            mLastPlayCursor = playCursor;
+            MILO_ASSERT(activeBuf >= 0 && activeBuf < mNumBuffers, 0xc2);
+            if (!mSlipEnabled && activeBuf != mSendTarget) {
+                mWantToSend = true;
+            }
+            int diff = activeBuf - mSendTarget;
+            if (diff == mNumBuffers / 2 || diff == -(mNumBuffers / 2)) {
+                mWantToSend = true;
+            }
+        }
+    } else {
         mWantToSend = true;
-        break;
-    case kReady:
-        break;
-    case kPlaying:
-    case kStopped: {
-        int playCursor = GetPlayCursor();
-        int activeBuf = playCursor / kStreamRcvrSendSize;
-        mLastPlayCursor = playCursor;
-        MILO_ASSERT(activeBuf >= 0 && activeBuf < mNumBuffers, 0xc2);
-        if (!mSlipEnabled && activeBuf != mSendTarget) {
-            mWantToSend = true;
-        }
-        int diff = activeBuf - mSendTarget;
-        if (diff == mNumBuffers / 2 || diff == -(mNumBuffers / 2)) {
-            mWantToSend = true;
-        }
-        break;
-    }
-    default:
-        MILO_FAIL("bad state logic.\n");
-        break;
     }
     if (mWantToSend && mState != kInit && kStreamRcvrBufSize - mRingFreeSpace != 0) {
         mStarving = true;

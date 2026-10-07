@@ -90,6 +90,10 @@ void WorldInstance::SavePersistentObjects(BinStream &bs) {
             objects.push_back(it);
         }
     }
+    // Retail copies this uninitialised byte through its frame slot (`lbz r4,
+    // 0x50(r31)` / `stb r4, 0x50(r31)`): the home of list::sort's by-value
+    // comparator. A `ClassAndNameSort()` temporary is value-initialised and
+    // stores 0 instead (measured 97.63 -> 96.51), so the named local stays.
     DirLoader::ClassAndNameSort sorter;
     objects.sort(sorter);
     bs << (int)objects.size();

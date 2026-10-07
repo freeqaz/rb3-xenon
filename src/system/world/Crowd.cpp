@@ -901,25 +901,33 @@ void WorldCrowd::SetFullness(float flatFullness, float charFullness) {
                 for (; instanceCount < targetInstances; instanceCount++) {
                     ++backIt;
                 }
+                // Spliced in at the FRONT. Retail's transfer position is
+                // `lwz r10, 0x0(r10)` off &mMMesh->mInstances -- the header's
+                // first word, i.e. begin(); end() would be the header address
+                // itself, with no load.
                 it->mMMesh->mInstances.splice(
-                    it->mMMesh->mInstances.end(), it->mBackup, it->mBackup.begin(), backIt
+                    it->mMMesh->mInstances.begin(), it->mBackup, it->mBackup.begin(), backIt
                 );
             } else if (targetInstances < instanceCount) {
                 InstanceList::iterator instIt = it->mMMesh->mInstances.begin();
                 for (; targetInstances < instanceCount; instanceCount--) {
                     ++instIt;
                 }
+                // Same here: the position is `lwz r9, 0x3c(r29)`, mBackup.begin(),
+                // not the `addi r7, r29, 0x3c` header address end() would use.
                 it->mBackup.splice(
-                    it->mBackup.end(), it->mMMesh->mInstances, it->mMMesh->mInstances.begin(),
+                    it->mBackup.begin(), it->mMMesh->mInstances, it->mMMesh->mInstances.begin(),
                     instIt
                 );
                 it->mMMesh->InvalidateProxies();
             }
             unsigned int totalChars3D = it->m3DCharsCreated.size();
             int targetChars3D = (int)((float)totalChars3D * charFullness);
-            if (targetChars3D >= (int)totalChars3D) {
-                targetChars3D = (int)totalChars3D;
-            }
+            // Min(total, target): Utl.h's Min is `(y < x) ? y : x`, so this is
+            // `(target < total) ? target : total` -- retail compares target
+            // against total (`cmpw cr6, r10, r11`, r10 = target) and keeps it on
+            // `blt`.
+            targetChars3D = Min((int)totalChars3D, targetChars3D);
             int currentChars3D = (int)it->m3DChars.size();
             if (currentChars3D < targetChars3D) {
                 for (; currentChars3D < targetChars3D; currentChars3D++) {
