@@ -5155,6 +5155,9 @@ static bool gNoW16TS = false;
 // native/src/w16tw_phase.cpp (W16-TW)
 int RunW16TWPhase(void (*gate)(const char *, bool, const char *));
 static bool gNoW16TW = false;
+// native/src/w16ty_phase.cpp (W16-TY)
+int RunW16TYPhase(void (*gate)(const char *, bool, const char *));
+static bool gNoW16TY = false;
 
 int main(int argc, char **argv) {
     // Line-buffer: a SIGSEGV inside the renderer would otherwise discard the
@@ -5191,6 +5194,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--no-w16tr") == 0) gNoW16TR = true;
         else if (strcmp(argv[i], "--no-w16ts") == 0) gNoW16TS = true;
         else if (strcmp(argv[i], "--no-w16tw") == 0) gNoW16TW = true;
+        else if (strcmp(argv[i], "--no-w16ty") == 0) gNoW16TY = true;
         else if (strcmp(argv[i], "--crowd-all") == 0) gCrowdShowAll = true;
         else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
@@ -5453,6 +5457,12 @@ int main(int argc, char **argv) {
     // default-mode rule; --no-w16tw opts out.
     if (pos.size() == 2 && !gNoW16TW)
         RunW16TWPhase(Gate);
+    // W16-TY: VIA-DC3 engine rows native linked but no target entered, and
+    // executed VIA-DC3 rows no gate checked, driven on shipped venue,
+    // vignette, rigging and track milos (native/src/w16ty_phase.cpp). Same
+    // default-mode rule; --no-w16ty opts out.
+    if (pos.size() == 2 && !gNoW16TY)
+        RunW16TYPhase(Gate);
 
     printf("\n=== summary ===\n");
     for (size_t i = 0; i < cells.size(); i++) {
