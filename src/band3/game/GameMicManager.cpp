@@ -55,7 +55,7 @@ static DataNode SetAmount(DataArray *a) {
 }
 
 static DataNode SetEnable(DataArray *a) {
-    TheGameMicManager->unk2f = a->Float(1) > 0.5;
+    TheGameMicManager->unk2f = a->Float(1) > 0.5f ? true : false;
     return 0;
 }
 
