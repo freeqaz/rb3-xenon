@@ -420,34 +420,36 @@ void StandardStream::PollStream() {
         mChannels.begin(), mChannels.end(), std::mem_fun(&StreamReceiver::Poll)
     );
 
-    switch ((unsigned int)mState) {
-    case kInit:
-    case kReady:
-    case kFinished:
-        break;
-    case kBuffering:
-        if (StuffChannels()) {
+    // An if-chain, not a switch: retail dispatches `cmplwi 1; blt` (kInit),
+    // `beq` (kBuffering), `cmplwi 3; blt` (kReady), `cmplwi 6; bge` (kFinished
+    // and out of range). A switch lowers to `cmplwi 1; beq; cmplwi 2; ble;
+    // cmplwi 5; bgt`.
+    // The playing arm is the fall-through and kBuffering's body is placed
+    // after it, hence `!=` first.
+    if ((unsigned int)mState >= kBuffering) {
+        if ((unsigned int)mState != kBuffering) {
+            if ((unsigned int)mState >= kPlaying) {
+                if ((unsigned int)mState < kFinished) {
+                    StuffChannels();
+                    if (mChannels[0]->mDoneBufferCounter
+                        > mChannels[0]->mNumBuffers + 2) {
+                        mState = kFinished;
+                    }
+                } else if ((unsigned int)mState != kFinished) {
+                    MILO_FAIL("bad state logic.");
+                }
+            }
+        } else if (StuffChannels()) {
             mState = kReady;
         }
-        break;
-    case kPlaying:
-    case kSuspended:
-    case kStopped:
-        StuffChannels();
-        if (mChannels[0]->mDoneBufferCounter > mChannels[0]->mNumBuffers + 2) {
-            mState = kFinished;
-        }
-        break;
-    default:
-        MILO_FAIL("bad state logic.");
-        break;
     }
 
     if (mState != kInit && mJumpFromSamples != 0) {
-        if (mJumpFromSamples < 0) {
-            if (mRdr->Done()) {
-                DoJump();
-            }
+        // `x < 0 && Done()`, then `else if (x > 0)`: when the reader is not
+        // done retail falls through and re-tests mJumpFromSamples > 0 (a second
+        // `lwz 0x84`), where a nested `if (Done())` exits directly.
+        if (mJumpFromSamples < 0 && mRdr->Done()) {
+            DoJump();
         } else if (mJumpFromSamples > 0) {
             if (mJumpFromSamples < mJumpToSamples) {
                 if (mCurrentSamp >= mJumpFromSamples && mCurrentSamp < mJumpToSamples) {

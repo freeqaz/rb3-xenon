@@ -268,9 +268,11 @@ void SpotlightDrawer::DrawShowing() {
         );
 #else
         // Retail 0x824D51E8: the notify is compiled out but its two PathName
-        // argument calls remain (right-to-left).
+        // argument calls remain (right-to-left). Retail converts `this` to
+        // Hmx::Object* (with its null test) before sCurrent.
+        Hmx::Object *self = this;
         Hmx::Object *cur = sCurrent;
-        PathName(this);
+        PathName(self);
         PathName(cur);
 #endif
     } else {

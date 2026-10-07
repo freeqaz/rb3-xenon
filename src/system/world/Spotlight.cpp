@@ -260,7 +260,13 @@ BEGIN_PROPSYNCS(Spotlight)
     SYNC_PROP_MODIFY(spot_height, mSpotHeight, UpdateBounds())
     SYNC_PROP_MODIFY(spot_material, mSpotMaterial, UpdateBounds())
     SYNC_PROP_SET(color, Color().Pack(), SetColor(_val.Int()))
-    SYNC_PROP_SET(intensity, Intensity(), SetIntensity(_val.Float())) // fix this line
+    // SetIntensity -> SetColorIntensity(Color(), f) expands to the 16-byte
+    // self-copy `mColorOwner->mColor = mColorOwner->mColor`, and retail emits it
+    // too. Retail keeps the owner in one register and the +0x180 source in
+    // another (`mr r9, r11` plus a dead `addi r10, r9, 0x180`); we anchor both
+    // sides on one register. Same bytes copied; the two instructions are the
+    // whole residue of this arm.
+    SYNC_PROP_SET(intensity, Intensity(), SetIntensity(_val.Float()))
     SYNC_PROP(color_owner, mColorOwner)
     SYNC_PROP(damping_constant, mDampingConstant)
     SYNC_PROP_MODIFY(lens_size, mLensSize, UpdateBounds())

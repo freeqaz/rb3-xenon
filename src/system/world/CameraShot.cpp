@@ -548,6 +548,8 @@ void CamShotFrame::Interp(const CamShotFrame &other, float f1, float f2, RndCam 
         float easeEnd = 1.0f;
         switch (mBlendEaseMode) {
         case kBlendEaseIn:
+            // Retail re-sets the offset here (`fmr f3, f30` before the 2.0f).
+            easeOffset = 0.0f;
             easeEnd = 2.0f;
             break;
         case kBlendEaseInAndOut:
@@ -555,7 +557,9 @@ void CamShotFrame::Interp(const CamShotFrame &other, float f1, float f2, RndCam 
             easeEnd = 1.0f;
             break;
         case kBlendEaseOut:
+            // Retail's arm branches into InAndOut's `easeEnd = 1` instruction.
             easeOffset = -1.0f;
+            easeEnd = 1.0f;
             break;
         default:
             MILO_NOTIFY("Invalid mBlendEaseMode: %d", mBlendEaseMode);

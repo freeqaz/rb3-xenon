@@ -50,8 +50,10 @@ void Fader::DoFade(float targetDb, float duration) {
     mFaderTask->mTimer.Start();
     mFaderTask->mFader = this;
     mFaderTask->mDone = false;
-    FaderTask *thetask = mFaderTask;
-    FaderTask::sTasks.push_back(thetask);
+    // Retail passes &mFaderTask itself to the list insert (`mr r6, r29`, with
+    // r29 = this + 0x2c held from the top); a local copy is homed to the frame
+    // and its address passed instead.
+    FaderTask::sTasks.push_back(mFaderTask);
 }
 
 bool Fader::IsFading() const { return mFaderTask; }
