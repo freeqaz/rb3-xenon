@@ -54,7 +54,11 @@ PatchSticker::~PatchSticker() { Unload(); }
 // Retail keeps MakeLoader out of line (0x822738D8); LoadStickerTex calls it.
 __declspec(noinline) void PatchSticker::MakeLoader() {
     MILO_ASSERT(!mLoader, 0x52);
-    mLoader = dynamic_cast<FileLoader *>(TheLoadMgr.AddLoader(unkc, kLoadFront));
+    // The loader lands in a local before the cast: retail materialises the
+    // __RTDynamicCast target type (r6) and isRef (r7) ahead of the source type
+    // and vfdelta, which is the order the one-expression form does not give.
+    Loader *loader = TheLoadMgr.AddLoader(unkc, kLoadFront);
+    mLoader = dynamic_cast<FileLoader *>(loader);
 }
 
 void PatchSticker::FinishLoad() {

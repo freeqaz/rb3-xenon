@@ -52,7 +52,13 @@ public:
     NEW_POOL_OVERLOAD(GameGem);
     DELETE_POOL_OVERLOAD(GameGem);
 
-    bool operator<(const GameGem &g) const { return mMs < g.mMs; }
+    // The other gem's time is read first: in retail's __adjust_heap<GameGem>
+    // (0x8278CE50) and __partial_sort<GameGem> the [i-1] element loads ahead
+    // of [i], which the one-expression compare does not schedule.
+    bool operator<(const GameGem &g) const {
+        float other = g.mMs;
+        return mMs < other;
+    }
 
     int GetTick() const { return mTick; }
     bool IgnoreDuration() const { return mIgnoreDuration; }
