@@ -521,6 +521,12 @@ DataArray *ReadCacheStream(BinStream &bs, const char *cc) {
 // There is no `UsingCD() &&` gate on the !isLocal arm in
 // retail's inlined copies (no bl ?UsingCD@@YA_NXZ in either extent), the
 // same elimination ArchiveInit documents.
+#ifdef HX_NATIVE
+// Lane W16-UC file-source ledger (native/src/platform/FileLedger_Native.cpp).
+// Weak: a target that links no platform shims still links this TU.
+extern void NativeFileLedger(const char *fmt, ...) __attribute__((weak));
+#endif
+
 static const char *CachedDataFile(const char *file, bool &b) {
     bool isLocal = FileIsLocal(file);
     if (strstr(file, ".dtb")) {
@@ -544,6 +550,10 @@ DataArray *DataReadFile(const char *file, bool warn) {
     bool b;
     DataNode *node;
     const char *cached = CachedDataFile(buf, b);
+#ifdef HX_NATIVE
+    if (NativeFileLedger)
+        NativeFileLedger("MAP\tdta\t%s\t%s", file, cached);
+#endif
     if (gReadingFile) {
         node = &gReadFiles[cached];
         if (node->Type() == kDataArray) {
@@ -678,6 +688,10 @@ DataLoader::DataLoader(const FilePath &fp, LoaderPos pos, bool b3)
     const char *new_str = fp.c_str();
     if (b3) {
         new_str = CachedDataFile(new_str, mDtb);
+#ifdef HX_NATIVE
+        if (NativeFileLedger)
+            NativeFileLedger("MAP\tdta\t%s\t%s", fp.c_str(), new_str);
+#endif
     }
     mFilename = new_str;
     mState = &DataLoader::OpenFile;

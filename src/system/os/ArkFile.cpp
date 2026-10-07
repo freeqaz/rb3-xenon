@@ -13,6 +13,7 @@
 // Native port: direct read from ark files, bypassing BlockMgr
 // Needs CDReader_Native's file handles
 extern bool NativeArkRead(int arkFile, long long byteOffset, void *buffer, int bytes);
+extern void NativeFileLedger(const char *fmt, ...) __attribute__((weak));
 
 int ArkFile::Read(void *c, int a) {
     if (mFail || mTell >= mSize) return 0;
@@ -86,6 +87,13 @@ ArkFile::ArkFile(const char *iFilename, int iMode)
         || (iMode & 1)) {
         mFail = true;
     }
+#ifdef HX_NATIVE
+    // Lane W16-UC: record every archive lookup (native/src/platform/
+    // FileLedger_Native.cpp). Weak, because a target that links no platform
+    // shims still links this TU.
+    if (NativeFileLedger)
+        NativeFileLedger("ARK\t%s\t%s", FileMakePath(".", iFilename), mFail ? "miss" : "ok");
+#endif
 }
 
 ArkFile::~ArkFile() {

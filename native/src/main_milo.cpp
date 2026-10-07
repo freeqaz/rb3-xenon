@@ -349,8 +349,9 @@ int main(int argc, char **argv) {
     // config DTBs execute script that resolves objects through it
     // (DataArray::Execute -> ObjectDir::FindObject), and with a null main dir
     // reading config/objects.dta segfaults inside the DTB's own script. It also
-    // flips DirLoader::SetCacheMode(true) under UsingCD(), which is what makes
-    // DirLoader::CachedPath resolve "foo.milo" to "gen/foo.milo_xbox".
+    // flips DirLoader::SetCacheMode(true) -- unconditionally, as retail does
+    // (W16-UC) -- which is what makes DirLoader::CachedPath resolve "foo.milo"
+    // to "gen/foo.milo_xbox".
     DataInit();
     gFailures += RetailBootMacros::Define(); // retail's boot DTA macros, before any read (W16-UA)
 
@@ -360,6 +361,26 @@ int main(int argc, char **argv) {
         return 1;
     }
     Gate("archive-mounted", true, TheArchive->GetArkfileName(0));
+
+    // ---- name resolution, as retail resolves it (W16-UC) ------------------
+    // gSystemRoot is retail's relative "../../system/run" (it resolves in the
+    // ark), not a host path derived from the working directory; a .milo name
+    // maps to the gen/*.milo_xbox the disc holds; and a device path is a
+    // device read (retail's FileIsLocal rule), which fails here as it does on
+    // a console without that device -- it never reaches the archive or the
+    // host. tools/native_file_audit.py checks the reads themselves.
+    {
+        const char *sr = FileSystemRoot();
+        Gate("file-system-root", sr && strcmp(sr, "../../system/run") == 0, sr ? sr : "(null)");
+        const char *cp = DirLoader::CachedPath("ui/track/tracksystem_meshes.milo", false);
+        Gate("milo-cached-path", strcmp(cp, "ui/track/gen/tracksystem_meshes.milo_xbox") == 0, cp);
+        bool local = FileIsLocal("devkit:/locale_keep.dta");
+        File *f = NewFile("devkit:/locale_keep.dta", FILE_OPEN_READ);
+        Gate("device-path-is-device", local && !f,
+             local ? (f ? "opened (should fail: no devkit device)" : "local, open failed")
+                   : "routed to the archive");
+        delete f;
+    }
 
     // ---- system config ---------------------------------------------------
     // NOT optional, and not a nicety. DirLoader's own constructor dereferences

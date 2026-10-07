@@ -222,6 +222,15 @@ MID_PILLS="${RB3_MID_PILLS:-$MH/onyx/songs-cort/hurt/pills/notes.mid}"
 MID_CENTERFOLD="${RB3_MID_CENTERFOLD:-$MH/rock-band-3-deluxe/_ark/songs/centerfold/centerfold.mid}"
 SONGS_DTA="${RB3_SONGS_DTA:-$MH/rb3/orig-assets/extracted/songs/songs.dta}"
 RT_TIMEOUT="${NATIVE_HEALTH_TIMEOUT:-120}"
+# Every target runs under strace (open-family syscalls only, seccomp-filtered)
+# with the engine's file ledger on; the FILE SOURCES section below judges both.
+# No strace => that section is UNRUNNABLE (rc 3), never a pass.
+FA_RUNS=()
+FA_STRACE=()
+if command -v strace > /dev/null 2>&1; then
+    FA_STRACE=(strace -f -qq --seccomp-bpf -y -s 4096
+               -e trace=open,openat,openat2,creat,chdir,fchdir -e signal=none)
+fi
 gates_pass=0; gates_fail=0; rt_ran=0; rt_total=0; unrunnable=(); green=()
 rt_crashed=0; rt_failed=()
 
@@ -274,10 +283,14 @@ run_target() {  # [--gated] NAME MARKER [--needs PATH]... -- ARGV...
     local gated=0
     if [ "${1:-}" = "--gated" ]; then gated=1; shift; fi
     local name="$1" marker="$2"; shift 2
-    local need missing=""
+    local need missing="" fa_args=()
     while [ "${1:-}" = "--needs" ]; do
         need="$2"; shift 2
         [ -e "$need" ] || missing="${missing:-$need}"
+        # File audit (W16-UC): the disc image is the disc, and every other
+        # declared input is the only host file this target may read besides it.
+        if [ "$need" = "$ASSETS" ]; then fa_args+=(--assets "$ASSETS" --expect-disc)
+        else fa_args+=(--input "$need"); fi
     done
     [ "${1:-}" = "--" ] && shift
     rt_total=$((rt_total + 1))
@@ -290,7 +303,17 @@ run_target() {  # [--gated] NAME MARKER [--needs PATH]... -- ARGV...
         unrunnable+=("$name:nodata"); return
     fi
     local log="$LOGDIR/native_health_${name}_$SLUG.log"
-    classify_run "$log" "$marker" "$gated" "$name" -- "$NB/$name" "$@"
+    local trace="$LOGDIR/native_health_files_${name}_$SLUG.trace"
+    local ledger="$LOGDIR/native_health_files_${name}_$SLUG.ledger"
+    rm -f "$trace" "$ledger"
+    if [ ${#FA_STRACE[@]} -gt 0 ]; then
+        classify_run "$log" "$marker" "$gated" "$name" -- \
+            env RB3_FILE_LEDGER="$ledger" "${FA_STRACE[@]}" -o "$trace" -- "$NB/$name" "$@"
+    else
+        classify_run "$log" "$marker" "$gated" "$name" -- "$NB/$name" "$@"
+    fi
+    local IFS=$'\x1f'   # paths may hold spaces; fields are re-split on 0x1f
+    FA_RUNS+=("$name|$trace|$ledger|${fa_args[*]+${fa_args[*]}}")
     case "$CL_STATUS" in
     UNRUNNABLE)
         printf '  %-10s %-12s -- %s\n' UNRUNNABLE "$name" "$CL_WHY"
@@ -403,6 +426,101 @@ for pair in "rb3-ark:$CFG_ARK" "rb3-render:$CFG_RENDER"; do
     esac
 done
 
+# ------------------------------------------------- FILE SOURCES (W16-UC) --
+# Retail reads every relative path out of the disc archive; the only host files
+# a console opens are main_xbox.hdr and the main_xbox_N.ark parts. Each target
+# above ran under strace with the engine's file ledger on, and
+# tools/native_file_audit.py puts every host open in one class: DISC, a
+# declared INPUT (the --needs paths), OUTPUT (write-only), ALLOW (the
+# allow-list, tools/native_file_audit_allow.txt: loader, libc, GPU stack), or
+# OUTSIDE. Any OUTSIDE open -- read or failed attempt -- fails the target.
+# W16-UA found 16 config files coming from a sibling checkout's host TEXT; this
+# is the check that would have caught it.
+echo
+echo "--- file sources: did every read resolve on the disc image? ---"
+fa_ok=0; fa_bad=0; fa_norun=0; FA_PASSED=()
+if [ ${#FA_STRACE[@]} -eq 0 ]; then
+    echo "  UNRUNNABLE  strace not found -- no target's file opens were checked"
+    unrunnable+=("file-audit:nostrace")
+fi
+for run in ${FA_RUNS[@]+"${FA_RUNS[@]}"}; do
+    [ ${#FA_STRACE[@]} -eq 0 ] && break
+    t="${run%%|*}"; rest="${run#*|}"
+    trace="${rest%%|*}"; rest="${rest#*|}"
+    ledger="${rest%%|*}"; args="${rest#*|}"
+    if printf '%s\n' ${unrunnable[@]+"${unrunnable[@]}"} | G -q "^$t:\(nobinary\|nodata\)"; then
+        continue
+    fi
+    IFS=$'\x1f' read -r -a fa_argv <<< "$args"
+    out="$LOGDIR/native_health_files_${t}_$SLUG.audit"
+    python3 "$DIR/tools/native_file_audit.py" check --label "$t" --trace "$trace" \
+        --ledger "$ledger" --cwd "$PWD" ${fa_argv[@]+"${fa_argv[@]}"} \
+        --allow-glob "self=$NB/$t" --allow-glob "self=$NB/lib*.so*" > "$out" 2>&1
+    fa_rc=$?
+    case "$fa_rc" in
+    0) fa_ok=$((fa_ok + 1)); FA_PASSED+=("$t") ;;
+    1) fa_bad=$((fa_bad + 1)); rt_failed+=("$t:file-audit")
+       G -E '^FILE-AUDIT .*FAIL|^    OUTSIDE ' "$out" | head -6 | sed 's/^/  /' ;;
+    *) fa_norun=$((fa_norun + 1)); unrunnable+=("$t:file-audit-norun")
+       printf '  %s\n' "$(G '^FILE-AUDIT ' "$out" | tail -1)" ;;
+    esac
+done
+echo "  file sources: $fa_ok target(s) clean, $fa_bad with reads outside the disc image," \
+     "$fa_norun not judgeable (per-target detail: $LOGDIR/native_health_files_*_$SLUG.audit)"
+
+# The PLANT: a real shipped milo copied OUT of the disc image, to two places a
+# wrong resolution would read it from. Built here so the escape probe below and
+# the selftest's planted-read control use the same file.
+#   $PLANT/a/disc                 a data dir whose gen/ is the real disc's gen/
+#   $PLANT/system/run/ui/gen/planted.milo_xbox
+#                                 = <data dir>/../../system/run/ui/gen/... -- the
+#                                 sibling position W16-UA's 16 host reads came
+#                                 from (the ark keys system files that way).
+PLANT="$LOGDIR/native_health_plant_$SLUG"
+PLANTED="$PLANT/system/run/ui/gen/planted.milo_xbox"
+plant_ok=0
+if [ -d "$ASSETS/gen" ]; then
+    rm -rf "$PLANT"; mkdir -p "$PLANT/a/disc" "$(dirname "$PLANTED")"
+    ln -s "$ASSETS/gen" "$PLANT/a/disc/gen"
+    python3 "$DIR/native/tools/ark_extract.py" "$ASSETS" \
+        --extract ui/track/gen/tracksystem_meshes.milo_xbox --out "$PLANTED" > /dev/null 2>&1 \
+        && [ -s "$PLANTED" ] && plant_ok=1
+fi
+# ESCAPE PROBE (positive): ask rb3-milo for the planted name THROUGH the data
+# dir. The ark does not hold it, so retail fails it, and native must too --
+# without reading the plant. Before W16-UC the loose-file check stat'ed
+# <data>/../../system/run/... and read the host copy (with ALL GATES PASSED).
+# Green here = the audit found no outside read AND the ledger shows the name
+# was asked of the archive and missed (otherwise the probe proved nothing).
+if [ $plant_ok -eq 1 ] && [ ${#FA_STRACE[@]} -gt 0 ] && [ -x "$NB/rb3-milo" ]; then
+    etrace="$LOGDIR/native_health_files_escape_$SLUG.trace"
+    eledger="$LOGDIR/native_health_files_escape_$SLUG.ledger"
+    eout="$LOGDIR/native_health_files_escape_$SLUG.audit"
+    rm -f "$etrace" "$eledger"
+    timeout -k 10 "$RT_TIMEOUT" env RB3_FILE_LEDGER="$eledger" "${FA_STRACE[@]}" -o "$etrace" -- \
+        "$NB/rb3-milo" "$PLANT/a/disc" ../../system/run/ui/gen/planted.milo_xbox \
+        > "$LOGDIR/native_health_files_escape_$SLUG.log" 2>&1
+    python3 "$DIR/tools/native_file_audit.py" check --label escape-probe --trace "$etrace" \
+        --ledger "$eledger" --cwd "$PWD" --assets "$PLANT/a/disc" --expect-disc \
+        --allow-glob "self=$NB/rb3-milo" --allow-glob "self=$NB/lib*.so*" > "$eout" 2>&1
+    erc=$?
+    if [ $erc -eq 0 ] && G -q $'^ARK\t\.\./\.\./system/run/ui/gen/planted\.milo_xbox\tmiss' "$eledger"; then
+        echo "  OK    escape-probe -- <data>/../../system/run/... was asked of the archive" \
+             "(miss) and the planted host copy was not read"
+    elif [ $erc -eq 1 ]; then
+        echo "  FAIL  escape-probe -- a name outside the disc image resolved to the host:"
+        G '^    OUTSIDE ' "$eout" | head -3 | sed 's/^/  /'
+        rt_failed+=("rb3-milo:file-escape")
+    else
+        echo "  UNRUNNABLE escape-probe -- audit rc=$erc, or the planted name never reached" \
+             "the archive (log: $eout)"
+        unrunnable+=("rb3-milo:file-escape-norun")
+    fi
+else
+    echo "  UNRUNNABLE escape-probe -- no plant (assets/strace/rb3-milo absent)"
+    unrunnable+=("rb3-milo:file-escape-norun")
+fi
+
 # -------------------------------------------------------------- SELFTEST ----
 # Does each negative control actually go RED? The PAIR is the control: the
 # positive run above must be green FIRST, or a red here proves nothing (it would
@@ -498,6 +616,96 @@ if [ $SELFTEST -eq 1 ]; then
         fi
         echo "        log: $log"
     done
+    # ---- FILE-SOURCE CONTROLS (W16-UC) -------------------------------------
+    #   file-planted   rb3-milo loads the PLANTED milo by its absolute host path.
+    #                  That is a real engine read (FileIsLocal -> AsyncFile) of a
+    #                  file outside the disc image; the audit must FAIL and name
+    #                  it, on both the strace and the ledger record.
+    #   file-undeclared  rb3-ark's own positive trace re-judged WITHOUT declaring
+    #                  ARK_REF as an input: the same reads, one fewer --input, and
+    #                  the audit must FAIL on exactly that file. Proves the
+    #                  declaration is load-bearing, i.e. inputs are not waved
+    #                  through because they were on the command line.
+    # Pair: the base target's run was green AND its own audit was clean.
+    fa_passed() {
+        local x; for x in ${FA_PASSED[@]+"${FA_PASSED[@]}"}; do [ "$x" = "$1" ] && return 0; done
+        return 1
+    }
+    if was_green rb3-milo && fa_passed rb3-milo && [ $plant_ok -eq 1 ]; then
+        label=file-planted
+        log="$LOGDIR/native_health_selftest_${label}_$SLUG.log"
+        ptrace="$log.trace"; pledger="$log.ledger"; rm -f "$ptrace" "$pledger"
+        timeout -k 10 "$RT_TIMEOUT" env RB3_FILE_LEDGER="$pledger" "${FA_STRACE[@]}" -o "$ptrace" -- \
+            "$NB/rb3-milo" "$ASSETS" "$PLANTED" > "$log" 2>&1
+        python3 "$DIR/tools/native_file_audit.py" check --label "$label" --trace "$ptrace" \
+            --ledger "$pledger" --cwd "$PWD" --assets "$ASSETS" --expect-disc \
+            --allow-glob "self=$NB/rb3-milo" --allow-glob "self=$NB/lib*.so*" > "$log.audit" 2>&1
+        arc=$?
+        if [ $arc -eq 1 ] && G -qF "OUTSIDE [strace] $PLANTED" "$log.audit" \
+           && G -qF "OUTSIDE [ledger HOST] $PLANTED" "$log.audit"; then
+            echo "  RED   $label -- audit rc=1, the planted read named on both records (control WORKS)"
+            st_ok=$((st_ok + 1))
+        else
+            echo "  GREEN $label -- audit rc=$arc; THE CONTROL DID NOT FIRE: a read outside the"
+            echo "        disc image went unnoticed. log: $log.audit"
+            st_bad=$((st_bad + 1))
+        fi
+        echo "        log: $log"
+    else
+        echo "  SKIP  file-planted -- rb3-milo's positive run/audit was not clean, or no plant"
+        st_skip=$((st_skip + 1))
+    fi
+    #   file-namemap   rb3-milo's own ledger with ONE `.milo` request rewritten
+    #                  to have opened the unmapped name (what native did before
+    #                  W16-UC whenever ObjectDir::Init ran with UsingCD() off: no
+    #                  cache mode, so "foo.milo" was asked of the archive as-is).
+    #                  The audit recomputes retail's CachedPath and must FAIL.
+    if was_green rb3-milo && fa_passed rb3-milo \
+       && G -q $'^MAP\tmilo\t[^\t]*\\.milo\t' "$LOGDIR/native_health_files_rb3-milo_$SLUG.ledger"; then
+        label=file-namemap
+        log="$LOGDIR/native_health_selftest_${label}_$SLUG.log"
+        awk -F'\t' 'BEGIN{OFS="\t"} !done && $1=="MAP" && $2=="milo" && $3 ~ /\.milo$/ {$4=$3; done=1} {print}' \
+            "$LOGDIR/native_health_files_rb3-milo_$SLUG.ledger" > "$log.ledger"
+        python3 "$DIR/tools/native_file_audit.py" check --label "$label" \
+            --trace "$LOGDIR/native_health_files_rb3-milo_$SLUG.trace" --ledger "$log.ledger" \
+            --cwd "$PWD" --assets "$ASSETS" --expect-disc \
+            --allow-glob "self=$NB/rb3-milo" --allow-glob "self=$NB/lib*.so*" > "$log" 2>&1
+        arc=$?
+        if [ $arc -eq 1 ] && G -q '^    OUTSIDE \[name map milo\] ' "$log"; then
+            echo "  RED   $label -- audit rc=1: $(G -m1 '^    OUTSIDE \[name map milo\] ' "$log" \
+                | sed 's/^ *OUTSIDE //' | cut -c1-90)... (control WORKS)"
+            st_ok=$((st_ok + 1))
+        else
+            echo "  GREEN $label -- audit rc=$arc; a .milo opened under its unmapped name went unnoticed."
+            st_bad=$((st_bad + 1))
+        fi
+        echo "        log: $log"
+    else
+        echo "  SKIP  file-namemap -- rb3-milo's positive run/audit was not clean, or it mapped no .milo"
+        st_skip=$((st_skip + 1))
+    fi
+    if was_green rb3-ark && fa_passed rb3-ark; then
+        label=file-undeclared
+        log="$LOGDIR/native_health_selftest_${label}_$SLUG.log"
+        python3 "$DIR/tools/native_file_audit.py" check --label "$label" \
+            --trace "$LOGDIR/native_health_files_rb3-ark_$SLUG.trace" \
+            --ledger "$LOGDIR/native_health_files_rb3-ark_$SLUG.ledger" --cwd "$PWD" \
+            --assets "$ASSETS" --expect-disc \
+            --allow-glob "self=$NB/rb3-ark" --allow-glob "self=$NB/lib*.so*" > "$log" 2>&1
+        arc=$?
+        if [ $arc -eq 1 ] && { G -qF "OUTSIDE [strace] $ARK_REF" "$log" \
+                               || G -qF "OUTSIDE [strace] $(realpath "$ARK_REF")" "$log"; }; then
+            echo "  RED   $label -- audit rc=1 on rb3-ark's own trace, naming ARK_REF (control WORKS)"
+            st_ok=$((st_ok + 1))
+        else
+            echo "  GREEN $label -- audit rc=$arc; an undeclared host input was waved through."
+            st_bad=$((st_bad + 1))
+        fi
+        echo "        log: $log"
+    else
+        echo "  SKIP  file-undeclared -- rb3-ark's positive run/audit was not clean"
+        st_skip=$((st_skip + 1))
+    fi
     # ---- RUNTIME CLASSIFIER CONTROLS (W16-PE) ------------------------------
     # The all-targets runtime section above is only worth something if its
     # classifier is shown to go red on each failure class it claims to catch.

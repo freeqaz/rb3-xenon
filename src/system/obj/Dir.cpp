@@ -1241,13 +1241,13 @@ void ObjectDir::PreInit(int hashSize, int stringSize) {
     DataSetThis(sMainDir);
 #ifdef HX_NATIVE
     sSuperClassMap.clear();
-    if (UsingCD()) {
-        DirLoader::SetCacheMode(true);
-    }
-#else
-    // TU5: no superclass-map reset, and the cache mode is set unconditionally.
-    DirLoader::SetCacheMode(true);
 #endif
+    // TU5: the cache mode is set unconditionally. This is what makes
+    // DirLoader::CachedPath turn "dir/foo.milo" into "dir/gen/foo.milo_xbox",
+    // the name the disc holds. Native gated it on UsingCD(), so a driver that
+    // runs ObjectDir::Init before SetUsingCD(true) would ask the archive for
+    // "foo.milo", which no disc holds (lane W16-UC; no current driver does).
+    DirLoader::SetCacheMode(true);
 }
 
 void ObjectDir::SaveInlined(const FilePath &fp, bool share, InlineDirType type) {

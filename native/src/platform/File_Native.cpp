@@ -7,11 +7,15 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <limits.h>
+#include <stdlib.h>
 
 #include "os/Archive.h"
 #include "os/Debug.h"
 #include "os/File.h"
 #include "os/System.h"
+
+void NativeFileLedger(const char *fmt, ...); // FileLedger_Native.cpp
 
 // Configurable data directory for native port (where gen/, config/ etc. live)
 static char gNativeDataDir[512] = ".";
@@ -41,6 +45,27 @@ static bool NativeOverlayExists(const char *file) {
     snprintf(buf, sizeof(buf), "%s/%s", gNativeOverlayDir, file);
     struct stat st;
     return stat(buf, &st) == 0;
+}
+
+// Does host path `path` lie inside the data dir (the disc image) once
+// symlinks and ".." are resolved? Both sides go through realpath, so a data
+// dir that is itself a symlink, or holds symlinked parts, still counts.
+static bool NativePathInsideDataDir(const char *path) {
+    char root[PATH_MAX], real[PATH_MAX];
+    if (!realpath(gNativeDataDir, root) || !realpath(path, real)) return false;
+    size_t n = strlen(root);
+    if (n == 1 && root[0] == '/') return true;
+    return strncmp(real, root, n) == 0 && (real[n] == '/' || real[n] == '\0');
+}
+
+// A DEVICE path ("devkit:/x", "cache:/y"): retail's FileIsLocal is exactly
+// "the drive in front of the colon is longer than one character". "d:" (the
+// disc) is one character, so it is not a device and goes to the archive.
+static bool NativeIsDevicePath(const char *file) {
+    if (!file || file[0] == '/') return false;
+    char drive[256];
+    FileGetDriveBuf(file, drive);
+    return strlen(drive) > 1;
 }
 
 // Is `file` a LOOSE file -- present on the filesystem but absent from the
@@ -96,7 +121,16 @@ static bool NativeLooseFileExists(const char *file) {
     char qualified[256];
     FileQualifiedFilename(qualified, 0x100, file);
     struct stat st;
-    return stat(qualified, &st) == 0 && S_ISREG(st.st_mode);
+    if (stat(qualified, &st) != 0 || !S_ISREG(st.st_mode)) return false;
+    // ⛔ A loose file must be ON THE DISC IMAGE, i.e. inside the data dir once
+    // symlinks and ".." are resolved (lane W16-UC). The .dta rule above only
+    // closed W16-UA's instance; the hole was general. Every config path under
+    // "../../system/run" climbs two levels out of the data dir, so any such
+    // name the ark lacks was read from whatever host tree sat there -- and a
+    // run doing so printed ALL GATES PASSED (measured: rb3-milo loaded a milo
+    // planted at <data>/../../system/run/ui/gen/ from the host). Retail cannot
+    // do this at all: a plain path is never local there.
+    return NativePathInsideDataDir(qualified);
 }
 
 // On Xbox, FileIsLocal checks for drive letters (d: = disc = not local).
@@ -104,21 +138,41 @@ static bool NativeLooseFileExists(const char *file) {
 // so they get routed through the archive system (ArkFile).
 // Files that exist in the overlay directory are treated as local so they
 // bypass the archive and load from disk.
+bool NativeFileIsDevicePath(const char *file) { return NativeIsDevicePath(file); }
+
 bool FileIsLocal(const char *file) {
     if (!file || !*file) return true;
     // Absolute paths are always local
-    if (file[0] == '/') return true;
+    if (file[0] == '/') {
+        NativeFileLedger("LOCAL\t%s\tabsolute", file);
+        return true;
+    }
+    // Retail's rule, and the only one retail has: a device path is local.
+    // On a console "devkit:" does not exist, so the open fails on the host
+    // door; here AsyncFileNative refuses it the same way (no host fallback).
+    // Before W16-UC native sent "devkit:/locale_keep.dta" to the archive.
+    if (NativeIsDevicePath(file)) {
+        NativeFileLedger("LOCAL\t%s\tdevice", file);
+        return true;
+    }
     // Files in overlay directory are local (bypass archive)
-    if (NativeOverlayExists(file)) return true;
+    if (NativeOverlayExists(file)) {
+        NativeFileLedger("LOCAL\t%s\toverlay", file);
+        return true;
+    }
     // Loose files (DLC/mods) are local too -- see NativeLooseFileExists.
     // Gated on UsingCD() because that is the only mode in which the caller
     // (os/File.cpp NewFile) would otherwise build an ArkFile.
-    if (UsingCD() && NativeLooseFileExists(file)) return true;
+    if (UsingCD() && NativeLooseFileExists(file)) {
+        NativeFileLedger("LOCAL\t%s\tloose", file);
+        return true;
+    }
     // When using CD (archive), relative paths are archive files, not local
     return false;
 }
 
 int FileGetStat(const char *iFilename, FileStat *iBuffer) {
+    if (NativeIsDevicePath(iFilename)) return -1; // no such device on this host
     String fullName;
     FileQualifiedFilename(fullName, iFilename);
     struct stat st;
@@ -138,12 +192,14 @@ int FileGetStat(const char *iFilename, FileStat *iBuffer) {
 }
 
 int FileDelete(const char *iFilename) {
+    if (NativeIsDevicePath(iFilename)) return -1;
     String str;
     FileQualifiedFilename(str, iFilename);
     return unlink(str.c_str()) == 0 ? 0 : -1;
 }
 
 int FileMkDir(const char *iDirname) {
+    if (NativeIsDevicePath(iDirname)) return 0;
     String str;
     FileQualifiedFilename(str, iDirname);
     return mkdir(str.c_str(), 0755) == 0 ? 1 : 0;
@@ -168,6 +224,12 @@ void FileEnumerate(
     const char *pattern,
     bool b2
 ) {
+    // Retail (File_Win.cpp): a non-local dir under UsingCD is enumerated in
+    // the archive; a local one on the device. A device dir has no host here.
+    if (NativeIsDevicePath(dir)) {
+        MILO_LOG("FileEnumerate: no device for %s\n", dir);
+        return;
+    }
     if (UsingCD() && TheArchive) {
         TheArchive->Enumerate(dir, cb, recurse, pattern);
         return;

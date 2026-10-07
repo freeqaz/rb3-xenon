@@ -18,6 +18,11 @@
 #include "utl/TextFileStream.h"
 #include "utl/TextStream.h"
 #include <map>
+#ifdef HX_NATIVE
+// Lane W16-UC file-source ledger (native/src/platform/FileLedger_Native.cpp).
+// Weak: a target that links no platform shims still links this TU.
+extern void NativeFileLedger(const char *fmt, ...) __attribute__((weak));
+#endif
 
 #ifdef HX_NATIVE
 bool (*DirLoader::sPathEval)(const char *);
@@ -1413,6 +1418,12 @@ void DirLoader::OpenFile() {
         const char *path = CachedPath(fileStr, true);
 #else
         const char *path = CachedPath(fileStr, false);
+#endif
+#ifdef HX_NATIVE
+        // The .milo -> gen/.milo_xbox mapping, requested name next to mapped
+        // name, so tools/native_file_audit.py can recompute retail's rule.
+        if (NativeFileLedger)
+            NativeFileLedger("MAP\tmilo\t%s\t%s\t%d", fileStr, path, (int)sCacheMode);
 #endif
         mStream =
             new ChunkStream(path, ChunkStream::kRead, 0x10000, true, kPlatformNone, false);
