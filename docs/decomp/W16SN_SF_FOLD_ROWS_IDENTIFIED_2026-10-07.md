@@ -141,9 +141,13 @@ units at 100% [mpn]: 608 -> 610 (CharIKHand, ClipDistMap; both DENOMINATOR_SHRAN
 - **No unit lost a match.** The 10 units that gained are SetlistMergePanel +3, SessionMessages +2,
   StoreMainPanel +2, and Character, DataNode, MeshDeform, MidiParserMgr, OutfitConfig, SongData
   and PlayerTrackConfigList at +1 each.
-- **+1,340 B** is the 9 renamed rows that reached 100 (928 B), plus the NewReleaseEntry row
-  (328 B, reached via the new fold), plus the two OnMsg funclets (64 + 40 B), less the 20 B those
-  funclets already counted in ClipDistMap.
+- **+1,340 B decomposes exactly**:
+  - 736 B from eight renamed rows that reach 100 on the rename alone (112 + 100 + 96 + 92 + 92 +
+    84 + 80 + 80).
+  - 328 B from the NewReleaseEntry row, which also needed the new `_M_clear` fold.
+  - 276 B from five EH funclets that reach 100 in their correct units: `0x82634624` (64, was 0),
+    `0x82634664` (40, was 99.9), `0x8263b5b8` (60, was 95.67), and `0x823f21a0` / `0x823f2248`
+    (56 each, were 0).
 - **`Δmasked_equal=+5`** comes from five EH funclets now pairing by byte signature in their correct
   units: `0x82634624`, `0x82634664`, `0x8263b5b8`, `0x823f21a0`, `0x823f2248`. That is why honest
   is +9, not +14.
