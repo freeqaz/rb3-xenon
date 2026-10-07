@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "ac027140a",
+ "recorded_at": "49d0c8399",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -1775,7 +1775,7 @@
   "0x826605e8": "?Compare@Node@@QBAHPBV1@W4SongNodeType@@@Z",
   "0x82662c00": "??1SortNode@@UAA@XZ",
   "0x826660f0": null,
-  "0x82666160": "??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0PAV1@P6A_N11@Z@Z",
+  "0x82666160": "??$__linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@0PAV1@P6A_NPBV1@2@Z@Z",
   "0x82666290": null,
   "0x82667220": "??$__uninitialized_fill_n@PAVCharacterEntry@CharProvider@@IV12@@stlpmtx_std@@YAPAVCharacterEntry@CharProvider@@PAV12@IABV12@ABU__false_type@0@@Z",
   "0x82668a38": "??$__uninitialized_fill_n@PAVPartSelectEntry@OvershellPartSelectProvider@@IV12@@stlpmtx_std@@YAPAVPartSelectEntry@OvershellPartSelectProvider@@PAV12@IABV12@ABU__false_type@0@@Z",
@@ -2057,7 +2057,7 @@
   "0x82768968": "??1TextFile@@UAA@XZ",
   "0x82768dc0": "?DataSetThis@@YAPAVObject@Hmx@@PAV12@@Z",
   "0x82768ef0": "?DataPopVar@@YAXXZ",
-  "0x82768f98": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@M@3@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+  "0x82768f98": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
   "0x82768ff8": "?_M_create_node@?$_Rb_tree@PAVFlowNode@@U?$less@PAVFlowNode@@@stlpmtx_std@@U?$pair@QAVFlowNode@@W4QueueState@1@@3@U?$_Select1st@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@QAVFlowNode@@W4QueueState@1@@stlpmtx_std@@@3@@stlpmtx_std@@IAAPAU_Rb_tree_node_base@2@ABU?$pair@QAVFlowNode@@W4QueueState@1@@2@@Z",
   "0x827690d0": null,
   "0x82769120": "?DataGetMacro@@YAPAVDataArray@@VSymbol@@@Z",
@@ -24082,7 +24082,7 @@
    }
   },
   "0x82666160": {
-   "survivor": "??$__linear_insert@PAPAVFlowNode@@PAV1@P6A_NPAV1@0@Z@stlpmtx_std@@YAXPAPAVFlowNode@@0PAV1@P6A_N11@Z@Z",
+   "survivor": "??$__linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@0PAV1@P6A_NPBV1@2@Z@Z",
    "callees": [
     "0x82670f88",
     "0x8282a840",
@@ -24307,7 +24307,8 @@
     "??$__unguarded_linear_insert@PAPAVRndPollable@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndPollable@@PAV1@P6A_NPBV1@2@Z@Z": "PROVEN",
     "??$__unguarded_linear_insert@PAPAVRndTransformable@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVRndTransformable@@PAV1@P6A_NPBV1@2@Z@Z": "PROVEN",
     "??$__unguarded_linear_insert@PAPAVVocalPart@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVVocalPart@@PAV1@P6A_NPBV1@2@Z@Z": "PROVEN",
-    "??$__unguarded_linear_insert@PAVSymbol@@V1@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@V1@P6A_N11@Z@Z": "PROVEN"
+    "??$__unguarded_linear_insert@PAVSymbol@@V1@P6A_NV1@0@Z@stlpmtx_std@@YAXPAVSymbol@@V1@P6A_N11@Z@Z": "PROVEN",
+    "??$__unguarded_linear_insert@PAPAVFriend@@PAV1@P6A_NPBV1@0@Z@stlpmtx_std@@YAXPAPAVFriend@@PAV1@P6A_NPBV1@2@Z@Z": "PROVEN"
    }
   },
   "0x826714d8": {
@@ -28826,7 +28827,7 @@
    }
   },
   "0x82768f98": {
-   "survivor": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@M@3@U?$_Select1st@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@M@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
+   "survivor": "?_M_erase@?$_Rb_tree@VSymbol@@U?$less@VSymbol@@@stlpmtx_std@@U?$pair@$$CBVSymbol@@PAVDataArray@@@3@U?$_Select1st@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@U?$_MapTraitsT@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@priv@3@V?$StlNodeAlloc@U?$pair@$$CBVSymbol@@PAVDataArray@@@stlpmtx_std@@@3@@stlpmtx_std@@AAAXPAU_Rb_tree_node_base@2@@Z",
    "callees": [
     "0x82273470",
     "0x825243e0",
