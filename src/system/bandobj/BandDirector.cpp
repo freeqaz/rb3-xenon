@@ -105,8 +105,12 @@ BandDirector::BandDirector()
       mCamPostProc(this), mPostProcA(this), mPostProcB(this), mPostProcBlend(0),
       mLightPresetCatBlend(0), mLightPresetInterpEnabled(1), mDisabled(0), mAsyncLoad(0),
       mCurShot(this), mNextShot(this), mIntroShot(this), unke0(-kHugeFloat),
-      mDisablePicking(0), unke5(1), unk108(-1.0f), mEndOfSongSec(0), unk110(0),
-      mLipSyncs(), mSongPref(0) {
+      mDisablePicking(0), unke5(1), unk108(-1.0f), mEndOfSongSec(0), unk110(0) {
+    mLipSyncs[0] = nullptr;
+    mLipSyncs[1] = nullptr;
+    mLipSyncs[2] = nullptr;
+    mLipSyncs[3] = nullptr;
+    mSongPref = nullptr;
     static DataNode &banddirector = DataVariable("banddirector");
     banddirector = this;
     mAsyncLoad = !LOADMGR_EDITMODE;
