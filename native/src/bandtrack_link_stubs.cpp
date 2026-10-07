@@ -56,6 +56,9 @@
 #include "synth/Synth.h"
 #include "meta_band/AssetStore.h"
 #include "meta_band/BandUI.h"
+#include "game/RGTrainerPanel.h"
+#include "game/RealGuitarGemPlayer.h"
+#include "os/ContentMgr.h"
 
 [[noreturn]] static void BandTrackUnreached(const char *fn) {
     fprintf(stderr, "bandtrack_link_stubs: UNREACHED stub called: %s\n", fn);
@@ -137,5 +140,17 @@ AssetOffer::AssetOffer(DataArray *) { UNREACHED(); }
 extern "C" DWORD XMarketplaceGetDownloadStatus(DWORD, unsigned long long, DWORD *) { UNREACHED(); }
 bool NetSession::IsBusy() const { UNREACHED(); }
 void RockCentral::FailAllOutstandingCalls() { UNREACHED(); }
+// The real-guitar trainer and the real-guitar player (GemManager::Poll and
+// GemTrack::Poll's pro-guitar arms; neither TU is linked).
+RGTrainerPanel *TheRGTrainerPanel = nullptr;
+bool RGTrainerPanel::GetLegendMode() const { UNREACHED(); }
+const RGState &RealGuitarGemPlayer::GetRGState() const { UNREACHED(); }
 
 
+// TheContentMgr is a REFERENCE (os/ContentMgr.h); the DTA link stub gives
+// it 128 zero bytes, i.e. a null reference, so any registration faults.
+// Bind it to a base ContentMgr: no content packages, no refresh in flight
+// (mState kDone), every IsMounted true -- an on-disc-only session. The
+// SongUpgradeMgr and CustomizePanel the W16-TJ phase builds register here.
+static ContentMgr gW16TJContentMgr;
+ContentMgr &TheContentMgr = gW16TJContentMgr;

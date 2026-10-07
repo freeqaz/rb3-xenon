@@ -1745,6 +1745,12 @@ set(W16TJ_LINK_SOURCES
 )
 set_source_files_properties(${W16TJ_LINK_SOURCES}
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+# ui/UIList.cpp scatter-includes bandtrack/GemTrack.cpp, whose handler table
+# becomes live once w16tj_phase.cpp gives a BandUser a real GemTrack. Its
+# default HANDLE arms name the undefined utl/Symbols*.h globals; the
+# LOCAL_STATIC arms are the same comparisons with function-local statics.
+set_source_files_properties(${REPO_ROOT}/src/system/ui/UIList.cpp
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
 
 set(MILO_TARGET_COMMON_SOURCES
     ${CMAKE_SOURCE_DIR}/src/milo_object_factories.cpp
