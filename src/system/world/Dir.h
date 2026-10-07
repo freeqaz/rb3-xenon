@@ -27,7 +27,10 @@
 class WorldDir : public PanelDir {
 public:
     struct PresetOverride {
-        PresetOverride(Hmx::Object *owner) : preset(owner), hue(owner) {}
+        // Retail 0x824CB940 inlines the owner-only ObjPtr<LightPreset> ctor and
+        // calls ObjPtr<LightHue>'s out of line.
+        PresetOverride(Hmx::Object *owner)
+            : preset(ObjPtrInlineOwner(), owner), hue(owner) {}
         void Sync(bool);
 
         /** "Subdir preset to modify" */
