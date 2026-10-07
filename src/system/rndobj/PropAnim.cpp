@@ -482,7 +482,9 @@ static inline bool SameObject(const Hmx::Object *a, const Hmx::Object *b) {
 std::list<PropKeys *>::iterator RndPropAnim::FindKeys(Hmx::Object *obj, DataArray *prop) {
     FOREACH (it, mPropKeys) {
         PropKeys *cur = *it;
-        if (!prop && !cur->Prop()) {
+        // The direct member read, not the Prop() accessor: retail tests it with
+        // `cmplwi`, and only a direct member access lowers to the unsigned compare.
+        if (!prop && !cur->mProp) {
             return it;
         }
         if (SameObject(cur->Target(), obj) && PathCompare(prop, cur->Prop())) {

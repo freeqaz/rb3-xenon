@@ -663,9 +663,10 @@ void RndText::SetLeading(float f) {
 }
 
 const char *
-RndText::ParseMarkup(const char *cc, RndText::Style *style, float f3, float f4) const {
-    const char *ptr = cc + 1;
-    bool b1 = *ptr == '/';
+RndText::ParseMarkup(const char *ptr, RndText::Style *style, float f3, float f4) const {
+    // The cursor IS the parameter: retail promotes r4 into r29 and folds the
+    // pre-increment into `lbzu r11, 0x1(r29)`.
+    bool b1 = *++ptr == '/';
     if (b1)
         ptr++;
     if (strnicmp(ptr, "sup", 3) == 0) {
