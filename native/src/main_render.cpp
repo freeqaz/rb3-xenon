@@ -145,6 +145,7 @@ void InternSymbolGlobals_M6Symbols();
 #include <cstdio>
 #include <cstdlib>
 #include <algorithm>
+#include <deque>
 #include <cstring>
 #include <map>
 #include <set>
@@ -2191,19 +2192,67 @@ namespace {
     }
 
     // -----------------------------------------------------------------------
-    // W16-RX: which step answers the flares' point tests.
+    // W16-RX: which step answers the flares' point tests, and (W16-SB) how old
+    // each answer is.
     //
     // Rnd::TestPoint registers its own result handler on every call, so the
     // frame loop wraps it after the flares draw; the wrapper counts the answers
     // and passes each one on. The loop reads the count after Rnd::EndWorld and
     // again after EndDrawing.
+    //
+    // The tester the backend registers is wrapped too, for the frame loop's
+    // duration: every test it accepts is noted with the frame it was queued in,
+    // per flare, and each answer is matched to its flare's oldest noted test.
+    // The backend answers one query per accepted test, in the order they were
+    // queued. Retail reads a frame's queries back at the next frame's world end
+    // (DxRnd::DoWorldEnd -> DoPointTests), so an answer is one frame old.
     // -----------------------------------------------------------------------
     NativePointTestResultFn gPointTestConsumer = nullptr;
     int gPointTestAnswers = 0;
+    int gPointTestFrame = 0;         // the frame loop's current frame
+    std::map<const void *, std::deque<int> > gPointTestQueuedFrames;
+    int gPointTestAgeMax = -1;       // oldest answer, in frames
+    int gPointTestAgeCount[3] = {};  // answers 0, 1 and 2+ frames old
+    int gPointTestUnmatched = 0;     // answers to no noted test
     void CountPointTestAnswer(const NativePointTestResult &res) {
         gPointTestAnswers++;
+        std::map<const void *, std::deque<int> >::iterator it =
+            gPointTestQueuedFrames.find(res.key);
+        if (it == gPointTestQueuedFrames.end() || it->second.empty()) {
+            gPointTestUnmatched++;
+        } else {
+            const int age = gPointTestFrame - it->second.front();
+            it->second.pop_front();
+            if (age > gPointTestAgeMax) gPointTestAgeMax = age;
+            gPointTestAgeCount[age < 0 ? 0 : (age > 2 ? 2 : age)]++;
+        }
         if (gPointTestConsumer) gPointTestConsumer(res);
     }
+    // Tests queued in frame `f - 1` and still unanswered: at the end of frame
+    // f, these are later than retail's answers.
+    int PointTestsOverdueAtFrameEnd(int f) {
+        int n = 0;
+        for (std::map<const void *, std::deque<int> >::const_iterator it =
+                 gPointTestQueuedFrames.begin();
+             it != gPointTestQueuedFrames.end(); ++it)
+            for (size_t i = 0; i < it->second.size(); i++)
+                if (it->second[i] == f - 1) n++;
+        return n;
+    }
+    class AgingPointTester : public NativePointTester {
+    public:
+        NativePointTester *inner = nullptr;
+        bool QueuePointTest(const NativePointTest &t) override {
+            const bool queued = inner && inner->QueuePointTest(t);
+            if (queued) gPointTestQueuedFrames[t.key].push_back(gPointTestFrame);
+            return queued;
+        }
+        void CancelPointTests(const void *key) override {
+            gPointTestQueuedFrames.erase(key);
+            if (inner) inner->CancelPointTests(key);
+        }
+    };
+    AgingPointTester gAgingPointTester;
 
     // W16-RX: RB3_POST_WORLD_OCCLUDER=1. A quad just past the near plane that
     // covers the whole view, drawn after Rnd::EndWorld and before EndDrawing,
@@ -4886,8 +4935,19 @@ namespace {
         }
         printf("  world end: %s\n", endWorld ? "Rnd::EndWorld after the world's drawables"
                                               : "none (RB3_NO_END_WORLD): EndDrawing ends it");
-        int answersAtWorldEnd = 0, answersAtEndDrawing = 0;
+        int answersAtWorldEnd = 0, answersAtEndDrawing = 0, answersOverdue = 0;
+        // W16-SB: note the frame each flare test is queued in (AgingPointTester).
+        gPointTestQueuedFrames.clear();
+        gPointTestAgeMax = -1;
+        gPointTestAgeCount[0] = gPointTestAgeCount[1] = gPointTestAgeCount[2] = 0;
+        gPointTestUnmatched = 0;
+        if (!flares.empty() && GetNativePointTester() &&
+            GetNativePointTester() != &gAgingPointTester) {
+            gAgingPointTester.inner = GetNativePointTester();
+            SetNativePointTester(&gAgingPointTester);
+        }
         for (int f = 0; f < frames; f++) {
+            gPointTestFrame = f;
             TheRnd.BeginDrawing();
             r.drawn = 0;
             for (size_t i = 0; i < meshes.size(); i++) {
@@ -4947,10 +5007,12 @@ namespace {
                 r.flaresDrawn++;
             }
             // W16-RX: count the answers each step delivers (see
-            // CountPointTestAnswer). The engine answers last frame's tests, and
-            // draws this frame's, at the world end (WgpuRnd::DoWorldEnd, as
-            // retail DxRnd::DoWorldEnd runs DoPointTests), or at EndDrawing for
-            // a frame that never ended its world.
+            // CountPointTestAnswer). The engine draws this frame's tests at the
+            // world end (WgpuRnd::DoWorldEnd, as retail DxRnd::DoWorldEnd runs
+            // DoPointTests), or at EndDrawing for a frame that never ended its
+            // world. It answers last frame's tests at the world end when their
+            // readback has finished, and otherwise at the end of EndDrawing,
+            // after this frame's submit (W16-SB).
             if (!flares.empty() && GetNativePointTestResultFn() != CountPointTestAnswer) {
                 gPointTestConsumer = GetNativePointTestResultFn();
                 SetNativePointTestResultFn(CountPointTestAnswer);
@@ -4961,19 +5023,35 @@ namespace {
             if (postWorldOccluder) postWorldOccluder->DrawShowing();
             TheRnd.EndDrawing();
             const int atEndDrawing = gPointTestAnswers - answersBefore - atWorldEnd;
-            if (!flares.empty())
+            const int overdue = PointTestsOverdueAtFrameEnd(f);
+            if (!flares.empty() && f > 0)
                 printf("  point tests: frame %d answered %d at the world end, %d at "
-                       "EndDrawing\n",
-                       f, atWorldEnd, atEndDrawing);
+                       "EndDrawing; %d of frame %d's tests still unanswered\n",
+                       f, atWorldEnd, atEndDrawing, overdue, f - 1);
             answersAtWorldEnd += atWorldEnd;
             answersAtEndDrawing += atEndDrawing;
+            answersOverdue += overdue;
         }
+        if (GetNativePointTester() == &gAgingPointTester)
+            SetNativePointTester(gAgingPointTester.inner);
+        // W16-SB: the tests are drawn at the world end, and each is answered
+        // before the next frame ends, one frame old, as retail's are. Which
+        // step delivers an answer depends on how far behind the GPU is, so it
+        // is reported, not gated: the world end takes the answers whose
+        // readback has finished, EndDrawing waits for the rest.
         if (!flares.empty() && endWorld && frames >= 2) {
-            char d[160];
+            const int answers = answersAtWorldEnd + answersAtEndDrawing;
+            char d[256];
             snprintf(d, sizeof(d),
-                     "%d answer(s) at the world end, %d at EndDrawing, over %d frame(s)",
-                     answersAtWorldEnd, answersAtEndDrawing, frames);
-            Gate("flare-tests-at-world-end", answersAtWorldEnd > 0 && answersAtEndDrawing == 0,
+                     "%d answer(s) over %d frame(s), %d / %d / %d of them 0 / 1 / 2+ "
+                     "frames old (oldest %d), %d past the frame after their own, %d "
+                     "unmatched; %d at the world end, %d at EndDrawing",
+                     answers, frames, gPointTestAgeCount[0], gPointTestAgeCount[1],
+                     gPointTestAgeCount[2], gPointTestAgeMax, answersOverdue,
+                     gPointTestUnmatched, answersAtWorldEnd, answersAtEndDrawing);
+            Gate("flare-tests-at-world-end",
+                 answers > 0 && gPointTestAgeMax <= 1 && answersOverdue == 0 &&
+                     gPointTestUnmatched == 0,
                  d);
         }
         // W16-RW: each flare's last answer. `occ` is the area query's visible
