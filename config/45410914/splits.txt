@@ -1418,12 +1418,11 @@ OvershellPartSelectProvider.cpp:
 	.text       start:0x82668C70 end:0x82669288
 
 GuitarController.cpp:
-	.pdata      start:0x8223FC08 end:0x8223FC30
+	.pdata      start:0x8223FC28 end:0x8223FC30
 	.pdata      start:0x8223FC30 end:0x8223FC38
 	.pdata      start:0x8223FC38 end:0x8223FC40
 	.pdata      start:0x8223FC40 end:0x8223FC58
 	.pdata      start:0x8223FC58 end:0x8223FCC0
-	.pdata      start:0x82240038 end:0x82240040
 	.text       start:0x8279C4A8 end:0x8279C630
 	.text       start:0x8279C630 end:0x8279C7C0
 	.text       start:0x8279C7C0 end:0x8279C85C
@@ -1492,7 +1491,7 @@ JoypadController.cpp:
 	.pdata      start:0x8223FBD8 end:0x8223FBE8
 	.pdata      start:0x8223FBE8 end:0x8223FBF0
 	.pdata      start:0x8223FBF0 end:0x8223FC00
-	.pdata      start:0x8223FC00 end:0x8223FC08
+	.pdata      start:0x8223FC00 end:0x8223FC28
 	.text       start:0x8279B280 end:0x8279B2C8
 	.text       start:0x8279B2C8 end:0x8279B2DC
 	.text       start:0x8279B2DC end:0x8279B2E8
@@ -7045,7 +7044,7 @@ system/synth/FxSendChorus.cpp:
 	.text       start:0x827200A0 end:0x82720A58
 
 Achievements.cpp:
-	.pdata      start:0x82240040 end:0x82240048
+	.pdata      start:0x82240038 end:0x82240048
 	.pdata      start:0x82240048 end:0x82240058
 	.pdata      start:0x82240058 end:0x82240098
 	.text       start:0x827A2400 end:0x827A2564
