@@ -815,13 +815,13 @@
   {
    "name": "SetObjConcrete",
    "address": "0x8238b130",
-   "survivor": "?SetObjConcrete@?$ObjPtr@VObject@Hmx@@@@QAAXPAVObject@Hmx@@@Z",
+   "survivor": "?SetObjConcrete@?$ObjPtr@VCharLipSync@@@@QAAXPAVCharLipSync@@@Z",
    "folded": [
     "?SetObjConcrete@?$ObjPtr@VAnimTask@@@@QAAXPAVAnimTask@@@Z",
     "?SetObjConcrete@?$ObjPtr@VCharBone@@@@QAAXPAVCharBone@@@Z",
     "?SetObjConcrete@?$ObjPtr@VCharClip@@@@QAAXPAVCharClip@@@Z",
     "?SetObjConcrete@?$ObjPtr@VCharEyeDartRuleset@@@@QAAXPAVCharEyeDartRuleset@@@Z",
-    "?SetObjConcrete@?$ObjPtr@VCharLipSync@@@@QAAXPAVCharLipSync@@@Z",
+    "?SetObjConcrete@?$ObjPtr@VObject@Hmx@@@@QAAXPAVObject@Hmx@@@Z",
     "?SetObjConcrete@?$ObjPtr@VChordShapeGenerator@@@@QAAXPAVChordShapeGenerator@@@Z",
     "?SetObjConcrete@?$ObjPtr@VColorPalette@@@@QAAXPAVColorPalette@@@Z",
     "?SetObjConcrete@?$ObjPtr@VDetectionVolume@@@@QAAXPAVDetectionVolume@@@Z",
@@ -93292,7 +93292,7 @@
   {
    "name": "insert",
    "address": "0x823d14c0",
-   "survivor": "?insert@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObject@Hmx@@U?$_Nonconst_traits@PAVObject@Hmx@@@stlpmtx_std@@@2@U32@ABQAVObject@Hmx@@@Z",
+   "survivor": "?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharClip@@U?$_Nonconst_traits@PAVCharClip@@@stlpmtx_std@@@2@U32@ABQAVCharClip@@@Z",
    "folded": [
     "?insert@?$list@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@HU?$_Nonconst_traits@H@stlpmtx_std@@@2@U32@ABH@Z",
     "?insert@?$list@P6AXXZV?$StlNodeAlloc@P6AXXZ@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@P6AXXZU?$_Nonconst_traits@P6AXXZ@stlpmtx_std@@@2@U32@ABQ6AXXZ@Z",
@@ -93300,7 +93300,7 @@
     "?insert@?$list@PAUDep@CharPollableSorter@@V?$StlNodeAlloc@PAUDep@CharPollableSorter@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUDep@CharPollableSorter@@U?$_Nonconst_traits@PAUDep@CharPollableSorter@@@stlpmtx_std@@@2@U32@ABQAUDep@CharPollableSorter@@@Z",
     "?insert@?$list@PAUMerger@FileMerger@@V?$StlNodeAlloc@PAUMerger@FileMerger@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAUMerger@FileMerger@@U?$_Nonconst_traits@PAUMerger@FileMerger@@@stlpmtx_std@@@2@U32@ABQAUMerger@FileMerger@@@Z",
     "?insert@?$list@PAVCallback@ContentMgr@@V?$StlNodeAlloc@PAVCallback@ContentMgr@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCallback@ContentMgr@@U?$_Nonconst_traits@PAVCallback@ContentMgr@@@stlpmtx_std@@@2@U32@ABQAVCallback@ContentMgr@@@Z",
-    "?insert@?$list@PAVCharClip@@V?$StlNodeAlloc@PAVCharClip@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVCharClip@@U?$_Nonconst_traits@PAVCharClip@@@stlpmtx_std@@@2@U32@ABQAVCharClip@@@Z",
+    "?insert@?$list@PAVObject@Hmx@@V?$StlNodeAlloc@PAVObject@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVObject@Hmx@@U?$_Nonconst_traits@PAVObject@Hmx@@@stlpmtx_std@@@2@U32@ABQAVObject@Hmx@@@Z",
     "?insert@?$list@PAVContent@@V?$StlNodeAlloc@PAVContent@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVContent@@U?$_Nonconst_traits@PAVContent@@@stlpmtx_std@@@2@U32@ABQAVContent@@@Z",
     "?insert@?$list@PAVDataArray@@V?$StlNodeAlloc@PAVDataArray@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVDataArray@@U?$_Nonconst_traits@PAVDataArray@@@stlpmtx_std@@@2@U32@ABQAVDataArray@@@Z",
     "?insert@?$list@PAVGamerAwardStatus@@V?$StlNodeAlloc@PAVGamerAwardStatus@@@stlpmtx_std@@@stlpmtx_std@@QAA?AU?$_List_iterator@PAVGamerAwardStatus@@U?$_Nonconst_traits@PAVGamerAwardStatus@@@stlpmtx_std@@@2@U32@ABQAVGamerAwardStatus@@@Z",
@@ -96696,7 +96696,7 @@
   },
   {
    "address": "0x8240ddb0",
-   "survivor": "??3BinStream@@SAXPAX@Z",
+   "survivor": "??3RndCubeTex@@SAXPAX@Z",
    "folded": [
     "??3@YAXPAX@Z",
     "??3Accomplishment@@SAXPAX@Z",
@@ -96818,7 +96818,7 @@
     "??3RndBitmap@@SAXPAX@Z",
     "??3RndCam@@SAXPAX@Z",
     "??3RndCamAnim@@SAXPAX@Z",
-    "??3RndCubeTex@@SAXPAX@Z",
+    "??3BinStream@@SAXPAX@Z",
     "??3RndDir@@SAXPAX@Z",
     "??3RndDrawable@@SAXPAX@Z",
     "??3RndEnviron@@SAXPAX@Z",
@@ -99164,9 +99164,9 @@
   {
    "name": "thunk-fold 0x82316428",
    "address": "0x82316428",
-   "survivor": "??_GInlineHelp@@$4PPPPPPPM@A@AAPAXI@Z",
+   "survivor": "??_EInlineHelp@@$4PPPPPPPM@A@AAPAXI@Z",
    "folded": [
-    "??_EInlineHelp@@$4PPPPPPPM@A@AAPAXI@Z"
+    "??_GInlineHelp@@$4PPPPPPPM@A@AAPAXI@Z"
    ],
    "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['InlineHelp', 384, 0]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x82316c70 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
   },
@@ -99369,9 +99369,9 @@
   {
    "name": "thunk-fold 0x82823728",
    "address": "0x82823728",
-   "survivor": "?Load@UIPicture@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
+   "survivor": "?Load@UIProxy@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z",
    "folded": [
-    "?Load@UIProxy@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
+    "?Load@UIPicture@@$4PPPPPPPM@A@AAXAAVBinStream@@@Z"
    ],
    "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['UIPicture', 420, 10], ['UIProxy', 420, 10]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x828232c8 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
   },
@@ -99387,9 +99387,9 @@
   {
    "name": "thunk-fold 0x82826e28",
    "address": "0x82826e28",
-   "survivor": "??_GLabelShrinkWrapper@@$4PPPPPPPM@A@AAPAXI@Z",
+   "survivor": "??_ELabelShrinkWrapper@@$4PPPPPPPM@A@AAPAXI@Z",
    "folded": [
-    "??_ELabelShrinkWrapper@@$4PPPPPPPM@A@AAPAXI@Z"
+    "??_GLabelShrinkWrapper@@$4PPPPPPPM@A@AAPAXI@Z"
    ],
    "evidence": "VT1 (lane W15-D, 2026-09-14): ICF fold of vtordisp thunks proven by retail VTABLE GEOMETRY, not by byte comparison (vacuous for a 3-word thunk). Retail RTTI vtables (class, subobject offset, slot) [['LabelShrinkWrapper', 356, 0]] all hold this one address; cl.exe /d1reportSingleClassLayout assigns those slots to the methods named by the folded spellings; every member's compiled thunk is the canonical `lwz r11,-4(rN); subf rN,r11,rN; b` body whose only relocation is the branch, and all members branch to one retail destination 0x828279c8 (so relocation TARGETS agree, which is exactly the MSVC /OPT:ICF fold condition)."
   },
@@ -101301,9 +101301,9 @@
   {
    "name": "__uninitialized_copy_PAU12",
    "address": "0x827070f0",
-   "survivor": "??$__uninitialized_copy@PAUUnlockable@?A0xf8e4b4b5@@PAU12@@stlpmtx_std@@YAPAUUnlockable@?A0xf8e4b4b5@@PAU12@00ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_copy@PAV?$ObjPtr@VSequence@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VSequence@@@@PAV1@00ABU__false_type@0@@Z",
    "folded": [
-    "??$__uninitialized_copy@PAV?$ObjPtr@VSequence@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VSequence@@@@PAV1@00ABU__false_type@0@@Z"
+    "??$__uninitialized_copy@PAUUnlockable@?A0xf8e4b4b5@@PAU12@@stlpmtx_std@@YAPAUUnlockable@?A0xf8e4b4b5@@PAU12@00ABU__false_type@0@@Z"
    ],
    "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 25, row addr 0x827070f0). \"ours\" spelling ??$__uninitialized_copy@PAV?$ObjPtr@VSeqInst@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VSeqInst@@@@PAV1@00ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PAUUnlockable@?A0xf8e4b4b5@@PAU12@@stlpmtx_std@@YAPAUUnlockable@?A0xf8e4b4b5@@PAU12@00ABU__false_type@0@@Z at retail address 0x827070f0. FLAT T1 PROVEN directly -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 3 named relocation(s) matched at FLAT T1 (no chase recursion required), 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 392 B (392 B honest) across ['default/Sequence'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md. W16-KD 2026-10-01: +__uninitialized_copy<ObjPtr<Sequence>>: retail vector<ObjPtr<Sequence>>::_M_fill_insert_aux and _M_insert_overflow_aux (0x82708548, 0x8270A280) branch here. FLAT T1 PROVEN and tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, no CYCLE-ASSUMED leaf; the folded spelling is not map-resident. This is the ObjPtr<Sequence> spelling the W16-JD withdrawal of the SeqInst spelling pointed at.",
    "withdrawn": [
@@ -101431,9 +101431,9 @@
   {
    "name": "__uninitialized_copy_PBVSampleMarker",
    "address": "0x822a2e10",
-   "survivor": "??$__uninitialized_copy@PBVSampleMarker@@PAV1@@stlpmtx_std@@YAPAVSampleMarker@@PBV1@0PAV1@ABU__false_type@0@@Z",
+   "survivor": "??$__uninitialized_copy@PBVOverlay@OutfitConfig@@PAV12@@stlpmtx_std@@YAPAVOverlay@OutfitConfig@@PBV12@0PAV12@ABU__false_type@0@@Z",
    "folded": [
-    "??$__uninitialized_copy@PBVOverlay@OutfitConfig@@PAV12@@stlpmtx_std@@YAPAVOverlay@OutfitConfig@@PBV12@0PAV12@ABU__false_type@0@@Z",
+    "??$__uninitialized_copy@PBVSampleMarker@@PAV1@@stlpmtx_std@@YAPAVSampleMarker@@PBV1@0PAV1@ABU__false_type@0@@Z",
     "??$__uninitialized_copy@PAVOverlay@OutfitConfig@@PAV12@@stlpmtx_std@@YAPAVOverlay@OutfitConfig@@PAV12@00ABU__false_type@0@@Z"
    ],
    "evidence": "W16-HC 2026-09-30: FRESH alias-pair adjudication (candidates w16hc_candidates.json idx 47, row addr 0x822a2e10). \"ours\" spelling ??$__uninitialized_copy@PBVOverlay@OutfitConfig@@PAV12@@stlpmtx_std@@YAPAVOverlay@OutfitConfig@@PBV12@0PAV12@ABU__false_type@0@@Z is a template/spelling twin of survivor ??$__uninitialized_copy@PBVSampleMarker@@PAV1@@stlpmtx_std@@YAPAVSampleMarker@@PBV1@0PAV1@ABU__false_type@0@@Z at retail address 0x822a2e10. FLAT T1 REFUTED at FLAT T1 (relocation target names disagree) -> CHASED T1 PROVEN via tools/icf_pair_adjudicate.py --chase: 1 SLOT-FOLD-OK, 0 SLOT-REFUTED/BYTES-DIFFER/CYCLE-ASSUMED. 'ours' spelling not map-resident at its own address (re-checked against scripts/target_symbol_map.json); no prior co-withdrawal with the retail spelling in this group. Predicted crossing: 1 row(s) / 336 B (336 B honest) across ['default/OutfitConfig'] unit(s). See docs/decomp/W16HC_FRESH_ALIAS_PAIRS_2_2026-09-30.md / docs/decomp/W16HC_PREDICTIONS_2026-09-30.md.",
@@ -119520,6 +119520,16 @@
      "evidence": "Lane W16-SW 2026-10-07 (CAMPAIGN_STATE_2026-10-07 §6 lever 7). tools/icf_pair_adjudicate.py --chase on the built tree: CHASED T1 PROVEN (CYCLE-ASSUMED x1, RETAIL-TAIL-PAD x1, SLOT-FOLD-OK x5). size_gate: extents equal: retail 240 == ours 240. Retail census at the survivor: 1 body/bodies identical including relocation target names, 1 of the same masked bytes and relocation shape. Per-call-site: paired callers of our spelling: lands-at-survivor 1, unpaired-caller 1; none lands elsewhere. The CYCLE-ASSUMED leaf (??$__introsort_loop@PAVSpotlightEntry@SpotlightDrawer@@V12@HVByColor@@@stlpmtx_std@@YAXPAV) is the self-recursive helper; channel 1, its retail home is unique: literal census 1. Channel 2W (Wii call-site witness): in the Wii Bank-8 link (orig/SZBE69_B8/files/band_r_wii.map; one name per address), SortLights__15SpotlightDrawerFv calls sort<PQ215SpotlightDrawer14SpotlightEntry,7ByColor>__11stlpmtx_stdFPQ215SpotlightDrawer14SpotlightEntryPQ215SpotlightDrawer14SpotlightEntry7ByColor_v. Charged row(s): ??$sort@PAVSpotlightEntry@SpotlightDrawer@@VByColor@@@stlpmtx_std@@YAXPAVSpotlig (112 B)."
     }
    ]
+  },
+  {
+   "name": "_Rb_tree<int,float> dtor fold 0x825971f0",
+   "address": "0x825971f0",
+   "survivor": "??1?$_Rb_tree@HU?$less@H@stlpmtx_std@@U?$pair@$$CBHM@2@U?$_Select1st@U?$pair@$$CBHM@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBHM@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAA@XZ",
+    "?clear@?$map@HMU?$less@H@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@$$CBHM@stlpmtx_std@@@2@@stlpmtx_std@@QAAXXZ"
+   ],
+   "evidence": "W16-TH (2026-10-07): retail 0x825971f0 is the single word `b` to _Rb_tree<int,float>::clear (0x827690D0). Our compiler emits all three spellings (map<int,float> dtor, map<int,float>::clear, _Rb_tree<int,float> dtor) as that same 4-byte body with the same relocation target name (SongSortMgr.obj, VocalTrack.obj, MusicLibrary.obj, ...), so they fold under /OPT:ICF. The survivor is the spelling SongSortMgr.obj defines, which is the unit whose span holds the address."
   }
  ]
 }

@@ -28,21 +28,21 @@ SuperFormatString::SuperFormatString(const char *cc, const DataArray *da, bool b
         InitializeWithFmt(cc, true);
         return;
     } else {
+        char *tempFmtPos = tempFmt;
+        char *tempFmtEnd = tempFmt + 2048;
+        char *phInfoPos = phInfo;
+        char *paramPos = param;
         int phType = 0;
         int state = 0;
-        char *paramPos = param;
-        char *phInfoPos = phInfo;
-        char *tempFmtEnd = tempFmt + 2048;
-        char *tempFmtPos = tempFmt;
         for (const char *p = cc; *p != 0; p++) {
             switch (state) {
             case 0:
                 if (*p == '{') {
-                    if (p[1] != '{') {
-                        state = 1;
-                    } else {
-                        *tempFmtPos++ = '{';
+                    if (p[1] == '{') {
                         p++;
+                        *tempFmtPos++ = *p;
+                    } else {
+                        state = 1;
                     }
                 } else {
                     *tempFmtPos++ = *p;
@@ -54,17 +54,16 @@ SuperFormatString::SuperFormatString(const char *cc, const DataArray *da, bool b
                     *phInfoPos = '\0';
                     phInfoPos = phInfo;
                     state = 3;
-                    auto _tmp0 = strcmp(phInfoPos, "string");
-                    bool phInfoCmp = _tmp0 == 0;
+                    bool phInfoCmp = strcmp(phInfoPos, "string") == 0;
                     if (phInfoCmp) {
                         phType = 0;
                         continue;
                     }
                     phInfoCmp = strcmp(phInfoPos, "int") == 0;
                     if (phInfoCmp) {
+                        phType = 1;
                         *paramPos++ = '%';
                         state = 2;
-                        phType = 1;
                         continue;
                     }
                     phInfoCmp = strcmp(phInfoPos, "sep_int") == 0;
@@ -74,8 +73,8 @@ SuperFormatString::SuperFormatString(const char *cc, const DataArray *da, bool b
                     }
                     phInfoCmp = strcmp(phInfoPos, "float") == 0;
                     if (phInfoCmp) {
-                        *paramPos++ = '%';
                         phType = 3;
+                        *paramPos++ = '%';
                         state = 2;
                         continue;
                     }
@@ -86,8 +85,8 @@ SuperFormatString::SuperFormatString(const char *cc, const DataArray *da, bool b
                     }
                     phInfoCmp = strcmp(phInfoPos, "ordinal") == 0;
                     if (phInfoCmp) {
-                        phType = 5;
                         state = 2;
+                        phType = 5;
                         continue;
                     }
                     MILO_FAIL("bad SuperFormatString placeholder type '%s'", phInfoPos);
@@ -157,7 +156,6 @@ SuperFormatString::SuperFormatString(const char *cc, const DataArray *da, bool b
                             int snResult = 0;
                             LocaleGender gender;
                             LocaleNumber num;
-                            int x;
                             switch (phType) {
                             case 0:
                                 if (node.Type() == kDataString) {
@@ -208,12 +206,16 @@ SuperFormatString::SuperFormatString(const char *cc, const DataArray *da, bool b
                             case 5:
                                 gender = (LocaleGender)(param[0] != 'm');
                                 num = (LocaleNumber)(param[1] != 's');
-                                x = node.Int();
                                 snResult = SFS_SNPRINTF(
                                     tempFmtPos,
                                     tempFmtEnd - tempFmtPos,
                                     "%s",
-                                    LocalizeOrdinal(x, gender, num, false)
+                                    LocalizeOrdinal(
+                                        node.Int(),
+                                        gender,
+                                        num,
+                                        false
+                                    )
                                 );
                                 break;
                             }

@@ -766,7 +766,7 @@ public:
     ObjPtr(Hmx::Object *owner, T *ptr = nullptr);
 #endif
     ObjPtr(const ObjPtr &p);
-    // ---- PER-TU: user-DECLARED, never-defined destructor ------------------
+    // ---- PER-TU: user-DECLARED, noinline destructor -----------------------
     // Purely a codegen lever, gated so it is inert for every TU that does not
     // opt in (one TU today: bandobj/BandScoreboard.cpp). No layout/ABI change:
     // ~ObjPtr is already virtual via ObjRefOwner, so the vtable is unchanged.
@@ -791,16 +791,16 @@ public:
     // matched 41267 -> 41268, masked_equal 1508 -> 1507 (honest +2), code
     // 35.506874% -> 35.512127%, and EXACTLY one function changed.
     //
-    // Deliberately never defined: the opted-in TU emits an external reference
-    // for ~ObjPtr (and its vtable slot). That is fine here -- this build
-    // compiles and objdiffs .obj files and never links the game -- but a TU
-    // that must LINK cannot use this macro without providing a definition.
+    // W16-TH: the gate used to leave ~ObjPtr undefined in the opted-in TU,
+    // which also stopped that TU from emitting the body retail's
+    // BandScoreboard.obj carries (~ObjPtr<BandStarDisplay>, 116 B, 0x822CD918).
+    // It now defines the same body __declspec(noinline) in obj/ObjPtr_p.h,
+    // which keeps the slot packing and emits the body.
     //
     // W17-OPTR: ~ObjPtr is now ALWAYS user-declared -- it is the release
     // (`if (mObject) mObject->Release(this);`), retail's one ~ObjPtr<T> body.
-    // Under this gate the out-of-line definition in obj/ObjPtr_p.h is compiled
-    // out, which keeps the "declared, body not visible" property the packing
-    // needs. (The old "NO user dtor" rule below this gate described the
+    // Under this gate the definition in obj/ObjPtr_p.h is __declspec(noinline),
+    // which removes the dtor's inline candidacy just as an absent body did. (The old "NO user dtor" rule below this gate described the
     // ObjRefConcrete-based hierarchy, where the release lived in the base and a
     // user-declared ~ObjPtr only added a vtable store; with ObjRef as the
     // direct base the release has nowhere else to live.)

@@ -604,6 +604,18 @@ DataNode Synth::OnPassthrough(DataArray *a) {
     }
 }
 
+// Retail 0x826FE8A8, laid out right after OnPassthrough. Plays a cue from the
+// common bank by name; GamePanel::PlayBandDiedCue is the caller. The not-found
+// path does nothing: retail evaluates no warning arguments there (no
+// GetPathName call), unlike OnPassthrough and PlaySound.
+void Synth::Play(const char *name, float f1, float f2, float f3) {
+    if (CheckCommonBank(false)) {
+        Sequence *seq = Find<Sequence>(name, false);
+        if (seq)
+            seq->Play(f1, f2, f3);
+    }
+}
+
 DataNode Synth::OnStartMic(const DataArray *a) {
     GetMic(a->Int(2))->Start();
     return 0;

@@ -6,6 +6,7 @@
         "objects": {
             "Main.cpp": "NonMatching",
             "App.cpp": "NonMatching",
+            "ChecksumData_xbox.cpp": "NonMatching",
             "keygen_xbox.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

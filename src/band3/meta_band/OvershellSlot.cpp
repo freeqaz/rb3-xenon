@@ -1190,10 +1190,10 @@ void OvershellSlot::UpdateState() {
             mState->HandleMsg(exit_msg);
             if (!pUser || pUser->IsLocal()) {
                 if (mState->RetractedPosition() && !curState->RetractedPosition()) {
-                    TheSynth->PlaySound("overshell_up.cue", 0, 0, 0);
+                    TheSynth->Play("overshell_up.cue", 0, 0, 0);
                 }
                 if (!mState->RetractedPosition() && curState->RetractedPosition()) {
-                    TheSynth->PlaySound("overshell_down.cue", 0, 0, 0);
+                    TheSynth->Play("overshell_down.cue", 0, 0, 0);
                 }
             }
             if (mState->AllowsInputToShell() != curState->AllowsInputToShell())
@@ -1735,7 +1735,7 @@ DataNode OvershellSlot::OnMsg(const ButtonDownMsg &msg) {
     if (!TheInputMgr->IsValidButtonForShell(msg.GetButton(), lUser)) {
         return 1;
     } else if (mBlockAllInput) {
-        TheSynth->PlaySound("button_error.cue", 0, 0, 0);
+        TheSynth->Play("button_error.cue", 0, 0, 0);
         return 0;
     } else {
         DataNode handled = mState->HandleMsg(msg);
@@ -1744,7 +1744,7 @@ DataNode OvershellSlot::OnMsg(const ButtonDownMsg &msg) {
                 static Message on_cancel("on_cancel");
                 handled = mState->HandleMsg(on_cancel);
                 if (handled.Type() != kDataUnhandled) {
-                    TheSynth->PlaySound("overshell_back.cue", 0, 0, 0);
+                    TheSynth->Play("overshell_back.cue", 0, 0, 0);
                 }
             } else if (msg.GetAction() == kAction_Start) {
                 static Message on_start("on_start", 0);
@@ -1805,14 +1805,14 @@ DataNode OvershellSlot::OnMsg(const UIComponentScrollMsg &msg) {
             DataArrayPtr ptr("play_instr_sfx_local", pUser, button_toggle);
             ptr->Execute();
         } else
-            TheSynth->PlaySound("slider.cue", 0, 0, 0);
+            TheSynth->Play("slider.cue", 0, 0, 0);
     }
     return 1;
 }
 
 DataNode OvershellSlot::OnMsg(const UIComponentSelectMsg &msg) {
     if (mState->HandleMsg(msg) != DataNode(kDataUnhandled, 0)) {
-        TheSynth->PlaySound("overshell_select.cue", 0, 0, 0);
+        TheSynth->Play("overshell_select.cue", 0, 0, 0);
     }
     return 1;
 }

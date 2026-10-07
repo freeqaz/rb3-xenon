@@ -454,9 +454,17 @@ ObjPtr<T>::ObjPtr(const ObjPtr &p) : mOwner(p.mOwner), mObject(p.mObject) {
 // bodies read: e.g. OverdriveMeter 0x822e4010, RndTex 0x8229d930): own vptr;
 // if (mObject) mObject->Release(this); ObjRef vptr -- 100 B, 116 B when T
 // reaches Hmx::Object through a virtual base. This is ~ObjRefConcrete's body
-// under ObjPtr's name and vtable. Compiled out under
-// RB3_TU_OBJPTR_OUTOFLINE_DTOR (see the gate in obj/Object.h).
-#ifndef RB3_TU_OBJPTR_OUTOFLINE_DTOR
+// under ObjPtr's name and vtable. Under RB3_TU_OBJPTR_OUTOFLINE_DTOR the same
+// body is defined __declspec(noinline) (see the gate in obj/Object.h): the TU
+// still packs its destructible temporaries, and it now emits the body too.
+// Retail BandScoreboard.obj does emit ~ObjPtr<BandStarDisplay> (0x822CD918).
+#ifdef RB3_TU_OBJPTR_OUTOFLINE_DTOR
+template <class T>
+__declspec(noinline) ObjPtr<T>::~ObjPtr() {
+    if (mObject)
+        mObject->Release(this);
+}
+#else
 template <class T>
 ObjPtr<T>::~ObjPtr() {
     if (mObject)
