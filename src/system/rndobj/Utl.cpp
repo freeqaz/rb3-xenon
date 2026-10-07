@@ -2801,6 +2801,24 @@ void BuildSphereStratified(unsigned int numSamples, std::vector<Vector3> &dirs) 
     } while (i != 0);
 }
 
+#ifndef HX_NATIVE
+// Lane W16-UP: ORPHAN INSTANTIATION, the RB3 counterpart of DC3's w8-a block
+// in its own rndobj/Utl.cpp.  Retail places
+// ?_M_erase@?$vector@V?$Key@VTexPtr@RndMatAnim@@@@... (the range overload) at
+// 0x824417D8, inside this unit's .text, and nothing in this unit calls it (its
+// one caller is RndMatAnim's Key<TexPtr> vector resize, in MatAnim.obj, which
+// links after this obj).  DC3's map attributes the same COMDAT to
+// rndobj:Utl.obj with no in-unit caller either: this obj had a function, later
+// discarded by /OPT:REF, that erased a range of texture keys.  Its name and
+// body are not recoverable; this stand-in reproduces only the instantiation.
+// It must be external -- MSVC drops an unreferenced static before
+// instantiating through it.
+void RndUtlDiscardedTexKeyErase(RndMatAnim *matanim, int lo, int hi) {
+    RndMatAnim::TexKeys &keys = matanim->GetTexKeys();
+    keys.erase(keys.begin() + lo, keys.begin() + hi);
+}
+#endif
+
 // sw2 scatter-include (default/system/rndobj/Utl <- rndobj/Rnd.cpp)
 #define gRev gRev_Rnd
 #define gAltRev gAltRev_Rnd
