@@ -2076,8 +2076,12 @@ bool MusicLibrary::FilterSetlist(WiiFriendList *friends, NetSavedSetlist *pSetli
     return true;
 }
 
+// Retail emits these two in this TU and in SongSortMgr.cpp too; natively they
+// are one program, so only SongSortMgr's copy is compiled.
+#if !HX_NATIVE
 void SavedSetlist::SetTitle(const char *title) { mTitle = title; }
 void SavedSetlist::SetDescription(const char *desc) { mDescription = desc; }
+#endif
 RndTex *SavedSetlist::GetArtTex() const { return nullptr; }
 
 void MusicLibrary::GetNetSetlists(std::vector<NetSavedSetlist *> &setlists) const {

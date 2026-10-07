@@ -190,7 +190,7 @@ void GamePanel::PollForLoading() {
         if ((gp_spam++ % 60) == 0)
             MILO_LOG("GAME_DBG: GamePanel::PollForLoading uiLoaded=%d transScreen=%p "
                      "bandDir=%p readyMidi=%d loadChars=%d allCharsLoaded=%d\n",
-                     UIPanel::IsLoaded(), (void *)TheUI.TransitionScreen(),
+                     UIPanel::IsLoaded(), (void *)TheUI->TransitionScreen(),
                      (void *)TheBandDirector,
                      TheBandDirector ? TheBandDirector->ReadyForMidiParsers() : -1,
                      TheGameMode->Property("load_chars", true)->Int(),

@@ -16,6 +16,14 @@
 #include "utl/Symbols3.h"
 #include "utl/Symbols4.h"
 
+// STLport's vector iterator is a raw pointer, so the equal_range result is
+// already an insert position; libstdc++'s is not, so native rebuilds one.
+#ifdef HX_NATIVE
+#define SONGSORT_TREE_POS(p) (mTree.begin() + ((p) - mTree.data()))
+#else
+#define SONGSORT_TREE_POS(p) p
+#endif
+
 NodeSort::NodeSort() : mTree(0) {}
 
 void NodeSort::DeleteTree() {
@@ -120,7 +128,7 @@ void SongSort::BuildSongTree(
                 MILO_ASSERT(0 == newSong->Compare(shortcut, kNodeShortcut), 0xCD);
             } else {
                 shortcut = NewShortcutNode(newSong);
-                mTree.insert(found.first, shortcut);
+                mTree.insert(SONGSORT_TREE_POS(found.first), shortcut);
             }
             shortcut->Insert(newSong, this);
         }
@@ -135,7 +143,7 @@ void SongSort::BuildSongTree(
                 MILO_ASSERT(0 == newSong->Compare(shortcut, kNodeShortcut), 0xE8);
             } else {
                 shortcut = NewShortcutNode(newSong);
-                mTree.insert(found.first, shortcut);
+                mTree.insert(SONGSORT_TREE_POS(found.first), shortcut);
             }
             shortcut->Insert(newSong, this);
         }
@@ -246,7 +254,7 @@ void SetlistSort::BuildSetlistTree(std::map<Symbol, SetlistRecord> &records) {
             MILO_ASSERT(0 == newSetlist->Compare(shortcut, kNodeShortcut), 0x16B);
         } else {
             shortcut = NewShortcutNode(newSetlist);
-            mTree.insert(found.first, shortcut);
+            mTree.insert(SONGSORT_TREE_POS(found.first), shortcut);
         }
         shortcut->Insert(newSetlist, this);
     }
@@ -273,7 +281,7 @@ void SetlistSort::BuildSetlistTree(std::map<Symbol, SetlistRecord> &records) {
             MILO_ASSERT(0 == fsn->Compare(shortcut, kNodeShortcut), 0x197);
         } else {
             shortcut = NewShortcutNode(fsn);
-            mTree.insert(found.first, shortcut);
+            mTree.insert(SONGSORT_TREE_POS(found.first), shortcut);
         }
         shortcut->Insert(fsn, this);
     }

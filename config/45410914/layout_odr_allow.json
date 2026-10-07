@@ -213,6 +213,16 @@
     "0f7112b8ec15b1a99d56"
    ],
    "reason": "Same DC3-hamobj vs RB3-band3 clash as on X360: rb3-milo/rb3-render link the DC3 hamobj generation through milo_link_stubs.cpp (HamDirector.h) and PostProc_NG/Morph scatter-includes. Both definitions emit a destructor with the same mangled name, so this is a latent COMDAT hazard; see the doc."
+  },
+  {
+   "domain": "native",
+   "name": "json_object",
+   "verdict": "SPLIT",
+   "fps": [
+    "34f3a71480af7347fee2",
+    "fe4a104008db15fb856d"
+   ],
+   "reason": "Not a layout divergence: the same json-c struct (json_object_private.h) seen from a C TU (json-c/json_object.c) and a C++ TU (net/JsonUtils.cpp). Every offset and member is identical; the only differing row is the nested union's printed type name, `union data` in C (no nested scopes) vs `union json_object::data` in C++. Appeared when W16-SH linked net/JsonUtils.cpp and json-c into rb3-render; see docs/decomp/W16SH_NATIVE_LINK_96_2026-10-07.md."
   }
  ]
 }

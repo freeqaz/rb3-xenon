@@ -28,6 +28,16 @@
 #include "utl/MemMgr.h"
 #include "utl/Symbols2.h"
 #include "utl/Symbols3.h"
+
+// The match build spells the temp allocator as retail's 2-arg (size, align);
+// that overload exists only for X360 (utl/MemMgr.h), so native passes the
+// 5-arg debug form. Token-identical to the old call sites on X360.
+#ifdef HX_NATIVE
+#define SLM_MEM_ALLOC_TEMP(size, align) \
+    _MemAllocTemp((size), __FILE__, __LINE__, "SaveLoadManager", (align))
+#else
+#define SLM_MEM_ALLOC_TEMP(size, align) (_MemAllocTemp)(size, align)
+#endif
 #include "utl/Symbols4.h"
 #include "meta_band/BandMemcardAction.h"
 
@@ -984,7 +994,7 @@ void SaveLoadManager::SetState(State newState) {
     }
     case kS_SongCacheCreateSearch:
     {
-        mData = (_MemAllocTemp)(mSaveSize, 0);
+        mData = SLM_MEM_ALLOC_TEMP(mSaveSize, 0);
         if (!mCache->ReadAsync(unk4c.c_str(), mData, (unsigned int)mSaveSize, NULL)) {
 #pragma dont_inline on
             MILO_FAIL("mCache->ReadAsync failed with CacheResult %d\n", (int)TheCacheMgr->GetLastResult());
@@ -1004,7 +1014,7 @@ void SaveLoadManager::SetState(State newState) {
     case kS_SongCacheCreateNotFound_Msg:
     {
         int sz = TheSongMgr.GetCachedSongInfoSize();
-        mData = (_MemAllocTemp)(sz, 0);
+        mData = SLM_MEM_ALLOC_TEMP(sz, 0);
         BufStream stream(mData, sz, true);
         if (TheSongMgr.SaveCachedSongInfo(stream)) {
             if (!mCache->WriteAsync(unk4c.c_str(), mData, (unsigned int)sz, NULL)) {
@@ -1201,7 +1211,7 @@ void SaveLoadManager::SetState(State newState) {
     case kS_SongCacheCreateMissing_Msg:
     {
         int sz = TheProfileMgr.GetGlobalOptionsSize();
-        mData = (_MemAllocTemp)(sz, 0);
+        mData = SLM_MEM_ALLOC_TEMP(sz, 0);
         if (!mCache->ReadAsync(kStrGlobalCacheName, mData, (unsigned int)sz, NULL)) {
 #pragma dont_inline on
             MILO_FAIL("TheCacheMgr->ReadAsync failed with CacheResult %d\n", (int)TheCacheMgr->GetLastResult());
@@ -1214,7 +1224,7 @@ void SaveLoadManager::SetState(State newState) {
     {
         UpdateStatus((SaveLoadMgrStatus)1);
         int sz = TheProfileMgr.GetGlobalOptionsSize();
-        mData = (_MemAllocTemp)(sz, 0);
+        mData = SLM_MEM_ALLOC_TEMP(sz, 0);
         FixedSizeSaveableStream stream(mData, sz, true);
         TheProfileMgr.SaveGlobalOptions(stream);
         if (!mCache->WriteAsync(kStrGlobalCacheName, mData, (unsigned int)sz, NULL)) {

@@ -127,3 +127,12 @@
 #undef size_t
 
 // clang-format enable
+
+/* Native (HX_NATIVE) host: glibc provides strncasecmp and vasprintf, and the
+   X360 mapping above (`strncasecmp` -> LIBCMT `strnicmp`) is MSVC-only. */
+#ifdef HX_NATIVE
+#undef HAVE_STRNCASECMP
+#define HAVE_STRNCASECMP 1
+#undef HAVE_VASPRINTF
+#define HAVE_VASPRINTF 1
+#endif

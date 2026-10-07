@@ -12,11 +12,21 @@
 // in one TU without an ODR clash.
 #ifndef RB3_HASH_SYMBOL_DEFINED
 #define RB3_HASH_SYMBOL_DEFINED
+#if HX_NATIVE
+// native: libstdc++'s hash_map is unordered_map, keyed on std::hash (the same
+// spelling NextSongPanel.h uses).
+namespace std {
+template <> struct hash<Symbol> {
+    size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
+};
+}
+#else
 namespace stlpmtx_std {
 _STLP_TEMPLATE_NULL struct hash<Symbol> {
     size_t operator()(const Symbol &s) const { return (size_t)s.Str(); }
 };
 }
+#endif
 #endif
 
 class TourWeightManager {
