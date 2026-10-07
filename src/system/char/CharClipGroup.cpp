@@ -142,7 +142,8 @@ void CharClipGroup::MakeMRU(int i) {
     }
     CharClip *temp = mClips[i];
     if (i > which) {
-        mWhich++;
+        // Retail stores the which + 1 it already computed, not a re-read.
+        mWhich = which + 1;
         for (int k = i; k > mWhich; k--) {
             mClips[k] = mClips[k - 1];
         }
