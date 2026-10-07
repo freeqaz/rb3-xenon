@@ -2790,6 +2790,7 @@
  "0x82516420": "?FileExecRoot@@YAPBDXZ",
  "0x82516430": "?FileSystemRoot@@YAPBDXZ",
  "0x8251a008": "?E3CheatSetMinVelocity@UsbMidiGuitar@@SAXH@Z",
+ "0x8251a018": "??1Queue@@QAA@XZ",
  "0x825231d8": "?SetTheUserMgr@@YAXPAVUserMgr@@@Z",
  "0x825296d8": "?Init@JoypadClient@@AAAXXZ",
  "0x82533870": "?CDReadDone@@YA_NXZ",
