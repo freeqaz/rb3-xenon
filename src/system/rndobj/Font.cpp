@@ -25,7 +25,13 @@
 static unsigned short gAltRev = 0;
 static unsigned short gRev = 0;
 
-KerningTable::KerningTable() : mNumEntries(0), mEntries(0) { memset(mTable, 0, 0x80); }
+// mTable is 32 Entry pointers: 0x80 bytes on X360 (retail clears exactly 0x80
+// here, in SetKerning and in Load) and 0x100 on a 64-bit host. Clearing a
+// literal 0x80 left buckets 16-31 holding heap garbage natively, and Find()
+// followed that garbage for any character pair hashing there (W16-TY: a
+// shipped venue RndText crashed in Find for the pair 0x20/0x52, bucket 18).
+// sizeof(mTable) is the constant 0x80 on X360, so the match build is unchanged.
+KerningTable::KerningTable() : mNumEntries(0), mEntries(0) { memset(mTable, 0, sizeof(mTable)); }
 KerningTable::~KerningTable() { delete mEntries; }
 
 KerningTable::Entry *KerningTable::Find(unsigned short us1, unsigned short us2) {
@@ -76,7 +82,7 @@ void KerningTable::SetKerning(
         delete[] mEntries;
         mEntries = new Entry[mNumEntries];
     }
-    memset(mTable, 0, 0x80);
+    memset(mTable, 0, sizeof(mTable));
     int entryIdx = 0;
     for (int i = 0; i < info.size(); i++) {
         const RndFont::KernInfo &curInfo = info[i];
@@ -116,7 +122,7 @@ void KerningTable::Load(BinStream &bs, RndFont *f) {
             delete mEntries;
             mEntries = new Entry[mNumEntries];
         }
-        memset(&mTable, 0, 0x80);
+        memset(&mTable, 0, sizeof(mTable));
         for (int i = 0; i < mNumEntries; i++) {
             Entry &curEntry = mEntries[i];
             bs >> curEntry.key;
