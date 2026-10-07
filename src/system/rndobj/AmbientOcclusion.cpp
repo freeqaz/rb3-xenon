@@ -29,12 +29,22 @@ static const int kQualityLUT[] = { 300, 150, 2, 0 };
 // Native: define it here since AmbientOcclusion.cpp is the natural home.
 #ifdef HX_NATIVE
 bool RndAmbientOcclusion::Edge::operator<(const Edge &other) const {
-    short aMin = v0 < v1 ? v0 : v1;
-    short aMax = v0 < v1 ? v1 : v0;
-    short bMin = other.v0 < other.v1 ? other.v0 : other.v1;
-    short bMax = other.v0 < other.v1 ? other.v1 : other.v0;
-    unsigned int a = ((unsigned int)(unsigned short)aMax << 16) | (unsigned short)aMin;
-    unsigned int b = ((unsigned int)(unsigned short)bMax << 16) | (unsigned short)bMin;
+    // Same body as the PPC definition in Utl.cpp: the smaller index goes in
+    // the high half, compared unsigned.
+    unsigned short aMax = v1, aMin = v0;
+    unsigned int a;
+    if (aMin < aMax) {
+        a = ((unsigned int)aMin << 16) | aMax;
+    } else {
+        a = ((unsigned int)aMax << 16) | aMin;
+    }
+    unsigned short bMax = other.v1, bMin = other.v0;
+    unsigned int b;
+    if (bMin < bMax) {
+        b = ((unsigned int)bMin << 16) | bMax;
+    } else {
+        b = ((unsigned int)bMax << 16) | bMin;
+    }
     return a < b;
 }
 #endif
@@ -755,8 +765,8 @@ bool kdTree<Triangle>::kdTreeNode::FindSplit_SAH(
     // Retail stores the axis first, reads it back out of the packed word to
     // pick the split, and re-asserts it after the float store (as FindSplit_Mean).
     mData.index = bestAxis;
-    unsigned int splitAxis = mData.index;
-    mData.real = bestPos[splitAxis];
+    unsigned char splitAxis = mData.index;
+    mData.real = bestPos[bestAxis];
     mData.index = splitAxis;
     return true;
 }
@@ -1271,15 +1281,15 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
 
                     // Construct 3 midpoint edges
                     Edge edge01, edge12, edge20;
-                    edge01.v0 = (short)fv0;
-                    edge01.v1 = (short)fv1;
-                    edge01.midpoint = (short)0xffff;
-                    edge12.v0 = (short)fv1;
-                    edge12.v1 = (short)fv2;
-                    edge12.midpoint = (short)0xffff;
-                    edge20.v0 = (short)fv2;
-                    edge20.v1 = (short)fv0;
-                    edge20.midpoint = (short)0xffff;
+                    edge01.v0 = fv0;
+                    edge01.v1 = fv1;
+                    edge01.midpoint = 0xffff;
+                    edge12.v0 = fv1;
+                    edge12.v1 = fv2;
+                    edge12.midpoint = 0xffff;
+                    edge20.v0 = fv2;
+                    edge20.v1 = fv0;
+                    edge20.midpoint = 0xffff;
 
                     RndMesh::Vert blendVert01;
                     RndMesh::Vert blendVert12;
@@ -1291,7 +1301,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                     // Edge 0-1
                     std::set<Edge>::iterator it01 = edgeSet.find(edge01);
                     if (it01 == edgeSet.end()) {
-                        edge01.midpoint = (short)numNewVerts;
+                        edge01.midpoint = numNewVerts;
                         numNewVerts++;
                         edgeSet.insert(edge01);
                         Vector3 worldPos, worldNorm;
@@ -1308,7 +1318,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                     // Edge 1-2
                     std::set<Edge>::iterator it12 = edgeSet.find(edge12);
                     if (it12 == edgeSet.end()) {
-                        edge12.midpoint = (short)numNewVerts;
+                        edge12.midpoint = numNewVerts;
                         numNewVerts++;
                         edgeSet.insert(edge12);
                         Vector3 worldPos, worldNorm;
@@ -1325,7 +1335,7 @@ void RndAmbientOcclusion::Tessellate(float *outTessTime, float *outPatchTime) {
                     // Edge 2-0
                     std::set<Edge>::iterator it20 = edgeSet.find(edge20);
                     if (it20 == edgeSet.end()) {
-                        edge20.midpoint = (short)numNewVerts;
+                        edge20.midpoint = numNewVerts;
                         numNewVerts++;
                         edgeSet.insert(edge20);
                         Vector3 worldPos, worldNorm;
