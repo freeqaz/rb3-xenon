@@ -224,6 +224,10 @@ SCRIPT_ARM: list[dict] = [
     # its address (the rendered bucket must contain the name retail uses
     # there).  Includes live-ledger mutations so the check is shown to fail.
     {"path": "tools/test_alias_survivor_drift.py", "timeout": 120},
+    # W16-TV (2026-10-07): an alias group is re-proved when the map renames a
+    # callee its proof reads (scripts/alias_callee_names.json); frozen fixtures
+    # plus live-snapshot mutations so the check is shown to fail.
+    {"path": "tools/test_alias_callee_name_drift.py", "timeout": 120},
     {"path": "tools/test_fold_thunk_gate_install.py", "timeout": 60},
     # W16-FM (2026-09-16): comdat_fold_gate.py's MAP-SILENT tier CF5.  The gate
     # used to coerce `base_addr` unconditionally, so a folded spelling the map
