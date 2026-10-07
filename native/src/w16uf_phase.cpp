@@ -14,9 +14,14 @@
 // per row, the gate or the reason it has none.
 
 #include "bandobj/BandCamShot.h"
+#include "bandobj/BandCharacter.h"
 #include "bandobj/BandCrowdMeter.h"
 #include "bandobj/BandFaceDeform.h"
 #include "bandobj/BandTrack.h"
+#include "bandobj/BandWardrobe.h"
+#include "char/CharDriver.h"
+#include "char/CharWeightable.h"
+#include "char/Waypoint.h"
 #include "bandobj/CrowdMeterIcon.h"
 #include "bandobj/GemTrackDir.h"
 #include "bandobj/TrackPanelDir.h"
@@ -1529,6 +1534,167 @@ void AppendDeltasChecks() {
          arrays, bytes, sameAsShipped, bad, edgeOk ? "ok" : "WRONG", edgeTxt.c_str(), first.c_str());
 }
 
+// ============================================ chars.milo: closet rows ==
+ObjDirPtr<ObjectDir> gChars;
+ObjDirPtr<ObjectDir> gClosetClips;
+
+bool SameXfm(const Transform &a, const Transform &b) { return !memcmp(&a, &b, sizeof(Transform)); }
+
+// Retail fn_82281D50 (BandCharacter::OnClosetTeleport), read off the asm:
+// dirty the closet waypoint (0x7c0) if it is clean, copy the character's
+// local transform (0xf0, 0x40 bytes) into the waypoint's local transform,
+// Teleport(waypoint) through the vtable (+0x2c), clear 0x5fe, return
+// DataNode(0) (int 0).
+void ClosetTeleportChecks(BandCharacter *chars[4]) {
+    int bad = 0, n = 0;
+    std::string first;
+    for (int c = 0; c < 4; c++) {
+        BandCharacter *bc = chars[c];
+        Waypoint *wp = bc->unk734;
+        Transform savedChar = bc->LocalXfm(), savedWp = wp->LocalXfm();
+        Transform x;
+        x.m.Set(0, 1, 0, -1, 0, 0, 0, 0, 1);
+        x.v.Set(10.0f + c, -20.0f, 3.5f);
+        bc->SetLocalXfm(x);
+        Transform other;
+        other.Reset();
+        other.v.Set(-99, -99, -99);
+        wp->SetLocalXfm(other);
+        bc->unk5a2 = true;
+        bc->SetTeleported(false);
+        DataArray *msg = new DataArray(2);
+        msg->Node(0) = Symbol("closet_teleport");
+        DataNode ret = bc->OnClosetTeleport(msg);
+        msg->Release();
+        n++;
+        std::string why;
+        if (!SameXfm(wp->LocalXfm(), x))
+            why += " waypoint_xfm";
+        Transform want = wp->WorldXfm();
+        Normalize(want.m, want.m);
+        if (!SameXfm(bc->LocalXfm(), want))
+            why += " teleported_xfm";
+        if (!bc->Teleported())
+            why += " teleported_flag";
+        if (bc->unk5a2)
+            why += " flag_5fe";
+        if (ret.Type() != kDataInt || ret.Int() != 0)
+            why += " return";
+        if (!why.empty()) {
+            if (!bad)
+                first = MakeString(" first: %s:%s", bc->Name(), why.c_str());
+            bad++;
+        }
+        wp->SetLocalXfm(savedWp);
+        bc->SetLocalXfm(savedChar);
+    }
+    Gate("uf-closet-teleport", bad == 0,
+         "%d shipped band characters: waypoint takes the character's transform, the character "
+         "is teleported onto the waypoint's world transform, flag 0x5fe cleared, returns 0: %d "
+         "wrong%s",
+         n, bad, first.c_str());
+}
+
+// Retail fn_8232F1C0 (BandWardrobe::OnEnterCloset), read off the asm: dir =
+// arg 2, i = arg 3; current names = the closet names (0x40); every target
+// takes context "closet"; when target i has a driver: driver clips = dir's
+// "clips" (no fail), closet name j = "closet_character" for j == i else "",
+// SetDir(dir), target j showing iff j == i. Returns DataNode(0).
+void EnterClosetChecks(BandWardrobe *w, ObjectDir *closet) {
+    ObjectDir *clips = closet->Find<ObjectDir>("clips", false);
+    BandWardrobe::TargetNames *savedCur = w->mCurNames;
+    ObjectDir *savedVenue = w->mVenueDir;
+    ObjectDir *savedClips[4];
+    for (int i = 0; i < 4; i++)
+        savedClips[i] = w->mTargets[i]->Driver() ? w->mTargets[i]->Driver()->ClipDir() : nullptr;
+    int bad = 0;
+    std::string first;
+    for (int t = 0; t < 4; t++) {
+        w->mCurNames = &w->mVenueNames;
+        for (int i = 0; i < 4; i++) {
+            w->mClosetNames.names[i] = "w16uf_stale";
+            w->mTargets[i]->SetShowing(true);
+            if (w->mTargets[i]->Driver())
+                w->mTargets[i]->Driver()->SetClips(nullptr);
+        }
+        w->mVenueDir = nullptr;
+        DataArray *msg = new DataArray(4);
+        msg->Node(0) = Symbol("enter_closet");
+        msg->Node(1) = Symbol("enter_closet");
+        msg->Node(2) = DataNode(closet);
+        msg->Node(3) = DataNode(t);
+        DataNode ret = w->OnEnterCloset(msg);
+        msg->Release();
+        std::string why;
+        if (w->mCurNames != &w->mClosetNames)
+            why += " current_names";
+        for (int i = 0; i < 4; i++) {
+            CharWeightable *cw = w->mTargets[i]->Find<CharWeightable>("closet.weight", false);
+            CharWeightable *vw = w->mTargets[i]->Find<CharWeightable>("venue.weight", false);
+            if ((cw && cw->Weight() != 1.0f) || (vw && vw->Weight() != 0.0f))
+                why += MakeString(" context%d", i);
+            if (strcmp(w->mClosetNames.names[i].Str(), i == t ? "closet_character" : "") != 0)
+                why += MakeString(" name%d", i);
+            if (w->mTargets[i]->Showing() != (i == t))
+                why += MakeString(" showing%d", i);
+        }
+        if (w->mTargets[t]->Driver()->ClipDir() != clips)
+            why += " clips";
+        if (w->mVenueDir != closet)
+            why += " venue_dir";
+        if (ret.Type() != kDataInt || ret.Int() != 0)
+            why += " return";
+        if (!why.empty()) {
+            if (!bad)
+                first = MakeString(" first: target %d:%s", t, why.c_str());
+            bad++;
+        }
+    }
+    w->mCurNames = savedCur;
+    w->mVenueDir = savedVenue;
+    for (int i = 0; i < 4; i++) {
+        w->mTargets[i]->SetShowing(true);
+        if (w->mTargets[i]->Driver())
+            w->mTargets[i]->Driver()->SetClips(savedClips[i]);
+    }
+    Gate("uf-enter-closet", bad == 0,
+         "the shipped wardrobe entering portrait_clips_shared.milo for each of its 4 targets: "
+         "closet names current, closet/venue weights, names (\"closet_character\" on the "
+         "target), the target's driver clips = the dir's clips, the dir set, only the target "
+         "shown, returns 0: %d of 4 wrong%s",
+         bad, first.c_str());
+}
+
+void ClosetChecks() {
+    printf("\n=== W16-UF: closet rows on the shipped world/shared chars ===\n");
+    gChars.LoadFile(FilePath("world/shared/gen/chars.milo_xbox"), false, false, kLoadFront, false);
+    gClosetClips.LoadFile(FilePath("world/meta/closet/gen/portrait_clips_shared.milo_xbox"), false,
+                          false, kLoadFront, false);
+    BandCharacter *chars[4];
+    bool ok = gChars.Ptr() != nullptr;
+    for (int i = 0; i < 4; i++) {
+        chars[i] = FindByName<BandCharacter>(gChars.Ptr(), MakeString("player%d", i));
+        ok = ok && chars[i] && chars[i]->unk734;
+    }
+    BandWardrobe *w = FindByName<BandWardrobe>(gChars.Ptr(), "BandWardrobe");
+    bool wardrobeOk = w && gClosetClips.Ptr() && gClosetClips->Find<ObjectDir>("clips", false);
+    int drivers = 0, targets = 0;
+    for (int i = 0; w && i < 4; i++) {
+        targets += w->mTargets[i] != nullptr;
+        drivers += w->mTargets[i] && w->mTargets[i]->Driver();
+    }
+    wardrobeOk = wardrobeOk && targets == 4 && drivers == 4;
+    Gate("uf-closet-fixture", ok && wardrobeOk,
+         "chars.milo: player0-3 with closet waypoints %s; BandWardrobe %s with %d/4 targets, "
+         "%d/4 with a driver; portrait_clips_shared.milo 'clips' %s",
+         ok ? "yes" : "NO", w ? "found" : "MISSING", targets, drivers,
+         gClosetClips.Ptr() && gClosetClips->Find<ObjectDir>("clips", false) ? "found" : "MISSING");
+    if (ok)
+        ClosetTeleportChecks(chars);
+    if (ok && wardrobeOk)
+        EnterClosetChecks(w, gClosetClips.Ptr());
+}
+
 } // namespace
 
 int RunW16UFPhase(GateFn gate) {
@@ -1552,6 +1718,7 @@ int RunW16UFPhase(GateFn gate) {
     KeyHandPollChecks();
     CrowdChecks();
     AppendDeltasChecks();
+    ClosetChecks();
     Hmx::Object::sFactories = savedFactories;
     return gRan;
 }
