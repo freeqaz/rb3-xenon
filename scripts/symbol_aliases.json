@@ -119756,10 +119756,8 @@
   {
    "name": "fn_8246F020",
    "address": "0x8246f020",
-   "survivor": "fn_8246F020",
-   "folded": [
-    "??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@IABV1@ABU__false_type@0@@Z"
-   ],
+   "survivor": "??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@IABV1@ABU__false_type@0@@Z",
+   "folded": [],
    "withdrawn": [],
    "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
    "admitted": [
@@ -119774,15 +119772,29 @@
       "evidence_there": "chase(??$__uninitialized_fill_n@PAV?$Key@V?$vector@VVector2@@V?$St @ 0x8246f0c0, ??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$) fails at callee: retail ??0?$vector@VExtent@@V?$StlNodeAlloc@VExtent@@@stlpmtx_std@@ @ 0x82686260 vs ours ??0?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx. our callee ??0?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stl PROVEN (clean chase) at 0x823e4630 = ??0?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx only. Retail holds both callee bodies and they differ, so the body at 0x8246f0c0 is not this member's."
      }
     }
+   ],
+   "relabelled": {
+    "from": "fn_8246F020",
+    "to": "??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@IABV1@ABU__false_type@0@@Z",
+    "lane": "W16-UM 2026-10-07 (tools/alias_survivor_relabel.py)",
+    "why": "W16-UM named this address in target_symbol_map.json with the group's only folded spelling (W16-UH census: chase PROVEN); the survivor follows the map, and the group now folds nothing"
+   },
+   "rechase_w16um": [
+    {
+     "spelling": "fn_8246F020",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "dropped (W16-UM): a placeholder label names no symbol once the map names the address",
+     "evidence": "tools/icf_pair_adjudicate.chase(??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAll @ 0x8246f020, fn_8246F020): UNDECIDABLE [MISSING(ours)] depth 0: retail ??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlp | ours fn_8246F020"
+    }
    ]
   },
   {
    "name": "fn_824CE758",
    "address": "0x824ce758",
-   "survivor": "fn_824CE758",
-   "folded": [
-    "?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVFilePath@@ABV3@ABU__false_type@2@I_N@Z"
-   ],
+   "survivor": "?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVFilePath@@ABV3@ABU__false_type@2@I_N@Z",
+   "folded": [],
    "withdrawn": [],
    "evidence": "Opened by W16-OU 2026-10-03: membership(s) located here on retail bytes (see 'admitted').",
    "admitted": [
@@ -119796,6 +119808,22 @@
       "address": "0x827ed550",
       "evidence_there": "chase(?_M_insert_overflow_aux@?$vector@VDataEvent@@V?$StlNodeAlloc @ 0x827ed550, ?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@) fails at callee: retail ??$_Param_Construct@VDataEvent@@V1@@stlpmtx_std@@YAXPAVDataE @ 0x827ece48 vs ours ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePa. our callee ??$_Param_Construct@VFilePath@@V1@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@ PROVEN (clean chase) at 0x824cad98 = ??$_Copy_Construct@VFilePath@@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@Z only. Retail holds both callee bodies and they differ, so the body at 0x827ed550 is not this member's."
      }
+    }
+   ],
+   "relabelled": {
+    "from": "fn_824CE758",
+    "to": "?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVFilePath@@ABV3@ABU__false_type@2@I_N@Z",
+    "lane": "W16-UM 2026-10-07 (tools/alias_survivor_relabel.py)",
+    "why": "W16-UM named this address in target_symbol_map.json with the group's only folded spelling (W16-UH census: chase PROVEN); the survivor follows the map, and the group now folds nothing"
+   },
+   "rechase_w16um": [
+    {
+     "spelling": "fn_824CE758",
+     "role": "old-label",
+     "verdict": "UNDECIDABLE",
+     "kind": "MISSING(ours)",
+     "disposition": "dropped (W16-UM): a placeholder label names no symbol once the map names the address",
+     "evidence": "tools/icf_pair_adjudicate.chase(?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@ @ 0x824ce758, fn_824CE758): UNDECIDABLE [MISSING(ours)] depth 0: retail ?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlp | ours fn_824CE758"
     }
    ]
   },

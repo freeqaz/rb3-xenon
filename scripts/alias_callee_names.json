@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "bd8f532e0",
+ "recorded_at": "8ed7f6b1d",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -882,7 +882,6 @@
   "0x822c76f0": "??$_Copy_Construct@VDeltaArray@BandFaceDeform@@@stlpmtx_std@@YAXPAVDeltaArray@BandFaceDeform@@ABV12@@Z",
   "0x822cb430": "??0?$ObjPtr@VRndAnimatable@@@@QAA@ABV0@@Z",
   "0x822cdb70": null,
-  "0x822ce170": null,
   "0x822d0be8": "?_M_insert_overflow_aux@?$vector@W4KeyboardKey@CharKeyHandMidi@@V?$StlNodeAlloc@W4KeyboardKey@CharKeyHandMidi@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAW4KeyboardKey@CharKeyHandMidi@@ABW434@ABU__false_type@2@I_N@Z",
   "0x822d3b78": "??1?$ObjPtr@VTask@@@@UAA@XZ",
   "0x822d3cb0": "??1?$ObjPtr@VUnisonIcon@@@@UAA@XZ",
@@ -1135,7 +1134,7 @@
   "0x823c3300": "??6@YAAAVBinStream@@AAV0@ABUConstraintSystem@CharBlendBone@@@Z",
   "0x823c3360": "?Handle@CharForeTwist@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
   "0x823c5310": "??1CharIKRod@@UAA@XZ",
-  "0x823c7000": null,
+  "0x823c7000": "??1CharUpperTwist@@MAA@XZ",
   "0x823c7210": "?Handle@CharBoneOffset@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
   "0x823c7ad8": "??1CharTransCopy@@UAA@XZ",
   "0x823c8198": "?Handle@Screenshot@@UAA?AVDataNode@@PAVDataArray@@_N@Z",
@@ -1328,7 +1327,7 @@
   "0x8246ebe0": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z",
   "0x8246eea0": "??$__uninitialized_copy@PBV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
   "0x8246ef38": "?_M_clear@?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ",
-  "0x8246f020": null,
+  "0x8246f020": "??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@IABV1@ABU__false_type@0@@Z",
   "0x8246f200": "??1?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
   "0x8246f2b8": "??1?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
   "0x8246f370": "?_M_fill_insert_aux@?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IABV3@ABU__false_type@2@@Z",
@@ -1445,9 +1444,8 @@
   "0x824c3608": "??0CamShotCrowd@@QAA@ABV0@@Z",
   "0x824c36f0": "??1CamShotCrowd@@QAA@XZ",
   "0x824cad98": "??$_Copy_Construct@VFilePath@@@stlpmtx_std@@YAXPAVFilePath@@ABV1@@Z",
-  "0x824cd818": "??$__uninitialized_fill_n@PAVFilePath@@IV1@@stlpmtx_std@@YAPAVFilePath@@PAV1@IABV1@ABU__false_type@0@@Z",
   "0x824cdde8": "?_M_fill_insert_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVFilePath@@IABV3@ABU__false_type@2@@Z",
-  "0x824ce758": null,
+  "0x824ce758": "?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVFilePath@@ABV3@ABU__false_type@2@I_N@Z",
   "0x824d05a8": "?_M_fill_insert@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@AAAXPAVFilePath@@IABV3@@Z",
   "0x824d1120": "?resize@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@QAAXIABVFilePath@@@Z",
   "0x824d2bc8": "??1NgSpotlightDrawer@@UAA@XZ",
@@ -2282,7 +2280,6 @@
   "0x82803280": "??0?$_Vector_base@PAVUIScreen@@V?$StlNodeAlloc@PAVUIScreen@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@PAVUIScreen@@@1@@Z",
   "0x828043a8": "??1?$list@PAVUIResource@@V?$StlNodeAlloc@PAVUIResource@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
   "0x82804720": "??1UIManager@@UAA@XZ",
-  "0x828070e0": null,
   "0x82809db8": "??_DUISlider@@QAAXXZ",
   "0x8280c430": "??$__uninitialized_fill_n@PAUUIListElementDrawState@@IU1@@stlpmtx_std@@YAPAUUIListElementDrawState@@PAU1@IABU1@ABU__false_type@0@@Z",
   "0x8280d078": "??1UIListDir@@UAA@XZ",
@@ -15477,19 +15474,6 @@
     "?_M_clear_after_move@?$vector@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@IAAXXZ": "PROVEN"
    }
   },
-  "0x8246f020": {
-   "survivor": "fn_8246F020",
-   "callees": [
-    "0x823e4630",
-    "0x824499f8",
-    "0x8246e9a8",
-    "0x826c3888",
-    "0x827708c0"
-   ],
-   "verdicts": {
-    "??$__uninitialized_fill_n@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@IV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@IABV1@ABU__false_type@0@@Z": "PROVEN"
-   }
-  },
   "0x8246f160": {
    "survivor": "??$__uninitialized_copy@PBV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
    "callees": [
@@ -17735,44 +17719,6 @@
    ],
    "verdicts": {
     "??$?6UMatOverride@WorldDir@@V?$StlNodeAlloc@UMatOverride@WorldDir@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$list@UMatOverride@WorldDir@@V?$StlNodeAlloc@UMatOverride@WorldDir@@@stlpmtx_std@@@stlpmtx_std@@@Z": "PROVEN"
-   }
-  },
-  "0x824ce758": {
-   "survivor": "fn_824CE758",
-   "callees": [
-    "0x820009a8",
-    "0x82117728",
-    "0x822716e8",
-    "0x82273420",
-    "0x822ce170",
-    "0x824cad98",
-    "0x824cd818",
-    "0x825243e0",
-    "0x82524420",
-    "0x82710808",
-    "0x827badb0",
-    "0x827bae60",
-    "0x827baf70",
-    "0x827bb0e8",
-    "0x827bb898",
-    "0x827bc430",
-    "0x827bca50",
-    "0x827bca78",
-    "0x827bcd38",
-    "0x827bd208",
-    "0x827bd2f0",
-    "0x827be4b8",
-    "0x827be608",
-    "0x828070e0",
-    "0x8282b170",
-    "0x82c78e24",
-    "0x82e0699c",
-    "0x82e06ba8",
-    "0x82e06e08",
-    "0x82e06e10"
-   ],
-   "verdicts": {
-    "?_M_insert_overflow_aux@?$vector@VFilePath@@V?$StlNodeAlloc@VFilePath@@@stlpmtx_std@@@stlpmtx_std@@IAAXPAVFilePath@@ABV3@ABU__false_type@2@I_N@Z": "PROVEN"
    }
   },
   "0x824d12f8": {
