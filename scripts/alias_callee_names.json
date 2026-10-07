@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "54d2b096a",
+ "recorded_at": "be70c01f5",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -15674,6 +15674,19 @@
     "??$_Copy_Construct@V?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@YAXPAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@ABV1@@Z": "PROVEN"
    }
   },
+  "0x8246eb78": {
+   "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z",
+   "callees": [
+    "0x8240ddb0",
+    "0x82774148",
+    "0x827badb0",
+    "0x827bc430",
+    "0x827bca50"
+   ],
+   "verdicts": {
+    "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z": "PROVEN"
+   }
+  },
   "0x8246eea0": {
    "survivor": "??$__uninitialized_copy@PBV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
    "callees": [
@@ -15745,6 +15758,29 @@
    ],
    "verdicts": {
     "??$__uninitialized_copy@PAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@@stlpmtx_std@@YAPAV?$Key@V?$vector@VVector2@@V?$StlNodeAlloc@VVector2@@@stlpmtx_std@@@stlpmtx_std@@@@PAV1@00ABU__false_type@0@@Z": "PROVEN"
+   }
+  },
+  "0x8246f200": {
+   "survivor": "??1?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "callees": [
+    "0x82273470",
+    "0x8240ddb0",
+    "0x8246eb78",
+    "0x825243e0",
+    "0x82524420",
+    "0x82774148",
+    "0x827badb0",
+    "0x827bbd88",
+    "0x827bc430",
+    "0x827bca50",
+    "0x827c44b8",
+    "0x8282aed0",
+    "0x82e0699c",
+    "0x82e06ba8",
+    "0x82e06e08"
+   ],
+   "verdicts": {
+    "??1?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ": "PROVEN"
    }
   },
   "0x8246f370": {

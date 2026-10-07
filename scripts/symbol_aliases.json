@@ -86865,7 +86865,9 @@
    "name": "$__destroy_range_aux",
    "address": "0x8246eb78",
    "survivor": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z",
-   "folded": [],
+   "folded": [
+    "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z"
+   ],
    "evidence": "ICF fold group derived by tools/icf_alias_build.py. Evidence tier(s) T1. T1=RB3 retail bytes at the survivor address are byte-identical (modulo relocated fields, >=4 words, >=50% unmasked) to our compiled body for the folded spelling; T2=same our-compiler ICF fold class (class size 2, cap 8); T3=both names at one address in dc3 ham_xbox_r.map (positive-only transfer). 2 folded spelling(s), 0 census sites over 1 functions.",
    "withdrawn": [
     {
@@ -86937,6 +86939,30 @@
        "disposition": "dropped_singleton"
       }
      ]
+    }
+   ],
+   "admitted": [
+    {
+     "spelling": "??$__destroy_range_aux@V?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@YAXV?$reverse_iterator@PAV?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@0@0ABU__false_type@0@@Z",
+     "lane": "W16-UQ 2026-10-07",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (FLAT REFUTED only on relocation names: Key<vector<Vector3>> vs Key<vector<Color>> helpers, themselves folds); unique among the 5 retail masked twins (pair<vector<int>,int>, Key<vector<Color>>, Key<vector<Vector2>>, StreakList, TrackChannels): only this survivor PROVEN. 100 B both sides. Retail callers of 0x8246eb78 are 0x8246ef74 (inside _M_clear at 0x8246ef38, whose group already folds the Color and Vector3 _M_clear) and 0x8246f248 (inside ~vector<Key<vector<Color>>> at 0x8246f200, which ~RndMeshAnim calls for both Vector3 key vectors). Retail has two Key<vector<T>> destroy_range_aux bodies for three element types; W16-SN withdrew the Vector3 label from 0x827ebad0 (VocalEvent's), which left this spelling with no retail home and charged RndMeshAnim's _M_clear<Key<vector<Vector3>>> (99.82)."
+    }
+   ]
+  },
+  {
+   "name": "??1?$vector",
+   "address": "0x8246f200",
+   "survivor": "??1?$vector@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VColor@Hmx@@V?$StlNodeAlloc@VColor@Hmx@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+   "folded": [
+    "??1?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ"
+   ],
+   "evidence": "Created by lane W16-UQ: see per-member records in `admitted`.",
+   "lane": "W16-UQ 2026-10-07",
+   "admitted": [
+    {
+     "spelling": "??1?$vector@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@V?$StlNodeAlloc@V?$Key@V?$vector@VVector3@@V?$StlNodeAlloc@VVector3@@@stlpmtx_std@@@stlpmtx_std@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@XZ",
+     "lane": "W16-UQ 2026-10-07",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN (its slots fold: ??_G Key<vector<Vector3>> into ??_GMeasureMap's group, destroy_range_aux Vector3 into 0x8246eb78); unique among the 8 map-named retail masked twins (only Key<vector<Color>> PROVEN; Key<vector<Vector2>>, Key<ObjectStage>, IKTarget, CharInterestState, ObjVersion, TypeCreatorPair, pair<vector<int>,int> REFUTED). 132 B both sides. Retail 0x8246f200 has exactly 3 call sites, 0x8247036c, 0x8247037c and 0x82470384, all in ~RndMeshAnim, which destroys two Vector3 key vectors (points, normals) and one Color key vector; our ~RndMeshAnim calls the Vector3 spelling at the first two of those sites (objdiff idx 15, 17) and Color's at the third."
     }
    ]
   },
