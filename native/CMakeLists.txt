@@ -1428,11 +1428,12 @@ if(EXISTS "${MILO_ENGINE_PATH}/src/platform/NativeSettings.h")
 #                               tree already carries in NextSongPanel.h and
 #                               meta/FixedSizeSaveableStream.h, NOT an stlpmtx_std
 #                               shim (that would compile and then be ignored).
-#   * CriticalUserListener.cpp -- its flow/FlowManager.cpp scatter-include is now
-#                               #if !HX_NATIVE; the direct second host is
+#   * CriticalUserListener.cpp -- its flow/FlowManager.cpp scatter-include was
+#                               removed (W16-TX: retail has no Flow system and the
+#                               include paired no retail row); FlowManager's bodies
+#                               still arrive natively through
 #                               bandtrack/GemManager.cpp (CharBonesMeshes reaches
-#                               FlowManager only through it), and that chain still
-#                               supplies the bodies natively.
+#                               FlowManager only through it).
 set(L4_SCATTER_WIRE
     # --- src/band3/meta_band (RB3 game layer) --------------------------------
     # AccomplishmentProgress drags net/WebSvcMgr.cpp and AccomplishmentTrainer-
