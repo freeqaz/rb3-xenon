@@ -583,8 +583,13 @@ END_PROPSYNCS
 #undef gAltRev
 
 // sw2 scatter-include (default/CrowdAudio <- hamobj/HamMove.cpp)
+// Native: rndobj/Morph.cpp scatter-includes HamMove.cpp too, and every native
+// target that links this TU also links Morph.cpp (through char/FileMerger.cpp),
+// so a second copy here is a duplicate definition (W16-TS, rb3-render).
+#ifndef HX_NATIVE
 #define gRev gRev_HamMove
 #define gAltRev gAltRev_HamMove
 #include "hamobj/HamMove.cpp"
 #undef gRev
 #undef gAltRev
+#endif

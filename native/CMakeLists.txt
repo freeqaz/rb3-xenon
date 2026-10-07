@@ -1983,6 +1983,21 @@ set(MILO_TARGETS rb3-milo)
 # offset and means something else. main_render.cpp --dump-rnd prints every
 # Rnd/NgRnd member the backend actually reads, so that class of bug is
 # measurable rather than inferred.
+# W16-TS: real TUs the phase's BandDirector reaches (TheCrowdAudio, SetBank).
+set(W16TS_LINK_SOURCES
+    ${REPO_ROOT}/src/system/bandobj/CrowdAudio.cpp
+    # RemoteBandUser's ctor news a TourCharRemote (UIStats::MaybePublish fixture).
+    ${REPO_ROOT}/src/band3/tour/TourCharRemote.cpp
+    # SaveLoadManager::SetState's edge: StandIn::SaveSize (BandProfile::SaveSize)
+    # and the two memcard actions it news (the memcard layer itself is stubbed loudly in
+    # w16ts_link_support.cpp).
+    ${REPO_ROOT}/src/band3/meta_band/StandIn.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandMemcardAction.cpp
+    ${REPO_ROOT}/src/system/meta/MemcardAction.cpp
+)
+set_source_files_properties(${W16TS_LINK_SOURCES}
+    PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+
 if(RB3X_BUILD_ENGINE)
     rb3_add_executable(rb3-render
         ${CMAKE_SOURCE_DIR}/src/main_render.cpp
@@ -2008,6 +2023,12 @@ if(RB3X_BUILD_ENGINE)
         # MidiSynth, which W16-TM linked but --gc-sections discarded.
         ${CMAKE_SOURCE_DIR}/src/w16tr_phase.cpp
         ${CMAKE_SOURCE_DIR}/src/w16tr_link_stubs.cpp
+        # W16-TS: in-scope rows linked but never entered (HasPart, song
+        # filters, ModifierMgr, BandDirector::OnFileLoaded, UIStats,
+        # SaveLoadManager::SetState) over shipped data.
+        ${CMAKE_SOURCE_DIR}/src/w16ts_phase.cpp
+        ${CMAKE_SOURCE_DIR}/src/w16ts_link_support.cpp
+        ${W16TS_LINK_SOURCES}
         ${VOCALTRACK_GAME_SOURCES}
         ${W16SH_LINK_SOURCES}
         ${W16SH_DEP_SOURCES}
@@ -2029,6 +2050,12 @@ if(RB3X_BUILD_ENGINE)
     target_compile_definitions(rb3-render PRIVATE RB3_ENGINE_RENDER=1)
     target_link_libraries(rb3-render PRIVATE milo-engine)
 endif()
+
+# W16-TS: the phase reads members of the objects it drives (BandDirector's
+# cached finds, UIStats' last-published state, SaveLoadManager's state). Access
+# checking is relaxed for that one driver file only; no decomp TU changes.
+set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16ts_phase.cpp
+    PROPERTIES COMPILE_OPTIONS "-fno-access-control")
 
 # ---- X20: OutfitConfig's property table needs the LOCAL_STATIC Symbol arm ----
 # ObjMacros.h's SYNC_PROP family has two spellings, selected by
