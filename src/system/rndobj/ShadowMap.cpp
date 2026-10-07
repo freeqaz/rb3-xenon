@@ -84,7 +84,28 @@ found:
     float nearPlane = dist - sphere.radius;
 
     Vector3 offset;
-    Multiply(Vector3(0.0f, -dist, 0.0f), lightXfm.m, offset);
+    // This is Multiply(Vector3(0.0f, -dist, 0.0f), lightXfm.m, offset) written
+    // out.  x and z of that vector are literal 0.0f, and through the shared
+    // overload in Mtx.h /fp:fast reassociates `m.x.c*0 + m.y.c*(-dist) +
+    // m.z.c*0` into `(m.x.c + m.z.c)*0 + ...`, a leading `fadds` of two matrix
+    // elements.  Retail instead multiplies each zero term on its own
+    // (`fmuls f12, f12, f31` on m.z.x at 0xa0(r1), then the -dist term by
+    // `fmadds`, then m.x.x at 0x80(r1) by `fmadds ..., f31, ...`), seeding x
+    // from m.z.x and y/z from m.x.c.  Accumulator statements pin that order.
+    {
+        const Vector3 v(0.0f, -dist, 0.0f);
+        const Hmx::Matrix3 &m = lightXfm.m;
+        float ox = m.z.x * v.z;
+        ox += m.y.x * v.y;
+        ox += m.x.x * v.x;
+        float oy = m.x.y * v.x;
+        oy += m.y.y * v.y;
+        oy += m.z.y * v.z;
+        float oz = m.x.z * v.x;
+        oz += m.y.z * v.y;
+        oz += m.z.z * v.z;
+        offset.Set(ox, oy, oz);
+    }
     Add(lightXfm.v, offset, lightXfm.v);
 
     sLightCam->SetWorldXfm(lightXfm);
