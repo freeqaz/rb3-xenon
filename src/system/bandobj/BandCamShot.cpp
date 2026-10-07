@@ -931,8 +931,12 @@ void sw_BandCamShotTargetListStream(BinStream &bs, const ObjList<BandCamShot::Ta
 // two-arg ctor out of line (0x822B0D48, with its unwind funclet at 0x822B0DB8),
 // between the ObjPtr<ObjectDir> and ObjPtr<EventTrigger> vtable members.  No
 // surviving BandCamShot function calls it (its callers are BandCrowdMeter and
-// BandStarDisplay, which link later), so the referencing function was
-// discarded by /OPT:REF and is not recoverable; this stand-in only
+// BandStarDisplay, which link later).  MSVC emits a used inline function's
+// COMDAT even where every call is inlined (see VertVector::clear in
+// ChordShapeGenerator.cpp), so the likeliest referencer is Load's two
+// owner-only trigger ObjPtrs, if retail spelled them through the two-arg ctor
+// with its default nullptr and inlined it; this TU spells them through the
+// one-arg ctor for Load's store order.  Not proven, so this stand-in only
 // instantiates the ctor, like the stream operator above.
 void sw_BandCamShotEventTriggerPtr(Hmx::Object *owner, EventTrigger *trig) {
     ObjPtr<EventTrigger> ptr(owner, trig);

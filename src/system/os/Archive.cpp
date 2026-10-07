@@ -416,10 +416,12 @@ void ArchiveInit() {
 // rndobj/Utl.cpp).  Retail places the five-argument MakeString at 0x825122B0,
 // between Archive::GetGuid and this TU's FileEntry sort COMDATs, and nothing
 // in this unit calls it: its callers are MemTracker and PoolAlloc, whose objs
-// link after this one.  So this obj had a function, later discarded by
-// /OPT:REF, that formatted five arguments.  Its name, format and argument
-// types are not recoverable (the const char* and int instantiations are
-// byte-identical and fold); this stand-in reproduces only the instantiation.
+// link after this one.  So some code in this obj formatted five arguments,
+// and either it was discarded by /OPT:REF or the call was inlined (MSVC still
+// emits a used inline function's COMDAT then; see VertVector::clear in
+// bandobj/ChordShapeGenerator.cpp).  The code, format and argument types are
+// not recoverable (the const char* and int instantiations are byte-identical
+// and fold); this stand-in reproduces only the instantiation.
 // It must be external -- MSVC drops an unreferenced static before
 // instantiating through it.
 const char *ArchiveDiscardedFormat5(

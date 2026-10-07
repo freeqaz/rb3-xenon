@@ -2808,9 +2808,11 @@ void BuildSphereStratified(unsigned int numSamples, std::vector<Vector3> &dirs) 
 // 0x824417D8, inside this unit's .text, and nothing in this unit calls it (its
 // one caller is RndMatAnim's Key<TexPtr> vector resize, in MatAnim.obj, which
 // links after this obj).  DC3's map attributes the same COMDAT to
-// rndobj:Utl.obj with no in-unit caller either: this obj had a function, later
-// discarded by /OPT:REF, that erased a range of texture keys.  Its name and
-// body are not recoverable; this stand-in reproduces only the instantiation.
+// rndobj:Utl.obj with no in-unit caller either: some code in this obj erased
+// a range of texture keys, and either it was discarded by /OPT:REF or every
+// call it made was inlined (MSVC still emits a used inline function's COMDAT
+// then; see VertVector::clear in bandobj/ChordShapeGenerator.cpp).  Which code
+// it was is not recoverable; this stand-in reproduces only the instantiation.
 // It must be external -- MSVC drops an unreferenced static before
 // instantiating through it.
 void RndUtlDiscardedTexKeyErase(RndMatAnim *matanim, int lo, int hi) {
