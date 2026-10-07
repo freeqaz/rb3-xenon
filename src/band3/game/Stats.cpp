@@ -50,26 +50,10 @@ void __adjust_heap<PairIF *, long, PairIF, SingerStats::PartPercentageSorter>(
     (__first + __holeIndex)->second = __val_second;
 }
 
-template <>
-PairIF *
-__unguarded_partition<PairIF *, PairIF, SingerStats::PartPercentageSorter>(
-    PairIF *__first,
-    PairIF *__last,
-    PairIF __pivot,
-    SingerStats::PartPercentageSorter
-) {
-    for (;;) {
-        while (__first->second > __pivot.second)
-            ++__first;
-        --__last;
-        while (__pivot.second > __last->second)
-            --__last;
-        if (!(__first < __last))
-            return __first;
-        iter_swap(__first, __last);
-        ++__first;
-    }
-}
+// __unguarded_partition: no specialization. Retail 0x82697FE8 (136 B) is the
+// stock STLport template, comparator included: it materializes the
+// PartPercentageSorter result as a bool (li 1 / bgt / li 0 / clrlwi.) before
+// each branch.
 
 // __insertion_sort: retail TU5 uses the stock STLport template (out-of-line
 // __linear_insert per element), so no specialization here.

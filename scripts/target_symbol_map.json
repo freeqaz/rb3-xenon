@@ -19921,6 +19921,7 @@
  "0x82697ec8": "?GetSingerRankedPercentage@Stats@@QBAMHH@Z",
  "0x82697ee8": "?GetSingerRankedPart@Stats@@QBAHHH@Z",
  "0x82697f00": "?SaveSingerStats@Stats@@QBAXAAVBinStream@@@Z",
+ "0x82697fe8": "??$__unguarded_partition@PAU?$pair@HM@stlpmtx_std@@U12@UPartPercentageSorter@SingerStats@@@stlpmtx_std@@YAPAU?$pair@HM@0@PAU10@0U10@UPartPercentageSorter@SingerStats@@@Z",
  "0x82698070": "?SaveForEndGame@Stats@@QBAXAAVBinStream@@@Z",
  "0x82698470": "??$__uninitialized_fill_n@PAUBone@CharBones@@IU12@@stlpmtx_std@@YAPAUBone@CharBones@@PAU12@IABU12@ABU__false_type@0@@Z",
  "0x82698540": "??0?$vector@VStreakInfo@Stats@@V?$StlNodeAlloc@VStreakInfo@Stats@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABVStreakInfo@Stats@@ABV?$StlNodeAlloc@VStreakInfo@Stats@@@1@@Z",
