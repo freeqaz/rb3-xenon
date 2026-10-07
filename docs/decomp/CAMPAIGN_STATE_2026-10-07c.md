@@ -406,7 +406,7 @@ read can still hide behaviour. Lever 1 is every population like that, in both ri
    drained (5 files / 2,032 B, all excluded with reasons).
 4. **[B] `SendDataPoint<const char*,int>`'s caller: 100 B in the ceiling.** Its only retail caller is the unpinned
    `auto_03_825632BC_text` (35 rows / 4,392 B, outside the ceiling). That is TU5 RBN-audition code (`"rbn/audition/fail"`)
-   with no source in DC3, rb3-Wii or this tree (W16-TH). Closing the row needs that TU identified and written from
+   with no source in DC3 or this tree (W16-TH). Closing the row needs that TU identified and written from
    retail bytes. Native value is low: it is telemetry.
 5. **[C] Identification residue: 207 rows / 14,652 B** (in scope 118 / 8,384, VIA-DC3 89 / 6,268). This round's
    re-homes drained 4 rows / 272 B in passing. It is bookkeeping unless a new channel appears.
