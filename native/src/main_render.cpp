@@ -5184,6 +5184,9 @@ static bool gNoW16UB = false;
 // native/src/w16uf_phase.cpp (W16-UF)
 int RunW16UFPhase(void (*gate)(const char *, bool, const char *));
 static bool gNoW16UF = false;
+// native/src/w16uj_phase.cpp (W16-UJ)
+int RunW16UJPhase(void (*gate)(const char *, bool, const char *));
+static bool gNoW16UJ = false;
 
 int main(int argc, char **argv) {
     // Line-buffer: a SIGSEGV inside the renderer would otherwise discard the
@@ -5223,6 +5226,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--no-w16ty") == 0) gNoW16TY = true;
         else if (strcmp(argv[i], "--no-w16ub") == 0) gNoW16UB = true;
         else if (strcmp(argv[i], "--no-w16uf") == 0) gNoW16UF = true;
+        else if (strcmp(argv[i], "--no-w16uj") == 0) gNoW16UJ = true;
         else if (strcmp(argv[i], "--crowd-all") == 0) gCrowdShowAll = true;
         else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
@@ -5503,6 +5507,12 @@ int main(int argc, char **argv) {
     // default-mode rule; --no-w16uf opts out.
     if (pos.size() == 2 && !gNoW16UF)
         RunW16UFPhase(Gate);
+    // W16-UJ: all 52 shipped venue milos loaded and unloaded one at a time
+    // (stream audit quiet, failed-read counter), and float Min/Max/Clamp
+    // against retail's fsel on NaN (native/src/w16uj_phase.cpp). Same
+    // default-mode rule; --no-w16uj opts out.
+    if (pos.size() == 2 && !gNoW16UJ)
+        RunW16UJPhase(Gate);
 
     printf("\n=== summary ===\n");
     for (size_t i = 0; i < cells.size(); i++) {

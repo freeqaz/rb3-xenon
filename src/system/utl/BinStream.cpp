@@ -136,9 +136,18 @@ void BinStream::EnableWriteEncryption() {
     mCrypto = new Rand2(i);
 }
 
+#ifdef HX_NATIVE
+// W16-UJ: reads attempted on a failed stream, process-wide. The notice above
+// fires once per process, so a gate counts this instead.
+int gNativeFailedStreamReads;
+#endif
+
 void BinStream::Read(void *data, int bytes) {
     if (Fail()) {
         MILO_NOTIFY_ONCE("Stream error: Can't read from %s", Name());
+#ifdef HX_NATIVE
+        gNativeFailedStreamReads++;
+#endif
         memset(data, 0, bytes);
     } else {
 #ifdef HX_NATIVE
