@@ -85,44 +85,22 @@ void RndShaderMgr::Terminate() {
 }
 
 void RndShaderMgr::UpdateCache(const Transform &xfm, int idx) {
-    // Cache pointer - accessing mConstantCache[idx * 12]
+    float t[12] = { xfm.m.x.x, xfm.m.y.x, xfm.m.z.x, xfm.v.x,
+                    xfm.m.x.y, xfm.m.y.y, xfm.m.z.y, xfm.v.y,
+                    xfm.m.x.z, xfm.m.y.z, xfm.m.z.z, xfm.v.z };
     float *p = &mConstantCache[idx * 12];
-
-    // Load transform components - declaration order affects register allocation.
-    // MEASURED (laneAW-unitsb): MSVC hoists all 12 loads in DECLARATION order,
-    // then SINKS exactly the one load feeding the FIRST store (the only legal
-    // sink) to sit immediately before it. Retail performs NO such sink: its load
-    // order is exactly the store order 0x00,0x10,0x20,0x30,0x04,... and its
-    // last-loaded f3 (0x38) is stored LAST. So no permutation of this
-    // decl/store shape can reach it -- the residue is the sink itself.
-    // Tried: decl==store order -> 97.4%; no temporaries (direct p[i]=xfm...)
-    // -> 67.9% (interleaves load/store pairs). This order is the best at 98.7%.
-    float xz = xfm.m.x.z;
-    float yx = xfm.m.y.x;
-    float zx = xfm.m.z.x;
-    float yz = xfm.m.y.z;
-    float xy = xfm.m.x.y;
-    float tz = xfm.v.z;
-    float xx = xfm.m.x.x;
-    float zy = xfm.m.z.y;
-    float ty = xfm.v.y;
-    float yy = xfm.m.y.y;
-    float tx = xfm.v.x;
-    float zz = xfm.m.z.z;
-
-    // Store in column-major order for GPU shader constants (transpose)
-    p[0] = xx;
-    p[1] = yx;
-    p[2] = zx;
-    p[3] = tx;
-    p[4] = xy;
-    p[5] = yy;
-    p[6] = zy;
-    p[7] = ty;
-    p[8] = xz;
-    p[9] = yz;
-    p[10] = zz;
-    p[11] = tz;
+    p[0] = t[0];
+    p[1] = t[1];
+    p[2] = t[2];
+    p[3] = t[3];
+    p[4] = t[4];
+    p[5] = t[5];
+    p[6] = t[6];
+    p[7] = t[7];
+    p[8] = t[8];
+    p[9] = t[9];
+    p[10] = t[10];
+    p[11] = t[11];
 }
 
 void RndShaderMgr::ShaderPoolAlloc(int i) { mShaderPoolAlloc = i; }

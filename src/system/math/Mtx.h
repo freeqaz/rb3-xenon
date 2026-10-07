@@ -300,11 +300,14 @@ public:
 class Plane {
 public:
     Plane() {}
+    // d reads `normal`, not the a/b/c just stored: retail reloads the normal
+    // after the three stores (CharCollide::Highlight), which only happens when
+    // the stores to `this` may alias the reference being read.
     Plane(const Vector3 &point, const Vector3 &normal) {
         a = normal.x;
         b = normal.y;
         c = normal.z;
-        d = -(a * point.x + b * point.y + c * point.z);
+        d = -(normal.x * point.x + normal.y * point.y + normal.z * point.z);
     }
 
     void Set(const Vector3 &, const Vector3 &, const Vector3 &);

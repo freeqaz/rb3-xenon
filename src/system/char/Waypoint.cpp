@@ -246,8 +246,8 @@ void Waypoint::ShapeDeltaBox(const Vector3 &v1, float f1, float f2, Vector3 &res
     const Transform &world = WorldXfm();
     if (f2 > 0.0f) {
         Subtract(v1, WorldXfm().v, res);
-        float dotx = Dot(res, world.m.x);
-        float doty = Dot(world.m.y, res);
+        float dotx = (res.z * world.m.x.z + res.y * world.m.x.y) + res.x * world.m.x.x;
+        float doty = (world.m.y.z * res.z + world.m.y.x * res.x) + world.m.y.y * res.y;
         float clamped1 = Clamp(-f1, f1, dotx);
         float clamped2 = Clamp(-f2, f2, doty);
         Scale(world.m.x, clamped1 - dotx, res);

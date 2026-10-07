@@ -1109,24 +1109,20 @@ RndDrawable *DrawPtrVec::CollideShowing(const Segment &s, float &dist, Plane &pl
 int CharPollableSorter::sSearchID = 0;
 
 void CharPollableSorter::AddDeps(
-    Dep *dep,
-    const std::list<Hmx::Object *> &objs,
-    std::list<Dep *> &deps,
-    bool isChangedBy
+    Dep *me, const std::list<Hmx::Object *> &odeps, std::list<Dep *> &toDo, bool changedBy
 ) {
-    for (std::list<Hmx::Object *>::const_iterator it = objs.begin(); it != objs.end();
-         ++it) {
+    FOREACH (it, odeps) {
         Hmx::Object *cur = *it;
         if (cur) {
-            Dep *mapDep = &mDeps[cur];
-            if (!mapDep->obj) {
-                mapDep->obj = cur;
-                deps.push_back(mapDep);
+            Dep &mapDep = mDeps[cur];
+            if (!mapDep.obj) {
+                mapDep.obj = cur;
+                toDo.push_back(&mapDep);
             }
-            if (isChangedBy) {
-                dep->changedBy.push_back(mapDep);
+            if (changedBy) {
+                me->changedBy.push_back(&mapDep);
             } else {
-                mapDep->changedBy.push_back(dep);
+                mapDep.changedBy.push_back(me);
             }
         }
     }

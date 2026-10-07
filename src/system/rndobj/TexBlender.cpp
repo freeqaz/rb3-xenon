@@ -199,13 +199,13 @@ void RndTexBlender::DrawShowing() {
         RndTexBlendController::BlendState state = ctrl->GetBlendState(blendAmount, influence);
         switch (state) {
         case RndTexBlendController::kBlendNear:
-            nearList.push_back(std::pair<RndTexBlendController *, float>(ctrl, blendAmount));
+            nearList.push_back(std::make_pair(ctrl, blendAmount));
             break;
         case RndTexBlendController::kBlendFar:
-            farList.push_back(std::pair<RndTexBlendController *, float>(ctrl, blendAmount));
+            farList.push_back(std::make_pair(ctrl, blendAmount));
             break;
         case RndTexBlendController::kBlendCustom:
-            customList.push_back(std::pair<RndTexBlendController *, float>(ctrl, blendAmount));
+            customList.push_back(std::make_pair(ctrl, blendAmount));
             break;
         }
     }
@@ -254,7 +254,8 @@ void RndTexBlender::DrawShowing() {
 
     // The near and far passes have DrawBlendList's shape: no mesh null test,
     // and the faces are drawn through each mesh's geometry owner.
-    RndTex *nearTex = mNearMap;
+    TexState nearState = kTexNear;
+    RndTex *nearTex = nearState == kTexNear ? mNearMap : mFarMap;
     if (nearTex && !nearList.empty()) {
         mRenderedStates |= kTexNear;
         RndMat *mat = TheShaderMgr.GetWork();
@@ -293,7 +294,8 @@ void RndTexBlender::DrawShowing() {
         }
     }
 
-    RndTex *farTex = mFarMap;
+    TexState farState = kTexFar;
+    RndTex *farTex = farState == kTexNear ? mNearMap : mFarMap;
     if (farTex && !farList.empty()) {
         mRenderedStates |= kTexFar;
         RndMat *mat = TheShaderMgr.GetWork();

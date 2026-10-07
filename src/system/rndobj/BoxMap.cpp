@@ -200,9 +200,16 @@ void BoxMapLighting::ApplyLight(
     for (unsigned int i = 0; i < arr.NumElements(); i++) {
         const LightParams_Point &light = arr[i];
         if (light.mRange > light.mFalloffStart) {
-            Vector3 &dir = *(Vector3 *)&gLightBuffer1[gLightIndex];
-            Subtract(light.mPosition, viewPos, dir);
-            float distSq = LengthSquared(dir);
+            // Retail (BoxMap ApplyLight<Point>) stores dir.red, re-reads it for
+            // distSq, and scales the three components only after the colour
+            // stores; it computes dy, then dx, then dz.
+            Hmx::Color &dir = gLightBuffer1[gLightIndex];
+            float dy = light.mPosition.y - viewPos.y;
+            dir.red = light.mPosition.x - viewPos.x;
+            float dz = light.mPosition.z - viewPos.z;
+            dir.green = dy;
+            dir.blue = dz;
+            float distSq = dy * dy + dir.red * dir.red + dz * dz;
             if (distSq > 0.0f) {
                 // The raw estimate, no Newton step: frsqrte then frsp.
                 float invDist = __frsqrte(distSq);
@@ -210,10 +217,13 @@ void BoxMapLighting::ApplyLight(
                 float atten = Max(
                     0.0f, 1.0f - dist / (light.mRange - light.mFalloffStart)
                 );
-                gLightBuffer2[gLightIndex].red = light.mColor.red * atten;
-                gLightBuffer2[gLightIndex].green = light.mColor.green * atten;
-                gLightBuffer2[gLightIndex].blue = light.mColor.blue * atten;
-                dir *= invDist;
+                Hmx::Color &col = gLightBuffer2[gLightIndex];
+                col.red = light.mColor.red * atten;
+                col.green = light.mColor.green * atten;
+                col.blue = light.mColor.blue * atten;
+                dir.red = dir.red * invDist;
+                dir.green = dy * invDist;
+                dir.blue = dz * invDist;
                 gLightIndex++;
             }
         }

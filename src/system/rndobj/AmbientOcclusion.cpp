@@ -42,36 +42,52 @@ bool RndAmbientOcclusion::Edge::operator<(const Edge &other) const {
 void RndAmbientOcclusion::BlendVert(
     const RndMesh::Vert &v1, const RndMesh::Vert &v2, RndMesh::Vert &out
 ) {
-    // 0x8248C750: member-wise += then *= 0.5f; the tangent is copied out as a
-    // whole 16-byte Vector3 before the add.
     memcpy(&out, &v1, sizeof(RndMesh::Vert));
-    out.pos += v2.pos;
+    Add(v2.pos, out.pos, out.pos);
     out.tex += v2.tex;
-    out.color.red += v2.color.red;
-    out.color.green += v2.color.green;
-    out.color.blue += v2.color.blue;
-    out.color.alpha += v2.color.alpha;
-    out.norm += v2.norm;
-    Vector3 tang;
-    memcpy(&tang, &out.tangent, sizeof(Vector3));
-    tang.x += v2.tangent.x;
-    tang.y += v2.tangent.y;
-    tang.z += v2.tangent.z;
+    Add(v2.color, out.color, out.color);
+    Add(v2.norm, out.norm, out.norm);
+    // NEGATIVE RESULT 2026-09-14 (w7-ae), 85.7% canonical.  The interleaving
+    // below is load-bearing and two variants that tidy it up both REGRESS:
+    //   * hoisting `tang.z`/`tang.y` to sit right after `tang.x` (which is where
+    //     the image's `lfs 0x54(r30)` / `lfs 0x58(r30)` appear, at target
+    //     AmbientOcclusion.obj offsets 0x818 and 0x834, interleaved into the
+    //     `out.pos *= 0.5f` block) measures
+    //     85.7 -> 78.9.  The image hoists only the LOADS; the adds and the
+    //     stores back into the stack copy stay after the colour multiply, so the
+    //     current statement order is already the one that produces them.
+    //   * replacing the three `out.tangent.<c> = tang.<c>` stores with a single
+    //     `(Vector3&)out.tangent = (const Vector3&)tang;` measures 85.7 -> 82.7.
+    //     It does fix the one real ordering row (we sink the 0x50 store past the
+    //     colour zeroing, the image does not) but costs more elsewhere.
+    // What is left after those is ~90 rows of pure FPR renaming with identical
+    // opcodes on both sides, plus ~4 rows where MSVC defers the `lfs 0x44(r30)`
+    // of `out.tex += v2.tex` past the store to out.tex.x -- i.e. our build proved
+    // the two Vert& do not alias and the image's did not.
+    // w7-bw (2026-09-15), 85.66912 -> 88.7: the colour zeroing at the end is
+    // Color::Set(0.0f) (its chained assignment stores alpha, blue, green, red
+    // = 0x3c..0x30 in that order) -- that also stops our build sinking the
+    // out.tangent.x store past the zeroing, so rows 121-142 now match.
+    // Refuted on top of that: out.tex.Set(x + v2.x, y + v2.y) fixes the tex
+    // block's load order but reshuffles the pos add (88.0); Scale(out.pos,
+    // 0.5f, out.pos) for the pos scaling is inert (88.7); `out.tex *= 0.5f`
+    // ahead of the tangent copy makes the pos add byte-exact but drags the
+    // tex scale up with it (75.4); reading v2.tangent.x/y/z into float locals
+    // before the scaling (the image holds them in f11/f13 across it) hoists
+    // the loads above the tangent copy instead (85.1).
+    Vector4 tang = out.tangent;
+    tang.x = v2.tangent.x + tang.x;
     out.pos *= 0.5f;
     out.tex *= 0.5f;
-    out.color.red *= 0.5f;
-    out.color.green *= 0.5f;
-    out.color.blue *= 0.5f;
-    out.color.alpha *= 0.5f;
+    Multiply(out.color, 0.5f, out.color);
+    tang.z = v2.tangent.z + tang.z;
+    tang.y = v2.tangent.y + tang.y;
     Normalize(out.norm, out.norm);
-    Normalize(tang, tang);
+    Normalize((Vector3 &)tang, (Vector3 &)tang);
     out.tangent.x = tang.x;
     out.tangent.y = tang.y;
     out.tangent.z = tang.z;
-    out.color.alpha = 0.0f;
-    out.color.blue = 0.0f;
-    out.color.green = 0.0f;
-    out.color.red = 0.0f;
+    out.color.Set(0.0f);
 }
 
 bool IsValidObject(Hmx::Object *obj) {
@@ -1712,7 +1728,9 @@ Triangle* vector<Triangle, StlNodeAlloc<Triangle>>::_M_erase(
 ) {
     Triangle* __pos = __first;
     Triangle* __src = __last;
-    int __count = (int)((this->_M_finish - __src) / (unsigned int)sizeof(Triangle));
+    // Element count: retail is a single srawi. of the byte span. Dividing the
+    // pointer difference by sizeof again moved only 1/64 of the tail.
+    int __count = (int)(this->_M_finish - __src);
 
     for (; __count > 0; __count--) {
         memcpy(__pos, __src, sizeof(Triangle));

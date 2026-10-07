@@ -663,9 +663,10 @@ void RndText::SetLeading(float f) {
 }
 
 const char *
-RndText::ParseMarkup(const char *cc, RndText::Style *style, float f3, float f4) const {
-    const char *ptr = cc + 1;
-    bool b1 = *ptr == '/';
+RndText::ParseMarkup(const char *ptr, RndText::Style *style, float f3, float f4) const {
+    // The cursor IS the parameter: retail promotes r4 into r29 and folds the
+    // pre-increment into `lbzu r11, 0x1(r29)`.
+    bool b1 = *++ptr == '/';
     if (b1)
         ptr++;
     if (strnicmp(ptr, "sup", 3) == 0) {
@@ -757,10 +758,12 @@ void RndText::ComputeCharWidths(float *fp, int i2, const char *cc, Style style) 
             if (i4) {
                 float fVal = i4->CharAdvance(u7, us68) * style.mSize;
                 fp[i] = fVal;
-                u7 = us68;
                 if (fVal < 0)
                     fp[i] = 0;
                 FontKey key = (FontKey)i4;
+                // Retail reloads us68 into u7 after storing key, just before
+                // the map lookup.
+                u7 = us68;
                 mMeshMap[key].displayableChars++;
             } else
                 fp[i] = 0;

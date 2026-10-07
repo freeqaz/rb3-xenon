@@ -815,10 +815,11 @@ void TransformKeys(RndTransAnim *tanim, const Transform &tf) {
          ++it) {
         Multiply(it->value, tf, it->value);
     }
+    auto _tmp3 = tanim->ScaleKeys().end();
     for (Keys<Vector3, Vector3>::iterator it = tanim->ScaleKeys().begin();
-         it != tanim->ScaleKeys().end();
+         it != _tmp3;
          ++it) {
-        Scale(it->value, v48.x, it->value);
+        Scale(it->value, v48, it->value);
     }
     for (Keys<Hmx::Quat, Hmx::Quat>::iterator it = tanim->RotKeys().begin();
          it != tanim->RotKeys().end();
@@ -1030,131 +1031,180 @@ void UtilDrawCigar(
     const Hmx::Color &col,
     int segments
 ) {
-    float len2 = lengths[2];
-    float len1 = lengths[1];
-    float len0 = lengths[0];
-    float scale = sqrtf(len2 * len2 + len0 * len0 + len1 * len1);
-    float scaledLens[3];
+    // The scale factor comes out of the TRANSFORM, not out of `lengths`: retail
+    // loads 0x4/0x0/0x8 off r3 (= tf) here, and the memcpy that fills `basis`
+    // reads r11, which is the saved r3, not r5.  This is Length(tf.m.x), the
+    // uniform scale baked into the transform -- exactly what RB3's copy of this
+    // function spells as `lengths[i] * Length(tf.m.x)` and `Transform basis = tf`.
+    float mz = tf.m.x.z;
+    float my = tf.m.x.y;
+    float mx = tf.m.x.x;
+    float scale = sqrtf(mz * mz + mx * mx + my * my);
+    // Only two entries: retail's ctr for the scaling loop is a literal 2
+    // (li r9,0x2 / mtctr r9), and only [0] and [1] are ever read back.
     Transform basis;
-
+    float sLen0;
+    float sLen1;
     {
-        int cnt = 3;
-        float *dst = scaledLens;
-        do {
-#ifdef HX_NATIVE
-            *dst =
-                *(float *)((intptr_t)(lengths) + ((intptr_t)dst - (intptr_t)scaledLens))
-                * scale;
-#else
-            *dst = *(float *)((int)(lengths) + ((int)dst - (int)scaledLens)) * scale;
-#endif
-            dst++;
-            cnt--;
-        } while (cnt != 0);
+        float scaledLens[2];
+        for (int n = 0; n < 2; n++) {
+            scaledLens[n] = lengths[n] * scale;
+        }
+        memcpy(&basis, &tf, 0x40);
+        Normalize(basis.m, basis.m);
+
+        sLen0 = scaledLens[0];
+        sLen1 = scaledLens[1];
     }
-    memcpy(&basis, lengths, 0x40);
-    Normalize(basis.m, basis.m);
 
-    float sLen0 = scaledLens[0];
-    float sLen1 = scaledLens[1];
-
+    // Two behavioural bugs fixed here, both visible in retail's stores:
+    //  1. The cap apex sits on the LOCAL X AXIS, not Y.  Retail writes the
+    //     computed value to 0x60(r1) -- offset 0 of the temp vector -- and zeroes
+    //     0x64/0x68, i.e. Set(value, 0, 0).  That is the same axis the ring
+    //     vertices use (v1/v2 take the axial coordinate as their x), so putting
+    //     it in y put both caps off the cigar's axis.
+    //  2. Retail transforms through a SEPARATE temp (in = 0x60, out = 0x90 /
+    //     0xa0); we were transforming in place.
+    // Retail's frame is 0x3d0 and ours WAS 0x3e0: retail coalesces the int->float
+    // conversion scratch double into the dead `scaledLens` slot (0x50, accessed
+    // again at the (float)i conversions), while MSVC gave us a fresh 0x90 and
+    // pushed top/bottom/basis/both vertex arrays up by 0x10.  Hoisting `end` out
+    // of a nested block recovered 0.1pp of that; swapping the declaration order of
+    // `end` and `scaledLens` to give scaledLens the lower slot was byte-identical
+    // (measured 2026-09-14, two consecutive neutral variants).
+    //
+    // w7-bo (2026-09-15): THE 0x10 IS CLOSED, and declaration order was never the
+    // lever -- LIFETIME was.  `scaledLens` and the do-loop that fills it now live in
+    // their own block, with `sLen0`/`sLen1` declared outside it, so the array is dead
+    // the moment the block ends and MSVC reuses 0x50 for the conversion double exactly
+    // as retail does.  Frame 0x3e0 -> 0x3d0 (prologue `stwu r1, -0x3d0(r1)` now equal),
+    // all 38 +/-0x10 offset rows closed, canonical 91.94 -> 92.31193, mismatch rows
+    // 97 -> 72.  See docs/decomp/patterns/lexical-scope-controls-msvc-stack-slots.
+    // w7-bo (2026-09-15) measured negatives on the two remaining small clusters,
+    // both BYTE-IDENTICAL (canonical 92.31193 unchanged, same 72 rows):
+    //  - swapping the declaration order of `top` and `bottom` to chase the 0x90/0xa0
+    //    permutation (retail puts `top` at 0x90; we get 0xa0).  MSVC assigns these two
+    //    same-sized Vector3 temps by use, not by declaration order.
+    //  - writing the three `sin * radii[]` products as `radii[] * sin` to chase
+    //    idx 82/88/50 (retail `fmuls f27,f1,f0`, we emit `fmuls f28,f13,f0`; retail
+    //    `fadds f0,f24,f0`, we emit `fadds f0,f0,f24`).  MSVC canonicalises fmuls/fadds
+    //    operand order from its register assignment, not from the source order, so the
+    //    readable order stays.
+    // w7-bs (2026-09-15): the fmadds row (retail `fmuls f0,f1,f0` + `fadds
+    // f27,f0,f24` at 0x8262D384/D38C) is CLOSED by H2 below -- see the note above
+    // the inner loop.  Two further byte-identical negatives (95.3 canonical, same
+    // 54 rows both times): constructing `end` with its value (`Vector3 end(sLen0 -
+    // radii[0], 0, 0)`) instead of Set(), and declaring `v2` before `v1` in the
+    // inner loop.  What is left on this function after H1/H2 is register and
+    // slot assignment only: `top`/`bottom` at 0x90/0xa0 vs our 0xa0/0x90 (rows
+    // 33-50, which also drags the sLen0 reload and the `fadds f0,f24,f0` operand
+    // order), `v1`/`v2` at 0x70/0x80 vs our 0x80/0x70 (rows 107-127), h0 in f27
+    // vs our f28 with the matching `fmr` placement (rows 79-93), TheRnd's base in
+    // r30 vs our r28 (canonical-forgiven), and the `li` order in the ring-index
+    // loop (rows 153-161).  Both slot pairs are same-sized Vector3 temps that
+    // MSVC assigns by use, not declaration order, and the documented pinned-region
+    // slot order is still unresolved (docs/decomp/patterns/stack-slot-sharing.md).
+    // w16-a (95.25 -> 98.02): the scaledLens fill is a PLAIN `for (n < 2)`
+    // loop -- MSVC itself strength-reduces lengths[n] off the dst pointer,
+    // which is the odd `lengths + (dst - scaledLens)` address the old
+    // hand-stepped do/while spelled out.  Left: the top/bottom (0x90/0xa0) and
+    // v1/v2 (0x80/0x70) slot pairs and the h0 `fmr` placement listed above.
+    // Passing v1/v2 as unnamed Vector3 temporaries to Multiply is inert.
+    Vector3 end;
     Vector3 top;
-    top.Set(0, sLen0 - radii[0], 0);
-    Multiply(top, basis, top);
-
     Vector3 bottom;
-    bottom.Set(0, sLen1 + radii[1], 0);
-    Multiply(bottom, basis, bottom);
+    end.Set(sLen0 - radii[0], 0, 0);
+    Multiply(end, basis, top);
+    end.Set(sLen1 + radii[1], 0, 0);
+    Multiply(end, basis, bottom);
 
     float angle2Pi = 1.0471975803375244f;
     float anglePiHalf = 1.5707963705062866f;
     float anglePi6 = 0.5235987901687622f;
 
-    // Arrays use 16-byte stride per element (4 floats per Vector3)
-    // 18 entries each (3 rings × 6 vertices)
-    float verts2e0[18 * 4];
-    float verts1c0[18 * 4];
+    // 18 entries each (3 rings x 6 vertices).  Vector3 carries its own 4-byte
+    // PAD member, so sizeof is 16.
+    //
+    // w7-bs (2026-09-15), H1: the index is spelled `iIdx * 6 + iLon` and the outer
+    // loop is bounded by `iIdx < 3`.  MSVC strength-reduces `iIdx * 6` into its own
+    // induction variable (retail's r28, stepping by 6, LFTR test `cmpwi r28,0x12`
+    // at 0x8262D410) but does NOT strength-reduce the derived-of-derived `idx`, so
+    // `add r10,r28,r31` / `slwi r29,r10,4` (0x8262D3D0/D3DC) are recomputed per
+    // iteration exactly as retail does.  The earlier `iLatSum` source-level IV was
+    // what let MSVC fuse both loops into one byte cursor (`addi r30,r30,0x10` /
+    // `cmpwi r30,0x120`) -- an IV that already IS the sum has nothing left to
+    // reduce, so it becomes the cursor.  92.31193 -> 95.1 canonical, 72 -> 53 rows.
+    // H2: the apex offsets `sLen0 - h0` / `sLen1 + h1` are written INSIDE the
+    // inner loop (in the Vector3 ctor call).  LICM hoists them to the outer loop
+    // as stand-alone `fsubs`/`fadds` (retail 0x8262D38C `fadds f27,f0,f24`),
+    // which is why retail has no fmadds there; a separate `h1 = h1raw + sLen1`
+    // statement in the outer loop is contracted under /fp:fast.  95.1 -> 95.3.
+    Vector3 verts2e0[18];
+    Vector3 verts1c0[18];
 
-    int iIdx = 0;
-    int iLatSum = 0;
-    do {
+    for (int iIdx = 0; iIdx < 3; iIdx++) {
         float latVal = (float)iIdx * anglePi6;
         float sinLatPi2 = FastSin(latVal + anglePiHalf);
-        // Single-precision in retail: every radius/sine product in
-        // fn_8243A868 is an `fmuls`, and both of the function's two `frsp`
-        // belong to the two `fcfid` int->float casts, so none is
-        // attributable to a double intermediate.
+        // These radii and the two sines below are single-precision in retail
+        // (fmuls, no frsp).  Holding them as double makes MSVC emit a `fmul`
+        // plus a `frsp` at every use.
         float r0 = radii[0] * sinLatPi2;
         float sinLat = FastSin(latVal);
         float h0 = sinLat * radii[0];
         float sinLatPi2b = FastSin(latVal + anglePiHalf);
         float r1 = sinLatPi2b * radii[1];
         float sinLatb = FastSin(latVal);
-        float h0b = sLen0 - h0;
-        int iLon = 0;
-        float h1 = sinLatb * radii[1] + sLen1;
-        do {
+        float h1 = sinLatb * radii[1];
+        for (int iLon = 0; iLon < 6; iLon++) {
             float lonVal = (float)iLon * angle2Pi;
             float sinLon = FastSin((float)iLon * angle2Pi);
             float sinLonPi2 = FastSin(lonVal + anglePiHalf);
-            int idx = (iLatSum + iLon) * 4;
-            Vector3 v1(h0b, sinLonPi2 * r0, sinLon * r0);
-            Multiply(v1, basis, *(Vector3 *)&verts1c0[idx]);
-            // Retail's v2 uses the SAME phase convention as v1: the stores at
-            // 0x74/0x78 read f22 (the lonVal+pi/2 sine) then f21 (the plain
-            // lonVal sine), exactly as v1's 0x84/0x88 do.  Ours had y/z
-            // swapped, rotating the second ring 90 degrees in that plane.
-            Vector3 v2(h1, sinLonPi2 * r1, sinLon * r1);
-            Multiply(v2, basis, *(Vector3 *)&verts2e0[idx]);
-            iLon = iLon + 1;
-        } while (iLon < 6);
-        iLatSum = iLatSum + 6;
-        iIdx = iIdx + 1;
-    } while (iLatSum < 0x12);
+            int idx = iIdx * 6 + iLon;
+            Vector3 v1(sLen0 - h0, sinLonPi2 * r0, sinLon * r0);
+            Multiply(v1, basis, verts1c0[idx]);
+            // y takes the cos-phase sine and z the sin-phase one, the same way
+            // round as v1 -- retail's stores at 0x74/0x78 read f22 (the
+            // lonVal+pi/2 result) then f21 (the plain lonVal result).
+            Vector3 v2(sLen1 + h1, sinLonPi2 * r1, sinLon * r1);
+            Multiply(v2, basis, verts2e0[idx]);
+        }
+    }
 
-    int i = 0;
-    do {
-        TheRnd.DrawLine(
-            *(Vector3 *)&verts2e0[i * 4], *(Vector3 *)&verts1c0[i * 4], col, false
-        );
-        i = i + 1;
-    } while (i < 6);
+    for (int i = 0; i < 6; i++) {
+        TheRnd.DrawLine(verts2e0[i], verts1c0[i], col, false);
+    }
 
-    int iRing = 0;
-    do {
-        int iJ = 0;
+    for (int iRing = 0; iRing < 3; iRing++) {
         int iK = 5;
-        do {
-            int p1 = (iRing * 6 + iJ) * 4;
-            int p2 = (iRing * 6 + iK) * 4;
-            TheRnd.DrawLine(
-                *(Vector3 *)&verts2e0[p1], *(Vector3 *)&verts2e0[p2], col, false
-            );
-            Vector3 *pTop;
+        for (int iJ = 0; iJ < 6; iJ++) {
+            int p1 = iRing * 6 + iJ;
+            int p2 = iRing * 6 + iK;
+            TheRnd.DrawLine(verts2e0[p1], verts2e0[p2], col, false);
+            // Third behavioural bug: the caps were attached to the WRONG rings.
+            // verts2e0 is the radii[1]/sLen1 ring, so its last ring closes on
+            // `bottom` (retail: addi r5,r1,0xa0), and verts1c0 -- the
+            // radii[0]/sLen0 ring -- closes on `top` (addi r5,r1,0x90).  We had
+            // each ring reaching across to the other cap's apex.
+            Vector3 *pEnd2;
             if (iRing == 2) {
-                pTop = &top;
+                pEnd2 = &bottom;
             } else {
-                pTop = (Vector3 *)&verts2e0[p1 + 6 * 4];
+                pEnd2 = &verts2e0[p1 + 6];
             }
-            TheRnd.DrawLine(*(Vector3 *)&verts2e0[p1], *pTop, col, false);
-            TheRnd.DrawLine(
-                *(Vector3 *)&verts1c0[p1], *(Vector3 *)&verts1c0[p2], col, false
-            );
-            Vector3 *pBottom;
+            TheRnd.DrawLine(verts2e0[p1], *pEnd2, col, false);
+            TheRnd.DrawLine(verts1c0[p1], verts1c0[p2], col, false);
+            Vector3 *pEnd1;
             if (iRing == 2) {
-                pBottom = &bottom;
+                pEnd1 = &top;
             } else {
-                pBottom = (Vector3 *)&verts1c0[p1 + 6 * 4];
+                pEnd1 = &verts1c0[p1 + 6];
             }
-            TheRnd.DrawLine(*(Vector3 *)&verts1c0[p1], *pBottom, col, false);
-            // iK trails iJ by one.  RB3's loop tail is `mr r11,r27` then
-            // `addi r27,r27,1` then `cmpwi cr6,r27,6` -- iK takes the old iJ
-            // with no staged temp, and the compare is on the INCREMENTED iJ.
+            TheRnd.DrawLine(verts1c0[p1], *pEnd1, col, false);
+            // iK trails iJ by one; retail keeps both in place (mr iK, iJ then
+            // addi iJ, iJ, 1) rather than staging the old value in a temp.
             iK = iJ;
-            iJ = iJ + 1;
-        } while (iJ < 6);
-        iRing = iRing + 1;
-    } while (iRing < 3);
+        }
+    }
 }
 
 // Retail takes no trailing bool: its only caller (CharCollide::Highlight)
@@ -1682,28 +1732,29 @@ void MakeNormals(RndMesh *m) {
     int numVerts = m->Verts().size();
     std::vector<int> repVerts(numVerts);
     for (int i = 0; i < m->Verts().size(); i++) {
-        const Vector3 &pos = m->Verts()[i].pos;
-        int rep = i;
-        for (int j = 0; j < i; j++) {
+        // The target re-derives Verts() for both vertices inside the j loop: there
+        // is no hoisted `pos` reference and no `rep` local (the loop counter itself
+        // is what gets stored). Caching either costs an extra callee-saved GPR.
+        int j;
+        for (j = 0; j < i; j++) {
             const Vector3 &otherPos = m->Verts()[j].pos;
-            if (fabsf(pos.x - otherPos.x) <= 0.001f && fabs(pos.y - otherPos.y) <= 0.001f
+            const Vector3 &pos = m->Verts()[i].pos;
+            if (fabs(pos.x - otherPos.x) <= 0.001f && fabs(pos.y - otherPos.y) <= 0.001f
                 && fabs(pos.z - otherPos.z) <= 0.001f) {
-                rep = j;
                 break;
             }
         }
-        repVerts[i] = rep;
+        repVerts[i] = j;
     }
 
     for (int i = 0; i < m->Verts().size(); i++) {
         m->Verts()[i].norm.Zero();
 
-        int rep = repVerts[i];
         for (int f = 0; f < m->Faces().size(); f++) {
             RndMesh::Face &face = m->Faces()[f];
             int k;
             for (k = 0; k < 3; k++) {
-                if (repVerts[face[k]] == rep)
+                if (repVerts[face[k]] == repVerts[i])
                     break;
             }
             if (k != 3) {
@@ -1731,12 +1782,45 @@ void MakeNormals(RndMesh *m) {
                             float angle = (float)acos((double)(e2.x * e1.x + e2.y * e1.y
                                                                + e2.z * e1.z));
 
-                            crossProd.x *= angle;
-                            crossProd.y *= angle;
-                            crossProd.z *= angle;
-                            m->Verts()[i].norm.x += crossProd.x;
-                            m->Verts()[i].norm.y += crossProd.y;
-                            m->Verts()[i].norm.z += crossProd.z;
+                            Vector3 weighted;
+                            Scale(crossProd, angle, weighted);
+                            // 99.98797, 9 rows, two clusters, both commutative
+                            // /scheduling ties with no source lever left:
+                            //  * [222]/[223] -- the crossProd fmuls/fmsubs
+                            //    multiply operands are the same two registers in
+                            //    the other order (f9/f13, f9/f0). The plain
+                            //    two-term same-register swap is the documented
+                            //    backend floor (stream3_fmuls_operand_order).
+                            //  * [249]/[250] + [265]..[270] -- the Add() below.
+                            //    The target adds and stores x, y, z; we add and
+                            //    store x, z, y, and the y/z halves of `weighted`
+                            //    land in the other FPR. The x row [265] is a bare
+                            //    commutative swap: the target emits
+                            //    norm.x + weighted.x (v1 first, as written), we
+                            //    emit weighted.x + norm.x.
+                            // Measured INERT (w7-m): swapping this call's first
+                            // two arguments to Add(weighted, norm, norm). The
+                            // object is byte-identical -- same 9 rows, same
+                            // registers -- which is the stop signal for the
+                            // commutative-order lever: the backend picks the
+                            // operand order here and source cannot reach it.
+                            // REFUTED (w9-f) -- and it is the y/z ORDER, not
+                            // Vec.h, that the four offset rows report.  Add()
+                            // ends in `dst.Set(v1.x+v2.x, v1.y+v2.y, v1.z+v2.z)`
+                            // and Vector3::Set assigns x, then y, then z, so the
+                            // source order is ALREADY the image's; MSVC reorders
+                            // the y and z halves on our side while inlining.
+                            // Expanding the call by hand to dodge the 3-argument
+                            // Set --
+                            //     Vector3 &norm = m->Verts()[i].norm;
+                            //     norm.x = norm.x + weighted.x;  (y, z likewise)
+                            // -- costs a callee-saved GPR for the reference and
+                            // collapses the function: 99.98799 -> 94.5 canonical,
+                            // 9 rows -> 86, the whole repVerts loop reallocated.
+                            // Do NOT reach for math/Vec.h here either: its order
+                            // is correct, it is PCH-reached, and there is nothing
+                            // in it to change.
+                            Add(m->Verts()[i].norm, weighted, m->Verts()[i].norm);
                         }
                     }
                 }
@@ -1745,10 +1829,7 @@ void MakeNormals(RndMesh *m) {
         Normalize(m->Verts()[i].norm, m->Verts()[i].norm);
 
         if (leftHanded) {
-            Vector3 &norm = m->Verts()[i].norm;
-            norm.x = -norm.x;
-            norm.y = -norm.y;
-            norm.z = -norm.z;
+            Negate(m->Verts()[i].norm, m->Verts()[i].norm);
         }
     }
     m->Sync(0x1F);
@@ -1914,44 +1995,35 @@ void ConvertBonesToTranses(ObjectDir *dir, bool b) {
 
 static const int kNumBloomTaps = 7;
 
-static float sBloomWeights[15] = { 0.0159283932f, 0.0270778369f, 0.0424231887f,
+void SetBloomBlurWeights(bool horizontal, float width, float height) {
+    static const float sBloomWeights[15] = { 0.0159283932f, 0.0270778369f, 0.0424231887f,
                                    0.0612547919f, 0.0815124959f, 0.0999667868f,
                                    0.1129886061f, 0.1176957935f, 0.1129886061f,
                                    0.0999667868f, 0.0815124959f, 0.0612547919f,
                                    0.0424231887f, 0.0270778369f, 0.0159283932f };
 
-static float sBloomOffsets[15] = { -6.5f, -5.5f, -4.5f, -3.5f, -2.5f, -1.5f, -0.5f, 0.5f,
+    static const float sBloomOffsets[15] = { -6.5f, -5.5f, -4.5f, -3.5f, -2.5f, -1.5f, -0.5f, 0.5f,
                                    1.5f,  2.5f,  3.5f,  4.5f,  5.5f,  6.5f,  7.5f };
 
-void SetBloomBlurWeights(bool horizontal, float width, float height) {
-    int numTaps = 15;
-    // RB3 retail's PShaderConstant base is 0x2f (verified: target `li r30,0x2f`);
-    // DC3 (newer, more shader constants) uses 0x9a. RB3-specific value.
-    int reg = 0x2f;
-    float one = 1.0f;
-    int i = 0;
     float invWidth = 1.0f / width;
     float invHeight = 1.0f / height;
-    TheShaderMgr.SetNumTaps(numTaps);
-    float zero = 0.0f;
-    do {
+    TheShaderMgr.SetNumTaps(15);
+    for (int i = 0; i < 15; i++) {
         float x, y;
         if (horizontal) {
             x = sBloomOffsets[i] * invWidth;
-            y = zero;
+            y = 0.0f;
         } else {
             y = sBloomOffsets[i] * invHeight;
-            x = zero;
+            x = 0.0f;
         }
-        Vector4 texOffset(x, y, one, one);
-        TheShaderMgr.SetPConstant((PShaderConstant)(reg - 0x10), texOffset);
+        Vector4 texOffset(x, y, 1.0f, 1.0f);
+        // RB3's tap constants start at 0x2f (offsets at 0x1f); DC3's at 0x9a.
+        TheShaderMgr.SetPConstant((PShaderConstant)(0x1f + i), texOffset);
         float w = sBloomWeights[i];
         Vector4 weight(w, w, w, w);
-        TheShaderMgr.SetPConstant((PShaderConstant)reg, weight);
-        numTaps--;
-        i++;
-        reg++;
-    } while (numTaps != 0);
+        TheShaderMgr.SetPConstant((PShaderConstant)(0x2f + i), weight);
+    }
 }
 
 void SetBloomBlurWeightsStreak(

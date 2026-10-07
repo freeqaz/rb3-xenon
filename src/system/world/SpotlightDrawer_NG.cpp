@@ -997,7 +997,9 @@ void vector<SpotMeshEntry, StlNodeAlloc<SpotMeshEntry>>::_M_fill_insert_aux(
         // Manual backward copy loop to match target codegen
         pointer src = __old_finish - __n;
         pointer dst = __old_finish;
-        for (int count = (src - __pos) / sizeof(SpotMeshEntry); count > 0; count--) {
+        // Element count (retail: one signed divw. of the byte span); dividing
+        // the pointer difference by sizeof again copied 1/80 of the tail.
+        for (int count = src - __pos; count > 0; count--) {
             dst--;
             src--;
             memcpy(dst, src, sizeof(SpotMeshEntry));
@@ -1029,15 +1031,13 @@ SpotMeshEntry* vector<SpotMeshEntry, StlNodeAlloc<SpotMeshEntry>>::_M_erase(
 ) {
     SpotMeshEntry* __pos = __first;
     SpotMeshEntry* __src = __last;
-    int __count = (this->_M_finish - __src) / 0x50;
+    // Element count; the extra / 0x50 moved only 1/80 of the tail.
+    int __count = this->_M_finish - __src;
 
-    if (__count > 0) {
-        do {
-            memcpy(__pos, __src, 0x50);
-            __count--;
-            __pos += 1;
-            __src += 1;
-        } while (__count != 0);
+    for (; __count > 0; __count--) {
+        memcpy(__pos, __src, 0x50);
+        __pos += 1;
+        __src += 1;
     }
 
     this->_M_finish = __pos;

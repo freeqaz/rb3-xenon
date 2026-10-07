@@ -818,8 +818,7 @@ bool CharEyes::EyesOnTarget(float f) {
 void CharEyes::EnforceMinimumTargetDistance(
     const Vector3 &v1, const Vector3 &v2, Vector3 &vout
 ) {
-    Vector3 diff;
-    Subtract(v2, v1, diff);
+    Vector3 diff(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
     float vlen = Length(diff);
     mBlinkActive = false;
     float minDist;

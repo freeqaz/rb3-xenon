@@ -419,6 +419,14 @@ void RndLine::SetPointsColor(int start, int end, const Hmx::Color &color) {
     mMesh->Sync(0x1F);
 }
 
+// View-space position offset by a screen-space (x, z) pair; y is copied through.
+inline void LineAdd(const Vector3 &v, const Vector2 &d, Vector3 &dst) {
+    dst.Set(v.x + d.x, v.y, v.z + d.y);
+}
+inline void LineSubtract(const Vector3 &v, const Vector2 &d, Vector3 &dst) {
+    dst.Set(v.x - d.x, v.y, v.z - d.y);
+}
+
 void RndLine::UpdateLinePair(RndLine::Point *pt1, RndLine::Point *pt2) {
     VertsMap vmap;
     MapVerts((pt1 - &mPoints[0]), vmap);
@@ -444,72 +452,64 @@ void RndLine::UpdateLinePair(RndLine::Point *pt1, RndLine::Point *pt2) {
             *(Vector3 *)&vmap.v->pos = *(Vector3 *)&pt2->unk[0];
         }
     } else {
-        float *viewPos1 = (float *)&pt1->unk[0];
-        float *viewPos2 = (float *)&pt2->unk[0];
-        float *proj1 = (float *)&pt1->unk[4];
-        float *dir1 = (float *)&pt1->unk[6];
-        float *side1 = (float *)&pt1->unk[8];
-        float *proj2 = (float *)&pt2->unk[4];
-        float *side2 = (float *)&pt2->unk[8];
+        Vector3 &viewPos1 = *(Vector3 *)&pt1->unk[0];
+        Vector3 &viewPos2 = *(Vector3 *)&pt2->unk[0];
+        Vector2 &proj1 = *(Vector2 *)&pt1->unk[4];
+        Vector2 &dir1 = *(Vector2 *)&pt1->unk[6];
+        Vector2 &side1 = *(Vector2 *)&pt1->unk[8];
+        Vector2 &proj2 = *(Vector2 *)&pt2->unk[4];
+        Vector2 &side2 = *(Vector2 *)&pt2->unk[8];
+        Vector2 perp;
 
-        float invY1 = 1.0f / viewPos1[1];
-        proj1[1] = viewPos1[2] * invY1;
-        proj1[0] = viewPos1[0] * invY1;
-        float invY2 = 1.0f / viewPos2[1];
-        proj2[1] = viewPos2[2] * invY2;
-        proj2[0] = viewPos2[0] * invY2;
+        float vy1 = viewPos1.y, vz1 = viewPos1.z, vx1 = viewPos1.x;
+        float invY1 = 1.0f / vy1;
+        proj1.y = vz1 * invY1;
+        proj1.x = vx1 * invY1;
+        float invY2 = 1.0f / viewPos2.y;
+        proj2.y = viewPos2.z * invY2;
+        proj2.x = viewPos2.x * invY2;
 
         // Retail 0x82479FD8: the direction is normalized out of line.
-        Vector2 &dir = *(Vector2 *)dir1;
-        dir.x = proj2[0] - proj1[0];
-        dir.y = proj2[1] - proj1[1];
-        Normalize(dir, dir);
-        side1[0] = -dir.y;
-        side1[1] = dir.x;
-        side1[0] *= mWidth;
-        side1[1] *= mWidth;
-        ((int *)side2)[0] = ((int *)side1)[0];
-        ((int *)side2)[1] = ((int *)side1)[1];
+        dir1.x = proj2.x - proj1.x;
+        dir1.y = proj2.y - proj1.y;
+        Normalize(dir1, dir1);
 
-        float sideZ = side1[1];
-        float sideX = side1[0];
+        side1.x = -dir1.y;
+        side1.y = dir1.x;
+        side1.x = side1.x * mWidth;
+        side1.y = side1.y * mWidth;
+        ((int *)&side2)[0] = ((int *)&side1)[0];
+        ((int *)&side2)[1] = ((int *)&side1)[1];
+
+        // Cap vertices are pushed one half-width along the line as well as
+        // across it: the side vector rotated a further quarter turn.
+        perp.x = -side1.y;
+        perp.y = side1.x;
 
         if (mHasCaps) {
-            vmap.v->pos.x = viewPos1[0] - sideX;
-            vmap.v->pos.y = viewPos1[1];
-            vmap.v->pos.z = viewPos1[2] - sideZ;
-            vmap.v->pos.z = vmap.v->pos.z + sideX;
-            vmap.v->pos.x = vmap.v->pos.x + -sideZ;
+            LineSubtract(viewPos1, side1, *(Vector3 *)&vmap.v->pos);
+            LineAdd(*(Vector3 *)&vmap.v->pos, perp, *(Vector3 *)&vmap.v->pos);
             vmap.v++;
-            vmap.v->pos.x = viewPos1[0] + sideX;
-            vmap.v->pos.y = viewPos1[1];
-            vmap.v->pos.z = viewPos1[2] + sideZ;
-            vmap.v->pos.z = vmap.v->pos.z + sideX;
-            vmap.v->pos.x = vmap.v->pos.x + -sideZ;
+            LineAdd(viewPos1, side1, *(Vector3 *)&vmap.v->pos);
+            LineAdd(*(Vector3 *)&vmap.v->pos, perp, *(Vector3 *)&vmap.v->pos);
             vmap.v++;
         }
 
-        vmap.v->pos.Set(viewPos1[0] - sideX, viewPos1[1], viewPos1[2] - sideZ);
-        vmap.v++;
-        vmap.v->pos.Set(viewPos1[0] + sideX, viewPos1[1], viewPos1[2] + sideZ);
-        vmap.v++;
-        vmap.v->pos.Set(viewPos2[0] - side2[0], viewPos2[1], viewPos2[2] - side2[1]);
-        vmap.v++;
-        vmap.v->pos.Set(viewPos2[0] + side2[0], viewPos2[1], viewPos2[2] + side2[1]);
-        vmap.v++;
+        LineSubtract(viewPos1, side1, *(Vector3 *)&(vmap.v++)->pos);
+        LineAdd(viewPos1, side1, *(Vector3 *)&(vmap.v++)->pos);
+        LineSubtract(viewPos2, side2, *(Vector3 *)&(vmap.v++)->pos);
+        LineAdd(viewPos2, side2, *(Vector3 *)&(vmap.v++)->pos);
 
         if (mHasCaps) {
-            vmap.v->pos.x = viewPos2[0] - side2[0];
-            vmap.v->pos.y = viewPos2[1];
-            vmap.v->pos.z = viewPos2[2] - side2[1];
-            vmap.v->pos.x = vmap.v->pos.x + side2[1];
-            vmap.v->pos.z = vmap.v->pos.z + -side2[0];
+            float endY = side2.x;
+            float endX = side2.y;
+            perp.x = endX;
+            perp.y = -endY;
+            LineSubtract(viewPos2, side2, *(Vector3 *)&vmap.v->pos);
+            LineAdd(*(Vector3 *)&vmap.v->pos, perp, *(Vector3 *)&vmap.v->pos);
             vmap.v++;
-            vmap.v->pos.x = viewPos2[0] + side2[0];
-            vmap.v->pos.y = viewPos2[1];
-            vmap.v->pos.z = viewPos2[2] + side2[1];
-            vmap.v->pos.x = vmap.v->pos.x + side2[1];
-            vmap.v->pos.z = vmap.v->pos.z + -side2[0];
+            LineAdd(viewPos2, side2, *(Vector3 *)&vmap.v->pos);
+            LineAdd(*(Vector3 *)&vmap.v->pos, perp, *(Vector3 *)&vmap.v->pos);
         }
     }
 }
