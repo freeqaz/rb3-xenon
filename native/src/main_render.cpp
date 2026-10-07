@@ -5149,6 +5149,9 @@ static bool gNoW16TM = false;
 // native/src/w16tr_phase.cpp (W16-TR)
 int RunW16TRPhase(void (*gate)(const char *, bool, const char *));
 static bool gNoW16TR = false;
+// native/src/w16ts_phase.cpp (W16-TS)
+int RunW16TSPhase(void (*gate)(const char *, bool, const char *));
+static bool gNoW16TS = false;
 
 int main(int argc, char **argv) {
     // Line-buffer: a SIGSEGV inside the renderer would otherwise discard the
@@ -5183,6 +5186,7 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--no-w16tj") == 0) gNoW16TJ = true;
         else if (strcmp(argv[i], "--no-w16tm") == 0) gNoW16TM = true;
         else if (strcmp(argv[i], "--no-w16tr") == 0) gNoW16TR = true;
+        else if (strcmp(argv[i], "--no-w16ts") == 0) gNoW16TS = true;
         else if (strcmp(argv[i], "--crowd-all") == 0) gCrowdShowAll = true;
         else if (strcmp(argv[i], "--focus") == 0 && i + 1 < argc) gFocus = argv[++i];
         else if (strcmp(argv[i], "--scene-clip") == 0 && i + 1 < argc)
@@ -5434,6 +5438,12 @@ int main(int argc, char **argv) {
     // default-mode rule; --no-w16tr opts out.
     if (pos.size() == 2 && !gNoW16TR)
         RunW16TRPhase(Gate);
+    // W16-TS: in-scope rows native linked but no target entered -- HasPart,
+    // DoesSongMatchFilter, ModifierMgr, BandDirector::OnFileLoaded,
+    // UIStats::MaybePublish, SaveLoadManager::SetState
+    // (native/src/w16ts_phase.cpp). Same default-mode rule; --no-w16ts opts out.
+    if (pos.size() == 2 && !gNoW16TS)
+        RunW16TSPhase(Gate);
 
     printf("\n=== summary ===\n");
     for (size_t i = 0; i < cells.size(); i++) {

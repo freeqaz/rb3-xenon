@@ -2008,6 +2008,10 @@ if(RB3X_BUILD_ENGINE)
         # MidiSynth, which W16-TM linked but --gc-sections discarded.
         ${CMAKE_SOURCE_DIR}/src/w16tr_phase.cpp
         ${CMAKE_SOURCE_DIR}/src/w16tr_link_stubs.cpp
+        # W16-TS: in-scope rows linked but never entered (HasPart, song
+        # filters, ModifierMgr, BandDirector::OnFileLoaded, UIStats,
+        # SaveLoadManager::SetState) over shipped data.
+        ${CMAKE_SOURCE_DIR}/src/w16ts_phase.cpp
         ${VOCALTRACK_GAME_SOURCES}
         ${W16SH_LINK_SOURCES}
         ${W16SH_DEP_SOURCES}
@@ -2029,6 +2033,12 @@ if(RB3X_BUILD_ENGINE)
     target_compile_definitions(rb3-render PRIVATE RB3_ENGINE_RENDER=1)
     target_link_libraries(rb3-render PRIVATE milo-engine)
 endif()
+
+# W16-TS: the phase reads members of the objects it drives (BandDirector's
+# cached finds, UIStats' last-published state, SaveLoadManager's state). Access
+# checking is relaxed for that one driver file only; no decomp TU changes.
+set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16ts_phase.cpp
+    PROPERTIES COMPILE_OPTIONS "-fno-access-control")
 
 # ---- X20: OutfitConfig's property table needs the LOCAL_STATIC Symbol arm ----
 # ObjMacros.h's SYNC_PROP family has two spellings, selected by
