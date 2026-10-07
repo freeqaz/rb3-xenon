@@ -516,7 +516,11 @@ void Character::Enter() {
 }
 
 void Character::Exit() {
+    // Retail 0x8236D3F8 (12 B) is `mPollState = kCharExited; b RndDir::Exit`:
+    // no current-character scope (a DC3 addition, kept natively).
+#ifdef HX_NATIVE
     AutoSetCurrentCharacter scope(this);
+#endif
     mPollState = kCharExited;
     RndDir::Exit();
 }

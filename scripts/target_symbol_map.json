@@ -2351,6 +2351,7 @@
  "0x823502f0": "?Retract@BandTrack@@UAAX_N@Z",
  "0x823574b0": "?SetConfiguration@TrackPanelDirBase@@UAAXPAVObject@Hmx@@_N@Z",
  "0x8236d3c0": "?Enter@Character@@UAAXXZ",
+ "0x8236d3f8": "?Exit@Character@@UAAXXZ",
  "0x8236ea08": "?DrawLodOrShadow@Character@@UAAXHW4DrawMode@1@@Z",
  "0x82375d30": "?Replace@CharBonesMeshes@@$2PPPPPPPM@CM@AAXPAVObjRef@@PAVObject@Hmx@@@Z",
  "0x82390ad0": "?Handle@CharClipGroup@@$4PPPPPPPM@A@AA?AVDataNode@@PAVDataArray@@_N@Z",
