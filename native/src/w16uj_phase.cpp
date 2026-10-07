@@ -255,16 +255,18 @@ void LightPresetCheck(ObjectDir *root) {
          ps.size(), missing, withKeys, keys);
 }
 
-// A fault inside an unload kills the process before any gate can report it.
-// Armed only around `dir = nullptr`: name the venue in a FAIL line, then
+// A fault inside a load or an unload kills the process before any gate can
+// report it. Armed only around those two steps: name the venue in a FAIL line,
+// then
 // re-raise so the run still ends on the signal (native_health counts it as a
 // crash). write(2) only; the process is already lost.
 char gUnloading[160];
+const char *gStage = "unload";
 void OnUnloadFault(int sig) {
     char line[256];
     int len = snprintf(line, sizeof(line),
-                       "  [FAIL] uj-venue-unload %s — signal %d during the unload\n",
-                       gUnloading, sig);
+                       "  [FAIL] uj-venue-%s %s — signal %d during the %s\n",
+                       gStage, gUnloading, sig, gStage);
     if (len > 0)
         (void)!write(1, line, len < (int)sizeof(line) ? len : (int)sizeof(line) - 1);
     signal(sig, SIG_DFL);
@@ -286,8 +288,14 @@ int VenueChecks() {
         int a0 = NativeStreamAuditAnomalies(), m0 = NativeStreamAuditMissSkips();
         auto t0 = std::chrono::steady_clock::now();
         ObjDirPtr<ObjectDir> dir;
+        snprintf(gUnloading, sizeof(gUnloading), "%s", base);
+        gStage = "load";
+        void (*oldSegv)(int) = signal(SIGSEGV, OnUnloadFault);
+        void (*oldBus)(int) = signal(SIGBUS, OnUnloadFault);
         if (inArk)
             dir.LoadFile(FilePath(path), false, false, kLoadFront, false);
+        signal(SIGSEGV, oldSegv);
+        signal(SIGBUS, oldBus);
         double ms = std::chrono::duration<double, std::milli>(
                         std::chrono::steady_clock::now() - t0)
                         .count();
@@ -310,9 +318,9 @@ int VenueChecks() {
         // The unload. Before W16-UJ every arena and festival died here
         // (SIGSEGV in ~ObjectDir's seed restore); a crash ends the run, which
         // native_health reports as runtime_crashed.
-        snprintf(gUnloading, sizeof(gUnloading), "%s", base);
-        void (*oldSegv)(int) = signal(SIGSEGV, OnUnloadFault);
-        void (*oldBus)(int) = signal(SIGBUS, OnUnloadFault);
+        gStage = "unload";
+        oldSegv = signal(SIGSEGV, OnUnloadFault);
+        oldBus = signal(SIGBUS, OnUnloadFault);
         dir = nullptr;
         signal(SIGSEGV, oldSegv);
         signal(SIGBUS, oldBus);
