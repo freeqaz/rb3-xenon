@@ -44,6 +44,7 @@ extern MemTracker *gMemTracker; // defined in utl/MemTrack.cpp, not declared in 
 #include <new>
 #include <string>
 #include <vector>
+#include <malloc.h>
 #include <signal.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -332,6 +333,18 @@ bool MemTrackChild(std::string &detail) {
         detail = "MemTrackInit left gMemTracker null";
         return false;
     }
+    // MemTracker's hash table: Size() AllocInfo* entries, all cleared by the
+    // KeylessHash ctor, live in mHashMem. The DC3 size was `numAllocs * 8`,
+    // which holds only half of them on a 64-bit host.
+    size_t hashNeed = (size_t)gMemTracker->mHashTable->Size() * sizeof(AllocInfo *);
+    size_t hashHave = malloc_usable_size(gMemTracker->mHashMem);
+    if (hashHave < hashNeed) {
+        char s[160];
+        snprintf(s, sizeof(s), "hash table needs %zu bytes for %d entries, mHashMem block holds %zu",
+                 hashNeed, gMemTracker->mHashTable->Size(), hashHave);
+        detail = s;
+        return false;
+    }
     char names[65][16];
     for (int i = 1; i <= 64; i++) {
         snprintf(names[i], sizeof(names[i]), "w16ub_f%02d", i);
@@ -345,8 +358,10 @@ bool MemTrackChild(std::string &detail) {
         wrong += strcmp(gMemTracker->unk181ac.c_str(), want) != 0;
     }
     char s[160];
-    snprintf(s, sizeof(s), "64 nested file names pushed and popped, %d pops restored the wrong name",
-             wrong);
+    snprintf(s, sizeof(s),
+             "hash block %zu bytes >= %zu needed; 64 nested file names pushed and popped, %d pops "
+             "restored the wrong name",
+             hashHave, hashNeed, wrong);
     detail = s;
     return wrong == 0;
 }
