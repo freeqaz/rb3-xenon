@@ -2418,9 +2418,11 @@ window.c:
 
 AsyncFile_Win.cpp:
 	.pdata      start:0x8221A160 end:0x8221A198
+	.pdata      start:0x8221A198 end:0x8221A1A8
 	.pdata      start:0x8221A1A8 end:0x8221A1B0
 	.pdata      start:0x8221A1B0 end:0x8221A1D0
 	.text       start:0x825353C0 end:0x82535708
+	.text       start:0x82535708 end:0x82535780
 	.text       start:0x82535780 end:0x825357CC
 	.text       start:0x825357D0 end:0x82535C90
 
@@ -3445,10 +3447,6 @@ Char.cpp:
 	.text       start:0x8236CCF0 end:0x8236CD80
 	.text       start:0x8236CD80 end:0x8236D2C8
 
-Spline.cpp:
-	.pdata      start:0x821F4778 end:0x821F4780
-	.text       start:0x822A20C8 end:0x822A212C
-
 Character.cpp:
 	.pdata      start:0x821F4880 end:0x821F4888
 	.pdata      start:0x821F4B60 end:0x821F4B68
@@ -4081,6 +4079,7 @@ ChordShapeGenerator.cpp:
 	.text       start:0x822DCF58 end:0x822DCFB8
 	.text       start:0x822DCFB8 end:0x822DD024
 	.text       start:0x822DD028 end:0x822DD188
+	.text       start:0x822DD188 end:0x822DD1E0
 	.text       start:0x822DD240 end:0x822DD28C
 	.text       start:0x822DD290 end:0x822DD7AC
 	.text       start:0x822DD808 end:0x822DD9A0
@@ -4642,9 +4641,6 @@ CharBonesMeshes.cpp:
 	.text       start:0x8237C398 end:0x8237C960
 	.text       start:0x82434150 end:0x82434230
 
-DingoSvr.cpp:
-	.text       start:0x827AB2C0 end:0x827AB2C8
-
 UIComponent.cpp:
 	.pdata      start:0x8222A418 end:0x8222A438
 	.pdata      start:0x82245930 end:0x82245940
@@ -4899,9 +4895,6 @@ Wind.cpp:
 Line.cpp:
 	.pdata      start:0x8220FD28 end:0x8220FEF8
 	.text       start:0x82479148 end:0x8247C3EC
-
-Font3d.cpp:
-	.text       start:0x822DD188 end:0x822DD1E0
 
 system/rndobj/Movie.cpp:
 	.pdata      start:0x8220FC08 end:0x8220FC20
@@ -7121,6 +7114,7 @@ FixedSizeSaveableStream.cpp:
 	.pdata      start:0x82240978 end:0x822409D8
 	.pdata      start:0x822409D8 end:0x822409F0
 	.text       start:0x827AB1C0 end:0x827AB2C0
+	.text       start:0x827AB2C0 end:0x827AB2C8
 	.text       start:0x827AB2C8 end:0x827AB688
 	.text       start:0x827AB688 end:0x827AB750
 
@@ -7148,10 +7142,6 @@ ScreenMask.cpp:
 	.text       start:0x824816F8 end:0x82482050
 	.text       start:0x82482058 end:0x8248233C
 	.text       start:0x82482340 end:0x824823A0
-
-AsyncFileHolmes.cpp:
-	.pdata      start:0x8221A198 end:0x8221A1A8
-	.text       start:0x82535708 end:0x82535780
 
 BandUI.cpp:
 	.pdata      start:0x8221A1D0 end:0x8221A748
@@ -7227,6 +7217,7 @@ system/synth_xbox/SynthSample.cpp:
 	.pdata      start:0x8225B6B0 end:0x8225B6B8
 	.text       start:0x82B6C6F8 end:0x82B6C7C0
 	.text       start:0x82B6C7C0 end:0x82B6C830
+	.text       start:0x82B6C830 end:0x82B6C844
 	.text       start:0x82B6C850 end:0x82B6C8F0
 	.text       start:0x82B6C8F0 end:0x82B6CA0C
 	.text       start:0x82B6CA0C end:0x82B6CAB0
@@ -12120,6 +12111,7 @@ OutfitConfig.cpp:
 	.pdata      start:0x821F4728 end:0x821F4750
 	.pdata      start:0x821F4750 end:0x821F4768
 	.pdata      start:0x821F4768 end:0x821F4778
+	.pdata      start:0x821F4778 end:0x821F4780
 	.pdata      start:0x821F4780 end:0x821F4790
 	.pdata      start:0x821F47D8 end:0x821F47E8
 	.pdata      start:0x821F47E8 end:0x821F4808
@@ -12232,6 +12224,7 @@ OutfitConfig.cpp:
 	.text       start:0x822A1EE0 end:0x822A2030
 	.text       start:0x822A2030 end:0x822A2038
 	.text       start:0x822A2038 end:0x822A20C4
+	.text       start:0x822A20C8 end:0x822A212C
 	.text       start:0x822A212C end:0x822A21D8
 	.text       start:0x822A26A8 end:0x822A28F4
 	.text       start:0x822A28F8 end:0x822A2BD8
@@ -13618,9 +13611,6 @@ system/synth/MidiChannel.cpp:
 system/synth_xbox/SampleInst360.cpp:
 	.pdata      start:0x8225B7F0 end:0x8225B830
 	.text       start:0x82B6DFAC end:0x82B6E2D0
-
-system/net/HttpReq.cpp:
-	.text       start:0x82B6C830 end:0x82B6C844
 
 system/ui/UILabelDir.cpp:
 	.pdata      start:0x82246960 end:0x822469B0

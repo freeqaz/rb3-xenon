@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "6dde457dd",
+ "recorded_at": "de3f14051",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -818,11 +818,8 @@
   "0x8229ee08": "??$_Copy_Construct@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@YAXPAV?$ObjPtr@VRndTex@@@@ABV1@@Z",
   "0x8229ee78": "??$_Copy_Construct@VOverlay@OutfitConfig@@@stlpmtx_std@@YAXPAVOverlay@OutfitConfig@@ABV12@@Z",
   "0x8229ef00": "??0?$ObjPtr@VRndDir@@@@QAA@ABV0@@Z",
-  "0x822a00c8": "??6@YAAAVBinStream@@AAV0@ABVPiece@Piercing@OutfitConfig@@@Z",
-  "0x822a0ed8": "??$?6VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VPiece@Piercing@OutfitConfig@@V?$StlNodeAlloc@VPiece@Piercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z",
   "0x822a1070": "??$PropSync@VRndTransformable@@@@YA_NAAV?$ObjPtr@VRndTransformable@@@@AAVDataNode@@PAVDataArray@@HW4PropOp@@@Z",
   "0x822a1520": "?_M_erase@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@IAAPAHPAHABU__false_type@2@@Z",
-  "0x822a1b80": "??6@YAAAVBinStream@@AAV0@ABVPiercing@OutfitConfig@@@Z",
   "0x822a2038": "??1Piece@Piercing@OutfitConfig@@QAA@XZ",
   "0x822a2138": "??$__uninitialized_copy@PBV?$ObjPtr@VRndTex@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VRndTex@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
   "0x822a21e0": "??0?$vector@V?$ObjPtr@VRndTex@@@@V?$StlNodeAlloc@V?$ObjPtr@VRndTex@@@@@stlpmtx_std@@@stlpmtx_std@@QAA@ABV01@@Z",
@@ -4639,25 +4636,6 @@
     "?_M_erase@?$vector@PAVOvershellSlot@@V?$StlNodeAlloc@PAVOvershellSlot@@@stlpmtx_std@@@stlpmtx_std@@IAAPAPAVOvershellSlot@@PAPAV3@ABU__false_type@2@@Z": "PROVEN"
    }
   },
-  "0x822a20c8": {
-   "survivor": "??$?6VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VCtrlPoint@RndSpline@@V?$StlNodeAlloc@VCtrlPoint@RndSpline@@@stlpmtx_std@@@stlpmtx_std@@@Z",
-   "callees": [
-    "0x82000c55",
-    "0x8229d3b8",
-    "0x8229e5d0",
-    "0x822a00c8",
-    "0x822a0ed8",
-    "0x822a1b80",
-    "0x827c4d18",
-    "0x827c4f58",
-    "0x827c5098",
-    "0x827c5100",
-    "0x82b8c888"
-   ],
-   "verdicts": {
-    "??$?6VPiercing@OutfitConfig@@V?$StlNodeAlloc@VPiercing@OutfitConfig@@@stlpmtx_std@@@@YAAAVBinStream@@AAV0@ABV?$vector@VPiercing@OutfitConfig@@V?$StlNodeAlloc@VPiercing@OutfitConfig@@@stlpmtx_std@@@stlpmtx_std@@@Z": "PROVEN"
-   }
-  },
   "0x822a2138": {
    "survivor": "??$__uninitialized_copy@PBV?$ObjPtr@VRndTex@@@@PAV1@@stlpmtx_std@@YAPAV?$ObjPtr@VRndTex@@@@PBV1@0PAV1@ABU__false_type@0@@Z",
    "callees": [
@@ -5838,11 +5816,11 @@
    }
   },
   "0x822dd188": {
-   "survivor": "??$_M_find@G@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@2@U?$_Select1st@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABG@Z",
+   "survivor": "??$_M_find@G@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGG@2@U?$_Select1st@U?$pair@$$CBGG@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABG@Z",
    "callees": [],
    "verdicts": {
-    "??$_M_find@G@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGG@2@U?$_Select1st@U?$pair@$$CBGG@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGG@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGG@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABG@Z": "PROVEN",
-    "??$_M_find@G@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABG@Z": "PROVEN"
+    "??$_M_find@G@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGUCharInfo@RndFont@@@2@U?$_Select1st@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGUCharInfo@RndFont@@@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABG@Z": "PROVEN",
+    "??$_M_find@G@?$_Rb_tree@GU?$less@G@stlpmtx_std@@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@2@U?$_Select1st@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@2@U?$_MapTraitsT@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@priv@2@V?$StlNodeAlloc@U?$pair@$$CBGPAUCharInfo@RndFont3d@@@stlpmtx_std@@@2@@stlpmtx_std@@ABAPAU_Rb_tree_node_base@1@ABG@Z": "PROVEN"
    }
   },
   "0x822dd808": {
@@ -19352,7 +19330,7 @@
    }
   },
   "0x82535708": {
-   "survivor": "??1AsyncFileHolmes@@UAA@XZ",
+   "survivor": "??1AsyncFileWin@@UAA@XZ",
    "callees": [
     "0x82000e8c",
     "0x82087c1c",
@@ -19374,7 +19352,7 @@
     "0x82e06e08"
    ],
    "verdicts": {
-    "??1AsyncFileWin@@UAA@XZ": "PROVEN"
+    "??1AsyncFileHolmes@@UAA@XZ": "UNDECIDABLE"
    }
   },
   "0x825371f8": {
@@ -30182,13 +30160,13 @@
    }
   },
   "0x827ab2c0": {
-   "survivor": "?GetBaseURL@WebSvcRequest@@QBAPBDXZ",
+   "survivor": "?GetSymbolCount@FixedSizeSaveableStream@@QBAHXZ",
    "callees": [],
    "verdicts": {
     "?GetGameCymbalLanes@PlayerTrackConfigList@@QBAIXZ": "PROVEN",
     "?GetSampleRate@SynthSample@@QBAHXZ": "PROVEN",
     "?SongBlock@SongMetadata@@QBAPAVDataArraySongInfo@@XZ": "PROVEN",
-    "?GetSymbolCount@FixedSizeSaveableStream@@QBAHXZ": "PROVEN"
+    "?GetBaseURL@WebSvcRequest@@QBAPBDXZ": "PROVEN"
    }
   },
   "0x827acab0": {
@@ -34760,10 +34738,10 @@
    }
   },
   "0x82b6c830": {
-   "survivor": "?HasSucceeded@HttpReq@@UAA_NXZ",
+   "survivor": "?IsXMA@SynthSample360@@QBA_NXZ",
    "callees": [],
    "verdicts": {
-    "?IsXMA@SynthSample360@@QBA_NXZ": "PROVEN"
+    "?HasSucceeded@HttpReq@@UAA_NXZ": "PROVEN"
    }
   },
   "0x82b6cc18": {
