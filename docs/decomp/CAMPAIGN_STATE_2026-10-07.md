@@ -112,7 +112,90 @@ paired as a re-home:
 
 ## 3. What landed, per lane
 
-LANE_TABLE_PLACEHOLDER
+10-06 split each lane's Δ by ring from its archived `ab_measure` legs. Most of this round's lane worktrees, and their
+run dirs, were already removed. So I rebuilt every step instead (`walk/walk.sh`, `walk/walk2.sh`, run in two
+private worktrees):
+- **Steps:** the 51 first-parent commits from `7e5a99800` to `4a14afeb3` (W16-RV) that are neither a native pin nor
+  a CLAUDE.md-only commit. Pins and CLAUDE.md changes are not match-build inputs, and `24d250690` is a pin on top of
+  `4a14afeb3`.
+- **Per step:** check out the commit; put in the image it targets (RB3DX before `a3f3339a8`, clean TU5 from then
+  on); run `configure.py`; build until `symbols.txt` is unchanged by a build (every step took one build); wipe
+  `report.json` and `report.cache`; regenerate the report and snapshot it.
+- **Ring:** `scope_ledger2.tier()` of the unit's source path, the same classifier for every step.
+- **A lane's Δ** is its merge's report minus the previous step's report.
+
+Controls, all predicted to hold before the walk ran, and all hold (`lane_rings.py`):
+- **Step 0** (`7e5a99800`) reproduces 10-06's ledger on every ring and on both headline keys.
+- **The last step** (`4a14afeb3`) equals this worktree's build on `matched_code`, `matched_functions` and every ring.
+- **The steps sum** to +1,271 fns / +122,020 B whole-binary, +78,272 B / +934 fns in scope, +34,604 B VIA-DC3, and
+  each other ring's §2 delta.
+- **Every one of the 45 lanes in `claims.py` equals its own A/B claim exactly**, fns and bytes. The three merges
+  without a claim (W16-RT, RW, RX) read +0.
+
+Eleven steps read zero on every ring and are left out of the table: W16-PN (10-06's doc), PQ (Δ0, as priced), PX,
+PZ, QD, RT, RW, RX, RY, the clean-TU5 README commit and the alias-placeholder commit `377f357a6`.
+
+| lane | merge | Δ fns | Δ matched_code | Δ in scope | CORE / SOON / RB3ENG | Δ in-scope fns | Δ VIA-DC3 | other rings |
+|---|---|---:|---:|---:|---|---:|---:|---|
+| W16-PG | `614420e78` | +14 | +4,944 | **+4,928** | +724 / +448 / +3,756 | +13 | +16 | — |
+| W16-PK | `409cc160e` | +7 | +1,648 | **+264** | +156 / +108 / +0 | +3 | +1,384 | — |
+| W16-PM | `dc238f637` | +0 | +0 | **-104** | +0 / -104 / +0 | -1 | +104 | — |
+| W16-PR | `7f41fe33e` | +2 | +624 | **+624** | +0 / +0 / +624 | +2 | +0 | — |
+| W16-PS | `c8e56eba1` | +4 | +3,356 | **+3,028** | +280 / +972 / +1,776 | +3 | +328 | — |
+| W16-PT | `a3f3339a8` | +5 | +1,240 | **+1,164** | +348 / +816 / +0 | +4 | +0 | UNK +76 |
+| W16-PO | `9480cb75e` | +9 | +1,880 | **+1,880** | +1,880 / +0 / +0 | +9 | +0 | — |
+| W16-PY | `90a3e94d2` | +3 | +872 | **+0** | +0 / +0 / +0 | +0 | +872 | — |
+| W16-PW | `60c34cf1a` | +1 | +424 | **+0** | +0 / +0 / +0 | +0 | +424 | — |
+| W16-PU | `c2e3a92f6` | +2 | +752 | **+0** | +0 / +0 / +0 | +0 | +752 | — |
+| W16-QC | `2b9c29c43` | +7 | +1,604 | **+1,604** | +0 / +316 / +1,288 | +7 | +0 | — |
+| W16-QA | `d8aef7dcf` | +31 | +7,184 | **+1,552** | +1,472 / +80 / +0 | +14 | +1,336 | 360 +4,296 |
+| W16-QB | `5fcd005d9` | +8 | +796 | **+704** | +80 / +624 / +0 | +7 | +92 | — |
+| W16-QH | `bd0b1c74c` | +25 | +1,688 | **+1,004** | +468 / +536 / +0 | +11 | +436 | 360 +248 |
+| W16-QF | `9fd8de7b1` | +6 | +384 | **+168** | +168 / +0 / +0 | +3 | +216 | — |
+| W16-QG | `c4eae7348` | +46 | +2,796 | **+2,208** | +828 / +712 / +668 | +36 | +512 | 360 +8, NET +68 |
+| W16-QJ | `0ec8e12d4` | +7 | +1,472 | **+80** | +0 / +0 / +80 | +1 | +1,164 | 360 +228 |
+| W16-QI | `2d3582fa3` | +920 | +25,240 | **+19,720** | +1,780 / +15,168 / +2,772 | +730 | +3,892 | 360 +812, NET +788, UNK +28 |
+| W16-QK | `bb82b4cae` | +12 | +2,948 | **+1,692** | +0 / +1,408 / +284 | +3 | +1,256 | — |
+| W16-QL | `ad2929d31` | +2 | +76 | **+12** | +12 / +0 / +0 | +1 | +64 | — |
+| W16-QM | `1059a558f` | +12 | +952 | **+840** | +0 / +40 / +800 | +10 | +112 | — |
+| W16-QO | `ca61b767f` | +22 | +7,720 | **+1,840** | +548 / +0 / +1,292 | +3 | +5,356 | NET +524 |
+| W16-QP | `cecef177b` | +2 | +212 | **+212** | +0 / +0 / +212 | +2 | +0 | — |
+| W16-QR | `014662e57` | +1 | +272 | **+272** | +0 / +0 / +272 | +1 | +0 | — |
+| W16-QU | `76ff16e11` | +5 | +492 | **+0** | +0 / +0 / +0 | +0 | +0 | UNK +492 |
+| W16-QQ | `442f01984` | +35 | +9,864 | **+3,312** | +0 / +0 / +3,312 | +12 | +6,616 | 360 -64 |
+| W16-QW | `1fe4ab41c` | +4 | +144 | **+0** | +0 / +0 / +0 | +0 | +80 | 360 +64 |
+| W16-QV | `d5d873c95` | +8 | +280 | **+0** | +0 / +0 / +0 | +0 | +0 | UNK +280 |
+| W16-QX | `d76ab0ca4` | +4 | +5,960 | **+5,928** | +0 / +2,228 / +3,700 | +2 | +32 | — |
+| W16-RB | `b5a56416b` | +5 | +2,664 | **+2,664** | +0 / +248 / +2,416 | +5 | +0 | — |
+| W16-QZ | `1b62177bd` | +3 | +4,512 | **+4,512** | +0 / +2,276 / +2,236 | +3 | +0 | — |
+| W16-RC | `5aa1d53b0` | +4 | +300 | **+264** | +20 / +100 / +144 | +3 | +0 | 360 +36 |
+| W16-RD | `f883478b5` | +2 | +4,248 | **+2,108** | +2,108 / +0 / +0 | +1 | +2,140 | — |
+| W16-RG | `6a7e96479` | +8 | +1,792 | **+0** | +0 / +0 / +0 | +0 | +1,792 | — |
+| W16-RF | `dd88a0ee7` | +4 | +5,800 | **+0** | +0 / +0 / +0 | +0 | +5,800 | — |
+| W16-RI | `f7cdbf7ca` | +36 | +3,316 | **+1,764** | +456 / +1,176 / +132 | +28 | +280 | 360 +1,272 |
+| W16-RM | `e5a8ad4b3` | -20 | -748 | **-284** | +0 / -244 / -40 | -7 | -452 | NET -12 |
+| W16-RK | `f22f71f15` | +8 | +5,228 | **+5,228** | +0 / +4,244 / +984 | +8 | +0 | — |
+| W16-RQ | `774f9fe86` | +7 | +2,376 | **+2,376** | +0 / +264 / +2,112 | +7 | +0 | — |
+| W16-RV | `4a14afeb3` | +10 | +6,708 | **+6,708** | +0 / +1,896 / +4,812 | +10 | +0 | — |
+| **sum of steps** | | **+1,271** | **+122,020** | **+78,272** | +11,328 / +33,312 / +33,632 | +934 | +34,604 | 360 +6,900, NET +1,368, UNK +876 |
+
+Columns:
+- `360` is OUT-360-OTHER, `NET` is OUT-NET, `UNK` is UNKNOWN-other.
+- `Δ in-scope fns` counts `mpn == 100` rows in the three in-scope rings.
+- W16-PM's step moves 104 B from IN-SOON to VIA-DC3 at Δ0. That is the matched row at `0x82449930`, which it
+  re-pinned to `Part.cpp` as `vector<RndParticleSys::Burst>::_M_erase` (its merge message: "Δ0, one row re-homed").
+  It is not a regression.
+- `Δ total_code` is +52 B (W16-RC's re-carves) and `total_functions` −25 (W16-RC −24 phantom rows, W16-QP −1); no
+  other step moves either.
+
+Where the in-scope bytes came from:
+- **W16-QI is a sixth of all in-scope bytes (19,720 of 78,272).** Its static-dtor stubs are tiny and many: 920 of
+  the round's 1,271 fns.
+- **Row lanes take the next tier:** W16-RV 6,708, QX 5,928, RK 5,228, PG 4,928, QZ 4,512, QQ 3,312.
+- **The behaviour readers that 10-06 ranked 1–4** (PO, PQ, PR, PS) bought 5,532 B together, as priced. The defects
+  they fixed are mostly score-invisible.
+- **VIA-DC3 gains are spread out:** QQ 6,616, RF 5,800, QO 5,356, QI 3,892, RD 2,140, RG 1,792, PK 1,384, QA 1,336,
+  and only 752 from W16-PU.
 
 ## 4. Where the in-scope gap stands: one disposition per row
 
