@@ -228,7 +228,7 @@ int RndMeshDeform::VertArray::AppendWeights(int num, int *const boneIndices, flo
     float scale = 1.0f / sum;
     // append (num*2+1) bytes at end of buffer
     u8 *newEntry = (u8 *)MemResizeElem(
-        mData, mSize, (u8 *)mData + mSize, 0, (num * 2) + 1, "RndMeshDeform"
+        mData, mSize, end(), 0, (num * 2) + 1, "RndMeshDeform"
     );
     *newEntry = (u8)num;
     for (int i = 0; i < num; i++) {

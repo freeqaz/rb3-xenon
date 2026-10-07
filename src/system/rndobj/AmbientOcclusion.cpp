@@ -403,12 +403,12 @@ void RndAmbientOcclusion::BuildSHCoeff(const Vector3 &inVector, float *fArr) con
 float RndAmbientOcclusion::DistanceSH(
     const Vector4 &sh1, const Vector3 &n1, const Vector4 &sh2, const Vector3 &n2
 ) const {
+    float dx = sh1.x - sh2.x;
+    float dot = n1.y * n2.y + n1.z * n2.z + n1.x * n2.x;
+    float dy = (sh1.y * 2.0f - 1.0f) - (sh2.y * 2.0f - 1.0f);
     float dz = (sh1.z * 2.0f - 1.0f) - (sh2.z * 2.0f - 1.0f);
     float dw = (sh1.w * 2.0f - 1.0f) - (sh2.w * 2.0f - 1.0f);
-    float dy = (sh1.y * 2.0f - 1.0f) - (sh2.y * 2.0f - 1.0f);
-    float dx = sh1.x - sh2.x;
     float dist = sqrtf(dz * dz + dw * dw + dy * dy + dx * dx);
-    float dot = n1.y * n2.y + n1.z * n2.z + n1.x * n2.x;
     if (dot <= 0.0f) {
         dot = -dot;
     }

@@ -1248,6 +1248,9 @@ float Rnd::DrawTimers(float f) {
     float bgLeft = 0.025f;
     float rowSpacing = 0.045f;
     float totalHeight = numTimers * rowSpacing;
+    // Retail copies f into its callee-saved row cursor inside the argument
+    // block of the first DrawRectScreen, so y is declared before that call.
+    float y = f;
 
     Hmx::Rect rect(bgLeft, f, 0.95f, totalHeight);
     Hmx::Color bgColor(0.0f, 0.0f, 0.0f, 0.5f);
@@ -1259,13 +1262,14 @@ float Rnd::DrawTimers(float f) {
 
     float scale = 0.019f;
     float barHeight = 0.0268f;
-    float y = f;
 
     rect.h = barHeight;
 
     for (std::list<std::pair<Timer, TimerStats> >::iterator it = timers.begin();
          it != timers.end();
          ++it) {
+        // Retail materialises &it->first once per iteration, above the
+        // Draw() test, and reads every Timer member through it.
         Timer &timer = it->first;
         if (!timer.Draw()) {
             continue;
@@ -1292,6 +1296,8 @@ float Rnd::DrawTimers(float f) {
             DrawRectScreen(rect, worstExcessColor, nullptr, nullptr, nullptr);
         }
 
+        // RESIDUAL (99.75): retail stores rect.x before rect.y here (we store y
+        // first), and permutes f23/f24/f25/f27/f28 relative to ours.
         rect.x = bgLeft;
         y += rowSpacing;
         rect.y = y;
@@ -1322,22 +1328,33 @@ float Rnd::DrawTimers(float f) {
 
         float lastMs = it->first.GetLastMs();
 
-        const char *text;
         if (lastMs >= 0.05f) {
             if (mVerboseTimers && AutoTimer::CollectingStats()) {
                 Symbol name = it->first.Name();
                 TimerStats &stats = it->second;
-                text = MakeString("%s %2.1f (%.2f, %.2f) %.2f", name, lastMs, stats.mAvgMs, stats.mStdDevMs, stats.mMaxMs);
+                DrawStringScreen(
+                    MakeString(
+                        "%s %2.1f (%.2f, %.2f) %.2f",
+                        name,
+                        lastMs,
+                        stats.mAvgMs,
+                        stats.mStdDevMs,
+                        stats.mMaxMs
+                    ),
+                    pos,
+                    barColor,
+                    true
+                );
             } else {
                 Symbol name = it->first.Name();
                 float worstMs = it->first.GetWorstMs();
-                text = MakeString("%s %.2f (%.2f)", name, lastMs, worstMs);
+                DrawStringScreen(
+                    MakeString("%s %.2f (%.2f)", name, lastMs, worstMs), pos, barColor, true
+                );
             }
         } else {
-            text = it->first.Name().Str();
+            DrawStringScreen(it->first.Name().Str(), pos, barColor, true);
         }
-
-        DrawStringScreen(text, pos, barColor, true);
         pos.y += rowSpacing;
     }
 
@@ -1519,17 +1536,13 @@ void Rnd::DrawPreClear() {
 DataNode Rnd::OnToggleHeap(const DataArray *) {
     int numHeaps = MemNumHeaps() + 1;
     RndOverlay *overlay = mHeapOverlay;
-    if (!overlay->Showing()) {
-        overlay->SetShowing(true);
+    if (overlay->Showing() && ++lbl_82F14008 >= numHeaps) {
+        overlay->SetShowingOnly(false);
+        lbl_82F14008 = -1;
     } else {
-        lbl_82F14008++;
-        if (lbl_82F14008 >= numHeaps) {
-            lbl_82F14008 = -1;
-            overlay->SetShowing(false);
-        } else {
-            overlay->SetShowing(true);
-        }
+        overlay->SetShowingOnly(true);
     }
+    overlay->TimerRef().Restart();
     return 0;
 }
 

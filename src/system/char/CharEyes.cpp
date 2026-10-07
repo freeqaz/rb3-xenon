@@ -138,23 +138,27 @@ CharEyes::~CharEyes() {}
 void CharEyes::Enter() {
     mLastFacing.Zero();
     mLastLook = 0;
-    mAvDelta = 0;
+    mAvDelta = 0.0f;
+    // Store order is retail's (100.0). The filter-flags copy goes through the
+    // inline ClearInterestFilterFlags(): spelled as a plain assignment, MSVC
+    // hoists the mDefaultFilterFlags load above every store, where retail
+    // loads it immediately before the copy's store.
     mLastCang = 1.0f;
     mLastBlinkWeight = -1.0f;
+    mBlinkDetect = false;
     mDartEnabled = false;
-    mEyeClampCount = -1;
     mDartInterval = -1.0f;
+    mEyeClampCount = -1;
     mBlinkEnabled = false;
-    mBlinkCount = 0;
     mBlinkTimer = -1.0f;
-    mBlinkActive = false;
+    mBlinkCount = 0;
     mUpperBlinkAngle = -1.0f;
     mLowerBlinkAngle = -1.0f;
-    mBlinkDetect = false;
-    mInterestFilterFlags = mDefaultFilterFlags;
+    mBlinkActive = false;
+    ClearInterestFilterFlags();
+    mDartTimer = 0.0f;
     mEnabled = false;
     mNeedRecalc = false;
-    mDartTimer = 0.0f;
     RndTransformable *head = GetHead();
     if (head) {
         mLastFacing = head->WorldXfm().m.y;

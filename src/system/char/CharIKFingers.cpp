@@ -290,19 +290,20 @@ void CharIKFingers::CalculateHandDest(int engagedCount, int firstEngaged) {
             if (!mIsRightHand) {
                 Scale(sideOffsetBase, -1.0f, sideOffsetBase);
             }
+            // Multiply(sideOffsetBase, refM) spelled with retail's association,
+            // m.y*y + (m.x*x + m.z*z). sideOffsetBase's y and z are the same
+            // zero, and with the plain row-by-row form MSVC folds the two zero
+            // products into one (m.y + m.z) * 0; retail keeps them separate.
             {
-                const Hmx::Matrix3 &m = mKeyboardRefBone->WorldXfm().m;
-                Vector3 tmp;
-                tmp.z = m.z.z * sideOffsetBase.z;
-                tmp.y = m.z.y * sideOffsetBase.z;
-                tmp.x = m.z.x * sideOffsetBase.z;
-                tmp.z += m.x.z * sideOffsetBase.x;
-                tmp.y += m.x.y * sideOffsetBase.x;
-                tmp.x += m.x.x * sideOffsetBase.x;
-                tmp.z += m.y.z * sideOffsetBase.y;
-                tmp.y += m.y.y * sideOffsetBase.y;
-                tmp.x += m.y.x * sideOffsetBase.y;
-                sideOffsetBase = tmp;
+                const Hmx::Matrix3 &refM = mKeyboardRefBone->WorldXfm().m;
+                sideOffsetBase.Set(
+                    refM.y.x * sideOffsetBase.y
+                        + (refM.x.x * sideOffsetBase.x + refM.z.x * sideOffsetBase.z),
+                    refM.y.y * sideOffsetBase.y
+                        + (refM.x.y * sideOffsetBase.x + refM.z.y * sideOffsetBase.z),
+                    refM.y.z * sideOffsetBase.y
+                        + (refM.x.z * sideOffsetBase.x + refM.z.z * sideOffsetBase.z)
+                );
             }
             Hmx::Matrix3 refRotMat;
             Multiply(mtx, mKeyboardRefBone->WorldXfm().m, refRotMat);
@@ -310,7 +311,8 @@ void CharIKFingers::CalculateHandDest(int engagedCount, int firstEngaged) {
             for (int i = 0; i < 5; i++) {
                 FingerDesc &finger = mFingers[i];
                 if (finger.mIsEngaged) {
-                    Add(finger.mTargetWorldPos, avgPos, avgPos);
+                    // avgPos first: retail adds avg.x + pos.x.
+                    Add(avgPos, finger.mTargetWorldPos, avgPos);
                     Vector3 sideScaled;
                     Scale(sideOffsetBase, i - 2.0f, sideScaled);
                     Add(sideScaled, avgPos, avgPos);
@@ -384,16 +386,22 @@ void CharIKFingers::CalculateFingerDest(FingerNum num) {
 
                 Vector3 toTarget;
                 Subtract(targetPos, f1Xfm.v, toTarget);
+                // f1z is default-constructed then ASSIGNED (word copies that the
+                // scheduler interleaves with the Subtract above), f1x is
+                // copy-constructed (a block copy below it). That pair of
+                // spellings is what reaches 100.0; both as copy-ctors or both as
+                // assignments does not.
+                Vector3 f1z;
+                f1z = f1Xfm.m.z;
                 Vector3 f1x(f1Xfm.m.x);
 
                 float len02 = Length(finger.mFinger02->LocalXfm().v);
                 float lenTip = Length(finger.mFingertip->LocalXfm().v);
                 float toTargetLen = Length(toTarget);
                 float len03 = Length(finger.mFinger03->LocalXfm().v);
-                Vector3 f1z(f1Xfm.m.z);
                 float angle03 = std::acos(
                     ((len02 * len02 + lenTip * lenTip) - (toTargetLen - len03) * (toTargetLen - len03))
-                    / (len02 * 2.0f * lenTip)
+                    / (len02 * lenTip * 2.0f)
                 );
                 if (angle03 < 0.87f)
                     angle03 = 0.87f;
@@ -510,14 +518,16 @@ void CharIKFingers::MeasureLengths() {
     }
 
     if (mHand && mHand->TransParent() && mHand->TransParent()->TransParent()) {
+        // ONE `len` local reused for both bones: retail moves the first
+        // square out of the register the second length then reuses.
         mInv2ab = 2.0f;
         mAAPlusBB = 0;
-        float handLen = Length(mHand->LocalXfm().v);
-        mAAPlusBB += handLen * handLen;
-        mInv2ab *= handLen;
-        float foreArmLen = Length(mHand->TransParent()->LocalXfm().v);
-        mAAPlusBB += foreArmLen * foreArmLen;
-        mInv2ab = 1.0f / (mInv2ab * foreArmLen);
+        float len = Length(mHand->LocalXfm().v); // hand bone
+        mAAPlusBB += len * len;
+        mInv2ab *= len;
+        len = Length(mHand->TransParent()->LocalXfm().v); // forearm bone
+        mAAPlusBB += len * len;
+        mInv2ab = 1.0f / (mInv2ab * len);
     }
 }
 
