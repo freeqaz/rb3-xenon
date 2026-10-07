@@ -62,14 +62,16 @@ protected:
     Hmx::Matrix4 mTexGenMatrix; // 0x1b4
     Hmx::Matrix4 mTexGenMatrix2; // 0x1f4
     // Blend-derived shader state, written by the second `mBlend` switch in
-    // RefreshState and consumed by every RndShader*::CalcShaderOpts as a 2-bit
-    // option field plus a Vector4 constant. Names still `unk` because the
-    // semantics are unproven; the offsets are not.
-    int unk234; // 0x234
-    float unk238; // 0x238
-    float unk23c; // 0x23c
-    float unk240; // 0x240
-    float unk244; // 0x244
+    // RefreshState and consumed by every RndShader*::CalcShaderOpts as the
+    // 2-bit fade-out option field (ShaderOptions::mFadeOut) plus a Vector4
+    // constant.
+    int mFadeOut; // 0x234
+    // One Vector4, not four floats: RefreshState's blend arms store it through
+    // an inlined Set().  As four scalar members MSVC hoists the mFadeOut store
+    // above the float stores and tail-merges the two zero-fill arms; retail
+    // keeps the four stfs (0x238..0x244) first in every arm and instead merges
+    // the kBlendMultiply arm into the kBlendAdd arm's `stw r26, 0x234(r31)`.
+    Vector4 mFadeParams; // 0x238
     RndRenderState::BlendOp mBlendOp; // 0x248
     bool mBlendEnable; // 0x24c
 };

@@ -365,7 +365,7 @@ void CharLipSync::PlayBack::Poll(float time) {
 
     if (mFrame < frameIdx) {
         float conv = 1.0f / 255.0f;
-        do {
+        for (; mFrame < frameIdx; mFrame++) {
             int oldIndex = mIndex++;
             mOldIndex = oldIndex;
             int count = lipSync->mData[oldIndex];
@@ -379,8 +379,7 @@ void CharLipSync::PlayBack::Poll(float time) {
                     w.mCurWeight = Interp(w.mPrevWeight, w.mNextWeight, frac);
                 }
             }
-            mFrame++;
-        } while (mFrame < frameIdx);
+        }
     } else if (mFrame >= 0 && mFrame == frameIdx) {
         int idx = mOldIndex + 1;
         int count = lipSync->mData[mOldIndex];

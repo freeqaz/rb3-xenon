@@ -145,9 +145,10 @@ void RndFlare::DrawShowing() {
     } else {
         bool useOccResult = false;
         if (mPointTest) {
-            if (mOcclusionPending || (useOccResult = true, !mOcclusionReady)) {
-                useOccResult = false;
-            }
+            // One bool expression assigned once: retail builds it in a scratch
+            // register (`li r11, 1` / `mr r11, r26`) and then narrows it into
+            // the callee-saved home with `clrlwi r28, r11, 24`.
+            useOccResult = !mOcclusionPending && mOcclusionReady;
             bool oldReady = mOcclusionReady;
             mOcclusionReady = false;
             mOcclusionPending = oldReady;

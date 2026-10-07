@@ -549,36 +549,27 @@ void NgMat::RefreshState() {
         break;
     }
 
-    // Second blend switch - set unk234 and unk238..unk244
+    // Second blend switch - fade-out mode and fade parameters.
     switch (mBlend) {
     case kBlendDest:
         break;
     case kBlendSrc:
-        unk234 = 0;
+        mFadeOut = 0;
         break;
     case kBlendAdd:
     case kBlendSrcAlphaAdd:
     case kBlendSubtract:
-        unk238 = 0.0f;
-        unk23c = 0.0f;
-        unk240 = 0.0f;
-        unk244 = 0.0f;
-        unk234 = 2;
+        mFadeParams.Set(0.0f, 0.0f, 0.0f, 0.0f);
+        mFadeOut = 2;
         break;
     case kBlendSrcAlpha:
     case kPreMultAlpha:
-        unk238 = 0.0f;
-        unk23c = 0.0f;
-        unk240 = 0.0f;
-        unk244 = 0.0f;
-        unk234 = 1;
+        mFadeParams.Set(0.0f, 0.0f, 0.0f, 0.0f);
+        mFadeOut = 1;
         break;
     case kBlendMultiply:
-        unk238 = 1.0f;
-        unk23c = 1.0f;
-        unk240 = 1.0f;
-        unk244 = 1.0f;
-        unk234 = 2;
+        mFadeParams.Set(1.0f, 1.0f, 1.0f, 1.0f);
+        mFadeOut = 2;
         break;
     default:
         MILO_ASSERT(false, 0x139);

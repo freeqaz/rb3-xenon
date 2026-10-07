@@ -432,13 +432,16 @@ MovieInternalBuffers *MovieInternalBuffers::New(std::vector<BINK *> binks) {
             BINKFRAMEBUFFERS info;
             memset(&info, 0, sizeof(info));
             BinkGetFrameBuffersInfo(bink, &info);
-            BINKFRAMEBUFFERS &b = bufs->mBuffers;
-            b.TotalFrames = Max(info.TotalFrames, b.TotalFrames);
-            b.YABufferWidth = Max(info.YABufferWidth, b.YABufferWidth);
-            b.YABufferHeight = Max(info.YABufferHeight, b.YABufferHeight);
-            b.cRcBBufferWidth = Max(info.cRcBBufferWidth, b.cRcBBufferWidth);
-            b.cRcBBufferHeight = Max(info.cRcBBufferHeight, b.cRcBBufferHeight);
-            BinkRegisterFrameBuffers(bink, &b);
+            bufs->mBuffers.TotalFrames = Max(info.TotalFrames, bufs->mBuffers.TotalFrames);
+            bufs->mBuffers.YABufferWidth =
+                Max(info.YABufferWidth, bufs->mBuffers.YABufferWidth);
+            bufs->mBuffers.YABufferHeight =
+                Max(info.YABufferHeight, bufs->mBuffers.YABufferHeight);
+            bufs->mBuffers.cRcBBufferWidth =
+                Max(info.cRcBBufferWidth, bufs->mBuffers.cRcBBufferWidth);
+            bufs->mBuffers.cRcBBufferHeight =
+                Max(info.cRcBBufferHeight, bufs->mBuffers.cRcBBufferHeight);
+            BinkRegisterFrameBuffers(bink, &bufs->mBuffers);
         }
     }
     if (bufs->mBuffers.TotalFrames == 0) {

@@ -7,10 +7,30 @@
 #include "utl/BinStream.h"
 #include "utl/Loader.h"
 
-Hmx::Object *RndMatAnim::sOwner;
+// Retail's rev storage: RndMatAnim::Load (0x824639C0) reads the revision word
+// whole into a file-static int (`bs >> gRev`: lwz/cmpwi, no hmx/alt split) and
+// LoadStage (0x824637E8) reads it as its own symbol (lis + lwz lbl_82CC5060).
+// No rev wrapper exists -- band.exe has no `.?AVBinStreamRev@@` descriptor --
+// and every read takes the raw stream.
+static int gRev_MatAnim = 0;
+// The owner handed to every TexPtr built while loading.  A file static, not a
+// class member, and declared right after gRev_MatAnim: Load writes it as
+// `stw r11, 0x4(r27)` off the base register it already holds for gRev
+// (lbl_82CC5060), which MSVC only does for two internal-linkage objects laid
+// out next to each other; an external RndMatAnim::sOwner gets its own
+// `lis`/`stw` relocation pair.  The explicit `= nullptr` matters as much as the
+// linkage: MSVC lays out this TU's uninitialised .bss objects ahead of the
+// zero-initialised ones, so without it sOwner lands in the other group, away
+// from gRev_MatAnim.  Not one aggregate with the revision: the TexPtr ctors
+// load it by its own address (`lwz r4, lbl_82CC5064@l(r11)`), and a struct
+// holding both drops those ctors to base+4 addressing.  The remaining Load
+// difference is the anchor: MSVC bases this pair on sOwner (gRev at -4) where
+// retail bases it on gRev, the same choice as Character::PostLoad's
+// gRevs/gCharMe pair.
+static Hmx::Object *sOwner = nullptr;
 
 // Two out-of-line ctors (0x82461948 / 0x82461990); each hands the current
-// RndMatAnim::sOwner to ObjPtr<RndTex> as the owner.
+// sOwner to ObjPtr<RndTex> as the owner.
 RndMatAnim::TexPtr::TexPtr() : ObjPtr<RndTex>(sOwner, nullptr) {}
 RndMatAnim::TexPtr::TexPtr(RndTex *tex) : ObjPtr<RndTex>(sOwner, tex) {}
 
@@ -88,12 +108,6 @@ BEGIN_COPYS(RndMatAnim)
     }
 END_COPYS
 
-// Retail's rev storage: RndMatAnim::Load (0x824639C0) reads the revision word
-// whole into a file-static int (`bs >> gRev`: lwz/cmpwi, no hmx/alt split) and
-// LoadStage (0x824637E8) reads it as its own symbol (lis + lwz lbl_82CC5060).
-// No rev wrapper exists -- band.exe has no `.?AVBinStreamRev@@` descriptor --
-// and every read takes the raw stream.
-static int gRev_MatAnim = 0;
 
 BEGIN_LOADS(RndMatAnim)
     bs >> gRev_MatAnim;

@@ -160,8 +160,16 @@ void NgRnd::ResetStats() {
 #endif
 }
 
+// Retail 0x82B87200. The weight on each counter is read off retail: each
+// `lwax` at a fixed NgStats offset feeds the `fmadds` with one constant, and
+// UpdateOverlay's format strings name the offsets (0x4 "parts", 0x8
+// "part_sys", 0x14 "bones", 0x24 "lights (approx)", 0x2c "flares", 0x30
+// "motion blur"). Six of the twelve weights sat on the wrong counter here
+// (right weight / previous weight): parts 0.01 / 0.000233, part_sys 0.000233
+// / 0.005, bones 0.005 / 0.00126, lights (approx) 0.00126 / 0.01, flares
+// 0.003 / 0.017, motion blur 0.017 / 0.003.
 float EstimateDraw(int idx) {
-    return ((float)gNgStats[idx].mFlares * 0.017f + ((float)gNgStats[idx].mMotionBlurs * 0.003f + ((float)gNgStats[idx].mMultiMeshInsts * 0.001f + ((float)gNgStats[idx].mBones * 0.00126f + ((float)gNgStats[idx].mLightsReal * 0.001f + ((float)gNgStats[idx].mCams * 0.0068f + ((float)gNgStats[idx].mMats * 0.0097f + ((float)gNgStats[idx].mPartSys * 0.005f + ((float)gNgStats[idx].mMutMeshes * 0.0112f + ((float)gNgStats[idx].mRegMeshes * 0.0028f + ((float)gNgStats[idx].mParts * 0.00023333334f + (float)gNgStats[idx].mLightsApprox * 0.01f)))))))))));
+    return ((float)gNgStats[idx].mMotionBlurs * 0.017f + ((float)gNgStats[idx].mFlares * 0.003f + ((float)gNgStats[idx].mMultiMeshInsts * 0.001f + ((float)gNgStats[idx].mLightsApprox * 0.00126f + ((float)gNgStats[idx].mLightsReal * 0.001f + ((float)gNgStats[idx].mCams * 0.0068f + ((float)gNgStats[idx].mMats * 0.0097f + ((float)gNgStats[idx].mBones * 0.005f + ((float)gNgStats[idx].mMutMeshes * 0.0112f + ((float)gNgStats[idx].mRegMeshes * 0.0028f + ((float)gNgStats[idx].mPartSys * 0.00023333334f + (float)gNgStats[idx].mParts * 0.01f)))))))))));
 }
 
 float NgRnd::UpdateOverlay(RndOverlay *overlay, float y) {

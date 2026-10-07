@@ -291,8 +291,26 @@ void RndTexRenderer::DrawToTexture() {
                 Length(tfc8.v),
                 mImpostorHeight / 2.0f + cam->NearPlane()
             );
-            Multiply(Vector3(0, -f34, 0), tfc8.m, tfc8.v);
-            tfc8.v.z += mImpostorHeight / 2.0f;
+            // Pull the camera back along the impostor's -Y by f34: this is
+            // Multiply(Vector3(0, -f34, 0), tfc8.m, tfc8.v) written out.  Two of
+            // the vector's components are literal 0.0f, and through the shared
+            // overload /fp:fast factors `m.x.c * 0 + m.z.c * 0` into
+            // `(m.x.c + m.z.c) * 0`, opening the block with an fadds of two
+            // matrix elements.  Retail multiplies each zero term on its own
+            // (`fmuls f10, f10, f31` etc. on m.z.c at 0xd0..0xd8(r31)), folds the
+            // -f34 term in with fmadds and then m.x.c * 0, so every component
+            // seeds from m.z.c.  Accumulator statements pin that order.
+            float negDist = -f34;
+            float outY = tfc8.m.z.y * 0.0f;
+            outY += tfc8.m.y.y * negDist;
+            outY += tfc8.m.x.y * 0.0f;
+            float outX = tfc8.m.z.x * 0.0f;
+            outX += tfc8.m.y.x * negDist;
+            outX += tfc8.m.x.x * 0.0f;
+            float outZ = tfc8.m.z.z * 0.0f;
+            outZ += tfc8.m.y.z * negDist;
+            outZ += tfc8.m.x.z * 0.0f;
+            tfc8.v.Set(outX, outY, outZ + mImpostorHeight / 2.0f);
             cam->SetWorldXfm(tfc8);
             float atanned = atanf(mImpostorHeight / 2.0f / f34);
             cam->SetFrustum(

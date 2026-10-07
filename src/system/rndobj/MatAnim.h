@@ -59,7 +59,6 @@ public:
 protected:
     RndMatAnim();
 
-    static Hmx::Object *sOwner;
 
     void LoadStage(BinStream &);
     void LoadStages(BinStream &);
