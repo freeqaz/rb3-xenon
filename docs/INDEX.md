@@ -3,9 +3,10 @@
 Single entry point for every doc under `docs/`. Find the right reference, skip the stale ones.
 
 **Project:** decompilation of Rock Band 3 for Xbox 360 (PowerPC), compiling C++ to matching
-retail machine code. Decomp effort concentrates on the **game layer** (`src/band3/`,
-`src/network/`); the Milo engine (`src/system/`) is effectively pre-solved via DC3. Full
-framing in `../CLAUDE.md` — **read that first**, it is the authoritative current-state doc.
+retail machine code. Decomp priority is native-port relevance: the game layer (`src/band3/`)
+plus the `src/system/` pieces the native runtime consumes, with the VIA-DC3 engine ring funded;
+`src/network/` is out of scope for new work (2026-10-08). Read `../CLAUDE.md` first for rules
+and scope; current numbers are in the newest `docs/decomp/CAMPAIGN_STATE_*.md`.
 
 ## How to read this index
 
