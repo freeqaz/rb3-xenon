@@ -211,8 +211,12 @@ framing in `../CLAUDE.md` — **read that first**, it is the authoritative curre
 
 ## 1. Start here / current state
 
-- [../CLAUDE.md](../CLAUDE.md) — project framing, build tracks, decomp priority, worktree/git
-  rules, toolchain wiring. Authoritative current state.
+- [../CLAUDE.md](../CLAUDE.md) — core rules only (condensed 2026-10-08 from 140 KB to ~16 KB):
+  framing, provenance, git/worktrees, build, measurement, native gate, traps, tooling. Each
+  rule links the doc that carries its evidence.
+- [decomp/CLAUDE_MD_FULL_RECORD_2026-10-08.md](decomp/CLAUDE_MD_FULL_RECORD_2026-10-08.md) —
+  `[HIST]` the full pre-condensation CLAUDE.md, verbatim: every dated measurement, incident and
+  inline correction behind the rules above. Frozen; add new findings as new dated docs.
 - ⛔ **CLOSURE RECORD — do not re-mine session `d40e3b86` (2026-07-24 → 07-29).**
   [decomp/MINING_SESSION_D40E_CERTIFIED_DRAINED_2026-08-18.md](decomp/MINING_SESSION_D40E_CERTIFIED_DRAINED_2026-08-18.md)
   — 8 sonnet miners + 1 fable reviewer over the full 92K-token narration:
