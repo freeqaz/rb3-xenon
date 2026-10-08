@@ -6,7 +6,7 @@ area, or citing a number. The full pre-2026-10-08 text of this file (140 KB, eve
 measurement and inline correction) is frozen at
 `docs/decomp/CLAUDE_MD_FULL_RECORD_2026-10-08.md`. `docs/INDEX.md` indexes the core docs
 (banner audit 2026-07-06) but not most lane docs written since, so also search `docs/decomp/`
-by lane ID or topic. Any number quoted here is a snapshot: re-measure before you build on it.
+by lane ID or topic; for scope, this file wins over any older framing. Any number quoted here is a snapshot: re-measure before you build on it.
 
 **Document your work as you go.** Say what you are about to do, what you expect, and what you
 measured — predictions before results; a failed prediction is the most useful line in a record.
@@ -25,11 +25,13 @@ from C++ source. Title ID `45410914`, target `orig/45410914/default.xex` (not co
   `orig/45410914/rb3dx-archive/`. ⚠ `orig/45410914/default_tu5.xex` holds **Deluxe** bytes
   despite its name and is the file the Ghidra program `default_tu5.xex-c5a170` was imported
   from: leave it in place (moving it imports a duplicate program). That program is wrong only
-  in 53 words in 10 groups at the same VAs, usable everywhere else. Any raw address in a doc
-  dated before 2026-07-15 is a **TU0** address and is invalid here.
+  in 53 words in 10 groups at the same VAs, usable everywhere else. A raw address in a doc dated
+  before 2026-07-15 is a **TU0** address unless the doc labels it TU5 (the 07-07..07-14
+  `docs/plans/*tu5*` migration docs mix the two); check it against `band.exe` first.
   Record: `docs/decomp/W16PT_CLEAN_TU5_RETARGET_2026-10-06.md`.
 - **Retail bytes:** `orig/45410914/band.exe` is the decompressed clean-TU5 PE (image base
-  `0x82000000`); read any VA with `python3 tools/va_disasm.py <hexva> [nbytes]`. Prefer it
+  `0x82000000`); read any VA from the repo root with `python3 tools/va_disasm.py <hexva> [nbytes, decimal]`
+  (it opens the relative path `orig/45410914/band.exe`). Prefer it
   over the Ghidra program and over any map-derived artifact. RB3 has **no linker map**:
   retail functions are anonymous `fn_8XXXXXXX` until named in
   `scripts/target_symbol_map.json`. `ham_xbox_r.map` is DC3's.
@@ -37,18 +39,27 @@ from C++ source. Title ID `45410914`, target `orig/45410914/default.xex` (not co
   `/GS` off for Harmonix code, and linker ICF **on** (relocation-restricted COMDAT folding)
   are verified on retail bytes; `/O1 /Oi` and the implicit `/fp:fast` by whole-binary A/B
   (every perturbation scored worse); the `c` in `/EHsc` rests on that metric alone. Per-TU
-  overrides live in `objects.json` `extra_cflags` (Quazal `/Od /Oi- /Ob1`, mostly `/EHs-c-`;
-  `keygen_xbox` `/Od /Os`; curl `/TC /GS`). Do not re-litigate from match-%: `/GR` and ICF
+  overrides live in `objects.json` `extra_cflags` (Quazal `/Od /Oi- /Ob1`, mostly `/EHs-c-`,
+  often `/GR-`; `keygen_xbox` `/Od /Os`); curl's `/TC /GS` are the `curl` cflags set in
+  `config/45410914/config.json`, not `extra_cflags`. Do not re-litigate from match-%: `/GR` and ICF
   cannot be settled by that instrument. `docs/decomp/xdk-11164-compiler.md`,
   `docs/decomp/W16NT_PER_TU_FLAG_AUDIT_2026-10-02.md`.
 - **Priority is native-port relevance:** RB3's game layer (`src/band3/`) plus the
-  `src/system/` pieces the native runtime consumes, with the VIA-DC3 engine ring funded
-  alongside (user, 2026-10-06; engine fixes may land in `../milo-native-engine`). DC3 supplies
-  the renderer, materials and mesh as-is (`docs/plans/engine-reuse-and-asset-rendering.md`).
+  `src/system/` pieces the native runtime consumes. DC3 supplies the renderer, materials and
+  mesh (`docs/plans/engine-reuse-and-asset-rendering.md`), but RB3's engine is older and the
+  differences reach the native port silently, so the VIA-DC3 engine ring is funded too for
+  differences that change native behaviour (user, 2026-10-06; engine fixes may land in
+  `../milo-native-engine`).
   XDK porting is out of scope (pinning and an allocator/memory-management subset are not).
-  All of `src/network/` (Quazal and the `net/` layer over it) is out of scope for the native
-  port: landed work stays, fund no new lanes there. Tiers: `scripts/native_scope_map.py`;
-  current ranking: newest `docs/decomp/CAMPAIGN_STATE_*.md`.
+  All of `src/network/` (Quazal and the `net/` layer over it) is out of scope for funding
+  (`native_scope_map.py` tier 360-ONLY): landed work stays, no new RE or bodyport lanes
+  go there; the exception is what native links (`net/NetMessage.cpp`, `net/Synchronize.cpp`
+  and `src/network` headers), whose fixes are in scope. Tiers: `tools/native_runtime_rank.py`
+  `tier_fn`, which is `scripts/native_scope_map.py` classify() with NATIVE-VIA-DC3 split into
+  IN-RB3ENG (in scope; DC3 lacks the file) and VIA-DC3 (funded) — do not rank from that
+  script's own headline or its stale "redundant" docstring. Current ranking: the latest
+  `docs/decomp/CAMPAIGN_STATE_<date><suffix>.md`, ordered by date then letter suffix (`ls`
+  sorts the bare `2026-10-07.md` after `-07d`); each edition names the one it supersedes.
 
 ## Source provenance
 
@@ -72,7 +83,9 @@ from C++ source. Title ID `45410914`, target `orig/45410914/default.xex` (not co
   `' /D[A-Za-z_][A-Za-z0-9_]*'` over `build.ninja` — a bare `/D…` regex matches inside paths,
   which is how the count was wrong twice). None is `HX_NATIVE`. Gates rot (`RB3_MAP_0x1C`
   went live-in-6 to dead-in-all within two months), so probe liveness with
-  `tools/gate_liveness.py` rather than inheriting it; a gate tested inside the PCH closure
+  `tools/gate_liveness.py --flag RB3_FOO` rather than inheriting it (bare name — the tool
+  adds `/D` itself and `--flag /DRB3_FOO` reads INERT everywhere; never omit `--flag`, its
+  default is the dead `RB3_MAP_0x1C`); a gate tested inside the PCH closure
   does nothing in a PCH-dir TU.
 
 ## Git and worktrees (other agents are in the main tree right now)
@@ -81,10 +94,14 @@ from C++ source. Title ID `45410914`, target `orig/45410914/default.xex` (not co
   the main repo.** Do isolated work in a worktree.
 - **`scripts/setup_worktree.sh ~/tmp/wt-<name> <branch>`** makes a buildable worktree via
   btrfs reflinks (`--cold-cache` for a clean A/B baseline — ⚠ its prime currently fails with
-  a false `THE SPLIT REWROTE ITS OWN INPUT`; re-run `./tools/ninja-locked
-  build/45410914/config.json` and commit nothing). A bare `git worktree add` is unbuildable
+  a false `THE SPLIT REWROTE ITS OWN INPUT` while the script still prints `Worktree ready`;
+  the false positive shows every input as `split with: None` and leaves `git status` clean —
+  re-run `./tools/ninja-locked build/45410914/config.json` and commit nothing. A `split with:`
+  showing a hash is a real guard hit). A bare `git worktree add` is unbuildable
   here. Worktrees and scratch go under **`~/tmp`, never `/tmp`** (tmpfs, no reflink, quota).
-  Every worktree carries an intentional ` M tools/download_tool.py`; never commit it.
+  `setup_worktree.sh` patches `tools/download_tool.py` for offline builds and marks it
+  `--assume-unchanged` (hidden from `git status`; `git ls-files -v` shows `h`); never commit
+  or stage it.
 - **A fresh worktree's target objs are pre-renamer: every retail mangled name reads "absent"
   until the first build.** Build before any name-keyed analysis and sanity-check the symbol
   count.
@@ -94,8 +111,9 @@ from C++ source. Title ID `45410914`, target `orig/45410914/default.xex` (not co
   abandoned lane (say so). Never rebase a branch someone is still committing to.
   `scripts/harvest/land.sh <wt|branch>` only **rebases** (auto-unions the map, `objects.json`
   and `splits.txt`, prints READY/DEFER); merge `--no-ff` afterwards despite its header's
-  `--ff-only`, and never let it union-resolve a `splits.txt` conflict when your patch deletes
-  lines (the union drops deletions). Stage exact file lists; no AI co-author trailers;
+  `--ff-only`. If your branch deletes or changes `splits.txt` lines, after READY run
+  `git diff main -- config/45410914/splits.txt` and re-delete any old line that came back: a
+  conflict is silently line-unioned, which never propagates removals. Stage exact file lists; no AI co-author trailers;
   committing is standing-authorized, pushing is not.
 - **Remove your worktree after landing with plain `git worktree remove <path>`** (no
   `--force`: plain `remove` refuses while untracked or modified files remain, and untracked
@@ -104,8 +122,9 @@ from C++ source. Title ID `45410914`, target `orig/45410914/default.xex` (not co
   window. `worktree remove` does not delete the branch; only uncommitted work, or commits on
   a detached HEAD no ref reaches (orchestrator pool trees are detached), can be lost.
 - A killed `--agent-tools` grind run leaves the worktree without `.git` (moved to
-  `~/tmp/.<name>.gitmeta/gitfile`). Restore with `cp ~/tmp/.<name>.gitmeta/gitfile <wt>/.git
-  && git worktree repair <wt>` before anything runs `git worktree prune` (the orchestrator
+  `.<name>.gitmeta/gitfile` in the worktree's parent directory, `~/tmp/` for a `~/tmp` lane).
+  Restore with `cp <parent>/.<name>.gitmeta/gitfile <wt>/.git && git worktree repair <wt>`
+  before anything runs `git worktree prune` (the orchestrator
   pool does); once `.git/worktrees/<name>` is gone the tree is unrecoverable scratch. Never run
   two campaigns against one worktree.
 
@@ -127,9 +146,10 @@ python3 configure.py                                         # after objects.jso
   `THE SPLIT REWROTE ITS OWN INPUT`; the corrected file is already on disk — inspect it,
   commit it with your change, rebuild. A `.text` move must land together with the re-derived
   `.pdata` lines and the fixed-point `symbols.txt` (`scripts/verify_split_current.py`).
-- Tools are **prebuilt local forks** resolved by absolute path, none on PATH: dtk =
+- Tools are **prebuilt local forks** resolved by absolute path (the live binaries are not on
+  PATH): dtk =
   `../jeff/target/release/dtk`; objdiff = **`bin/objdiff-cli`** (the grader's 4.2.9 binary,
-  shared by rb3 and dc3-decomp — a bare `objdiff-cli` on PATH is an older install); compiler
+  shared by rb3 and dc3-decomp — a bare `objdiff-cli` on PATH is an older 4.2.7 install); compiler
   wrapper = `../wibo` (live `build/release/wibo` = `1.2.0-c2rs.1`, built with the
   **`release64-clang`** preset and copied in; never build inside `build/release/`, it is the
   i686 `release` preset's binaryDir and a build there overwrites the live binary); object
@@ -140,7 +160,8 @@ python3 configure.py                                         # after objects.jso
   with `CARGO_TARGET_DIR=~/tmp/...`, back up the live binary, swap deliberately, verify by
   sha256. wibo: build to staging, run the byte gate (≥3 TUs, same `/Fo`, 0 differing bytes
   beyond the COFF timestamp), then swap atomically. objcache does not key on the wibo binary,
-  so a bad swap keeps serving old-loader objs: roll back the cache too. Full discipline: full
+  so objs compiled by a bad loader stay cached after you roll the binary back: drop
+  `~/.cache/rb3-objcache` too. Full discipline: full
   record §"Two build tracks".
 - **Raw `.obj` byte comparison is a dead instrument** (cache-served objs embed the populating
   worktree's `/Fo` and can carry its unattested `?A0x…` anon-namespace hash; PCH signature
@@ -149,7 +170,8 @@ python3 configure.py                                         # after objects.jso
   exact unattested `?A0x` name.
 - PCH: nine engine dirs compile through `build/45410914/pch/system.pch` from
   `src/system/decomp_pch.h` (Object.h + Debug.h only — **codegen-load-bearing, keep sacred**;
-  an edit to anything it includes recompiles ~2,000 objs). `char rndobj world ui` are
+  an edit to anything it includes recompiles ~1,100 of the ~1,170 objs, nearly the whole
+  build). `char rndobj world ui` are
   excluded on purpose (they regressed tracked matches), so never add a dir without a fresh A/B.
   Disable via `config.pch_eligible_dirs = set()` in `configure.py` + `python3 configure.py`.
 - Expected split noise: the SPLIT step prints ~130 lines including ~36 dtk `WARN`. Tens of
@@ -159,7 +181,7 @@ python3 configure.py                                         # after objects.jso
 ## Build wiring
 
 - `tools/defines_common.py` — include order: STLport, `src/xdk/LIBCMT`, `src`, `src/system`,
-  then `src/band3`, `src/network`. Earlier roots shadow later ones (`net/JsonUtils.h` exists
+  `src/system/oggvorbis`, `src/band3`, `src/network`, `src/system/speex/include`. Earlier roots shadow later ones (`net/JsonUtils.h` exists
   in both `system/` and `network/`), so never add stub headers at `src/` root.
 - `config/45410914/objects.json` — which `.cpp` compile (new files as `NonMatching`). An entry
   gets a compile edge even with no `splits.txt` pin (compile-only scaffolding: port and
@@ -186,9 +208,10 @@ python3 configure.py                                         # after objects.jso
   `obj_target_symbol_renamer` rewrites the target obj's `fn_<addr>` symbols from
   `scripts/target_symbol_map.json` (add rows by textual edit or
   `scripts/harvest/tu5_map_apply_fragment.py`, never `json.dump` the whole map;
-  `tools/gen_game_target_map.py` is dead on TU5). **Changing or removing an existing name is
-  inert until a re-split** (the renamer only rewrites `fn_` symbols):
-  `rm build/45410914/target_symbol_renames.stamp && touch config/45410914/config.yml` first.
+  `tools/gen_game_target_map.py` is dead on TU5). The renamer only rewrites placeholder
+  `fn_`/`lbl_` symbols, so a changed or removed name needs a re-split; that happens on the
+  next `./tools/ninja-locked` because the map has been a declared SPLIT input since
+  `4956a0937` (before that a landed map edit was silently inert).
   Post-compile **six** passes — `anon_ns`, `dynamic_init`, `guard`, `bool_mangle`,
   `atexit_scope`, `eh_boundary`; by ablation only `anon_ns` and `guard` move the metric, the
   rest are correctness or idle (re-measure before quoting). `regswap` and `transplant` are
@@ -208,12 +231,12 @@ python3 configure.py                                         # after objects.jso
   commit a deliberate carve and use `--pick`/`--patch`. If the run prints **LANDING**, commit
   its `legB_symbols_fixed_point.diff` / `legB_splits_rederived.diff` with the patch or main's
   next build fails the split guard. Deltas come only from legs measured in-run — deltas
-  compose, absolutes do not.
+  compose (on one ruler and one objdiff binary), absolutes do not.
 - **`report.json` is the score.** It self-declares its ruler in `provenance.diff_config` (a
   list of `key=value` strings; `scripts/analysis/ruler.py` parses it). The shipped ruler is
   **`functionRelocDiffs=name_check`** (since 2026-08-12); `none` is opt-in and is **not** a
-  control for either headline number (on the same objdiff binary it reads a different, moving
-  function count). Any absolute recorded without its ruler is incomparable.
+  control for `matched_functions` (it reads a different, moving function count); its one use
+  is the `matched_code` alias-shape check below, so keep `ab_measure`'s default `none` leg. Any absolute recorded without its ruler is incomparable.
   `docs/decomp/RULER_CHANGE_name_check_2026-08-12.md` (its "ruler-invariant
   `matched_functions`" line is superseded by
   `docs/decomp/W16AR_AO_FILED_ROWS_RULER_INVARIANCE_2026-09-14.md` §3).
@@ -222,11 +245,13 @@ python3 configure.py                                         # after objects.jso
   `name_check` a vetted relocation-name diff is charged, objdiff `b14ba45`); `matched_code`
   sums rows at `fuzzy_match_percent == 100`. A fix can move one and not the other. A wrong
   callee stays invisible to `mpn` only when its target is a placeholder, an alias, a regalloc
-  save helper, a local-static ordinal, or inside an anonymous funclet — so a correctness fix
+  save helper or a local-static ordinal twin, or when the call site itself sits in a
+  placeholder-named `fn_` symbol such as an EH funclet — so a correctness fix
   can still read Δ0; land it anyway. About half of `matched_functions` are `masked_equal`
   funclet pairings; the honest floor is `matched − masked_equal`, and `ab_measure` prints
-  Δhonest (never chain one from before the 2026-08-02 disclosure flip,
-  `docs/decomp/RULER_CHANGE_2026-08-02.md`).
+  Δhonest. Never chain a delta across a ruler or binary change (08-02 `masked_equal`
+  disclosure, 08-12 `name_check`, 08-20 `b14ba45` mpn, 09-14 objdiff 4.2.9 funclet
+  tie-break); compare `provenance.tool_binary_hash` on both ends. `docs/decomp/RULER_CHANGE_*.md`.
 - `report.json` traps: byte and address numerics are JSON **strings** and zero-valued scalars
   are omitted (most units have no `matched_code`), so read `int(x.get(k, 0))`; but
   `match_percent_normalized` is emitted even at 0.0 — count how many rows lack a key before
@@ -247,7 +272,10 @@ python3 configure.py                                         # after objects.jso
   charged callee our map cannot place is **unidentified, not proven folded** — a triage
   backlog, never noise or an alias candidate.
 - Verdict labels: since objdiff `7a334d4` (2026-08-21) `LINKER_MERGED` fires only on a
-  splitter merged name; two different named callees are `WRONG_CALLEE` (fixable). An
+  splitter merged name. Two different named callees are `WRONG_CALLEE`, or
+  `TEMPLATE_INSTANTIATION_MISMATCH` when they share a template base (both fixable, the
+  template class is the larger); save-helper pairs are `REGISTER_SAVE_HELPER_MISMATCH`
+  (regalloc), a placeholder side is `UNVERIFIABLE_CALLEE_NAME`. An
   `AT_LIMIT`/ICF label on a relocation-name-only row from an older brief carries no
   information — adjudicate on retail bytes (does the named callee's signature fit the call
   site?). `REGISTER_SWAP` on a sub-100 row is a symptom, not a diagnosis.
@@ -278,21 +306,23 @@ cmake --build build
 ```
 
 - The shared native runtime is `../milo-native-engine`, consumed as a live working tree (an
-  engine edit reaches every consumer on its next configure). `MILO_ENGINE_PIN` in
+  engine edit, including adding or removing a file, reaches every consumer on its next
+  build; no reconfigure or pin bump needed). `MILO_ENGINE_PIN` in
   `native/CMakeLists.txt` is a warn-only SHA and a CMake cache variable (an existing build dir
   keeps the old value; reconfigure with `-UMILO_ENGINE_PIN` before reading a mismatch as
   drift). Only the coordinator bumps it. Siblings resolve from the real repo, so a cold
   worktree gates 18/18 without seeding. Lessons: memory `hub_native.md`, `docs/plans/x*.md`.
-- **Run `tools/native_build_gate.sh` before landing anything under `src/`** as your **last**
-  action (a comment-only commit once broke the link). Require `PASS 18/18, 0 SKIPs, rc=0` and
-  paste the `NATIVE_GATE_RESULT …` line verbatim. rc: 0 pass · 1 broken · 2 could not run ·
-  3 ran but incomplete/partial. It also runs `tools/layout_odr.py` (cross-TU class-layout ODR
-  over every X360 TU and native program; a cold run after a wide header change takes ~35 min,
-  do not kill it — `docs/decomp/W16QD_LAYOUT_ODR_CHECK_2026-10-06.md`). The gate proves the
-  targets link, not that they run: for shared `src/`, `docs/decomp/NATIVE_HEALTH.md` also
-  requires `tools/native_health.sh --selftest` (all 18 targets on real data); paste its
-  `NATIVE_HEALTH_RESULT` line too. If you seed a configure by hand, pin the compiler or CMake
-  wipes the cache.
+- **Before landing anything under `src/`, make `tools/native_health.sh --selftest` your
+  last action** (a comment-only commit once broke the link). It runs
+  `tools/native_build_gate.sh` itself (which runs `tools/layout_odr.py`, cross-TU class-layout
+  ODR over every X360 TU and native program; a cold run after a wide header change takes
+  ~35 min, do not kill it — `docs/decomp/W16QD_LAYOUT_ODR_CHECK_2026-10-06.md`), then runs all
+  18 targets on real data (`docs/decomp/NATIVE_HEALTH.md`). Paste both contract lines
+  verbatim: `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0
+  failed=0 rc=0` (the prose `PASS` line differs from the incomplete one by one space) and
+  `NATIVE_HEALTH_RESULT …`. rc: 0 pass · 1 broken · 2 could not run · 3 ran but
+  incomplete/partial. If you seed a configure by hand, pin the compiler or CMake wipes the
+  cache.
 - **Never put render or gate flags in a shell variable** — zsh does not word-split, the tool
   silently renders defaults and returns 0. Spell the flags out or use an array, and confirm
   the log names the cell or venue you asked for; `rc=0` alone proves nothing.
@@ -330,10 +360,12 @@ cmake --build build
   `lookup_merged_symbol` always fails here (needs a map; for ICF folds read
   `scripts/symbol_aliases.json` / `build/45410914/icf_aliases.map`). No build step refreshes
   `decomp.db`, so `query_functions` percents trail `report.json`
-  (`venv/bin/python tools/refresh_permuter_db.py` refreshes them).
+  (refresh with `venv/bin/python tools/refresh_permuter_db.py` **from the main checkout** —
+  it rewrites the shared `decomp.db` the server reads; from a worktree it creates a private
+  copy nobody reads).
 - **Ghidra MCP** on port **8002** (`tools/ghidra/pyghidra-service.sh`, project
-  `ghidra_projects/RB3Xenon/RB3Xenon/RB3Xenon.gpr` — the top-level `RB3Xenon.gpr` is a stale
-  May copy; Xbox 360 Ghidra fork 12.3_DEV since 2026-10-02,
+  `ghidra_projects/RB3Xenon/RB3Xenon/RB3Xenon.gpr`, the one holding `RB3Xenon.lock` — the
+  top-level `RB3Xenon.gpr` is stale and `RB3Xenon/RB3Xenon.gpr` an empty shell; Xbox 360 Ghidra fork 12.3_DEV since 2026-10-02,
   `docs/plans/ghidra-install-swap-2026-10-02.md`). pyghidra caches decompiles in the repo-root
   `cache.db` keyed by binary hash (`--reinit` does not clear it); move it aside after any
   Ghidra change. BinDiff at `/usr/bin/bindiff`, one BinExport copy per Ghidra version only.
