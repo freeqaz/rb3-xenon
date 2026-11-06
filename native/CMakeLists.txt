@@ -1077,8 +1077,15 @@ set(MILO_ENGINE_PATH "${_rb3x_milo_default}"
     CACHE PATH "Path to milo-native-engine checkout")
 # Soft SHA pin (warn, never fail) — mirrors rb3/native/CMakeLists.txt:88-102.
 # Seeded from the engine HEAD SPIKE-X0 measured against.
+# FORCE, so the source value is authoritative. Without it a build directory's
+# CMakeCache.txt shadows this line permanently: measured 2026-11-06 in an
+# isolated CMake project, a cached "OLD" survived a source change to "NEW"
+# (effective=OLD) and only FORCE made the source win (effective=NEW). This
+# repo's native/build was still carrying 40dd2a12 while this file said
+# cb124a75, i.e. the bump had never taken effect in the build directory.
+# dc3-decomp's pin has carried FORCE since 2026-08-19 for the same reason.
 set(MILO_ENGINE_PIN "cb124a75ae5bb55f8bf32fc5661b2d4042a672a1"
-    CACHE STRING "Engine commit SHA verified against")
+    CACHE STRING "Engine commit SHA verified against" FORCE)
 
 # Dawn (WebGPU) lives in the shared dc3 deps tree; glfw3 is system-installed.
 # Defaulted (not required) so a bare `cmake -B build` finds it; override with
