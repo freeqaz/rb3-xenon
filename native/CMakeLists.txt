@@ -1084,7 +1084,7 @@ set(MILO_ENGINE_PATH "${_rb3x_milo_default}"
 # repo's native/build was still carrying 40dd2a12 while this file said
 # cb124a75, i.e. the bump had never taken effect in the build directory.
 # dc3-decomp's pin has carried FORCE since 2026-08-19 for the same reason.
-set(MILO_ENGINE_PIN "cb124a75ae5bb55f8bf32fc5661b2d4042a672a1"
+set(MILO_ENGINE_PIN "4e738fea9bedbfa9a17112f3e1c585490475cf01"
     CACHE STRING "Engine commit SHA verified against" FORCE)
 
 # Dawn (WebGPU) lives in the shared dc3 deps tree; glfw3 is system-installed.
@@ -1125,9 +1125,13 @@ if(RB3X_BUILD_ENGINE)
     # hazard documented in CLAUDE.md "Build wiring"). MEASURED in X0: adding
     # src/band3, src/network or src/system/oggvorbis changes nothing — the build
     # is byte-for-byte as clean without them, so they are deliberately absent.
-    # The engine injects its own include/ STL shim BEFORE PUBLIC, and it is
-    # byte-identical to native/include/bits/stl_iterator.h, so no consumer-side
-    # STL shim injection is needed either.
+    # The engine generates its own host-STL shim at configure time
+    # (cmake/MiloHostStlShim.cmake: the toolchain's own <vector> iterator
+    # header plus one implicit operator T*()) and puts it on milo-engine's
+    # include path BEFORE PUBLIC, so the targets that link the engine get a
+    # shim matched to the compiler in use. It is no longer byte-identical to
+    # native/include/bits/stl_iterator.h (a checked-in GCC 15.2.1 copy that the
+    # other targets still use); no consumer-side STL shim injection is needed.
     set(MILO_ENGINE_DECOMP_INCLUDE_DIRS
         ${CMAKE_SOURCE_DIR}/src        # native shims + stl/ STLport-shape shims
         ${REPO_ROOT}/src
