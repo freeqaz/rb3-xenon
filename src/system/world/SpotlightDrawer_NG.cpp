@@ -23,6 +23,9 @@
 
 #ifdef HX_NATIVE
 NgSpotlightDrawer::SpotlightResources *NgSpotlightDrawer::sSharedResources;
+// No X360 unit defines it yet (the match build references the retail data
+// symbol); the native RenderScene below writes it, so native needs storage.
+bool NgSpotlightDrawer::sActiveFrame;
 #endif
 
 void GetLightPosition(Spotlight *s, Vector3 &v) {
@@ -128,7 +131,22 @@ void NgSpotlightDrawer::RenderBeams(const Hmx::Matrix4 &) {}
 bool NgSpotlightDrawer::CheckCam() { return true; }
 void NgSpotlightDrawer::BlurRT(float, float) {}
 void NgSpotlightDrawer::SetupForPostProcess() {}
-void NgSpotlightDrawer::RenderScene() {}
+// RenderScene (DoPost) is where retail ends the spotlight list's frame: every
+// path through the non-native body below calls ClearPostProc -- directly when
+// there are no lights or the drawer cannot render, otherwise as the last step
+// of SetupForPostProcess. NgSpotlightDrawer::ClearPostDraw clears only
+// sNeedDraw, so on the NG path nothing else empties sLights between frames
+// (SpotlightDrawer::EndWorld's ClearLights runs only under TheRnd.DisablePP()).
+// Native renders none of the beam work, but it still owes the clear: the empty
+// stub this replaced let sLights grow by every drawn spotlight every frame --
+// measured on world/vignette/transition/gen/tv11_a (8 spotlights) in rb3-render:
+// 8, 16, 24, ... 240 entries after 30 frames, against 0 after each frame with
+// this body -- and DrawWorld drew each stale entry's flares and lenses again.
+// Same defect and fix as dc3-decomp 637cf9950.
+void NgSpotlightDrawer::RenderScene() {
+    sActiveFrame = false;
+    ClearPostProc();
+}
 #endif
 
 #ifndef HX_NATIVE

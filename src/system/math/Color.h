@@ -54,17 +54,28 @@ namespace Hmx {
                 | ((int)(green * 255.0f) & 0xFF) << 8 | ((int)(red * 255.0f) & 0xFF);
         }
 
+        // Retail multiplies by the float nearest 1/255, 0x3B808081, which sits
+        // just ABOVE 1/255 (RndLight::SetPackedColor 0x82497BB0: fmuls by
+        // lbl_820178E8). cl's implicit /fp:fast folds `/ 255.0f` into that
+        // multiply, so the X360 objects are the same either way; native (no
+        // fast-math) divided exactly, which reads 126 of the 256 levels one ulp
+        // LOW, and Pack truncates. RndLight's {set intensity} re-packs the
+        // colour every set (SetPackedColor(PackedColor(), I)), so an animated
+        // light lost levels: 255/200/4 reads 255/71/0 after 1,200 sets with the
+        // division, 255/200/3 with the multiply (the retail arithmetic).
+        // Same fix as dc3-decomp d560e63f0. rb3 (Wii) divides in its original
+        // and must keep its own spelling.
         void Unpack(int packed) {
-            red = (packed & 255) / 255.0f;
-            green = ((packed >> 8) & 255) / 255.0f;
-            blue = ((packed >> 0x10) & 255) / 255.0f;
+            red = (packed & 255) * (1.0f / 255.0f);
+            green = ((packed >> 8) & 255) * (1.0f / 255.0f);
+            blue = ((packed >> 0x10) & 255) * (1.0f / 255.0f);
         }
 
         void UnpackAlpha(int packed) {
-            red = (packed & 255) / 255.0f;
-            green = ((packed >> 8) & 255) / 255.0f;
-            blue = ((packed >> 0x10) & 255) / 255.0f;
-            alpha = ((packed >> 0x18) & 255) / 255.0f;
+            red = (packed & 255) * (1.0f / 255.0f);
+            green = ((packed >> 8) & 255) * (1.0f / 255.0f);
+            blue = ((packed >> 0x10) & 255) * (1.0f / 255.0f);
+            alpha = ((packed >> 0x18) & 255) * (1.0f / 255.0f);
         }
 
         float &operator[](int i) { return *(&red + i); }

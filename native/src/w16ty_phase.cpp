@@ -48,6 +48,7 @@
 #include <chrono>
 #include <cmath>
 #include <cstdarg>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -681,7 +682,14 @@ void SpotlightChecks() {
             s->SetProperty("color", DataNode(0x00336699));
             sets++;
             const Hmx::Color &c = s->mColorOwner->mColor;
-            if (c.red != 0x99 / 255.0f || c.green != 0x66 / 255.0f || c.blue != 0x33 / 255.0f
+            // Retail Spotlight::SetColor(int) (0x824D86C0) unpacks with fmuls
+            // by lbl_820178E8 = 0x3B808081, the float just above 1/255; the
+            // `k / 255.0f` this gate used to expect was the native division
+            // Hmx::Color::Unpack had (one ulp low on 126 of 256 levels).
+            const uint32_t kUnpackBits = 0x3B808081u;
+            float kUnpack;
+            memcpy(&kUnpack, &kUnpackBits, sizeof kUnpack);
+            if (c.red != 0x99 * kUnpack || c.green != 0x66 * kUnpack || c.blue != 0x33 * kUnpack
                 || c.alpha != 1.0f || s->mColorOwner->mIntensity != oi)
                 miss(setBad, sfirst, s, "color");
             s->SetProperty("intensity", DataNode(oi + 0.5f));
