@@ -62,8 +62,18 @@ public:
     static void Sleep(int);
 
     static float CyclesToMs(long long cycles) {
+#ifdef HX_NATIVE
+        // The two 32-bit words of the count. The image's `unsigned long` and
+        // `long` are 4 bytes; as 8-byte types the low "word" was the whole
+        // count and the high word was added again, so from 2^32 cycles (71.6
+        // minutes of microseconds) a reading was too large by
+        // high * 4,294,967 ms.
+        unsigned int lowCycles = (unsigned int)cycles;
+        int highCycles = (int)(cycles >> 32);
+#else
         unsigned long lowCycles = cycles;
         long highCycles = cycles >> 32;
+#endif
         return (lowCycles * sLowCycles2Ms) + (highCycles * sHighCycles2Ms);
     }
 

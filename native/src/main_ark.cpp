@@ -36,6 +36,7 @@
 #include "os/Debug.h"
 #include "os/File.h"
 #include "os/System.h"
+#include "os/Timer.h"
 #include "utl/Str.h"
 #include "utl/Symbol.h"
 
@@ -144,6 +145,76 @@ namespace {
                  "ui/cheat_init %s", breed ? "PRESENT" : "absent",
                  hosts ? "PRESENT" : "absent", cheat ? "PRESENT" : "absent");
         Gate("ship-dev-blocks-absent", !breed && !hosts && !cheat, d);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// os/Timer: a cycle count on both sides of 2^32.
+//
+// Timer::CyclesToMs splits the 64-bit count into a low and a high 32-bit word
+// and scales each: low * sLowCycles2Ms + high * sHighCycles2Ms. Natively a
+// cycle is a microsecond (Timer.h's __mftb) and Timer::Init sets the factors
+// to 0.001 and 2^32 * 0.001, so a reading is cycles / 1000 whichever word the
+// count reaches. 2^32 microseconds is 71.6 minutes of accumulated Timer time.
+//
+// The references do not go through the word split: below 2^32 the one float
+// product the low word alone gives, from 2^32 the same product in double.
+// 66,647,490,000 is the count at which dc3's clock stopped advancing a ribbon
+// (18.5 h); 2,592,000,000,000 is 30 days.
+//
+// Called last: Timer::Init turns every Timer in the process from reading 0 ms
+// (no driver but rb3-render calls it) to reading real time.
+namespace {
+    void TimerChecks() {
+        printf("\n--- os/Timer: cycles to milliseconds ---\n");
+        Timer::Init();
+        char d[256];
+
+        static const long long kBelow[] = { 0, 1, 999, 16667, 1000000, 60000000,
+                                            3600000000LL, (1LL << 32) - 1 };
+        int same = 0;
+        const int numBelow = (int)(sizeof(kBelow) / sizeof(kBelow[0]));
+        long long firstOff = -1;
+        for (int i = 0; i < numBelow; i++) {
+            float got = Timer::CyclesToMs(kBelow[i]);
+            float want = (float)(unsigned int)kBelow[i] * 0.001f;
+            if (memcmp(&got, &want, sizeof(got)) == 0) same++;
+            else if (firstOff < 0) firstOff = kBelow[i];
+        }
+        if (same == numBelow) {
+            snprintf(d, sizeof(d), "%d of %d counts read low * 0.001f bit for bit; "
+                     "1,000,000 cycles read %g ms", same, numBelow,
+                     (double)Timer::CyclesToMs(1000000));
+        } else {
+            snprintf(d, sizeof(d), "%d of %d counts read low * 0.001f bit for bit; "
+                     "first off: %lld cycles read %.9g ms", same, numBelow, firstOff,
+                     (double)Timer::CyclesToMs(firstOff));
+        }
+        Gate("timer-ms-below-2^32", same == numBelow, d);
+
+        static const long long kFrom[] = { 1LL << 32, 66647490000LL, 131072000000LL,
+                                           2592000000000LL };
+        const int numFrom = (int)(sizeof(kFrom) / sizeof(kFrom[0]));
+        int close = 0;
+        long long firstFar = -1;
+        for (int i = 0; i < numFrom; i++) {
+            double got = Timer::CyclesToMs(kFrom[i]);
+            double want = (double)kFrom[i] * 0.001;
+            double off = got > want ? got - want : want - got;
+            if (off <= want * 1e-6) close++;
+            else if (firstFar < 0) firstFar = kFrom[i];
+        }
+        if (close == numFrom) {
+            snprintf(d, sizeof(d), "%d of %d counts within 1e-6 of cycles / 1000; "
+                     "2^32 cycles read %.9g ms", close, numFrom,
+                     (double)Timer::CyclesToMs(1LL << 32));
+        } else {
+            snprintf(d, sizeof(d), "%d of %d counts within 1e-6 of cycles / 1000; "
+                     "first off: %lld cycles read %.9g ms, want %.9g", close, numFrom,
+                     firstFar, (double)Timer::CyclesToMs(firstFar),
+                     (double)firstFar * 0.001);
+        }
+        Gate("timer-ms-from-2^32", close == numFrom, d);
     }
 }
 
@@ -335,6 +406,7 @@ int main(int argc, char **argv) {
     // drivers defined _SHIP (W16-UA); tools/retail_boot_config.py gives 130.
     Gate("song-count == 130", songCount == 130, "");
 
+    TimerChecks();
 
     printf("\nRESULT: %s", gFailures == 0 ? "ALL GATES PASSED\n" : "FAILED\n");
     if (gFailures) printf("  %d gate(s) failed\n", gFailures);
