@@ -617,10 +617,28 @@ echo "  file sources: $fa_ok target(s) clean, $fa_bad with reads outside the dis
 #                                 = <data dir>/../../system/run/ui/gen/... -- the
 #                                 sibling position W16-UA's 16 host reads came
 #                                 from (the ark keys system files that way).
-PLANT="$LOGDIR/native_health_plant_$SLUG"
+#
+# The engine lower-cases the paths it is given (the 360's file system ignores
+# case), so a plant under a directory with an upper-case letter is never found:
+# the escape probe then reads FAIL and the planted-read control cannot fire,
+# both blaming the engine for the script's choice of directory. Put the plant
+# under the first all-lower-case candidate; with none, say so by name.
+PLANT=""
+for _pd in "$LOGDIR" "$HOME/tmp"; do
+    case "$_pd" in
+    *[[:upper:]]*) ;;
+    *) PLANT="$_pd/native_health_plant_$SLUG"; break ;;
+    esac
+done
+[ -n "$PLANT" ] && [ "$PLANT" != "$LOGDIR/native_health_plant_$SLUG" ] && \
+    echo "  note: TMPDIR has upper-case letters; the plant goes under $PLANT"
 PLANTED="$PLANT/system/run/ui/gen/planted.milo_xbox"
 plant_ok=0
-if [ -d "$ASSETS/gen" ]; then
+if [ -z "$PLANT" ]; then
+    echo "  no plant: TMPDIR ($LOGDIR) and \$HOME/tmp both contain upper-case" \
+         "letters, and the engine lower-cases the paths it is given"
+elif [ -d "$ASSETS/gen" ]; then
+    mkdir -p "$(dirname "$PLANT")"
     rm -rf "$PLANT"; mkdir -p "$PLANT/a/disc" "$(dirname "$PLANTED")"
     ln -s "$ASSETS/gen" "$PLANT/a/disc/gen"
     python3 "$DIR/native/tools/ark_extract.py" "$ASSETS" \
@@ -658,7 +676,8 @@ if [ $plant_ok -eq 1 ] && [ ${#FA_STRACE[@]} -gt 0 ] && [ -x "$NB/rb3-milo" ]; t
         unrunnable+=("rb3-milo:file-escape-norun")
     fi
 else
-    echo "  UNRUNNABLE escape-probe -- no plant (assets/strace/rb3-milo absent)"
+    echo "  UNRUNNABLE escape-probe -- no plant (assets/strace/rb3-milo absent, or no" \
+         "lower-case directory for it)"
     unrunnable+=("rb3-milo:file-escape-norun")
 fi
 
