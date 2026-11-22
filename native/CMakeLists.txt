@@ -2277,6 +2277,13 @@ set(RB3_APP_SOURCES
     # made NetLog a FUNCTION stub, i.e. a data object backed by code bytes.
     ${REPO_ROOT}/src/network/net/NetSearchResult.cpp
     ${REPO_ROOT}/src/network/net/NetLog.cpp
+    # A5: with the Net stop gone, MetaPanel's ctor -> Campaign::Campaign ->
+    # AccomplishmentManager::Init builds every accomplishment; the song
+    # conditionals derive from AccomplishmentConditional, whose TU was not in
+    # rb3-app (the ctor/dtor/CanBeLaunched/GetRequiredDifficulty/
+    # InqRequiredScoreTypes rows were a1-absent-body stubs). Retail ctor
+    # 0x8266AED0 = Accomplishment ctor, empty condition list, Configure.
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentConditional.cpp
     # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
     # constructs TheBandUI at static init; natively TheUI was the engine's weak
     # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.
