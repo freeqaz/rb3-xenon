@@ -15,7 +15,8 @@
 #include "synth/Synth.h"
 #include <cstdio>
 
-// Retail: os/Debug.cpp defines it; no native target compiles that TU. The
+// Retail defines it outside the decompiled tree (os/Debug.cpp, which rb3-app
+// compiles, declares but does not define it). The
 // class is a 0x100-byte char buffer with no constructor, so static zero
 // storage IS the retail initial state ("no message printed yet").
 DebugNotifyOncePrinter TheDebugNotifyOncePrinter; // ring: native-real
