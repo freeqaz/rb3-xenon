@@ -477,9 +477,9 @@ void RndDir::Enter() {
          ++it) {
         (*it)->Enter();
     }
-    if (IsProxy() && Dir()) {
-        ChainSourceSubdir(Dir(), this);
-    }
+    MsgSource *src = IsProxy() ? dynamic_cast<MsgSource *>(Dir()) : nullptr; // as 0x82404EA8
+    if (src) // chain the owner's MsgSource subobject, never its Hmx::Object base
+        ChainSourceSubdir(reinterpret_cast<Hmx::Object *>(src), this);
     RndPollable::Enter();
 }
 #endif

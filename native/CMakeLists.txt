@@ -2015,6 +2015,8 @@ rb3_add_executable(rb3-milo
     ${CMAKE_SOURCE_DIR}/src/cascade_notify_phase.cpp
     # A8: an async ~ObjectDir leaves refs alone until each object dies.
     ${CMAKE_SOURCE_DIR}/src/async_unload_phase.cpp
+    # A9: a proxy RndDir's Enter chains its owner through MsgSource.
+    ${CMAKE_SOURCE_DIR}/src/proxy_chain_phase.cpp
     ${MILO_TARGET_COMMON_SOURCES}
     # W16-RW: Rnd::TestPoint asks the engine's point-test seam for an occlusion
     # tester (rndobj/Rnd.cpp, HX_NATIVE). rb3-render gets the seam's storage
