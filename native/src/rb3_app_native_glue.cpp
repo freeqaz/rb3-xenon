@@ -7,10 +7,12 @@
 // for a reference is a null reference. Each definition below states the
 // semantics it gives natively. Aborting function stubs are NOT here; they are
 // in rb3_app_link_stubs.s/.cpp.
+#include "movie/MovieSys.h"
 #include "net/WebSvcMgr.h"
 #include "os/ContentMgr.h"
 #include "os/CritSec.h"
 #include "os/Debug.h"
+#include "synth/Synth.h"
 #include <cstdio>
 
 // Retail: os/Debug.cpp defines it; no native target compiles that TU. The
@@ -84,3 +86,20 @@ extern "C" void OutputDebugStringA(const char *msg) { // ring: native-real
 //      CSHA1::Transform). Fix drafted, not landed: a1/sha1_lp64_fix.patch.
 void SetFileChecksumData() {} // ring: native-real
 void SetSongMidiChecksumData() {} // ring: native-real
+
+// Retail: SynthPreInit (synth/Synth.cpp) takes Synth::New(), the Xbox audio
+// synth; its HX_NATIVE arm asks for CreateNativeSynth() instead. rb3-app has
+// no audio device yet (A5 owns NativeSynth), so this returns the base null
+// Synth: the object retail itself builds when config synth/use_null_synth is
+// set, and the fallback SynthPreInit uses when a synth Fail()s. No sound plays.
+Synth *CreateNativeSynth() { return new Synth(); } // ring: native-real
+
+// Retail: TheMovieSys (movie/MovieSys.cpp) is bound to gBinkMovieSys, the
+// Bink/XAudio movie system (moviebink/*_Xbox.cpp, not native). rb3-app gives
+// that symbol a BASE MovieSys instead of the zero bytes A0 reserved (a null
+// vtable: Movie::Init() segfaulted on it). Semantics: Init/Terminate are the
+// base bodies (initialized flag, TexMovie::Init, exit callback), and every
+// movie is a base MovieImpl, which never opens a file: no movie plays, and
+// the splash movies are skipped. Only the MovieSys interface is ever used
+// through TheMovieSys, never BinkMovieSys members. A2 owns real playback.
+MovieSys gRb3AppMovieSys __asm__("gBinkMovieSys"); // ring: native-real

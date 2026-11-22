@@ -42,120 +42,120 @@
 .Lname_21: .asciz "CampaignGoalsLeaderboardPanel::CampaignGoalsLeaderboardPanel()"
 .Lname_22: .asciz "CloseHandle(int)"
 .Lname_23: .asciz "ContainerId::Set(int, unsigned int)"
-.Lname_24: .asciz "CreateNativeSynth()"
-.Lname_25: .asciz "CurrentScreenChangedMsg::GetScreen() const"
-.Lname_26: .asciz "D3DResource_Release"
-.Lname_27: .asciz "DisplayEvents(DataEventList*, float, float)"
-.Lname_28: .asciz "DmCaptureStackBackTrace"
-.Lname_29: .asciz "DmMapDevkitDrive"
-.Lname_30: .asciz "GestureMgr::SetInVoiceMode(bool)"
-.Lname_31: .asciz "GetLastError"
-.Lname_32: .asciz "GetOverlappedResult"
-.Lname_33: .asciz "HeldNote::GetAwardedPercent() const"
-.Lname_34: .asciz "HeldNote::GetAwardedPoints() const"
-.Lname_35: .asciz "HeldNote::GetGem()"
-.Lname_36: .asciz "Hmx::Object::Object(Hmx::Object const&)"
-.Lname_37: .asciz "JoinInvitePanel::JoinInvitePanel()"
-.Lname_38: .asciz "JoypadSetCalbertMode"
-.Lname_39: .asciz "Label3d::Label3d()"
-.Lname_40: .asciz "LoadMgr::PollUntilEmpty()"
-.Lname_41: .asciz "MatchmakingSettings::ClearCustomSettings()"
-.Lname_42: .asciz "MatchmakingSettings::GetCustomValueByID(int) const"
-.Lname_43: .asciz "MemcardXbox::FindValidUnit(ContainerId*)"
-.Lname_44: .asciz "Metronome::Enable(bool)"
-.Lname_45: .asciz "Metronome::Enabled() const"
-.Lname_46: .asciz "Metronome::Enter(Sfx*, Sfx*)"
-.Lname_47: .asciz "Metronome::Exit()"
-.Lname_48: .asciz "Metronome::GetVolume(int) const"
-.Lname_49: .asciz "Metronome::Metronome()"
-.Lname_50: .asciz "Metronome::PlayBeat(int)"
-.Lname_51: .asciz "Metronome::Poll(int, Metronome::OverrideEnabled)"
-.Lname_52: .asciz "Metronome::SetVolume(int, int)"
-.Lname_53: .asciz "Movie::SetTimeCallback(float (*)())"
-.Lname_54: .asciz "MultiByteToWideChar"
-.Lname_55: .asciz "NameGenerator::GetRandomNameFromList(Symbol)"
-.Lname_56: .asciz "NameGenerator::NameGenerator(DataArray*)"
-.Lname_57: .asciz "Net::Init()"
-.Lname_58: .asciz "NetLoaderXbox::NetLoaderXbox(String const&)"
-.Lname_59: .asciz "NetSession::AddLocalUser(LocalUser*)"
-.Lname_60: .asciz "NetSession::Disconnect()"
-.Lname_61: .asciz "NetSession::EndGame(int, bool, float)"
-.Lname_62: .asciz "NetSession::GetLocalHost() const"
-.Lname_63: .asciz "NetSession::GetLocalUserList(std::vector<LocalUser*, std::allocator<LocalUser*>>&) const"
-.Lname_64: .asciz "NetSession::HasUser(User const*) const"
-.Lname_65: .asciz "NetSession::IsBusy() const"
-.Lname_66: .asciz "NetSession::IsInGame() const"
-.Lname_67: .asciz "NetSession::IsJoining() const"
-.Lname_68: .asciz "NetSession::IsLocal() const"
-.Lname_69: .asciz "NetSession::IsOnlineEnabled() const"
-.Lname_70: .asciz "NetSession::IsStartingGame() const"
-.Lname_71: .asciz "NetSession::Join(NetSearchResult*)"
-.Lname_72: .asciz "NetSession::NumOpenSlots() const"
-.Lname_73: .asciz "NetSession::RegisterOnline()"
-.Lname_74: .asciz "NetSession::RemoveLocalUser(LocalUser*)"
-.Lname_75: .asciz "NetSession::SendMsg(User*, NetMessage&, PacketType)"
-.Lname_76: .asciz "NetSession::SendMsg(std::vector<RemoteUser*, std::allocator<RemoteUser*>> const&, NetMessage&, PacketType)"
-.Lname_77: .asciz "NetSession::SendMsgToAll(NetMessage&, PacketType)"
-.Lname_78: .asciz "NetSession::StartGame()"
-.Lname_79: .asciz "NetSession::UpdateUserData(User*, unsigned int)"
-.Lname_80: .asciz "OvershellProfileProvider::ActOnProfile(int, LocalBandUser*, bool)"
-.Lname_81: .asciz "OvershellProfileProvider::ActOnProfileConfirmed(LocalBandUser*)"
-.Lname_82: .asciz "OvershellProfileProvider::GetUser(int) const"
-.Lname_83: .asciz "OvershellProfileProvider::GetWiiProfileCount(LocalBandUser*) const"
-.Lname_84: .asciz "OvershellProfileProvider::GetWiiProfileListMode()"
-.Lname_85: .asciz "OvershellProfileProvider::GetWiiProfileSelectedName() const"
-.Lname_86: .asciz "OvershellProfileProvider::OvershellProfileProvider(BandUserMgr*)"
-.Lname_87: .asciz "OvershellProfileProvider::Reload()"
-.Lname_88: .asciz "OvershellProfileProvider::SetWiiProfileListMode(OvershellProfileProvider::WiiProfileListMode, bool)"
-.Lname_89: .asciz "PlatformMgr::CanSeeUserCreatedContent(OnlineID const*) const"
-.Lname_90: .asciz "PlatformMgr::GetOnlineID(int, OnlineID*) const"
-.Lname_91: .asciz "PlatformMgr::IsGuestOnlineID(OnlineID const*) const"
-.Lname_92: .asciz "PlatformMgr::RegisterSignInserCallback(bool (*)(User*, unsigned long))"
-.Lname_93: .asciz "PlatformMgr::SetHomeMenuEnabled(bool)"
-.Lname_94: .asciz "PlatformMgr::ShowGamercard(LocalUser*, OnlineID const*)"
-.Lname_95: .asciz "PlatformMgr::SwapUserPads(LocalUser*, LocalUser*)"
-.Lname_96: .asciz "ProfilePicture::ProfilePicture(int, Hmx::Object*)"
-.Lname_97: .asciz "ProfilePicture::Update()"
-.Lname_98: .asciz "RecursePatternInternal(char const*, void (*)(char const*, char const*), bool, bool)"
-.Lname_99: .asciz "RockCentral::CancelOutstandingCalls(Hmx::Object*)"
-.Lname_100: .asciz "RockCentral::CheckBattleLimits(BandProfile*, DataResultList&, Hmx::Object*)"
-.Lname_101: .asciz "RockCentral::CreateBattle(BandProfile*, char const*, char const*, std::vector<int, std::allocator<int>> const&, PatchDescriptor&, int, ScoreType, int, BattleTimeUnits, DataResultList&, Hmx::Object*, int, int)"
-.Lname_102: .asciz "RockCentral::FailAllOutstandingCalls()"
-.Lname_103: .asciz "RockCentral::GetActiveContextHighWatermark()"
-.Lname_104: .asciz "RockCentral::GetAllSonglists(std::vector<BandProfile*, std::allocator<BandProfile*>>&, DataResultList&, Hmx::Object*)"
-.Lname_105: .asciz "RockCentral::GetBattleArt(int, RndTex*, Hmx::Object*, int)"
-.Lname_106: .asciz "RockCentral::GetClosedBattles(std::vector<BandProfile*, std::allocator<BandProfile*>>&, DataResultList&, Hmx::Object*)"
-.Lname_107: .asciz "RockCentral::GetLeaderboardByPlayer(std::vector<int, std::allocator<int>>&, int, ScoreType, LeaderboardType, LeaderboardMode, int, DataResultList&, Hmx::Object*)"
-.Lname_108: .asciz "RockCentral::GetLinkingCode(int, DataResultList&, Hmx::Object*)"
-.Lname_109: .asciz "RockCentral::GetMultipleRankingsForPlayer(Profile*, ScoreType, std::vector<int, std::allocator<int>>&, DataResultList&, Hmx::Object*)"
-.Lname_110: .asciz "RockCentral::GetRedeemedTokensByPlayer(int, DataResultList&, Hmx::Object*)"
-.Lname_111: .asciz "RockCentral::GetSetlistArt(char const*, RndTex*, Hmx::Object*, int)"
-.Lname_112: .asciz "RockCentral::GetSetlistCreationStatus(Profile const*, int, DataResultList&, Hmx::Object*)"
-.Lname_113: .asciz "RockCentral::GetSongFullOffer(int, DataResultList&, Hmx::Object*)"
-.Lname_114: .asciz "RockCentral::GetTickerInfo(Profile const*, ScoreType, DataResultList&, Hmx::Object*)"
-.Lname_115: .asciz "RockCentral::GetWebLinkStatus(Profile const*, int, DataResultList&, Hmx::Object*)"
-.Lname_116: .asciz "RockCentral::Init(bool)"
-.Lname_117: .asciz "RockCentral::RecordAccomplishmentData(Profile const*, AccomplishmentProgress*, int, Hmx::Object*, DataResultList&)"
-.Lname_118: .asciz "RockCentral::RecordBattleScore(int, int, std::vector<BandProfile*, std::allocator<BandProfile*>>&, int, DataResultList&, Hmx::Object*)"
-.Lname_119: .asciz "RockCentral::RecordOptionData()"
-.Lname_120: .asciz "RockCentral::RecordPerformance(Profile const*, PerformanceData const*, int, Hmx::Object*, DataResultList&)"
-.Lname_121: .asciz "RockCentral::RecordScore(int, int, std::vector<PlayerScore, std::allocator<PlayerScore>>&, int, int, bool, Hmx::Object*, DataResultList&)"
-.Lname_122: .asciz "RockCentral::RedeemToken(int, String, DataResultList&, Hmx::Object*)"
-.Lname_123: .asciz "RockCentral::SyncAvailableSongs(std::vector<BandProfile*, std::allocator<BandProfile*>> const&, std::vector<int, std::allocator<int>> const&, std::vector<int, std::allocator<int>> const&, Hmx::Object*)"
-.Lname_124: .asciz "RockCentral::SyncSetlists(std::vector<BandProfile*, std::allocator<BandProfile*>>&, DataResultList&, Hmx::Object*)"
-.Lname_125: .asciz "RockCentral::UpdateBandLogo(int, RndTex*, int, Hmx::Object*, int)"
-.Lname_126: .asciz "RockCentral::UpdateBattleArt(RndTex*, Hmx::Object*, int)"
-.Lname_127: .asciz "SearchSettings::SearchSettings(int, bool, int)"
-.Lname_128: .asciz "SessionSearcher::GetNextResult()"
-.Lname_129: .asciz "SessionSearcher::GetSearchResults(std::vector<NetSearchResult*, std::allocator<NetSearchResult*>>&)"
-.Lname_130: .asciz "SessionSettings::SetPublic(bool)"
-.Lname_131: .asciz "SessionUsersProvider::ShowGamercard(int, LocalBandUser*)"
-.Lname_132: .asciz "ShowParentalControlUI(int, _XOVERLAPPED*)"
-.Lname_133: .asciz "SongSelectPanel::SongSelectPanel()"
-.Lname_134: .asciz "StoreRootPanel::StoreRootPanel()"
-.Lname_135: .asciz "SyncStore::Poll()"
-.Lname_136: .asciz "TexMovie::IsEmpty() const"
-.Lname_137: .asciz "TexMovie::SetFile(FilePath const&)"
+.Lname_24: .asciz "CurrentScreenChangedMsg::GetScreen() const"
+.Lname_25: .asciz "D3DResource_Release"
+.Lname_26: .asciz "DisplayEvents(DataEventList*, float, float)"
+.Lname_27: .asciz "DmCaptureStackBackTrace"
+.Lname_28: .asciz "DmMapDevkitDrive"
+.Lname_29: .asciz "GestureMgr::SetInVoiceMode(bool)"
+.Lname_30: .asciz "GetLastError"
+.Lname_31: .asciz "GetOverlappedResult"
+.Lname_32: .asciz "HeldNote::GetAwardedPercent() const"
+.Lname_33: .asciz "HeldNote::GetAwardedPoints() const"
+.Lname_34: .asciz "HeldNote::GetGem()"
+.Lname_35: .asciz "Hmx::Object::Object(Hmx::Object const&)"
+.Lname_36: .asciz "JoinInvitePanel::JoinInvitePanel()"
+.Lname_37: .asciz "JoypadSetCalbertMode"
+.Lname_38: .asciz "Label3d::Label3d()"
+.Lname_39: .asciz "LoadMgr::PollUntilEmpty()"
+.Lname_40: .asciz "MatchmakingSettings::ClearCustomSettings()"
+.Lname_41: .asciz "MatchmakingSettings::GetCustomValueByID(int) const"
+.Lname_42: .asciz "MemcardXbox::FindValidUnit(ContainerId*)"
+.Lname_43: .asciz "Metronome::Enable(bool)"
+.Lname_44: .asciz "Metronome::Enabled() const"
+.Lname_45: .asciz "Metronome::Enter(Sfx*, Sfx*)"
+.Lname_46: .asciz "Metronome::Exit()"
+.Lname_47: .asciz "Metronome::GetVolume(int) const"
+.Lname_48: .asciz "Metronome::Metronome()"
+.Lname_49: .asciz "Metronome::PlayBeat(int)"
+.Lname_50: .asciz "Metronome::Poll(int, Metronome::OverrideEnabled)"
+.Lname_51: .asciz "Metronome::SetVolume(int, int)"
+.Lname_52: .asciz "Movie::SetTimeCallback(float (*)())"
+.Lname_53: .asciz "MultiByteToWideChar"
+.Lname_54: .asciz "NameGenerator::GetRandomNameFromList(Symbol)"
+.Lname_55: .asciz "NameGenerator::NameGenerator(DataArray*)"
+.Lname_56: .asciz "Net::Init()"
+.Lname_57: .asciz "NetLoaderXbox::NetLoaderXbox(String const&)"
+.Lname_58: .asciz "NetSession::AddLocalUser(LocalUser*)"
+.Lname_59: .asciz "NetSession::Disconnect()"
+.Lname_60: .asciz "NetSession::EndGame(int, bool, float)"
+.Lname_61: .asciz "NetSession::GetLocalHost() const"
+.Lname_62: .asciz "NetSession::GetLocalUserList(std::vector<LocalUser*, std::allocator<LocalUser*>>&) const"
+.Lname_63: .asciz "NetSession::HasUser(User const*) const"
+.Lname_64: .asciz "NetSession::IsBusy() const"
+.Lname_65: .asciz "NetSession::IsInGame() const"
+.Lname_66: .asciz "NetSession::IsJoining() const"
+.Lname_67: .asciz "NetSession::IsLocal() const"
+.Lname_68: .asciz "NetSession::IsOnlineEnabled() const"
+.Lname_69: .asciz "NetSession::IsStartingGame() const"
+.Lname_70: .asciz "NetSession::Join(NetSearchResult*)"
+.Lname_71: .asciz "NetSession::NumOpenSlots() const"
+.Lname_72: .asciz "NetSession::RegisterOnline()"
+.Lname_73: .asciz "NetSession::RemoveLocalUser(LocalUser*)"
+.Lname_74: .asciz "NetSession::SendMsg(User*, NetMessage&, PacketType)"
+.Lname_75: .asciz "NetSession::SendMsg(std::vector<RemoteUser*, std::allocator<RemoteUser*>> const&, NetMessage&, PacketType)"
+.Lname_76: .asciz "NetSession::SendMsgToAll(NetMessage&, PacketType)"
+.Lname_77: .asciz "NetSession::StartGame()"
+.Lname_78: .asciz "NetSession::UpdateUserData(User*, unsigned int)"
+.Lname_79: .asciz "OvershellProfileProvider::ActOnProfile(int, LocalBandUser*, bool)"
+.Lname_80: .asciz "OvershellProfileProvider::ActOnProfileConfirmed(LocalBandUser*)"
+.Lname_81: .asciz "OvershellProfileProvider::GetUser(int) const"
+.Lname_82: .asciz "OvershellProfileProvider::GetWiiProfileCount(LocalBandUser*) const"
+.Lname_83: .asciz "OvershellProfileProvider::GetWiiProfileListMode()"
+.Lname_84: .asciz "OvershellProfileProvider::GetWiiProfileSelectedName() const"
+.Lname_85: .asciz "OvershellProfileProvider::OvershellProfileProvider(BandUserMgr*)"
+.Lname_86: .asciz "OvershellProfileProvider::Reload()"
+.Lname_87: .asciz "OvershellProfileProvider::SetWiiProfileListMode(OvershellProfileProvider::WiiProfileListMode, bool)"
+.Lname_88: .asciz "PlatformMgr::CanSeeUserCreatedContent(OnlineID const*) const"
+.Lname_89: .asciz "PlatformMgr::GetOnlineID(int, OnlineID*) const"
+.Lname_90: .asciz "PlatformMgr::IsGuestOnlineID(OnlineID const*) const"
+.Lname_91: .asciz "PlatformMgr::RegisterSignInserCallback(bool (*)(User*, unsigned long))"
+.Lname_92: .asciz "PlatformMgr::SetHomeMenuEnabled(bool)"
+.Lname_93: .asciz "PlatformMgr::ShowGamercard(LocalUser*, OnlineID const*)"
+.Lname_94: .asciz "PlatformMgr::SwapUserPads(LocalUser*, LocalUser*)"
+.Lname_95: .asciz "ProfilePicture::ProfilePicture(int, Hmx::Object*)"
+.Lname_96: .asciz "ProfilePicture::Update()"
+.Lname_97: .asciz "RecursePatternInternal(char const*, void (*)(char const*, char const*), bool, bool)"
+.Lname_98: .asciz "RockCentral::CancelOutstandingCalls(Hmx::Object*)"
+.Lname_99: .asciz "RockCentral::CheckBattleLimits(BandProfile*, DataResultList&, Hmx::Object*)"
+.Lname_100: .asciz "RockCentral::CreateBattle(BandProfile*, char const*, char const*, std::vector<int, std::allocator<int>> const&, PatchDescriptor&, int, ScoreType, int, BattleTimeUnits, DataResultList&, Hmx::Object*, int, int)"
+.Lname_101: .asciz "RockCentral::FailAllOutstandingCalls()"
+.Lname_102: .asciz "RockCentral::GetActiveContextHighWatermark()"
+.Lname_103: .asciz "RockCentral::GetAllSonglists(std::vector<BandProfile*, std::allocator<BandProfile*>>&, DataResultList&, Hmx::Object*)"
+.Lname_104: .asciz "RockCentral::GetBattleArt(int, RndTex*, Hmx::Object*, int)"
+.Lname_105: .asciz "RockCentral::GetClosedBattles(std::vector<BandProfile*, std::allocator<BandProfile*>>&, DataResultList&, Hmx::Object*)"
+.Lname_106: .asciz "RockCentral::GetLeaderboardByPlayer(std::vector<int, std::allocator<int>>&, int, ScoreType, LeaderboardType, LeaderboardMode, int, DataResultList&, Hmx::Object*)"
+.Lname_107: .asciz "RockCentral::GetLinkingCode(int, DataResultList&, Hmx::Object*)"
+.Lname_108: .asciz "RockCentral::GetMultipleRankingsForPlayer(Profile*, ScoreType, std::vector<int, std::allocator<int>>&, DataResultList&, Hmx::Object*)"
+.Lname_109: .asciz "RockCentral::GetRedeemedTokensByPlayer(int, DataResultList&, Hmx::Object*)"
+.Lname_110: .asciz "RockCentral::GetSetlistArt(char const*, RndTex*, Hmx::Object*, int)"
+.Lname_111: .asciz "RockCentral::GetSetlistCreationStatus(Profile const*, int, DataResultList&, Hmx::Object*)"
+.Lname_112: .asciz "RockCentral::GetSongFullOffer(int, DataResultList&, Hmx::Object*)"
+.Lname_113: .asciz "RockCentral::GetTickerInfo(Profile const*, ScoreType, DataResultList&, Hmx::Object*)"
+.Lname_114: .asciz "RockCentral::GetWebLinkStatus(Profile const*, int, DataResultList&, Hmx::Object*)"
+.Lname_115: .asciz "RockCentral::Init(bool)"
+.Lname_116: .asciz "RockCentral::RecordAccomplishmentData(Profile const*, AccomplishmentProgress*, int, Hmx::Object*, DataResultList&)"
+.Lname_117: .asciz "RockCentral::RecordBattleScore(int, int, std::vector<BandProfile*, std::allocator<BandProfile*>>&, int, DataResultList&, Hmx::Object*)"
+.Lname_118: .asciz "RockCentral::RecordOptionData()"
+.Lname_119: .asciz "RockCentral::RecordPerformance(Profile const*, PerformanceData const*, int, Hmx::Object*, DataResultList&)"
+.Lname_120: .asciz "RockCentral::RecordScore(int, int, std::vector<PlayerScore, std::allocator<PlayerScore>>&, int, int, bool, Hmx::Object*, DataResultList&)"
+.Lname_121: .asciz "RockCentral::RedeemToken(int, String, DataResultList&, Hmx::Object*)"
+.Lname_122: .asciz "RockCentral::SyncAvailableSongs(std::vector<BandProfile*, std::allocator<BandProfile*>> const&, std::vector<int, std::allocator<int>> const&, std::vector<int, std::allocator<int>> const&, Hmx::Object*)"
+.Lname_123: .asciz "RockCentral::SyncSetlists(std::vector<BandProfile*, std::allocator<BandProfile*>>&, DataResultList&, Hmx::Object*)"
+.Lname_124: .asciz "RockCentral::UpdateBandLogo(int, RndTex*, int, Hmx::Object*, int)"
+.Lname_125: .asciz "RockCentral::UpdateBattleArt(RndTex*, Hmx::Object*, int)"
+.Lname_126: .asciz "SearchSettings::SearchSettings(int, bool, int)"
+.Lname_127: .asciz "SessionSearcher::GetNextResult()"
+.Lname_128: .asciz "SessionSearcher::GetSearchResults(std::vector<NetSearchResult*, std::allocator<NetSearchResult*>>&)"
+.Lname_129: .asciz "SessionSettings::SetPublic(bool)"
+.Lname_130: .asciz "SessionUsersProvider::ShowGamercard(int, LocalBandUser*)"
+.Lname_131: .asciz "ShowParentalControlUI(int, _XOVERLAPPED*)"
+.Lname_132: .asciz "SongSelectPanel::SongSelectPanel()"
+.Lname_133: .asciz "StoreRootPanel::StoreRootPanel()"
+.Lname_134: .asciz "SyncStore::Poll()"
+.Lname_135: .asciz "TexMovie::IsEmpty() const"
+.Lname_136: .asciz "TexMovie::SetFile(FilePath const&)"
+.Lname_137: .asciz "TexMovie::TexMovie()"
 .Lname_138: .asciz "ValidateThreadId(unsigned long)"
 .Lname_139: .asciz "VocalOverlay::AddPossiblePart(int, VocalPart*)"
 .Lname_140: .asciz "VocalOverlay::AppendAssignedPart(Singer const*, std::vector<VocalPart*, std::allocator<VocalPart*>> const&)"
@@ -385,20 +385,12 @@ _ZN11ContainerId3SetEij: // ring: a1-absent-body
     leaq .Lname_23(%rip), %rsi
     jmp rb3_app_stub_reached
 
-// CreateNativeSynth()
-.globl _Z17CreateNativeSynthv
-.type _Z17CreateNativeSynthv,@function
-_Z17CreateNativeSynthv: // ring: a1-absent-body
-    leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_24(%rip), %rsi
-    jmp rb3_app_stub_reached
-
 // CurrentScreenChangedMsg::GetScreen() const
 .globl _ZNK23CurrentScreenChangedMsg9GetScreenEv
 .type _ZNK23CurrentScreenChangedMsg9GetScreenEv,@function
 _ZNK23CurrentScreenChangedMsg9GetScreenEv: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_25(%rip), %rsi
+    leaq .Lname_24(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // D3DResource_Release
@@ -406,7 +398,7 @@ _ZNK23CurrentScreenChangedMsg9GetScreenEv: // ring: a1-absent-body
 .type D3DResource_Release,@function
 D3DResource_Release: // ring: xbox-d3d
     leaq .Lring_xbox_d3d(%rip), %rdi
-    leaq .Lname_26(%rip), %rsi
+    leaq .Lname_25(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // DisplayEvents(DataEventList*, float, float)
@@ -414,7 +406,7 @@ D3DResource_Release: // ring: xbox-d3d
 .type _Z13DisplayEventsP13DataEventListff,@function
 _Z13DisplayEventsP13DataEventListff: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_27(%rip), %rsi
+    leaq .Lname_26(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // DmCaptureStackBackTrace
@@ -422,7 +414,7 @@ _Z13DisplayEventsP13DataEventListff: // ring: a1-absent-body
 .type DmCaptureStackBackTrace,@function
 DmCaptureStackBackTrace: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_28(%rip), %rsi
+    leaq .Lname_27(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // DmMapDevkitDrive
@@ -430,7 +422,7 @@ DmCaptureStackBackTrace: // ring: a1-absent-body
 .type DmMapDevkitDrive,@function
 DmMapDevkitDrive: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_29(%rip), %rsi
+    leaq .Lname_28(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // GestureMgr::SetInVoiceMode(bool)
@@ -438,7 +430,7 @@ DmMapDevkitDrive: // ring: a1-absent-body
 .type _ZN10GestureMgr14SetInVoiceModeEb,@function
 _ZN10GestureMgr14SetInVoiceModeEb: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_30(%rip), %rsi
+    leaq .Lname_29(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // GetLastError
@@ -446,7 +438,7 @@ _ZN10GestureMgr14SetInVoiceModeEb: // ring: a1-absent-body
 .type GetLastError,@function
 GetLastError: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_31(%rip), %rsi
+    leaq .Lname_30(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // GetOverlappedResult
@@ -454,7 +446,7 @@ GetLastError: // ring: a1-absent-body
 .type GetOverlappedResult,@function
 GetOverlappedResult: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_32(%rip), %rsi
+    leaq .Lname_31(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // HeldNote::GetAwardedPercent() const
@@ -462,7 +454,7 @@ GetOverlappedResult: // ring: a1-absent-body
 .type _ZNK8HeldNote17GetAwardedPercentEv,@function
 _ZNK8HeldNote17GetAwardedPercentEv: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_33(%rip), %rsi
+    leaq .Lname_32(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // HeldNote::GetAwardedPoints() const
@@ -470,7 +462,7 @@ _ZNK8HeldNote17GetAwardedPercentEv: // ring: a6-failing-tu
 .type _ZNK8HeldNote16GetAwardedPointsEv,@function
 _ZNK8HeldNote16GetAwardedPointsEv: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_34(%rip), %rsi
+    leaq .Lname_33(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // HeldNote::GetGem()
@@ -478,7 +470,7 @@ _ZNK8HeldNote16GetAwardedPointsEv: // ring: a6-failing-tu
 .type _ZN8HeldNote6GetGemEv,@function
 _ZN8HeldNote6GetGemEv: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_35(%rip), %rsi
+    leaq .Lname_34(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // Hmx::Object::Object(Hmx::Object const&)
@@ -486,7 +478,7 @@ _ZN8HeldNote6GetGemEv: // ring: a6-failing-tu
 .type _ZN3Hmx6ObjectC2ERKS0_,@function
 _ZN3Hmx6ObjectC2ERKS0_: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_36(%rip), %rsi
+    leaq .Lname_35(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // JoinInvitePanel::JoinInvitePanel()
@@ -494,7 +486,7 @@ _ZN3Hmx6ObjectC2ERKS0_: // ring: a1-absent-body
 .type _ZN15JoinInvitePanelC1Ev,@function
 _ZN15JoinInvitePanelC1Ev: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_37(%rip), %rsi
+    leaq .Lname_36(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // JoypadSetCalbertMode
@@ -502,7 +494,7 @@ _ZN15JoinInvitePanelC1Ev: // ring: a6-failing-tu
 .type JoypadSetCalbertMode,@function
 JoypadSetCalbertMode: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_38(%rip), %rsi
+    leaq .Lname_37(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // Label3d::Label3d()
@@ -510,7 +502,7 @@ JoypadSetCalbertMode: // ring: a1-absent-body
 .type _ZN7Label3dC1Ev,@function
 _ZN7Label3dC1Ev: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_39(%rip), %rsi
+    leaq .Lname_38(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // LoadMgr::PollUntilEmpty()
@@ -518,7 +510,7 @@ _ZN7Label3dC1Ev: // ring: a6-failing-tu
 .type _ZN7LoadMgr14PollUntilEmptyEv,@function
 _ZN7LoadMgr14PollUntilEmptyEv: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_40(%rip), %rsi
+    leaq .Lname_39(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // MatchmakingSettings::ClearCustomSettings()
@@ -526,7 +518,7 @@ _ZN7LoadMgr14PollUntilEmptyEv: // ring: a1-absent-body
 .type _ZN19MatchmakingSettings19ClearCustomSettingsEv,@function
 _ZN19MatchmakingSettings19ClearCustomSettingsEv: // ring: online-matchmaking
     leaq .Lring_online_matchmaking(%rip), %rdi
-    leaq .Lname_41(%rip), %rsi
+    leaq .Lname_40(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // MatchmakingSettings::GetCustomValueByID(int) const
@@ -534,7 +526,7 @@ _ZN19MatchmakingSettings19ClearCustomSettingsEv: // ring: online-matchmaking
 .type _ZNK19MatchmakingSettings18GetCustomValueByIDEi,@function
 _ZNK19MatchmakingSettings18GetCustomValueByIDEi: // ring: online-matchmaking
     leaq .Lring_online_matchmaking(%rip), %rdi
-    leaq .Lname_42(%rip), %rsi
+    leaq .Lname_41(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // MemcardXbox::FindValidUnit(ContainerId*)
@@ -542,7 +534,7 @@ _ZNK19MatchmakingSettings18GetCustomValueByIDEi: // ring: online-matchmaking
 .type _ZN11MemcardXbox13FindValidUnitEP11ContainerId,@function
 _ZN11MemcardXbox13FindValidUnitEP11ContainerId: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_43(%rip), %rsi
+    leaq .Lname_42(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // Metronome::Enable(bool)
@@ -550,7 +542,7 @@ _ZN11MemcardXbox13FindValidUnitEP11ContainerId: // ring: a1-absent-body
 .type _ZN9Metronome6EnableEb,@function
 _ZN9Metronome6EnableEb: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_44(%rip), %rsi
+    leaq .Lname_43(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // Metronome::Enabled() const
@@ -558,7 +550,7 @@ _ZN9Metronome6EnableEb: // ring: a6-failing-tu
 .type _ZNK9Metronome7EnabledEv,@function
 _ZNK9Metronome7EnabledEv: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_45(%rip), %rsi
+    leaq .Lname_44(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // Metronome::Enter(Sfx*, Sfx*)
@@ -566,7 +558,7 @@ _ZNK9Metronome7EnabledEv: // ring: a6-failing-tu
 .type _ZN9Metronome5EnterEP3SfxS1_,@function
 _ZN9Metronome5EnterEP3SfxS1_: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_46(%rip), %rsi
+    leaq .Lname_45(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // Metronome::Exit()
@@ -574,7 +566,7 @@ _ZN9Metronome5EnterEP3SfxS1_: // ring: a6-failing-tu
 .type _ZN9Metronome4ExitEv,@function
 _ZN9Metronome4ExitEv: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_47(%rip), %rsi
+    leaq .Lname_46(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // Metronome::GetVolume(int) const
@@ -582,7 +574,7 @@ _ZN9Metronome4ExitEv: // ring: a6-failing-tu
 .type _ZNK9Metronome9GetVolumeEi,@function
 _ZNK9Metronome9GetVolumeEi: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_48(%rip), %rsi
+    leaq .Lname_47(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // Metronome::Metronome()
@@ -590,7 +582,7 @@ _ZNK9Metronome9GetVolumeEi: // ring: a6-failing-tu
 .type _ZN9MetronomeC1Ev,@function
 _ZN9MetronomeC1Ev: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_49(%rip), %rsi
+    leaq .Lname_48(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // Metronome::PlayBeat(int)
@@ -598,7 +590,7 @@ _ZN9MetronomeC1Ev: // ring: a6-failing-tu
 .type _ZN9Metronome8PlayBeatEi,@function
 _ZN9Metronome8PlayBeatEi: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_50(%rip), %rsi
+    leaq .Lname_49(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // Metronome::Poll(int, Metronome::OverrideEnabled)
@@ -606,7 +598,7 @@ _ZN9Metronome8PlayBeatEi: // ring: a6-failing-tu
 .type _ZN9Metronome4PollEiNS_15OverrideEnabledE,@function
 _ZN9Metronome4PollEiNS_15OverrideEnabledE: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_51(%rip), %rsi
+    leaq .Lname_50(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // Metronome::SetVolume(int, int)
@@ -614,7 +606,7 @@ _ZN9Metronome4PollEiNS_15OverrideEnabledE: // ring: a6-failing-tu
 .type _ZN9Metronome9SetVolumeEii,@function
 _ZN9Metronome9SetVolumeEii: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_52(%rip), %rsi
+    leaq .Lname_51(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // Movie::SetTimeCallback(float (*)())
@@ -622,7 +614,7 @@ _ZN9Metronome9SetVolumeEii: // ring: a6-failing-tu
 .type _ZN5Movie15SetTimeCallbackEPFfvE,@function
 _ZN5Movie15SetTimeCallbackEPFfvE: // ring: a2-movie
     leaq .Lring_a2_movie(%rip), %rdi
-    leaq .Lname_53(%rip), %rsi
+    leaq .Lname_52(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // MultiByteToWideChar
@@ -630,7 +622,7 @@ _ZN5Movie15SetTimeCallbackEPFfvE: // ring: a2-movie
 .type MultiByteToWideChar,@function
 MultiByteToWideChar: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_54(%rip), %rsi
+    leaq .Lname_53(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NameGenerator::GetRandomNameFromList(Symbol)
@@ -638,7 +630,7 @@ MultiByteToWideChar: // ring: a1-absent-body
 .type _ZN13NameGenerator21GetRandomNameFromListE6Symbol,@function
 _ZN13NameGenerator21GetRandomNameFromListE6Symbol: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_55(%rip), %rsi
+    leaq .Lname_54(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NameGenerator::NameGenerator(DataArray*)
@@ -646,7 +638,7 @@ _ZN13NameGenerator21GetRandomNameFromListE6Symbol: // ring: a6-failing-tu
 .type _ZN13NameGeneratorC1EP9DataArray,@function
 _ZN13NameGeneratorC1EP9DataArray: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_56(%rip), %rsi
+    leaq .Lname_55(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // Net::Init()
@@ -654,7 +646,7 @@ _ZN13NameGeneratorC1EP9DataArray: // ring: a6-failing-tu
 .type _ZN3Net4InitEv,@function
 _ZN3Net4InitEv: // ring: online-net
     leaq .Lring_online_net(%rip), %rdi
-    leaq .Lname_57(%rip), %rsi
+    leaq .Lname_56(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetLoaderXbox::NetLoaderXbox(String const&)
@@ -662,7 +654,7 @@ _ZN3Net4InitEv: // ring: online-net
 .type _ZN13NetLoaderXboxC1ERK6String,@function
 _ZN13NetLoaderXboxC1ERK6String: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_58(%rip), %rsi
+    leaq .Lname_57(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::AddLocalUser(LocalUser*)
@@ -670,7 +662,7 @@ _ZN13NetLoaderXboxC1ERK6String: // ring: a1-absent-body
 .type _ZN10NetSession12AddLocalUserEP9LocalUser,@function
 _ZN10NetSession12AddLocalUserEP9LocalUser: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_59(%rip), %rsi
+    leaq .Lname_58(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::Disconnect()
@@ -678,7 +670,7 @@ _ZN10NetSession12AddLocalUserEP9LocalUser: // ring: online-netsession
 .type _ZN10NetSession10DisconnectEv,@function
 _ZN10NetSession10DisconnectEv: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_60(%rip), %rsi
+    leaq .Lname_59(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::EndGame(int, bool, float)
@@ -686,7 +678,7 @@ _ZN10NetSession10DisconnectEv: // ring: online-netsession
 .type _ZN10NetSession7EndGameEibf,@function
 _ZN10NetSession7EndGameEibf: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_61(%rip), %rsi
+    leaq .Lname_60(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::GetLocalHost() const
@@ -694,7 +686,7 @@ _ZN10NetSession7EndGameEibf: // ring: online-netsession
 .type _ZNK10NetSession12GetLocalHostEv,@function
 _ZNK10NetSession12GetLocalHostEv: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_62(%rip), %rsi
+    leaq .Lname_61(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::GetLocalUserList(std::vector<LocalUser*, std::allocator<LocalUser*>>&) const
@@ -702,7 +694,7 @@ _ZNK10NetSession12GetLocalHostEv: // ring: online-netsession
 .type _ZNK10NetSession16GetLocalUserListERSt6vectorIP9LocalUserSaIS2_EE,@function
 _ZNK10NetSession16GetLocalUserListERSt6vectorIP9LocalUserSaIS2_EE: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_63(%rip), %rsi
+    leaq .Lname_62(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::HasUser(User const*) const
@@ -710,7 +702,7 @@ _ZNK10NetSession16GetLocalUserListERSt6vectorIP9LocalUserSaIS2_EE: // ring: onli
 .type _ZNK10NetSession7HasUserEPK4User,@function
 _ZNK10NetSession7HasUserEPK4User: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_64(%rip), %rsi
+    leaq .Lname_63(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::IsBusy() const
@@ -718,7 +710,7 @@ _ZNK10NetSession7HasUserEPK4User: // ring: online-netsession
 .type _ZNK10NetSession6IsBusyEv,@function
 _ZNK10NetSession6IsBusyEv: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_65(%rip), %rsi
+    leaq .Lname_64(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::IsInGame() const
@@ -726,7 +718,7 @@ _ZNK10NetSession6IsBusyEv: // ring: online-netsession
 .type _ZNK10NetSession8IsInGameEv,@function
 _ZNK10NetSession8IsInGameEv: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_66(%rip), %rsi
+    leaq .Lname_65(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::IsJoining() const
@@ -734,7 +726,7 @@ _ZNK10NetSession8IsInGameEv: // ring: online-netsession
 .type _ZNK10NetSession9IsJoiningEv,@function
 _ZNK10NetSession9IsJoiningEv: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_67(%rip), %rsi
+    leaq .Lname_66(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::IsLocal() const
@@ -742,7 +734,7 @@ _ZNK10NetSession9IsJoiningEv: // ring: online-netsession
 .type _ZNK10NetSession7IsLocalEv,@function
 _ZNK10NetSession7IsLocalEv: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_68(%rip), %rsi
+    leaq .Lname_67(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::IsOnlineEnabled() const
@@ -750,7 +742,7 @@ _ZNK10NetSession7IsLocalEv: // ring: online-netsession
 .type _ZNK10NetSession15IsOnlineEnabledEv,@function
 _ZNK10NetSession15IsOnlineEnabledEv: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_69(%rip), %rsi
+    leaq .Lname_68(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::IsStartingGame() const
@@ -758,7 +750,7 @@ _ZNK10NetSession15IsOnlineEnabledEv: // ring: online-netsession
 .type _ZNK10NetSession14IsStartingGameEv,@function
 _ZNK10NetSession14IsStartingGameEv: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_70(%rip), %rsi
+    leaq .Lname_69(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::Join(NetSearchResult*)
@@ -766,7 +758,7 @@ _ZNK10NetSession14IsStartingGameEv: // ring: online-netsession
 .type _ZN10NetSession4JoinEP15NetSearchResult,@function
 _ZN10NetSession4JoinEP15NetSearchResult: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_71(%rip), %rsi
+    leaq .Lname_70(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::NumOpenSlots() const
@@ -774,7 +766,7 @@ _ZN10NetSession4JoinEP15NetSearchResult: // ring: online-netsession
 .type _ZNK10NetSession12NumOpenSlotsEv,@function
 _ZNK10NetSession12NumOpenSlotsEv: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_72(%rip), %rsi
+    leaq .Lname_71(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::RegisterOnline()
@@ -782,7 +774,7 @@ _ZNK10NetSession12NumOpenSlotsEv: // ring: online-netsession
 .type _ZN10NetSession14RegisterOnlineEv,@function
 _ZN10NetSession14RegisterOnlineEv: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_73(%rip), %rsi
+    leaq .Lname_72(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::RemoveLocalUser(LocalUser*)
@@ -790,7 +782,7 @@ _ZN10NetSession14RegisterOnlineEv: // ring: online-netsession
 .type _ZN10NetSession15RemoveLocalUserEP9LocalUser,@function
 _ZN10NetSession15RemoveLocalUserEP9LocalUser: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_74(%rip), %rsi
+    leaq .Lname_73(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::SendMsg(User*, NetMessage&, PacketType)
@@ -798,7 +790,7 @@ _ZN10NetSession15RemoveLocalUserEP9LocalUser: // ring: online-netsession
 .type _ZN10NetSession7SendMsgEP4UserR10NetMessage10PacketType,@function
 _ZN10NetSession7SendMsgEP4UserR10NetMessage10PacketType: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_75(%rip), %rsi
+    leaq .Lname_74(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::SendMsg(std::vector<RemoteUser*, std::allocator<RemoteUser*>> const&, NetMessage&, PacketType)
@@ -806,7 +798,7 @@ _ZN10NetSession7SendMsgEP4UserR10NetMessage10PacketType: // ring: online-netsess
 .type _ZN10NetSession7SendMsgERKSt6vectorIP10RemoteUserSaIS2_EER10NetMessage10PacketType,@function
 _ZN10NetSession7SendMsgERKSt6vectorIP10RemoteUserSaIS2_EER10NetMessage10PacketType: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_76(%rip), %rsi
+    leaq .Lname_75(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::SendMsgToAll(NetMessage&, PacketType)
@@ -814,7 +806,7 @@ _ZN10NetSession7SendMsgERKSt6vectorIP10RemoteUserSaIS2_EER10NetMessage10PacketTy
 .type _ZN10NetSession12SendMsgToAllER10NetMessage10PacketType,@function
 _ZN10NetSession12SendMsgToAllER10NetMessage10PacketType: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_77(%rip), %rsi
+    leaq .Lname_76(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::StartGame()
@@ -822,7 +814,7 @@ _ZN10NetSession12SendMsgToAllER10NetMessage10PacketType: // ring: online-netsess
 .type _ZN10NetSession9StartGameEv,@function
 _ZN10NetSession9StartGameEv: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_78(%rip), %rsi
+    leaq .Lname_77(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // NetSession::UpdateUserData(User*, unsigned int)
@@ -830,7 +822,7 @@ _ZN10NetSession9StartGameEv: // ring: online-netsession
 .type _ZN10NetSession14UpdateUserDataEP4Userj,@function
 _ZN10NetSession14UpdateUserDataEP4Userj: // ring: online-netsession
     leaq .Lring_online_netsession(%rip), %rdi
-    leaq .Lname_79(%rip), %rsi
+    leaq .Lname_78(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // OvershellProfileProvider::ActOnProfile(int, LocalBandUser*, bool)
@@ -838,7 +830,7 @@ _ZN10NetSession14UpdateUserDataEP4Userj: // ring: online-netsession
 .type _ZN24OvershellProfileProvider12ActOnProfileEiP13LocalBandUserb,@function
 _ZN24OvershellProfileProvider12ActOnProfileEiP13LocalBandUserb: // ring: a4-wii-residue
     leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_80(%rip), %rsi
+    leaq .Lname_79(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // OvershellProfileProvider::ActOnProfileConfirmed(LocalBandUser*)
@@ -846,7 +838,7 @@ _ZN24OvershellProfileProvider12ActOnProfileEiP13LocalBandUserb: // ring: a4-wii-
 .type _ZN24OvershellProfileProvider21ActOnProfileConfirmedEP13LocalBandUser,@function
 _ZN24OvershellProfileProvider21ActOnProfileConfirmedEP13LocalBandUser: // ring: a4-wii-residue
     leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_81(%rip), %rsi
+    leaq .Lname_80(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // OvershellProfileProvider::GetUser(int) const
@@ -854,7 +846,7 @@ _ZN24OvershellProfileProvider21ActOnProfileConfirmedEP13LocalBandUser: // ring: 
 .type _ZNK24OvershellProfileProvider7GetUserEi,@function
 _ZNK24OvershellProfileProvider7GetUserEi: // ring: a4-wii-residue
     leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_82(%rip), %rsi
+    leaq .Lname_81(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // OvershellProfileProvider::GetWiiProfileCount(LocalBandUser*) const
@@ -862,7 +854,7 @@ _ZNK24OvershellProfileProvider7GetUserEi: // ring: a4-wii-residue
 .type _ZNK24OvershellProfileProvider18GetWiiProfileCountEP13LocalBandUser,@function
 _ZNK24OvershellProfileProvider18GetWiiProfileCountEP13LocalBandUser: // ring: a4-wii-residue
     leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_83(%rip), %rsi
+    leaq .Lname_82(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // OvershellProfileProvider::GetWiiProfileListMode()
@@ -870,7 +862,7 @@ _ZNK24OvershellProfileProvider18GetWiiProfileCountEP13LocalBandUser: // ring: a4
 .type _ZN24OvershellProfileProvider21GetWiiProfileListModeEv,@function
 _ZN24OvershellProfileProvider21GetWiiProfileListModeEv: // ring: a4-wii-residue
     leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_84(%rip), %rsi
+    leaq .Lname_83(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // OvershellProfileProvider::GetWiiProfileSelectedName() const
@@ -878,7 +870,7 @@ _ZN24OvershellProfileProvider21GetWiiProfileListModeEv: // ring: a4-wii-residue
 .type _ZNK24OvershellProfileProvider25GetWiiProfileSelectedNameEv,@function
 _ZNK24OvershellProfileProvider25GetWiiProfileSelectedNameEv: // ring: a4-wii-residue
     leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_85(%rip), %rsi
+    leaq .Lname_84(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // OvershellProfileProvider::OvershellProfileProvider(BandUserMgr*)
@@ -886,7 +878,7 @@ _ZNK24OvershellProfileProvider25GetWiiProfileSelectedNameEv: // ring: a4-wii-res
 .type _ZN24OvershellProfileProviderC1EP11BandUserMgr,@function
 _ZN24OvershellProfileProviderC1EP11BandUserMgr: // ring: a4-wii-residue
     leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_86(%rip), %rsi
+    leaq .Lname_85(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // OvershellProfileProvider::Reload()
@@ -894,7 +886,7 @@ _ZN24OvershellProfileProviderC1EP11BandUserMgr: // ring: a4-wii-residue
 .type _ZN24OvershellProfileProvider6ReloadEv,@function
 _ZN24OvershellProfileProvider6ReloadEv: // ring: a4-wii-residue
     leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_87(%rip), %rsi
+    leaq .Lname_86(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // OvershellProfileProvider::SetWiiProfileListMode(OvershellProfileProvider::WiiProfileListMode, bool)
@@ -902,7 +894,7 @@ _ZN24OvershellProfileProvider6ReloadEv: // ring: a4-wii-residue
 .type _ZN24OvershellProfileProvider21SetWiiProfileListModeENS_18WiiProfileListModeEb,@function
 _ZN24OvershellProfileProvider21SetWiiProfileListModeENS_18WiiProfileListModeEb: // ring: a4-wii-residue
     leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_88(%rip), %rsi
+    leaq .Lname_87(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // PlatformMgr::CanSeeUserCreatedContent(OnlineID const*) const
@@ -910,7 +902,7 @@ _ZN24OvershellProfileProvider21SetWiiProfileListModeENS_18WiiProfileListModeEb: 
 .type _ZNK11PlatformMgr24CanSeeUserCreatedContentEPK8OnlineID,@function
 _ZNK11PlatformMgr24CanSeeUserCreatedContentEPK8OnlineID: // ring: a1-platformmgr
     leaq .Lring_a1_platformmgr(%rip), %rdi
-    leaq .Lname_89(%rip), %rsi
+    leaq .Lname_88(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // PlatformMgr::GetOnlineID(int, OnlineID*) const
@@ -918,7 +910,7 @@ _ZNK11PlatformMgr24CanSeeUserCreatedContentEPK8OnlineID: // ring: a1-platformmgr
 .type _ZNK11PlatformMgr11GetOnlineIDEiP8OnlineID,@function
 _ZNK11PlatformMgr11GetOnlineIDEiP8OnlineID: // ring: a1-platformmgr
     leaq .Lring_a1_platformmgr(%rip), %rdi
-    leaq .Lname_90(%rip), %rsi
+    leaq .Lname_89(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // PlatformMgr::IsGuestOnlineID(OnlineID const*) const
@@ -926,7 +918,7 @@ _ZNK11PlatformMgr11GetOnlineIDEiP8OnlineID: // ring: a1-platformmgr
 .type _ZNK11PlatformMgr15IsGuestOnlineIDEPK8OnlineID,@function
 _ZNK11PlatformMgr15IsGuestOnlineIDEPK8OnlineID: // ring: a1-platformmgr
     leaq .Lring_a1_platformmgr(%rip), %rdi
-    leaq .Lname_91(%rip), %rsi
+    leaq .Lname_90(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // PlatformMgr::RegisterSignInserCallback(bool (*)(User*, unsigned long))
@@ -934,7 +926,7 @@ _ZNK11PlatformMgr15IsGuestOnlineIDEPK8OnlineID: // ring: a1-platformmgr
 .type _ZN11PlatformMgr25RegisterSignInserCallbackEPFbP4UsermE,@function
 _ZN11PlatformMgr25RegisterSignInserCallbackEPFbP4UsermE: // ring: a1-platformmgr
     leaq .Lring_a1_platformmgr(%rip), %rdi
-    leaq .Lname_92(%rip), %rsi
+    leaq .Lname_91(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // PlatformMgr::SetHomeMenuEnabled(bool)
@@ -942,7 +934,7 @@ _ZN11PlatformMgr25RegisterSignInserCallbackEPFbP4UsermE: // ring: a1-platformmgr
 .type _ZN11PlatformMgr18SetHomeMenuEnabledEb,@function
 _ZN11PlatformMgr18SetHomeMenuEnabledEb: // ring: a1-platformmgr
     leaq .Lring_a1_platformmgr(%rip), %rdi
-    leaq .Lname_93(%rip), %rsi
+    leaq .Lname_92(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // PlatformMgr::ShowGamercard(LocalUser*, OnlineID const*)
@@ -950,7 +942,7 @@ _ZN11PlatformMgr18SetHomeMenuEnabledEb: // ring: a1-platformmgr
 .type _ZN11PlatformMgr13ShowGamercardEP9LocalUserPK8OnlineID,@function
 _ZN11PlatformMgr13ShowGamercardEP9LocalUserPK8OnlineID: // ring: a1-platformmgr
     leaq .Lring_a1_platformmgr(%rip), %rdi
-    leaq .Lname_94(%rip), %rsi
+    leaq .Lname_93(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // PlatformMgr::SwapUserPads(LocalUser*, LocalUser*)
@@ -958,7 +950,7 @@ _ZN11PlatformMgr13ShowGamercardEP9LocalUserPK8OnlineID: // ring: a1-platformmgr
 .type _ZN11PlatformMgr12SwapUserPadsEP9LocalUserS1_,@function
 _ZN11PlatformMgr12SwapUserPadsEP9LocalUserS1_: // ring: a1-platformmgr
     leaq .Lring_a1_platformmgr(%rip), %rdi
-    leaq .Lname_95(%rip), %rsi
+    leaq .Lname_94(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // ProfilePicture::ProfilePicture(int, Hmx::Object*)
@@ -966,7 +958,7 @@ _ZN11PlatformMgr12SwapUserPadsEP9LocalUserS1_: // ring: a1-platformmgr
 .type _ZN14ProfilePictureC1EiPN3Hmx6ObjectE,@function
 _ZN14ProfilePictureC1EiPN3Hmx6ObjectE: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_96(%rip), %rsi
+    leaq .Lname_95(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // ProfilePicture::Update()
@@ -974,7 +966,7 @@ _ZN14ProfilePictureC1EiPN3Hmx6ObjectE: // ring: a1-absent-body
 .type _ZN14ProfilePicture6UpdateEv,@function
 _ZN14ProfilePicture6UpdateEv: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_97(%rip), %rsi
+    leaq .Lname_96(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RecursePatternInternal(char const*, void (*)(char const*, char const*), bool, bool)
@@ -982,7 +974,7 @@ _ZN14ProfilePicture6UpdateEv: // ring: a1-absent-body
 .type _Z22RecursePatternInternalPKcPFvS0_S0_Ebb,@function
 _Z22RecursePatternInternalPKcPFvS0_S0_Ebb: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
-    leaq .Lname_98(%rip), %rsi
+    leaq .Lname_97(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::CancelOutstandingCalls(Hmx::Object*)
@@ -990,7 +982,7 @@ _Z22RecursePatternInternalPKcPFvS0_S0_Ebb: // ring: a1-absent-body
 .type _ZN11RockCentral22CancelOutstandingCallsEPN3Hmx6ObjectE,@function
 _ZN11RockCentral22CancelOutstandingCallsEPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_99(%rip), %rsi
+    leaq .Lname_98(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::CheckBattleLimits(BandProfile*, DataResultList&, Hmx::Object*)
@@ -998,7 +990,7 @@ _ZN11RockCentral22CancelOutstandingCallsEPN3Hmx6ObjectE: // ring: online-rockcen
 .type _ZN11RockCentral17CheckBattleLimitsEP11BandProfileR14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral17CheckBattleLimitsEP11BandProfileR14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_100(%rip), %rsi
+    leaq .Lname_99(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::CreateBattle(BandProfile*, char const*, char const*, std::vector<int, std::allocator<int>> const&, PatchDescriptor&, int, ScoreType, int, BattleTimeUnits, DataResultList&, Hmx::Object*, int, int)
@@ -1006,7 +998,7 @@ _ZN11RockCentral17CheckBattleLimitsEP11BandProfileR14DataResultListPN3Hmx6Object
 .type _ZN11RockCentral12CreateBattleEP11BandProfilePKcS3_RKSt6vectorIiSaIiEER15PatchDescriptori9ScoreTypei15BattleTimeUnitsR14DataResultListPN3Hmx6ObjectEii,@function
 _ZN11RockCentral12CreateBattleEP11BandProfilePKcS3_RKSt6vectorIiSaIiEER15PatchDescriptori9ScoreTypei15BattleTimeUnitsR14DataResultListPN3Hmx6ObjectEii: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_101(%rip), %rsi
+    leaq .Lname_100(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::FailAllOutstandingCalls()
@@ -1014,7 +1006,7 @@ _ZN11RockCentral12CreateBattleEP11BandProfilePKcS3_RKSt6vectorIiSaIiEER15PatchDe
 .type _ZN11RockCentral23FailAllOutstandingCallsEv,@function
 _ZN11RockCentral23FailAllOutstandingCallsEv: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_102(%rip), %rsi
+    leaq .Lname_101(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::GetActiveContextHighWatermark()
@@ -1022,7 +1014,7 @@ _ZN11RockCentral23FailAllOutstandingCallsEv: // ring: online-rockcentral
 .type _ZN11RockCentral29GetActiveContextHighWatermarkEv,@function
 _ZN11RockCentral29GetActiveContextHighWatermarkEv: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_103(%rip), %rsi
+    leaq .Lname_102(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::GetAllSonglists(std::vector<BandProfile*, std::allocator<BandProfile*>>&, DataResultList&, Hmx::Object*)
@@ -1030,7 +1022,7 @@ _ZN11RockCentral29GetActiveContextHighWatermarkEv: // ring: online-rockcentral
 .type _ZN11RockCentral15GetAllSonglistsERSt6vectorIP11BandProfileSaIS2_EER14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral15GetAllSonglistsERSt6vectorIP11BandProfileSaIS2_EER14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_104(%rip), %rsi
+    leaq .Lname_103(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::GetBattleArt(int, RndTex*, Hmx::Object*, int)
@@ -1038,7 +1030,7 @@ _ZN11RockCentral15GetAllSonglistsERSt6vectorIP11BandProfileSaIS2_EER14DataResult
 .type _ZN11RockCentral12GetBattleArtEiP6RndTexPN3Hmx6ObjectEi,@function
 _ZN11RockCentral12GetBattleArtEiP6RndTexPN3Hmx6ObjectEi: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_105(%rip), %rsi
+    leaq .Lname_104(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::GetClosedBattles(std::vector<BandProfile*, std::allocator<BandProfile*>>&, DataResultList&, Hmx::Object*)
@@ -1046,7 +1038,7 @@ _ZN11RockCentral12GetBattleArtEiP6RndTexPN3Hmx6ObjectEi: // ring: online-rockcen
 .type _ZN11RockCentral16GetClosedBattlesERSt6vectorIP11BandProfileSaIS2_EER14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral16GetClosedBattlesERSt6vectorIP11BandProfileSaIS2_EER14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_106(%rip), %rsi
+    leaq .Lname_105(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::GetLeaderboardByPlayer(std::vector<int, std::allocator<int>>&, int, ScoreType, LeaderboardType, LeaderboardMode, int, DataResultList&, Hmx::Object*)
@@ -1054,7 +1046,7 @@ _ZN11RockCentral16GetClosedBattlesERSt6vectorIP11BandProfileSaIS2_EER14DataResul
 .type _ZN11RockCentral22GetLeaderboardByPlayerERSt6vectorIiSaIiEEi9ScoreType15LeaderboardType15LeaderboardModeiR14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral22GetLeaderboardByPlayerERSt6vectorIiSaIiEEi9ScoreType15LeaderboardType15LeaderboardModeiR14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_107(%rip), %rsi
+    leaq .Lname_106(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::GetLinkingCode(int, DataResultList&, Hmx::Object*)
@@ -1062,7 +1054,7 @@ _ZN11RockCentral22GetLeaderboardByPlayerERSt6vectorIiSaIiEEi9ScoreType15Leaderbo
 .type _ZN11RockCentral14GetLinkingCodeEiR14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral14GetLinkingCodeEiR14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_108(%rip), %rsi
+    leaq .Lname_107(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::GetMultipleRankingsForPlayer(Profile*, ScoreType, std::vector<int, std::allocator<int>>&, DataResultList&, Hmx::Object*)
@@ -1070,7 +1062,7 @@ _ZN11RockCentral14GetLinkingCodeEiR14DataResultListPN3Hmx6ObjectE: // ring: onli
 .type _ZN11RockCentral28GetMultipleRankingsForPlayerEP7Profile9ScoreTypeRSt6vectorIiSaIiEER14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral28GetMultipleRankingsForPlayerEP7Profile9ScoreTypeRSt6vectorIiSaIiEER14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_109(%rip), %rsi
+    leaq .Lname_108(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::GetRedeemedTokensByPlayer(int, DataResultList&, Hmx::Object*)
@@ -1078,7 +1070,7 @@ _ZN11RockCentral28GetMultipleRankingsForPlayerEP7Profile9ScoreTypeRSt6vectorIiSa
 .type _ZN11RockCentral25GetRedeemedTokensByPlayerEiR14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral25GetRedeemedTokensByPlayerEiR14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_110(%rip), %rsi
+    leaq .Lname_109(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::GetSetlistArt(char const*, RndTex*, Hmx::Object*, int)
@@ -1086,7 +1078,7 @@ _ZN11RockCentral25GetRedeemedTokensByPlayerEiR14DataResultListPN3Hmx6ObjectE: //
 .type _ZN11RockCentral13GetSetlistArtEPKcP6RndTexPN3Hmx6ObjectEi,@function
 _ZN11RockCentral13GetSetlistArtEPKcP6RndTexPN3Hmx6ObjectEi: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_111(%rip), %rsi
+    leaq .Lname_110(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::GetSetlistCreationStatus(Profile const*, int, DataResultList&, Hmx::Object*)
@@ -1094,7 +1086,7 @@ _ZN11RockCentral13GetSetlistArtEPKcP6RndTexPN3Hmx6ObjectEi: // ring: online-rock
 .type _ZN11RockCentral24GetSetlistCreationStatusEPK7ProfileiR14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral24GetSetlistCreationStatusEPK7ProfileiR14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_112(%rip), %rsi
+    leaq .Lname_111(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::GetSongFullOffer(int, DataResultList&, Hmx::Object*)
@@ -1102,7 +1094,7 @@ _ZN11RockCentral24GetSetlistCreationStatusEPK7ProfileiR14DataResultListPN3Hmx6Ob
 .type _ZN11RockCentral16GetSongFullOfferEiR14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral16GetSongFullOfferEiR14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_113(%rip), %rsi
+    leaq .Lname_112(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::GetTickerInfo(Profile const*, ScoreType, DataResultList&, Hmx::Object*)
@@ -1110,7 +1102,7 @@ _ZN11RockCentral16GetSongFullOfferEiR14DataResultListPN3Hmx6ObjectE: // ring: on
 .type _ZN11RockCentral13GetTickerInfoEPK7Profile9ScoreTypeR14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral13GetTickerInfoEPK7Profile9ScoreTypeR14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_114(%rip), %rsi
+    leaq .Lname_113(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::GetWebLinkStatus(Profile const*, int, DataResultList&, Hmx::Object*)
@@ -1118,7 +1110,7 @@ _ZN11RockCentral13GetTickerInfoEPK7Profile9ScoreTypeR14DataResultListPN3Hmx6Obje
 .type _ZN11RockCentral16GetWebLinkStatusEPK7ProfileiR14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral16GetWebLinkStatusEPK7ProfileiR14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_115(%rip), %rsi
+    leaq .Lname_114(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::Init(bool)
@@ -1126,7 +1118,7 @@ _ZN11RockCentral16GetWebLinkStatusEPK7ProfileiR14DataResultListPN3Hmx6ObjectE: /
 .type _ZN11RockCentral4InitEb,@function
 _ZN11RockCentral4InitEb: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_116(%rip), %rsi
+    leaq .Lname_115(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::RecordAccomplishmentData(Profile const*, AccomplishmentProgress*, int, Hmx::Object*, DataResultList&)
@@ -1134,7 +1126,7 @@ _ZN11RockCentral4InitEb: // ring: online-rockcentral
 .type _ZN11RockCentral24RecordAccomplishmentDataEPK7ProfileP22AccomplishmentProgressiPN3Hmx6ObjectER14DataResultList,@function
 _ZN11RockCentral24RecordAccomplishmentDataEPK7ProfileP22AccomplishmentProgressiPN3Hmx6ObjectER14DataResultList: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_117(%rip), %rsi
+    leaq .Lname_116(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::RecordBattleScore(int, int, std::vector<BandProfile*, std::allocator<BandProfile*>>&, int, DataResultList&, Hmx::Object*)
@@ -1142,7 +1134,7 @@ _ZN11RockCentral24RecordAccomplishmentDataEPK7ProfileP22AccomplishmentProgressiP
 .type _ZN11RockCentral17RecordBattleScoreEiiRSt6vectorIP11BandProfileSaIS2_EEiR14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral17RecordBattleScoreEiiRSt6vectorIP11BandProfileSaIS2_EEiR14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_118(%rip), %rsi
+    leaq .Lname_117(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::RecordOptionData()
@@ -1150,7 +1142,7 @@ _ZN11RockCentral17RecordBattleScoreEiiRSt6vectorIP11BandProfileSaIS2_EEiR14DataR
 .type _ZN11RockCentral16RecordOptionDataEv,@function
 _ZN11RockCentral16RecordOptionDataEv: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_119(%rip), %rsi
+    leaq .Lname_118(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::RecordPerformance(Profile const*, PerformanceData const*, int, Hmx::Object*, DataResultList&)
@@ -1158,7 +1150,7 @@ _ZN11RockCentral16RecordOptionDataEv: // ring: online-rockcentral
 .type _ZN11RockCentral17RecordPerformanceEPK7ProfilePK15PerformanceDataiPN3Hmx6ObjectER14DataResultList,@function
 _ZN11RockCentral17RecordPerformanceEPK7ProfilePK15PerformanceDataiPN3Hmx6ObjectER14DataResultList: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_120(%rip), %rsi
+    leaq .Lname_119(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::RecordScore(int, int, std::vector<PlayerScore, std::allocator<PlayerScore>>&, int, int, bool, Hmx::Object*, DataResultList&)
@@ -1166,7 +1158,7 @@ _ZN11RockCentral17RecordPerformanceEPK7ProfilePK15PerformanceDataiPN3Hmx6ObjectE
 .type _ZN11RockCentral11RecordScoreEiiRSt6vectorI11PlayerScoreSaIS1_EEiibPN3Hmx6ObjectER14DataResultList,@function
 _ZN11RockCentral11RecordScoreEiiRSt6vectorI11PlayerScoreSaIS1_EEiibPN3Hmx6ObjectER14DataResultList: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_121(%rip), %rsi
+    leaq .Lname_120(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::RedeemToken(int, String, DataResultList&, Hmx::Object*)
@@ -1174,7 +1166,7 @@ _ZN11RockCentral11RecordScoreEiiRSt6vectorI11PlayerScoreSaIS1_EEiibPN3Hmx6Object
 .type _ZN11RockCentral11RedeemTokenEi6StringR14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral11RedeemTokenEi6StringR14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_122(%rip), %rsi
+    leaq .Lname_121(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::SyncAvailableSongs(std::vector<BandProfile*, std::allocator<BandProfile*>> const&, std::vector<int, std::allocator<int>> const&, std::vector<int, std::allocator<int>> const&, Hmx::Object*)
@@ -1182,7 +1174,7 @@ _ZN11RockCentral11RedeemTokenEi6StringR14DataResultListPN3Hmx6ObjectE: // ring: 
 .type _ZN11RockCentral18SyncAvailableSongsERKSt6vectorIP11BandProfileSaIS2_EERKS0_IiSaIiEESA_PN3Hmx6ObjectE,@function
 _ZN11RockCentral18SyncAvailableSongsERKSt6vectorIP11BandProfileSaIS2_EERKS0_IiSaIiEESA_PN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_123(%rip), %rsi
+    leaq .Lname_122(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::SyncSetlists(std::vector<BandProfile*, std::allocator<BandProfile*>>&, DataResultList&, Hmx::Object*)
@@ -1190,7 +1182,7 @@ _ZN11RockCentral18SyncAvailableSongsERKSt6vectorIP11BandProfileSaIS2_EERKS0_IiSa
 .type _ZN11RockCentral12SyncSetlistsERSt6vectorIP11BandProfileSaIS2_EER14DataResultListPN3Hmx6ObjectE,@function
 _ZN11RockCentral12SyncSetlistsERSt6vectorIP11BandProfileSaIS2_EER14DataResultListPN3Hmx6ObjectE: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_124(%rip), %rsi
+    leaq .Lname_123(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::UpdateBandLogo(int, RndTex*, int, Hmx::Object*, int)
@@ -1198,7 +1190,7 @@ _ZN11RockCentral12SyncSetlistsERSt6vectorIP11BandProfileSaIS2_EER14DataResultLis
 .type _ZN11RockCentral14UpdateBandLogoEiP6RndTexiPN3Hmx6ObjectEi,@function
 _ZN11RockCentral14UpdateBandLogoEiP6RndTexiPN3Hmx6ObjectEi: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_125(%rip), %rsi
+    leaq .Lname_124(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // RockCentral::UpdateBattleArt(RndTex*, Hmx::Object*, int)
@@ -1206,7 +1198,7 @@ _ZN11RockCentral14UpdateBandLogoEiP6RndTexiPN3Hmx6ObjectEi: // ring: online-rock
 .type _ZN11RockCentral15UpdateBattleArtEP6RndTexPN3Hmx6ObjectEi,@function
 _ZN11RockCentral15UpdateBattleArtEP6RndTexPN3Hmx6ObjectEi: // ring: online-rockcentral
     leaq .Lring_online_rockcentral(%rip), %rdi
-    leaq .Lname_126(%rip), %rsi
+    leaq .Lname_125(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // SearchSettings::SearchSettings(int, bool, int)
@@ -1214,7 +1206,7 @@ _ZN11RockCentral15UpdateBattleArtEP6RndTexPN3Hmx6ObjectEi: // ring: online-rockc
 .type _ZN14SearchSettingsC1Eibi,@function
 _ZN14SearchSettingsC1Eibi: // ring: online-matchmaking
     leaq .Lring_online_matchmaking(%rip), %rdi
-    leaq .Lname_127(%rip), %rsi
+    leaq .Lname_126(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // SessionSearcher::GetNextResult()
@@ -1222,7 +1214,7 @@ _ZN14SearchSettingsC1Eibi: // ring: online-matchmaking
 .type _ZN15SessionSearcher13GetNextResultEv,@function
 _ZN15SessionSearcher13GetNextResultEv: // ring: online-matchmaking
     leaq .Lring_online_matchmaking(%rip), %rdi
-    leaq .Lname_128(%rip), %rsi
+    leaq .Lname_127(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // SessionSearcher::GetSearchResults(std::vector<NetSearchResult*, std::allocator<NetSearchResult*>>&)
@@ -1230,7 +1222,7 @@ _ZN15SessionSearcher13GetNextResultEv: // ring: online-matchmaking
 .type _ZN15SessionSearcher16GetSearchResultsERSt6vectorIP15NetSearchResultSaIS2_EE,@function
 _ZN15SessionSearcher16GetSearchResultsERSt6vectorIP15NetSearchResultSaIS2_EE: // ring: online-matchmaking
     leaq .Lring_online_matchmaking(%rip), %rdi
-    leaq .Lname_129(%rip), %rsi
+    leaq .Lname_128(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // SessionSettings::SetPublic(bool)
@@ -1238,7 +1230,7 @@ _ZN15SessionSearcher16GetSearchResultsERSt6vectorIP15NetSearchResultSaIS2_EE: //
 .type _ZN15SessionSettings9SetPublicEb,@function
 _ZN15SessionSettings9SetPublicEb: // ring: online-matchmaking
     leaq .Lring_online_matchmaking(%rip), %rdi
-    leaq .Lname_130(%rip), %rsi
+    leaq .Lname_129(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // SessionUsersProvider::ShowGamercard(int, LocalBandUser*)
@@ -1246,7 +1238,7 @@ _ZN15SessionSettings9SetPublicEb: // ring: online-matchmaking
 .type _ZN20SessionUsersProvider13ShowGamercardEiP13LocalBandUser,@function
 _ZN20SessionUsersProvider13ShowGamercardEiP13LocalBandUser: // ring: xbox-live
     leaq .Lring_xbox_live(%rip), %rdi
-    leaq .Lname_131(%rip), %rsi
+    leaq .Lname_130(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // ShowParentalControlUI(int, _XOVERLAPPED*)
@@ -1254,7 +1246,7 @@ _ZN20SessionUsersProvider13ShowGamercardEiP13LocalBandUser: // ring: xbox-live
 .type _Z21ShowParentalControlUIiP12_XOVERLAPPED,@function
 _Z21ShowParentalControlUIiP12_XOVERLAPPED: // ring: xbox-live
     leaq .Lring_xbox_live(%rip), %rdi
-    leaq .Lname_132(%rip), %rsi
+    leaq .Lname_131(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // SongSelectPanel::SongSelectPanel()
@@ -1262,7 +1254,7 @@ _Z21ShowParentalControlUIiP12_XOVERLAPPED: // ring: xbox-live
 .type _ZN15SongSelectPanelC1Ev,@function
 _ZN15SongSelectPanelC1Ev: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_133(%rip), %rsi
+    leaq .Lname_132(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // StoreRootPanel::StoreRootPanel()
@@ -1270,7 +1262,7 @@ _ZN15SongSelectPanelC1Ev: // ring: a6-failing-tu
 .type _ZN14StoreRootPanelC1Ev,@function
 _ZN14StoreRootPanelC1Ev: // ring: xbox-store
     leaq .Lring_xbox_store(%rip), %rdi
-    leaq .Lname_134(%rip), %rsi
+    leaq .Lname_133(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // SyncStore::Poll()
@@ -1278,7 +1270,7 @@ _ZN14StoreRootPanelC1Ev: // ring: xbox-store
 .type _ZN9SyncStore4PollEv,@function
 _ZN9SyncStore4PollEv: // ring: online-net
     leaq .Lring_online_net(%rip), %rdi
-    leaq .Lname_135(%rip), %rsi
+    leaq .Lname_134(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // TexMovie::IsEmpty() const
@@ -1286,13 +1278,21 @@ _ZN9SyncStore4PollEv: // ring: online-net
 .type _ZNK8TexMovie7IsEmptyEv,@function
 _ZNK8TexMovie7IsEmptyEv: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
-    leaq .Lname_136(%rip), %rsi
+    leaq .Lname_135(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // TexMovie::SetFile(FilePath const&)
 .globl _ZN8TexMovie7SetFileERK8FilePath
 .type _ZN8TexMovie7SetFileERK8FilePath,@function
 _ZN8TexMovie7SetFileERK8FilePath: // ring: a6-failing-tu
+    leaq .Lring_a6_failing_tu(%rip), %rdi
+    leaq .Lname_136(%rip), %rsi
+    jmp rb3_app_stub_reached
+
+// TexMovie::TexMovie()
+.globl _ZN8TexMovieC1Ev
+.type _ZN8TexMovieC1Ev,@function
+_ZN8TexMovieC1Ev: // ring: a6-failing-tu
     leaq .Lring_a6_failing_tu(%rip), %rdi
     leaq .Lname_137(%rip), %rsi
     jmp rb3_app_stub_reached

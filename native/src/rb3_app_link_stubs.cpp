@@ -51,10 +51,10 @@ alignas(BandUI) unsigned char gRb3AppTheBandUI[sizeof(BandUI)] __asm__("TheBandU
 alignas(WiiFriendMgr) unsigned char gRb3AppTheWiiFriendMgr[sizeof(WiiFriendMgr)] __asm__("TheWiiFriendMgr"); // ring: a4-wii-residue
 alignas(WiiProfileMgr) unsigned char gRb3AppTheWiiProfileMgr[sizeof(WiiProfileMgr)] __asm__("TheWiiProfileMgr"); // ring: a4-wii-residue
 alignas(WiiFriendsProvider) unsigned char gRb3AppTheWiiFriendsProvider[sizeof(WiiFriendsProvider)] __asm__("TheWiiFriendsProvider"); // ring: a4-wii-residue
-// Declared only inside MetaPanel.cpp / MovieSys.cpp: no header gives the size,
+// Declared only inside MetaPanel.cpp: no header gives the size,
 // so these reserve 4 KiB of zeroes (an over-estimate, measured nowhere).
 alignas(16) unsigned char gRb3AppTheWiiInvitationsProvider[4096] __asm__("TheWiiInvitationsProvider"); // ring: a4-wii-residue
-alignas(16) unsigned char gRb3AppBinkMovieSys[4096] __asm__("gBinkMovieSys"); // ring: a2-movie
+// gBinkMovieSys: a real base MovieSys in rb3_app_native_glue.cpp (A1).
 // Message globals the retail game constructs in a TU no native target compiles.
 alignas(Message) unsigned char gRb3AppPlayMsg[sizeof(Message)] __asm__("play_msg"); // ring: a1-absent-body
 alignas(Message) unsigned char gRb3AppShowInviteMsg[sizeof(Message)] __asm__("show_invitation_notification_msg"); // ring: online-netsession
