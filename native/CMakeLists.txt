@@ -2290,6 +2290,46 @@ set(RB3_APP_SOURCES
     # rb3_hash_symbol_native.h (force-included, flags below) supplies the
     # HX_NATIVE arm FixedSizeSaveableStream.h already carries.
     ${REPO_ROOT}/src/band3/meta_band/NameGenerator.cpp
+    # A6: with MetaPanel done, UIManager::Init's UI script DTA-`new`s the two
+    # campaign leaderboard panels (CampaignGoalsLeaderboardPanel::NewObject was
+    # the a6-failing-tu stop; retail ctors 0x825EFED8 / 0x825F11F8 = UIPanel
+    # ctor, provider = null, then goal = gNullStr / mScoreType = kScoreBand (10),
+    # mUseDLC = false, as the source). Each TU failed natively only on
+    # `(MILO_ASSERT(p, n), true)` inside HANDLE_ACTION_IF: the native
+    # MILO_ASSERT is a do/while statement. rb3_assert_expr_native.h
+    # (force-included, flags below) swaps in an expression form with the same
+    # test and failure path. No src/ edit.
+    ${REPO_ROOT}/src/band3/meta_band/CampaignGoalsLeaderboardPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CampaignCareerLeaderboardPanel.cpp
+    # The leaderboard objects the two panels build (PlayerCampaignGoal/Career
+    # Leaderboard ctors, SetScoreType, EnumerateFromID, EnumerateRankRange,
+    # GetStats): rb3-xenon-07's cldb wrote them from retail TU5
+    # 0x8266B4C0-0x8266BDC8. Until then they were a1-absent-body stubs here.
+    # X360 gives this TU no extra_cflags, so it gets no per-file flags.
+    ${REPO_ROOT}/src/band3/meta_band/CampaignLeaderboards.cpp
+    # A6: the UI script's next DTA `new` is SongSelectPanel (its ctor was the
+    # a6-failing-tu stop; retail ctor 0x82637500 zeroes the same six fields,
+    # unk58 = -1.0f). The TU failed natively on its own HX_NATIVE arm:
+    # FinishLoad calls SetMiniLeaderboardGroupShowing, which the header never
+    # declared (fixed by an HX_NATIVE declaration in SongSelectPanel.h), and on
+    # the expression-form MILO_ASSERT in two handlers (the same force-include
+    # as the campaign panels, flags below).
+    ${REPO_ROOT}/src/band3/meta_band/SongSelectPanel.cpp
+    # A6: then JoinInvitePanel (its ctor stub was the a6-failing-tu stop; retail
+    # ctor 0x826308C0 = UIPanel ctor, mJoiningUser = 0, as the source). With
+    # X360's extra_cflags (RB3_HANDLE_LOCAL_STATIC, flags below) it compiles
+    # as-is: PLAN 2.1's `undeclared set_joining_user` is its handler Symbol,
+    # a function-local static in retail.
+    ${REPO_ROOT}/src/band3/meta_band/JoinInvitePanel.cpp
+    # A6: then GemTrainerPanel's ctor builds its Metronome member (the
+    # Metronome ctor stub was the a6-failing-tu stop; retail ctor 0x826F0708 =
+    # mEnabled = false, mBeat = -1, three nulls, as the source). The TU failed
+    # only on -Werror=tautological-constant-out-of-range-compare: Poll's
+    # `oe != 2` compares Metronome::OverrideEnabled, which Metronome.h declares
+    # EMPTY (a placeholder, the same artifact as Mat_NG.cpp's ClampMode). The
+    # comparison is live in retail and clang keeps it (no -fstrict-enums), so
+    # the warning is silenced for this TU only (flags below).
+    ${REPO_ROOT}/src/band3/game/Metronome.cpp
     # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
     # constructs TheBandUI at static init; natively TheUI was the engine's weak
     # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.
@@ -2580,6 +2620,21 @@ if(RB3X_BUILD_ENGINE)
     set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/NameGenerator.cpp
         PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC"
         COMPILE_OPTIONS "-include;${CMAKE_SOURCE_DIR}/src/rb3_hash_symbol_native.h")
+    # A6: the campaign leaderboard panels and SongSelectPanel: X360's
+    # extra_cflags (RB3_HANDLE_LOCAL_STATIC, the same for all three) plus the
+    # expression-form native MILO_ASSERT.
+    set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/CampaignGoalsLeaderboardPanel.cpp
+        ${REPO_ROOT}/src/band3/meta_band/CampaignCareerLeaderboardPanel.cpp
+        ${REPO_ROOT}/src/band3/meta_band/SongSelectPanel.cpp
+        PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC"
+        COMPILE_OPTIONS "-include;${CMAKE_SOURCE_DIR}/src/rb3_assert_expr_native.h")
+    # A6: JoinInvitePanel.cpp: X360's extra_cflags only.
+    set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/JoinInvitePanel.cpp
+        PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC")
+    # A6: Metronome.cpp: no X360 extra_cflags; the empty OverrideEnabled enum
+    # makes Poll's live `oe != 2` read as out of range.
+    set_source_files_properties(${REPO_ROOT}/src/band3/game/Metronome.cpp
+        PROPERTIES COMPILE_OPTIONS "-Wno-tautological-constant-out-of-range-compare")
     # A2: the retail tables and registrars; rb3_app_gates.cpp calls them only
     # with a title update mounted (RB3_TITLE_UPDATE_DIR).
     list(APPEND _rb3_app_all ${REPO_ROOT}/src/ChecksumData_xbox.cpp)

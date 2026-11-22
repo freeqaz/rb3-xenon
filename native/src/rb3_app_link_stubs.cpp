@@ -59,8 +59,9 @@ alignas(16) unsigned char gRb3AppTheWiiInvitationsProvider[4096] __asm__("TheWii
 // gBinkMovieSys: a real base MovieSys in rb3_app_native_glue.cpp (A1).
 // Message globals the retail game constructs in a TU no native target compiles.
 alignas(Message) unsigned char gRb3AppPlayMsg[sizeof(Message)] __asm__("play_msg"); // ring: a1-absent-body
-alignas(Message) unsigned char gRb3AppShowInviteMsg[sizeof(Message)] __asm__("show_invitation_notification_msg"); // ring: online-netsession
-alignas(Message) unsigned char gRb3AppHideInviteMsg[sizeof(Message)] __asm__("hide_invitation_notification_msg"); // ring: online-netsession
+// show/hide_invitation_notification_msg: gone since lane A6. Their only use was an
+// rb3-Wii dev-build HX_NATIVE arm in OvershellSlot::UpdateView, which retail X360
+// (0x825DB930) does not have; that arm is removed.
 
 // ---- pointers and references: null -------------------------------------------
 alignas(8) unsigned char gRb3AppTheAuditionMgr[8] __asm__("TheAuditionMgr"); // ring: a1-absent-body

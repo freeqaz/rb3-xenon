@@ -1191,11 +1191,6 @@ void OvershellSlot::UpdateView() {
                 i6 = i4->HasMic(MicClientID(1, -1));
                 i16 = i4->HasMic(MicClientID(2, -1));
             }
-#ifdef HX_NATIVE
-            if (!l14->IsGuest() && l14->IsSignedIn() && TheRockCentral.unk111) {
-                b1 = true;
-            }
-#endif
         } else {
             if (user->IsParticipating()) {
                 i18 = 1;
@@ -1335,15 +1330,11 @@ void OvershellSlot::UpdateView() {
             }
         }
     }
-#ifdef HX_NATIVE
-    // Retail X360 emits nothing between the
-    // difficulty-restriction handling and the update_mics message
-    if (b1) {
-        HandleType(show_invitation_notification_msg);
-    } else {
-        HandleType(hide_invitation_notification_msg);
-    }
-#endif
+    // Retail X360 (0x825DB930) emits nothing between the difficulty-restriction
+    // handling and the update_mics message. An rb3-Wii dev-build
+    // show/hide_invitation_notification_msg call used to sit here under
+    // HX_NATIVE; natively both Messages are never constructed, so it crashed
+    // rb3-app's boot (lane A6), and retail never sends them.
     static Message msgUpdateMics("update_mics", i4, 0, 0, 0, 0, 0, 0);
     msgUpdateMics[0] = i4;
     msgUpdateMics[1] = b17;
