@@ -109,7 +109,7 @@ static LONG AppExceptionFilter(EXCEPTION_POINTERS *) {
 
 void App::Run() {
     gApp = this;
-#ifdef HX_NATIVE // SCOUT EXPERIMENT (uncommitted): no SEH trampoline natively
+#ifdef HX_NATIVE // no SEH trampoline natively: retail enters the loop through AppExceptionFilter
     RunWithoutDebugging();
 #else
     LPTOP_LEVEL_EXCEPTION_FILTER old = SetUnhandledExceptionFilter(AppExceptionFilter);
