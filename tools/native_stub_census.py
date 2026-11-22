@@ -85,7 +85,10 @@ NON_STUB_RE = re.compile(
     # lightpreset: rb3-milo's LightPreset held-object ref gates (test code, not a stub).
     r"lightpreset_refs_phase\.cpp|"
     # A1: rb3-app's boot-gate --wrap shims (call the real step, then print).
-    r"rb3_app_gates\.cpp)\.o$"
+    r"rb3_app_gates\.cpp|"
+    # A14: rb3-app's joypad layer (retail Joypad_Xbox.cpp's lifecycle over the
+    # engine's scripted input; real bodies, nothing aborts) and its gate (test code).
+    r"rb3_app_joypad\.cpp|rb3_app_joypad_gate\.cpp)\.o$"
 )
 NATIVE_SRC_RE = re.compile(r"CMakeFiles/[^/]+\.dir/src/[^/]+\.o$")
 

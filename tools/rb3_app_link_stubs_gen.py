@@ -76,6 +76,12 @@ RULES = [
     # ToggleOverlay runs (session rb3-xenon-07, 114186523, VocalOverlay.h).
     # The stubs still abort; the ring says no retail body is owed for them.
     (r"^VocalOverlay::", "native-only-callsite"),
+    # A14: ReadSingleXinputJoypad (Joypad_Xinput.cpp, compiled) classifies a
+    # Harmonix peripheral by its XInput capability subtype through these
+    # Joypad_Xbox.cpp bodies (not compiled: XInput2 thread). rb3-app's pad
+    # (rb3_app_joypad.cpp) reports a standard gamepad, subtype 1, which takes
+    # none of them; a guitar/drums/keytar/pro-guitar pad would.
+    (r"^SetupHX(Guitar|Drums|Keytar|RealGuitar)\(", "peripheral-only"),
     (r".*", "a1-absent-body"),
 ]
 

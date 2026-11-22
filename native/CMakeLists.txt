@@ -2755,6 +2755,22 @@ if(RB3X_BUILD_ENGINE)
     # A2: the retail tables and registrars; rb3_app_gates.cpp calls them only
     # with a title update mounted (RB3_TITLE_UPDATE_DIR).
     list(APPEND _rb3_app_all ${REPO_ROOT}/src/ChecksumData_xbox.cpp)
+    # A14: the joypad. platform/Joypad_Stub.cpp (every other target) never runs
+    # JoypadInitCommon, polls nothing and binds no user, so rb3-app had no
+    # controller and sat on splash_screen waiting for Start. rb3_app_joypad.cpp
+    # runs retail's 360 lifecycle (Joypad_Xbox.cpp: JoypadInitCommon,
+    # JoypadResetXboxPC(4), JoypadPollCommon -> ReadSingleJoypad ->
+    # ReadSingleXinputJoypad) over the engine's scripted input (MILO_INPUT_SCRIPT),
+    # which it compiles in from the engine's Joypad_Native.cpp (excluded from
+    # libmilo-engine for xenon, see MILO_ENGINE_DECOMP_PLATFORM_EXCLUDE). With no
+    # script every pad is unplugged, as retail with no controller.
+    # rb3_app_joypad_gate.cpp is its gate (RB3_APP_JOYPAD_GATE=1).
+    list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/platform/Joypad_Stub.cpp)
+    list(APPEND _rb3_app_all ${CMAKE_SOURCE_DIR}/src/rb3_app_joypad.cpp
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_joypad_gate.cpp)
+    set_property(SOURCE ${CMAKE_SOURCE_DIR}/src/rb3_app_joypad.cpp APPEND PROPERTY
+        COMPILE_DEFINITIONS
+        "RB3_APP_ENGINE_JOYPAD_NATIVE=\"${MILO_ENGINE_PATH}/src/platform/Joypad_Native.cpp\"")
     # A4: TU5 is mounted by default when <checkout>/orig/45410914/tu5-package
     # holds it (orig/ is gitignored, so a worktree may not have its own copy).
     # The MAIN checkout comes from `git rev-parse --git-common-dir`, the same
