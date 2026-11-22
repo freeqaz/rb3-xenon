@@ -56,14 +56,12 @@ void FixedSizeSaveable::DepadStream(FixedSizeSaveableStream &fixedStream, int pa
 void FixedSizeSaveable::SaveFixedSymbol(
     FixedSizeSaveableStream &fixedStream, const Symbol &sym
 ) {
-#ifndef HX_NATIVE
     // retail (0x827A2B60, TU5): a symbol that cannot fit is written as a
     // zero-padded blank slot instead of overrunning the fixed size
     if (strlen(sym.Str()) >= kSymbolSize) {
         PadStream(fixedStream, kSymbolSize);
         return;
     }
-#endif
     int start = fixedStream.Tell();
     fixedStream << sym;
     MILO_ASSERT(fixedStream.Tell()-start <= kSymbolSize, 0x5E);
