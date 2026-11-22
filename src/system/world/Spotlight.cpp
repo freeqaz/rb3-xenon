@@ -914,22 +914,22 @@ void Spotlight::PropogateToPresets(int i) {
 }
 
 void Spotlight::Generate() {
-#ifdef HX_NATIVE
-    if (!mBeam.mBeam || TheLoadMgr.EditMode()) {
-        RELEASE(mBeam.mBeam);
-        if (mBeam.HasLength()) {
-            if (SpotlightDrawer::DrawNGSpotlights()) {
-                BuildNGShaft(mBeam);
-            } else if (mBeam.IsCone()) {
-                BuildCone(mBeam);
-            } else {
-                BuildBeam(mBeam);
-            }
-        }
-        UpdateBounds();
-        UpdateSphere();
-    }
-#else
+    // Both builds run retail's body (band.exe 0x824DD920, 0x8C bytes): test
+    // mBeam.mBeam, store null, BuildNGShaft when the beam has a length, then
+    // UpdateBounds and UpdateSphere (vtable +0x30 and +0x0 on this). Retail has
+    // no edit-mode regen and no cone/beam choice; BuildCone and BuildBeam are
+    // not in band.exe at all (no symbol in the retail objects). The native
+    // arm that stood here (A13 removed it) rebuilt on `!mBeam.mBeam ||
+    // TheLoadMgr.EditMode()` and picked BuildNGShaft only when
+    // SpotlightDrawer::DrawNGSpotlights(), i.e. kNewGfx on a non-PC platform.
+    // Natively that is always true in play: PreInitSystem sets kNewGfx
+    // (os/System.cpp) and LoadMgr starts on kPlatformXBox (utl/Loader.cpp),
+    // and EditMode() is constant false (LoadMgr::SetEditMode is retail's: it
+    // ignores its argument, so nothing writes mEditMode). The one live
+    // difference was the non-retail cone/beam fallback under kOldGfx (or
+    // null_platform), gated by native/src/spotlight_generate_phase.cpp.
+    // Line count kept so __LINE__ in the body below matches the X360 build.
+    //
     // RB3 360 retail: no edit-mode regen and only the NG shaft path
     // (retail tests mBeam, releases, then calls BuildNGShaft directly).
     if (!mBeam.mBeam) {
@@ -940,7 +940,7 @@ void Spotlight::Generate() {
         UpdateBounds();
         UpdateSphere();
     }
-#endif
+    // (end of the retail body; was the HX_NATIVE #endif)
 }
 
 void Spotlight::BuildNGShaft(Spotlight::BeamDef &def) {

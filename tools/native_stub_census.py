@@ -73,6 +73,8 @@ NON_STUB_RE = re.compile(
     r"charclip_refs_phase\.cpp|"
     # A11: rb3-milo's Rnd::Mode table gate (test code, not a stub).
     r"rnd_mode_phase\.cpp|"
+    # A13: rb3-milo's Spotlight::Generate / RndText::UpdateLineColor gates (test code, not a stub).
+    r"spotlight_generate_phase\.cpp|"
     # A1: rb3-app's boot-gate --wrap shims (call the real step, then print).
     r"rb3_app_gates\.cpp)\.o$"
 )
