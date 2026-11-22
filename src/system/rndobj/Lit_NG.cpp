@@ -209,9 +209,9 @@ void NgLight::RenderShadows(std::vector<RndDrawable *> &shadowCasters) {
     SetAndClearShadowViewport();
     SetShadowTransforms();
     Rnd::Mode savedDrawMode = TheRnd.DrawMode();
-    // Retail 0x82B8A7D0 sets raw Rnd::Mode 3, RB3's occlusion mode; this
-    // tree's Rnd::Mode numbers kDrawOcclusion 4 (see RndShader::CalcShaderOpts).
-    TheRnd.SetDrawMode((Rnd::Mode)3);
+    // Retail 0x82B8A7D0 stores Rnd::Mode 3 (`stw` at 0x82B8A834): the casters
+    // draw into the shadow colour target (DC3 numbers this pass kDrawOcclusion 4).
+    TheRnd.SetDrawMode(Rnd::kDrawShadowColor);
     for (std::vector<RndDrawable *>::iterator it = shadowCasters.begin(), end = shadowCasters.end();
          it != end;
          ++it) {

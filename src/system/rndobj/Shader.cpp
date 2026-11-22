@@ -214,10 +214,10 @@ void RndShader::SelectConfig(RndMat *mat, ShaderType shader_type, bool b3) {
 #ifdef HX_NATIVE
     RndShader *shader;
     // Retail picks the shadowmap shader on mode 1 and the velocity shader on
-    // mode 5 (see the X360 arm). The native setters use the enum names --
-    // RndShadowMap stores kDrawShadowDepth (1) and RndVelocityBuffer stores
-    // kDrawVelocity (6) -- so compare against those names, not DC3's raw 2
-    // (DC3's shadow pass stores kDrawExtrude, RB3's does not).
+    // mode 5 (see the X360 arm); Rnd::Mode carries those retail values, so
+    // RndShadowMap's kDrawShadowDepth (1) and RndVelocityBuffer's kDrawVelocity
+    // (5) select them, and RndSoftParticleBuffer's kDrawSoftParticle (6) does
+    // not (under DC3's numbering 6 was velocity: soft particles drew with it).
     if (TheRnd.DrawMode() == Rnd::kDrawShadowDepth) {
         shader_type = kShadowmapShader;
     } else if (TheRnd.DrawMode() == Rnd::kDrawVelocity) {
