@@ -141,7 +141,24 @@ bool Splash::PrepareNext() {
     FilePath fp = sp.fname;
     RndDir *rndDir = dynamic_cast<RndDir *>(DirLoader::LoadObjects(fp, 0, 0));
     if (!rndDir) {
+#ifdef HX_NATIVE
+        // ring: tu5-content. Retail halts here (MILO_FAIL does not return on
+        // the console); native MILO_FAIL returns and the Find below would
+        // dereference the null dir. The case that reaches this natively is a
+        // Title Update 5 screen (App::App's startup_madcatz_keep.milo) run
+        // against base-disc content, which does not have it: the official TU5
+        // patch archive is not on this box (lane A1b). Skip the screen loudly
+        // and go on to the next one; with the TU5 file present this arm is
+        // never taken.
+        MILO_NOTIFY("Missing file %s: splash screen skipped (no TU5 content)", sp.fname);
+        {
+            CritSecTracker tracker(&mScreenLock);
+            mScreens.pop_front();
+        }
+        return true;
+#else
         MILO_FAIL("Missing file %s", sp.fname);
+#endif
     }
 
     auto splashMovie = rndDir->Find<TexMovie>(kSplashMovie, false);
