@@ -17,6 +17,7 @@
 #include "obj/Object.h"
 #include "os/Memcard.h"
 #include "os/Memcard_Xbox.h"
+#include "world/SpotlightDrawer.h"
 
 extern "C" void rb3_app_gate(const char *step) { // ring: native-real
     printf("  [PASS] rb3-app %s\n", step);
@@ -182,10 +183,48 @@ extern "C" void __wrap__Z9TrackInitv(void) { // ring: native-real
     rb3_app_gate("TrackInit()");
 }
 
+// A15: after WorldInit, SpotlightDrawer::DeSelect must switch back to the
+// default drawer. Retail WorldInit (World.cpp) runs SpotlightDrawer::Init, which
+// makes sDefault and Select()s it. Retail's out-of-line DeSelect (0x824D4C90,
+// 0x2C bytes; WorldDir::DrawShowing calls it every frame) returns unless this
+// is sCurrent, returns if it is sDefault, else calls sDefault->Select(). The
+// call below is from outside world/SpotlightDrawer.cpp, which defines the body
+// __forceinline, so it links whatever out-of-line DeSelect rb3-app carries, the
+// same one world/Dir.cpp gets. Not an rb3-milo gate: rb3-milo links
+// SpotlightDrawer, but its TheRnd is zero-filled storage, so Select()'s
+// RegisterPostProcessor faults there. A failure stops the boot here, rc 7.
+static void rb3_app_check_spotlight_deselect() { // ring: native-real
+    SpotlightDrawer *def = SpotlightDrawer::Current();
+    SpotlightDrawer *other = def ? Hmx::Object::New<SpotlightDrawer>() : nullptr;
+    bool selected = false;
+    SpotlightDrawer *after = def;
+    if (other) {
+        other->Select();
+        selected = SpotlightDrawer::Current() == other;
+        other->DeSelect();
+        after = SpotlightDrawer::Current();
+    }
+    if (def && selected && after == def) {
+        delete other;
+        rb3_app_gate("WorldInit(): Select() of another SpotlightDrawer, then DeSelect(), "
+                     "selects the default drawer again (retail DeSelect 0x824D4C90)");
+        return;
+    }
+    printf("  [FAIL] rb3-app SpotlightDrawer::DeSelect: default %p, Select(other %p) -> current "
+           "%s, DeSelect() -> current %p, not the default (retail 0x824D4C90 calls "
+           "sDefault->Select())\n",
+           (void *)def, (void *)other, selected ? "other" : "NOT other", (void *)after);
+    printf("RESULT: GATE FAILED (spotlight drawer deselect)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
 extern "C" void __real__Z9WorldInitv(void);
 extern "C" void __wrap__Z9WorldInitv(void) { // ring: native-real
     __real__Z9WorldInitv();
     rb3_app_gate("WorldInit()");
+    rb3_app_check_spotlight_deselect();
 }
 
 extern "C" void __real__ZN11AuditionMgr4InitEv(void *self);
