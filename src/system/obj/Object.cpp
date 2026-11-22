@@ -3,6 +3,9 @@
 #include "Msg.h"
 #include "Object.h"
 #include "obj/Data.h"
+#ifdef HX_NATIVE
+#include "obj/DirLoader.h"
+#endif
 #include "obj/DataFunc.h"
 #include "obj/Utl.h"
 #include "os/Debug.h"
@@ -157,11 +160,20 @@ Hmx::Object::~Object() {
     Hmx::Object *old = sDeleting;
     sDeleting = this;
 #ifdef HX_NATIVE
-    // During cascading ObjectDir::DeleteObjects, ReplaceRefs is called
-    // in a separate pre-pass while all memory is still valid. Calling it
-    // here would be unsafe: derived member destructors have already freed
-    // ObjPtrVec buffers, leaving stale ring entries that crash SnapshotRing.
-    if (!ObjectDir::InDeleteObjects())
+    // X360 (0x8275CBF0) always walks mRefs here. Natively, inside a cascade
+    // (ObjectDir::DeleteObjects), the walk is NullifyAllRefs instead of
+    // ReplaceRefs: it runs every owner-control holder's Replace(nullptr) from a
+    // drained local ring, nulls every other ref, and skips nodes whose
+    // mAliveSentinel ~ObjRef has cleared (the freed-ObjPtrVec-buffer hazard).
+    // For an object the dir names this walks an empty ring (Phase 0 already
+    // emptied it). It used to be skipped outright (`if (!InDeleteObjects())
+    // ReplaceRefs(nullptr);`), which left every holder of an object destroyed
+    // AS COLLATERAL of a cascade -- a Task an owner step deletes, an object a
+    // Phase-1 destructor deletes -- aimed at a block about to be freed, its
+    // owner never told. dc3-decomp made the same change (9d3fc20f8).
+    if (ObjectDir::InDeleteObjects())
+        NullifyAllRefs();
+    else
         ReplaceRefs(nullptr);
     sDeleting = old;
 #else
@@ -571,6 +583,65 @@ bool ObjRefSeedRestoreEnabled() {
     return on;
 }
 
+// Owner-control holders in the native ~ObjectDir cascade.
+//
+// X360 frees a dir's objects with `delete` (ObjectDir::DeleteObjects), and
+// ~Object (0x8275CBF0) walks mRefs dispatching Replace(this, 0) on every
+// entry. For an OWNER-CONTROL holder -- an ObjOwnerPtr, or a node of an
+// ObjPtrList/ObjPtrVec in kObjListOwnerControl mode (ObjRef::ControlOwner) --
+// that call forwards to the owner's Replace(ref, 0), which is the owner's only
+// notice that the target died. Native DeleteObjects pre-nullifies every ring
+// first (Phase 0, Dir.cpp), and this function used to null every ref with
+// NullifyObj and nothing else, so for those holders the ref went NULL and the
+// owner's state did not follow. Measured on rb3-app's first App::Run frame:
+// Splash::EndSplasher's ~RndDir nulled the splash AnimTask's mAnim, retail's
+// AnimTask::Replace (which deletes the task) never ran, and TaskMgr::Poll's
+// AnimTask::Poll dereferenced the null anim.
+//
+// Why Phase 0 used NullifyObj alone (dc3-decomp 07bad0ab, 2026-03-20, carried
+// here by c5c1650fb): MessageTask, ScriptTask, PropertyTask and DirLoader
+// `delete this` from Replace, and running Replace INSIDE the half-walked ring
+// unlinks through neighbours this walk never repairs. So, as dc3-decomp did
+// (73642d516, 2026-09-30), this does what X360's ReplaceRefs does instead:
+// the walk takes each ref out of the ring, nulls ordinary refs with NullifyObj
+// as before, and moves owner-control refs onto a local head `pending` (the
+// image's `ObjRef other`). Once this object's own ring is empty, `pending` is
+// drained the way ReplaceList drains `other`: Replace(nullptr) on
+// pending.next until it is empty, so every unlink happens on a consistent
+// ring, and a ref an owner copies (ObjPtrVec::erase shifts nodes with
+// CopyRef) joins `pending` beside its source and is stepped too. A
+// `delete this` there frees a Task or a DirLoader, not an entry of
+// DeleteObjects' todo list, and every Hmx::Object free inside a cascade is
+// deferred to FlushDeferredFrees (NativeObjMemFree, Dir.cpp).
+//
+// Not stepped (NullifyObj, as before):
+//   * a dying dir's OWN DirLoader (its mProxyDir): DirLoader::Replace deletes
+//     the loader, and ~ObjectDir deletes mLoader again. X360 deletes mLoader in
+//     ~ObjectDir's body, before ~Object's ReplaceRefs; the native pre-nullify
+//     runs before that body.
+//   * a ref whose owning object is already destroyed (its sentinel is dead).
+// An owner that IS the dying object is stepped: it is alive here (X360 would
+// have destroyed that member first, taking the ref with it), and a member left
+// nulled in place breaks containers that relink their refs by ring neighbour
+// (dc3-decomp measured this on CharClip::Transitions::RemoveNodes).
+namespace {
+    bool TakesOwnerStep(ObjRef *ref, Hmx::Object *dying) {
+        // Classify by the REF first (the caller checked its sentinel) and only
+        // then ask for its owner: an ordinary holder's owner can already be
+        // gone, while an owner-control holder is a member of its owner.
+        ObjRefOwner *owner = ref->ControlOwner();
+        if (!owner)
+            return false;
+        if (DirLoader *loader = dynamic_cast<DirLoader *>(owner)) {
+            ObjectDir *dir = dynamic_cast<ObjectDir *>(dying);
+            if (dir && dir->Loader() == loader)
+                return false;
+        }
+        Hmx::Object *obj = owner->RefOwner();
+        return !obj || obj->IsRefAlive();
+    }
+}
+
 #if defined(__SANITIZE_ADDRESS__) || (defined(__has_feature) && __has_feature(address_sanitizer))
 __attribute__((no_sanitize("address")))
 #endif
@@ -581,6 +652,7 @@ void Hmx::Object::NullifyAllRefs() {
     constexpr size_t kMaxRingSize = 100000;
     ObjRef *cur = sentinel->next;
     size_t count = 0;
+    ObjRef pending; // the image's `other`: owner-control refs, a consistent ring
     while (cur != sentinel) {
         if ((uintptr_t)cur < 0x10000 || ++count > kMaxRingSize)
             break;
@@ -590,12 +662,34 @@ void Hmx::Object::NullifyAllRefs() {
         // next pointer (same technique as SnapshotRing).
         ObjRef *nxt = *(ObjRef **)((const char *)cur + kNextOffset);
         uint32_t alive = *(const uint32_t *)((const char *)cur + kSentinelOffset);
-        if (alive == ObjRef::kAliveSentinel)
-            cur->NullifyObj();
+        if (alive == ObjRef::kAliveSentinel) {
+            // Out of the ring first: this walk never repairs neighbours, so
+            // the next ref's `prev` still names this one.
+            cur->DetachSelf();
+            if (TakesOwnerStep(cur, this))
+                cur->AddRef(&pending); // still aimed at us, for its owner
+            else
+                cur->NullifyObj();
+        }
         cur = nxt;
     }
     sentinel->next = sentinel;
     sentinel->prev = sentinel;
+    // Drain `pending` as ReplaceList drains `other`: each owner step unlinks
+    // its ref (retargets it, or destroys it with its node or its owner).
+    while (!pending.empty()) {
+        ObjRef *ref = pending.next;
+        if (TakesOwnerStep(ref, this))
+            ref->Replace(nullptr);
+        if (pending.next == ref) {
+            // Declined (the default Hmx::Object::Replace changes nothing), or
+            // its owner died in an earlier step. Do not leave it aimed at a
+            // block that is about to be freed. For a self-seeded ObjOwnerPtr
+            // this is the X16 seed restore, unchanged.
+            ObjRef::SafeReleaseFromRing(ref);
+            ref->NullifyObj();
+        }
+    }
 }
 #endif
 

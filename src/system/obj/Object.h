@@ -162,9 +162,19 @@ public:
     OBJREF_VIRTUAL ObjRefOwner *Parent() const { return nullptr; }
 #ifdef HX_NATIVE
     /** Null the ref's target pointer and self-loop ring pointers.
-     *  No Replace callback fires — purely mechanical. Used by
-     *  NullifyAllRefs during cascade Phase 0 to avoid delete-this. */
+     *  No Replace callback fires — purely mechanical. NullifyAllRefs uses it
+     *  for every ref that is NOT an owner-control holder (see ControlOwner). */
     virtual void NullifyObj() { next = this; prev = this; }
+    /** For an OWNER-CONTROL holder -- an ObjOwnerPtr, or a node of an
+     *  ObjPtrList/ObjPtrVec in kObjListOwnerControl mode -- the owner its
+     *  Replace() forwards to; NULL for every other ref. On X360, ~Object's
+     *  ReplaceRefs(nullptr) (0x8275CBF0) hands every ref Replace(this, 0), and
+     *  for these holders that is the owner's only notice that the target died
+     *  (AnimTask::Replace deletes the task, RndGroup::Replace erases the child,
+     *  an `mX(this, this)` owner re-seeds itself). NullifyAllRefs therefore
+     *  runs Replace(nullptr) for these holders instead of NullifyObj
+     *  (Object.cpp). */
+    virtual ObjRefOwner *ControlOwner() const { return nullptr; }
 #endif
 
     class iterator {
@@ -882,6 +892,7 @@ public:
     ObjRefOwner *mOwner; // 0x10 (HX_NATIVE only)
     virtual Hmx::Object *RefOwner() const;
     virtual void Replace(Hmx::Object *obj) { mOwner->Replace(this, obj); }
+    ObjRefOwner *ControlOwner() const override { return mOwner; }
     // Portable spelling of "assign the held object", so consumer code can say
     // SetOwnerObj on BOTH legs (lane OBJREF-FLAVOUR added it to the X360 branch
     // only, which broke every native TU that adopted it -- 40 errors over 10
@@ -1156,6 +1167,10 @@ private:
             vec->ReplaceNode(this, obj);
         }
         virtual ObjRefOwner *Parent() const { return mVecOwner; }
+        ObjRefOwner *ControlOwner() const override {
+            ObjPtrVec<T1, T2> *vec = static_cast<ObjPtrVec<T1, T2> *>(mVecOwner);
+            return vec->Mode() == kObjListOwnerControl ? vec->mOwner : nullptr;
+        }
         void NullifyObj() override {
             ObjRefConcrete<T1, T2>::NullifyObj();
             ObjPtrVec<T1, T2> *vec = static_cast<ObjPtrVec<T1, T2> *>(mVecOwner);
@@ -1363,6 +1378,10 @@ private:
             list->ReplaceNode(this, obj);
         }
         virtual ObjRefOwner *Parent() const { return mListOwner; }
+        ObjRefOwner *ControlOwner() const override {
+            ObjPtrList<T1, T2> *list = static_cast<ObjPtrList<T1, T2> *>(mListOwner);
+            return list->Mode() == kObjListOwnerControl ? list->mOwner : nullptr;
+        }
         void NullifyObj() override {
             ObjRefConcrete<T1, T2>::NullifyObj();
             ObjPtrList<T1, T2> *list =
@@ -2387,9 +2406,10 @@ namespace Hmx {
         void ReplaceRefs(Hmx::Object *);
         void ReplaceRefsFrom(Hmx::Object *from, Hmx::Object *);
 #ifdef HX_NATIVE
-        /** Nullify all refs in this object's ring via NullifyObj.
-         *  No Replace callbacks fire — avoids delete-this in
-         *  MessageTask/ScriptTask/PropertyTask/DirLoader. */
+        /** Empty this object's ring as ~Object's ReplaceRefs(nullptr) would:
+         *  owner-control holders get Replace(nullptr) (their owner's step,
+         *  drained from a consistent ring after the walk), every other ref is
+         *  nulled with NullifyObj. See Object.cpp. */
         void NullifyAllRefs();
         /** Detach from parent dir without modifying the dir's hash table.
          *  Used during ~ObjectDir cascade to prevent surviving objects from
