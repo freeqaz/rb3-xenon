@@ -250,11 +250,13 @@ void MetaPanel::Init() {
     // tools/reglist_rdata_adjudicate.py); the call sequence is read from the
     // same function's bl list.
 #ifdef HX_NATIVE
-    OvershellPanel::Init();
-    WiiFriendsScreen::Init();
+    // ring: a4-wii-residue. The four Wii-lineage init calls are NOT made
+    // natively either (lane A1b): retail 360 does not make them (above), and
+    // natively OvershellPanel::Init reached PlatformMgr::
+    // RegisterSignInserCallback, a Wii entry point with no 360 body (an
+    // aborting stub in rb3-app, the only native caller of MetaPanel::Init).
+    // The factory registrations stay as they were.
     REGISTER_OBJ_FACTORY(WiiFriendsScreen);
-    TheWiiFriendsProvider.Init();
-    TheWiiInvitationsProvider.Init();
     REGISTER_OBJ_FACTORY(WiiProfilePanel);
     REGISTER_OBJ_FACTORY(WiiFriendsDetailsProvider);
 #endif

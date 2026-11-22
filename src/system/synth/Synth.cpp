@@ -680,8 +680,14 @@ void SynthInit() {
     TheSynth->SetMic(cfg->FindArray("mic"));
     TheSynth->SetFX(cfg->FindArray("fx"));
 #ifdef HX_NATIVE
-    // DC3-era; retail 0x82701710 does not read master_vol here.
-    TheSynth->MasterFader()->SetVal(cfg->FindFloat("master_vol"));
+    // DC3-era; retail 0x82701710 does not read master_vol here. RB3's synth
+    // config (config/band_keep.dta) has no master_vol, so the required
+    // FindFloat failed and crashed rb3-app's SynthInit (lane A1b): read it
+    // only when present, as retail never reads it at all.
+    float masterVol;
+    if (cfg->FindData("master_vol", masterVol, false)) {
+        TheSynth->MasterFader()->SetVal(masterVol);
+    }
 #endif
     TheDebug.AddExitCallback(SynthTerminate);
     PreloadSharedSubdirs("synth");
