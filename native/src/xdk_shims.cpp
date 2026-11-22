@@ -18,6 +18,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <map>
+#include <string>
 #include <vector>
 
 // ============================================================================
@@ -91,7 +92,7 @@ int RtlTryEnterCriticalSection(RTL_CRITICAL_SECTION *cs) {
 // ============================================================================
 
 // Simple handle table for events, threads, mutexes, etc.
-enum HandleType { kHandleNone, kHandleEvent, kHandleThread, kHandleMutex, kHandleSemaphore, kHandleFile, kHandleTimer, kHandleNotify, kHandleFindFile };
+enum HandleType { kHandleNone, kHandleEvent, kHandleThread, kHandleMutex, kHandleSemaphore, kHandleFile, kHandleTimer, kHandleNotify, kHandleFindFile, kHandleEnum };
 
 struct HandleEntry {
     HandleType type;
@@ -113,6 +114,10 @@ struct HandleEntry {
         struct {
             int fd;
         } file;
+        struct {
+            std::vector<XCONTENT_DATA> *items; // the packages, read at creation
+            size_t next;
+        } enumer;
     };
 };
 
@@ -167,6 +172,9 @@ BOOL CloseHandle(HANDLE hObject) {
         break;
     case kHandleFile:
         if (e->file.fd >= 0) close(e->file.fd);
+        break;
+    case kHandleEnum:
+        delete e->enumer.items;
         break;
     default:
         break;
@@ -455,8 +463,98 @@ BOOL SetWaitableTimer(HANDLE, const LARGE_INTEGER *, LONG, PTIMERAPCROUTINE, LPV
 // File API (fileapi.h)
 // ============================================================================
 
+// ---- Last error (errhandlingapi.h) ----------------------------------------
+// CacheXbox's file workers read GetLastError() after a failed CreateFile,
+// ReadFile, WriteFile or DeleteFile; the file shims below set it from errno.
+static thread_local DWORD sShimLastError = 0;
+DWORD GetLastError() { return sShimLastError; }
+static void ShimSetLastErrorFromErrno() {
+    switch (errno) {
+    case ENOENT: sShimLastError = ERROR_FILE_NOT_FOUND; break;
+    case ENOTDIR: sShimLastError = ERROR_PATH_NOT_FOUND; break;
+    case EEXIST: sShimLastError = ERROR_ALREADY_EXISTS; break;
+    case ENOSPC: sShimLastError = ERROR_DISK_FULL; break;
+    case EACCES: case EPERM: sShimLastError = 0x0005; break; // ERROR_ACCESS_DENIED
+    case ENOTEMPTY: sShimLastError = 0x0091; break;          // ERROR_DIR_NOT_EMPTY
+    default: sShimLastError = ERROR_INVALID_FUNCTION; break;
+    }
+}
+
+// ---- Content packages (the hard drive's XContent store) --------------------
+// A package is a host directory. XContentCreateEx mounts it under the
+// caller's root name, and the file shims translate "root:\dir\file" paths
+// through the mount table. Layout under the content directory
+// ($RB3_CONTENT_DIR, else $XDG_DATA_HOME/rb3-xenon/content, else
+// ~/.local/share/rb3-xenon/content):
+//   <DeviceID %08X>/<content type %08X>/<szFileName>/          the files
+//   <DeviceID %08X>/<content type %08X>/<szFileName>.xcontent  its XCONTENT_DATA
+// An empty content directory is the console with no saved game.
+static std::string ShimContentDir() {
+    if (const char *d = getenv("RB3_CONTENT_DIR")) {
+        if (*d) return d;
+    }
+    if (const char *x = getenv("XDG_DATA_HOME")) {
+        if (*x) return std::string(x) + "/rb3-xenon/content";
+    }
+    const char *home = getenv("HOME");
+    return std::string(home ? home : ".") + "/.local/share/rb3-xenon/content";
+}
+static void ShimMkdirs(const std::string &path) {
+    for (size_t i = 1; i <= path.size(); i++) {
+        if (i == path.size() || path[i] == '/') mkdir(path.substr(0, i).c_str(), 0755);
+    }
+}
+static std::string ShimPackageBase(DWORD deviceId, DWORD contentType) {
+    char sub[32];
+    snprintf(sub, sizeof(sub), "/%08X/%08X", (unsigned)deviceId, (unsigned)contentType);
+    return ShimContentDir() + sub;
+}
+static std::string ShimPackageName(const XCONTENT_DATA *data) {
+    char name[XCONTENT_MAX_FILENAME_LENGTH + 1];
+    memcpy(name, data->szFileName, XCONTENT_MAX_FILENAME_LENGTH);
+    name[XCONTENT_MAX_FILENAME_LENGTH] = 0;
+    return name;
+}
+static pthread_mutex_t gShimMountMutex = PTHREAD_MUTEX_INITIALIZER;
+static std::map<std::string, std::string> &ShimMounts() { // root name -> dir
+    static std::map<std::string, std::string> mounts;
+    return mounts;
+}
+// "root:\a\b" -> "<package dir>/a/b" when root is mounted; any other path
+// (the data dir's relative paths) is returned unchanged.
+static std::string ShimHostPath(LPCSTR path) {
+    if (!path) return std::string();
+    const char *colon = strchr(path, ':');
+    if (!colon) return path;
+    std::string root(path, colon - path);
+    pthread_mutex_lock(&gShimMountMutex);
+    auto it = ShimMounts().find(root);
+    std::string dir = it != ShimMounts().end() ? it->second : std::string();
+    pthread_mutex_unlock(&gShimMountMutex);
+    if (dir.empty()) return path;
+    std::string rest(colon + 1);
+    for (char &c : rest) {
+        if (c == '\\') c = '/';
+    }
+    if (rest.empty() || rest[0] != '/') rest.insert(rest.begin(), '/');
+    return dir + rest;
+}
+// Completes an XContent call the way the XDK reports it: with an XOVERLAPPED
+// the call returns ERROR_IO_PENDING and the outcome is read back through
+// XGetOverlappedResult (ERROR_FUNCTION_FAILED plus the extended error
+// HRESULT_FROM_WIN32(code) on failure); without one the code is returned.
+static DWORD ShimComplete(DWORD code, XOVERLAPPED *pOverlapped) {
+    if (!pOverlapped) return code;
+    pOverlapped->InternalHigh = 0;
+    pOverlapped->dwExtendedError = code ? (0x80070000u | code) : 0;
+    pOverlapped->InternalLow = code ? 0x065B : ERROR_SUCCESS; // ERROR_FUNCTION_FAILED
+    return ERROR_IO_PENDING;
+}
+
 BOOL CreateDirectoryA(LPCSTR lpPathName, LPSECURITY_ATTRIBUTES) {
-    return mkdir(lpPathName, 0755) == 0 ? 1 : 0;
+    if (mkdir(ShimHostPath(lpPathName).c_str(), 0755) == 0) return 1;
+    ShimSetLastErrorFromErrno();
+    return 0;
 }
 
 HANDLE CreateFileA(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD,
@@ -478,8 +576,11 @@ HANDLE CreateFileA(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD,
     case 5: flags |= O_TRUNC; break;              // TRUNCATE_EXISTING
     }
 
-    int fd = open(lpFileName, flags, 0644);
-    if (fd < 0) return (HANDLE)(LONG_PTR)-1; // INVALID_HANDLE_VALUE
+    int fd = open(ShimHostPath(lpFileName).c_str(), flags, 0644);
+    if (fd < 0) {
+        ShimSetLastErrorFromErrno();
+        return (HANDLE)(LONG_PTR)-1; // INVALID_HANDLE_VALUE
+    }
 
     HandleEntry *e = new HandleEntry;
     e->type = kHandleFile;
@@ -488,16 +589,23 @@ HANDLE CreateFileA(LPCSTR lpFileName, DWORD dwDesiredAccess, DWORD,
 }
 
 BOOL DeleteFileA(LPCSTR lpFileName) {
-    return unlink(lpFileName) == 0 ? 1 : 0;
+    if (unlink(ShimHostPath(lpFileName).c_str()) == 0) return 1;
+    ShimSetLastErrorFromErrno();
+    return 0;
 }
 
 BOOL RemoveDirectoryA(LPCSTR lpPathName) {
-    return rmdir(lpPathName) == 0 ? 1 : 0;
+    if (rmdir(ShimHostPath(lpPathName).c_str()) == 0) return 1;
+    ShimSetLastErrorFromErrno();
+    return 0;
 }
 
 DWORD GetFileAttributesA(LPCSTR lpFileName) {
     struct stat st;
-    if (stat(lpFileName, &st) != 0) return 0xFFFFFFFF;
+    if (stat(ShimHostPath(lpFileName).c_str(), &st) != 0) {
+        ShimSetLastErrorFromErrno();
+        return 0xFFFFFFFF;
+    }
     DWORD attrs = 0;
     if (S_ISDIR(st.st_mode)) attrs |= 0x10; // FILE_ATTRIBUTE_DIRECTORY
     if (!(st.st_mode & S_IWUSR)) attrs |= 0x01; // FILE_ATTRIBUTE_READONLY
@@ -507,7 +615,10 @@ DWORD GetFileAttributesA(LPCSTR lpFileName) {
 
 BOOL GetFileAttributesExA(LPCSTR lpFileName, GET_FILEEX_INFO_LEVELS, LPVOID lpFileInformation) {
     struct stat st;
-    if (stat(lpFileName, &st) != 0) return 0;
+    if (stat(ShimHostPath(lpFileName).c_str(), &st) != 0) {
+        ShimSetLastErrorFromErrno();
+        return 0;
+    }
     // Fill WIN32_FILE_ATTRIBUTE_DATA - same layout as first part of WIN32_FIND_DATA
     // For now just set the size
     WIN32_FIND_DATAA *data = (WIN32_FIND_DATAA *)lpFileInformation;
@@ -596,7 +707,7 @@ BOOL FileTimeToLocalFileTime(const FILETIME *, LPFILETIME lpLocalFileTime) {
 HANDLE FindFirstFileA(LPCSTR lpFileName, LPWIN32_FIND_DATAA lpFindFileData) {
     // Simple stub - doesn't support wildcards properly yet
     struct stat st;
-    if (stat(lpFileName, &st) == 0) {
+    if (stat(ShimHostPath(lpFileName).c_str(), &st) == 0) {
         memset(lpFindFileData, 0, sizeof(*lpFindFileData));
         strncpy(lpFindFileData->cFileName, lpFileName, 259);
         lpFindFileData->nFileSizeLow = (DWORD)st.st_size;
@@ -728,48 +839,237 @@ DWORD XUserCheckPrivilege(DWORD, unsigned int, BOOL *pfResult) {
     return 0;
 }
 
-XUSER_SIGNIN_STATE XUserGetSigninState(DWORD) {
-    return eXUserSigninState_NotSignedIn;
+// ---------------------------------------------------------------------------
+// The console model the XUser* and XContent* shims answer for: ONE local
+// profile is signed in on user index 0, offline (signed in locally, never to
+// Live); user indices 1-3 are empty. The hard drive is present and holds no
+// saved game. Each answer below is the one the retail caller is written to
+// receive from that console:
+//   * PlatformMgr::UpdateSigninState (retail 0x8251C620) tests
+//     XUserGetSigninState != 0, asks XUserGetSigninInfo(i, 2 = online XUID
+//     only) and falls back to XUserGetXUID when that left the xuid zero, so a
+//     local profile's XUID arrives through XUserGetXUID.
+//   * PlatformMgr::IsPadAGuest compares XUserGetSigninInfo's result with
+//     ERROR_NO_SUCH_USER for an empty index.
+//   * PlatformMgr::GetOnlineID (retail 0x8251BE80) writes the id only when
+//     XUserGetXUID returns 0.
+// An offline XUID carries 0xE in its top nibble (a Live XUID 0x0009...).
+// ---------------------------------------------------------------------------
+static const XUID kShimOfflineXuid = 0xE000000052423301ULL;
+static const DWORD kShimErrorFunctionFailed = 0x065B; // ERROR_FUNCTION_FAILED
+static const DWORD kShimErrorInvalidHandle = 0x0006;  // ERROR_INVALID_HANDLE
+// The one storage device: the hard drive. Its DeviceID is nonzero (0 is
+// XCONTENTDEVICE_ANY, which CacheMgrXbox::PollChoose reads as a cancel).
+static const DWORD kShimHddDeviceId = 1;
+
+static bool ShimUserSignedIn(DWORD dwUserIndex) { return dwUserIndex == 0; }
+
+XUSER_SIGNIN_STATE XUserGetSigninState(DWORD dwUserIndex) {
+    return ShimUserSignedIn(dwUserIndex) ? eXUserSigninState_SignedInLocally
+                                         : eXUserSigninState_NotSignedIn;
 }
 
-DWORD XUserGetXUID(DWORD, XUID *pxuid) {
-    if (pxuid) *pxuid = 0;
-    return 0;
+DWORD XUserGetXUID(DWORD dwUserIndex, XUID *pxuid) {
+    if (!ShimUserSignedIn(dwUserIndex)) {
+        if (pxuid) *pxuid = 0;
+        return ERROR_NO_SUCH_USER;
+    }
+    if (pxuid) *pxuid = kShimOfflineXuid;
+    return ERROR_SUCCESS;
 }
 
 VOID XUserSetContext(DWORD, DWORD, DWORD) {}
 
 DWORD XUserWriteAchievements(DWORD, XUSER_ACHIEVEMENT *, XOVERLAPPED *) { return 0; }
-DWORD XContentClose(LPCSTR, XOVERLAPPED *) { return 0; }
-DWORD XContentGetDeviceData(DWORD, XDEVICE_DATA *) { return 1; }
+// Unmounts the root name; the files stay in the package directory.
+DWORD XContentClose(LPCSTR szRootName, XOVERLAPPED *pOverlapped) {
+    pthread_mutex_lock(&gShimMountMutex);
+    size_t erased = szRootName ? ShimMounts().erase(szRootName) : 0;
+    pthread_mutex_unlock(&gShimMountMutex);
+    return ShimComplete(erased ? ERROR_SUCCESS : ERROR_FILE_NOT_FOUND, pOverlapped);
+}
+// The hard drive (XCONTENTDEVICETYPE_HDD = 1), 20 GB with 10 GB free;
+// CacheXbox::GetFreeSpaceSync adds ulDeviceFreeBytes to its own count.
+DWORD XContentGetDeviceData(DWORD DeviceID, XDEVICE_DATA *pDeviceData) {
+    if (DeviceID != kShimHddDeviceId) return ERROR_DEVICE_NOT_CONNECTED;
+    if (pDeviceData) {
+        memset(pDeviceData, 0, sizeof(*pDeviceData));
+        pDeviceData->DeviceID = kShimHddDeviceId;
+        pDeviceData->DeviceType = 1;
+        pDeviceData->ulDeviceBytes = 20ULL << 30;
+        pDeviceData->ulDeviceFreeBytes = 10ULL << 30;
+        const char *name = "Hard Drive";
+        for (int i = 0; name[i]; i++) pDeviceData->wszFriendlyName[i] = (WCHAR)name[i];
+    }
+    return ERROR_SUCCESS;
+}
 DWORD XCancelOverlapped(XOVERLAPPED *) { return 0; }
-DWORD XGetOverlappedExtendedError(XOVERLAPPED *) { return 0; }
+// The XDK reports an asynchronous failure as ERROR_FUNCTION_FAILED from
+// XGetOverlappedResult with the real code (an HRESULT) here; CacheMgrXbox's
+// PollMount masks it to its low 16 bits.
+DWORD XGetOverlappedExtendedError(XOVERLAPPED *pOverlapped) {
+    return pOverlapped ? pOverlapped->dwExtendedError : 0;
+}
 
 DWORD XShowKeyboardUI(DWORD, DWORD, LPCWSTR, LPCWSTR, LPCWSTR, LPWSTR, DWORD, XOVERLAPPED *) { return 1; }
 
 DWORD XContentCrossTitleCreate(DWORD, LPCSTR, XCONTENT_CROSS_TITLE_DATA *, DWORD, DWORD *, DWORD *, SIZE_T, ULARGE_INTEGER, XOVERLAPPED *) { return 1; }
 DWORD XContentCrossTitleDelete(DWORD, const XCONTENT_CROSS_TITLE_DATA *, XOVERLAPPED *) { return 0; }
-DWORD XGetOverlappedResult(XOVERLAPPED *, DWORD *pdwResult, BOOL) {
-    if (pdwResult) *pdwResult = 0;
-    return 0;
+// An operation's status is InternalLow (ERROR_IO_PENDING while it runs) and
+// its result (bytes, items) is InternalHigh. The shims complete every
+// operation before they return, so a still-pending one only appears when a
+// caller polls an XOVERLAPPED no shim filled in. Shims that leave the
+// caller's zeroed XOVERLAPPED untouched read as success with a result of 0,
+// as before.
+DWORD XGetOverlappedResult(XOVERLAPPED *pOverlapped, DWORD *pdwResult, BOOL) {
+    if (!pOverlapped) {
+        if (pdwResult) *pdwResult = 0;
+        return ERROR_SUCCESS;
+    }
+    if (pOverlapped->InternalLow == ERROR_IO_PENDING) return ERROR_IO_INCOMPLETE;
+    if (pdwResult) *pdwResult = (DWORD)pOverlapped->InternalHigh;
+    return (DWORD)pOverlapped->InternalLow;
 }
-DWORD XUserGetSigninInfo(DWORD, DWORD, XUSER_SIGNIN_INFO *pInfo) {
+// Flags bit 2 is XUSER_GET_SIGNIN_INFO_ONLINE_XUID_ONLY: a local profile has
+// no online XUID, so that query leaves the xuid zero (and UpdateSigninState
+// then asks XUserGetXUID). dwInfoFlags 0: not a guest, not Live-enabled.
+DWORD XUserGetSigninInfo(DWORD dwUserIndex, DWORD dwFlags, XUSER_SIGNIN_INFO *pInfo) {
     if (pInfo) memset(pInfo, 0, sizeof(*pInfo));
-    return 0;
+    if (!ShimUserSignedIn(dwUserIndex)) return ERROR_NO_SUCH_USER;
+    if (pInfo) {
+        pInfo->xuid = (dwFlags & 2) ? 0 : kShimOfflineXuid;
+        pInfo->UserSigninState = eXUserSigninState_SignedInLocally;
+        strncpy(pInfo->szUserName, "Player", sizeof(pInfo->szUserName) - 1);
+    }
+    return ERROR_SUCCESS;
 }
 DWORD XSetThreadProcessor(HANDLE, DWORD) { return 0; }
-DWORD XContentCreateEx(DWORD, LPCSTR, const XCONTENT_DATA *, DWORD, DWORD *, DWORD *, SIZE_T, ULARGE_INTEGER, XOVERLAPPED *) { return 1; }
+// Creates and/or opens a package and mounts it as szRootName. The low bits of
+// dwContentFlags are the disposition: 1 CREATENEW, 2 CREATEALWAYS,
+// 3 OPENEXISTING, 4 OPENALWAYS (CacheMgrXbox::MountAsync), 5 TRUNCATEEXISTING.
+// *pdwDisposition is 1 (created new) or 2 (opened existing). Retail's
+// MountAsync requires ERROR_IO_PENDING and reads the outcome in PollMount.
+DWORD XContentCreateEx(DWORD, LPCSTR szRootName, const XCONTENT_DATA *pContentData, DWORD dwContentFlags,
+                       DWORD *pdwDisposition, DWORD *pdwLicenseMask, SIZE_T, ULARGE_INTEGER,
+                       XOVERLAPPED *pOverlapped) {
+    if (pdwLicenseMask) *pdwLicenseMask = 0;
+    if (!szRootName || !*szRootName || !pContentData)
+        return ShimComplete(0x0057, pOverlapped); // ERROR_INVALID_PARAMETER
+    DWORD device = pContentData->DeviceID ? pContentData->DeviceID : kShimHddDeviceId;
+    if (device != kShimHddDeviceId) return ShimComplete(ERROR_DEVICE_NOT_CONNECTED, pOverlapped);
+    std::string name = ShimPackageName(pContentData);
+    if (name.empty()) return ShimComplete(ERROR_INVALID_NAME, pOverlapped);
+    std::string dir = ShimPackageBase(device, pContentData->dwContentType) + "/" + name;
+    struct stat st;
+    bool exists = stat(dir.c_str(), &st) == 0 && S_ISDIR(st.st_mode);
+    DWORD disposition = dwContentFlags & 0xF;
+    if (disposition == 1 && exists) return ShimComplete(ERROR_ALREADY_EXISTS, pOverlapped);
+    if ((disposition == 3 || disposition == 5) && !exists)
+        return ShimComplete(ERROR_PATH_NOT_FOUND, pOverlapped);
+    if (!exists) {
+        ShimMkdirs(dir);
+        if (stat(dir.c_str(), &st) != 0) return ShimComplete(ERROR_PATH_NOT_FOUND, pOverlapped);
+        XCONTENT_DATA meta = *pContentData;
+        meta.DeviceID = device;
+        if (FILE *f = fopen((dir + ".xcontent").c_str(), "wb")) {
+            fwrite(&meta, sizeof(meta), 1, f);
+            fclose(f);
+        }
+    }
+    if (pdwDisposition) *pdwDisposition = exists ? 2 : 1;
+    pthread_mutex_lock(&gShimMountMutex);
+    ShimMounts()[szRootName] = dir;
+    pthread_mutex_unlock(&gShimMountMutex);
+    return ShimComplete(ERROR_SUCCESS, pOverlapped);
+}
 DWORD XContentGetCreator(DWORD, const XCONTENT_DATA *, BOOL *, XUID *, XOVERLAPPED *) { return 0; }
 DWORD XContentGetDeviceState(DWORD, XOVERLAPPED *) { return 0; }
-DWORD XContentDelete(DWORD, const XCONTENT_DATA *, XOVERLAPPED *) { return 0; }
-DWORD XContentCreateEnumerator(DWORD, DWORD, DWORD, DWORD, DWORD, DWORD *pcbBuffer, HANDLE *phEnum) {
-    if (pcbBuffer) *pcbBuffer = 0;
-    if (phEnum) *phEnum = nullptr;
-    return 0;
+// Removes a package: its files and directories, then its record.
+static void ShimRemoveTree(const std::string &dir) {
+    if (DIR *d = opendir(dir.c_str())) {
+        while (struct dirent *ent = readdir(d)) {
+            if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..")) continue;
+            std::string p = dir + "/" + ent->d_name;
+            struct stat st;
+            if (lstat(p.c_str(), &st) == 0 && S_ISDIR(st.st_mode))
+                ShimRemoveTree(p);
+            else
+                unlink(p.c_str());
+        }
+        closedir(d);
+    }
+    rmdir(dir.c_str());
 }
-DWORD XEnumerate(HANDLE, VOID *, DWORD, DWORD *pcItemsReturned, XOVERLAPPED *) {
+DWORD XContentDelete(DWORD, const XCONTENT_DATA *pContentData, XOVERLAPPED *pOverlapped) {
+    if (!pContentData) return ShimComplete(0x0057, pOverlapped); // ERROR_INVALID_PARAMETER
+    DWORD device = pContentData->DeviceID ? pContentData->DeviceID : kShimHddDeviceId;
+    std::string name = ShimPackageName(pContentData);
+    if (name.empty()) return ShimComplete(ERROR_INVALID_NAME, pOverlapped);
+    std::string dir = ShimPackageBase(device, pContentData->dwContentType) + "/" + name;
+    struct stat st;
+    if (stat((dir + ".xcontent").c_str(), &st) != 0) return ShimComplete(ERROR_FILE_NOT_FOUND, pOverlapped);
+    ShimRemoveTree(dir);
+    unlink((dir + ".xcontent").c_str());
+    return ShimComplete(ERROR_SUCCESS, pOverlapped);
+}
+// A content enumerator over the hard drive's packages (the content store
+// above), read when the enumerator is created. Retail's callers:
+// CacheMgrXbox::SearchAsync (0x827D7878) passes user 0xFE (any), device 0
+// (any), type 1 (saved game), cItem 1; it treats 0x12 as "no storage
+// device", requires 0 plus a handle other than INVALID_HANDLE_VALUE, and its
+// (compiled out) assert expects the buffer size of one XCONTENT_DATA. It then
+// calls XEnumerate with an XOVERLAPPED and requires ERROR_IO_PENDING.
+// MemcardXbox::FindValidUnit (0x8252AA40) enumerates synchronously until
+// XEnumerate stops returning 0.
+DWORD XContentCreateEnumerator(DWORD, DWORD DeviceID, DWORD dwContentType, DWORD, DWORD cItem,
+                               DWORD *pcbBuffer, HANDLE *phEnum) {
+    if (pcbBuffer) *pcbBuffer = cItem * (DWORD)sizeof(XCONTENT_DATA);
+    if (DeviceID != 0 && DeviceID != kShimHddDeviceId) return ERROR_DEVICE_NOT_CONNECTED;
+    if (phEnum) {
+        std::vector<XCONTENT_DATA> *items = new std::vector<XCONTENT_DATA>();
+        std::string base = ShimPackageBase(kShimHddDeviceId, dwContentType);
+        if (DIR *d = opendir(base.c_str())) {
+            while (struct dirent *ent = readdir(d)) {
+                size_t len = strlen(ent->d_name);
+                if (len <= 9 || strcmp(ent->d_name + len - 9, ".xcontent") != 0) continue;
+                XCONTENT_DATA data;
+                FILE *f = fopen((base + "/" + ent->d_name).c_str(), "rb");
+                if (!f) continue;
+                bool ok = fread(&data, sizeof(data), 1, f) == 1;
+                fclose(f);
+                if (ok) items->push_back(data);
+            }
+            closedir(d);
+        }
+        HandleEntry *e = new HandleEntry();
+        e->type = kHandleEnum;
+        e->enumer.items = items;
+        e->enumer.next = 0;
+        *phEnum = AllocHandle(e);
+    }
+    return ERROR_SUCCESS;
+}
+// One package per call. cbBuffer is counted in retail units (the callers pass
+// the literal 0x134, retail's sizeof(XCONTENT_DATA); natively the struct is
+// wider, wchar_t being 4 bytes), so 0x134 or more holds one item. Past the
+// last package an overlapped call completes as ERROR_FUNCTION_FAILED with
+// extended error HRESULT_FROM_WIN32(ERROR_NO_MORE_FILES), which
+// CacheMgrXbox::PollSearch (0x827D7E38) turns into kCache_ErrorCacheNotFound;
+// a synchronous one returns ERROR_NO_MORE_FILES with no items.
+DWORD XEnumerate(HANDLE hEnum, VOID *pvBuffer, DWORD cbBuffer, DWORD *pcItemsReturned, XOVERLAPPED *pOverlapped) {
     if (pcItemsReturned) *pcItemsReturned = 0;
-    return 0;
+    HandleEntry *e = LookupHandle(hEnum);
+    if (!e || e->type != kHandleEnum) return kShimErrorInvalidHandle;
+    if (!pvBuffer || cbBuffer < 0x134) return ShimComplete(0x007A, pOverlapped); // ERROR_INSUFFICIENT_BUFFER
+    if (e->enumer.next >= e->enumer.items->size()) return ShimComplete(ERROR_NO_MORE_FILES, pOverlapped);
+    memcpy(pvBuffer, &(*e->enumer.items)[e->enumer.next++], sizeof(XCONTENT_DATA));
+    if (pOverlapped) {
+        ShimComplete(ERROR_SUCCESS, pOverlapped);
+        pOverlapped->InternalHigh = 1;
+        return ERROR_IO_PENDING;
+    }
+    if (pcItemsReturned) *pcItemsReturned = 1;
+    return ERROR_SUCCESS;
 }
 DWORD XContentFlush(LPCSTR, XOVERLAPPED *) { return 0; }
 ULONGLONG XContentCalculateSize(ULONGLONG cbData, DWORD) { return cbData; }
@@ -791,11 +1091,13 @@ INT XMemSize(LPVOID, DWORD) { return 0; }
 DWORD XPhysicalSize(LPVOID) { return 0; }
 DWORD XUserAwardGamerPicture(DWORD, DWORD, DWORD, XOVERLAPPED *) { return 0; }
 DWORD XUserAwardAvatarAssets(DWORD, const XUSER_AVATARASSET *, XOVERLAPPED *) { return 0; }
-DWORD XUserGetName(DWORD, LPSTR szUserName, DWORD cchUserName) {
+DWORD XUserGetName(DWORD dwUserIndex, LPSTR szUserName, DWORD cchUserName) {
+    if (!ShimUserSignedIn(dwUserIndex)) return ERROR_NO_SUCH_USER;
     if (szUserName && cchUserName > 0) {
         strncpy(szUserName, "Player", cchUserName);
+        szUserName[cchUserName - 1] = '\0';
     }
-    return 0;
+    return ERROR_SUCCESS;
 }
 DWORD XShowTokenRedemptionUI(DWORD) { return 0; }
 DWORD XUserAreUsersFriends(DWORD, XUID *, DWORD, BOOL *pfResult, XOVERLAPPED *) {
@@ -804,8 +1106,24 @@ DWORD XUserAreUsersFriends(DWORD, XUID *, DWORD, BOOL *pfResult, XOVERLAPPED *) 
 }
 DWORD XShowNuiMarketplaceUI(DWORD, DWORD, DWORD, QWORD, DWORD) { return 0; }
 DWORD XShowMarketplaceUI(DWORD, DWORD, QWORD, DWORD) { return 0; }
-DWORD XShowNuiDeviceSelectorUI(DWORD, DWORD, DWORD, DWORD, ULARGE_INTEGER, DWORD *, XOVERLAPPED *) { return 0; }
-DWORD XShowDeviceSelectorUI(DWORD, DWORD, DWORD, ULARGE_INTEGER, DWORD *, XOVERLAPPED *) { return 0; }
+// With a single storage device the system picks it without showing the
+// selector. Retail's callers (CacheMgrXbox::ShowUserSelectUIAsync 0x827D79C8,
+// MemcardXbox::ShowDeviceSelector 0x82518458) require ERROR_IO_PENDING and
+// then poll the XOVERLAPPED; a DeviceID of 0 on completion means cancelled.
+static DWORD ShimDeviceSelected(DWORD *pdwDeviceID, XOVERLAPPED *pOverlapped) {
+    if (pdwDeviceID) *pdwDeviceID = kShimHddDeviceId;
+    if (!pOverlapped) return ERROR_SUCCESS;
+    pOverlapped->InternalHigh = 0;
+    pOverlapped->dwExtendedError = 0;
+    pOverlapped->InternalLow = ERROR_SUCCESS;
+    return ERROR_IO_PENDING;
+}
+DWORD XShowNuiDeviceSelectorUI(DWORD, DWORD, DWORD, DWORD, ULARGE_INTEGER, DWORD *pdwDeviceID, XOVERLAPPED *pOverlapped) {
+    return ShimDeviceSelected(pdwDeviceID, pOverlapped);
+}
+DWORD XShowDeviceSelectorUI(DWORD, DWORD, DWORD, ULARGE_INTEGER, DWORD *pdwDeviceID, XOVERLAPPED *pOverlapped) {
+    return ShimDeviceSelected(pdwDeviceID, pOverlapped);
+}
 DWORD XGetGameRegion() { return 0x00FF; } // All regions
 DWORD XShowNuiDirtyDiscErrorUI(DWORD, DWORD) { exit(1); }
 DWORD XShowDirtyDiscErrorUI(DWORD) { exit(1); }
@@ -850,7 +1168,28 @@ VOID GlobalMemoryStatus(LPMEMORYSTATUS lpBuffer) {
 // Timezone API (timezoneapi.h)
 // ============================================================================
 
-// FileTimeToSystemTime etc. - stub if needed
+// FILETIME is 100 ns ticks since 1601-01-01 UTC. DateTime::FromFileTime
+// (os/DateTime.cpp) and CacheXbox's directory listing convert through this.
+BOOL FileTimeToSystemTime(const FILETIME *lpFileTime, LPSYSTEMTIME lpSystemTime) {
+    if (!lpFileTime || !lpSystemTime) return 0;
+    unsigned long long t = ((unsigned long long)lpFileTime->dwHighDateTime << 32) |
+                           lpFileTime->dwLowDateTime;
+    const unsigned long long kEpochDelta = 116444736000000000ULL; // 1601 -> 1970
+    if (t < kEpochDelta) return 0;
+    unsigned long long ticks = t - kEpochDelta;
+    time_t secs = (time_t)(ticks / 10000000ULL);
+    struct tm tmv;
+    if (!gmtime_r(&secs, &tmv)) return 0;
+    lpSystemTime->wYear = tmv.tm_year + 1900;
+    lpSystemTime->wMonth = tmv.tm_mon + 1;
+    lpSystemTime->wDayOfWeek = tmv.tm_wday;
+    lpSystemTime->wDay = tmv.tm_mday;
+    lpSystemTime->wHour = tmv.tm_hour;
+    lpSystemTime->wMinute = tmv.tm_min;
+    lpSystemTime->wSecond = tmv.tm_sec;
+    lpSystemTime->wMilliseconds = (WORD)((ticks / 10000ULL) % 1000ULL);
+    return 1;
+}
 
 // ============================================================================
 // XGRAPHICS functions

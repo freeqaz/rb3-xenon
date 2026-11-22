@@ -6,6 +6,15 @@
 #include "obj/Dir.h"
 #include "os/Debug.h"
 #include "utl/JobMgr.h"
+#include "xdk/XAPILIB.h"
+#include <cstring>
+
+// Retail keeps these as PlatformMgr_Xbox.cpp file statics (lbl_82CCA8F0 and
+// the four-XUID cache at lbl_82CCA8B8); UpdateSigninState is their only user.
+namespace {
+    int mSigninSameGuest;
+    XUID mXuidCache[4];
+}
 
 PlatformMgr::PlatformMgr() {
     mSigninMask = 0;
@@ -38,10 +47,14 @@ void PlatformMgr::ThreadDone(int) {}
 // SetName("platform_mgr", ObjectDir::Main()); that is the part kept here, so
 // the UI scripts' `{platform_mgr ...}` calls find the object. The rest is
 // XDK-only and skipped: the utility-drive probe (mHasHardDrive), WinSock and
-// XOnlineStartup, the XNotify listener, UpdateSigninState (a no-op below) and
-// the RBN member check (a Live job). Only rb3-app calls Init (SystemInit,
-// RB3_NATIVE_SYSTEM_NET_MGRS).
-void PlatformMgr::Init() { SetName("platform_mgr", ObjectDir::Main()); }
+// XOnlineStartup, the XNotify listener and the RBN member check (a Live job).
+// UpdateSigninState runs, as in retail, so the sign-in mask reflects the
+// console xdk_shims.cpp models (one local profile on user index 0). Only
+// rb3-app calls Init (SystemInit, RB3_NATIVE_SYSTEM_NET_MGRS).
+void PlatformMgr::Init() {
+    SetName("platform_mgr", ObjectDir::Main());
+    UpdateSigninState();
+}
 void PlatformMgr::PreInit() {}
 void PlatformMgr::RegionInit() { SetRegion(kRegionNA); }
 void PlatformMgr::Poll() {}
@@ -72,7 +85,40 @@ bool PlatformMgr::PollXSocialCapabilities() { return true; }
 bool PlatformMgr::QueryXSocialCapabilities() { return false; }
 void PlatformMgr::SmartGlassSend(unsigned long, const DataArray *) {}
 bool PlatformMgr::IsSmartGlassConnected() { return false; }
-void PlatformMgr::UpdateSigninState() {}
+// Retail 0x8251C620 (PlatformMgr_Xbox.cpp), the same body over the XUser*
+// shims: the sign-in mask, the per-pad XUID cache and the change masks. A
+// signed-in index whose online XUID is zero (a local profile) takes its XUID
+// from XUserGetXUID.
+void PlatformMgr::UpdateSigninState() {
+    XUID oldCache[4];
+    memcpy(oldCache, mXuidCache, sizeof(oldCache));
+    mSigninSameGuest = 0;
+    mSigninChangeMask = 0;
+    mSigninMask = 0;
+    for (int i = 0; i < 4; i++) {
+        if (XUserGetSigninState(i) != 0) {
+            XUSER_SIGNIN_INFO info = {};
+            mSigninMask |= (1 << i);
+            if (XUserGetSigninInfo(i, 2, &info) != 0) {
+                info.xuid = 0;
+            }
+            if (info.xuid == 0) {
+                if (XUserGetXUID(i, &info.xuid) != 0) {
+                    info.xuid = 0;
+                }
+            }
+            mXuidCache[i] = info.xuid;
+        } else {
+            mXuidCache[i] = 0;
+        }
+        if (oldCache[i] != mXuidCache[i]) {
+            mSigninChangeMask |= (1 << i);
+            if (((oldCache[i] ^ mXuidCache[i]) & 0xff3fffffffffffffULL) == 0) {
+                mSigninSameGuest |= (1 << i);
+            }
+        }
+    }
+}
 void PlatformMgr::SetPadContext(int, int, int) const {}
 void PlatformMgr::SetPadPresence(int, int) const {}
 void PlatformMgr::SetPadProperty(int, int, unsigned short const *) const {}
