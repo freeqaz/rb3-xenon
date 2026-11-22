@@ -19,6 +19,7 @@
 // is a pointer or a reference. Reading one is an A1 crash site, not a value.
 #include <cstdio>
 #include <cstdlib>
+#include <execinfo.h>
 #include "meta_band/BandUI.h"
 #include "meta/WiiProfileMgr.h"
 #include "meta_band/WiiFriendsProvider.h"
@@ -29,6 +30,9 @@
 
 extern "C" [[noreturn]] void rb3_app_stub_reached(const char *ring, const char *fn) { // ring: reporter
     fprintf(stderr, "rb3-app: UNREACHED stub [ring %s] %s\n", ring, fn);
+    // The caller chain (A1): which boot step reached the stub.
+    void *frames[24];
+    backtrace_symbols_fd(frames, backtrace(frames, 24), 2);
     fflush(stderr);
     abort();
 }

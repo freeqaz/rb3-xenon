@@ -11,6 +11,7 @@
 #include "os/ContentMgr.h"
 #include "os/CritSec.h"
 #include "os/Debug.h"
+#include <cstdio>
 
 // Retail: os/Debug.cpp defines it; no native target compiles that TU. The
 // class is a 0x100-byte char buffer with no constructor, so static zero
@@ -58,3 +59,28 @@ public:
 Rb3AppOfflineWebSvcMgr gRb3AppWebSvcMgr;
 } // namespace
 WebSvcMgr &TheWebSvcMgr = gRb3AppWebSvcMgr; // ring: native-real
+
+// Retail: the XDK sends the string to the attached debugger (Debug::Print's
+// last sink, os/Debug.cpp:133). Natively the debugger channel is stderr,
+// unbuffered, the string as given (callers supply their own newlines).
+extern "C" void OutputDebugStringA(const char *msg) { // ring: native-real
+    if (msg)
+        fputs(msg, stderr);
+}
+
+// Retail: src/ChecksumData_xbox.cpp registers two SHA-1 tables (1,065 game
+// files, 62 song .mid files) that FileStream/BufStream then validate every
+// listed file against; a mismatch raises the disk-error loop. rb3-app
+// registers NEITHER table, so GetFileChecksum() returns null for every file
+// and no file is validated: the same state retail is in for any file the
+// tables do not list. Two measured reasons (lane A1, 2026-11-22):
+//   1. the tables do not describe this disc: config/gen/macros.dtb read
+//      straight out of main_xbox_0.ark (native/tools/ark_extract.py, and the
+//      extracted copy) hashes 4611a568..., the table entry is fe866dce...;
+//      with the tables registered the boot stops at "Checksum failure for file
+//      config/gen/macros.dtb" and loops DISK ERROR;
+//   2. natively CSHA1 is wrong on LP64/little-endian (SHA1.h `unsigned long
+//      l[16]` overruns m_workspace into m_block: segfault in
+//      CSHA1::Transform). Fix drafted, not landed: a1/sha1_lp64_fix.patch.
+void SetFileChecksumData() {} // ring: native-real
+void SetSongMidiChecksumData() {} // ring: native-real

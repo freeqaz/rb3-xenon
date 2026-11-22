@@ -2222,6 +2222,11 @@ set(RB3_APP_SOURCES
     # OutfitConfig.cpp's owner region, which is `#if !HX_NATIVE` (X7), so no
     # native TU emitted it and the census counted it reached. Compiled here.
     ${REPO_ROOT}/src/band3/meta_band/ContextChecker.cpp
+    # A1: TheMemcardMgr is constructed at static init (meta/MemcardMgr.cpp);
+    # its ctor/dtor/Handle/Init are the retail 360 bodies in this TU, which
+    # compiles natively as-is. Its device/container calls land on TheMC,
+    # platform/Memcard_Stub.cpp's MemcardXbox (A4 replaces that).
+    ${REPO_ROOT}/src/system/meta/MemcardMgr_Xbox.cpp
     ${REPO_ROOT}/src/band3/game/AccuracyTracker.cpp
     ${REPO_ROOT}/src/band3/game/BandPerformer.cpp
     ${REPO_ROOT}/src/band3/game/ChordPreview.cpp
@@ -2454,6 +2459,8 @@ if(RB3X_BUILD_ENGINE)
         ${CMAKE_SOURCE_DIR}/src/rb3_app_link_stubs.s
         # Real native definitions of the globals dta_link_stubs.s used to zero.
         ${CMAKE_SOURCE_DIR}/src/rb3_app_native_glue.cpp
+        # Quazal String/RootObject as plain data (DataResults, ProfileMgr ctor).
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_quazal_native.cpp
         # The engine's consumer seams (ShouldSkipMesh, DebugPanel::*).
         ${CMAKE_SOURCE_DIR}/src/rb3_render_glue.cpp
         # W16-TR's store stubs: abort if reached (the store TUs are excluded above).
@@ -2473,6 +2480,15 @@ if(RB3X_BUILD_ENGINE)
     # ring-tagged stub in rb3_app_link_stubs.s or a real, commented native body
     # in rb3_app_native_glue.cpp.
     list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s)
+    # rb3_app_native_glue.cpp defines both checksum registrars (registering
+    # nothing, measured reason there) in place of the uncommented no-op every
+    # other target links.
+    list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/platform/ChecksumData_Stub.cpp)
+    # A1: native/src/main_app.cpp drives App::App (data dir, headless, bounded);
+    # src/Main.cpp is retail's main (App::Run, the frame loop: A2).
+    list(REMOVE_ITEM _rb3_app_all ${REPO_ROOT}/src/Main.cpp)
+    list(APPEND _rb3_app_all ${CMAKE_SOURCE_DIR}/src/main_app.cpp
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.cpp)
     rb3_add_executable(rb3-app ${_rb3_app_all})
     list(APPEND MILO_TARGETS rb3-app)
     # RB3_NATIVE_PRESENCEMGR: the real PresenceMgr.cpp is linked (App::App calls
@@ -2481,6 +2497,14 @@ if(RB3X_BUILD_ENGINE)
     target_link_libraries(rb3-app PRIVATE milo-engine ZLIB::ZLIB)
     target_link_options(rb3-app PRIVATE -fuse-ld=lld -Wl,--error-limit=0
         -Wl,--wrap=_ZN6Symbol4InitEv)
+    # A1 boot gates: each App::App init step is --wrap'ed by rb3_app_gates.cpp,
+    # which prints `  [PASS] rb3-app <step>` when it returns.
+    file(STRINGS ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.txt _rb3_app_gate_syms)
+    foreach(_g IN LISTS _rb3_app_gate_syms)
+        target_link_options(rb3-app PRIVATE -Wl,--wrap=${_g})
+    endforeach()
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.txt)
 endif()
 foreach(_t IN LISTS MILO_TARGETS)
 target_compile_options(${_t} PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
