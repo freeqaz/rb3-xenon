@@ -9,15 +9,36 @@
 #
 # If no path is given, uses the current working directory.
 #
-# This script is idempotent — safe to run multiple times on the same worktree.
+# This script is idempotent — safe to run multiple times on the same worktree
+# (since 2026-11-22: before link_dir a second run wrote into the main checkout).
 
 set -euo pipefail
 
-MAIN_REPO="$(cd "$(dirname "$0")/.." && pwd)"
+# The main checkout, wherever this copy of the script lives: a worktree's own
+# copy would otherwise make MAIN_REPO the worktree and link it to itself.
+MAIN_REPO="$(dirname "$(git -C "$(dirname "$0")" rev-parse --path-format=absolute --git-common-dir)")"
 WORKTREE_PATH="${1:-$(pwd)}"
 
 # Resolve to absolute path
 WORKTREE_PATH="$(cd "$WORKTREE_PATH" && pwd)"
+
+if [ "$WORKTREE_PATH" = "$MAIN_REPO" ]; then
+    echo "ERROR: $WORKTREE_PATH is the main checkout; give a worktree path" >&2
+    exit 1
+fi
+
+# Link $2 -> $1 for a DIRECTORY target. -n: when $2 is already a symlink to a
+# directory, replace the link; plain -sf follows it and writes $2/<name> INSIDE
+# the target, which on a second run planted build/45410914/obj/obj in the MAIN
+# checkout and failed on build/compilers. A real directory at $2 is kept:
+# setup_worktree.sh makes some of these as reflinked copies on purpose.
+link_dir() {
+    if [ -d "$2" ] && [ ! -L "$2" ]; then
+        echo "    keeping the real directory $2"
+        return 0
+    fi
+    ln -sfn "$1" "$2"
+}
 
 # Sanity check: must be a git worktree (has .git file, not .git directory)
 if [ ! -f "$WORKTREE_PATH/.git" ] && [ ! -d "$WORKTREE_PATH/.git" ]; then
@@ -66,7 +87,7 @@ mkdir -p "$WT_BUILD" "$WT_BUILD/pch"
 touch "$WT_BUILD/pch/system.pch"
 
 # Target objects (original binary, never changes)
-ln -sf "$MAIN_BUILD/obj" "$WT_BUILD/obj"
+link_dir "$MAIN_BUILD/obj" "$WT_BUILD/obj"
 
 # Pre-split config (COPY, not symlink — see setup_worktree.sh for rationale)
 if [ -f "$MAIN_BUILD/config.json" ]; then
@@ -76,13 +97,13 @@ fi
 # Downloaded tools (compilers, binutils, sjiswrap)
 for dir in compilers binutils tools; do
     if [ -e "$MAIN_REPO/build/$dir" ]; then
-        ln -sf "$MAIN_REPO/build/$dir" "$WORKTREE_PATH/build/$dir"
+        link_dir "$MAIN_REPO/build/$dir" "$WORKTREE_PATH/build/$dir"
     fi
 done
 
 echo "    Symlinking Python venv"
 if [ -d "$MAIN_REPO/venv" ]; then
-    ln -sf "$MAIN_REPO/venv" "$WORKTREE_PATH/venv"
+    link_dir "$MAIN_REPO/venv" "$WORKTREE_PATH/venv"
 fi
 
 echo "    Running configure.py with absolute tool paths"
