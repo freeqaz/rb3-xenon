@@ -37,6 +37,20 @@ RndTex::RndTex()
       mNumMips(0), mOptimizeForPS3(0), mIsPowerOf2(0), mLoader(0) {}
 
 RndTex::~RndTex() {
+#ifdef HX_NATIVE
+    // Retail's concrete texture is DxTex, whose dtor (band.exe TU5 0x827356B8)
+    // calls ResetSurfaces (0x827355D0), releasing the D3D surfaces, before
+    // ??1RndTex (0x823FEBB8, this body). Natively RndTex is the concrete class and
+    // its GPU state lives in the engine's side tables keyed on this ADDRESS
+    // (Tex_Wgpu.cpp sTexGpuData, and sSharedTex, whose entry names one holder as
+    // the reference bitmap). Nothing there is an ObjRef, so no ref walk reaches
+    // it: without this, a dead texture stays the share owner, and the next
+    // texture with the same bitmap (the same .tex in the next screen's panel)
+    // reads the dead one's mBitmap in PresyncBitmap. A20, from dc3-decomp's
+    // ~RndTex; gate rb3_app_check_tex_gpu_cleanup (native/src/rb3_app_gates.cpp).
+    extern void CleanupGpuTex(RndTex *);
+    CleanupGpuTex(this);
+#endif
     delete mLoader;
 }
 

@@ -223,6 +223,9 @@ void RndTex::SyncBitmap() {}
 void RndTex::PresyncBitmap() {}
 void RndTex::MakeDrawTarget() {}
 void RndTex::FinishDrawTarget() {}
+// CleanupGpuTex runs from RndTex's destructor (rndobj/Tex.cpp), like
+// CleanupGpuMesh below: it releases GPU state that was never created.
+void CleanupGpuTex(RndTex *) {}
 
 // --- mesh + particle GPU paths (rnddx9/Mesh.cpp, rnddx9/Part.cpp;
 //     X3: engine Mesh_Wgpu.cpp / Part_Wgpu.cpp / MeshGpuCache.cpp)
