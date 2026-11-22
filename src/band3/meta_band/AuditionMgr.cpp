@@ -686,12 +686,24 @@ void AuditionMgr::EnterLoad() {
         mDownloader->CloseFiles();
         mFileCache = new FileCache(0x100000, kLoadBack, true);
         mFileCache->StartSet(0);
-        const char *midi = AuditionSongFile(1, mSong.Str());
-        mFileCache->Add(FilePath(midi), 0, FilePath(""));
-        const char *milo = AuditionSongFile(3, mSong.Str());
-        mFileCache->Add(FilePath(milo), 0, FilePath(""));
-        const char *weights = AuditionSongFile(5, mSong.Str());
-        mFileCache->Add(FilePath(weights), 0, FilePath(""));
+        {
+            const char *midi = AuditionSongFile(1, mSong.Str());
+            FilePath none("");
+            FilePath path(midi);
+            mFileCache->Add(path, 0, none);
+        }
+        {
+            const char *milo = AuditionSongFile(3, mSong.Str());
+            FilePath none("");
+            FilePath path(milo);
+            mFileCache->Add(path, 0, none);
+        }
+        {
+            const char *weights = AuditionSongFile(5, mSong.Str());
+            FilePath none("");
+            FilePath path(weights);
+            mFileCache->Add(path, 0, none);
+        }
         mFileCache->EndSet();
         mLoadStep = 1;
     }
