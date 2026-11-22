@@ -326,11 +326,20 @@ gMemStackLock:
 TheContentMgr:
     .zero 128
 
+// TheDebugNotifyOncePrinter is an OBJECT, `class DebugNotifyOncePrinter
+// { char msg[0x100]; }` (os/Debug.h), not a pointer, so this storage must be
+// 256 bytes, not the 128 every other blob here gets. Its operator<< does
+// strncpy(msg, cc, 0xFF), which writes all 255 bytes (strncpy NUL-pads), so a
+// 128-byte blob let the first MILO_PRINT_ONCE / MILO_LOG_ONCE (BinStream::Write
+// on a failed stream, linked into every target that takes this weak copy)
+// overwrite the next 127 bytes of .bss -- TheGameData's blob, which sits right
+// after it. Zero-filled is retail's initial state (an empty msg); only the size
+// was wrong. Recorded in docs/decomp/NATIVE_STUB_GLOBALS_VS_RETAIL_2026-11-22.md.
 .weak TheDebugNotifyOncePrinter
 .type TheDebugNotifyOncePrinter,@object
-.size TheDebugNotifyOncePrinter, 128
+.size TheDebugNotifyOncePrinter, 256
 TheDebugNotifyOncePrinter:
-    .zero 128
+    .zero 256
 
 .weak TheGameData
 .type TheGameData,@object
