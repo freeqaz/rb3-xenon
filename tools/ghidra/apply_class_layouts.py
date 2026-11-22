@@ -7,8 +7,8 @@ apply_prototypes.py put every method in its class namespace; Ghidra types a __th
 the class structure of that namespace (VariableUtilities.findOrCreateClassStruct), which until now was an
 empty placeholder. This script fills those structures, and only those: a layout is applied to a Ghidra class
 namespace whose simple name equals the layout's class name, when exactly one such namespace exists and it is
-not nested inside another class (the compiler's report prints simple names only, so a nested class cannot be
-told apart). Members: every member the report prints, flattened through base classes, at its reported offset;
+not nested inside another class the compiler reported (the report prints simple names only, so a nested class
+cannot be told apart). Members: every member the report prints, flattened through base classes, at its reported offset;
 type = pointer (4 bytes) for `T *`, the builtin for a primitive, the class structure for a by-value member of
 a seeded class whose size fits, else undefined bytes up to the next member. Re-running replaces what it wrote.
 
@@ -58,7 +58,8 @@ def main():
     ap.add_argument("--layouts", required=True)
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
-    layouts = json.load(open(args.layouts))["classes"]
+    _lj = json.load(open(args.layouts))
+    layouts, conflicts = _lj["classes"], set(_lj.get("conflicts", []))
 
     import pyghidra
     pyghidra.start(verbose=False)
@@ -102,7 +103,11 @@ def main():
             stats["ambiguous"] += 1
             continue
         ns = nss[0]
-        if isinstance(ns.getParentNamespace(), GhidraClass):
+        # nested inside a real C++ class (one the compiler reported). A Ghidra CLASS parent that the compiler
+        # never reported is a C++ namespace Ghidra promoted: a re-run of apply_prototypes turns `Hmx` into a
+        # class once Hmx::Object has a structure, and Hmx::Object must still be seeded.
+        par = ns.getParentNamespace()
+        if isinstance(par, GhidraClass) and (par.getName() in layouts or par.getName() in conflicts):
             stats["nested"] += 1
             continue
         targets[name] = (ns, c)
