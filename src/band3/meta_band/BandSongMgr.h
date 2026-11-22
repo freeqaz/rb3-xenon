@@ -107,6 +107,10 @@ public:
     /** TU5 0x82577480: erases a song by its Symbol from the id and name hash
         maps; AuditionMgr calls it with the audition temp song. Name ours. */
     void RemoveSong(Symbol);
+    /** TU5 0x82576B70: adds one downloaded song array as hard-drive content
+        under `path` (AuditionMgr passes the audition songs.dta path). Name
+        ours. */
+    void AddAuditionSongData(DataArray *, const char *path);
     bool IsDemo(int) const;
     bool HasLicense(Symbol) const;
     void SyncSharedSongs();
