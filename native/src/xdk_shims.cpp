@@ -200,11 +200,35 @@ struct ThreadStartData {
     HandleEntry *entry;
 };
 
+// Win32's STILL_ACTIVE: GetExitCodeThread's answer while a thread runs.
+static const DWORD kShimStillActive = 0x103;
+
+// Exit codes by thread id (GetCurrentThreadId's value) for every thread
+// CreateThread started: kShimStillActive while it runs, its exit code after.
+// OpenThread reads it. Retail's only OpenThread caller is ValidateThreadId
+// (utl/MakeString.cpp, 0x827BB7A8): OpenThread(0x40, FALSE, id) at
+// 0x827BB7C4, GetExitCodeThread at 0x827BB7E0, alive iff the code is 0x103.
+// NextBuf (0x827C3D80, the call at 0x827C3E44) hands a dead thread's
+// MakeString buffers to the calling thread and keeps a live one's.
+static pthread_mutex_t gShimThreadExitMutex = PTHREAD_MUTEX_INITIALIZER;
+static std::map<DWORD, DWORD> &ShimThreadExitCodes() {
+    static std::map<DWORD, DWORD> codes;
+    return codes;
+}
+static void ShimSetThreadExitCode(DWORD id, DWORD code) {
+    pthread_mutex_lock(&gShimThreadExitMutex);
+    ShimThreadExitCodes()[id] = code;
+    pthread_mutex_unlock(&gShimThreadExitMutex);
+}
+
 static void *ThreadStartRoutine(void *arg) {
     ThreadStartData *data = (ThreadStartData *)arg;
+    DWORD id = GetCurrentThreadId();
+    ShimSetThreadExitCode(id, kShimStillActive);
     DWORD result = data->func(data->param);
     data->entry->thread.exitCode = result;
     data->entry->thread.finished = true;
+    ShimSetThreadExitCode(id, result);
     delete data;
     return nullptr;
 }
@@ -216,7 +240,7 @@ HANDLE CreateThread(LPSECURITY_ATTRIBUTES, SIZE_T stackSize,
     HandleEntry *e = new HandleEntry;
     e->type = kHandleThread;
     e->thread.finished = false;
-    e->thread.exitCode = 0;
+    e->thread.exitCode = kShimStillActive; // GetExitCodeThread while it runs
 
     ThreadStartData *data = new ThreadStartData;
     data->func = lpStartAddress;
@@ -261,7 +285,23 @@ BOOL GetExitCodeThread(HANDLE hThread, LPDWORD lpExitCode) {
 }
 
 int GetThreadPriority(HANDLE) { return 0; }
-HANDLE OpenThread(DWORD, BOOL, DWORD) { return nullptr; }
+// A handle that answers GetExitCodeThread for the thread with that id (see
+// ShimThreadExitCodes). A thread CreateThread did not start (the main thread,
+// a host std::thread) has no record and reads as running, which is all a
+// caller can see of it while it holds an id.
+HANDLE OpenThread(DWORD, BOOL, DWORD dwThreadId) {
+    DWORD code = kShimStillActive;
+    pthread_mutex_lock(&gShimThreadExitMutex);
+    auto it = ShimThreadExitCodes().find(dwThreadId);
+    if (it != ShimThreadExitCodes().end()) code = it->second;
+    pthread_mutex_unlock(&gShimThreadExitMutex);
+    HandleEntry *e = new HandleEntry;
+    e->type = kHandleThread;
+    e->thread.thread = pthread_t();
+    e->thread.finished = code != kShimStillActive;
+    e->thread.exitCode = code;
+    return AllocHandle(e);
+}
 DWORD ResumeThread(HANDLE) { return 0; }
 BOOL SetThreadPriority(HANDLE, int) { return 1; }
 BOOL SwitchToThread() { sched_yield(); return 1; }
@@ -982,7 +1022,28 @@ DWORD XContentCreateEx(DWORD, LPCSTR szRootName, const XCONTENT_DATA *pContentDa
     pthread_mutex_unlock(&gShimMountMutex);
     return ShimComplete(ERROR_SUCCESS, pOverlapped);
 }
-DWORD XContentGetCreator(DWORD, const XCONTENT_DATA *, BOOL *, XUID *, XOVERLAPPED *) { return 0; }
+// Whether the user created a package. MCContainerXbox::Mount (0x8252AEA8)
+// asks right after its XContentCreateEx (bl at 0x8252AF94, no XOVERLAPPED)
+// and reads FALSE as someone else's save: it closes the package (0x8252AFB4)
+// and fails the mount as ERROR_FILE_CORRUPT (0x570, kMCCorrupt). This console
+// has one profile, and every package in the store was written by it, so a
+// signed-in user created every package that exists; the creator XUID is that
+// profile's offline XUID.
+DWORD XContentGetCreator(DWORD dwUserIndex, const XCONTENT_DATA *pContentData,
+                         BOOL *pfUserIsCreator, XUID *pxuidCreator, XOVERLAPPED *pOverlapped) {
+    if (pfUserIsCreator) *pfUserIsCreator = 0;
+    if (pxuidCreator) *pxuidCreator = 0;
+    if (!pContentData) return ShimComplete(0x0057, pOverlapped); // ERROR_INVALID_PARAMETER
+    DWORD device = pContentData->DeviceID ? pContentData->DeviceID : kShimHddDeviceId;
+    std::string name = ShimPackageName(pContentData);
+    if (name.empty()) return ShimComplete(ERROR_INVALID_NAME, pOverlapped);
+    std::string dir = ShimPackageBase(device, pContentData->dwContentType) + "/" + name;
+    struct stat st;
+    if (stat((dir + ".xcontent").c_str(), &st) != 0) return ShimComplete(ERROR_FILE_NOT_FOUND, pOverlapped);
+    if (pxuidCreator) *pxuidCreator = kShimOfflineXuid;
+    if (pfUserIsCreator) *pfUserIsCreator = ShimUserSignedIn(dwUserIndex) ? 1 : 0;
+    return ShimComplete(ERROR_SUCCESS, pOverlapped);
+}
 DWORD XContentGetDeviceState(DWORD, XOVERLAPPED *) { return 0; }
 // Removes a package: its files and directories, then its record.
 static void ShimRemoveTree(const std::string &dir) {

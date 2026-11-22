@@ -2249,9 +2249,18 @@ set(RB3_APP_SOURCES
     ${REPO_ROOT}/src/band3/meta_band/ContextChecker.cpp
     # A1: TheMemcardMgr is constructed at static init (meta/MemcardMgr.cpp);
     # its ctor/dtor/Handle/Init are the retail 360 bodies in this TU, which
-    # compiles natively as-is. Its device/container calls land on TheMC,
-    # platform/Memcard_Stub.cpp's MemcardXbox (A4 replaces that).
+    # compiles natively as-is. Its device/container calls land on TheMC, the
+    # MemcardXbox of os/Memcard_Xbox.cpp below.
     ${REPO_ROOT}/src/system/meta/MemcardMgr_Xbox.cpp
+    # memcard lane: TheMC is retail's MemcardXbox (os/Memcard_Xbox.cpp, no X360
+    # extra_cflags), in place of the empty platform/Memcard_Stub.cpp every
+    # other target still links (removed from _rb3_app_all below). The TU sits
+    # only on XContent and Win32 file calls, which xdk_shims.cpp models as a
+    # hard drive (DeviceID 1) holding a host-directory content store; the
+    # device selector answers through ShowDeviceSelector's XOVERLAPPED and
+    # Poll (retail 0x8252B9A8, 0x8252B858), which SaveLoadManager state 8
+    # (kS_AutoloadSetDevice) waits on.
+    ${REPO_ROOT}/src/system/os/Memcard_Xbox.cpp
     # A1b: TheEntityUploader (App.cpp: TheEntityUploader.Init()) is a reference
     # bound in this TU to gXboxEntityUploader, a static-init object (retail
     # dynamic initializer 0x82C3F610). Init is offline: SetName, the submit
@@ -2639,6 +2648,9 @@ if(RB3X_BUILD_ENGINE)
     # nothing, measured reason there) in place of the uncommented no-op every
     # other target links.
     list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/platform/ChecksumData_Stub.cpp)
+    # os/Memcard_Xbox.cpp (RB3_APP_SOURCES) defines TheMC and every MemcardXbox,
+    # MCContainerXbox and MCFileXbox member the stub would.
+    list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/platform/Memcard_Stub.cpp)
     # A2: OvershellProfileProvider's ctor, GetUser and Reload are retail 360
     # code (100% matched, rb3-xenon-07); rb3-app had them as a4-wii-residue
     # stubs only because this TU was not compiled. Its Handle names the bare
