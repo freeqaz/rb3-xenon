@@ -110,8 +110,8 @@ public:
     .rdata 0x8219C73C holds {0, 1, 2, 3, 7}, among UGCNet's .rdata (next to
     UGCNet_Server's EH records), so it is defined with UGCNet, not in this TU:
     every loop over it here re-reads element 0 before its first pass, which a
-    definition in this TU would let the compiler fold away. No UGCNet source is
-    in our tree, so it stays extern. Name ours. */
+    definition in this TU would let the compiler fold away. So it stays extern
+    here; the definition is in AuditionSongFiles.cpp. Name ours. */
 extern const int gUGCAuditionFiles[];
 
 /** The downloader AuditionMgr creates in state 3 (`li r3,0xe4`, ctor
