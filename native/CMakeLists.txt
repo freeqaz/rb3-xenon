@@ -2200,6 +2200,27 @@ set_source_files_properties(
     ${REPO_ROOT}/src/system/bandobj/OutfitConfig.cpp
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
 
+# ---- SCOUT EXPERIMENT (uncommitted): link probe for a real App boot ----
+if(RB3X_BUILD_ENGINE AND RB3X_APP_PROBE)
+    file(STRINGS /home/free/tmp/claude-1000/rb3-scout/xenon/probe_extra.txt _probe_extra)
+    rb3_add_executable(rb3-app-probe
+        ${REPO_ROOT}/src/Main.cpp
+        ${REPO_ROOT}/src/App.cpp
+        ${CMAKE_SOURCE_DIR}/src/rb3_render_glue.cpp
+        ${CMAKE_SOURCE_DIR}/src/bandtrack_link_stubs.cpp
+        ${CMAKE_SOURCE_DIR}/src/w16sh_link_support.cpp
+        ${CMAKE_SOURCE_DIR}/src/w16tr_link_stubs.cpp
+        ${CMAKE_SOURCE_DIR}/src/w16ts_link_support.cpp
+        ${W16TS_LINK_SOURCES} ${W16UF_LINK_SOURCES} ${VOCALTRACK_GAME_SOURCES}
+        ${W16SH_LINK_SOURCES} ${W16SH_DEP_SOURCES} ${W16TJ_LINK_SOURCES}
+        ${W16TJ_VOCAL_SOURCES} ${W16TM_LINK_SOURCES} ${W16TM_DEP_SOURCES}
+        ${W16TR_DEP_SOURCES} ${MILO_TARGET_COMMON_SOURCES}
+        ${_probe_extra})
+    list(APPEND MILO_TARGETS rb3-app-probe)
+    target_compile_definitions(rb3-app-probe PRIVATE RB3_ENGINE_RENDER=1)
+    target_link_libraries(rb3-app-probe PRIVATE milo-engine)
+    target_link_options(rb3-app-probe PRIVATE -fuse-ld=lld -Wl,--error-limit=0)
+endif()
 foreach(_t IN LISTS MILO_TARGETS)
 target_compile_options(${_t} PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
