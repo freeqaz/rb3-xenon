@@ -29,12 +29,24 @@ import glob, os, re, subprocess, sys
 BD, LOG, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
 
 RULES = [
-    (r"^Quazal::", "online-quazal"),
+    (r"^(vtable for |typeinfo for )?Quazal::", "online-quazal"),
     (r"^(NetSession::|BandNetGameData::)", "online-netsession"),
+    # A3: NetSession.cpp + NetSession_Xbox.cpp are compiled, so the idle
+    # XboxSession exists; what its online paths call (XSession jobs, the Quazal
+    # session, search results, the messenger, voice chat) stays aborting.
+    (r"^(vtable for )?((AddLocalPlayer|AddRemotePlayer|DeleteSession|EndSession|MakeSession|"
+     r"ModifySession|RegisterArbitration|RemoveLocalPlayer|RemoveRemotePlayer|StartSession|"
+     r"WriteTrueSkill|MakeQuazalSession)Job|QuazalSession|NetSearchResult|NetMessenger|"
+     r"SyncUserMsg|SyncAllMsg|MicManagerXbox)\b", "online-netsession"),
+    (r"^Synth360::(ActivateLocalChat|GetChatData)", "online-netsession"),
     (r"^(vtable for )?(MatchmakingSettings|SearchSettings|SessionSettings|SessionSearcher)\b",
      "online-matchmaking"),
     (r"^(Net::|SyncStore::)", "online-net"),
     (r"^RockCentral::", "online-rockcentral"),
+    # A3: RockCentral.cpp is compiled (TheRockCentral is a real static-init
+    # object); its web-service plumbing stays aborting.
+    (r"^(ContextWrapper|ContextWrapperPool|JsonObject|UpdateFriendsListJob)::", "online-rockcentral"),
+    (r"^(XNet|XUserMuteListQuery|XUserSetProperty)", "xbox-live"),
     (r"^(AssetOffer::|XMarketplace|XBackgroundDownload|StoreRootPanel::)", "xbox-store"),
     (r"^(XMsgCancelIORequest|XUserReadGamerPicture|XGetOverlappedResult|XStringVerify|ShowParentalControlUI|SessionUsersProvider::ShowGamercard)",
      "xbox-live"),

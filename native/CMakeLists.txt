@@ -2239,6 +2239,20 @@ set(RB3_APP_SOURCES
     # whose entry points are aborting stubs (rings xbox-live, xbox-d3d).
     ${REPO_ROOT}/src/system/os/ProfilePicture.cpp
     ${REPO_ROOT}/src/system/os/ProfilePicture_Xbox.cpp
+    # A3: the idle online objects an OFFLINE retail 360 has. App::App always
+    # runs Net::Init, which builds NetSession::New() = new XboxSession()
+    # (kIdle, online disabled), and TheRockCentral is a static-init object
+    # whose ctor is three stores and a JobMgr. ProfileMgr::Init,
+    # SessionMgr::Init and MemcardMgr subscribe to both. The Quazal transport
+    # the two session ctors touch has native bodies in
+    # rb3_app_quazal_native.cpp (no Quazal stack natively: default context,
+    # settings stored, nothing transmitted); everything networked still
+    # aborts through rb3_app_link_stubs.s (rings online-*).
+    ${REPO_ROOT}/src/band3/net_band/RockCentral.cpp
+    ${REPO_ROOT}/src/network/net/NetSession.cpp
+    ${REPO_ROOT}/src/network/net/NetSession_Xbox.cpp
+    ${REPO_ROOT}/src/network/net/SessionMessages.cpp
+    ${REPO_ROOT}/src/network/net/MatchmakingSettings.cpp
     # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
     # constructs TheBandUI at static init; natively TheUI was the engine's weak
     # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.

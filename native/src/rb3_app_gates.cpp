@@ -155,14 +155,26 @@ extern "C" void __wrap__ZN17FixedSizeSaveable4InitEii(int a0, int a1) { // ring:
 }
 
 extern "C" void __real__ZN3Net4InitEv(void *self);
-// GATED, not called (lane A1b). TheNet is zero storage in rb3-app
-// (rb3_app_link_stubs.cpp, ring online-net) and Net::Init is an aborting stub:
-// retail constructs the Quazal/online stack here, which rb3-app does not have.
-// The call is skipped LOUDLY; any later use of TheNet still reaches an aborting
-// stub or zero storage, so this hides nothing.
+// NARROWED (lane A3). Retail Net::Init (src/network/net/Net.cpp:79, 0x823E0648)
+// runs on an offline 360 too: it installs the Quazal allocator hooks, builds a
+// SyncStore, `mSession = NetSession::New()` (= new XboxSession, NetSession_Xbox.cpp:441,
+// which sets TheNetSession; state kIdle, online disabled), SessionSearcher::New(),
+// TheServer.Init(), a NetworkEmulator and TheNetMessenger.Init(). Natively this
+// gate runs ONLY the session construction: the idle session object is what
+// SessionMgr::Init, MemcardMgr and ProfileMgr::Init subscribe to, and its ctor
+// sends nothing (the Quazal settings it writes have native bodies in
+// rb3_app_quazal_native.cpp). Everything else Net::Init builds is networked and
+// is NOT built: TheNet itself stays zero storage (Net.cpp does not compile
+// natively), so TheNet.mSession/mSearcher/mServer stay null, and any later use
+// of them still reaches an aborting stub or zero storage. Net.cpp's body is not
+// called. Printed as GATED, not PASS, because it is not retail's whole call.
+extern "C" void *rb3_app_netsession_new() __asm__("_ZN10NetSession3NewEv");
 extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
     (void)self;
-    printf("  [GATED] rb3-app Net::Init() -- ring online-net: no network stack natively, not called\n");
+    void *session = rb3_app_netsession_new();
+    printf("  [GATED] rb3-app Net::Init() -- ring online-net: built ONLY the idle XboxSession "
+           "(TheNetSession=%p); SyncStore/SessionSearcher/Server/NetworkEmulator/NetMessenger not built\n",
+           session);
     fflush(stdout);
 }
 
