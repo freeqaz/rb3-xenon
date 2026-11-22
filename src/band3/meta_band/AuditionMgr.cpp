@@ -66,6 +66,7 @@ public:
     }
 
     String mSong; // 0x0
+    int unkc; // 0xc -- the ctor does not write it
     AuditionNetClient *mClient; // 0x10
     void *mBuf; // 0x14
     int mBufSize; // 0x18
@@ -87,8 +88,9 @@ AuditionMgr *TheAuditionMgr = &gAuditionMgr;
 void AuditionMgr::EnterStart() {
     ThePlatformMgr.AddSink(this, SigninChangedMsg::Type());
     TheRockCentral.AddSink(this, ServerStatusChangedMsg::Type());
+    OvershellPanel *overshell = TheBandUI.mOvershell;
     mBuilder = new AuditionSessionBuilder(
-        TheSessionMgr, TheBandUserMgr, TheBandUI.mOvershell, TheSongMgrPtr, TheModifierMgr
+        TheSessionMgr, TheBandUserMgr, overshell, TheSongMgrPtr, TheModifierMgr
     );
     unk40 = false;
     TheContentMgr.SetRefreshAllowed(false);
@@ -110,7 +112,8 @@ void AuditionMgr::EnterEnd() {
 // 0x825610B8
 void AuditionMgr::Init() {
     SetName("audition_mgr", ObjectDir::Main());
-    unk48 = Symbol(gUGCAuditionTempSongName);
+    Symbol song(gUGCAuditionTempSongName);
+    unk48 = song;
     static Symbol none("none");
     unk4c = none;
 }
@@ -280,6 +283,8 @@ void AuditionMgr::SetState(int state) {
 void AuditionMgr::Poll() {
     if (mDownloader)
         mDownloader->Poll();
+    if (mState == 0)
+        return;
     switch (mState) {
     case 4:
         UpdateScreen();
