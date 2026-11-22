@@ -185,3 +185,63 @@ extern "C" int MultiByteToWideChar(UINT, DWORD, LPCSTR src, int cb, LPWSTR dst, 
         dst[i] = (unsigned char)src[i];
     return n;
 }
+
+// A3: RecursePatternInternal, the pattern walker under FileRecursePattern
+// (MakeFileList, the framerate list, AssetMgr). The retail 360 body is in
+// src/system/os/File.cpp:956, behind a scaffold-era `#ifndef HX_NATIVE`, so no
+// native TU defines it (other native targets get a weak no-op from
+// dta_link_stubs.s, which rb3-app does not link). This is that body, logic for
+// logic: split at the first '&' or wildcard; with `recurse` and a '/' after the
+// split, list the directories at this level (DirListCB into File.cpp's
+// gDirList) and recurse into each with the rest of the pattern; otherwise
+// enumerate the directory before the last separator with the whole pattern.
+// FileEnumerate is the engine's native primitive. Only the matching-driven
+// spellings of the retail source (temporaries, the two-arg substr) are dropped.
+// Reached at boot from AssetMgr's ctor through VerifyAssets, which is a
+// `MILO_DEBUG && HX_NATIVE` arm (retail fn_8256B740 makes no such call): a dev
+// check rb3-app runs because native builds define MILO_DEBUG.
+#include "os/File.h"
+#include "utl/MakeString.h"
+#include "utl/Str.h"
+#include <vector>
+extern std::vector<String> gDirList;
+void DirListCB(const char *, const char *);
+void RecursePatternInternal( // ring: native-real
+    const char *pattern, void (*cb)(const char *, const char *), bool recurse, bool recurse_dirs
+) {
+    MILO_ASSERT(pattern && pattern[0], 0x5B8);
+    String pttn(pattern);
+    unsigned int ampPos = pttn.find_first_of("&", 0);
+    unsigned int wildcardPos = pttn.find_first_of("?*", 0);
+    int splitPos = ampPos == FixedString::npos ? (int)pttn.length() - 1 : (int)ampPos;
+    if (wildcardPos != FixedString::npos && wildcardPos < (unsigned int)splitPos)
+        splitPos = wildcardPos;
+    if (recurse && ampPos == FixedString::npos) {
+        int len = (int)pttn.length();
+        int fwd = splitPos;
+        while (fwd < len && pttn[fwd] != '/' && pttn[fwd] != '\\')
+            fwd++;
+        if (fwd == len) {
+            recurse = false;
+        } else {
+            String subPattern = pttn.substr((unsigned int)fwd, (unsigned int)(len - fwd));
+            pttn = pttn.substr(0, (unsigned int)fwd);
+            RecursePatternInternal(pttn.c_str(), DirListCB, false, true);
+            std::vector<String> dirs(gDirList);
+            gDirList.clear();
+            pttn = FileGetPath(pttn.c_str());
+            for (unsigned int i = 0; i < dirs.size(); i++) {
+                RecursePatternInternal(
+                    MakeString("%s/%s%s", pttn.c_str(), dirs[i].c_str(), subPattern.c_str()),
+                    cb, recurse, recurse_dirs
+                );
+            }
+            return;
+        }
+    }
+    int pos = splitPos;
+    while (pos >= 0 && pttn[pos] != '/' && pttn[pos] != '\\')
+        pos--;
+    String dirStr = pos <= 0 ? String(".") : pttn.substr(0, (unsigned int)pos);
+    FileEnumerate(dirStr.c_str(), cb, recurse, pttn.c_str(), recurse_dirs);
+}
