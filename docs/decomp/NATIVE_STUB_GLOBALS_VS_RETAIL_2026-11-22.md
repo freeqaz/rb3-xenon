@@ -41,6 +41,18 @@ than retail?
     `Symbol foo("foo")` at static-init time would call `gStringTable->Add` before `Symbol::PreInit`, and
     `gHashTable` in another TU has no defined construction order. The fix is per-TU `RB3_HANDLE_LOCAL_STATIC`, or
     interning these after `Symbol::PreInit`. That is a CMake/boot change for the coordinator.
+
+    **Corrected 2026-11-22 (lane SYMEMPTY, measured under gdb in all 19 targets, rb3-app by A4):** the claim
+    above holds for far fewer cases than stated. Most of these globals are interned before any handler runs:
+    rb3-app interns them with the generated `--wrap=Symbol::Init` TU, rb3-render with
+    `InternSymbolGlobals_MiloLinkStubs`, and rb3-song with m1. In the other targets the empty ones are **dead
+    definitions**: no linked code reads them, because the handler TUs those targets compile already use local
+    statics. Only **rb3-milo** (never interned; `BandCharacter`, `BandConfiguration`, `EventAnim`,
+    `BandWardrobe`-in-`Crowd.cpp`, `BandTrack::Reset`) and one key in **rb3-render**
+    (`hack_fix_clips_pre_merge` in `BandCharacter::Handle`) had code that compared against an empty Symbol, and
+    none of it ran in the health invocations. These are fixed on branch `symempty`, which gives those TUs their
+    X360 flags and makes main_milo.cpp intern the globals. Per-target table and method:
+    `NATIVE_EMPTY_SYMBOLS_MEASURED_2026-11-22.md`.
 - Everything else either matches retail or differs by design (§3). One more by-design case: the weak
   `MidiParser::sParsers` blob is an **unconstructed** `std::list` in ark/dta/save/song. Retail constructs it in a
   `??__E` dynamic initializer (found among the functions the resolver read). A zeroed libstdc++ list crashes on
@@ -159,7 +171,8 @@ Native holds all of them zero or null.
 - No native build and no health selftest (the coordinator's). Both `.s` files assemble with `clang -c`, with and
   without the preprocessor, and `nm -S` shows the new sizes (256, 0x400, 0x400).
 - No X360 A/B: no `objects.json` TU changed, so the delta is 0 by construction.
-- The `Symbol` class and `sParsers` construction (§1) are left for the coordinator. `rb3_app_link_stubs.*` is
+- The `Symbol` class (since measured and settled: `NATIVE_EMPTY_SYMBOLS_MEASURED_2026-11-22.md`) and
+  `sParsers` construction (§1) are left for the coordinator. `rb3_app_link_stubs.*` is
   untouched.
 - typeinfo/vtable stubs (`dta_link_stubs.s` RndPollable/WorldDir/RndGroup/RndAnimFilter; `m8_link_stubs.cpp`
   BandUser typeinfo, PlayerStatsMsg/PlayerGameplayMsg vtables) carry no retail initial value and were not compared.
