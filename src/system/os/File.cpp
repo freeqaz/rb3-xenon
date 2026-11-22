@@ -63,6 +63,22 @@ std::vector<File *> gFiles(0x80); // 0x10...?
 std::vector<String> gDirList;
 const int File::MaxFileNameLen = 0x100;
 
+// The path tokenizer used by FileMakePath and FileMakePathBuf. Retail calls the
+// CRT strtok (0x8282D8A0), which keeps its cursor PER THREAD (`bl _getptd`,
+// then `lwz r11,0x18(r3)` = ptd->_token). glibc's strtok keeps ONE cursor for
+// the whole process, so natively a ThreadCall worker building a path while the
+// main thread builds another resumes inside the other thread's buffer. Neither
+// loop calls anything else between its strtok calls, so a cursor local to the
+// call returns exactly what retail's per-thread cursor does, for every caller.
+// docs/decomp/FILEMAKEPATH_NEWFILE_2026-11-22.md has the test.
+#ifdef HX_NATIVE
+#define FILE_PATH_TOK_STATE char *pathTokCursor = nullptr
+#define FILE_PATH_TOK(s) strtok_r((s), "/", &pathTokCursor)
+#else
+#define FILE_PATH_TOK_STATE
+#define FILE_PATH_TOK(s) strtok((s), "/")
+#endif
+
 const char *FileRoot() { return gRoot; }
 const char *FileExecRoot() { return gExecRoot; }
 const char *FileSystemRoot() { return gSystemRoot; }
@@ -623,7 +639,8 @@ const char *FileMakePathBuf(const char *root, const char *file, char *buffer) {
     bool curSlash = (*c == '/');
     const char *dirs[32];
     const char **endDir = &dirs[0];
-    char *p = strtok(c, "/");
+    FILE_PATH_TOK_STATE;
+    char *p = FILE_PATH_TOK(c);
     while (p != nullptr) {
         if (*p != '.')
             *endDir++ = p;
@@ -633,7 +650,7 @@ const char *FileMakePathBuf(const char *root, const char *file, char *buffer) {
             else
                 *endDir++ = p;
         }
-        p = strtok(nullptr, "/");
+        p = FILE_PATH_TOK(nullptr);
     }
     MILO_ASSERT(endDir - dirs <= 32, 0x35c);
     if (endDir == dirs) {
@@ -729,7 +746,8 @@ const char *FileMakePath(const char *root, const char *file) {
     // `for(;;) { p = strtok(arg,"/"); if (!p) break; ... }`; and a `goto` into
     // a do/while, which cannot be guard-duplicated at source level at all.
     // MSVC normalises the CFG and re-derives the peel every time. Lane W7-A.
-    char *p = strtok(c, "/");
+    FILE_PATH_TOK_STATE;
+    char *p = FILE_PATH_TOK(c);
     while (p != nullptr) {
         if (*p != '.')
             *endDir++ = p;
@@ -739,7 +757,7 @@ const char *FileMakePath(const char *root, const char *file) {
             else
                 *endDir++ = p;
         }
-        p = strtok(nullptr, "/");
+        p = FILE_PATH_TOK(nullptr);
     }
     MILO_ASSERT(endDir - dirs <= 32, 0x35c);
     if (endDir == dirs) {
@@ -891,6 +909,13 @@ File *NewFile(const char *iFilename, int iMode) {
     // A/B measured -4 matched functions / -88 B (8+16+48+16, exact).
     // ⇒ Locating retail's real NullFile emission site is a PREREQUISITE for
     // finishing this body port, and hence for naming 0x825173E0.
+    // 2026-11-22 (FILEMAKEPATH_NEWFILE doc): retail .rdata holds NO NullFile
+    // vtable -- the only vtables with File::Filename in slot 1 are File's own
+    // (0x82087C1C, every pure slot _purecall) and FileCacheFile's -- and
+    // ~File is header-inline in retail too (vptr stored inline at 0x82518C38,
+    // 0x8252D820, 0x8252E2B4, 0x826FCF38), so moving ~File out of line is NOT
+    // the emission site. Behaviour is unaffected: nothing in this tree (X360
+    // or native) ever sets gNullFiles, so the branch never runs.
     if (gNullFiles) {
         return new NullFile();
     }
