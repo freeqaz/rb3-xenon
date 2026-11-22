@@ -1554,20 +1554,10 @@ bool CamShot::CheckShotStarted() { return mShotStarted; }
 bool CamShot::CheckShotOver(float f) { return !mShotOver && !mLooping && f >= mDuration; }
 
 bool CamShot::PlatformOk() const {
-#if defined(MILO_DEBUG) && defined(HX_NATIVE)
-    if (TheLoadMgr.EditMode() || mPlatform == kPlatformNone
-        || TheLoadMgr.GetPlatform() == kPlatformNone)
-        return true;
-    Platform plat = TheLoadMgr.GetPlatform();
-    if (TheLoadMgr.GetPlatform() == kPlatformPC)
-        plat = kPlatformXBox;
-    return plat == mPlatform;
-#else
     // Retail is built for one platform: a shot is ok if it names none or this one.
     if (mPlatform != kPlatformNone)
         return mPlatform == kPlatformXBox;
     return true;
-#endif
 }
 
 float CamShot::GetDurationSeconds() const {
