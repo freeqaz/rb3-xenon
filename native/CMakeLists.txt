@@ -2452,6 +2452,8 @@ if(RB3X_BUILD_ENGINE)
         # --rings rb3-app). The .s is generated: tools/rb3_app_link_stubs_gen.py.
         ${CMAKE_SOURCE_DIR}/src/rb3_app_link_stubs.cpp
         ${CMAKE_SOURCE_DIR}/src/rb3_app_link_stubs.s
+        # Real native definitions of the globals dta_link_stubs.s used to zero.
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_native_glue.cpp
         # The engine's consumer seams (ShouldSkipMesh, DebugPanel::*).
         ${CMAKE_SOURCE_DIR}/src/rb3_render_glue.cpp
         # W16-TR's store stubs: abort if reached (the store TUs are excluded above).
@@ -2464,6 +2466,13 @@ if(RB3X_BUILD_ENGINE)
     # The real beatmatch/Output.cpp defines TheBeatMatchOutput here, so the
     # M3B shim that stands in for it elsewhere must not meet it.
     list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/beatmatch_native_support.cpp)
+    # A1: dta_link_stubs.s is 63 weak NO-OP stubs (return 0 / zero storage)
+    # written for rb3-dta, where none is on the parse path. rb3-app runs the
+    # real boot, so a silent no-op here could replace live behaviour. It is
+    # dropped; what rb3-app still needs from it is either an aborting
+    # ring-tagged stub in rb3_app_link_stubs.s or a real, commented native body
+    # in rb3_app_native_glue.cpp.
+    list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s)
     rb3_add_executable(rb3-app ${_rb3_app_all})
     list(APPEND MILO_TARGETS rb3-app)
     # RB3_NATIVE_PRESENCEMGR: the real PresenceMgr.cpp is linked (App::App calls
