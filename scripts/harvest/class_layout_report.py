@@ -456,6 +456,22 @@ def build_command(project_dir, obj, cls, scratch_obj, use_pch=False, all_classes
         # try to exec "/Y-" as the program.
         i = next((n for n, a in enumerate(out) if a.lower().endswith("cl.exe")), 0)
         out.insert(i + 1, "/Y-")
+    # ---- /w: compiler WARNINGS are printed into the same stdout stream as the
+    # layout report, and MID-LINE.  ObjMacros.h re-defining Object.h's macros
+    # (C4005) lands wherever the report happens to be, e.g.
+    #   `BandCamShot::$vftable@RndAnimatablsrc/system\obj/ObjMacros.h(45) : warning C4005: ...`
+    # which unhooks the vftable header so its slots parse as MEMBERS of the class
+    # above, or splices into a member row and renames the member (RockCentral's
+    # `mSinks` read as `pragma`).  Where the splice lands depends on the TU's
+    # include order, so one class read as several layouts: 101 of the 141
+    # "conflicts" emit_class_layouts.py reported on 2026-11-22 were this
+    # (docs/decomp/LAYOUT_CONFLICTS_141_2026-11-22.md).  tools/layout_odr.py has
+    # passed /w since 2026-10-06 for the same reason.  /w does not silence
+    # errors, so diagnostics() and the sizeof probes (C2079) are unaffected; the
+    # DRIVER's own `cl : Command line warning` lines are not silenced by /w and
+    # are cut out in run_report().
+    i = next((n for n, a in enumerate(out) if a.lower().endswith("cl.exe")), 0)
+    out.insert(i + 1, "/w")
 
     if all_classes:
         # One compile, every class in the TU.  The flag takes no operand, so the
@@ -502,6 +518,7 @@ EXIT_FOR = {OK: 0, CLASS_ABSENT: 1, COMPILE_FAILED: 3}
 HEADER_AMBIGUOUS_EXIT = 4
 
 # `c1xx : fatal error C1094:`, `foo.cpp(12) : error C2065:`, `LNK1104`, ...
+RE_CLWARN = re.compile(r"cl : Command line warning [^\n]*\n")
 RE_DIAG = re.compile(r"^.*?\b((?:fatal )?error\s+[A-Z]+\d+)\s*:\s*(.*)$", re.M)
 
 
@@ -550,7 +567,9 @@ def run_report(project_dir, cls, tu=None, verbose=False,
         if verbose:
             print("# " + " ".join(shlex.quote(a) for a in argv), file=sys.stderr)
         p = subprocess.run(argv, cwd=cwd, capture_output=True, text=True, env=env)
-    text = p.stdout + p.stderr
+    # The driver warning (`cl : Command line warning D9025 : overriding '/O1'
+    # with '/Od'`, per-TU flag overrides) survives /w and can land mid-report.
+    text = RE_CLWARN.sub("", p.stdout + p.stderr)
     # NEVER fail silently.  This return code used to be discarded, which is why a
     # crashed cl.exe surfaced as "emits nothing, exits 0" instead of an error.
     # subprocess reports signal death as a negative return code; a shell in between
@@ -649,6 +668,7 @@ def probe_true_sizes(project_dir, src, parsed, verbose=False):
 # --------------------------------------------------------------------- parsing
 
 RE_CLASS = re.compile(r"^(?:class|struct|union)\s+(\S+)\s+size\((\d+)\):")
+RE_CLASS_M = re.compile(RE_CLASS.pattern, re.M)
 RE_ROW = re.compile(r"^\s*(\d+|)\s*((?:\|\s*)+|\+---.*)(.*)$")
 RE_BASE_OPEN = re.compile(r"^\+---\s*\((?:base class|virtual base|vtordisp for vbase)\s+(\S+?)\)")
 RE_VFT = re.compile(r"^(\S+)::\$vf(?:table|tables?)@?(\S*)@?:")
