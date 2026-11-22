@@ -2290,6 +2290,17 @@ set(RB3_APP_SOURCES
     # rb3_hash_symbol_native.h (force-included, flags below) supplies the
     # HX_NATIVE arm FixedSizeSaveableStream.h already carries.
     ${REPO_ROOT}/src/band3/meta_band/NameGenerator.cpp
+    # A6: with MetaPanel done, UIManager::Init's UI script DTA-`new`s the two
+    # campaign leaderboard panels (CampaignGoalsLeaderboardPanel::NewObject was
+    # the a6-failing-tu stop; retail ctors 0x825EFED8 / 0x825F11F8 = UIPanel
+    # ctor, provider = null, then goal = gNullStr / mScoreType = kScoreBand (10),
+    # mUseDLC = false, as the source). Each TU failed natively only on
+    # `(MILO_ASSERT(p, n), true)` inside HANDLE_ACTION_IF: the native
+    # MILO_ASSERT is a do/while statement. rb3_assert_expr_native.h
+    # (force-included, flags below) swaps in an expression form with the same
+    # test and failure path. No src/ edit.
+    ${REPO_ROOT}/src/band3/meta_band/CampaignGoalsLeaderboardPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CampaignCareerLeaderboardPanel.cpp
     # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
     # constructs TheBandUI at static init; natively TheUI was the engine's weak
     # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.
@@ -2580,6 +2591,12 @@ if(RB3X_BUILD_ENGINE)
     set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/NameGenerator.cpp
         PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC"
         COMPILE_OPTIONS "-include;${CMAKE_SOURCE_DIR}/src/rb3_hash_symbol_native.h")
+    # A6: the campaign leaderboard panels: X360's extra_cflags
+    # (RB3_HANDLE_LOCAL_STATIC) plus the expression-form native MILO_ASSERT.
+    set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/CampaignGoalsLeaderboardPanel.cpp
+        ${REPO_ROOT}/src/band3/meta_band/CampaignCareerLeaderboardPanel.cpp
+        PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC"
+        COMPILE_OPTIONS "-include;${CMAKE_SOURCE_DIR}/src/rb3_assert_expr_native.h")
     # A2: the retail tables and registrars; rb3_app_gates.cpp calls them only
     # with a title update mounted (RB3_TITLE_UPDATE_DIR).
     list(APPEND _rb3_app_all ${REPO_ROOT}/src/ChecksumData_xbox.cpp)
