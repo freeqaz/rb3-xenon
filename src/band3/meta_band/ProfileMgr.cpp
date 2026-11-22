@@ -111,15 +111,13 @@ void ProfileMgr::Init() {
     }
     SetName("profile_mgr", ObjectDir::Main());
     TheNetSession->AddSink(this);
-#ifndef HX_NATIVE
-    // Off-path online/Wii globals (network/ TheServer; gated-out TheGameMicManager;
-    // excluded SaveLoadManager) — their MsgSource base is unconstructed natively, so
-    // AddSink faults. Mirror BandUI::Init: keep the real natives (TheNetSession,
-    // TheRockCentral, ThePlatformMgr), gate the rest.
+    // TheServer, TheGameMicManager and TheSaveLoadMgr exist natively only in the
+    // real App target (rb3-render also compiles this TU, without them).
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_APP)
     TheServer.AddSink(this, UserLoginMsg::Type());
 #endif
     TheRockCentral.AddSink(this);
-#ifndef HX_NATIVE
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_APP)
     TheGameMicManager->AddSink(this, GameMicsChangedMsg::Type());
     TheSaveLoadMgr->AddSink(this, SaveLoadMgrStatusUpdateMsg::Type());
 #endif

@@ -81,8 +81,10 @@ TambourineManager::~TambourineManager() {
 }
 
 void TambourineManager::PostLoad() {
-#ifndef HX_NATIVE
-    // Headless: no ObjectDir::Main() "tambourine" MidiParser object.
+    // Retail 0x826FA1F0 subscribes to the "tambourine" MidiParser
+    // (config/midi_parsers.dta, PART VOCALS). The headless vocal harnesses have
+    // no such parser in ObjectDir::Main(), so only the real App target runs it.
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_APP)
     mTambourineParser = ObjectDir::Main()->Find<MidiParser>("tambourine", true);
     mTambourineParser->AddSink(this);
 #endif
@@ -393,9 +395,9 @@ DataNode TambourineManager::OnPlayTambourine(DataArray *d) {
         seq_name = "percussion1.cue";
     }
     MILO_ASSERT(!seq_name.Null(), 0x1ef);
-#ifndef HX_NATIVE
-    // Headless: no synth Sequence playback (percussion cue is audio-only). The
-    // MIDI tambourine sink is not wired in the synthetic-mic run.
+    // Retail 0x826F9BC8 plays the percussion cue from the bank. The headless
+    // harnesses have no synth bank, so only the real App target plays it.
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_APP)
     RELEASE(mTambourineSequence);
     Sequence *seq = mBank->Find<Sequence>(seq_name.Str(), true);
     MILO_ASSERT(seq, 0x1f5);

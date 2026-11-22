@@ -409,9 +409,12 @@ void LoadMgr::PollUntilLoaded(Loader *ldr1, Loader *ldr2) {
 // `if (ldr1->mLoadCount != loadCount) break;` re-checked after each
 // PollFrontLoader() -- guards against a nested PollUntilLoaded (invoked from
 // inside PollFrontLoader) racing this one's wait.
+#endif
+    // The re-entrance stamp is retail's, so the native build runs it too (lane
+    // skipped): a nested PollUntilLoaded on the same loader re-stamps it, and
+    // this outer wait then stops instead of polling on behind the inner one.
     int loadCount = ++gLoadCount;
     ldr1->mLoadCount = loadCount;
-#endif
 #ifdef HX_WEB
     int maxIter = 10000; // Safety valve: don't block browser event loop forever
 #endif
@@ -442,10 +445,8 @@ void LoadMgr::PollUntilLoaded(Loader *ldr1, Loader *ldr2) {
         PollFrontLoader();
         if (!ListFind(mLoading, ldr1))
             break;
-#ifndef HX_NATIVE
         if (ldr1->mLoadCount != loadCount)
             break;
-#endif
         if (mLoading.front()->IsLoaded()) {
             mLoading.pop_front();
         }

@@ -2815,8 +2815,15 @@ if(RB3X_BUILD_ENGINE)
     # (other native targets compile that TU without the Xbox half).
     # RB3_NATIVE_SYSTEM_NET_MGRS: NetCacheMgr_Xbox.cpp is linked, so the native
     # SystemInit runs retail's NetCacheMgrInit and ThePlatformMgr.Init (System.cpp).
+    # RB3_NATIVE_APP: this target runs the real App::Init, which constructs
+    # TheNet (session, searcher, sync store, TheServer), TheGameMicManager and
+    # TheSaveLoadMgr, and links GamePanel.cpp (TheGamePanel). Game-layer TUs that
+    # the headless harnesses (rb3-score*, rb3-vocal*, rb3-harmony, rb3-render) also
+    # compile run their retail subscriptions to those objects only here
+    # (lane skipped, docs/decomp/NATIVE_SKIPPED_RETAIL_BLOCKS_2026-11-22.md).
     target_compile_definitions(rb3-app PRIVATE RB3_ENGINE_RENDER=1 RB3_NATIVE_PRESENCEMGR
-        RB3_NATIVE_AUDITION RB3_NATIVE_PROFILEPICTURE RB3_NATIVE_SYSTEM_NET_MGRS)
+        RB3_NATIVE_AUDITION RB3_NATIVE_PROFILEPICTURE RB3_NATIVE_SYSTEM_NET_MGRS
+        RB3_NATIVE_APP)
     target_link_libraries(rb3-app PRIVATE milo-engine ZLIB::ZLIB)
     target_link_options(rb3-app PRIVATE -fuse-ld=lld -Wl,--error-limit=0
         -Wl,--wrap=_ZN6Symbol4InitEv)

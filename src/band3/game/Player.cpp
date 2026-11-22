@@ -958,7 +958,10 @@ bool Player::DeployBandEnergyIfPossible(bool b) {
 }
 
 void Player::Hit() {
-#ifndef HX_NATIVE
+    // Retail 0x826A49A0: "p<slot>_hit" goes to TheGamePanel, which forwards it to
+    // the venue's p0_hit..p3_hit EventTriggers. The headless scoring harnesses
+    // have no GamePanel or BandUser, so only the real App target runs it natively.
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_APP)
     char slotStr[] = "p0_hit";
     slotStr[1] = (char)(mUser->GetSlot() + 0x30);
     static Message hit("");

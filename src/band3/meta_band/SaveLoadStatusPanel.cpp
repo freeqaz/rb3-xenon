@@ -21,13 +21,9 @@ void SaveLoadStatusPanel::FinishLoad() {
     start->SetAnimRate(RndAnimatable::k30_fps_ui);
     finish->SetAnimRate(RndAnimatable::k30_fps_ui);
     UIPanel::FinishLoad();
-#ifndef HX_NATIVE
-    // TheSaveLoadMgr (SaveLoadManager) is in _NATIVE_FORK_EXCLUDE -> the pointer is
-    // a zeroed DATA stub (null) on native, so AddSink derefs null. The save/load
-    // status panel (Wii memcard write icon) has no offline meaning. Mirrors the
-    // BandUI::Init / ProfileMgr::Init TheSaveLoadMgr AddSink gating.
+    // Natively only rb3-app compiles this TU, and its App::Init has built
+    // TheSaveLoadMgr: the panel hears the save start/finish updates it shows.
     TheSaveLoadMgr->AddSink(this);
-#endif
 }
 
 void SaveLoadStatusPanel::Draw() {

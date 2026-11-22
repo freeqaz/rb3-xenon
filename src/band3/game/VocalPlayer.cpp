@@ -227,9 +227,11 @@ void VocalPlayer::SetTrack(int trk) {
 }
 
 void VocalPlayer::PostLoad(bool b1) {
-#ifndef HX_NATIVE
-    // Headless: no ObjectDir::Main() "play_tambourine" MidiParser object; the
-    // tambourine MIDI sink isn't wired in the synthetic-mic run.
+    // Retail 0x826EACE8 subscribes to the "play_tambourine" MidiParser
+    // (config/midi_parsers.dta), which drives the tambourine sections. The
+    // headless vocal harnesses have no such parser in ObjectDir::Main(), so only
+    // the real App target runs it natively.
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_APP)
     MidiParser *midiParser = ObjectDir::Main()->Find<MidiParser>("play_tambourine", true);
     midiParser->AddSink(this);
 #endif
@@ -1857,7 +1859,10 @@ bool VocalPlayer::AllowWarningState() const {
 }
 
 void VocalPlayer::OnGameOver() {
-#ifndef HX_NATIVE
+    // Retail 0x826E5108: TheGameMicManager vcall (slot 2, SetPlayback(false))
+    // unless the song ends with an endgame sequence. TheGameMicManager exists
+    // natively only in the real App target.
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_APP)
     if (!MetaPerformer::Current()->SongEndsWithEndgameSequence()) {
         TheGameMicManager->SetPlayback(false);
     }
