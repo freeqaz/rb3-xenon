@@ -59,9 +59,17 @@
 // trick tightly around just this include -- CreditsPanel.h is #pragma once and only
 // reached here, so this affects nothing else in this 60-header TU.
 #include "macros.h"
+#ifndef HX_NATIVE
 #undef MILO_DEBUG
+#endif
 #include "meta/CreditsPanel.h"
+#ifndef HX_NATIVE
 #define MILO_DEBUG
+#endif
+// Natively CreditsPanel.h gates mCheatOn on MILO_DEBUG && HX_NATIVE and
+// CreditsPanel.cpp keeps MILO_DEBUG, so the undef above would give this TU a
+// second CreditsPanel layout (layout_odr SPLIT, first seen when rb3-app linked
+// both TUs). X360 tokens are unchanged.
 #include "meta/HAQManager.h"
 #include "meta/HeldButtonPanel.h"
 #include "meta/MemcardMgr.h"
