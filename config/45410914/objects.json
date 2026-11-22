@@ -1614,6 +1614,8 @@
                 ]
             },
             "band3/meta_band/PlayerLeaderboards.cpp": "NonMatching",
+            "band3/meta_band/CampaignLeaderboards.cpp": "NonMatching",
+            "band3/meta_band/AssetOffer.cpp": "NonMatching",
             "band3/meta_band/CalibrationPanel.cpp": {
                 "status": "NonMatching",
                 "extra_cflags": [

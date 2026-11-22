@@ -8757,6 +8757,14 @@ band3/meta_band/StandIn.cpp:
 	.pdata      start:0x822266C8 end:0x82226718
 	.text       start:0x825EC4F8 end:0x825EC840
 
+band3/meta_band/AssetOffer.cpp:
+	.pdata      start:0x8222EE50 end:0x8222EE90
+	.text       start:0x8266B4C0 end:0x8266B7D0
+
+band3/meta_band/CampaignLeaderboards.cpp:
+	.pdata      start:0x8222EE90 end:0x8222EF08
+	.text       start:0x8266B7D0 end:0x8266BDC8
+
 band3/meta_band/AssetStore.cpp:
 	.pdata      start:0x82226718 end:0x82226760
 	.pdata      start:0x82226760 end:0x822267C0
