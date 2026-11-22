@@ -129,6 +129,9 @@ not reached in either case.
 - **Pre-existing `CreateThread` shim hazard, noticed and not fixed.** `ThreadStartRoutine` writes
   the exit code into the handle entry, which a `CloseHandle` made while the thread runs has freed.
   The new exit-code record does not depend on the entry.
+  Fixed afterwards on branch `threadshim`: handles are now references to shared objects and
+  a running thread holds its own; `tools/xdk_shim_thread_gate.sh` (ASan) reproduces this
+  use-after-free and six related handle/thread defects on the old shim.
 - **`tools/native_health.sh --selftest`: not run.** The branch is not being landed. Run it before
   merging. The `OpenThread`/`GetExitCodeThread` and MakeString changes reach every target that
   links `xdk_shims.cpp` or compiles `utl/MakeString.cpp`. In those targets MakeString's strong
