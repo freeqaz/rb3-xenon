@@ -44,7 +44,6 @@ unsigned char RndBitmap::PixelIndex(int i1, int i2) const {
 // no-op in this build; the name CRC only exists transiently during serialization.
 void RndBitmap::SetName(const Hmx::CRC &crc) {}
 
-#ifndef HX_NATIVE
 // Retail (0x823FC9A8): no Tell(), no rev-2 name CRC (a later format), and the
 // header pad is `rev ? 0x13 : 6` bytes.
 BinStream &RndBitmap::LoadHeader(BinStream &bs, u8 &numMips) {
@@ -65,37 +64,6 @@ BinStream &RndBitmap::LoadHeader(BinStream &bs, u8 &numMips) {
     bs.Read(pad, rev ? 0x13 : 6);
     return bs;
 }
-#else
-BinStream &RndBitmap::LoadHeader(BinStream &bs, u8 &numMips) {
-    u8 rev, h;
-    u8 pad[32];
-    bs.Tell();
-    bs >> rev;
-    if (rev > 1) {
-        Hmx::CRC name; // retail: name CRC read into a local, not a stored member
-        bs.ReadEndian(&name.mCRC, 4);
-    }
-    bs >> mBpp;
-    if (rev > 0)
-        bs >> mOrder;
-    else {
-        bs >> h;
-        mOrder = h;
-    }
-    bs >> numMips;
-    bs >> mWidth;
-    bs >> mHeight;
-    bs >> mRowBytes;
-
-    int count;
-    if (rev == 0) {
-        count = 6;
-    } else
-        count = rev == 1 ? 0x13 : 0xF;
-    bs.Read(pad, count);
-    return bs;
-}
-#endif
 
 BinStream &RndBitmap::SaveHeader(BinStream &bs) const {
     static u8 pad[0x13];

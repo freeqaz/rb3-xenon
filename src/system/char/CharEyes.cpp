@@ -859,12 +859,19 @@ Vector3 CharEyes::GenerateDartOffset() {
 }
 
 void CharEyes::Replace(ObjRef *ref, Hmx::Object *obj) {
-#ifndef HX_NATIVE
     // Retail (0x823889B8): CharWeightable first, then every eye and
     // interest whose pointee is the dying object is retargeted to `obj` (cast
     // to the slot's type) and dropped from its vector if that leaves it null.
+    // Native: ObjVector's iterator is not a raw pointer there (X360 STLport's is).
+#ifdef HX_NATIVE
+    typedef ObjVector<EyeDesc>::iterator EyeIt;
+    typedef ObjVector<CharInterestState>::iterator InterestIt;
+#else
+    typedef EyeDesc *EyeIt;
+    typedef CharInterestState *InterestIt;
+#endif
     CharWeightable::Replace(ref, obj);
-    for (EyeDesc *it = mEyes.begin(); it != mEyes.end();) {
+    for (EyeIt it = mEyes.begin(); it != mEyes.end();) {
         if (RefIs(ref, it->mEye))
             it->mEye.SetOwnerObj(dynamic_cast<CharLookAt *>(obj));
         if (!it->mEye)
@@ -872,7 +879,7 @@ void CharEyes::Replace(ObjRef *ref, Hmx::Object *obj) {
         else
             ++it;
     }
-    for (CharInterestState *it = mInterests.begin(); it != mInterests.end();) {
+    for (InterestIt it = mInterests.begin(); it != mInterests.end();) {
         if (RefIs(ref, it->mInterest))
             it->mInterest.SetOwnerObj(dynamic_cast<CharInterest *>(obj));
         if (!it->mInterest)
@@ -880,49 +887,6 @@ void CharEyes::Replace(ObjRef *ref, Hmx::Object *obj) {
         else
             ++it;
     }
-#else
-    EyeDesc *eyeEnd = mEyes.end();
-    EyeDesc *eyeBegin = mEyes.begin();
-    int eyeCount = (int)((char *)eyeEnd - (char *)eyeBegin) / (int)sizeof(EyeDesc);
-    if (eyeCount != 0) {
-        int eyeOff = (int)((char *)ref - (char *)eyeBegin);
-        if (eyeOff >= 0) {
-            int eyeTotal = eyeCount * (int)sizeof(EyeDesc);
-            if ((unsigned)eyeOff < (unsigned)eyeTotal) {
-                int eyeIdx = eyeOff / (int)sizeof(EyeDesc);
-                if (eyeOff == eyeIdx * (int)sizeof(EyeDesc)) {
-                    EyeDesc *desc = eyeBegin + eyeIdx;
-                    if (desc != mEyes.end()) {
-                        if (!desc->mEye.SetObj(obj))
-                            mEyes.erase(mEyes.begin() + eyeIdx);
-                        return;
-                    }
-                }
-            }
-        }
-    }
-    CharInterestState *stateEnd = mInterests.end();
-    CharInterestState *stateBegin = mInterests.begin();
-    int stateCount = (int)((char *)stateEnd - (char *)stateBegin) / (int)sizeof(CharInterestState);
-    if (stateCount != 0) {
-        int stateOff = (int)((char *)ref - (char *)stateBegin);
-        if (stateOff >= 0) {
-            int stateTotal = stateCount * (int)sizeof(CharInterestState);
-            if ((unsigned)stateOff < (unsigned)stateTotal) {
-                int stateIdx = stateOff / (int)sizeof(CharInterestState);
-                if (stateOff == stateIdx * (int)sizeof(CharInterestState)) {
-                    CharInterestState *state = stateBegin + stateIdx;
-                    if (state != mInterests.end()) {
-                        if (!state->mInterest.SetObj(obj))
-                            mInterests.erase(mInterests.begin() + stateIdx);
-                        return;
-                    }
-                }
-            }
-        }
-    }
-    CharWeightable::Replace(ref, obj);
-#endif
 }
 
 // Retail shape (TU5): the focus interest is taken only when it is inside the

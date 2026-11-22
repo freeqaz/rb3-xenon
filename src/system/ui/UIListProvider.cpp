@@ -67,29 +67,6 @@ void UIListProvider::UpdateExtendedCustom(int, int, Hmx::Object *obj) const {
 
 void DataProvider::Text(int i, int j, UIListLabel *listlabel, UILabel *label) const {
     DataNode &n = mData->Node(mOffset + j);
-#ifdef HX_NATIVE
-    if (n.Type() == kDataArray) {
-        if (!TheLoadMgr.EditMode() && unkd) {
-            Message msg("set_token_fmt", n);
-            label->Handle(msg, false);
-        } else if (TheLoadMgr.EditMode()) {
-            label->SetEditText(Localize(n.Array()->Sym(0), nullptr));
-        } else {
-            label->SetTextToken(n.Array()->Sym(0));
-        }
-    } else {
-        if (!IsActive(j)) {
-            label->SetTextToken(gNullStr);
-        } else if (TheLoadMgr.EditMode()) {
-            label->SetEditText(Localize(n.ForceSym(), nullptr));
-        } else {
-            label->SetTextToken(n.ForceSym());
-        }
-    }
-    if (mFluidWidth) {
-        const_cast<DataProvider *>(this)->mWidths[j] = label->TextObj()->BoundsRight();
-    }
-#else
     // Retail 0x82801388: no edit-mode arms and no IsActive test; a fluid-width
     // list records the label's draw width.
     if (n.Type() == kDataArray) {
@@ -105,7 +82,6 @@ void DataProvider::Text(int i, int j, UIListLabel *listlabel, UILabel *label) co
     if (mFluidWidth) {
         const_cast<DataProvider *>(this)->mWidths[j] = label->GetDrawWidth();
     }
-#endif
 }
 
 float DataProvider::GapSize(int, int i, int, int) const {

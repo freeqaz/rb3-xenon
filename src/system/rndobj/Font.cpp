@@ -155,7 +155,6 @@ void KerningTable::Load(BinStream &bs, RndFont *f) {
 
 BitmapLocker::BitmapLocker(RndFont *font) : mTexture(0), mPbm(0) {
     mTexture = font->ValidTexture();
-#ifndef HX_NATIVE
     // Retail (0x82472870) always locks the texture's bitmap; the loose-.bmp
     // development path is absent.
     if (mTexture) {
@@ -164,24 +163,6 @@ BitmapLocker::BitmapLocker(RndFont *font) : mTexture(0), mPbm(0) {
             mPbm = &mBm;
         }
     }
-#else
-    if (mTexture) {
-        const char *filename = mTexture->File().c_str();
-        int len = strlen(filename);
-        if (UsingCD() || len < 4 || stricmp(filename + len - 4, ".bmp")) {
-            mTexture->LockBitmap(mBm, 3);
-            if (mBm.Pixels()) {
-                mPbm = &mBm;
-            }
-        } else {
-            mBm.LoadBmp(filename, false, true);
-            if (mBm.Pixels()) {
-                mPbm = &mBm;
-            }
-            mTexture = nullptr;
-        }
-    }
-#endif
 }
 
 BitmapLocker::~BitmapLocker() {
