@@ -47,6 +47,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstring>
+#include <cstdlib>
 
 const char *gNullStr = "";
 
@@ -107,16 +108,34 @@ int Hx_snprintf(char *c, unsigned int ui, char const *cc, ...) {
     va_start(args, cc);
     int ret = vsnprintf(c, ui, cc, args);
 #ifdef HX_NATIVE
-    // MSVC's vsnprintf (the CRT retail links, pre-C99) returns -1 when the
-    // output does not fit; glibc's returns the length it WOULD have written,
-    // which can exceed ui. Callers (FormatString's `mBufSize -= n`,
-    // SuperFormatString's `tempFmtPos += n`) advance by the result, so the
-    // glibc value walks them past the end of their buffers. Report truncation
-    // the MSVC way. Exact fit (ret == ui) differs by one byte: MSVC writes all
-    // ui characters with no terminator, glibc writes ui-1 and a terminator;
-    // the native arm keeps the terminator and reports -1
+    // Retail's CRT (_snprintf 0x8282D540, vsnprintf 0x8282D750 -> _vsnprintf_l
+    // 0x8282D668) formats into a string FILE whose count is ui: output longer
+    // than ui makes _output return -1, an exact fit returns ui with no
+    // terminator (the trailing `--_cnt >= 0` store at 0x8282D60C fails), and
+    // shorter output is terminated. glibc's C99 vsnprintf instead returns the
+    // length it WOULD have written. Retail callers advance by the result
+    // (FormatString::operator<< 0x827C40E8: `subf` of the result from mBufSize
+    // at 0x827C4140), so the glibc value drove mBufSize negative and the next
+    // write past the end of the buffer. Native returns what retail returns;
+    // on truncation the buffer is terminated, as the X360 arm below does
     // (docs/decomp/NATIVE_LP64_CRT_TRIAGE_2026-11-22.md).
-    if (ret < 0 || (unsigned int)ret >= ui) {
+    va_end(args);
+    if (ret >= 0 && (unsigned int)ret > ui) {
+        ret = -1;
+    } else if (ret > 0 && (unsigned int)ret == ui) {
+        // glibc wrote ui-1 characters and a terminator; retail writes all ui
+        // and no terminator. Format once more with room for the last one.
+        char *full = (char *)malloc(ui + 1);
+        if (full) {
+            va_start(args, cc);
+            vsnprintf(full, ui + 1, cc, args);
+            va_end(args);
+            memcpy(c, full, ui);
+            free(full);
+        }
+        return ret;
+    }
+    if (ret < 0) {
         if (ui != 0)
             c[ui - 1] = '\0';
         return -1;

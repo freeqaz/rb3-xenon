@@ -1,4 +1,5 @@
 #include "meta_band/EditSetlistPanel.h"
+#include "utl/CrtCompat.h"
 #include "meta_band/MusicLibrary.h"
 #include "game/BandUser.h"
 #include "game/Defines.h"
@@ -474,28 +475,15 @@ DataNode EditSetlistPanel::OnMsg(const DWCProfanityResultMsg &msg) {
     return DataNode(1);
 }
 
-#ifdef HX_NATIVE
-// The X360 arm measures its UTF-16 buffers with wcslen, which reads 2-byte
-// units there. A Linux wchar_t is 4 bytes, so wcslen would pair units and
-// read past the terminator; count 16-bit units instead
-// (docs/decomp/NATIVE_LP64_CRT_TRIAGE_2026-11-22.md).
-static unsigned int NativeUtf16Len(const unsigned short *s) {
-    unsigned int n = 0;
-    while (s[n] != 0)
-        n++;
-    return n;
-}
-#endif
-
 void EditSetlistPanel::VerifyStrings(const char *name, const char *desc) {
 #ifdef HX_NATIVE
     NativeStringData *sd = new NativeStringData[2];
     sd[0].str = new unsigned short[strlen(name) + 1];
     UTF8toUTF16(sd[0].str, name);
-    sd[0].len = NativeUtf16Len(sd[0].str) + 1;
+    sd[0].len = HX_CRT_WCSLEN(sd[0].str) + 1;
     sd[1].str = new unsigned short[strlen(desc) + 1];
     UTF8toUTF16(sd[1].str, desc);
-    sd[1].len = NativeUtf16Len(sd[1].str) + 1;
+    sd[1].len = HX_CRT_WCSLEN(sd[1].str) + 1;
     unk90 = (unsigned short **)sd;
     // The response header, then one result per string (retail: 6 + 2*4 = 14).
     const unsigned int cbResults = sizeof(NativeVerifyResponse) + 2 * sizeof(unsigned int);

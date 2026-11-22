@@ -1,4 +1,5 @@
 #include "os/PlatformMgr.h"
+#include "utl/CrtCompat.h"
 #include <cstdlib>
 #include <cstring>
 #include <cwchar>
@@ -192,7 +193,7 @@ void PlatformMgr::SetPadPresence(int padNum, int i2) const {
 
 void PlatformMgr::SetPadProperty(int padNum, int propertyId, unsigned short const *value) const {
     if (padNum != -1 && ThePlatformMgr.IsSignedIn(padNum)) {
-        int byteLength = wcslen((const wchar_t *)value) * 2;
+        int byteLength = HX_CRT_WCSLEN((const wchar_t *)value) * 2;
         if (byteLength > 0x7E) {
             byteLength = 0x7E;
         }

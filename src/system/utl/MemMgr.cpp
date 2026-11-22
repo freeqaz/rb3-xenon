@@ -91,17 +91,12 @@ std::vector<String> gUseLowestMipExceptions;
 // gThreadIds sits in .data (0x82C78E0C) initialised { -1, 0, 0, 0, 0, 0 },
 // the same shape as MakeString.cpp's per-thread table.
 static int gThreadIds[MAX_BUF_THREADS] = { -1 };
-// The thread-table walks below step through gThreadIds (an int[6]) with an
-// `unsigned long *`: one 4-byte word per step on X360. On a 64-bit host that
-// pointer reads two ids per step with an 8-byte stride, so a second thread is
-// never found again, re-registers on every switch and runs the table past
-// MAX_BUF_THREADS. Natively the walk uses a 4-byte word
-// (docs/decomp/NATIVE_LP64_CRT_TRIAGE_2026-11-22.md). X360 type unchanged.
-#ifdef HX_NATIVE
-typedef DWORD ThreadIdWord;
-#else
-typedef unsigned long ThreadIdWord;
-#endif
+// The thread-table walks below step through gThreadIds (an int[6]) with a
+// DWORD *, which is `unsigned long *` on X360 (the same type, so the match
+// build is unchanged). Natively `unsigned long` is 8 bytes: that pointer read
+// two ids per step with an 8-byte stride, so a second thread was never found
+// again and re-registered on every switch, running the table past
+// MAX_BUF_THREADS (docs/decomp/NATIVE_LP64_CRT_TRIAGE_2026-11-22.md).
 // Retail .data 0x82C78E24, directly after gThreadIds, holds -1 (MemInit sets it
 // to 0). It was declared in MemHeap.h but never defined here.
 int MemHeapStack::sDefaultHeap = -1;
@@ -1134,11 +1129,11 @@ MemHeapStack &ThreadMemStack(bool createIfMissing) {
     } else {
         DWORD currentThreadId = GetCurrentThreadId();
         idx = gThreadBufCurrentIndex;
-        if ((ThreadIdWord)gThreadIds[gThreadBufCurrentIndex] != currentThreadId) {
-            ThreadIdWord *threadIdSlot = (ThreadIdWord *)&gThreadIds[0];
+        if ((DWORD)gThreadIds[gThreadBufCurrentIndex] != currentThreadId) {
+            DWORD *threadIdSlot = (DWORD *)&gThreadIds[0];
             idx = 0;
             if (gNumThreads > 0) {
-                ThreadIdWord *slot = threadIdSlot;
+                DWORD *slot = threadIdSlot;
                 do {
                     unsigned long tid = GetCurrentThreadId();
                     if (*slot == tid)
@@ -1158,7 +1153,7 @@ MemHeapStack &ThreadMemStack(bool createIfMissing) {
                     // itself, which stays as the base for the `gThreadIds[cur] = ...` stores
                     // further down. Incrementing threadIdSlot keeps a second copy live across
                     // the assert block and costs one more callee-saved register.
-                    ThreadIdWord *validateSlot = threadIdSlot;
+                    DWORD *validateSlot = threadIdSlot;
                     do {
                         if (!ValidateThreadId(*validateSlot)) {
                             MILO_ASSERT(gThreadBuf[cur].mSize == 0, 0x12e);

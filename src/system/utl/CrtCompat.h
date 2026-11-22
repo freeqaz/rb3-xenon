@@ -32,9 +32,22 @@ inline int HxCrtAtoi(const char *s) {
     return (int)v;
 }
 
+// Retail wcslen (0x8282D640) steps `lhz` / `addi r11,r11,2`: it counts 16-bit
+// units, the X360 wchar_t. A Linux wchar_t is 4 bytes, so glibc's wcslen over a
+// UTF-16 buffer reads two units per step and can run past the terminator. This
+// counts 16-bit units the retail way.
+inline unsigned int HxCrtUtf16Len(const unsigned short *s) {
+    unsigned int n = 0;
+    while (s[n] != 0)
+        n++;
+    return n;
+}
+
 #define HX_CRT_RAND() HxCrtRand()
 #define HX_CRT_ATOI(s) HxCrtAtoi(s)
+#define HX_CRT_WCSLEN(s) HxCrtUtf16Len((const unsigned short *)(s))
 #else
 #define HX_CRT_RAND() rand()
 #define HX_CRT_ATOI(s) atoi(s)
+#define HX_CRT_WCSLEN(s) wcslen(s)
 #endif

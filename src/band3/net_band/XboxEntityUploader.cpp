@@ -1,4 +1,5 @@
 #include "net_band/XboxEntityUploader.h"
+#include "utl/CrtCompat.h"
 #include "meta_band/BandProfile.h"
 #include "meta_band/SavedSetlist.h"
 #include "net_band/RockCentralMsgs.h"
@@ -90,7 +91,7 @@ void XboxEntityUploader::StartStringVerify() {
         UTF8toUTF16((unsigned short *)str, mStringChecks->Array(i)->Str(2));
         mStringData[i - mBatchStart].pszString = str;
         mStringData[i - mBatchStart].wStringSize =
-            wcslen(mStringData[i - mBatchStart].pszString) + 1;
+            HX_CRT_WCSLEN(mStringData[i - mBatchStart].pszString) + 1;
     }
     mVerifyResultsSize = mBatchSize * 4 + 6;
     mVerifyResults = (STRING_VERIFY_RESPONSE *)new char[mVerifyResultsSize];
