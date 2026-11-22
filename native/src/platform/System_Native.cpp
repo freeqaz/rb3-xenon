@@ -128,6 +128,20 @@ void NativeArchiveInit() {
     // (os/Archive.cpp), never from TheLoadMgr's platform; so does this, so a
     // driver that sets another load platform still mounts the disc's archive
     // (lane W16-UC).
+    // A2 (rb3-app only): a title-update directory is configured (the weak
+    // hook is defined in rb3_app_native_glue.cpp, RB3_TITLE_UPDATE_DIR). Run
+    // the RETAIL ArchiveInit (os/Archive.cpp): it reads TheContentMgr's
+    // TitleContentPath, mounts <dir>/gen/patch_xbox.hdr when it exists,
+    // SetLocationHardDrive's the patch's ark parts under <dir>, and Merges the
+    // patch over the disc's main_xbox, so a patched file wins.
+    extern const char *Rb3NativeTitleContentPath() __attribute__((weak));
+    if (Rb3NativeTitleContentPath && Rb3NativeTitleContentPath()) {
+        printf("DC3 Native: title update dir %s: retail ArchiveInit (patch merged ahead of disc)\n",
+               Rb3NativeTitleContentPath());
+        ArchiveInit();
+        printf("DC3 Native: Archive loaded, %d ark files\n", TheArchive->NumArkFiles());
+        return;
+    }
     Symbol plat = PlatformSymbol(kPlatformXBox);
     const char *mainArk = MakeString("gen/main_%s", plat);
     printf("DC3 Native: Loading archive %s.hdr\n", mainArk);

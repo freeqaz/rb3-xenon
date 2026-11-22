@@ -34,8 +34,28 @@ CriticalSection *gMemStackLock = nullptr; // ring: native-real
 // content storage: a base ContentMgr means no content packages, no refresh in
 // flight, an on-disc-only session. Same binding bandtrack_link_stubs.cpp
 // (rb3-render's phase stubs) has used since W16-TJ.
-static ContentMgr gRb3AppContentMgr;
+//
+// A2: TitleContentPath. Retail ContentMgr_Xbox returns ContentPath(0), the
+// mounted title-update package, and ArchiveInit (os/Archive.cpp) merges
+// <path>/gen/patch_xbox.hdr ahead of the disc when it exists. Natively the
+// title update is opt-in: RB3_TITLE_UPDATE_DIR names the directory that holds
+// gen/patch_xbox.hdr + gen/patch_xbox_0.ark (the official TU5 package is
+// /home/free/code/milohax/rb3-xenon/orig/45410914/tu5-package). Unset or
+// empty = no title update, which is what the base class answers.
+#include <cstdlib>
+class Rb3AppContentMgr : public ContentMgr {
+public:
+    virtual const char *TitleContentPath() { // ring: native-real
+        const char *dir = std::getenv("RB3_TITLE_UPDATE_DIR");
+        return (dir && *dir) ? dir : nullptr;
+    }
+};
+static Rb3AppContentMgr gRb3AppContentMgr;
 ContentMgr &TheContentMgr = gRb3AppContentMgr; // ring: native-real
+
+// NativeArchiveInit (platform/System_Native.cpp, every target) asks this weak
+// hook; only rb3-app defines it. Non-null = run the retail ArchiveInit.
+const char *Rb3NativeTitleContentPath() { return TheContentMgr.TitleContentPath(); } // ring: native-real
 
 // Retail: WebSvcMgrCurl.cpp binds TheWebSvcMgr to the curl web-service
 // manager; rb3-app excludes it (online ring, curl). An offline WebSvcMgr: the
@@ -85,8 +105,16 @@ extern "C" void OutputDebugStringA(const char *msg) { // ring: native-real
 //   2. natively CSHA1 is wrong on LP64/little-endian (SHA1.h `unsigned long
 //      l[16]` overruns m_workspace into m_block: segfault in
 //      CSHA1::Transform). Fix drafted, not landed: a1/sha1_lp64_fix.patch.
-void SetFileChecksumData() {} // ring: native-real
-void SetSongMidiChecksumData() {} // ring: native-real
+//
+// A2 (2026-11-22) retires both reasons: (2) the CSHA1 fix landed (8b219ac4e)
+// and the native CSHA1 matches sha1sum on macros.dtb (4611a568...), the
+// community patch's macros.dtb and the TU5 patch_xbox.hdr, fed in uneven
+// chunks (a2/sha1drv); (1) the tables describe TU5 (41 of 41 TU5 rows match
+// the official package, a1b/scripts/checksum_xref.py). So the REAL registrars
+// (src/ChecksumData_xbox.cpp) are now compiled in, and rb3_app_gates.cpp
+// calls them only when a title update is mounted (RB3_TITLE_UPDATE_DIR); on
+// the bare disc they are skipped with a [GATED] line, since 41 listed files
+// would fail by measurement and stop the boot.
 
 // Retail: SynthPreInit (synth/Synth.cpp) takes Synth::New(), the Xbox audio
 // synth; its HX_NATIVE arm asks for CreateNativeSynth() instead. rb3-app has
@@ -122,3 +150,98 @@ void BeatMatchInit() { MidiParser::Init(); } // ring: native-real
 // then reads the shipped locale config, exactly as retail always does.
 #include "xdk/xbdm/xbdm.h"
 extern "C" HRESULT DmMapDevkitDrive() { return (HRESULT)0x82DA0000; } // ring: native-real (XBDM_NOERR is 0x02DA0000; 0x82DA... = a failure facility code, < 0)
+
+// Retail body, src/system/os/Memcard_Xbox.cpp:43 (MemcardMgr::Init calls it for
+// each of the four pads). That TU is not in rb3-app: the rest of it is the
+// XContent device/container layer, which natively is platform/Memcard_Stub.cpp
+// (A4 replaces that). This one member is three stores, so it is copied
+// verbatim rather than stubbed.
+#include "os/Memcard_Xbox.h"
+void ContainerId::Set(int idx, DWORD dw) { // ring: native-real
+    mUserIndex = idx;
+    unk8 = dw;
+    mDeviceId = XCONTENTDEVICE_ANY;
+}
+
+// Win32 MultiByteToWideChar (xdk/xapilibi/stringapiset.h). Retail calls the XDK
+// export (MemcardMgr::Init widens the localized title_name for
+// SetContainerDisplayName). Natively there is no code-page table: each byte
+// widens to the code unit of the same value (the Latin-1 view of CP_ACP),
+// which is exact for the ASCII the game passes and is the inverse of
+// rb3_app_quazal_native.cpp's WideCharToMultiByte convention. The Win32
+// contract is kept: cbMultiByte -1 means "through the NUL, counted";
+// cchWideChar 0 returns the size needed; a buffer too small returns 0.
+#include "xdk/xapilibi/stringapiset.h"
+#include <cstring>
+extern "C" int MultiByteToWideChar(UINT, DWORD, LPCSTR src, int cb, LPWSTR dst, int cch) { // ring: native-real
+    if (!src)
+        return 0;
+    int n = cb < 0 ? (int)std::strlen(src) + 1 : cb;
+    if (cch == 0)
+        return n;
+    if (!dst || cch < n)
+        return 0;
+    for (int i = 0; i < n; i++)
+        dst[i] = (unsigned char)src[i];
+    return n;
+}
+
+// A3: RecursePatternInternal, the pattern walker under FileRecursePattern
+// (MakeFileList, the framerate list, AssetMgr). The retail 360 body is in
+// src/system/os/File.cpp:956, behind a scaffold-era `#ifndef HX_NATIVE`, so no
+// native TU defines it (other native targets get a weak no-op from
+// dta_link_stubs.s, which rb3-app does not link). This is that body, logic for
+// logic: split at the first '&' or wildcard; with `recurse` and a '/' after the
+// split, list the directories at this level (DirListCB into File.cpp's
+// gDirList) and recurse into each with the rest of the pattern; otherwise
+// enumerate the directory before the last separator with the whole pattern.
+// FileEnumerate is the engine's native primitive. Only the matching-driven
+// spellings of the retail source (temporaries, the two-arg substr) are dropped.
+// Reached at boot from AssetMgr's ctor through VerifyAssets, which is a
+// `MILO_DEBUG && HX_NATIVE` arm (retail fn_8256B740 makes no such call): a dev
+// check rb3-app runs because native builds define MILO_DEBUG.
+#include "os/File.h"
+#include "utl/MakeString.h"
+#include "utl/Str.h"
+#include <vector>
+extern std::vector<String> gDirList;
+void DirListCB(const char *, const char *);
+void RecursePatternInternal( // ring: native-real
+    const char *pattern, void (*cb)(const char *, const char *), bool recurse, bool recurse_dirs
+) {
+    MILO_ASSERT(pattern && pattern[0], 0x5B8);
+    String pttn(pattern);
+    unsigned int ampPos = pttn.find_first_of("&", 0);
+    unsigned int wildcardPos = pttn.find_first_of("?*", 0);
+    int splitPos = ampPos == FixedString::npos ? (int)pttn.length() - 1 : (int)ampPos;
+    if (wildcardPos != FixedString::npos && wildcardPos < (unsigned int)splitPos)
+        splitPos = wildcardPos;
+    if (recurse && ampPos == FixedString::npos) {
+        int len = (int)pttn.length();
+        int fwd = splitPos;
+        while (fwd < len && pttn[fwd] != '/' && pttn[fwd] != '\\')
+            fwd++;
+        if (fwd == len) {
+            recurse = false;
+        } else {
+            String subPattern = pttn.substr((unsigned int)fwd, (unsigned int)(len - fwd));
+            pttn = pttn.substr(0, (unsigned int)fwd);
+            RecursePatternInternal(pttn.c_str(), DirListCB, false, true);
+            std::vector<String> dirs(gDirList);
+            gDirList.clear();
+            pttn = FileGetPath(pttn.c_str());
+            for (unsigned int i = 0; i < dirs.size(); i++) {
+                RecursePatternInternal(
+                    MakeString("%s/%s%s", pttn.c_str(), dirs[i].c_str(), subPattern.c_str()),
+                    cb, recurse, recurse_dirs
+                );
+            }
+            return;
+        }
+    }
+    int pos = splitPos;
+    while (pos >= 0 && pttn[pos] != '/' && pttn[pos] != '\\')
+        pos--;
+    String dirStr = pos <= 0 ? String(".") : pttn.substr(0, (unsigned int)pos);
+    FileEnumerate(dirStr.c_str(), cb, recurse, pttn.c_str(), recurse_dirs);
+}

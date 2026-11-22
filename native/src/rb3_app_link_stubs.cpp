@@ -24,6 +24,7 @@
 #include "meta/WiiProfileMgr.h"
 #include "meta_band/WiiFriendsProvider.h"
 #include "net/Net.h"
+#include "net/NetMessenger.h"
 #include "net/WiiFriendMgr.h"
 #include "net_band/RockCentral.h"
 #include "obj/Msg.h"
@@ -46,13 +47,14 @@ extern "C" [[noreturn]] void rb3_app_vcall_unreached() { // ring: reporter
 
 // ---- objects: zero bytes, never constructed ----------------------------------
 alignas(Net) unsigned char gRb3AppTheNet[sizeof(Net)] __asm__("TheNet"); // ring: online-net
-alignas(RockCentral) unsigned char gRb3AppTheRockCentral[sizeof(RockCentral)] __asm__("TheRockCentral"); // ring: online-rockcentral
 alignas(WiiFriendMgr) unsigned char gRb3AppTheWiiFriendMgr[sizeof(WiiFriendMgr)] __asm__("TheWiiFriendMgr"); // ring: a4-wii-residue
 alignas(WiiProfileMgr) unsigned char gRb3AppTheWiiProfileMgr[sizeof(WiiProfileMgr)] __asm__("TheWiiProfileMgr"); // ring: a4-wii-residue
 alignas(WiiFriendsProvider) unsigned char gRb3AppTheWiiFriendsProvider[sizeof(WiiFriendsProvider)] __asm__("TheWiiFriendsProvider"); // ring: a4-wii-residue
 // Declared only inside MetaPanel.cpp: no header gives the size,
 // so these reserve 4 KiB of zeroes (an over-estimate, measured nowhere).
 alignas(16) unsigned char gRb3AppTheWiiInvitationsProvider[4096] __asm__("TheWiiInvitationsProvider"); // ring: a4-wii-residue
+// TheRockCentral (RockCentral.cpp) and TheNetSession (NetSession.cpp) are real
+// since lane A3: both TUs are compiled into rb3-app.
 // gBinkMovieSys: a real base MovieSys in rb3_app_native_glue.cpp (A1).
 // Message globals the retail game constructs in a TU no native target compiles.
 alignas(Message) unsigned char gRb3AppPlayMsg[sizeof(Message)] __asm__("play_msg"); // ring: a1-absent-body
@@ -63,9 +65,15 @@ alignas(Message) unsigned char gRb3AppHideInviteMsg[sizeof(Message)] __asm__("hi
 alignas(8) unsigned char gRb3AppTheAuditionMgr[8] __asm__("TheAuditionMgr"); // ring: a1-absent-body
 alignas(8) unsigned char gRb3AppTheSongDB[8] __asm__("TheSongDB"); // ring: a1-absent-body
 alignas(8) unsigned char gRb3AppTheSessionMgr[8] __asm__("TheSessionMgr"); // ring: online-netsession
-alignas(8) unsigned char gRb3AppTheNetSession[8] __asm__("TheNetSession"); // ring: online-netsession
 alignas(8) unsigned char gRb3AppTheTour[8] __asm__("TheTour"); // ring: a1-absent-body
 alignas(8) unsigned char gRb3AppTheNameGenerator[8] __asm__("TheNameGenerator"); // ring: a6-failing-tu
+// NetMessenger.cpp is absent from the tree (A3): retail TheNetMessenger is a
+// static-init object holding only mLastSender; NetSession's send/deliver paths
+// name it and are online-only (their entry points abort, ring online-net).
+alignas(NetMessenger) unsigned char gRb3AppTheNetMessenger[sizeof(NetMessenger)] __asm__("TheNetMessenger"); // ring: online-net
+// TheXboxSynth (Synth360*, synth_xbox/Synth.cpp, not compiled natively): the
+// session's voice-chat paths name it (NetSession_Xbox.cpp). Null; online only.
+alignas(8) unsigned char gRb3AppTheXboxSynth[8] __asm__("TheXboxSynth"); // ring: online-netsession
 alignas(8) unsigned char gRb3AppTheSyncStore[8] __asm__("TheSyncStore"); // ring: online-net
 alignas(8) unsigned char gRb3AppTheHAQMgr[8] __asm__("TheHAQMgr"); // ring: a1-absent-body
 alignas(8) unsigned char gRb3AppTheGestureMgr[8] __asm__("TheGestureMgr"); // ring: a1-absent-body

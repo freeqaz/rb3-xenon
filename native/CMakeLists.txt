@@ -2233,6 +2233,26 @@ set(RB3_APP_SOURCES
     # time, an empty DataArray. Its upload paths go to RockCentral, whose entry
     # points are aborting stubs (ring online-rockcentral).
     ${REPO_ROOT}/src/band3/net_band/XboxEntityUploader.cpp
+    # A2: ProfileMgr::Init constructs a ProfilePicture per pad (retail ctor in
+    # ProfilePicture_Xbox.cpp: six member stores, no Xbox call). The fetch path
+    # (XUserReadGamerPicture into a D3D texture) is the Xbox Live / D3D layer,
+    # whose entry points are aborting stubs (rings xbox-live, xbox-d3d).
+    ${REPO_ROOT}/src/system/os/ProfilePicture.cpp
+    ${REPO_ROOT}/src/system/os/ProfilePicture_Xbox.cpp
+    # A3: the idle online objects an OFFLINE retail 360 has. App::App always
+    # runs Net::Init, which builds NetSession::New() = new XboxSession()
+    # (kIdle, online disabled), and TheRockCentral is a static-init object
+    # whose ctor is three stores and a JobMgr. ProfileMgr::Init,
+    # SessionMgr::Init and MemcardMgr subscribe to both. The Quazal transport
+    # the two session ctors touch has native bodies in
+    # rb3_app_quazal_native.cpp (no Quazal stack natively: default context,
+    # settings stored, nothing transmitted); everything networked still
+    # aborts through rb3_app_link_stubs.s (rings online-*).
+    ${REPO_ROOT}/src/band3/net_band/RockCentral.cpp
+    ${REPO_ROOT}/src/network/net/NetSession.cpp
+    ${REPO_ROOT}/src/network/net/NetSession_Xbox.cpp
+    ${REPO_ROOT}/src/network/net/SessionMessages.cpp
+    ${REPO_ROOT}/src/network/net/MatchmakingSettings.cpp
     # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
     # constructs TheBandUI at static init; natively TheUI was the engine's weak
     # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.
@@ -2494,6 +2514,18 @@ if(RB3X_BUILD_ENGINE)
     # nothing, measured reason there) in place of the uncommented no-op every
     # other target links.
     list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/platform/ChecksumData_Stub.cpp)
+    # A2: OvershellProfileProvider's ctor, GetUser and Reload are retail 360
+    # code (100% matched, rb3-xenon-07); rb3-app had them as a4-wii-residue
+    # stubs only because this TU was not compiled. Its Handle names the bare
+    # `num_data` Symbol global, which no native TU defines; the LOCAL_STATIC
+    # arm spells the same comparison with a function-local static, which is
+    # what the X360 build emits. Native-only.
+    list(APPEND _rb3_app_all ${REPO_ROOT}/src/band3/meta_band/OvershellProfileProvider.cpp)
+    set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/OvershellProfileProvider.cpp
+        PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+    # A2: the retail tables and registrars; rb3_app_gates.cpp calls them only
+    # with a title update mounted (RB3_TITLE_UPDATE_DIR).
+    list(APPEND _rb3_app_all ${REPO_ROOT}/src/ChecksumData_xbox.cpp)
     # A1: native/src/main_app.cpp drives App::App (data dir, headless, bounded);
     # src/Main.cpp is retail's main (App::Run, the frame loop: A2).
     list(REMOVE_ITEM _rb3_app_all ${REPO_ROOT}/src/Main.cpp)

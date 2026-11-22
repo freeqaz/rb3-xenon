@@ -155,14 +155,26 @@ extern "C" void __wrap__ZN17FixedSizeSaveable4InitEii(int a0, int a1) { // ring:
 }
 
 extern "C" void __real__ZN3Net4InitEv(void *self);
-// GATED, not called (lane A1b). TheNet is zero storage in rb3-app
-// (rb3_app_link_stubs.cpp, ring online-net) and Net::Init is an aborting stub:
-// retail constructs the Quazal/online stack here, which rb3-app does not have.
-// The call is skipped LOUDLY; any later use of TheNet still reaches an aborting
-// stub or zero storage, so this hides nothing.
+// NARROWED (lane A3). Retail Net::Init (src/network/net/Net.cpp:79, 0x823E0648)
+// runs on an offline 360 too: it installs the Quazal allocator hooks, builds a
+// SyncStore, `mSession = NetSession::New()` (= new XboxSession, NetSession_Xbox.cpp:441,
+// which sets TheNetSession; state kIdle, online disabled), SessionSearcher::New(),
+// TheServer.Init(), a NetworkEmulator and TheNetMessenger.Init(). Natively this
+// gate runs ONLY the session construction: the idle session object is what
+// SessionMgr::Init, MemcardMgr and ProfileMgr::Init subscribe to, and its ctor
+// sends nothing (the Quazal settings it writes have native bodies in
+// rb3_app_quazal_native.cpp). Everything else Net::Init builds is networked and
+// is NOT built: TheNet itself stays zero storage (Net.cpp does not compile
+// natively), so TheNet.mSession/mSearcher/mServer stay null, and any later use
+// of them still reaches an aborting stub or zero storage. Net.cpp's body is not
+// called. Printed as GATED, not PASS, because it is not retail's whole call.
+extern "C" void *rb3_app_netsession_new() __asm__("_ZN10NetSession3NewEv");
 extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
     (void)self;
-    printf("  [GATED] rb3-app Net::Init() -- ring online-net: no network stack natively, not called\n");
+    void *session = rb3_app_netsession_new();
+    printf("  [GATED] rb3-app Net::Init() -- ring online-net: built ONLY the idle XboxSession "
+           "(TheNetSession=%p); SyncStore/SessionSearcher/Server/NetworkEmulator/NetMessenger not built\n",
+           session);
     fflush(stdout);
 }
 
@@ -218,4 +230,119 @@ extern "C" void __real__ZN9PrefabMgr4InitEP11BandUserMgr(void * a0);
 extern "C" void __wrap__ZN9PrefabMgr4InitEP11BandUserMgr(void * a0) { // ring: native-real
     __real__ZN9PrefabMgr4InitEP11BandUserMgr(a0);
     rb3_app_gate("PrefabMgr::Init(BandUserMgr*)");
+}
+
+// ---- lane A2: MetaPanel::Init's steps, and the App::App steps after it ------
+extern "C" void __real__Z12GameModeInitv(void);
+extern "C" void __wrap__Z12GameModeInitv(void) { // ring: native-real
+    __real__Z12GameModeInitv();
+    rb3_app_gate("GameModeInit()");
+}
+
+extern "C" void __real__ZN11ModifierMgr4InitEv(void);
+extern "C" void __wrap__ZN11ModifierMgr4InitEv(void) { // ring: native-real
+    __real__ZN11ModifierMgr4InitEv();
+    rb3_app_gate("ModifierMgr::Init()");
+}
+
+extern "C" void __real__ZN11SongSortMgr4InitEv(void);
+extern "C" void __wrap__ZN11SongSortMgr4InitEv(void) { // ring: native-real
+    __real__ZN11SongSortMgr4InitEv();
+    rb3_app_gate("SongSortMgr::Init()");
+}
+
+extern "C" void __real__ZN10SessionMgr4InitEv(void);
+// GATED, not called (lane A2; reason updated by lane A3). Retail 360 makes this
+// call offline too. Since A3 the idle XboxSession exists (Net::Init's gate builds
+// it, TheNetSession is real), so the session is no longer the blocker. What is:
+// SessionMgr's ctor (SessionMgr.cpp:43) does `new BandNetGameData()`, and
+// BandNetGameData's ctor has NO source in the tree (sourceless retail code;
+// session rb3-xenon-07's bngd lane owns writing it from the retail bytes, and
+// this lane may not). Skipped LOUDLY; TheSessionMgr stays null (zero storage in
+// rb3_app_link_stubs.cpp), so its first reader crashes visibly rather than
+// talking to a half-built manager. SessionUsersProvidersInit and
+// BandMachineMgr::Init, which SessionMgr::Init also calls, are skipped with it.
+// Drop this gate when BandNetGameData's ctor lands.
+extern "C" void __wrap__ZN10SessionMgr4InitEv(void) { // ring: online-netsession
+    printf("  [GATED] rb3-app SessionMgr::Init() -- ring online-netsession: SessionMgr's ctor builds "
+           "BandNetGameData, whose ctor has no source yet (rb3-xenon-07 bngd); TheSessionMgr stays null, not called\n");
+    fflush(stdout);
+}
+
+extern "C" void __real__ZN10MemcardMgr4InitEv(void *self);
+extern "C" void __wrap__ZN10MemcardMgr4InitEv(void *self) { // ring: native-real
+    __real__ZN10MemcardMgr4InitEv(self);
+    rb3_app_gate("MemcardMgr::Init()");
+}
+
+extern "C" void __real__ZN10ProfileMgr4InitEv(void *self);
+extern "C" void __wrap__ZN10ProfileMgr4InitEv(void *self) { // ring: native-real
+    __real__ZN10ProfileMgr4InitEv(self);
+    rb3_app_gate("ProfileMgr::Init()");
+}
+
+extern "C" void __real__ZN13MetaPerformer4InitEv(void);
+extern "C" void __wrap__ZN13MetaPerformer4InitEv(void) { // ring: native-real
+    __real__ZN13MetaPerformer4InitEv();
+    rb3_app_gate("MetaPerformer::Init()");
+}
+
+extern "C" void __real__ZN14UploadErrorMgr4InitEv(void);
+extern "C" void __wrap__ZN14UploadErrorMgr4InitEv(void) { // ring: native-real
+    __real__ZN14UploadErrorMgr4InitEv();
+    rb3_app_gate("UploadErrorMgr::Init()");
+}
+
+extern "C" void __real__ZN25AppMiniLeaderboardDisplay4InitEv(void);
+extern "C" void __wrap__ZN25AppMiniLeaderboardDisplay4InitEv(void) { // ring: native-real
+    __real__ZN25AppMiniLeaderboardDisplay4InitEv();
+    rb3_app_gate("AppMiniLeaderboardDisplay::Init()");
+}
+
+extern "C" void __real__Z7UtlInitv(void);
+extern "C" void __wrap__Z7UtlInitv(void) { // ring: native-real
+    __real__Z7UtlInitv();
+    rb3_app_gate("UtlInit()");
+}
+
+extern "C" void __real__ZN11PresenceMgr4InitEv(void *self);
+extern "C" void __wrap__ZN11PresenceMgr4InitEv(void *self) { // ring: native-real
+    __real__ZN11PresenceMgr4InitEv(self);
+    rb3_app_gate("PresenceMgr::Init()");
+}
+
+extern "C" void __real__ZN12QuestManager4InitEP9DataArray(void *self, void *a0);
+extern "C" void __wrap__ZN12QuestManager4InitEP9DataArray(void *self, void *a0) { // ring: native-real
+    __real__ZN12QuestManager4InitEP9DataArray(self, a0);
+    rb3_app_gate("QuestManager::Init(DataArray*)");
+}
+
+// ---- lane A2: the retail checksum tables, registered only over TU5 content ----
+// src/ChecksumData_xbox.cpp's two tables are TU5's (disc + the 41 files TU5
+// changed or added; a1b/checksum_xref.txt). Over the bare disc 41 listed files
+// differ, so registering them would stop the boot at the first one, by
+// measurement. With RB3_TITLE_UPDATE_DIR set the real registrar runs.
+const char *Rb3NativeTitleContentPath();
+extern "C" void __real__Z19SetFileChecksumDatav(void);
+extern "C" void __wrap__Z19SetFileChecksumDatav(void) { // ring: native-real
+    if (Rb3NativeTitleContentPath()) {
+        __real__Z19SetFileChecksumDatav();
+        rb3_app_gate("SetFileChecksumData()");
+    } else {
+        printf("  [GATED] rb3-app SetFileChecksumData() -- ring tu5-content: the table describes TU5, "
+               "no title update mounted (RB3_TITLE_UPDATE_DIR), not registered\n");
+        fflush(stdout);
+    }
+}
+
+extern "C" void __real__Z23SetSongMidiChecksumDatav(void);
+extern "C" void __wrap__Z23SetSongMidiChecksumDatav(void) { // ring: native-real
+    if (Rb3NativeTitleContentPath()) {
+        __real__Z23SetSongMidiChecksumDatav();
+        rb3_app_gate("SetSongMidiChecksumData()");
+    } else {
+        printf("  [GATED] rb3-app SetSongMidiChecksumData() -- ring tu5-content: the table describes TU5, "
+               "no title update mounted (RB3_TITLE_UPDATE_DIR), not registered\n");
+        fflush(stdout);
+    }
 }

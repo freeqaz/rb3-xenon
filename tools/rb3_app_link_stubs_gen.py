@@ -29,14 +29,26 @@ import glob, os, re, subprocess, sys
 BD, LOG, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
 
 RULES = [
-    (r"^Quazal::", "online-quazal"),
+    (r"^(vtable for |typeinfo for )?Quazal::", "online-quazal"),
     (r"^(NetSession::|BandNetGameData::)", "online-netsession"),
+    # A3: NetSession.cpp + NetSession_Xbox.cpp are compiled, so the idle
+    # XboxSession exists; what its online paths call (XSession jobs, the Quazal
+    # session, search results, the messenger, voice chat) stays aborting.
+    (r"^(vtable for )?((AddLocalPlayer|AddRemotePlayer|DeleteSession|EndSession|MakeSession|"
+     r"ModifySession|RegisterArbitration|RemoveLocalPlayer|RemoveRemotePlayer|StartSession|"
+     r"WriteTrueSkill|MakeQuazalSession)Job|QuazalSession|NetSearchResult|NetMessenger|"
+     r"SyncUserMsg|SyncAllMsg|MicManagerXbox)\b", "online-netsession"),
+    (r"^Synth360::(ActivateLocalChat|GetChatData)", "online-netsession"),
     (r"^(vtable for )?(MatchmakingSettings|SearchSettings|SessionSettings|SessionSearcher)\b",
      "online-matchmaking"),
     (r"^(Net::|SyncStore::)", "online-net"),
     (r"^RockCentral::", "online-rockcentral"),
+    # A3: RockCentral.cpp is compiled (TheRockCentral is a real static-init
+    # object); its web-service plumbing stays aborting.
+    (r"^(ContextWrapper|ContextWrapperPool|JsonObject|UpdateFriendsListJob)::", "online-rockcentral"),
+    (r"^(XNet|XUserMuteListQuery|XUserSetProperty)", "xbox-live"),
     (r"^(AssetOffer::|XMarketplace|XBackgroundDownload|StoreRootPanel::)", "xbox-store"),
-    (r"^(XMsgCancelIORequest|XStringVerify|ShowParentalControlUI|SessionUsersProvider::ShowGamercard)",
+    (r"^(XMsgCancelIORequest|XUserReadGamerPicture|XGetOverlappedResult|XStringVerify|ShowParentalControlUI|SessionUsersProvider::ShowGamercard)",
      "xbox-live"),
     (r"^D3D", "xbox-d3d"),
     (r"^__v", "a1-xbox-vmx"),
@@ -47,6 +59,11 @@ RULES = [
      r"JoinInvitePanel|CampaignGoalsLeaderboardPanel|CampaignCareerLeaderboardPanel|"
      r"Label3d|BeatClock)\b", "a6-failing-tu"),
     (r"^Movie::SetTimeCallback", "a2-movie"),
+    # Retail never calls these: VocalPlayer never reads mVocalOverlay (0x3c8);
+    # every call site is under HX_NATIVE and the pointer is null unless
+    # ToggleOverlay runs (session rb3-xenon-07, 114186523, VocalOverlay.h).
+    # The stubs still abort; the ring says no retail body is owed for them.
+    (r"^VocalOverlay::", "native-only-callsite"),
     (r".*", "a1-absent-body"),
 ]
 
