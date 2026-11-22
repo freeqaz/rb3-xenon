@@ -71,8 +71,51 @@ slots are Hit +4, Key +8, RGFret +0xC, RGStrum +0x10, and nothing calls +0x14.
 
 ## Measurement
 
-(filled in below)
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-wrongnames --pick 2ff77dd26` (leg A =
+`fb846835e`, ruler `functionRelocDiffs=name_check`, objdiff sha256 `ec3badc0f33323e9`, both legs
+re-split to a fixed point): **Δmatched +0, Δmasked_equal +0, Δhonest +0, Δcode +0 B, Δfuzzy
++0.000000 pp**. The `none` control is flat (55,092 → 55,092). Absolutes: leg A = leg B =
+55,039 matched, code% 59.402390. A zero delta is what I predicted. Every renamed row sits in
+`auto_03_82BCB964_text`, which has no base obj, so all of them are unpairable at any name.
+The renamed callees' callers are XDK units with no base obj, and the one compiled caller
+(`GuitarController::OnMsg` → RegisterHit) pairs through the alias group by address, which did
+not move. This is a correctness fix: the map now says which XAudio2 handler each address is,
+and the RegisterHit fold proof names the body it actually folds with.
 
 ## Other wrong-name screen (on the way)
 
-(filled in below)
+Method (scratch script, not committed): for each map row whose mangled name DC3's map places at
+exactly one address, compare RB3's body at the mapped address with DC3's body. Branch
+targets and `lis`-paired immediates are masked, and DC3's carve size comes from
+`../dc3-decomp/config/373307D9/symbols.txt`. When they differ, search ±0x800 in RB3 for a
+same-size body equal to DC3's. Positive control: on the pre-fix map the screen flags
+exactly `0x82BCD0E0 -> 0x82BCD130` among the `CX2SourceVoice@` rows. Whole map: 7,903 rows
+match DC3, 139 flag a move, and 41 of those survive the filters (one hit, same carve size,
+≥0x10 B).
+
+**No further wrong name is proven.** Every surviving candidate in scope was refuted:
+
+- `Rnd::OnClearColorR/G` (`0x82412E58/70`): RB3's three consecutive bodies read
+  `this+0x2C/0x30/0x34`, followed by `OnClearColorPacked`, and all read fuzzy 100 against our
+  source. DC3's Rnd has the color 4 B later. This is a layout difference that looks exactly
+  like a one-slot shift, so the screen alone proves nothing.
+- `NewObject` for TexLoadPanel, ContentLoadingPanel, SongSelectPanel and
+  RndSoftParticleBuffer: each body calls the ctor its own map name says, and all are fuzzy
+  100. The DC3 hit is a same-sized class (`li r3,size` is the only discriminator).
+- `??1FxSendFlanger360` / `??1FxSendEQ360`: RTTI of the vtable each dtor stores is
+  `.?AVFxSendFlanger360@@` / `.?AVFxSendEQ360@@` respectively, so the map is right. Masking the
+  vtable address made them look alike.
+- `GoalProgressionInfo` vs `GoalAcquisitionInfo` STL instantiations
+  (AccomplishmentManager): the mapped `_Destroy_Range` rows are fuzzy 100. The DC3 body has a
+  different element size.
+
+**Unadjudicated XDK candidates (out of scope, no base obj, need their own lane if ever
+funded).** These are reciprocal pairs, each body equal to the other name's DC3 body. That
+would be a swap, but the Rnd case shows that XDK version drift between RB3 and DC3 can
+produce the same pattern, so none is proven:
+`PSEmitLT`/`PSEmitGE@CPSProgram` (`0x82915320`/`0x82915458`),
+`MakeInstr_V_SETGT`/`V_ADD` (`0x829B6EE8`/`0x829B70A8`),
+`MakeInstr_V_MAXA`/`V_DST` (`0x829E4EE0`/`0x829E4FB8`),
+`Encode@CCodec_G16R16F`/`CCodec_R16F` (`0x82A06300`/`0x82A06398`, virtual, but the XDK
+vtables carry no RTTI). There are also one-step chains in `MakeInstr_V_MIN..SETNE`
+(`0x829E4458..0x829E4DF0`) and `IRAlloc*/IRLoopIndex::NewInst` (`0x82A5AD48..0x82A5AF08`).
