@@ -2301,6 +2301,12 @@ set(RB3_APP_SOURCES
     # test and failure path. No src/ edit.
     ${REPO_ROOT}/src/band3/meta_band/CampaignGoalsLeaderboardPanel.cpp
     ${REPO_ROOT}/src/band3/meta_band/CampaignCareerLeaderboardPanel.cpp
+    # The leaderboard objects the two panels build (PlayerCampaignGoal/Career
+    # Leaderboard ctors, SetScoreType, EnumerateFromID, EnumerateRankRange,
+    # GetStats): rb3-xenon-07's cldb wrote them from retail TU5
+    # 0x8266B4C0-0x8266BDC8. Until then they were a1-absent-body stubs here.
+    # X360 gives this TU no extra_cflags, so it gets no per-file flags.
+    ${REPO_ROOT}/src/band3/meta_band/CampaignLeaderboards.cpp
     # A6: the UI script's next DTA `new` is SongSelectPanel (its ctor was the
     # a6-failing-tu stop; retail ctor 0x82637500 zeroes the same six fields,
     # unk58 = -1.0f). The TU failed natively on its own HX_NATIVE arm:
