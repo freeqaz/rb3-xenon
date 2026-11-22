@@ -357,8 +357,15 @@ void VorbisReader::DoRawSeek(int byte) {
     mFile->Seek(byte + mHdrSize, 0);
     if (mCtrState) {
         MILO_ASSERT(byte%16 == 0, 0x3F4);
-        // the CTR counter is the 16-byte block index, stored big-endian
+        // The CTR counter's low word is the 16-byte block index, stored
+        // LITTLE-endian: tomcrypt's ctr.c increments ctr[0] first. X360 gets
+        // those bytes by swapping before its big-endian store; the native host
+        // stores little-endian already, so it must not swap (W16-UE #2).
+#ifdef HX_NATIVE
+        *(int *)mNonce = (unsigned int)(byte / 16);
+#else
         *(int *)mNonce = EndianSwap((unsigned int)(byte / 16));
+#endif
         int ret = ctr_reinit(gCipher, mNonce, mCtrState);
         MILO_ASSERT(ret == 0, 0x3F7);
     }
