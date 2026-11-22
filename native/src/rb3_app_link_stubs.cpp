@@ -27,13 +27,13 @@
 #include "net_band/RockCentral.h"
 #include "obj/Msg.h"
 
-extern "C" [[noreturn]] void rb3_app_stub_reached(const char *ring, const char *fn) {
+extern "C" [[noreturn]] void rb3_app_stub_reached(const char *ring, const char *fn) { // ring: reporter
     fprintf(stderr, "rb3-app: UNREACHED stub [ring %s] %s\n", ring, fn);
     fflush(stderr);
     abort();
 }
 
-extern "C" [[noreturn]] void rb3_app_vcall_unreached() {
+extern "C" [[noreturn]] void rb3_app_vcall_unreached() { // ring: reporter
     fprintf(stderr, "rb3-app: UNREACHED virtual call through a stub vtable "
                     "(rb3_app_link_stubs.s)\n");
     fflush(stderr);

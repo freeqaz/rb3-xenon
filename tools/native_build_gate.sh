@@ -194,6 +194,7 @@ KNOWN_TARGETS=(
     rb3-vocal rb3-vocal2  rb3-harmony rb3-crowd
     rb3-save  rb3-ark
     rb3-frame rb3-milo    rb3-render
+    rb3-app
 )
 
 STRICT="${NATIVE_GATE_STRICT:-0}"
