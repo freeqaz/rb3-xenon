@@ -1632,10 +1632,10 @@ int RndText::AddLineUTF8(
     }
 }
 
-// Retail's Line has no separate `color` member (a duplicate would be dead
-// storage — it would always hold the same value as lineStyle.color). So both the
-// early-out and the final store go through lineStyle.mTextColor.
-#ifndef HX_NATIVE
+// Both builds run retail's body (band.exe fn_82457BA0). Retail's Line has no
+// separate `color` member (a duplicate would be dead storage -- it would always
+// hold lineStyle.mTextColor's value), and this function never writes the colour
+// back into the line either. (A15 removed the native arm that followed.)
 // Retail (0x82457BA0): the line is copied by value (memcpy 0x78), there is no
 // early-out for an unchanged colour, every character from startIdx up to
 // min(endIdx, mFixedLength) whose defining font exists is recoloured (the quad
@@ -1662,65 +1662,65 @@ void RndText::UpdateLineColor(unsigned int idx, const Hmx::Color &col, bool *bpt
     else
         SyncMeshes();
 }
-#else
-void RndText::UpdateLineColor(unsigned int idx, const Hmx::Color &col, bool *bptr) {
-    HX_VECTOR(Line) &_ref0 = mLines;
-    MILO_ASSERT(idx < _ref0.size(), 0x883);
-    Line &curLine = _ref0[idx];
-    MILO_ASSERT(mMeshMap.size() < 10, 0x887);
-    if (curLine.lineStyle.mTextColor == col)
-        return;
-    int mapInts[10];
-    for (int i = 0; i < mMeshMap.size(); i++) {
-        mapInts[i] = 0;
-    }
-
-    std::map<FontKey, MeshInfo>::iterator it = mMeshMap.begin();
-    for (int i = 0; i < mMeshMap.size(); i++) {
-        RndFont *curFont = (RndFont *)it->first;
-        for (int j = 0; j < curLine.startIdx;) {
-            unsigned short us86;
-            int decoded = DecodeUTF8(us86, mText.c_str() + j);
-            if (GetDefiningFont(us86, curLine.lineStyle.mFont) == curFont) {
-                mapInts[i]++;
-            }
-            j += decoded;
-        }
-        ++it;
-    }
-
-    std::map<FontKey, MeshInfo>::iterator it2 = mMeshMap.begin();
-    for (int i = 0; i < mMeshMap.size(); i++, ++it2) {
-        RndFont *curFont = (RndFont *)it2->first;
-        unsigned int cidx = curLine.startIdx;
-        unsigned int min = std::min<unsigned int>(curLine.endIdx, mFixedLength);
-        int i11 = mapInts[i] * 4;
-        for (; cidx < min;) {
-            unsigned short us88;
-            int decoded = DecodeUTF8(us88, mText.c_str() + cidx);
-            RndFont *defining = GetDefiningFont(us88, curLine.lineStyle.mFont);
-            if (defining == curFont) {
-                FontKey definingFontAsInt = (FontKey)defining;
-                MeshInfo &curMeshInfo = mMeshMap[definingFontAsInt];
-                RndMesh::Vert *vert10 = curMeshInfo.mesh->Verts().begin() + i11;
-                vert10[3].color = col;
-                vert10[2].color = col;
-                vert10[1].color = col;
-                vert10[0].color = col;
-                i11 += 4;
-                curMeshInfo.syncFlags |= 0x1F;
-            }
-            cidx += decoded;
-        }
-    }
-
-    curLine.lineStyle.mTextColor = col;
-    if (bptr)
-        *bptr = true;
-    else
-        SyncMeshes();
-}
-#endif
+// A15: the native arm that stood here is gone; native runs the body above.
+// It diverged from retail fn_82457BA0 in three ways, measured by the rb3-milo
+// gate native/src/text_line_color_phase.cpp:
+//   * Its quad base was "characters of this font in mText[0, startIdx)" * 4,
+//     but startIdx is a BYTE offset, and ApplyLineText (shared by both builds)
+//     writes a line's quads from line.startIdx * 4 in each font's mesh. The
+//     two agree only while every earlier byte is a one-byte character defined
+//     in this font. An earlier two-byte UTF-8 character, a character of
+//     another font, or a '\n' (GetDefiningFont returns null for it) made the
+//     base too small, so the recolour landed on an EARLIER line's quads.
+//     Measured: lines "\u00E9a\u00E9" (5 bytes, 3 characters), "ab", "cd";
+//     UpdateLineColor on "cd" recoloured quads 5-6 ("ab") and left 7-8 white.
+//   * It returned early when lineStyle.mTextColor already equalled the
+//     colour. Retail has no early-out: it always rewrites the verts and sets
+//     *bptr (or syncs the meshes).
+//   * It stored the colour into lineStyle.mTextColor. Retail works on a copy
+//     of the line (memcpy 0x78) and stores nothing back.
+// It also walked mMeshMap once per font, where retail walks the line once and
+// recolours each character in its defining font's mesh; for a line whose
+// characters are all in one font that part was equivalent.
+//
+// The only caller is LyricPlate (band3/bandtrack/Lyric.cpp), which colours
+// each vocal lyric syllable line as it passes the now bar; lyrics with
+// accented characters (two bytes in UTF-8) therefore recoloured the wrong
+// syllable natively.
+//
+// Line-preserving: this comment stands in for the removed arm line for line
+// so that every later line of the X360 build keeps its number.
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 void RndText::ReplaceLineText(
     unsigned int idx,
