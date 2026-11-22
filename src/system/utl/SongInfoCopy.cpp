@@ -57,8 +57,9 @@ int SongInfoCopy::NumChannelsOfTrack(SongInfoAudioType ty) const {
 // TU5/retail-only virtual (vtable slot 0x4c, retail 0x827D1190); its real name is
 // not known. MasterAudio passes the result to Synth::NewStream.
 // Retail reads the name through a writable global pointer (.data 0x82C78F24),
-// not a literal; the variable's name is descriptive.
-static const char *gUGCAuditionTempSongName = "ugc_audition_temp_song";
+// not a literal; the variable's name is descriptive. It has external linkage:
+// AuditionMgr.cpp (0x82560B08..) loads the same word.
+const char *gUGCAuditionTempSongName = "ugc_audition_temp_song";
 
 // Retail: true for every song except the UGC audition temp song.
 bool SongInfoCopy::UnkTU5Virtual_0x4c() const {

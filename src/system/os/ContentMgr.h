@@ -128,6 +128,10 @@ public:
     // initializer (which then stores XboxContentMgr's vptr itself); it ends
     // `li r9,1; stb r9,0x70`, so the 0x70 flag is ContentMgr's, initialised true.
     ContentMgr() : unk70(true) {}
+    /** Writes the 0x70 flag; AuditionMgr clears it for the length of an
+        audition session (retail 0x82560D88) and sets it again at the end
+        (0x82561430). Name ours. */
+    void SetRefreshAllowed(bool b) { unk70 = b; }
     virtual DataNode Handle(DataArray *, bool);
     virtual void PreInit() {}
     virtual void Init();

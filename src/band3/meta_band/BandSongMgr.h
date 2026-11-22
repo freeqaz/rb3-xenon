@@ -104,6 +104,9 @@ public:
     int RankTier(float, Symbol) const;
     int GetNumVocalParts(Symbol) const;
     void AddRecentSong(int);
+    /** TU5 0x82577480: erases a song by its Symbol from the id and name hash
+        maps; AuditionMgr calls it with the audition temp song. Name ours. */
+    void RemoveSong(Symbol);
     bool IsDemo(int) const;
     bool HasLicense(Symbol) const;
     void SyncSharedSongs();
