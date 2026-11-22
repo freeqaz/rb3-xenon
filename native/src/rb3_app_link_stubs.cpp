@@ -77,7 +77,7 @@ alignas(NetMessenger) unsigned char gRb3AppTheNetMessenger[sizeof(NetMessenger)]
 // TheXboxSynth (Synth360*, synth_xbox/Synth.cpp, not compiled natively): the
 // session's voice-chat paths name it (NetSession_Xbox.cpp). Null; online only.
 alignas(8) unsigned char gRb3AppTheXboxSynth[8] __asm__("TheXboxSynth"); // ring: online-netsession
-alignas(8) unsigned char gRb3AppTheSyncStore[8] __asm__("TheSyncStore"); // ring: online-net
+// TheSyncStore: gone since lane postcal; net/SyncStore.cpp is compiled and defines it.
 alignas(8) unsigned char gRb3AppTheHAQMgr[8] __asm__("TheHAQMgr"); // ring: a1-absent-body
 // TheGestureMgr: gone since lane rbx-net. Its one rb3-app use was a Dance Central
 // arm in UIScreen::Exit (SetInVoiceMode); retail RB3 has no GestureMgr.

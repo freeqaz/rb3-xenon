@@ -2263,6 +2263,13 @@ set(RB3_APP_SOURCES
     # Poll (retail 0x8252B9A8, 0x8252B858), which SaveLoadManager state 8
     # (kS_AutoloadSetDevice) waits on.
     ${REPO_ROOT}/src/system/os/Memcard_Xbox.cpp
+    # postcal lane: TheContentMgr is retail's XboxContentMgr (os/ContentMgr_Xbox.cpp,
+    # no X360 extra_cflags), bound in rb3_app_native_glue.cpp through a subclass
+    # that only answers TitleContentPath natively. Its StartRefresh/PollRefresh
+    # (retail 0x82520FD0, 0x82520C18) run the content refresh that
+    # `content_mgr refresh_done` waits on (meta_loading after calibration);
+    # the cross-title enumerations land on xdk_shims.cpp's content store.
+    ${REPO_ROOT}/src/system/os/ContentMgr_Xbox.cpp
     # A1b: TheEntityUploader (App.cpp: TheEntityUploader.Init()) is a reference
     # bound in this TU to gXboxEntityUploader, a static-init object (retail
     # dynamic initializer 0x82C3F610). Init is offline: SetName, the submit
@@ -2314,6 +2321,12 @@ set(RB3_APP_SOURCES
     # made NetLog a FUNCTION stub, i.e. a data object backed by code bytes.
     ${REPO_ROOT}/src/network/net/NetSearchResult.cpp
     ${REPO_ROOT}/src/network/net/NetLog.cpp
+    # postcal: TheNet.mSyncStore (retail Net::Init `new SyncStore`, 0x823E06C0),
+    # built by the offline Net::Init gate and polled by the offline Net::Poll.
+    # NetSync::SyncScreen polls it on a leader-local screen sync (meta_loading's
+    # check_advance). A registry only: it sends nothing while it holds no
+    # objects, and natively Synchronizable::Publish does not insert.
+    ${REPO_ROOT}/src/network/net/SyncStore.cpp
     # A5: with the Net stop gone, MetaPanel's ctor -> Campaign::Campaign ->
     # AccomplishmentManager::Init builds every accomplishment; the song
     # conditionals derive from AccomplishmentConditional, whose TU was not in

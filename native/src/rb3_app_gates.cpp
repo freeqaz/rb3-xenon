@@ -9,6 +9,7 @@
 // (void) result. Member functions take `this` as the first argument, which is
 // the Itanium ABI for a non-virtual direct call. Generated from App.cpp.o's
 // undefined symbols; the list is rb3_app_gates.txt.
+#include "net/SyncStore.h"
 #include <cstdio>
 #include <unistd.h>
 #include "synth/StreamReceiver.h"
@@ -400,19 +401,18 @@ extern "C" void __real__ZN3Net4InitEv(void *self);
 // NetworkEmulator, TheNetMessenger.Init(), and the TerminateTheNet exit callback.
 // Since A5 TheNet is the real object (Net.cpp is compiled into rb3-app), and this
 // gate runs, in retail's order, the steps that touch no network:
-//   SetName, mSession = NetSession::New(), mSearcher = SessionSearcher::New(),
+//   SetName, (postcal) mSyncStore = new SyncStore(), mSession = NetSession::New(),
+//   mSearcher = SessionSearcher::New(),
 //   and (rbx-net) TheServer's offline Init and mServer = &TheServer
 // (rb3_app_net_init_offline in rb3_app_native_glue.cpp; each a retail body).
 // NOT run, as the printed line says:
 //   * Quazal hooks: there is no Quazal stack natively to read them;
-//   * SyncStore: SyncStore.cpp is not compiled into rb3-app (nothing reached yet
-//     needs mSyncStore; Net::Poll would);
 //   * XboxServer::Init's Quazal LSP back end (mBackEnd stays null; the server is
 //     offline, IsConnected() false), NetworkEmulator (Quazal emulation
 //     devices), TheNetMessenger.Init (NetMessenger.cpp absent): networked;
 //   * the exit callback: Net::Terminate calls TheServer.Terminate, which would
 //     call through the null mBackEnd at exit.
-// So TheNet.mEmulator and mSyncStore stay null. Net.cpp's own Init is
+// So TheNet.mEmulator stays null. Net.cpp's own Init is
 // not called. Printed as GATED, not PASS, because it is not retail's whole call.
 extern "C" void rb3_app_net_init_offline(void *net, void **session, void **searcher, void **server);
 extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
@@ -420,9 +420,9 @@ extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
     rb3_app_net_init_offline(self, &session, &searcher, &server);
     printf("  [GATED] rb3-app Net::Init() -- ring online-net: built ONLY the idle XboxSession "
            "(TheNetSession=%p), XSessionSearcher (TheNet.mSearcher=%p) and the offline XboxServer "
-           "(TheNet.mServer=%p, no LSP back end); Quazal hooks/SyncStore/NetworkEmulator/"
-           "NetMessenger/exit callback not built\n",
-           session, searcher, server);
+           "(TheNet.mServer=%p, no LSP back end) and the SyncStore (TheSyncStore=%p); Quazal "
+           "hooks/NetworkEmulator/NetMessenger/exit callback not built\n",
+           session, searcher, server, (void *)TheSyncStore);
     fflush(stdout);
 }
 
@@ -430,11 +430,11 @@ extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
 // TheNetMessenger.Poll() (0x823F5460), mSyncStore->Poll(), mSession->Poll(),
 // mSearcher->Poll(), mServer->Poll() (vtable +8). The Net::Init gate above built
 // mSession, mSearcher and (rbx-net) the offline mServer. This gate runs
-// mSearcher->Poll() and mServer->Poll() (rb3_app_net_poll_offline; the retail
+// mSyncStore->Poll() (postcal), mSearcher->Poll() and mServer->Poll()
+// (rb3_app_net_poll_offline; the retail
 // XSessionSearcher and XboxServer bodies; offline, XboxServer::Poll has no call
 // context to poll and is not connected) and NOT:
 //   * TheNetMessenger.Poll: NetMessenger.cpp is absent from src/;
-//   * mSyncStore->Poll: null, SyncStore is not built;
 //   * mSession->Poll: XboxSession::Poll (NetSession_Xbox.cpp:494) starts with
 //     NetSession::Poll, which reaches QuazalSession::Poll, an aborting
 //     online-netsession stub (the Quazal session layer, rb3-xenon-07's ring);
@@ -444,8 +444,8 @@ extern "C" void __wrap__ZN3Net4PollEv(void *self) { // ring: online-net
     static bool sPrinted = false;
     if (!sPrinted) {
         sPrinted = true;
-        printf("  [GATED] rb3-app Net::Poll() -- ring online-net: polls ONLY mSearcher and "
-               "the offline mServer; NetMessenger/SyncStore/Session(Quazal) not polled\n");
+        printf("  [GATED] rb3-app Net::Poll() -- ring online-net: polls ONLY mSyncStore, "
+               "mSearcher and the offline mServer; NetMessenger/Session(Quazal) not polled\n");
         fflush(stdout);
     }
     rb3_app_net_poll_offline(self);

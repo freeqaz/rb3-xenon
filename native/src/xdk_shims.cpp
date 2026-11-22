@@ -1264,6 +1264,56 @@ DWORD XEnumerate(HANDLE hEnum, VOID *pvBuffer, DWORD cbBuffer, DWORD *pcItemsRet
     return ERROR_SUCCESS;
 }
 DWORD XContentFlush(LPCSTR, XOVERLAPPED *) { return 0; }
+// Cross-title enumeration over the same content store. The one caller is
+// XboxContentMgr::StartRefresh (retail 0x82520FD0): for each signed-in pad
+// 0..3 it asks for (user i, device 0 = any, type 2 = marketplace content,
+// flags 0, cItem 1, pcbBuffer NULL) (bl 0x8283EF70 at 0x825212F0), and once
+// each for user 0xFF with type 2 and type 1 (saved games). It keeps the
+// enumeration only on 0 and then needs XEnumerateCrossTitle(h, buf, 0x138, NULL,
+// overlapped) to return ERROR_IO_PENDING (bl 0x8283F340 at 0x82521340); else it
+// frees the XOVERLAPPED and closes the handle. PollRefresh (0x82520C18) reads
+// the result through XGetOverlappedResult: 0 with the item count, or any
+// failure ends that buffer. The store holds this title's packages only, so
+// every item reports dwTitleId 0x45410914; there is no marketplace package
+// (type 2) natively, and the saved games (band3, globaloptions, songcache)
+// are on PollRefresh's ignored list. The declarations ContentMgr_Xbox.cpp
+// uses are extern "C" with int/void* parameters, so these are too.
+extern "C" long XContentCreateCrossTitleEnumerator(int dwUserIndex, void *DeviceID, int dwContentType,
+                                                    int dwFlags, int cItem, int pcbBuffer, void *phEnum) {
+    (void)dwUserIndex;
+    (void)dwFlags;
+    (void)pcbBuffer; // retail passes NULL
+    return (long)XContentCreateEnumerator(0xFE, (DWORD)(uintptr_t)DeviceID, (DWORD)dwContentType, 0,
+                                          (DWORD)cItem, nullptr, (HANDLE *)phEnum);
+}
+// One package per call, as XEnumerate; cbBuffer is in retail units (0x138 =
+// retail's sizeof(XCONTENT_CROSS_TITLE_DATA)). The overlapped completion sets
+// InternalHigh to the item count XGetOverlappedResult hands back.
+extern "C" unsigned long XEnumerateCrossTitle(void *hEnum, void *pvBuffer, int cbBuffer,
+                                              int pcItemsReturned, void *pOverlapped) {
+    XOVERLAPPED *ov = (XOVERLAPPED *)pOverlapped;
+    DWORD *pcItems = (DWORD *)(uintptr_t)pcItemsReturned;
+    if (pcItems) *pcItems = 0;
+    HandleRef e = LookupHandle((HANDLE)hEnum);
+    if (!e || e->type != kHandleEnum) return kShimErrorInvalidHandle;
+    if (!pvBuffer || cbBuffer < 0x138) return ShimComplete(0x007A, ov); // ERROR_INSUFFICIENT_BUFFER
+    if (e->enumer.next >= e->enumer.items->size()) return ShimComplete(ERROR_NO_MORE_FILES, ov);
+    const XCONTENT_DATA &src = (*e->enumer.items)[e->enumer.next++];
+    XCONTENT_CROSS_TITLE_DATA *dst = (XCONTENT_CROSS_TITLE_DATA *)pvBuffer;
+    memset(dst, 0, sizeof(*dst));
+    dst->DeviceID = src.DeviceID;
+    dst->dwContentType = src.dwContentType;
+    memcpy(dst->szDisplayName, src.szDisplayName, sizeof(dst->szDisplayName));
+    memcpy(dst->szFileName, src.szFileName, sizeof(dst->szFileName));
+    dst->dwTitleId = 0x45410914;
+    if (ov) {
+        ShimComplete(ERROR_SUCCESS, ov);
+        ov->InternalHigh = 1;
+        return ERROR_IO_PENDING;
+    }
+    if (pcItems) *pcItems = 1;
+    return ERROR_SUCCESS;
+}
 ULONGLONG XContentCalculateSize(ULONGLONG cbData, DWORD) { return cbData; }
 VOID XAudioGetSpeakerConfig() {}
 VOID XGetVideoMode(XVIDEO_MODE *pMode) {
