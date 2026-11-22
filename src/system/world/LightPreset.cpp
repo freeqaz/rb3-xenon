@@ -35,6 +35,19 @@ std::deque<std::pair<LightPreset::KeyframeCmd, float> > LightPreset::sManualEven
 static unsigned short sPresetAltRev = 0;
 static unsigned short sPresetRev = 0;
 static bool sLoading = false;
+
+// The preset holds every object its four lists name: retail AddRefs it with
+// Hmx::Object::AddRef(ObjRefOwner *) (bl 0x8275BD08) and Releases it with
+// bl 0x8275B378, the preset being the owner. Natively each hold is a ring node
+// (HoldRef/DropRef, LightPreset.h), so a dying object reaches Replace.
+#ifdef HX_NATIVE
+#define PRESET_ADDREF(obj) HoldRef(obj)
+#define PRESET_RELEASE(obj) DropRef(obj)
+#else
+#define PRESET_ADDREF(obj) (obj)->AddRef(this)
+#define PRESET_RELEASE(obj) (obj)->Release(this)
+#endif
+
 class AutoLoading {
 public:
     AutoLoading() { sLoading = true; }
@@ -384,7 +397,51 @@ LightPreset::LightPreset()
       mManualFrame(0), mLastManualFrame(-1), mManualFadeTime(0), mEndFrame(0),
       mHue(0) {}
 
-LightPreset::~LightPreset() { Clear(); }
+LightPreset::~LightPreset() {
+    Clear();
+#ifdef HX_NATIVE
+    // Clear released every listed object. A node can outlive its list entry
+    // (a Replace whose `to` fails the cast stores null but holds `to`, as
+    // retail 0x824B2C84 does), and a node must not outlive its owner.
+    for (uint i = 0; i != mHeldRefs.size(); i++)
+        delete mHeldRefs[i];
+    mHeldRefs.clear();
+#endif
+}
+
+#ifdef HX_NATIVE
+// Native AddRef(this): a fresh ring node on `obj` owned by the preset. Built
+// empty and then assigned so ObjOwnerPtr's self-seed stays null.
+void LightPreset::HoldRef(Hmx::Object *obj) {
+    if (!obj)
+        return;
+    ObjOwnerPtr<Hmx::Object> *ref = new ObjOwnerPtr<Hmx::Object>(this);
+    *ref = obj;
+    mHeldRefs.push_back(ref);
+}
+
+// Native Release(this): unlink and free one node naming `obj` (the first one,
+// as retail's list erase takes the first matching entry).
+void LightPreset::DropRef(Hmx::Object *obj) {
+    if (!obj)
+        return;
+    for (uint i = 0; i != mHeldRefs.size(); i++) {
+        if (mHeldRefs[i]->Ptr() == obj) {
+            delete mHeldRefs[i];
+            mHeldRefs.erase(mHeldRefs.begin() + i);
+            return;
+        }
+    }
+}
+
+int LightPreset::HeldRefIndex(const ObjRef *ref) const {
+    for (uint i = 0; i != mHeldRefs.size(); i++) {
+        if (mHeldRefs[i] == ref)
+            return i;
+    }
+    return -1;
+}
+#endif
 
 BEGIN_HANDLERS(LightPreset)
     HANDLE(set_keyframe, OnSetKeyframe)
@@ -562,35 +619,24 @@ BEGIN_COPYS(LightPreset)
     BEGIN_COPYING_MEMBERS
         Clear();
         COPY_MEMBER(mKeyframes)
-        // Retail calls AddRef after each pointer-vector copy and resizes
-        // mSpotlightDrawers. The AddRef/Release calls in Copy, Load and Replace
-        // are the X360 ref-ring bookkeeping (Hmx::Object::AddRef(ObjRefOwner *));
-        // native's Hmx::Object tracks refs through ObjRef, which LightPreset is
-        // not, so they are X360-only (same pattern as ScriptTask in Task.cpp).
+        // Retail AddRefs every copied entry (0x824B7820, 0x824B789C,
+        // 0x824B7928, 0x824B79B4) and resizes mSpotlightDrawers.
         COPY_MEMBER(mSpotlights)
-#ifndef HX_NATIVE
         for (uint i = 0; i != mSpotlights.size(); i++) {
-            mSpotlights[i]->AddRef(this);
+            PRESET_ADDREF(mSpotlights[i]);
         }
-#endif
         COPY_MEMBER(mEnvironments)
-#ifndef HX_NATIVE
         for (uint i = 0; i != mEnvironments.size(); i++) {
-            mEnvironments[i]->AddRef(this);
+            PRESET_ADDREF(mEnvironments[i]);
         }
-#endif
         COPY_MEMBER(mLights)
-#ifndef HX_NATIVE
         for (uint i = 0; i != mLights.size(); i++) {
-            mLights[i]->AddRef(this);
+            PRESET_ADDREF(mLights[i]);
         }
-#endif
         COPY_MEMBER(mSpotlightDrawers)
-#ifndef HX_NATIVE
         for (uint i = 0; i != mSpotlightDrawers.size(); i++) {
-            mSpotlightDrawers[i]->AddRef(this);
+            PRESET_ADDREF(mSpotlightDrawers[i]);
         }
-#endif
         mSpotlightState.resize(mSpotlights.size());
         mEnvironmentState.resize(mEnvironments.size());
         mLightState.resize(mLights.size());
@@ -692,10 +738,8 @@ void LightPreset::RemoveLight(int idx) {
         cur.mLightEntries.erase(cur.mLightEntries.begin() + idx);
     }
     mLightState.erase(mLightState.begin() + idx);
-#ifndef HX_NATIVE
     if (mLights[idx])
-        mLights[idx]->Release(this);
-#endif
+        PRESET_RELEASE(mLights[idx]);
     mLights.erase(mLights.begin() + idx);
 }
 
@@ -705,10 +749,8 @@ void LightPreset::RemoveSpotlightDrawer(int idx) {
         cur.mSpotlightDrawerEntries.erase(cur.mSpotlightDrawerEntries.begin() + idx);
     }
     mSpotlightDrawerState.erase(mSpotlightDrawerState.begin() + idx);
-#ifndef HX_NATIVE
     if (mSpotlightDrawers[idx])
-        mSpotlightDrawers[idx]->Release(this);
-#endif
+        PRESET_RELEASE(mSpotlightDrawers[idx]);
     mSpotlightDrawers.erase(mSpotlightDrawers.begin() + idx);
 }
 
@@ -742,10 +784,8 @@ void LightPreset::RemoveSpotlight(int idx) {
         cur.mSpotlightEntries.erase(cur.mSpotlightEntries.begin() + idx);
     }
     mSpotlightState.erase(mSpotlightState.begin() + idx);
-#ifndef HX_NATIVE
     if (mSpotlights[idx])
-        mSpotlights[idx]->Release(this);
-#endif
+        PRESET_RELEASE(mSpotlights[idx]);
     mSpotlights.erase(mSpotlights.begin() + idx);
 }
 
@@ -755,17 +795,13 @@ void LightPreset::RemoveEnvironment(int idx) {
         cur.mEnvironmentEntries.erase(cur.mEnvironmentEntries.begin() + idx);
     }
     mEnvironmentState.erase(mEnvironmentState.begin() + idx);
-#ifndef HX_NATIVE
     if (mEnvironments[idx])
-        mEnvironments[idx]->Release(this);
-#endif
+        PRESET_RELEASE(mEnvironments[idx]);
     mEnvironments.erase(mEnvironments.begin() + idx);
 }
 
 void LightPreset::AddLight(RndLight *lit) {
-#ifndef HX_NATIVE
-    lit->AddRef(this); // retail: the preset is the ObjRefOwner (house idiom, cf. TypeProps.cpp)
-#endif
+    PRESET_ADDREF(lit);
     mLights.push_back(lit);
     EnvLightEntry e;
     FillLightPresetData(lit, e);
@@ -781,22 +817,20 @@ void LightPreset::AddLight(RndLight *lit) {
 // mSpotlightDrawers is released and left in place (Load resizes it).
 void LightPreset::Clear() {
     mKeyframes.clear();
-#ifndef HX_NATIVE
     for (int i = 0; i != (unsigned)mSpotlights.size(); i++)
-        mSpotlights[i]->Release(this);
-#endif
+        PRESET_RELEASE(mSpotlights[i]);
     mSpotlights.clear();
-#ifndef HX_NATIVE
     for (int i = 0; i != (unsigned)mEnvironments.size(); i++)
-        mEnvironments[i]->Release(this);
-#endif
+        PRESET_RELEASE(mEnvironments[i]);
     mEnvironments.clear();
-#ifndef HX_NATIVE
     for (int i = 0; i != (unsigned)mLights.size(); i++)
-        mLights[i]->Release(this);
+        PRESET_RELEASE(mLights[i]);
     for (int i = 0; i != (unsigned)mSpotlightDrawers.size(); i++)
-        mSpotlightDrawers[i]->Release(this);
-#else
+        PRESET_RELEASE(mSpotlightDrawers[i]);
+#ifdef HX_NATIVE
+    // Native also empties the drawer list. Retail leaves the released pointers
+    // in place for Load to resize over, but a rev <= 9 Load never does, and
+    // those unheld pointers could then dangle.
     mSpotlightDrawers.clear();
 #endif
     mLights.clear();
@@ -807,9 +841,7 @@ void LightPreset::OnKeyframeCmd(LightPreset::KeyframeCmd cmd) {
 }
 
 void LightPreset::AddEnvironment(RndEnviron *env) {
-#ifndef HX_NATIVE
-    env->AddRef(this); // retail: the preset is the ObjRefOwner (house idiom, cf. TypeProps.cpp)
-#endif
+    PRESET_ADDREF(env);
     mEnvironments.push_back(env);
     EnvironmentEntry e;
     FillEnvPresetData(env, e);
@@ -830,9 +862,7 @@ void LightPreset::FillSpotlightDrawerPresetData(
 }
 
 void LightPreset::AddSpotlightDrawer(SpotlightDrawer *sd) {
-#ifndef HX_NATIVE
-    sd->AddRef(this); // retail: the preset is the ObjRefOwner (house idiom, cf. TypeProps.cpp)
-#endif
+    PRESET_ADDREF(sd);
     mSpotlightDrawers.push_back(sd);
     SpotlightDrawerEntry e;
     FillSpotlightDrawerPresetData(sd, e);
@@ -844,9 +874,7 @@ void LightPreset::AddSpotlightDrawer(SpotlightDrawer *sd) {
 }
 
 void LightPreset::AddSpotlight(Spotlight *s, bool b) {
-#ifndef HX_NATIVE
-    s->AddRef(this); // retail: the preset is the ObjRefOwner (house idiom, cf. TypeProps.cpp)
-#endif
+    PRESET_ADDREF(s);
     mSpotlights.push_back(s);
     SpotlightEntry e(this);
     FillSpotPresetData(s, e, -1);
@@ -1435,30 +1463,24 @@ BEGIN_LOADS(LightPreset)
     for (int i = 0; i != (unsigned)mSpotlights.size(); i++) {
         bs.ReadString(buf, 0x80);
         mSpotlights[i] = Dir()->Find<Spotlight>(buf, false);
-#ifndef HX_NATIVE
         if (mSpotlights[i])
-            mSpotlights[i]->AddRef(this);
-#endif
+            PRESET_ADDREF(mSpotlights[i]);
     }
     bs >> count;
     mEnvironments.resize(count);
     for (int i = 0; i != (unsigned)mEnvironments.size(); i++) {
         bs.ReadString(buf, 0x80);
         mEnvironments[i] = Dir()->Find<RndEnviron>(buf, false);
-#ifndef HX_NATIVE
         if (mEnvironments[i])
-            mEnvironments[i]->AddRef(this);
-#endif
+            PRESET_ADDREF(mEnvironments[i]);
     }
     bs >> count;
     mLights.resize(count);
     for (int i = 0; i != (unsigned)mLights.size(); i++) {
         bs.ReadString(buf, 0x80);
         mLights[i] = Dir()->Find<RndLight>(buf, false);
-#ifndef HX_NATIVE
         if (mLights[i])
-            mLights[i]->AddRef(this);
-#endif
+            PRESET_ADDREF(mLights[i]);
     }
     if (sPresetRev < 5) {
         bool b;
@@ -1522,10 +1544,8 @@ BEGIN_LOADS(LightPreset)
         for (int i = 0; i != (unsigned)mSpotlightDrawers.size(); i++) {
             bs.ReadString(buf, 0x80);
             mSpotlightDrawers[i] = Dir()->Find<SpotlightDrawer>(buf, false);
-#ifndef HX_NATIVE
-        if (mSpotlightDrawers[i])
-            mSpotlightDrawers[i]->AddRef(this);
-#endif
+            if (mSpotlightDrawers[i])
+                PRESET_ADDREF(mSpotlightDrawers[i]);
         }
     }
     if (sPresetRev == 0xB) {
@@ -1568,20 +1588,35 @@ BEGIN_LOADS(LightPreset)
     sLoading = false;
 END_LOADS
 
+// Retail 0x824B29B8: find the dying (or replaced) object in the four lists, in
+// order. With a replacement, Release the old object (0x824B2AAC..0x824B2C30),
+// store dynamic_cast<T>(to) and AddRef `to` (0x824B2C84); without one, call the
+// list's Remove* (which Releases it). Then CacheFrames (0x824B2C9C).
 void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
+#ifdef HX_NATIVE
+    // Natively `from` is one of the preset's ring nodes (HoldRef), not the
+    // object. Any other ref goes to the base, which forwards it to mSinks
+    // (retail's base Replace is empty).
+    int held = HeldRefIndex(from);
+    if (held < 0) {
+        Hmx::Object::Replace(from, to);
+        return;
+    }
+    // Put this node first, so the Release below (DropRef, directly or in
+    // Remove*) frees this node rather than another one naming the same object.
+    std::swap(mHeldRefs[0], mHeldRefs[held]);
+    Hmx::Object *fromObj = mHeldRefs[0]->Ptr();
+#else
     // X360: `from` IS the dying object (see RefIs in Object.h + Object.cpp:192).
     // ObjRef::GetObj() is an elided stub returning nullptr off HX_NATIVE.
     Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
+#endif
     for (uint idx = 0; idx != mSpotlights.size(); idx++) {
         if (mSpotlights[idx] == fromObj) {
             if (to) {
-#ifndef HX_NATIVE
-                fromObj->Release(this);
-#endif
+                PRESET_RELEASE(fromObj);
                 mSpotlights[idx] = dynamic_cast<Spotlight *>(to);
-#ifndef HX_NATIVE
-                to->AddRef(this);
-#endif
+                PRESET_ADDREF(to);
             } else
                 RemoveSpotlight(idx);
             CacheFrames();
@@ -1591,13 +1626,9 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
     for (uint idx = 0; idx != mEnvironments.size(); idx++) {
         if (mEnvironments[idx] == fromObj) {
             if (to) {
-#ifndef HX_NATIVE
-                fromObj->Release(this);
-#endif
+                PRESET_RELEASE(fromObj);
                 mEnvironments[idx] = dynamic_cast<RndEnviron *>(to);
-#ifndef HX_NATIVE
-                to->AddRef(this);
-#endif
+                PRESET_ADDREF(to);
             } else
                 RemoveEnvironment(idx);
             CacheFrames();
@@ -1607,13 +1638,9 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
     for (uint idx = 0; idx != mLights.size(); idx++) {
         if (mLights[idx] == fromObj) {
             if (to) {
-#ifndef HX_NATIVE
-                fromObj->Release(this);
-#endif
+                PRESET_RELEASE(fromObj);
                 mLights[idx] = dynamic_cast<RndLight *>(to);
-#ifndef HX_NATIVE
-                to->AddRef(this);
-#endif
+                PRESET_ADDREF(to);
             } else
                 RemoveLight(idx);
             CacheFrames();
@@ -1623,13 +1650,9 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
     for (uint idx = 0; idx != mSpotlightDrawers.size(); idx++) {
         if (mSpotlightDrawers[idx] == fromObj) {
             if (to) {
-#ifndef HX_NATIVE
-                fromObj->Release(this);
-#endif
+                PRESET_RELEASE(fromObj);
                 mSpotlightDrawers[idx] = dynamic_cast<SpotlightDrawer *>(to);
-#ifndef HX_NATIVE
-                to->AddRef(this);
-#endif
+                PRESET_ADDREF(to);
             } else
                 RemoveSpotlightDrawer(idx);
             CacheFrames();
@@ -1637,8 +1660,15 @@ void LightPreset::Replace(ObjRef *from, Hmx::Object *to) {
         }
     }
     // Retail does not chain to the base Replace here; the not-found path simply
-    // returns.
+    // returns. Its ring walk has already taken the preset off the object's ref
+    // list, so natively the node goes too.
+#ifdef HX_NATIVE
+    PRESET_RELEASE(fromObj);
+#endif
 }
+
+#undef PRESET_ADDREF
+#undef PRESET_RELEASE
 
 #pragma endregion
 

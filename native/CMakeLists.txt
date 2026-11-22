@@ -2019,6 +2019,8 @@ rb3_add_executable(rb3-milo
     ${CMAKE_SOURCE_DIR}/src/proxy_chain_phase.cpp
     # CharClip transitions ref-count their clips (deleting one cannot dangle).
     ${CMAKE_SOURCE_DIR}/src/charclip_refs_phase.cpp
+    # A LightPreset holds the objects its four lists name by reference.
+    ${CMAKE_SOURCE_DIR}/src/lightpreset_refs_phase.cpp
     # A11: Rnd::Mode is RB3 retail's numbering; SelectConfig keys off it.
     ${CMAKE_SOURCE_DIR}/src/rnd_mode_phase.cpp
     # A13: Spotlight::Generate is retail's body (no edit-mode regen).
