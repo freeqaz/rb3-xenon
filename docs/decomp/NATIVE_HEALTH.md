@@ -1,7 +1,8 @@
 # Native health — collected measurement and its committed baseline
 
-**Latest baseline: lane W16-PE, 2026-10-06, off `6f1d1d794` — now RUNS ALL 18
-targets; see [the W16-PE section at the end](#w16-pe-2026-10-06--every-native-target-is-now-run).**
+**Latest baseline: 2026-11-22, `rb3-app` — the link gate has 19 targets, the runtime stage
+still 18; see [the rb3-app section at the end](#rb3-app-2026-11-22--the-19th-link-target).**
+(Before it: lane W16-PE, 2026-10-06, off `6f1d1d794`, which first ran all 18 targets.)
 The sections below are dated records; the "Only 3 of 18 targets" runtime table is
 superseded by it.
 
@@ -838,3 +839,28 @@ contract. 14 s wall for the whole `--selftest` run on a warm tree.
 | scatter guests reaching NO target | 14 | 17 | ⚠ **not this lane** — drift since 09-11, not investigated |
 | scatter multi-host guests | 21 | 20 | ⚠ same |
 
+# rb3-app (2026-11-22) — the 19th link target
+
+Branches `rbx-app-a0` → `rbx-app-a1` → `rbx-app-a1b` (coordinator dc3-decomp-46, the owner's "get rb3 working,
+ideally the Xbox 360 version"). `rb3-app` links `Main`/`App` with the band3 and system TUs the boot needs and
+the shared engine: **0 undefined, 0 duplicate symbols** (the first probe: 506 / 204), with every stub it
+needs ring-tagged and aborting (`tools/native_stub_census.py --rings rb3-app`). It is the 19th entry of
+`KNOWN_TARGETS`, so the link gate's contract is now `expected=19 verified=19`.
+
+It is **not in the runtime stage yet**, so `runtime_total` stays 18: run headless, `App::App` gets through the
+splash, `SystemInit`, `TheRnd.Init` (headless), sound, saves, characters, beat-match, track, world, band and
+`TheSongMgr.Init`, then stops in `MetaPanel::Init` → `SessionMgr::Init` on the still zero-storage
+`TheNetSession`. It joins the runtime stage when it exits 0.
+
+## The baseline line
+
+Measured on `cd838fbc3 (before its rebase onto b285c0347)` with engine `fe848a9`, run inside a bwrap overlay of the loaded NVIDIA driver's user-space
+(the box's kernel module and user-space disagree since 2026-11-18; through `LD_LIBRARY_PATH` instead, the
+file audit fails every target on the loader's probes of that directory):
+
+```
+NATIVE_GATE_RESULT verdict=PASS expected=19 verified=19 skipped=0 partial=0 failed=0 rc=0
+NATIVE_HEALTH_RESULT verdict=PASS link=PASS link_verified=19 link_expected=19 link_skipped=0 runtime=PASS runtime_ran=18 runtime_total=18 gates_pass=513 gates_fail=0 unrunnable=none selftest=PASS scatter_unlinked=10 scatter_dirb=1 scatter_multihost=10 rc=0 handpose_controls=3/3 handpose_baseline_fail=1 runtime_crashed=0 runtime_failed=none retail_config=12/12 unhandled_calls=0
+```
+
+rb3-render's 11 frames are byte-identical to the run before these branches.
