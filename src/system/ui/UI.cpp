@@ -794,12 +794,12 @@ void UIManager::Poll() {
             UIScreen *oldCur = mCurrentScreen;
             mTransitionState = kTransitionFrom;
             mCurrentScreen = trans;
-#ifdef HX_NATIVE
-            // Native: DTA set_sink never fires in DC3 (investigated 2026-03-12).
-            // Screens don't have {ui set_sink} in their TypeDefs. Set mSink to
-            // current screen so HANDLE_MEMBER_PTR(mSink) routes button input.
-            mSink = trans;
-#endif
+            // mSink is not written here: retail's UIManager ctor (fn_82804588,
+            // `stw r29,0x3c(r30)` at 0x82804648) zeroes it and nothing in UI.cpp
+            // stores to +0x3c again, so input reaches the screen through the
+            // trailing HANDLE_MEMBER_PTR(mCurrentScreen). A native-only
+            // `mSink = trans` here kept naming a popped screen after PopScreen
+            // (lane A16: main_hub's A press went to hint_rb3_welcome's button).
             mTransitionScreen = oldCur;
 #ifdef HX_WEB
             printf("DC3 UI: transition complete, will enter '%s'\n", trans ? trans->Name() : "<null>");
