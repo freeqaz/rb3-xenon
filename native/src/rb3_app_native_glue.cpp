@@ -34,8 +34,28 @@ CriticalSection *gMemStackLock = nullptr; // ring: native-real
 // content storage: a base ContentMgr means no content packages, no refresh in
 // flight, an on-disc-only session. Same binding bandtrack_link_stubs.cpp
 // (rb3-render's phase stubs) has used since W16-TJ.
-static ContentMgr gRb3AppContentMgr;
+//
+// A2: TitleContentPath. Retail ContentMgr_Xbox returns ContentPath(0), the
+// mounted title-update package, and ArchiveInit (os/Archive.cpp) merges
+// <path>/gen/patch_xbox.hdr ahead of the disc when it exists. Natively the
+// title update is opt-in: RB3_TITLE_UPDATE_DIR names the directory that holds
+// gen/patch_xbox.hdr + gen/patch_xbox_0.ark (the official TU5 package is
+// /home/free/code/milohax/rb3-xenon/orig/45410914/tu5-package). Unset or
+// empty = no title update, which is what the base class answers.
+#include <cstdlib>
+class Rb3AppContentMgr : public ContentMgr {
+public:
+    virtual const char *TitleContentPath() { // ring: native-real
+        const char *dir = std::getenv("RB3_TITLE_UPDATE_DIR");
+        return (dir && *dir) ? dir : nullptr;
+    }
+};
+static Rb3AppContentMgr gRb3AppContentMgr;
 ContentMgr &TheContentMgr = gRb3AppContentMgr; // ring: native-real
+
+// NativeArchiveInit (platform/System_Native.cpp, every target) asks this weak
+// hook; only rb3-app defines it. Non-null = run the retail ArchiveInit.
+const char *Rb3NativeTitleContentPath() { return TheContentMgr.TitleContentPath(); } // ring: native-real
 
 // Retail: WebSvcMgrCurl.cpp binds TheWebSvcMgr to the curl web-service
 // manager; rb3-app excludes it (online ring, curl). An offline WebSvcMgr: the
@@ -85,8 +105,16 @@ extern "C" void OutputDebugStringA(const char *msg) { // ring: native-real
 //   2. natively CSHA1 is wrong on LP64/little-endian (SHA1.h `unsigned long
 //      l[16]` overruns m_workspace into m_block: segfault in
 //      CSHA1::Transform). Fix drafted, not landed: a1/sha1_lp64_fix.patch.
-void SetFileChecksumData() {} // ring: native-real
-void SetSongMidiChecksumData() {} // ring: native-real
+//
+// A2 (2026-11-22) retires both reasons: (2) the CSHA1 fix landed (8b219ac4e)
+// and the native CSHA1 matches sha1sum on macros.dtb (4611a568...), the
+// community patch's macros.dtb and the TU5 patch_xbox.hdr, fed in uneven
+// chunks (a2/sha1drv); (1) the tables describe TU5 (41 of 41 TU5 rows match
+// the official package, a1b/scripts/checksum_xref.py). So the REAL registrars
+// (src/ChecksumData_xbox.cpp) are now compiled in, and rb3_app_gates.cpp
+// calls them only when a title update is mounted (RB3_TITLE_UPDATE_DIR); on
+// the bare disc they are skipped with a [GATED] line, since 41 listed files
+// would fail by measurement and stop the boot.
 
 // Retail: SynthPreInit (synth/Synth.cpp) takes Synth::New(), the Xbox audio
 // synth; its HX_NATIVE arm asks for CreateNativeSynth() instead. rb3-app has

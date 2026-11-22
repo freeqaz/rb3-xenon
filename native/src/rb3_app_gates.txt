@@ -42,3 +42,5 @@ _ZN25AppMiniLeaderboardDisplay4InitEv
 _Z7UtlInitv
 _ZN11PresenceMgr4InitEv
 _ZN12QuestManager4InitEP9DataArray
+_Z19SetFileChecksumDatav
+_Z23SetSongMidiChecksumDatav

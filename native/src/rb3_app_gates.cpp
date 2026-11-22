@@ -304,3 +304,33 @@ extern "C" void __wrap__ZN12QuestManager4InitEP9DataArray(void *self, void *a0) 
     __real__ZN12QuestManager4InitEP9DataArray(self, a0);
     rb3_app_gate("QuestManager::Init(DataArray*)");
 }
+
+// ---- lane A2: the retail checksum tables, registered only over TU5 content ----
+// src/ChecksumData_xbox.cpp's two tables are TU5's (disc + the 41 files TU5
+// changed or added; a1b/checksum_xref.txt). Over the bare disc 41 listed files
+// differ, so registering them would stop the boot at the first one, by
+// measurement. With RB3_TITLE_UPDATE_DIR set the real registrar runs.
+const char *Rb3NativeTitleContentPath();
+extern "C" void __real__Z19SetFileChecksumDatav(void);
+extern "C" void __wrap__Z19SetFileChecksumDatav(void) { // ring: native-real
+    if (Rb3NativeTitleContentPath()) {
+        __real__Z19SetFileChecksumDatav();
+        rb3_app_gate("SetFileChecksumData()");
+    } else {
+        printf("  [GATED] rb3-app SetFileChecksumData() -- ring tu5-content: the table describes TU5, "
+               "no title update mounted (RB3_TITLE_UPDATE_DIR), not registered\n");
+        fflush(stdout);
+    }
+}
+
+extern "C" void __real__Z23SetSongMidiChecksumDatav(void);
+extern "C" void __wrap__Z23SetSongMidiChecksumDatav(void) { // ring: native-real
+    if (Rb3NativeTitleContentPath()) {
+        __real__Z23SetSongMidiChecksumDatav();
+        rb3_app_gate("SetSongMidiChecksumData()");
+    } else {
+        printf("  [GATED] rb3-app SetSongMidiChecksumData() -- ring tu5-content: the table describes TU5, "
+               "no title update mounted (RB3_TITLE_UPDATE_DIR), not registered\n");
+        fflush(stdout);
+    }
+}

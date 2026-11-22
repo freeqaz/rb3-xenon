@@ -47,6 +47,11 @@ RULES = [
      r"JoinInvitePanel|CampaignGoalsLeaderboardPanel|CampaignCareerLeaderboardPanel|"
      r"Label3d|BeatClock)\b", "a6-failing-tu"),
     (r"^Movie::SetTimeCallback", "a2-movie"),
+    # Retail never calls these: VocalPlayer never reads mVocalOverlay (0x3c8);
+    # every call site is under HX_NATIVE and the pointer is null unless
+    # ToggleOverlay runs (session rb3-xenon-07, 114186523, VocalOverlay.h).
+    # The stubs still abort; the ring says no retail body is owed for them.
+    (r"^VocalOverlay::", "native-only-callsite"),
     (r".*", "a1-absent-body"),
 ]
 

@@ -2500,6 +2500,18 @@ if(RB3X_BUILD_ENGINE)
     # nothing, measured reason there) in place of the uncommented no-op every
     # other target links.
     list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/platform/ChecksumData_Stub.cpp)
+    # A2: OvershellProfileProvider's ctor, GetUser and Reload are retail 360
+    # code (100% matched, rb3-xenon-07); rb3-app had them as a4-wii-residue
+    # stubs only because this TU was not compiled. Its Handle names the bare
+    # `num_data` Symbol global, which no native TU defines; the LOCAL_STATIC
+    # arm spells the same comparison with a function-local static, which is
+    # what the X360 build emits. Native-only.
+    list(APPEND _rb3_app_all ${REPO_ROOT}/src/band3/meta_band/OvershellProfileProvider.cpp)
+    set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/OvershellProfileProvider.cpp
+        PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+    # A2: the retail tables and registrars; rb3_app_gates.cpp calls them only
+    # with a title update mounted (RB3_TITLE_UPDATE_DIR).
+    list(APPEND _rb3_app_all ${REPO_ROOT}/src/ChecksumData_xbox.cpp)
     # A1: native/src/main_app.cpp drives App::App (data dir, headless, bounded);
     # src/Main.cpp is retail's main (App::Run, the frame loop: A2).
     list(REMOVE_ITEM _rb3_app_all ${REPO_ROOT}/src/Main.cpp)
