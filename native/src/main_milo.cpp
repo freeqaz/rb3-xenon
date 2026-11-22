@@ -108,6 +108,8 @@ int RunRndModePhase(void (*gate)(const char *, bool, const char *));
 int RunSpotlightGeneratePhase(void (*gate)(const char *, bool, const char *));
 // native/src/text_line_color_phase.cpp (A15)
 int RunTextLineColorPhase(void (*gate)(const char *, bool, const char *));
+// native/src/font_replace_phase.cpp (A18)
+int RunFontReplacePhase(void (*gate)(const char *, bool, const char *));
 // A ScriptTask ends when an object it watches dies (script_task_watch_phase.cpp).
 int RunScriptTaskWatchPhase(void (*gate)(const char *, bool, const char *));
 // DTA script ops on string nodes and native-width union reads (string_node_phase.cpp).
@@ -585,6 +587,9 @@ int main(int argc, char **argv) {
     // A15: RndText::UpdateLineColor recolours the line it is given, after an
     // earlier two-byte character (native/src/text_line_color_phase.cpp).
     RunTextLineColorPhase(Gate);
+    // A18: RndFont::Replace is retail's body, and a dead sink still leaves the
+    // font's native MsgSinks (native/src/font_replace_phase.cpp).
+    RunFontReplacePhase(Gate);
     // ScriptTask watches the objects its script names, as retail
     // UpdateVarsObjects 0x82749968 does (native/src/script_task_watch_phase.cpp).
     RunScriptTaskWatchPhase(Gate);
