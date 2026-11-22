@@ -1905,11 +1905,9 @@ BlockMgr.cpp:
 	.pdata      start:0x82219758 end:0x82219858
 	.pdata      start:0x82219858 end:0x82219860
 	.pdata      start:0x822615D8 end:0x822615E0
-	.pdata      start:0x82261608 end:0x82261610
 	.text       start:0x8252BE78 end:0x8252D114
 	.text       start:0x8252D114 end:0x8252D13C
 	.text       start:0x82C3FBE0 end:0x82C3FC28
-	.text       start:0x82C3FD60 end:0x82C3FE10
 	.text       start:0x82C45AB8 end:0x82C45AC8
 
 JoypadClient.cpp:
@@ -8654,8 +8652,10 @@ band3/meta_band/UIStats.cpp:
 band3/meta_band/AuditionMgr.cpp:
 	.pdata      start:0x8221CE18 end:0x8221D100
 	.pdata      start:0x8221D108 end:0x8221D220
+	.pdata      start:0x82261608 end:0x82261610
 	.text       start:0x82560B08 end:0x82563258
 	.text       start:0x825632BC end:0x82564410
+	.text       start:0x82C3FD60 end:0x82C3FE10
 	.text       start:0x82C45F18 end:0x82C46028
 
 band3/meta_band/NewAwardPanel.cpp:
