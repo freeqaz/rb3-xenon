@@ -1331,7 +1331,7 @@ void OvershellSlot::UpdateView() {
         }
     }
     // Retail X360 (0x825DB930) emits nothing between the difficulty-restriction
-    // handling and the update_mics message. An rb3-Wii dev-build
+    // handling and the update_mics message. A dev-build
     // show/hide_invitation_notification_msg call used to sit here under
     // HX_NATIVE; natively both Messages are never constructed, so it crashed
     // rb3-app's boot (lane A6), and retail never sends them.
