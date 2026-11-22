@@ -80,7 +80,11 @@ char *NextBuf() {
         if ((DWORD)gThreadIds[gCurThread] != currentThreadId) {
             threadIdx = 0;
             if (gNumThreads > 0) {
-                unsigned long *threadIdSlot = (unsigned long *)&gThreadIds[0];
+                // DWORD, a 4-byte id: retail walks gThreadIds with lwz and a stride
+                // of 4 (0x827C3E08, addi r29,r29,4 at 0x827C3E1C). On X360 DWORD is
+                // `unsigned long`; natively `unsigned long` is 8 bytes, so an
+                // `unsigned long *` read two ids at once and stepped two slots.
+                DWORD *threadIdSlot = (DWORD *)&gThreadIds[0];
                 do {
                     DWORD loopThreadId = GetCurrentThreadId();
                     if (*threadIdSlot == loopThreadId) {
@@ -94,7 +98,8 @@ char *NextBuf() {
                 int activeThreadCount = gNumThreads;
                 threadIdx = 0;
                 if (gNumThreads > 0) {
-                    unsigned long *threadIdSlot = (unsigned long *)&gThreadIds[0];
+                    // DWORD as above (lwz r3,0(r29) at 0x827C3E40, stride 4 at 0x827C3E58).
+                    DWORD *threadIdSlot = (DWORD *)&gThreadIds[0];
                     do {
                         if (!ValidateThreadId(*threadIdSlot)) {
                             gThreadIds[threadIdx] = GetCurrentThreadId();

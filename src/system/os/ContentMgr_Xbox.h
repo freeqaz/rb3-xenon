@@ -59,7 +59,10 @@ public:
 private:
     XOVERLAPPED *mOverlapped; // 0x4
     XCONTENT_CROSS_TITLE_DATA mXData; // 0x8
-    unsigned long mLicenseBits; // 0x140
+    // DWORD, the type XContentCrossTitleCreate writes through (its 6th
+    // parameter, XboxContent::Poll); the same 4-byte type as `unsigned long` on
+    // X360, while natively `unsigned long` is 8 bytes and DWORD 4.
+    DWORD mLicenseBits; // 0x140
     bool mValidLicenseBits; // 0x144
     String mRoot; // 0x148
     String mContentPath; // 0x154

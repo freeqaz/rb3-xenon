@@ -499,6 +499,8 @@ void XboxContentMgr::PollRefresh() {
                     // xdatas[j] at both uses made the RECORD the IV (inert);
                     // hoisting filename above the for created it before the
                     // guard. Only the in-body folded-base form matches.
+                    // The record start is filename - offsetof(szFileName): 0x108 on
+                    // X360 (the same constant), 8 + 128 * sizeof(wchar_t) natively.
                     for (unsigned int j = 0; j < numItems; j++) {
                         char *filename =
                             mXDatas[i].szFileName + j * sizeof(XCONTENT_CROSS_TITLE_DATA);
@@ -535,7 +537,7 @@ void XboxContentMgr::PollRefresh() {
                         }
                         Content *newContent =
                             new XboxContent(
-                                *(XCONTENT_CROSS_TITLE_DATA *)(filename - 0x108), unk7f8++, i, discovered
+                                *(XCONTENT_CROSS_TITLE_DATA *)(filename - offsetof(XCONTENT_CROSS_TITLE_DATA, szFileName)), unk7f8++, i, discovered
                             );
                         std::list<Content *>::iterator end = mContents.end();
                         mContents.insert(end, newContent);
