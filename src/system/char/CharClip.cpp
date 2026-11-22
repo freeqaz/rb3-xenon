@@ -158,6 +158,15 @@ CharClip::NodeVector *CharClip::Transitions::FindNodes(CharClip *clip) const {
 }
 
 void CharClip::Transitions::AddNode(CharClip *clip, const CharGraphNode &node) {
+    // The vector header (clip, size) is 8 bytes on X360; natively the clip
+    // pointer is 8 bytes, so the header is offsetof(NodeVector, nodes). The
+    // X360 literals stood here natively too, so a new vector was allocated 4
+    // bytes short and the next AddNode memmoved a negative length.
+#ifdef HX_NATIVE
+    const int kHeader = offsetof(NodeVector, nodes);
+#else
+    const int kHeader = 8;
+#endif
     NodeVector *nodes = FindNodes(clip);
     NodeVector *resized;
     if (nodes) {
@@ -169,12 +178,14 @@ void CharClip::Transitions::AddNode(CharClip *clip, const CharGraphNode &node) {
         // Retail addresses the tail by byte offset from the vector: it starts
         // at +8 + size*8 (the old Next()) and moves up one 8-byte node.
         int off = resized->size * sizeof(CharGraphNode);
-        memmove((char *)resized + off + 16, (char *)resized + off + 8, moveSize);
+        memmove(
+            (char *)resized + off + kHeader + 8, (char *)resized + off + kHeader, moveSize
+        );
     } else {
 #ifndef HX_NATIVE
         clip->AddRef(mOwner);
 #endif
-        resized = Resize(BytesInMemory() + 0x10, mNodeEnd);
+        resized = Resize(BytesInMemory() + kHeader + 8, mNodeEnd);
         resized->clip = clip;
         resized->size = 0;
     }
