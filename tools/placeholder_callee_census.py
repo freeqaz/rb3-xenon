@@ -167,6 +167,11 @@ def walk_population(od, rep, want_named=False):
             if slots is None:
                 rec["unaligned_fn"] = sum(1 for _o, n, ty in tf[name][1]
                                           if ty == BL and FN.match(n))
+                # UH2: most UNALIGNED rows make no call on either side, so they
+                # cannot hide a wrong callee; only a differing call count can.
+                rec["unaligned_calls"] = (
+                    sum(1 for x in tf[name][1] if x[2] == BL)
+                    + sum(1 for x in of[name][1] if x[2] == BL))
                 yield rec
                 continue
             for (toff, tn), (_oo, bn) in slots:
@@ -274,6 +279,9 @@ def census(out_path):
         tc["rows_" + r["align"]] += 1
         if r["align"] == "UNALIGNED":
             tc["unaligned_fn_slots"] += r["unaligned_fn"]
+            if r.get("unaligned_calls"):
+                tc["unaligned_rows_with_calls"] += 1
+                tc["unaligned_bytes_with_calls"] += r["size"]
             if r["unaligned_fn"]:
                 tc["unaligned_rows_with_fn"] += 1
         if r["sites"]:
@@ -297,12 +305,14 @@ def census(out_path):
                pairs=verdicts)
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     Path(out_path).write_text(json.dumps(out, indent=1))
-    print("tier          paired  STRICT     BL  UNALGN  rows_w/sites  sites  unaligned_fn_slots")
+    print("tier          paired  STRICT     BL  UNALGN  rows_w/sites  sites  unaligned_fn_slots"
+          "  unalgn_w/calls (B)")
     for t in sorted(tiers):
         c = tiers[t]
-        print("%-13s %6d %7d %6d %7d %13d %6d %8d" % (
+        print("%-13s %6d %7d %6d %7d %13d %6d %8d %10d (%d)" % (
             t, c["paired_rows"], c["rows_STRICT"], c["rows_BL"], c["rows_UNALIGNED"],
-            c["rows_with_sites"], c["sites"], c["unaligned_fn_slots"]))
+            c["rows_with_sites"], c["sites"], c["unaligned_fn_slots"],
+            c["unaligned_rows_with_calls"], c["unaligned_bytes_with_calls"]))
     print("distinct (A,F) pairs: %d  verdicts: %s" % (len(by_pair), dict(st)))
     print("wrote", out_path)
     return 0
