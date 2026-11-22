@@ -1084,7 +1084,7 @@ set(MILO_ENGINE_PATH "${_rb3x_milo_default}"
 # repo's native/build was still carrying 40dd2a12 while this file said
 # cb124a75, i.e. the bump had never taken effect in the build directory.
 # dc3-decomp's pin has carried FORCE since 2026-08-19 for the same reason.
-set(MILO_ENGINE_PIN "2a2abcf26afc386f0eb5a197a16de0872da52a8b"
+set(MILO_ENGINE_PIN "6b3458309173c7642d3ac9b5fe7054605ee7c2d8"
     CACHE STRING "Engine commit SHA verified against" FORCE)
 
 # Dawn (WebGPU) lives in the shared dc3 deps tree; glfw3 is system-installed.
@@ -1169,7 +1169,10 @@ if(RB3X_BUILD_ENGINE)
     #                         shape gap — cheap to close later.
     #  FxSendNative.cpp       xenon's EQEffect::Params lacks mBand4Q/mBand5Freq
     #                         (DC3 synth-FxSend shape). Off the render path.
-    #  Joypad_Native.cpp      xenon's JoypadData lacks mNumAnalogSticks.
+    #  Joypad_Native.cpp      xenon's JoypadData lacks mNumAnalogSticks. (Its
+    #                         input sources are the engine's separate
+    #                         JoypadNativeSource.cpp, which is NOT excluded:
+    #                         rb3-app reads them through JoypadNativeSource.h.)
     #  Synth_Stub.cpp         xenon synth/VorbisReader.h ctor takes 5 args (engine
     #                         passes 4), StandardStream.h takes 6 (engine passes
     #                         7); NewStreamDecoder doesn't override.
@@ -2755,6 +2758,22 @@ if(RB3X_BUILD_ENGINE)
     # A2: the retail tables and registrars; rb3_app_gates.cpp calls them only
     # with a title update mounted (RB3_TITLE_UPDATE_DIR).
     list(APPEND _rb3_app_all ${REPO_ROOT}/src/ChecksumData_xbox.cpp)
+    # A14: the joypad. platform/Joypad_Stub.cpp (every other target) never runs
+    # JoypadInitCommon, polls nothing and binds no user, so rb3-app had no
+    # controller and sat on splash_screen waiting for Start. rb3_app_joypad.cpp
+    # runs retail's 360 lifecycle (Joypad_Xbox.cpp: JoypadInitCommon,
+    # JoypadResetXboxPC(4), JoypadPollCommon -> ReadSingleJoypad ->
+    # ReadSingleXinputJoypad) over the engine's native input sources -- the
+    # MILO_INPUT_SCRIPT script headless, the GLFW keyboard and gamepad in a
+    # window -- read through the engine's game-agnostic
+    # platform/JoypadNativeSource.h (JoypadNativeSource.cpp is in
+    # libmilo-engine; the engine's DC3-shaped Joypad_Native.cpp stays excluded,
+    # see MILO_ENGINE_DECOMP_PLATFORM_EXCLUDE). A pad no source drives is
+    # unplugged, as retail with no controller.
+    # rb3_app_joypad_gate.cpp is its gate (RB3_APP_JOYPAD_GATE=1).
+    list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/platform/Joypad_Stub.cpp)
+    list(APPEND _rb3_app_all ${CMAKE_SOURCE_DIR}/src/rb3_app_joypad.cpp
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_joypad_gate.cpp)
     # A4: TU5 is mounted by default when <checkout>/orig/45410914/tu5-package
     # holds it (orig/ is gitignored, so a worktree may not have its own copy).
     # The MAIN checkout comes from `git rev-parse --git-common-dir`, the same
