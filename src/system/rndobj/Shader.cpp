@@ -213,9 +213,14 @@ bool RndShader::DisplayMatShaderFlagsError(RndMat *mat, ShaderType s) {
 void RndShader::SelectConfig(RndMat *mat, ShaderType shader_type, bool b3) {
 #ifdef HX_NATIVE
     RndShader *shader;
-    if (TheRnd.DrawMode() == 2) {
+    // Retail picks the shadowmap shader on mode 1 and the velocity shader on
+    // mode 5 (see the X360 arm). The native setters use the enum names --
+    // RndShadowMap stores kDrawShadowDepth (1) and RndVelocityBuffer stores
+    // kDrawVelocity (6) -- so compare against those names, not DC3's raw 2
+    // (DC3's shadow pass stores kDrawExtrude, RB3's does not).
+    if (TheRnd.DrawMode() == Rnd::kDrawShadowDepth) {
         shader_type = kShadowmapShader;
-    } else if (TheRnd.DrawMode() == 6) {
+    } else if (TheRnd.DrawMode() == Rnd::kDrawVelocity) {
         shader_type = kVelocityObjectShader;
     } else if (TheShaderMgr.InDepthVolume()) {
         shader_type = kDepthVolumeShader;

@@ -240,7 +240,6 @@ float RndGroup::GetDistanceToPlane(const Plane &p, Vector3 &v) {
     }
 }
 
-#ifndef HX_NATIVE
 // Retail X360 (0x82452568), the same shape as RndDir::MakeWorldSphere: each
 // child's sphere is widened by AddMotionSphere when the child is transformable,
 // and without `b` the group's own sphere is transformed to world space.
@@ -264,22 +263,6 @@ bool RndGroup::MakeWorldSphere(Sphere &s, bool b) {
     }
     return false;
 }
-#else
-bool RndGroup::MakeWorldSphere(Sphere &s, bool b) {
-    if (b) {
-        s.Zero();
-        for (std::vector<RndDrawable *>::iterator it = mDraws.begin(); it != mDraws.end();
-             ++it) {
-            Sphere local_s;
-            (*it)->MakeWorldSphere(local_s, true);
-            s.GrowToContain(local_s);
-        }
-        return true;
-    } else {
-        return false;
-    }
-}
-#endif
 
 void RndGroup::DrawShowing() {
     if (mDraws.empty())

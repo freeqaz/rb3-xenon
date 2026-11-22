@@ -228,20 +228,10 @@ void UIScreen::Poll() {
 void UIScreen::Draw() {
     if (mShowing) {
         FOREACH (it, mPanelList) {
-#ifdef HX_NATIVE
-            if (it->Active() && it->mPanel->Showing()
-                && TheRnd.ShouldDrawPanel(it->mPanel)) {
-                static Symbol suppress_blacklight_text("suppress_blacklight_text");
-                const DataNode *prop = Property(suppress_blacklight_text, false);
-                TheUI->SetScreenBlacklghtDisabled(prop && prop->Int() != 0);
-                it->mPanel->Draw();
-            }
-#else
             // Retail 0x827F01F0: no ShouldDrawPanel test, no blacklight property.
             if (it->Active() && it->mPanel->Showing()) {
                 it->mPanel->Draw();
             }
-#endif
         }
     }
 }

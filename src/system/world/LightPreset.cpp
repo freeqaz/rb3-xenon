@@ -648,22 +648,9 @@ RndPostProc *LightPreset::GetCurrentPostProc() const {
 // Retail 0x824AAFA8: no LoadMgr queries -- the running platform is the
 // constant kPlatformXBox and edit mode is not consulted.
 bool LightPreset::PlatformOk() const {
-#ifdef HX_NATIVE
-    if (TheLoadMgr.EditMode() || !mPlatformOnly
-        || TheLoadMgr.GetPlatform() == kPlatformNone) {
-        return true;
-    } else {
-        Platform plat = TheLoadMgr.GetPlatform();
-        if (TheLoadMgr.GetPlatform() == kPlatformPC) {
-            plat = kPlatformXBox;
-        }
-        return plat == mPlatformOnly;
-    }
-#else
     if (mPlatformOnly)
         return mPlatformOnly == kPlatformXBox;
     return true;
-#endif
 }
 
 int LightPreset::NextManualFrame(LightPreset::KeyframeCmd cmd) const {

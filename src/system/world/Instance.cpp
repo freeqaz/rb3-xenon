@@ -629,14 +629,6 @@ void SharedGroup::TryEnter(WorldInstance *inst) {
         (*it)->Enter();
     }
 
-#ifdef HX_NATIVE
-    Hmx::Object *src = dynamic_cast<Hmx::Object *>(mPollMaster->Dir());
-    if (src) {
-        Hmx::Object *src2 = dynamic_cast<Hmx::Object *>(mGroup->Dir());
-        if (src2)
-            src2->ChainSource(src, 0);
-    }
-#else
     // RB3 retail: two __RTDynamicCast ObjectDir -> MsgSource, then
     // MsgSource::ChainSource.
     MsgSource *src = dynamic_cast<MsgSource *>(mPollMaster->Dir());
@@ -645,7 +637,6 @@ void SharedGroup::TryEnter(WorldInstance *inst) {
         if (src2)
             src2->ChainSource(src, 0);
     }
-#endif
 }
 
 float SharedGroup::DistanceToPlane(const Transform &tf, const Plane &pl, Vector3 &v) {

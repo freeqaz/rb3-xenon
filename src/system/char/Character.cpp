@@ -485,22 +485,6 @@ RndDrawable *Character::CollideShowing(const Segment &s, float &fl, Plane &pl) {
 #pragma region RndPollable
 
 void Character::Poll() {
-#ifdef HX_NATIVE
-    START_AUTO_TIMER("char_poll");
-    AutoSetCurrentCharacter scope(this);
-    if (mFrozen)
-        return;
-    else {
-        if (TheLoadMgr.EditMode()) {
-            mTest->Poll();
-        }
-        RndDir::Poll();
-        if (mShowing) {
-            mTeleported = false;
-        }
-        mPollState = kCharPolled;
-    }
-#else
     // Retail: no current-character scope and no edit-mode test poll; the
     // teleport flag clears on every poll.
     if (!mFrozen) {
@@ -508,7 +492,6 @@ void Character::Poll() {
         mTeleported = false;
         mPollState = kCharPolled;
     }
-#endif
 }
 
 void Character::Enter() {
