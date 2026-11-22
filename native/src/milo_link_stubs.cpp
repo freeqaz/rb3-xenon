@@ -37,8 +37,10 @@
 //                    WebGPU backend carries its own pipeline state and never
 //                    reads a D3D9 device state. X2's table listed this row as
 //                    engine-supplied; it was wrong.
-//         ⛔ KEPT    SpotlightDrawer::DeSelect -- no engine counterpart exists;
-//                    still a leaf.
+//         ✅ DROPPED SpotlightDrawer::DeSelect -- A15: the empty stub did less
+//                    than retail (0x824D4C90 selects the default drawer, every
+//                    frame from WorldDir::DrawShowing). world/SpotlightDrawer.cpp
+//                    now emits its __forceinline body out of line (HX_NATIVE).
 //         ✅ DROPPED RndFont::CellDiff -- wave4 (f278d4d7) gave rndobj/Font.h:137
 //                    a real, UNGUARDED in-class definition
 //                    (`mCellSize.y / mCellSize.x`), so this stub became a
@@ -170,7 +172,6 @@ template BinStream &operator<< <BandCharDesc>(BinStream &, const ObjOwnerPtr<Ban
 #include "rndobj/ShaderMgr.h"
 #include "rndobj/Rnd_NG.h"
 #include "rndobj/Tex.h"
-#include "world/SpotlightDrawer.h"
 
 // --- render state (rnddx9/RenderState.cpp; X3: engine RenderState_Native.cpp)
 // Each is a thin setter over one D3D9 device state. rndobj's material / mesh /
@@ -239,7 +240,9 @@ void FlushTransparentDraws() {}
 #endif // !RB3_ENGINE_RENDER
 
 // --- misc render leaves
-void SpotlightDrawer::DeSelect() {}
+// SpotlightDrawer::DeSelect was stubbed here empty. A15: retail's body comes
+// from world/SpotlightDrawer.cpp (out-of-line copy of the __forceinline
+// definition, band.exe 0x824D4C90), linked through world/CameraManager.cpp.
 
 // RndFont::CellDiff was stubbed here returning 0.0f. wave4 (f278d4d7) landed a
 // real in-class definition at rndobj/Font.h:137 (`mCellSize.y / mCellSize.x`),
