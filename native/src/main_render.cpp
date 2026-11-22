@@ -130,6 +130,7 @@ extern "C" __attribute__((weak)) int __llvm_profile_write_file(void);
 #include "rndobj/TransProxy.h"
 #include "rndobj/MultiMesh.h"
 #include "world/Crowd.h"
+#include "world/Reflection.h"  // A12: RB3_DRAW_REFLECTIONS
 #include "bandobj/BandCharacter.h"     // X14: identify the four band members by type
 #include "bandobj/BandConfiguration.h"  // X7: the band-slot placement census
 #include "bandobj/BandWardrobe.h"      // X8: the shipped enter_venue placement path
@@ -145,6 +146,7 @@ void InternSymbolGlobals_M6Symbols();
 
 #include "gfx/Screenshot.h"
 #include "platform/Rnd_Wgpu.h"
+#include "platform/MeshPipelineKey.h"  // A12: CurrentMeshPassContext
 #include "retail_boot_macros.h"
 #include "platform/PointTestHook.h"  // W16-RX: which step answers the flare tests
 
@@ -2093,7 +2095,12 @@ namespace {
     void PlaceCamera(RndCam *cam, const Bounds &b, float azimuth, float elevation,
                      float distanceScale) {
         float cx = 0, cy = 0, cz = 0, dist = 10.0f;
-        if (b.valid) {
+        // A12: RB3_CAM="cx cy cz dist" pins the orbit target and distance (the
+        // angles stay --azimuth/--elevation), for a scene whose bbox does not
+        // frame it -- the vignettes holding a WorldReflection report none.
+        const char *camEnv = getenv("RB3_CAM");
+        if (camEnv && sscanf(camEnv, "%f %f %f %f", &cx, &cy, &cz, &dist) == 4) {
+        } else if (b.valid) {
             cx = (b.minv[0] + b.maxv[0]) * 0.5f;
             cy = (b.minv[1] + b.maxv[1]) * 0.5f;
             cz = (b.minv[2] + b.maxv[2]) * 0.5f;
@@ -4561,6 +4568,29 @@ namespace {
         printf("  flares: %d RndFlare(s)%s\n", (int)flares.size(),
                getenv("RB3_NO_FLARE_DRAW") ? " (RB3_NO_FLARE_DRAW: not collected)" : "");
 
+        // A12: a cell's WorldReflections (a vignette's wet street, say) are
+        // drawn only on request: RB3_DRAW_REFLECTIONS=1 draws each showing one
+        // (WorldReflection::DrawShowing: the mirrored camera, Rnd draw mode 7,
+        // its draw list) before the world's meshes, and RB3_REFLECTION_ONLY=1
+        // draws the mirrored pass alone, so what culling that pass gets is the
+        // whole picture. Neither is on by default: no shipped cell has one.
+        std::vector<WorldReflection *> reflections;
+        const bool reflectionOnly = getenv("RB3_REFLECTION_ONLY") != nullptr;
+        if (deep && (reflectionOnly || getenv("RB3_DRAW_REFLECTIONS") != nullptr))
+            reflections = CollectDeep<WorldReflection>(dir);
+        if (!reflections.empty()) {
+            int showing = 0;
+            for (size_t ri = 0; ri < reflections.size(); ri++) {
+                if (reflections[ri]->Showing()) showing++;
+                const Transform &x = reflections[ri]->WorldXfm();
+                printf("  reflection '%s': plane at (%.2f %.2f %.2f), normal (%.2f %.2f %.2f)\n",
+                       reflections[ri]->Name(), x.v.x, x.v.y, x.v.z, x.m.z.x, x.m.z.y, x.m.z.z);
+            }
+            printf("  reflections: %d WorldReflection(s), %d showing%s\n",
+                   (int)reflections.size(), showing,
+                   reflectionOnly ? "  [RB3_REFLECTION_ONLY: the mirrored pass alone]" : "");
+        }
+
         std::vector<WorldCrowd *> crowds;
         bool drawCrowd = getenv("RB3_NO_CROWD_DRAW") == nullptr;
         if (drawCrowd && deep) {
@@ -5099,8 +5129,17 @@ namespace {
             gPointTestFrame = f;
             TheRnd.BeginDrawing();
             r.drawn = 0;
+            int reflDrawn = 0;
+            for (size_t ri = 0; ri < reflections.size(); ri++) {
+                if (!reflections[ri]->Showing()) continue;
+                reflections[ri]->DrawShowing();
+                reflDrawn++;
+            }
+            if (!reflections.empty() && f == 0)
+                printf("  reflections drawn: %d (frame 0)\n", reflDrawn);
             for (size_t i = 0; i < meshes.size(); i++) {
                 RndMesh *m = meshes[i];
+                if (reflectionOnly) break;
                 if (!m->Showing()) continue;
                 // X4d: --only-mesh <substr> isolates one drawable. A crowd
                 // character ships SIX skinned meshes -- the body plus five
@@ -5122,6 +5161,7 @@ namespace {
             // instance list; only the rasterization mechanism is ours.
             for (size_t ci = 0; ci < crowds.size(); ci++) {
                 WorldCrowd *wc = crowds[ci];
+                if (reflectionOnly) break;
                 if (!wc->Showing()) continue;
                 const std::list<WorldCrowd::CharData> &cds = wc->GetCharacters();
                 for (std::list<WorldCrowd::CharData>::const_iterator it = cds.begin();
@@ -5150,6 +5190,7 @@ namespace {
             // W16-RW: flares last (see the collection above).
             for (size_t fi = 0; fi < flares.size(); fi++) {
                 RndFlare *fl = flares[fi];
+                if (reflectionOnly) break;
                 if (!fl->Showing()) continue;
                 if (gOnlyMesh && !strstr(fl->Name(), gOnlyMesh)) continue;
                 fl->DrawShowing();
@@ -5583,6 +5624,42 @@ int main(int argc, char **argv) {
         return 2;
     }
     if (dumpRnd) DumpRndMembers("immediately after TheRnd.Init()");
+
+    // A12: the engine has to know when a draw is in WorldReflection's mirrored
+    // pass, and it tells by the Rnd draw mode (rndshape::kDrawModeReflection).
+    // RB3's is 7: retail WorldReflection::DrawShowing does `li r10,7` and
+    // `stw r10,0xfc(r11)` (Rnd +0xfc, the draw mode) at band.exe 0x824E8994,
+    // and src/system/world/Reflection.cpp sets Rnd::kDrawReflection (7). The DC3 shape
+    // used to answer 8 (DC3's number) for rb3-xenon too, so the mirrored pass
+    // never got its cull flip. Always on, and a failure exits 1 (the check
+    // costs three state reads); RB3_REFLECTION_GATE=advisory reports it and
+    // carries on, which is how the before/after frames of the fix were drawn.
+    static_assert(rndshape::kDrawModeReflection == 7,
+                  "RB3's WorldReflection draws its mirrored pass in Rnd draw mode 7 "
+                  "(band.exe 0x824E8994); the engine's DC3 shape must answer 7 here");
+    static_assert(rndshape::kDrawModeReflection == Rnd::kDrawReflection,
+                  "the engine's reflection draw mode and rndobj's Rnd::kDrawReflection must agree");
+    {
+        const Rnd::Mode oldMode = TheRnd.DrawMode();
+        TheRnd.SetDrawMode((Rnd::Mode)7);
+        const bool at7 = CurrentMeshPassContext().reflection;
+        TheRnd.SetDrawMode((Rnd::Mode)8);
+        const bool at8 = CurrentMeshPassContext().reflection;
+        TheRnd.SetDrawMode(Rnd::kDrawNormal);
+        const bool at0 = CurrentMeshPassContext().reflection;
+        TheRnd.SetDrawMode(oldMode);
+        const bool ok = at7 && !at8 && !at0;
+        printf("reflection draw mode: mode 7 -> %s, mode 8 -> %s, mode 0 -> %s  [%s]\n",
+               at7 ? "reflection" : "normal", at8 ? "reflection" : "normal",
+               at0 ? "reflection" : "normal", ok ? "ok" : "FAIL");
+        const char *gate = getenv("RB3_REFLECTION_GATE");
+        if (!ok && !(gate && strcmp(gate, "advisory") == 0)) {
+            printf("\nRESULT: the engine does not treat RB3's draw mode 7 as the "
+                   "reflection pass (rndshape::kDrawModeReflection)\n");
+            fflush(stdout);
+            _exit(1);
+        }
+    }
 
     // X4c: run the boot invariants once the config and renderer are up. Both of
     // X4b's silent defects are covered here; see boot_invariants.h for why each
