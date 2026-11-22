@@ -327,24 +327,6 @@ DEF_DATA_FUNC(DataDo) {
     return ret;
 }
 
-#ifdef HX_NATIVE
-DEF_DATA_FUNC(DataMin) {
-    int min = -1;
-    float minf; // this matches but wow this is not good
-    for (int i = 1; i < array->Size(); i++) {
-        float f = array->Float(i);
-        if (min < 0 || f < minf) {
-            minf = f;
-            min = i;
-        }
-    }
-    if (min > 0) {
-        return array->Evaluate(min);
-    }
-    MILO_FAIL("DataMin: No valid data to compare");
-    return 0;
-}
-#else
 // RB3 retail: two operands only, float if either is.
 DEF_DATA_FUNC(DataMin) {
     const DataNode &n1 = array->Evaluate(1);
@@ -355,26 +337,7 @@ DEF_DATA_FUNC(DataMin) {
         return Min<int>(n1.LiteralInt(array), n2.LiteralInt(array));
     }
 }
-#endif
 
-#ifdef HX_NATIVE
-DEF_DATA_FUNC(DataMax) {
-    int max = -1;
-    float maxf;
-    for (int i = 1; i < array->Size(); i++) {
-        float f = array->Float(i);
-        if (max < 0 || f > maxf) {
-            maxf = f;
-            max = i;
-        }
-    }
-    if (max > 0) {
-        return array->Evaluate(max);
-    }
-    MILO_FAIL("DataMax: No valid data to compare");
-    return 0;
-}
-#else
 // RB3 retail: two operands only, float if either is.
 DEF_DATA_FUNC(DataMax) {
     const DataNode &n1 = array->Evaluate(1);
@@ -385,7 +348,6 @@ DEF_DATA_FUNC(DataMax) {
         return Max<int>(n1.LiteralInt(array), n2.LiteralInt(array));
     }
 }
-#endif
 
 DEF_DATA_FUNC(DataAbs) {
     const DataNode &n = array->Evaluate(1);
@@ -488,31 +450,6 @@ DEF_DATA_FUNC(DataClampEq) {
     return ret;
 }
 
-#ifdef HX_NATIVE
-DEF_DATA_FUNC(DataMultiply) {
-    const DataNode &n1 = array->Evaluate(1);
-    const DataNode &n2 = array->Evaluate(2);
-    bool isFloat = false;
-    int multi = 1;
-    float multf = 1;
-    int size = array->Size();
-    for (int i = 1; i < size; i++) {
-        const DataNode &cur = array->Evaluate(i);
-        if (cur.Type() != kDataFloat) {
-            multi *= cur.LiteralInt();
-        } else {
-            multf *= cur.LiteralFloat();
-            isFloat = true;
-        }
-    }
-    if (isFloat) {
-        return multf * (float)multi;
-    } else {
-        return multi;
-    }
-    return 0;
-}
-#else
 // RB3 retail: two operands only, float if either is.
 DEF_DATA_FUNC(DataMultiply) {
     const DataNode &dn1 = array->Evaluate(1);
@@ -522,7 +459,6 @@ DEF_DATA_FUNC(DataMultiply) {
     } else
         return dn1.LiteralInt(array) * dn2.LiteralInt(array);
 }
-#endif
 
 DEF_DATA_FUNC(DataMultiplyEq) {
     DataNode ret = DataMultiply(array);

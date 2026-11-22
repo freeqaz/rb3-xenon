@@ -1328,13 +1328,7 @@ void ObjectDir::AppendSubDir(const ObjDirPtr<ObjectDir> &subdir) {
 DataNode ObjectDir::OnFind(DataArray *da) {
     Hmx::Object *found = FindObject(da->Str(2), false);
     if (da->Size() > 3) {
-#ifdef HX_NATIVE
-        if (da->Int(3) != 0 && !found) {
-            MILO_FAIL("Couldn't find %s in %s", da->Str(2), Name());
-        }
-#else
         da->Int(3); // TU5 evaluates the fail flag and nothing else
-#endif
     }
     return found;
 }

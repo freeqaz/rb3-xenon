@@ -324,22 +324,12 @@ bool ObjDirPtr<C>::IsLoaded() const {
     return mObject != nullptr || (mLoader != nullptr && mLoader->IsLoaded());
 }
 
-#ifdef HX_NATIVE
-template <class C>
-BinStream &operator<<(BinStream &bs, const ObjDirPtr<C> &ptr) {
-    C *dir = ptr;
-    const char *name = dir ? dir->Name() : "";
-    bs << name;
-    return bs;
-}
-#else
 // Saves the dir's file, relative to the root path.
 template <class C>
 BinStream &operator<<(BinStream &bs, const ObjDirPtr<C> &ptr) {
     bs << FileRelativePath(FilePath::Root().c_str(), ptr.GetFile().c_str());
     return bs;
 }
-#endif
 
 template <class T>
 BinStream &operator>>(BinStream &bs, ObjDirPtr<T> &ptr) {

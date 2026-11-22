@@ -627,15 +627,7 @@ void DirLoader::Cleanup(const char *str) {
             }
         }
         if (IsLoaded() && mDir) {
-#ifdef HX_NATIVE
-            AutoGlitchReport report(50.0f, SyncObjectsGlitchCB, mDir);
-            // DC3-newer (no SetSubDirFlag in RB3); native-only.
-            mDir->SetSubDirFlag(mSubDir);
             mDir->SyncObjects();
-            mDir->SetSubDirFlag(false);
-#else
-            mDir->SyncObjects();
-#endif
         }
     }
     mState = &DirLoader::DoneLoading;
