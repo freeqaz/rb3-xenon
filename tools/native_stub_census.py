@@ -48,7 +48,7 @@ STUB_RE = re.compile(
     # W16-UR: W16-TR's XboxEnumeration/XboxPurchaser aborting stubs and W16-TS's phase link edge.
     r"w16tr_link_stubs\.cpp|w16ts_link_support\.cpp|"
     # A0: rb3-app's own stubs, each tagged `// ring: <tag>` (read by ring_map below).
-    r"rb3_app_link_stubs\.cpp)\.o$"
+    r"rb3_app_link_stubs\.cpp|rb3_app_link_stubs\.s)\.o$"
 )
 
 # native/src objects that are linked but are NOT stubs: drivers and runtime
@@ -201,7 +201,13 @@ def ring_map(stub):
         return _ring_cache[stub]
     names, classes = {}, {}
     path = os.path.join(SRC_DIR, stub)
-    if os.path.exists(path) and stub.endswith(".cpp"):
+    if os.path.exists(path) and stub.endswith(".s"):
+        # generated stubs: `<mangled>: // ring: <tag>` on the label line
+        for line in open(path, errors="replace"):
+            m = re.match(r"^(\S+):\s*//\s*ring:\s*(\S+)", line)
+            if m:
+                names[m.group(1)] = m.group(2)
+    elif os.path.exists(path) and stub.endswith(".cpp"):
         for line in open(path, errors="replace"):
             m = re.match(r"\s*//\s*ring-class:\s*(\S+)\s+(\S+)", line)
             if m:
@@ -237,6 +243,8 @@ def ring_of(stub, sym):
     names, classes = ring_map(stub)
     if not names and not classes:
         return None
+    if sym in names:
+        return names[sym]
     d = _dm.get(sym, sym)
     for pre in ("vtable for ", "typeinfo for ", "typeinfo name for "):
         if d.startswith(pre):

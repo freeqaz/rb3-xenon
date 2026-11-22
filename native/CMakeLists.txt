@@ -2448,7 +2448,10 @@ if(RB3X_BUILD_ENGINE)
         ${REPO_ROOT}/src/Main.cpp
         ${REPO_ROOT}/src/App.cpp
         ${_rb3_app_sym_cpp}
+        # Failing stubs, each tagged with its ring (tools/native_stub_census.py
+        # --rings rb3-app). The .s is generated: tools/rb3_app_link_stubs_gen.py.
         ${CMAKE_SOURCE_DIR}/src/rb3_app_link_stubs.cpp
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_link_stubs.s
         # The engine's consumer seams (ShouldSkipMesh, DebugPanel::*).
         ${CMAKE_SOURCE_DIR}/src/rb3_render_glue.cpp
         # W16-TR's store stubs: abort if reached (the store TUs are excluded above).
