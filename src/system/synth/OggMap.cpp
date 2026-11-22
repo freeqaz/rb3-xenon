@@ -156,12 +156,24 @@ int OggMap::ReadData(int bytes) {
             out[0] = 'O';
             out[1] = 'g';
             out[3] = 'S';
+#ifdef HX_NATIVE
+            // The hashes are XORed in as big-endian words (X360's host order).
+            // A little-endian host swaps them first, as VorbisReader's native
+            // Decrypt does (W16-UE #5).
+            if (bytes >= 16) {
+                *(unsigned int *)&out[12] ^= __builtin_bswap32((unsigned int)gMagicHashA);
+            }
+            if (bytes >= 24) {
+                *(unsigned int *)&out[20] ^= __builtin_bswap32((unsigned int)gMagicHashB);
+            }
+#else
             if (bytes >= 16) {
                 *(unsigned int *)&out[12] ^= gMagicHashA;
             }
             if (bytes >= 24) {
                 *(unsigned int *)&out[20] ^= gMagicHashB;
             }
+#endif
         }
         mStream.Write(out, bytes);
     } else {

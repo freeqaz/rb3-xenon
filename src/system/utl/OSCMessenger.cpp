@@ -7,6 +7,15 @@
 
 OSCMessenger TheOSCMessenger;
 
+// OSC is a big-endian wire format. X360's host order is big-endian, so retail
+// copies the int32/float32 arguments as plain words; a little-endian host must
+// swap each one in and out (W16-UE #6).
+#ifdef HX_NATIVE
+#define OSC_WIRE32(x) ((int)__builtin_bswap32((unsigned int)(x)))
+#else
+#define OSC_WIRE32(x) (x)
+#endif
+
 OSCMessenger::~OSCMessenger() {
     delete mSocket1;
     delete mSocket2;
@@ -48,18 +57,18 @@ void OSCMessenger::Poll() {
             MILO_ASSERT(data[pos+2] == 0, 0x51);
             MILO_ASSERT(data[pos+3] == 0, 0x52);
             value.mType = 'i';
-            *(int *)value.buffer = *(int *)&data[pos + 4];
+            *(int *)value.buffer = OSC_WIRE32(*(int *)&data[pos + 4]);
         } else if (c4 == 'f' && data[pos + 2] == 'f' && data[pos + 3] == 'f') {
             value.mType = 'v';
             int *valueBuffer = (int *)value.buffer;
-            valueBuffer[0] = *(int *)&data[pos + 8];
-            valueBuffer[1] = *(int *)&data[pos + 12];
-            valueBuffer[2] = *(int *)&data[pos + 16];
+            valueBuffer[0] = OSC_WIRE32(*(int *)&data[pos + 8]);
+            valueBuffer[1] = OSC_WIRE32(*(int *)&data[pos + 12]);
+            valueBuffer[2] = OSC_WIRE32(*(int *)&data[pos + 16]);
         } else if (c4 == 'f') {
             MILO_ASSERT(data[pos+2] == 0, 0x67);
             MILO_ASSERT(data[pos+3] == 0, 0x68);
             value.mType = 'f';
-            *(int *)value.buffer = *(int *)&data[pos + 4];
+            *(int *)value.buffer = OSC_WIRE32(*(int *)&data[pos + 4]);
         }
         bool found = false;
         FOREACH (it, mValues) {
@@ -111,7 +120,14 @@ void OSCMessenger::SendOSCFloat(String str, float value) {
         buf[i++] = 'f';
         buf[i++] = '\0';
         buf[i++] = '\0';
+#ifdef HX_NATIVE
+        int wire;
+        memcpy(&wire, &value, sizeof(float));
+        wire = OSC_WIRE32(wire);
+        memcpy(&buf[i], &wire, sizeof(float));
+#else
         memcpy(&buf[i], &value, sizeof(float));
+#endif
         mSocket2->Send(buf, i + 4);
     }
 }

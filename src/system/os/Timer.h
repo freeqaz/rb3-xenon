@@ -11,23 +11,23 @@ inline unsigned int __mftb() {
     return (unsigned int)(duration_cast<microseconds>(
         steady_clock::now().time_since_epoch()).count());
 }
-// PPC byte swap intrinsics - no-ops on little-endian (data already in native order)
+// PPC lwbrx/lhbrx/stwbrx/sthbrx: load or store LITTLE-endian data. On the
+// little-endian native host that is a plain load/store; the earlier
+// unconditional bswap made them load big-endian (W16-UE #7; no caller today).
 inline unsigned int __loadwordbytereverse(int offset, const void *base) {
     unsigned int val;
     memcpy(&val, (const char *)base + offset, 4);
-    return __builtin_bswap32(val);
+    return val;
 }
 inline unsigned short __loadshortbytereverse(int offset, const void *base) {
     unsigned short val;
     memcpy(&val, (const char *)base + offset, 2);
-    return __builtin_bswap16(val);
+    return val;
 }
 inline void __storewordbytereverse(unsigned int val, int offset, void *base) {
-    val = __builtin_bswap32(val);
     memcpy((char *)base + offset, &val, 4);
 }
 inline void __storeshortbytereverse(unsigned short val, int offset, void *base) {
-    val = __builtin_bswap16(val);
     memcpy((char *)base + offset, &val, 2);
 }
 #else

@@ -90,19 +90,27 @@ void WavReader::Poll(float dt) {
             mInWaveFileData->Read(mRawInputBuffer, mNumChannels * mBufNumSamples * 2);
             mBufOffset = 0;
             mSamplesLeft -= mBufNumSamples;
+            // .wav samples are little-endian. X360 swaps each one to host
+            // order; the little-endian native host already has it (W16-UE #9).
+#ifdef HX_NATIVE
+#define WAV_SAMPLE(s) (s)
+#else
+#define WAV_SAMPLE(s) (((s) << 8) | ((s) >> 8))
+#endif
             if (mNumChannels == 1) {
                 for (int i = 0; i < mBufNumSamples; i++) {
                     unsigned short s = mRawInputBuffer[i];
-                    mInputBuffers[0][i] = (s << 8) | (s >> 8);
+                    mInputBuffers[0][i] = WAV_SAMPLE(s);
                 }
             } else {
                 for (int i = 0; i < mBufNumSamples; i++) {
                     unsigned short s0 = mRawInputBuffer[i * 2];
-                    mInputBuffers[0][i] = (s0 << 8) | (s0 >> 8);
+                    mInputBuffers[0][i] = WAV_SAMPLE(s0);
                     unsigned short s1 = mRawInputBuffer[i * 2 + 1];
-                    mInputBuffers[1][i] = (s1 << 8) | (s1 >> 8);
+                    mInputBuffers[1][i] = WAV_SAMPLE(s1);
                 }
             }
+#undef WAV_SAMPLE
             if (mBufNumSamples != 0) {
                 int consumed = ConsumeData((void **)mInputBuffers, mBufNumSamples, mTotalSamplesConsumed);
                 mTotalSamplesConsumed += consumed;

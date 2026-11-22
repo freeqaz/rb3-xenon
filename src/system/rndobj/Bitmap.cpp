@@ -491,7 +491,14 @@ void RndBitmap::ConvertColor(
             a = ((a * 256) - a) >> 7;
         }
     } else if (mBpp == 0x10) {
+        // 16 bpp pixels are little-endian in memory on both hosts (shipped
+        // bitmaps and LoadBmp's BMP rows alike). X360's big-endian halfword load
+        // needs the swap; the little-endian native load does not (W16-UE #4).
+#ifdef HX_NATIVE
+        unsigned short swapped = *(unsigned short *)uc;
+#else
         unsigned short swapped = SwapBytes(*(unsigned short *)uc);
+#endif
         if (mOrder & 1) {
             a = (swapped & 0x8000) ? 0xFF : 0;
             b = swapped >> 7 & 0xF8;
@@ -549,7 +556,10 @@ void RndBitmap::ConvertColor(
         } else {
             *twobytes = (a & 0x80) << 8 | (r & 0xF8) << 7 | (g & 0xF8) << 2 | b >> 3;
         }
+#ifndef HX_NATIVE
+        // Store the pixel little-endian (see ConvertColor's reader, W16-UE #4).
         *twobytes = EndianSwap(*twobytes);
+#endif
         return;
     }
     if (mOrder & 1) {
@@ -914,8 +924,17 @@ void DecodeDxtColor(
     unsigned char &b,
     unsigned char &a
 ) {
+#ifdef HX_NATIVE
+    // X360 DXT blocks are 8-in-16 byte-swapped and X360 reads these words with
+    // a big-endian halfword load. RndBitmap memory keeps X360 order natively too
+    // (milo-native-engine's ByteSwapDXT un-swaps only its upload copy), so the
+    // little-endian load must swap to get the same value (W16-UE #3).
+    unsigned short color0 = SwapBytes(*(unsigned short *)blockData);
+    unsigned short color1 = SwapBytes(*((unsigned short *)blockData + 1));
+#else
     unsigned short color0 = *(unsigned short *)blockData;
     unsigned short color1 = *((unsigned short *)blockData + 1);
+#endif
     unsigned char *rowPtr = blockData + 4;
 
     if (pixelY & 1) {
@@ -966,7 +985,12 @@ void DecodeDxtColor(
 
 void DecodeDxt3Alpha(unsigned char *uc, int i, int j, unsigned char &alpha) {
     unsigned short *bytepair = (unsigned short *)uc;
+#ifdef HX_NATIVE
+    // Same 8-in-16 swapped DXT word as DecodeDxtColor's endpoints (W16-UE #3).
+    int i1 = SwapBytes(bytepair[j]) >> (i << 2);
+#else
     int i1 = bytepair[j] >> (i << 2);
+#endif
     alpha = ((i1 << 4) & 0xF0) | (i1 & 0xF);
 }
 
@@ -1061,7 +1085,12 @@ void RndBitmap::DxtColor(
             unsigned short *alphaData = (unsigned short *)blockData;
             // Retail 0x823FC8A8 keeps the low nibble only (& 0xF) before
             // replicating it into both halves of the byte.
+#ifdef HX_NATIVE
+            // 8-in-16 swapped DXT3 alpha word, as in DecodeDxt3Alpha (W16-UE #3).
+            int alphaBits = (SwapBytes(alphaData[yRemainder]) >> (xRemainder << 2)) & 0xF;
+#else
             int alphaBits = (alphaData[yRemainder] >> (xRemainder << 2)) & 0xF;
+#endif
             a = alphaBits | (alphaBits << 4);
         } else {
             DecodeDxt5Alpha(blockData, xRemainder, yRemainder, a);

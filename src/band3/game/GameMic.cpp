@@ -119,10 +119,15 @@ void GameMic::Update() {
         mNumSamplesContinuous = desired - ((unsigned int)mStoredAudio->Tell() >> 1);
         MinEq(mNumSamplesContinuous, 8192);
         mStoredAudio->Read(mSamplesContinuous, mNumSamplesContinuous * 2);
+#ifndef HX_NATIVE
+        // mStoredAudio holds SetInputFile's raw .wav samples, which are
+        // little-endian: X360 swaps them to host order, the little-endian
+        // native host already has it (W16-UE #8).
         for (int i = 0; i < mNumSamplesContinuous; i++) {
             mSamplesContinuous[i] = (mSamplesContinuous[i] << 8)
                 | ((unsigned short)mSamplesContinuous[i] >> 8);
         }
+#endif
     }
     mLastEnergy = mEnergy;
     mLastPitch = mPitch;
