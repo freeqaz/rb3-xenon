@@ -1,5 +1,5 @@
 #include "movie/TexMovie.h"
-#if defined(HX_NATIVE) && !defined(__EMSCRIPTEN__)
+#if defined(HX_NATIVE) && defined(HX_FFMPEG) && !defined(__EMSCRIPTEN__) // only with the engine FFmpeg movie backend linked (rb3-app has none)
 #include "platform/FFmpegMovieImpl.h"
 #include "platform/TexGpu.h"
 #elif defined(__EMSCRIPTEN__)
@@ -256,7 +256,7 @@ void TexMovie::Reset() {
 
 bool TexMovie::IsEmpty() const { return sRoot.empty(); }
 
-#if defined(HX_NATIVE) || defined(__EMSCRIPTEN__)
+#if (defined(HX_NATIVE) && defined(HX_FFMPEG)) || defined(__EMSCRIPTEN__) // else the retail body: no frame unless the movie is open
 void TexMovie::DrawToTexture() {
     bool b = (mTex != nullptr && mTex->Width() && mTex->Height());
 
