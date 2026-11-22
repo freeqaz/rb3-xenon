@@ -77,6 +77,10 @@ public:
         unsigned char mHash[20]; // 0x8
         int unk1c[3]; // 0x1c
         unsigned int mReceived; // 0x28
+        /** Not read here. Retail's callers reserve 0x10 more stack than a
+            0x2c-byte struct needs (ReadSongData 0x100 vs 0xf0, SetupFiles 0xd0
+            vs 0xc0), so the struct is about 0x40 bytes. */
+        int unk2c[5]; // 0x2c
     };
     UGCNet_Server(); // 0x82B8C8C8
     virtual ~UGCNet_Server(); // slot 0, ??_G 0x82B8C930
@@ -103,8 +107,12 @@ public:
 
 /** The files an audition download fetches, as indices into
     AuditionDownloader::mEntries; 7 (the entry count) ends the list. Retail
-    .rdata 0x8219C73C holds {0, 1, 2, 3, 7}. */
-static const int sAuditionFiles[] = { 0, 1, 2, 3, 7 };
+    .rdata 0x8219C73C holds {0, 1, 2, 3, 7}, among UGCNet's .rdata (next to
+    UGCNet_Server's EH records), so it is defined with UGCNet, not in this TU:
+    every loop over it here re-reads element 0 before its first pass, which a
+    definition in this TU would let the compiler fold away. No UGCNet source is
+    in our tree, so it stays extern. Name ours. */
+extern const int gUGCAuditionFiles[];
 
 /** The downloader AuditionMgr creates in state 3 (`li r3,0xe4`, ctor
     0x82560B08). It holds the song name, the client and seven file entries, each
@@ -207,10 +215,10 @@ AuditionDownloader::AuditionDownloader(const char *gamertag, const char *song)
 
 // 0x82560C28
 void AuditionDownloader::CloseFiles() {
-    for (int i = 0; sAuditionFiles[i] != 7; i++) {
-        Entry &entry = mEntries[sAuditionFiles[i]];
-        delete entry.mFile;
-        entry.mFile = NULL;
+    for (int i = 0; gUGCAuditionFiles[i] != 7; i++) {
+        int file = gUGCAuditionFiles[i];
+        delete mEntries[file].mFile;
+        mEntries[file].mFile = NULL;
     }
 }
 
@@ -242,8 +250,8 @@ void AuditionMgr::EnterEnd() {
 // 0x82560F48
 void AuditionDownloader::SetupFiles() {
     Close();
-    for (int i = 0; sAuditionFiles[i] != 7; i++) {
-        int file = sAuditionFiles[i];
+    for (int i = 0; gUGCAuditionFiles[i] != 7; i++) {
+        int file = gUGCAuditionFiles[i];
         UGCNet_Server::FileInfo info;
         mClient->GetFileInfo(file, &info);
         if (file == 0) {
@@ -255,15 +263,15 @@ void AuditionDownloader::SetupFiles() {
             mBuf = MemAlloc(info.mSize, __FILE__, __LINE__, "AuditionDownloader");
             mClient->SetFileBuffer(0, mBuf);
         } else {
-            Entry &entry = mEntries[file];
-            if (entry.mHasHash && memcmp(info.mHash, entry.mHash, sizeof(info.mHash)) == 0) {
+            if (mEntries[file].mHasHash
+                && memcmp(info.mHash, mEntries[file].mHash, sizeof(info.mHash)) == 0) {
                 mClient->SkipFile(file);
             } else {
                 const char *path = AuditionSongFile(file, mSong.c_str());
-                entry.mHasHash = false;
-                memcpy(entry.mHash, info.mHash, sizeof(entry.mHash));
-                entry.mFile = NewFile(path, 0x301);
-                mClient->SetFileTarget(file, entry.mFile, 0);
+                mEntries[file].mHasHash = false;
+                memcpy(mEntries[file].mHash, info.mHash, sizeof(info.mHash));
+                mEntries[file].mFile = NewFile(path, 0x301);
+                mClient->SetFileTarget(file, mEntries[file].mFile, 0);
             }
         }
     }
@@ -408,8 +416,8 @@ float AuditionDownloader::Progress() {
     if (mActive && NetworkStatus() == 1) {
         unsigned int total = 0;
         unsigned int missing = 0;
-        for (int i = 0; sAuditionFiles[i] != 7; i++) {
-            int file = sAuditionFiles[i];
+        for (int i = 0; gUGCAuditionFiles[i] != 7; i++) {
+            int file = gUGCAuditionFiles[i];
             UGCNet_Server::FileInfo info;
             mClient->GetFileInfo(file, &info);
             total += info.mSize;
@@ -450,9 +458,9 @@ bool AuditionDownloader::IsReady() {
     int status = ClientStatus();
     if (status != 1 && status != 4)
         return false;
-    for (int i = 0; sAuditionFiles[i] != 7; i++) {
+    for (int i = 0; gUGCAuditionFiles[i] != 7; i++) {
         UGCNet_Server::FileInfo info;
-        mClient->GetFileInfo(sAuditionFiles[i], &info);
+        mClient->GetFileInfo(gUGCAuditionFiles[i], &info);
         if (!info.mSize || !info.mDone)
             return false;
     }
@@ -678,9 +686,12 @@ void AuditionMgr::EnterLoad() {
         mDownloader->CloseFiles();
         mFileCache = new FileCache(0x100000, kLoadBack, true);
         mFileCache->StartSet(0);
-        mFileCache->Add(FilePath(AuditionSongFile(1, mSong.Str())), 0, FilePath(""));
-        mFileCache->Add(FilePath(AuditionSongFile(3, mSong.Str())), 0, FilePath(""));
-        mFileCache->Add(FilePath(AuditionSongFile(5, mSong.Str())), 0, FilePath(""));
+        const char *midi = AuditionSongFile(1, mSong.Str());
+        mFileCache->Add(FilePath(midi), 0, FilePath(""));
+        const char *milo = AuditionSongFile(3, mSong.Str());
+        mFileCache->Add(FilePath(milo), 0, FilePath(""));
+        const char *weights = AuditionSongFile(5, mSong.Str());
+        mFileCache->Add(FilePath(weights), 0, FilePath(""));
         mFileCache->EndSet();
         mLoadStep = 1;
     }
@@ -799,22 +810,25 @@ void AuditionMgr::PollLoad() {
         const char *file = AuditionSongFile(2, mSong.Str());
         Timer timer;
         timer.Start();
-        while (timer.SplitMs() < 10.0f) {
-            done = mValidator->ValidateMogg(file, ok);
-            if (done)
+        do {
+            if (timer.SplitMs() >= 10.0f)
                 break;
-        }
+            done = mValidator->ValidateMogg(file, ok);
+        } while (!done);
         if (done)
             mLoadStep = ok ? 7 : 6;
         break;
     }
     }
-    if (mLoadStep == 6) {
+    switch (mLoadStep) {
+    case 6:
         SetState(7);
         UpdateScreen();
-    } else if (mLoadStep == 7) {
+        break;
+    case 7:
         SetState(6);
         UpdateScreen();
+        break;
     }
 }
 
