@@ -175,7 +175,17 @@ void CharClipDriver::SetBeatOffset(float offset, TaskUnits units, Symbol sym) {
     mBeat += offset;
 }
 CharClipDriver *CharClipDriver::DeleteRef(ObjRef *ref) {
+#ifdef HX_NATIVE
+    // Retail 0x8239FF50 compares the held clip (lwz 0x2c) with `from`, which
+    // the X360 ring sets to the dying object. The native ring passes the ObjRef
+    // member itself (obj/Object.h RefIs), so the retail compare never matched:
+    // a driver whose clip died stayed in the chain aimed at the freed clip, and
+    // the next CharDriver::Play's Exit read it (ASan heap-use-after-free in
+    // CharClipDriver::ExecuteEvent, rb3-app main_hub; A20).
+    if (RefIs(ref, mClip)) {
+#else
     if (reinterpret_cast<void *>(mClip.Ptr()) == reinterpret_cast<void *>(ref)) {
+#endif
         return Exit(false);
     } else if (mNext) {
         mNext = mNext->DeleteRef(ref);
