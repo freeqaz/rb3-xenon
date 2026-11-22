@@ -92,6 +92,10 @@ extern void NativeArchiveInit();
 extern void RegisterMiloObjectFactories();
 // os/System.cpp:58 -- the global system-config DTA tree SystemConfig() returns.
 extern DataArray *gSystemConfig;
+// native/src/cascade_notify_phase.cpp (A8)
+int RunCascadeNotifyPhase(void (*gate)(const char *, bool, const char *));
+// native/src/async_unload_phase.cpp (A8)
+int RunAsyncUnloadPhase(void (*gate)(const char *, bool, const char *));
 
 namespace {
 
@@ -539,6 +543,13 @@ int main(int argc, char **argv) {
     printf("\n=== combined: %d objects across %d/%d milo(s), %d distinct classes ===\n",
            combined.total, loaded, requested, (int)combined.byClass.size());
     Gate("all-milos-loaded", loaded == requested, "");
+
+    // A8: the ~ObjectDir cascade must notify owner-control holders the way
+    // X360's ~Object ReplaceRefs does (native/src/cascade_notify_phase.cpp).
+    RunCascadeNotifyPhase(Gate);
+    // A8: an async ~ObjectDir leaves refs alone until each object dies
+    // (native/src/async_unload_phase.cpp).
+    RunAsyncUnloadPhase(Gate);
 
     printf("\nRESULT: %s (%d gate failure(s))\n",
            gFailures == 0 ? "ALL GATES PASSED" : "FAILED", gFailures);

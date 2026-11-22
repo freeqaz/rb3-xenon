@@ -264,15 +264,15 @@ ObjectDir::~ObjectDir() {
     mSubDirs.clear();
     delete mLoader;
     if (TheLoadMgr.AsyncUnload()) {
-#ifdef HX_NATIVE
-        // Async unload still needs to nullify refs on objects that will be
-        // destroyed later, so persistent ObjPtrs (TaskMgr, globals) don't
-        // hold stale pointers. DirUnloader handles the actual destruction.
-        for (ObjDirItr<Hmx::Object> it(this, false); it != nullptr; ++it) {
-            if (it != this && ((Hmx::Object *)it)->IsRefAlive())
-                ((Hmx::Object *)it)->NullifyAllRefs();
-        }
-#endif
+        // No ref nullification here, native included (it used to NullifyAllRefs
+        // every object eagerly). The objects are still ALIVE: the DirUnloader
+        // deletes one per LoadMgr poll and each ~Object walks its own refs then,
+        // as on X360. Eagerly, every ref to a live object read NULL for the whole
+        // unload window, and owner-control holders had their Replace run early
+        // (an AnimTask deleted while its anim still played). dc3-decomp did the
+        // same (b01fd8ba7). Gate: native/src/async_unload_phase.cpp (rb3-milo).
+        // TaskMgr/global holders are covered by ~Object's own walk on delete.
+        // (9 lines, as the removed block was: keeps PPC __LINE__ values fixed.)
         new DirUnloader(this);
     } else {
         DeleteObjects();
