@@ -30,6 +30,11 @@ public:
     Leaderboard *GetLeaderboard(LocalBandUser *, ScoreType, int, Leaderboard::Mode);
     void RestartLeaderboardTimer();
     void CancelLeaderboardTimer();
+#ifdef HX_NATIVE
+    // Native only: FinishLoad's HX_NATIVE arm (SongSelectPanel.cpp) defines and
+    // calls this; it was never declared, so the TU could not compile natively.
+    void SetMiniLeaderboardGroupShowing(bool showing);
+#endif
 
     Leaderboard *mLeaderboard; // 0x48
     AppMiniLeaderboardDisplay *unk48; // 0x4c
