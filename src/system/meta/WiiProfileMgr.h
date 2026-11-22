@@ -34,8 +34,6 @@ public:
     bool IsIndexValid(int) const;
     int GetIndexForPad(int) const;
     int GetPadForIndex(int) const;
-    void SetPadToGuest(int);
-    WiiProfile *GetProfileForPad(int);
     bool IsPadAGuest(int) const;
     bool IsPadRegistered(int) const;
     void SetIndexRegistered(int, bool);
@@ -43,8 +41,6 @@ public:
     bool IsIndexLocked(int) const;
     bool IsIndexRegistered(int) const;
     void RemovePad(int);
-    bool IsSlotAvailable() const;
-    bool IsDeleteQueueFull() const;
     // ProfileMgr-specific Wii APIs (decl-only for X360 compilation)
     int Count(int) const { return 0; }
     int GetHasSeenFirstTimeInstrumentFlagsForUser(const LocalUser *) const { return 0; }
@@ -58,6 +54,9 @@ public:
     void PreLoad();
     bool NeedsSave() const;
     void SetLocked(void *, bool);
+    // No src/ caller is left (SaveLoadManager::PrintoutSaveSizeInfo is not in
+    // retail X360); declared only because native/src/w16ts_link_support.cpp
+    // still defines an aborting body for it.
     static int SaveSize(int);
 };
 

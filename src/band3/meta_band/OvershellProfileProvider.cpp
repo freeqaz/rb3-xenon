@@ -67,22 +67,3 @@ OvershellProfileProvider::OvershellProfileProvider(BandUserMgr *mgr)
 
 // retail 0x82668388: only the implicit ~vector and the base destructors.
 OvershellProfileProvider::~OvershellProfileProvider() {}
-
-#ifdef HX_NATIVE
-// Wii-only profile-swap entry points. Retail X360 has no bodies for them;
-// they exist so the native engine links OvershellSlot's calls.
-WiiProfileActResult
-OvershellProfileProvider::ActOnProfile(int, LocalBandUser *, bool) {
-    return kWiiProfileActResult_Done;
-}
-WiiProfileActResult OvershellProfileProvider::ActOnProfileConfirmed(LocalBandUser *) {
-    return kWiiProfileActResult_Done;
-}
-void OvershellProfileProvider::SetWiiProfileListMode(WiiProfileListMode, bool) {}
-OvershellProfileProvider::WiiProfileListMode
-OvershellProfileProvider::GetWiiProfileListMode() {
-    return (WiiProfileListMode)0;
-}
-int OvershellProfileProvider::GetWiiProfileCount(LocalBandUser *) const { return 0; }
-const char *OvershellProfileProvider::GetWiiProfileSelectedName() const { return ""; }
-#endif

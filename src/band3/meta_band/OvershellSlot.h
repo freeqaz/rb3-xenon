@@ -1,5 +1,4 @@
 #pragma once
-#include "meta/WiiProfileMgr.h"
 #include "obj/Object.h"
 #include "net_band/DataResults.h"
 #include "game/BandUserMgr.h"
@@ -83,7 +82,6 @@ public:
     void LeaveReadyToPlay();
     void LeaveSignInWait();
     void ShowEnterWiiSpeakOptions();
-    void ShowEnterWiiProfile();
     void AttemptDisconnect();
     void ShowChordBook();
     void PracticeNewSection();
@@ -96,28 +94,9 @@ public:
     void ToggleMuteUser(int);
     void SelectDifficulty(Difficulty);
     void ShowSongOptions();
-    void ActOnUserProfile(int);
-    void HandleWiiProfileActResult(WiiProfileActResult);
-    void ActOnUserProfileConfirm();
-    void ShowWiiProfileConfirm();
-    void ShowWiiProfilePreconfirm();
-    void ShowWiiProfileSwitchConfirm();
-    void ShowWiiProfileFail();
-    void ShowWiiProfileFailBusy();
-    void ShowWiiProfileFailCreate();
-    void ShowWiiProfilePostAction();
     void AttemptSwapUserProfile(int);
-    void SelectGuestProfile();
-    void ShowWiiProfileSwapFail();
-    void SetWiiProfileListMode(int, bool);
-    OvershellProfileProvider::WiiProfileListMode GetWiiProfileListMode();
-    int GetWiiProfileLastIndex();
-    void ShowWiiProfileList(int);
-    void ShowWiiProfileOptions();
     void ShowWaitWii();
     void LeaveWaitWii();
-    void ShowWiiProfileSelector(bool);
-    void CancelWiiProfileSelector();
     void FetchLinkingCode();
     void ToggleVocalStyle();
     void Update();
@@ -164,16 +143,12 @@ public:
     void RenameCharacter(const char *);
     void DeleteCharacter();
     bool CanEditCharacter(int) const;
-    bool IsWiiProfileFull() const;
-    bool IsWiiProfileDeleteQueueFull() const;
-    const char *GetWiiProfileListSelectedName() const;
     void SwapUserProfile(LocalBandUser *);
     void AddValidController(ControllerType);
     void AddAutoVocalsValidController(ControllerType);
     void ToggleWiiSpeak();
     void AddUser(LocalBandUser *);
     bool IsValidUser(BandUser *) const;
-    WiiProfile *GetUserWiiProfile();
     bool InOverrideFlow(OvershellOverrideFlow) const;
 
     DataNode OnMsg(const AddLocalUserResultMsg &);
@@ -234,10 +209,7 @@ public:
     FriendsProvider *mFriendsProvider; // 0xb4 (retail X360-only)
     OvershellPartSelectProvider *mPartSelectProvider; // 0xb8
     CymbalSelectionProvider *mCymbalProvider; // 0xbc
-    // NOTE: the Wii-only `OvershellSlotStateID unk28` member that used to live
-    // here has been removed — retail X360 sizeof(OvershellSlot) is 0xC0 and the
-    // trailing member made ours 0xC4 (objdiff: OvershellPanel::FinishLoad
-    // emitted `li r3, 0xc4` for the operator new size where retail has 0xc0).
-    // The three Wii-profile-selector methods that referenced it (all absent from
-    // the retail X360 .text) now use a file-scope static in OvershellSlot.cpp.
+    // NOTE: retail X360 sizeof(OvershellSlot) is 0xC0 (OvershellPanel::FinishLoad
+    // allocates 0xc0): there is no Wii `OvershellSlotStateID unk28` member, and
+    // none of the Wii-profile methods that used it exists in retail either.
 };
