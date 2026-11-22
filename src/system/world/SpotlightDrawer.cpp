@@ -688,3 +688,15 @@ SpotMeshEntry_* vector<SpotMeshEntry_, StlNodeAlloc<SpotMeshEntry_>>::_M_erase(
 }
 }  // namespace stlpmtx_std
 #endif
+
+#ifdef HX_NATIVE
+// DeSelect is __forceinline above, so this TU inlines it (into ~SpotlightDrawer
+// and the `deselect` handler) and emits no out-of-line copy. Retail band.exe
+// also carries it out of line at 0x824D4C90 (0x2C bytes), the copy
+// WorldDir::DrawShowing (world/Dir.cpp) calls every frame. Taking its address
+// makes clang emit that out-of-line copy from the one body above, so every
+// other caller links retail's DeSelect, not an empty native stub. Appended at
+// the end of the file so no earlier line moves.
+[[gnu::used]] static void (SpotlightDrawer::*const kSpotlightDrawerDeSelect)() =
+    &SpotlightDrawer::DeSelect;
+#endif
