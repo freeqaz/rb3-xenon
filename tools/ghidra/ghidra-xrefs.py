@@ -23,7 +23,8 @@ def format_xrefs(result: dict, target: str) -> str:
     lines = []
 
     # Get the references lists
-    refs_to = result.get("references_to", result.get("xrefs_to", []))
+    # list_xrefs (pyghidra-mcp fork) returns {"target", "cross_references": [...]}: references TO only.
+    refs_to = result.get("references_to", result.get("xrefs_to", result.get("cross_references", [])))
     refs_from = result.get("references_from", result.get("xrefs_from", []))
 
     lines.append(f"Cross-references for: {target}")
@@ -37,7 +38,7 @@ def format_xrefs(result: dict, target: str) -> str:
         for ref in refs_to:
             from_addr = ref.get("from_address", ref.get("address", "unknown"))
             ref_type = ref.get("type", ref.get("ref_type", "unknown"))
-            from_func = ref.get("from_function", ref.get("function", ""))
+            from_func = ref.get("from_function", ref.get("function", ref.get("function_name", ""))) or ""
             lines.append(f"{from_addr:<14} {ref_type:<10} {from_func}")
     else:
         lines.append("  (none)")

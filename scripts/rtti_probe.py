@@ -8,7 +8,9 @@ import sys
 sys.path.insert(0, 'tools/ghidra')
 from mcp_client import create_client
 
-RTDYN_PAT = re.compile(r"Function_82804DA8\([^,]+,\s*0,\s*0x[0-9a-fA-F]+,\s*0x([0-9a-fA-F]+),\s*0\)")
+# TU0 thunk name, or the TU5 program's named __RTDynamicCast (0x8282A0C8; the TU0 pattern alone has
+# matched nothing on TU5 since the 07-15 flip).
+RTDYN_PAT = re.compile(r"(?:Function_82804DA8|__RTDynamicCast)\([^,]+,\s*0,\s*0x[0-9a-fA-F]+,\s*0x([0-9a-fA-F]+),\s*0\)")
 
 def probe(addr, client=None):
     c = client or create_client()

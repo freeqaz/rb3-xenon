@@ -164,6 +164,10 @@ def main():
                         continue
                     try:
                         func.setName(symbol, SourceType.USER_DEFINED)
+                        # apply_prototypes.py moves a function into its class namespace; a new name
+                        # may belong to another class, so go back to global and let it re-place it.
+                        if not func.getParentNamespace().isGlobal():
+                            func.setParentNamespace(program.getGlobalNamespace())
                         if is_change:
                             changed += 1
                             if args.verbose:
@@ -204,6 +208,8 @@ def main():
                     if args.verbose:
                         print("[apply_symbols] REMOVE %s %s" % (va, name))
                     if not args.dry_run:
+                        if not func.getParentNamespace().isGlobal():
+                            func.setParentNamespace(program.getGlobalNamespace())
                         func.setName(None, SourceType.DEFAULT)
                         c = func.getComment() or ""
                         keep = [l for l in c.split("\n") if l and not l.startswith("[decomp] ")
