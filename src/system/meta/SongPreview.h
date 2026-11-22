@@ -54,7 +54,6 @@ public:
 
 #ifdef HX_NATIVE
     bool HasMovie() const { return mTexMovie && !mTexMovie->IsEmpty(); }
-    float PreviewDb() const { return mPreviewDb; }
 #else
     // Retail RB3-360 has no TexMovie song preview at all (see the member note
     // below) -- the movie branches fold away entirely.
@@ -102,9 +101,9 @@ private:
     // The retail ctor (??0SongPreview@@QAA@ABVSongMgr@@@Z) corroborates: it
     // stores exactly 0x2c/0x30/0x34/0x38/0x3c/0x40/0x44/0x50/0x54/0x58/0x5c/
     // 0x60/0x64/0x68/0x6c/0x6d and nothing at 0x6e..0x74, and it makes no
-    // ObjPtr ctor call. So mPreviewDb (0x70) and ObjPtr<TexMovie> (0x74) cannot
-    // exist -- either one would push sizeof past 0x70. They are DC3-newer
-    // additions; keep them for the native build only.
+    // ObjPtr ctor call. So DC3's mPreviewDb and ObjPtr<TexMovie> cannot exist --
+    // either one would push sizeof past 0x70. mTexMovie is kept for the native
+    // build only; mPreviewDb is gone (retail Init reads no preview_db key).
     //
     // mInitted is DC3-only too: retail's ?Terminate@SongPreview@@QAAXXZ has no
     // `if (mInitted)` guard and no `mInitted = 0` store at all, and the ctor
@@ -113,7 +112,6 @@ private:
 #ifdef HX_NATIVE
     bool mSameSongRequested;
     bool mInitted;
-    float mPreviewDb;
     ObjPtr<TexMovie> mTexMovie;
 #endif
 
