@@ -62,6 +62,12 @@ RULES = [
      r"JoinInvitePanel|CampaignGoalsLeaderboardPanel|CampaignCareerLeaderboardPanel|"
      r"Label3d|BeatClock)\b", "a6-failing-tu"),
     (r"^Movie::SetTimeCallback", "a2-movie"),
+    # rbx-audmgr: AuditionMgr.cpp is compiled; what only audition mode reaches
+    # has no source: the RBN song Validator (retail 0x8272BAC8 onward), the
+    # UGCNet_Server download client (0x82B8C8C8 onward) and the utility-drive
+    # mount AuditionMgr::ThreadStart does for the song's files.
+    (r"^(vtable for |typeinfo for )?(Validator|UGCNet_Server)\b", "audition-only"),
+    (r"^X(Mount|Unmount)UtilityDrive$", "audition-only"),
     # Retail never calls these: VocalPlayer never reads mVocalOverlay (0x3c8);
     # every call site is under HX_NATIVE and the pointer is null unless
     # ToggleOverlay runs (session rb3-xenon-07, 114186523, VocalOverlay.h).
