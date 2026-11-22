@@ -2013,6 +2013,8 @@ rb3_add_executable(rb3-milo
     ${CMAKE_SOURCE_DIR}/src/main_milo.cpp
     # A8: the ~ObjectDir cascade notifies owner-control holders (unit gates).
     ${CMAKE_SOURCE_DIR}/src/cascade_notify_phase.cpp
+    # A8: an async ~ObjectDir leaves refs alone until each object dies.
+    ${CMAKE_SOURCE_DIR}/src/async_unload_phase.cpp
     ${MILO_TARGET_COMMON_SOURCES}
     # W16-RW: Rnd::TestPoint asks the engine's point-test seam for an occlusion
     # tester (rndobj/Rnd.cpp, HX_NATIVE). rb3-render gets the seam's storage

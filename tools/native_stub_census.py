@@ -66,7 +66,7 @@ NON_STUB_RE = re.compile(
     # W16-UR: the gate phases W16-TM .. W16-UJ added to rb3-render (drivers, not stubs).
     r"w16t[mrswy]_phase\.cpp|w16u[bfj]_phase\.cpp|"
     # A8: rb3-milo's cascade-notification gates (test code, not a stub).
-    r"cascade_notify_phase\.cpp|"
+    r"cascade_notify_phase\.cpp|async_unload_phase\.cpp|"
     # A1: rb3-app's boot-gate --wrap shims (call the real step, then print).
     r"rb3_app_gates\.cpp)\.o$"
 )
