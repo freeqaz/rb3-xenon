@@ -2315,6 +2315,15 @@ set(RB3_APP_SOURCES
     # as-is: PLAN 2.1's `undeclared set_joining_user` is its handler Symbol,
     # a function-local static in retail.
     ${REPO_ROOT}/src/band3/meta_band/JoinInvitePanel.cpp
+    # A6: then GemTrainerPanel's ctor builds its Metronome member (the
+    # Metronome ctor stub was the a6-failing-tu stop; retail ctor 0x826F0708 =
+    # mEnabled = false, mBeat = -1, three nulls, as the source). The TU failed
+    # only on -Werror=tautological-constant-out-of-range-compare: Poll's
+    # `oe != 2` compares Metronome::OverrideEnabled, which Metronome.h declares
+    # EMPTY (a placeholder, the same artifact as Mat_NG.cpp's ClampMode). The
+    # comparison is live in retail and clang keeps it (no -fstrict-enums), so
+    # the warning is silenced for this TU only (flags below).
+    ${REPO_ROOT}/src/band3/game/Metronome.cpp
     # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
     # constructs TheBandUI at static init; natively TheUI was the engine's weak
     # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.
@@ -2616,6 +2625,10 @@ if(RB3X_BUILD_ENGINE)
     # A6: JoinInvitePanel.cpp: X360's extra_cflags only.
     set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/JoinInvitePanel.cpp
         PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC")
+    # A6: Metronome.cpp: no X360 extra_cflags; the empty OverrideEnabled enum
+    # makes Poll's live `oe != 2` read as out of range.
+    set_source_files_properties(${REPO_ROOT}/src/band3/game/Metronome.cpp
+        PROPERTIES COMPILE_OPTIONS "-Wno-tautological-constant-out-of-range-compare")
     # A2: the retail tables and registrars; rb3_app_gates.cpp calls them only
     # with a title update mounted (RB3_TITLE_UPDATE_DIR).
     list(APPEND _rb3_app_all ${REPO_ROOT}/src/ChecksumData_xbox.cpp)
