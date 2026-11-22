@@ -170,7 +170,37 @@ Expected Δ0. Result: see "Results".
 
 ## Results
 
-*(filled in below)*
+**X360 A/B** (`python3 tools/ab_measure.py --worktree ~/tmp/wt-byteorder --revert b99110d70`;
+leg A = fixes in, leg B = fixes reverted; objdiff `sha256:ec3badc0f33323e9`, default
+`name_check` ruler; run dir `~/tmp/wt-byteorder/.ab_measure_runs/20261122-121025-w16ue-byteorder-214183/`):
+
+    leg A: matched=55038 masked=25227 honest=29811 code%=59.401530  (recompiles: 0, settled)
+    leg B: matched=55038 masked=25227 honest=29811 code%=59.401530  (recompiles: 1020, settle iterations: 2)
+    Δmatched=+0  Δmasked_equal=+0  Δhonest=+0  Δcode%=+0.000000pp  Δcode_bytes=+0
+    Δfuzzy=+0.000000pp   units at 100%: 633 -> 633 (mpn), 547 -> 547 (all-rows-fuzzy)
+    [control none] Δmatched_code=+0 B
+
+Prediction was Δ0; measured Δ0. Leg B recompiled 1,020 objects because `os/Timer.h`
+is widely included; the edit there is inside its `#ifdef HX_NATIVE` block.
+
+**Native** (`tools/native_health.sh --selftest` on `008d8d3cb`, base `af50f101a`,
+run while the box sat at load average ~100 on 32 cores with three other lanes building):
+
+    NATIVE_GATE_RESULT verdict=PASS expected=19 verified=19 skipped=0 partial=0 failed=0 rc=0
+    NATIVE_HEALTH_RESULT verdict=FAIL link=PASS link_verified=19 link_expected=19 link_skipped=0 runtime=FAIL runtime_ran=18 runtime_total=18 gates_pass=503 gates_fail=0 unrunnable=none selftest=PASS scatter_unlinked=10 scatter_dirb=1 scatter_multihost=10 rc=1 handpose_controls=3/3 handpose_baseline_fail=1 runtime_crashed=0 runtime_failed=rb3-render:hang,rb3-frame:file-audit,rb3-render:file-audit retail_config=12/12 unhandled_calls=0
+
+The link gate passes. The health FAIL has two causes, neither attributed to this
+change, and neither proven unrelated by a same-load baseline run:
+- `rb3-frame`/`rb3-render` file-audit: the only OUTSIDE reads are
+  `/usr/share/drirc.d` and `/usr/share/libdrm/amdgpu.ids`, which are RADV/Mesa files.
+  RADV was installed on this box on 2026-11-22, and main fixed the allow-list in
+  `ffce25484` (gate-radv-allow), which landed after this branch's base. A rebase
+  picks it up.
+- `rb3-render` HANG: killed at the 120 s cap with 404 gates passed and 0 failed
+  (main's record at `af50f101a`: 513 passed). The last output was a venue-load
+  notice, not a byte-order path. Running it at load ~100 is the likely cause.
+  **Re-run `tools/native_health.sh --selftest` on a quiet box after rebasing before
+  landing.**
 
 ## Not done
 
