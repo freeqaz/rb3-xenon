@@ -37,17 +37,119 @@ CriticalSection *gMemStackLock = nullptr; // ring: native-real
 //
 // A2: TitleContentPath. Retail ContentMgr_Xbox returns ContentPath(0), the
 // mounted title-update package, and ArchiveInit (os/Archive.cpp) merges
-// <path>/gen/patch_xbox.hdr ahead of the disc when it exists. Natively the
-// title update is opt-in: RB3_TITLE_UPDATE_DIR names the directory that holds
-// gen/patch_xbox.hdr + gen/patch_xbox_0.ark (the official TU5 package is
-// /home/free/code/milohax/rb3-xenon/orig/45410914/tu5-package). Unset or
-// empty = no title update, which is what the base class answers.
+// <path>/gen/patch_xbox.hdr ahead of the disc when it exists.
+//
+// A4: the title update is mounted BY DEFAULT when the data is present. Our
+// code is TU5 code (orig/45410914/default.xex is clean TU5) and it trips on
+// disc-only data (docs/decomp/TU5_PATCH_DATA_VS_SOURCE_2026-11-22.md:
+// Game::Properties wants TU5's allow_drum_fills, BandDirector handlers read
+// arguments only TU5 scripts pass), so the bare disc is the degraded mode.
+// Resolution, decided once and printed once:
+//   RB3_TITLE_UPDATE_DIR=none   explicit opt-out: bare disc, no title update.
+//   RB3_TITLE_UPDATE_DIR=<dir>  explicit override, used AS GIVEN: <dir> holds
+//                               gen/patch_xbox.hdr + gen/patch_xbox_0.ark. A
+//                               <dir> without the hdr is still "mounted" (so
+//                               the TU5 checksum tables register over the
+//                               bare disc: the A2 negative control), with a
+//                               NOTIFY saying so.
+//   unset or empty              auto-detect <checkout>/orig/45410914/
+//                               tu5-package, probing the MAIN checkout first
+//                               (git rev-parse --git-common-dir at configure
+//                               time, so a worktree finds the main checkout's
+//                               gitignored orig/), then this source tree.
+//                               Found = both gen/patch_xbox.hdr and
+//                               gen/patch_xbox_0.ark exist. Not found = one
+//                               `NOTIFY rb3-app title update: NOT FOUND` line
+//                               naming every path probed, then the bare disc.
+//   RB3_TITLE_UPDATE_PROBE_ROOT=<root>  test hook: probe only
+//                               <root>/orig/45410914/tu5-package instead of
+//                               the configured checkouts (simulates absence).
+// rb3-app only: this TU is linked into no other target, and the hook it
+// feeds (Rb3NativeTitleContentPath, weak in System_Native.cpp) is undefined
+// everywhere else, so every other target keeps the bare-disc archive path.
 #include <cstdlib>
+#include <cstring>
+#include <string>
+#include <sys/stat.h>
+#ifndef RB3_APP_MAIN_CHECKOUT
+#define RB3_APP_MAIN_CHECKOUT ""
+#endif
+#ifndef RB3_APP_SOURCE_CHECKOUT
+#define RB3_APP_SOURCE_CHECKOUT ""
+#endif
+namespace {
+bool Rb3AppIsFile(const std::string &p) {
+    struct stat st;
+    return stat(p.c_str(), &st) == 0 && S_ISREG(st.st_mode);
+}
+
+const char *Rb3AppResolveTitleUpdate() {
+    static std::string sDir;
+    static int sState = -1; // -1 undecided, 0 bare disc, 1 mounted
+    if (sState >= 0)
+        return sState ? sDir.c_str() : nullptr;
+    sState = 0;
+    const char *env = std::getenv("RB3_TITLE_UPDATE_DIR");
+    if (env && std::strcmp(env, "none") == 0) {
+        printf("rb3-app title update: OPTED OUT (RB3_TITLE_UPDATE_DIR=none): bare disc, "
+               "TU5 checksum tables not registered\n");
+        fflush(stdout);
+        return nullptr;
+    }
+    if (env && *env) {
+        sDir = env;
+        sState = 1;
+        if (Rb3AppIsFile(sDir + "/gen/patch_xbox.hdr")) {
+            printf("rb3-app title update: OVERRIDE RB3_TITLE_UPDATE_DIR=%s\n", env);
+        } else {
+            printf("NOTIFY rb3-app title update: OVERRIDE RB3_TITLE_UPDATE_DIR=%s has no "
+                   "gen/patch_xbox.hdr: nothing merges over the disc, but the TU5 checksum "
+                   "tables ARE registered (they will fail on the disc's files)\n", env);
+        }
+        fflush(stdout);
+        return sDir.c_str();
+    }
+    const char *tail = "/orig/45410914/tu5-package";
+    std::string roots[2];
+    int nroots = 0;
+    const char *probeRoot = std::getenv("RB3_TITLE_UPDATE_PROBE_ROOT");
+    if (probeRoot && *probeRoot) {
+        roots[nroots++] = probeRoot;
+    } else {
+        if (*RB3_APP_MAIN_CHECKOUT)
+            roots[nroots++] = RB3_APP_MAIN_CHECKOUT;
+        if (*RB3_APP_SOURCE_CHECKOUT && roots[0] != RB3_APP_SOURCE_CHECKOUT)
+            roots[nroots++] = RB3_APP_SOURCE_CHECKOUT;
+    }
+    std::string probed;
+    for (int i = 0; i < nroots; i++) {
+        std::string dir = roots[i] + tail;
+        if (Rb3AppIsFile(dir + "/gen/patch_xbox.hdr")
+            && Rb3AppIsFile(dir + "/gen/patch_xbox_0.ark")) {
+            sDir = dir;
+            sState = 1;
+            printf("rb3-app title update: TU5 auto-detected at %s (opt out with "
+                   "RB3_TITLE_UPDATE_DIR=none)\n", dir.c_str());
+            fflush(stdout);
+            return sDir.c_str();
+        }
+        if (!probed.empty())
+            probed += ", ";
+        probed += dir + "/gen/patch_xbox{.hdr,_0.ark}";
+    }
+    printf("NOTIFY rb3-app title update: NOT FOUND, booting the BARE DISC (TU5-only data "
+           "such as modes.dta allow_drum_fills will be missing; TU5 checksum tables not "
+           "registered). Probed: %s. Set RB3_TITLE_UPDATE_DIR=<dir> or =none\n",
+           probed.empty() ? "(no checkout configured)" : probed.c_str());
+    fflush(stdout);
+    return nullptr;
+}
+} // namespace
+
 class Rb3AppContentMgr : public ContentMgr {
 public:
     virtual const char *TitleContentPath() { // ring: native-real
-        const char *dir = std::getenv("RB3_TITLE_UPDATE_DIR");
-        return (dir && *dir) ? dir : nullptr;
+        return Rb3AppResolveTitleUpdate();
     }
 };
 static Rb3AppContentMgr gRb3AppContentMgr;

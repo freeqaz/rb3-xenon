@@ -129,7 +129,8 @@ void NativeArchiveInit() {
     // driver that sets another load platform still mounts the disc's archive
     // (lane W16-UC).
     // A2 (rb3-app only): a title-update directory is configured (the weak
-    // hook is defined in rb3_app_native_glue.cpp, RB3_TITLE_UPDATE_DIR). Run
+    // hook is defined in rb3_app_native_glue.cpp: TU5 auto-detected by
+    // default since A4, RB3_TITLE_UPDATE_DIR=<dir> overrides, =none opts out). Run
     // the RETAIL ArchiveInit (os/Archive.cpp): it reads TheContentMgr's
     // TitleContentPath, mounts <dir>/gen/patch_xbox.hdr when it exists,
     // SetLocationHardDrive's the patch's ark parts under <dir>, and Merges the
