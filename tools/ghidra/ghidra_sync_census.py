@@ -26,6 +26,9 @@ DEFAULT_RE = re.compile(r"^(thunk_)?(FUN|Function)_[0-9A-Fa-f]{8}$")
 CALL_UNNAMED_RE = re.compile(r"\b(?:thunk_)?(?:FUN|Function)_[0-9A-Fa-f]{8}\s*\(")
 RAW_MEMBER_RE = re.compile(r"\b(?:param_\d+|this|in_r\d+|unaff_r\d+)\s*\+\s*0x[0-9a-fA-F]+")
 DAT_RE = re.compile(r"\b(?:PTR_)?DAT_[0-9a-fA-F]{8}\b")
+# every Ghidra auto-named data reference: DAT_, PTR_<target>_<va> (e.g. a vftable shown by its first slot),
+# s_<text>_<va> strings. Phase 2 (data names) is measured on this one.
+AUTO_DATA_RE = re.compile(r"\b(?:PTR_\w*?_[0-9a-fA-F]{8}|(?:PTR_)?DAT_[0-9a-fA-F]{8}|s_\w*?_[0-9a-fA-F]{8})\b")
 
 
 def load_map(path):
@@ -106,11 +109,12 @@ def main():
                              "unnamed_calls": len(CALL_UNNAMED_RE.findall(body)),
                              "raw_member": len(RAW_MEMBER_RE.findall(body)),
                              "dat_refs": len(DAT_RE.findall(body)),
+                             "auto_data": len(AUTO_DATA_RE.findall(body)),
                              "undefined_in_sig": sig.count("undefined"),
                              "ok": bool(c)})
             di.dispose()
             tot = {k: sum(r.get(k, 0) for r in rows) for k in
-                   ("unnamed_calls", "raw_member", "dat_refs", "undefined_in_sig")}
+                   ("unnamed_calls", "raw_member", "dat_refs", "auto_data", "undefined_in_sig")}
             json.dump({"rows": rows, "totals": tot}, open(os.path.join(args.out_dir, "bodies.json"), "w"), indent=1)
             for r in rows:
                 print("[body] %s %-5s calls=%-3s raw=%-3s dat=%-3s undef_sig=%-2s %s" % (
