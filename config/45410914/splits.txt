@@ -528,6 +528,10 @@ Instarank.cpp:
 	.pdata      start:0x8222D178 end:0x8222D2F8
 	.text       start:0x8264F988 end:0x82650B74
 
+band3/meta_band/BandNetGameData.cpp:
+	.pdata      start:0x8222D2F8 end:0x8222D3B8
+	.text       start:0x82650B74 end:0x82651928
+
 BandCharacter.cpp:
 	.pdata      start:0x821F1F28 end:0x821F1F38
 	.pdata      start:0x821F1F88 end:0x821F1F98

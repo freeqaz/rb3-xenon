@@ -31,6 +31,11 @@ public:
     virtual bool AuthenticateJoin(BinStream &, int &) const = 0;
 };
 
+class RemovingRemoteUserMsg;
+
+// Retail clean TU5 0x82650B78..0x82651924 (BandNetGameData.cpp). Layout, from
+// the ctor at 0x82650E48: NetGameData vfptr @0x0, Hmx::Object @0x4 (vtable
+// 0x820D27A4), Timer @0x30.
 class BandNetGameData : public NetGameData, public Hmx::Object {
 public:
     BandNetGameData();
@@ -45,5 +50,14 @@ public:
 
     void Poll();
 
-    Timer unk20;
+private:
+    bool IsRanked() const;
+    int StatsViewID() const;
+    void DefaultRankedMatch(bool);
+    DataNode OnMsg(const RemovingRemoteUserMsg &);
+
+    // Runs while a refused invite is being reported: AuthenticateJoin raises
+    // the invite-failed message only when it is idle, and Poll stops it after
+    // 25 seconds.
+    mutable Timer mInviteFailedTimer; // 0x30
 };

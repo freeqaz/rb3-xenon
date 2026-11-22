@@ -1335,6 +1335,7 @@
                     "/DRB3_HANDLE_LOCAL_STATIC"
                 ]
             },
+            "band3/meta_band/BandNetGameData.cpp": "NonMatching",
             "band3/meta_band/BandStoreUIPanel.cpp": "NonMatching",
             "band3/meta_band/SessionMgr.cpp": {
                 "status": "NonMatching",

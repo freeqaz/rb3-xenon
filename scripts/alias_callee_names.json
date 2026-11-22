@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "fb846835e",
+ "recorded_at": "7044f6cac",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -30085,7 +30085,8 @@
     "?push_back@?$vector@USpotlightDrawerEntry@LightPreset@@V?$StlNodeAlloc@USpotlightDrawerEntry@LightPreset@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUSpotlightDrawerEntry@LightPreset@@@Z": "PROVEN",
     "?push_back@?$vector@UPhrase@@V?$StlNodeAlloc@UPhrase@@@stlpmtx_std@@@stlpmtx_std@@QAAXABUPhrase@@@Z": "PROVEN",
     "?push_back@?$vector@VBurst@RndParticleSys@@V?$StlNodeAlloc@VBurst@RndParticleSys@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVBurst@RndParticleSys@@@Z": "PROVEN",
-    "?push_back@?$vector@VRect@Hmx@@V?$StlNodeAlloc@VRect@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVRect@Hmx@@@Z": "PROVEN"
+    "?push_back@?$vector@VRect@Hmx@@V?$StlNodeAlloc@VRect@Hmx@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVRect@Hmx@@@Z": "PROVEN",
+    "?push_back@?$vector@VUserStat@@V?$StlNodeAlloc@VUserStat@@@stlpmtx_std@@@stlpmtx_std@@QAAXABVUserStat@@@Z": "PROVEN"
    }
   },
   "0x8278c898": {
