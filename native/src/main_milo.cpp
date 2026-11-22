@@ -106,6 +106,8 @@ int RunRndModePhase(void (*gate)(const char *, bool, const char *));
 int RunSpotlightGeneratePhase(void (*gate)(const char *, bool, const char *));
 // native/src/text_line_color_phase.cpp (A15)
 int RunTextLineColorPhase(void (*gate)(const char *, bool, const char *));
+// A ScriptTask ends when an object it watches dies (script_task_watch_phase.cpp).
+int RunScriptTaskWatchPhase(void (*gate)(const char *, bool, const char *));
 
 namespace {
 
@@ -575,6 +577,9 @@ int main(int argc, char **argv) {
     // A15: RndText::UpdateLineColor recolours the line it is given, after an
     // earlier two-byte character (native/src/text_line_color_phase.cpp).
     RunTextLineColorPhase(Gate);
+    // ScriptTask watches the objects its script names, as retail
+    // UpdateVarsObjects 0x82749968 does (native/src/script_task_watch_phase.cpp).
+    RunScriptTaskWatchPhase(Gate);
 
     printf("\nRESULT: %s (%d gate failure(s))\n",
            gFailures == 0 ? "ALL GATES PASSED" : "FAILED", gFailures);

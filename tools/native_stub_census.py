@@ -80,6 +80,8 @@ NON_STUB_RE = re.compile(
     r"spotlight_generate_phase\.cpp|"
     # A15: rb3-milo's RndText::UpdateLineColor gate (test code, not a stub).
     r"text_line_color_phase\.cpp|"
+    # scripttask: rb3-milo's ScriptTask watched-object gates (test code, not a stub).
+    r"script_task_watch_phase\.cpp|"
     # A1: rb3-app's boot-gate --wrap shims (call the real step, then print).
     r"rb3_app_gates\.cpp)\.o$"
 )
