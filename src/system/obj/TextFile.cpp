@@ -6,6 +6,9 @@
 void TextFile::SetName(const char *name, class ObjectDir *dir) {
     Hmx::Object::SetName(name, dir);
     RELEASE(mFile);
+    // Retail 0x8276D248 ends here: it releases mFile and never opens a file, so
+    // the "_append" / NewFile path below is dev-build code, kept natively only.
+#if defined(MILO_DEBUG) && defined(HX_NATIVE)
     bool holmes = UsingHolmes(1);
     if (name && *name && holmes) {
         const char *s = strstr(name, "_append");
@@ -20,6 +23,7 @@ void TextFile::SetName(const char *name, class ObjectDir *dir) {
             mFile = NewFile(name, 0x301);
         }
     }
+#endif
 }
 
 void TextFile::Print(const char *str) {
