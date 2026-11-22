@@ -1,24 +1,117 @@
-// rb3-app native driver (lane A1, 2026-11-22). Native only.
+// rb3-app native driver (lanes A1, A7, 2026-11-22). Native only.
 //
 // Retail main (src/Main.cpp, 0x82272E68) is `App app(argc, argv); app.Run();`.
-// A1's milestone is App::App alone, headless, with no frame loop, so this
-// driver replaces Main.cpp in rb3-app (Main.cpp stays the X360 TU, untouched):
+// This driver replaces Main.cpp in rb3-app (Main.cpp stays the X360 TU,
+// untouched) and does the same two calls, bounded:
 //
 //   1. the data dir: retail runs with game:\ at the disc root, and SystemInit
 //      opens gen/main_xbox.hdr relative to it. Natively the disc root is
 //      argv[1], else $RB3_ASSETS; the driver chdir()s there (rc 2 if absent).
 //   2. headless: MILO_HEADLESS=1 is forced for the engine (no window, no
-//      swapchain) unless the caller already set it.
+//      swapchain; the engine still renders offscreen, and MILO_SCREENSHOT_DIR /
+//      MILO_SCREENSHOT_FRAMES capture frames) unless the caller set it.
 //   3. App::App(argc, argv) with argv[0] and any arguments after the data dir.
-//   4. a gate line once the constructor returns, then _exit(0): App::Run and
-//      ~App are A2's (the frame loop and teardown are not this milestone).
 //      Every init step prints its own gate (rb3_app_gates.cpp).
+//   4. By default: print `RESULT: APP CONSTRUCTED` and _exit(0) right after
+//      the constructor (the A1 milestone; RB3_APP_CONSTRUCT_ONLY=1 still asks
+//      for it explicitly and wins over RB3_APP_RUN).
+//      RB3_APP_RUN=1: App::Run(), the retail frame loop (App::RunWithoutDebugging,
+//      `while (true)`; App.cpp's HX_NATIVE arm only drops the SEH trampoline).
+//      Opt-in while the loop does not yet survive its first frame natively:
+//      the splash's AnimTask outlives its anim through the ~ObjectDir cascade
+//      (Phase 0 nulls refs without the owner's Replace), so frame 1 polls a
+//      task whose mAnim is null.
+//
+// The loop has no exit, so the bound sits OUTSIDE it, at the one call every
+// frame starts with: SystemPoll(false) is -Wl,--wrap'ed (native/CMakeLists.txt;
+// App.cpp:76 is its only caller in src/). The wrapper counts frames, logs each
+// UI screen change, and ends the process at a frame boundary:
+//   RB3_APP_FRAMES=N   (default 300) after N whole frames:
+//                      `RESULT: APP RAN N FRAMES screen=<name>`, rc 0.
+//   RB3_APP_SECONDS=S  (default 120) wall clock since App::Run, checked at each
+//                      frame start: `RESULT: APP RAN N FRAMES (wall-clock cap)`,
+//                      rc 4. A frame still running S+15 s after App::Run is
+//                      killed by SIGALRM: `RESULT: APP STALLED IN FRAME N`, rc 5.
+// No teardown runs (_exit), as at the construct-only exit: ~App is not reached
+// in retail either.
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <csignal>
 #include <unistd.h>
 #include "App.h"
+#include "ui/UI.h"
+#include "ui/UIScreen.h"
 
 extern "C" void rb3_app_gate(const char *step);
+
+namespace {
+int gFramesStarted = 0; // SystemPoll calls since App::Run (frame N starts at call N)
+int gFrameCap = 300;
+double gSecondsCap = 120.0;
+bool gInRun = false;
+timespec gRunStart;
+const UIScreen *gLastScreen = nullptr;
+bool gLastTransition = false;
+
+double SecondsSinceRun() {
+    timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    return (now.tv_sec - gRunStart.tv_sec) + (now.tv_nsec - gRunStart.tv_nsec) * 1e-9;
+}
+
+const char *ScreenName(const UIScreen *s) {
+    if (!s) return "(none)";
+    const char *n = s->Name();
+    return n && *n ? n : "(unnamed)";
+}
+
+void Finish(int framesDone, const char *why, int rc) {
+    UIScreen *cur = TheUI ? TheUI->CurrentScreen() : nullptr;
+    UIScreen *next = TheUI ? TheUI->TransitionScreen() : nullptr;
+    printf("RESULT: APP RAN %d FRAMES screen=%s transition=%s%s (%.1f s)\n", framesDone,
+           ScreenName(cur), TheUI && TheUI->InTransition() ? ScreenName(next) : "none", why,
+           SecondsSinceRun());
+    fflush(stdout);
+    fflush(stderr);
+    _exit(rc);
+}
+
+void OnStall(int) {
+    // async-signal-safe: write() only
+    char buf[128];
+    int n = snprintf(buf, sizeof buf, "RESULT: APP STALLED IN FRAME %d\n", gFramesStarted);
+    if (n > 0) (void)!write(1, buf, (size_t)n);
+    _exit(5);
+}
+
+int EnvInt(const char *name, int dflt) {
+    const char *v = getenv(name);
+    return v && *v ? atoi(v) : dflt;
+}
+} // namespace
+
+extern "C" void __real__Z10SystemPollb(bool);
+extern "C" void __wrap__Z10SystemPollb(bool b) { // ring: native-real
+    if (gInRun) {
+        int framesDone = gFramesStarted; // every earlier frame ran to its DrawRegular
+        if (framesDone >= gFrameCap) Finish(framesDone, "", 0);
+        if (SecondsSinceRun() >= gSecondsCap) Finish(framesDone, " (wall-clock cap)", 4);
+        ++gFramesStarted;
+        UIScreen *cur = TheUI ? TheUI->CurrentScreen() : nullptr;
+        bool tr = TheUI && TheUI->InTransition();
+        if (cur != gLastScreen || tr != gLastTransition || framesDone == 0) {
+            printf("rb3-app: frame %d screen=%s transition=%s (%.2f s)\n", gFramesStarted,
+                   ScreenName(cur), tr ? ScreenName(TheUI->TransitionScreen()) : "none",
+                   SecondsSinceRun());
+            fflush(stdout);
+            gLastScreen = cur;
+            gLastTransition = tr;
+        }
+    }
+    __real__Z10SystemPollb(b);
+}
 
 int main(int argc, char **argv) {
     const char *data = argc > 1 ? argv[1] : getenv("RB3_ASSETS");
@@ -35,10 +128,28 @@ int main(int argc, char **argv) {
     char **appArgv = argc > 1 ? argv + 1 : argv;
     appArgv[0] = argv[0];
     App *app = new App(appArgc, appArgv);
-    (void)app;
     rb3_app_gate("App::App.complete");
-    printf("RESULT: APP CONSTRUCTED\n");
+    const char *co = getenv("RB3_APP_CONSTRUCT_ONLY");
+    const char *run = getenv("RB3_APP_RUN");
+    bool wantRun = run && *run && strcmp(run, "0") != 0;
+    if ((co && *co && strcmp(co, "0") != 0) || !wantRun) {
+        printf("RESULT: APP CONSTRUCTED\n");
+        fflush(stdout);
+        fflush(stderr);
+        _exit(0);
+    }
+    gFrameCap = EnvInt("RB3_APP_FRAMES", 300);
+    gSecondsCap = EnvInt("RB3_APP_SECONDS", 120);
+    printf("rb3-app: App::App constructed; App::Run (cap %d frames, %.0f s)\n", gFrameCap,
+           gSecondsCap);
     fflush(stdout);
-    fflush(stderr);
-    _exit(0);
+    signal(SIGALRM, OnStall);
+    alarm((unsigned)gSecondsCap + 15);
+    clock_gettime(CLOCK_MONOTONIC, &gRunStart);
+    gInRun = true;
+    app->Run();
+    // App::Run never returns in retail; the SystemPoll wrapper exits.
+    printf("RESULT: APP RUN RETURNED after %d frames\n", gFramesStarted);
+    fflush(stdout);
+    _exit(6);
 }

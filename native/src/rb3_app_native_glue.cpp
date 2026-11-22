@@ -364,3 +364,9 @@ extern "C" void rb3_app_net_init_offline(void *self, void **session, void **sear
     *session = net->mSession;
     *searcher = net->mSearcher;
 }
+// A7: the offline subset of Net::Poll (retail 0x823E03A8): mSearcher->Poll()
+// only. Why the other four are skipped: the gate in rb3_app_gates.cpp.
+extern "C" void rb3_app_net_poll_offline(void *self) { // ring: native-real
+    Net *net = static_cast<Net *>(self);
+    net->mSearcher->Poll();
+}

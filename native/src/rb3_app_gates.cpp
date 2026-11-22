@@ -112,6 +112,21 @@ extern "C" void __wrap__ZN11RockCentral4InitEb(void *self, bool a0) { // ring: o
     fflush(stdout);
 }
 
+// A7: RockCentral::Poll (App::RunWithoutDebugging, every frame; RockCentral.cpp
+// :174) is GATED, not called, for the same reason as Init above: it polls
+// mContextWrapperPool (ContextWrapper.cpp, Quazal protocol contexts; aborting
+// stub ContextWrapperPool::Poll) and, when connected, TheNet's Quazal server.
+// RockCentral::Init never ran, so there is nothing to poll. GATED once.
+extern "C" void __wrap__ZN11RockCentral4PollEv(void *self) { // ring: online-rockcentral
+    (void)self;
+    static bool sPrinted = false;
+    if (!sPrinted) {
+        sPrinted = true;
+        printf("  [GATED] rb3-app RockCentral::Poll() -- ring online-rockcentral: Init not run, not called\n");
+        fflush(stdout);
+    }
+}
+
 extern "C" void __real__ZN11TrainingMgr4InitEv(void);
 extern "C" void __wrap__ZN11TrainingMgr4InitEv(void) { // ring: native-real
     __real__ZN11TrainingMgr4InitEv();
@@ -185,6 +200,30 @@ extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
            "Server/NetworkEmulator/NetMessenger/exit callback not built\n",
            session, searcher);
     fflush(stdout);
+}
+
+// A7: Net::Poll (App::RunWithoutDebugging, every frame). Retail 0x823E03A8:
+// TheNetMessenger.Poll() (0x823F5460), mSyncStore->Poll(), mSession->Poll(),
+// mSearcher->Poll(), mServer->Poll() (vtable +8). The Net::Init gate above built
+// only mSession and mSearcher. This gate runs mSearcher->Poll() alone
+// (rb3_app_net_poll_offline; XSessionSearcher's retail body) and NOT:
+//   * TheNetMessenger.Poll: NetMessenger.cpp is absent from src/;
+//   * mSyncStore->Poll: null, SyncStore is not built;
+//   * mSession->Poll: XboxSession::Poll (NetSession_Xbox.cpp:494) starts with
+//     NetSession::Poll, which reaches QuazalSession::Poll, an aborting
+//     online-netsession stub (the Quazal session layer, rb3-xenon-07's ring);
+//   * mServer->Poll: null, Quazal.
+// GATED once, on the first frame.
+extern "C" void rb3_app_net_poll_offline(void *net);
+extern "C" void __wrap__ZN3Net4PollEv(void *self) { // ring: online-net
+    static bool sPrinted = false;
+    if (!sPrinted) {
+        sPrinted = true;
+        printf("  [GATED] rb3-app Net::Poll() -- ring online-net: polls ONLY mSearcher; "
+               "NetMessenger/SyncStore/Session(Quazal)/Server not polled\n");
+        fflush(stdout);
+    }
+    rb3_app_net_poll_offline(self);
 }
 
 extern "C" void __real__ZN5Movie4InitEv(void);

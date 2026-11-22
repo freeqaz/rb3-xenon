@@ -44,3 +44,5 @@ _ZN11PresenceMgr4InitEv
 _ZN12QuestManager4InitEP9DataArray
 _Z19SetFileChecksumDatav
 _Z23SetSongMidiChecksumDatav
+_ZN3Net4PollEv
+_ZN11RockCentral4PollEv

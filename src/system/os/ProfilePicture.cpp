@@ -2,9 +2,11 @@
 #include "os/Debug.h"
 #include "os/PlatformMgr.h"
 
-// The fetch itself is platform code (ProfilePicture_Xbox.cpp), which the native
-// build does not compile, so this state machine is console-only as well.
-#ifndef HX_NATIVE
+// The fetch itself is platform code (ProfilePicture_Xbox.cpp). Natively only
+// rb3-app compiles that TU (RB3_NATIVE_PROFILEPICTURE), so only rb3-app gets
+// this state machine; the other native targets keep it compiled out. Poll is
+// retail 0x82B902F0; ReceiveUserData is the ICF'd `return true` there.
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_PROFILEPICTURE)
 
 void ProfilePicture::Update() {
     switch (mState) {
