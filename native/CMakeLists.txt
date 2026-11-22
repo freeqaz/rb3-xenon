@@ -2387,6 +2387,16 @@ set(RB3_APP_SOURCES
     # comparison is live in retail and clang keeps it (no -fstrict-enums), so
     # the warning is silenced for this TU only (flags below).
     ${REPO_ROOT}/src/band3/game/Metronome.cpp
+    # A17: TexMovie (its ctor stub was the a6-failing-tu stop: a background
+    # DirLoader of ui/startup/gen/startup_movie_keep.milo_xbox, whose
+    # splash.tmov embeds startup.bik). The TU failed natively only because its
+    # native arm included the engine's FFmpegMovieImpl.h, whose `void
+    # SetPaused(bool) override` cannot override movie/MovieImpl.h's `virtual
+    # bool SetPaused(bool)`; that arm now needs HX_FFMPEG (the backend, which
+    # this tree excludes, see MILO_ENGINE_DECOMP_PLATFORM_EXCLUDE), so rb3-app
+    # compiles the retail DrawToTexture. Its Movie is rb3_app_native_glue.cpp's
+    # Rb3AppMovieImpl (retail Movie::Impl with no Bink decoder).
+    ${REPO_ROOT}/src/system/movie/TexMovie.cpp
     # rbx-audmgr: App::App calls TheAuditionMgr->Init() after TheUI->Init (the
     # AuditionMgr::Init stub was the a1-absent-body stop). AuditionMgr.cpp is
     # the retail TU5 body; AuditionSongFiles.cpp holds the song-file paths it

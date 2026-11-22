@@ -276,13 +276,145 @@ Synth *CreateNativeSynth() { return new Rb3AppNativeSynth(); } // ring: native-r
 
 // Retail: TheMovieSys (movie/MovieSys.cpp) is bound to gBinkMovieSys, the
 // Bink/XAudio movie system (moviebink/*_Xbox.cpp, not native). rb3-app gives
-// that symbol a BASE MovieSys instead of the zero bytes A0 reserved (a null
-// vtable: Movie::Init() segfaulted on it). Semantics: Init/Terminate are the
-// base bodies (initialized flag, TexMovie::Init, exit callback), and every
-// movie is a base MovieImpl, which never opens a file: no movie plays, and
-// the splash movies are skipped. Only the MovieSys interface is ever used
-// through TheMovieSys, never BinkMovieSys members. A2 owns real playback.
-MovieSys gRb3AppMovieSys __asm__("gBinkMovieSys"); // ring: native-real
+// that symbol a MovieSys instead of the zero bytes A0 reserved (a null
+// vtable: Movie::Init() segfaulted on it). Init/Terminate are the base bodies
+// (initialized flag, TexMovie::Init, exit callback). Only the MovieSys
+// interface is ever used through TheMovieSys, never BinkMovieSys members.
+//
+// A17: every movie is an Rb3AppMovieImpl: retail RB3's Movie::Impl (the
+// decompiled !HX_NATIVE arm of movie/Movie.cpp, TU5 0x82742C08-0x82746128)
+// with no Bink decoder. rb3-app links none: the engine's FFmpegMovieImpl is
+// excluded from this tree's engine build (native/CMakeLists.txt,
+// MILO_ENGINE_DECOMP_PLATFORM_EXCLUDE). So BinkOpen is modelled as failing,
+// and the rest is retail's own path for a movie that Bink cannot open:
+//  * Begin (0x82745D90): a preloaded movie is read by a front FileLoader,
+//    from the milo stream itself when that stream is cached (TexMovie::Load
+//    passes it). That consumes the movie bytes a cached .milo embeds
+//    (ui/startup/gen/startup_movie_keep.milo_xbox's splash.tmov carries
+//    startup.bik), so the DirLoader resumes on the object's 0xADDEADDE
+//    marker. The base MovieImpl MILO_FAILs on a cached stream instead.
+//    A streamed (not preloaded) movie needs no bytes read before BinkOpen.
+//  * CheckOpen (0x82745428): when the loader is done the buffer is kept as
+//    the preload buffer, the streamed arm runs the `videos stream_begin`
+//    script, and MovieOpen's BinkOpen fails: mBink stays null.
+//  * IsOpen (0x82742F08) is mBink != null: false. Poll (0x82745628) returns
+//    false once CheckOpen is done (`if (!mBink) return false`), so TexMovie
+//    ends the movie and MoviePanel sends movie_done.
+//  * End (0x82744BF0): runs `videos stream_end` when there is no preload
+//    buffer, then releases the loader and the buffer.
+//  * Save (Impl::Save): a cached save writes the preload buffer back.
+// Not modelled, since they act on an open Bink: the shared frame buffers
+// (SharedFinishOpen), the BIKi endian swap of the buffer before BinkOpen,
+// pause/volume/frame queries, and the disc contention report.
+// Real playback is the engine backend (FFmpegMovieImpl), and needs work there
+// first: it ignores the stream, so it cannot play an embedded movie yet.
+#include "movie/MovieImpl.h"
+#include "obj/Data.h"
+#include "os/File.h"
+#include "os/System.h"
+#include "utl/Loader.h"
+#include "utl/MemMgr.h"
+#include "utl/Str.h"
+namespace {
+void Rb3AppMovieScript(const char *name) { // ring: native-real
+    DataArray *videos = SystemConfig()->FindArray("videos", false);
+    if (videos) {
+        DataArray *script = videos->FindArray(name, false);
+        if (script)
+            script->ExecuteScript(1, nullptr, nullptr, 1);
+    }
+}
+} // namespace
+
+class Rb3AppMovieImpl : public MovieImpl { // ring-class: Rb3AppMovieImpl native-real
+public:
+    Rb3AppMovieImpl()
+        : mLoader(nullptr), mLoading(false), mPreloadBuf(nullptr), mPreloadBufLen(0) {}
+    virtual ~Rb3AppMovieImpl() { End(); }
+    virtual bool BeginFromFile(
+        const char *file, float, bool, bool, bool preload, bool, int, BinStream *stream,
+        LoaderPos
+    ) {
+        mFilename = FileMakePath(FileRoot(), file);
+        if (preload) {
+            const char *name = mFilename.c_str();
+            mLoader = new FileLoader(
+                name, name, kLoadFront, 0, true, true,
+                stream && stream->Cached() ? stream : nullptr
+            );
+        }
+        mLoading = true;
+        return true;
+    }
+    virtual bool Ready() const { return mLoader ? mLoader->IsLoaded() : true; }
+    virtual bool IsOpen() { return false; } // mBink: BinkOpen failed
+    virtual bool IsLoading() { return mLoader != nullptr; }
+    virtual bool CheckOpen(bool) {
+        if (!mLoading)
+            return false;
+        if (mLoader) {
+            if (!mLoader->IsLoaded())
+                return true;
+            mLoading = false;
+            mPreloadBuf = mLoader->GetBuffer(nullptr);
+            mPreloadBufLen = mLoader->GetSize();
+            delete mLoader;
+            mLoader = nullptr;
+            if (!mPreloadBuf) {
+                End();
+                return false;
+            }
+        } else {
+            mLoading = false;
+            Rb3AppMovieScript("stream_begin");
+        }
+        return false; // MovieOpen: BinkOpen returns null
+    }
+    virtual bool Poll() { return CheckOpen(true); } // then `if (!mBink) return false`
+    virtual void End() {
+        mLoading = false;
+        if (!mPreloadBuf)
+            Rb3AppMovieScript("stream_end");
+        delete mLoader;
+        mLoader = nullptr;
+        if (mPreloadBuf) {
+            MemFree(mPreloadBuf);
+            mPreloadBuf = nullptr;
+        }
+        mPreloadBufLen = 0;
+    }
+    virtual void Save(BinStream *bs) {
+        if (bs->Cached()) {
+            while (CheckOpen(false))
+                TheLoadMgr.Poll();
+            FileLoader::SaveData(*bs, mPreloadBuf, mPreloadBufLen);
+        }
+    }
+    // Probes for rb3_app_check_tex_movie (rb3_app_gates.cpp).
+    const char *PreloadBuf() const { return mPreloadBuf; }
+    int PreloadBufLen() const { return mPreloadBufLen; }
+
+private:
+    FileLoader *mLoader;
+    bool mLoading;
+    char *mPreloadBuf;
+    int mPreloadBufLen;
+    String mFilename;
+};
+
+const char *Rb3AppMoviePreload(MovieImpl *impl, int *len) { // ring: native-real
+    Rb3AppMovieImpl *m = dynamic_cast<Rb3AppMovieImpl *>(impl);
+    if (!m)
+        return nullptr;
+    *len = m->PreloadBufLen();
+    return m->PreloadBuf();
+}
+
+class Rb3AppMovieSys : public MovieSys { // ring-class: Rb3AppMovieSys native-real
+public:
+    virtual MovieImpl *CreateMovieImpl() { return new Rb3AppMovieImpl(); }
+};
+Rb3AppMovieSys gRb3AppMovieSys __asm__("gBinkMovieSys"); // ring: native-real
 
 // Retail: BeatMatchInit (declared in beatmatch/BeatMatch.h) has no decompiled
 // body: its one instruction, at 0x8276E210, sits inside the DataFlex.c split
