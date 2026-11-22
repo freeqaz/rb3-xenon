@@ -34,6 +34,10 @@
 // ring-class: Quazal::qResult native-real
 // ring-class: Quazal::StreamSettings native-real
 // ring-class: Quazal::Option native-real
+// ring-class: Quazal::PseudoSingleton native-real
+// ring-class: Quazal::RootTransport native-real
+// Stream::s_oStreamSettings is reserved, never constructed (see below):
+// ring-class: Quazal::Stream online-quazal
 #include <cstdlib>
 #include <cstring>
 #include <cwchar>
