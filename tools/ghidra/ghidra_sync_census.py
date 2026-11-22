@@ -25,6 +25,9 @@ REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 DEFAULT_RE = re.compile(r"^(thunk_)?(FUN|Function)_[0-9A-Fa-f]{8}$")
 CALL_UNNAMED_RE = re.compile(r"\b(?:thunk_)?(?:FUN|Function)_[0-9A-Fa-f]{8}\s*\(")
 RAW_MEMBER_RE = re.compile(r"\b(?:param_\d+|this|in_r\d+|unaff_r\d+)\s*\+\s*0x[0-9a-fA-F]+")
+# `param_1[2].mFoo` / `this[1].mBar`: a struct type indexed past its own end. The pointer's type is
+# smaller than (or not) the real object -- names printed this way are WRONG, so phase 4 is measured on it.
+OVERRUN_RE = re.compile(r"\b(?:param_\d+|this)\[[1-9]\d*\]\.")
 DAT_RE = re.compile(r"\b(?:PTR_)?DAT_[0-9a-fA-F]{8}\b")
 # every Ghidra auto-named data reference: DAT_, PTR_<target>_<va> (e.g. a vftable shown by its first slot),
 # s_<text>_<va> strings. Phase 2 (data names) is measured on this one.
@@ -44,6 +47,8 @@ def main():
     ap.add_argument("--program", default="default.xex-d56e7f")
     ap.add_argument("--map", default=os.path.join(REPO, "scripts/target_symbol_map.json"))
     ap.add_argument("--bodies", default=None)
+    ap.add_argument("--stamp", default=None,
+                    help="also write the sync stamp ghidra-status.py reads (time, map rows, program names)")
     ap.add_argument("--out-dir", required=True)
     args = ap.parse_args()
     os.makedirs(args.out_dir, exist_ok=True)
@@ -108,20 +113,33 @@ def main():
                 rows.append({"va": va, "name": f.getName(),
                              "unnamed_calls": len(CALL_UNNAMED_RE.findall(body)),
                              "raw_member": len(RAW_MEMBER_RE.findall(body)),
+                             "struct_overrun": len(OVERRUN_RE.findall(body)),
                              "dat_refs": len(DAT_RE.findall(body)),
                              "auto_data": len(AUTO_DATA_RE.findall(body)),
                              "undefined_in_sig": sig.count("undefined"),
                              "ok": bool(c)})
             di.dispose()
             tot = {k: sum(r.get(k, 0) for r in rows) for k in
-                   ("unnamed_calls", "raw_member", "dat_refs", "auto_data", "undefined_in_sig")}
+                   ("unnamed_calls", "raw_member", "struct_overrun", "dat_refs", "auto_data",
+                    "undefined_in_sig")}
             json.dump({"rows": rows, "totals": tot}, open(os.path.join(args.out_dir, "bodies.json"), "w"), indent=1)
             for r in rows:
-                print("[body] %s %-5s calls=%-3s raw=%-3s dat=%-3s undef_sig=%-2s %s" % (
-                    r["va"], r.get("ok"), r.get("unnamed_calls"), r.get("raw_member"),
+                print("[body] %s %-5s calls=%-3s raw=%-3s overrun=%-3s dat=%-3s undef_sig=%-2s %s" % (
+                    r["va"], r.get("ok"), r.get("unnamed_calls"), r.get("raw_member"), r.get("struct_overrun"),
                     r.get("dat_refs"), r.get("undefined_in_sig"), r.get("name", r.get("error"))[:70]))
             print("[bodies] totals " + json.dumps(tot))
         json.dump(census, open(os.path.join(args.out_dir, "census.json"), "w"), indent=1)
+        if args.stamp:
+            import subprocess
+            import time
+            head = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=REPO,
+                                  capture_output=True, text=True).stdout.strip()
+            stamp = dict(census, synced_at=time.strftime("%Y-%m-%dT%H:%M:%S"), repo_head=head,
+                         map_path=os.path.relpath(args.map, REPO))
+            if args.bodies:
+                stamp["bodies_totals"] = tot
+            json.dump(stamp, open(args.stamp, "w"), indent=1)
+            print("[census] stamp -> %s" % args.stamp)
     finally:
         project.close()
     return 0
