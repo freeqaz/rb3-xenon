@@ -9,6 +9,11 @@
 // (void) result. Member functions take `this` as the first argument, which is
 // the Itanium ABI for a non-virtual direct call. Generated from App.cpp.o's
 // undefined symbols; the list is rb3_app_gates.txt.
+#include <cstring>
+#include "utl/MakeString.h"
+#include "net/Net.h"
+#include "os/ContentMgr_Xbox.h"
+#include "net/SyncStore.h"
 #include <cstdio>
 #include <unistd.h>
 #include "synth/StreamReceiver.h"
@@ -390,6 +395,74 @@ extern "C" void __wrap__ZN17FixedSizeSaveable4InitEii(int a0, int a1) { // ring:
     rb3_app_gate("FixedSizeSaveable::Init(int, int)");
 }
 
+
+// postcal: TheContentMgr is retail's XboxContentMgr and its refresh completes.
+// RefreshDone (0x8251E510) is `mState == 1`; meta_loading's
+// kMetaLoading_Entered state waits on `content_mgr refresh_done`. The probe is
+// its own XboxContentMgr (static storage: XboxContentMgr's ctor leaves its
+// fields to the static-init zero fill, as retail's gContentMgr has), never
+// Init'd (Init would take the "content_mgr" name) and with no callbacks, so
+// no game state changes. It runs retail's StartRefresh (0x82520FD0): the
+// config's roots plus the cross-title enumerations over the content store,
+// then PollRefresh (0x82520C18 + base 0x8251F1E0) until RefreshDone. Needed:
+// TheContentMgr is an XboxContentMgr, the refresh is done within 16 polls,
+// it holds the one disc root and no package (the store's saved games are on
+// PollRefresh's ignored list), and every enumeration buffer was released.
+namespace {
+struct Rb3AppContentRefreshProbe : public XboxContentMgr {
+    void Run(int &polls, bool &done, int &contents, int &state) {
+        mDirty = true;
+        mState = kDone;
+        mRootLoaded = 0;
+        StartRefresh();
+        for (polls = 0; polls < 16 && !RefreshDone(); polls++) PollRefresh();
+        done = RefreshDone();
+        contents = (int)mContents.size();
+        state = (int)mState;
+        DeleteAll(mContents);
+    }
+};
+Rb3AppContentRefreshProbe gRb3AppContentProbe;
+} // namespace
+extern "C" int rb3_app_xdk_live_enum_handles();
+static void rb3_app_check_content_refresh() { // ring: native-real
+    bool isXbox = dynamic_cast<XboxContentMgr *>(&TheContentMgr) != nullptr;
+    int enumsBefore = rb3_app_xdk_live_enum_handles();
+    int polls = 0, contents = -1, state = -1;
+    bool done = false;
+    gRb3AppContentProbe.Run(polls, done, contents, state);
+    int enumsAfter = rb3_app_xdk_live_enum_handles();
+    if (!isXbox || !done || contents != 1 || enumsAfter != enumsBefore) {
+        printf("  [FAIL] rb3-app content refresh: TheContentMgr %s an XboxContentMgr; "
+               "after %d PollRefresh: state %d, refresh_done %d, %d contents, live enumerators "
+               "%d -> %d\n",
+               isXbox ? "is" : "is NOT", polls, state, (int)done, contents, enumsBefore, enumsAfter);
+        printf("RESULT: GATE FAILED (content refresh)\n");
+        fflush(stdout);
+        _exit(7);
+    }
+    printf("  [PASS] rb3-app content refresh: XboxContentMgr refresh_done after %d PollRefresh "
+           "(state 1, 1 root, 0 packages, enumerators released)\n", polls);
+    fflush(stdout);
+}
+
+// postcal: the offline Net::Init built TheNet.mSyncStore (retail `new
+// SyncStore`, 0x823E06C0) and it is TheSyncStore; NetSync::SyncScreen (retail
+// 0x8259CB48) polls it on a leader-local screen sync.
+static void rb3_app_check_sync_store(void *net) { // ring: native-real
+    SyncStore *store = static_cast<Net *>(net)->mSyncStore;
+    if (!store || store != TheSyncStore) {
+        printf("  [FAIL] rb3-app SyncStore: TheNet.mSyncStore=%p TheSyncStore=%p\n", (void *)store,
+               (void *)TheSyncStore);
+        printf("RESULT: GATE FAILED (sync store)\n");
+        fflush(stdout);
+        _exit(7);
+    }
+    store->Poll();
+    printf("  [PASS] rb3-app SyncStore: TheNet.mSyncStore is TheSyncStore and polls\n");
+    fflush(stdout);
+}
+
 extern "C" void __real__ZN3Net4InitEv(void *self);
 // NARROWED (lanes A3, A5). Retail Net::Init (src/network/net/Net.cpp, 0x823E0648)
 // runs on an offline 360 too, in this order: SetName("net", ObjectDir::Main()),
@@ -400,19 +473,18 @@ extern "C" void __real__ZN3Net4InitEv(void *self);
 // NetworkEmulator, TheNetMessenger.Init(), and the TerminateTheNet exit callback.
 // Since A5 TheNet is the real object (Net.cpp is compiled into rb3-app), and this
 // gate runs, in retail's order, the steps that touch no network:
-//   SetName, mSession = NetSession::New(), mSearcher = SessionSearcher::New(),
+//   SetName, (postcal) mSyncStore = new SyncStore(), mSession = NetSession::New(),
+//   mSearcher = SessionSearcher::New(),
 //   and (rbx-net) TheServer's offline Init and mServer = &TheServer
 // (rb3_app_net_init_offline in rb3_app_native_glue.cpp; each a retail body).
 // NOT run, as the printed line says:
 //   * Quazal hooks: there is no Quazal stack natively to read them;
-//   * SyncStore: SyncStore.cpp is not compiled into rb3-app (nothing reached yet
-//     needs mSyncStore; Net::Poll would);
 //   * XboxServer::Init's Quazal LSP back end (mBackEnd stays null; the server is
 //     offline, IsConnected() false), NetworkEmulator (Quazal emulation
 //     devices), TheNetMessenger.Init (NetMessenger.cpp absent): networked;
 //   * the exit callback: Net::Terminate calls TheServer.Terminate, which would
 //     call through the null mBackEnd at exit.
-// So TheNet.mEmulator and mSyncStore stay null. Net.cpp's own Init is
+// So TheNet.mEmulator stays null. Net.cpp's own Init is
 // not called. Printed as GATED, not PASS, because it is not retail's whole call.
 extern "C" void rb3_app_net_init_offline(void *net, void **session, void **searcher, void **server);
 extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
@@ -420,21 +492,23 @@ extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
     rb3_app_net_init_offline(self, &session, &searcher, &server);
     printf("  [GATED] rb3-app Net::Init() -- ring online-net: built ONLY the idle XboxSession "
            "(TheNetSession=%p), XSessionSearcher (TheNet.mSearcher=%p) and the offline XboxServer "
-           "(TheNet.mServer=%p, no LSP back end); Quazal hooks/SyncStore/NetworkEmulator/"
-           "NetMessenger/exit callback not built\n",
-           session, searcher, server);
+           "(TheNet.mServer=%p, no LSP back end) and the SyncStore (TheSyncStore=%p); Quazal "
+           "hooks/NetworkEmulator/NetMessenger/exit callback not built\n",
+           session, searcher, server, (void *)TheSyncStore);
     fflush(stdout);
+    rb3_app_check_sync_store(self);
+    rb3_app_check_content_refresh();
 }
 
 // A7: Net::Poll (App::RunWithoutDebugging, every frame). Retail 0x823E03A8:
 // TheNetMessenger.Poll() (0x823F5460), mSyncStore->Poll(), mSession->Poll(),
 // mSearcher->Poll(), mServer->Poll() (vtable +8). The Net::Init gate above built
 // mSession, mSearcher and (rbx-net) the offline mServer. This gate runs
-// mSearcher->Poll() and mServer->Poll() (rb3_app_net_poll_offline; the retail
+// mSyncStore->Poll() (postcal), mSearcher->Poll() and mServer->Poll()
+// (rb3_app_net_poll_offline; the retail
 // XSessionSearcher and XboxServer bodies; offline, XboxServer::Poll has no call
 // context to poll and is not connected) and NOT:
 //   * TheNetMessenger.Poll: NetMessenger.cpp is absent from src/;
-//   * mSyncStore->Poll: null, SyncStore is not built;
 //   * mSession->Poll: XboxSession::Poll (NetSession_Xbox.cpp:494) starts with
 //     NetSession::Poll, which reaches QuazalSession::Poll, an aborting
 //     online-netsession stub (the Quazal session layer, rb3-xenon-07's ring);
@@ -444,8 +518,8 @@ extern "C" void __wrap__ZN3Net4PollEv(void *self) { // ring: online-net
     static bool sPrinted = false;
     if (!sPrinted) {
         sPrinted = true;
-        printf("  [GATED] rb3-app Net::Poll() -- ring online-net: polls ONLY mSearcher and "
-               "the offline mServer; NetMessenger/SyncStore/Session(Quazal) not polled\n");
+        printf("  [GATED] rb3-app Net::Poll() -- ring online-net: polls ONLY mSyncStore, "
+               "mSearcher and the offline mServer; NetMessenger/Session(Quazal) not polled\n");
         fflush(stdout);
     }
     rb3_app_net_poll_offline(self);

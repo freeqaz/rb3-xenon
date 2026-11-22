@@ -10,6 +10,8 @@
 #include "movie/MovieSys.h"
 #include "net/WebSvcMgr.h"
 #include "os/ContentMgr.h"
+#include "os/ContentMgr_Xbox.h"
+#include "net/SyncStore.h"
 #include "os/CritSec.h"
 #include "os/Debug.h"
 #include "synth/Synth.h"
@@ -29,11 +31,19 @@ DebugNotifyOncePrinter TheDebugNotifyOncePrinter; // ring: native-real
 // bodies see on retail before MemInit runs.
 CriticalSection *gMemStackLock = nullptr; // ring: native-real
 
-// Retail: ContentMgr_Xbox.cpp binds TheContentMgr to the Xbox content manager
-// (DLC packages on the hard drive / marketplace). Natively there is no
-// content storage: a base ContentMgr means no content packages, no refresh in
-// flight, an on-disc-only session. Same binding bandtrack_link_stubs.cpp
-// (rb3-render's phase stubs) has used since W16-TJ.
+// Retail: TheContentMgr is the Xbox content manager, XboxContentMgr
+// (os/ContentMgr_Xbox.cpp, compiled into rb3-app since lane postcal). Its
+// refresh is what `content_mgr refresh_done` reports: StartRefresh (retail
+// 0x82520FD0) adds the config's content roots ("." = the disc) and starts one
+// cross-title enumeration per signed-in pad plus two device-wide ones;
+// PollRefresh (0x82520C18) and the base ContentMgr::PollRefresh (0x8251F1E0)
+// walk the callbacks over every root and reach mState 1, which RefreshDone
+// (0x8251E510: `mState == 1`) reads. A base ContentMgr has an empty
+// StartRefresh, so mState stayed 0 and meta_loading's kMetaLoading_Entered
+// state, which waits on refresh_done, never advanced. The enumerations run
+// over the xdk_shims.cpp content store (XContentCreateCrossTitleEnumerator).
+// The one native override is TitleContentPath, below: retail answers
+// ContentPath(0), the "UPDATE:" drive, which natively is a host directory.
 //
 // A2: TitleContentPath. Retail ContentMgr_Xbox returns ContentPath(0), the
 // mounted title-update package, and ArchiveInit (os/Archive.cpp) merges
@@ -146,7 +156,7 @@ const char *Rb3AppResolveTitleUpdate() {
 }
 } // namespace
 
-class Rb3AppContentMgr : public ContentMgr {
+class Rb3AppContentMgr : public XboxContentMgr {
 public:
     virtual const char *TitleContentPath() { // ring: native-real
         return Rb3AppResolveTitleUpdate();
@@ -409,6 +419,13 @@ Server &TheServer = gXboxServer; // ring: native-real
 extern "C" void rb3_app_net_init_offline(void *self, void **session, void **searcher, void **server) { // ring: native-real
     Net *net = static_cast<Net *>(self);
     net->SetName("net", ObjectDir::Main());
+    // postcal: retail's `mSyncStore = new SyncStore()` (operator new(0xC) at
+    // 0x823E06B0, ctor 0x823EA300 at 0x823E06C0), before NetSession::New. The
+    // ctor registers the three sync messages with the NetMessage factory and
+    // sets TheSyncStore; NetSync::SyncScreen (retail 0x8259CB48) polls it on
+    // every leader-local screen sync. Natively Synchronizable::Publish does not
+    // insert into it (Synchronize.cpp, HX_NATIVE arm), so the store is empty.
+    net->mSyncStore = new SyncStore();
     net->mSession = NetSession::New();
     net->mSearcher = SessionSearcher::New();
     // rbx-net: retail's `TheServer.Init(); mServer = &TheServer;` (0x823E06E0-
@@ -434,6 +451,7 @@ extern "C" void rb3_app_net_init_offline(void *self, void **session, void **sear
 // rb3_app_gates.cpp.
 extern "C" void rb3_app_net_poll_offline(void *self) { // ring: native-real
     Net *net = static_cast<Net *>(self);
+    net->mSyncStore->Poll(); // retail 0x823E03CC: bl SyncStore::Poll (0x823E9918) on +0x3C
     net->mSearcher->Poll();
     net->mServer->Poll();
 }
