@@ -100,6 +100,8 @@ int RunAsyncUnloadPhase(void (*gate)(const char *, bool, const char *));
 int RunProxyChainPhase(void (*gate)(const char *, bool, const char *));
 // native/src/charclip_refs_phase.cpp: CharClip transitions ref-count their clips
 int RunCharClipRefsPhase(void (*gate)(const char *, bool, const char *));
+// native/src/lightpreset_refs_phase.cpp: a LightPreset holds its objects by reference
+int RunLightPresetRefsPhase(void (*gate)(const char *, bool, const char *));
 // native/src/rnd_mode_phase.cpp (A11)
 int RunRndModePhase(void (*gate)(const char *, bool, const char *));
 // native/src/spotlight_generate_phase.cpp (A13)
@@ -568,6 +570,10 @@ int main(int argc, char **argv) {
     // CharClip::Transitions holds every clip it names by reference, as retail
     // AddNode/Clear/Replace do (native/src/charclip_refs_phase.cpp).
     RunCharClipRefsPhase(Gate);
+    // A LightPreset holds its spotlights, environments, lights and drawers by
+    // reference, as retail's Add*/Copy/Load/Replace do
+    // (native/src/lightpreset_refs_phase.cpp).
+    RunLightPresetRefsPhase(Gate);
     // A11: Rnd::Mode carries RB3 retail's draw-mode values; the soft-particle
     // pass does not select the velocity shader (native/src/rnd_mode_phase.cpp).
     RunRndModePhase(Gate);
