@@ -133,10 +133,9 @@ BandMatchmaker::BandMatchmaker() : mSearching(0), unk32(0), unk6c(0), mDevChanne
 #ifdef __EMSCRIPTEN__
     printf("RB3 Web boot: [BandMatchmaker ctor] GameMode AddSink done\n");
 #endif
-#ifndef HX_NATIVE
-    // TheNet.GetSearcher() is the Wii online match searcher; null on native (the
-    // network/ subsystem is off the link). The matchmaker only matters for online
-    // play, so skip the searcher AddSink — its events never fire offline.
+    // TheNet's searcher exists natively only in the real App target (rb3-render
+    // also compiles this TU, without it).
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_APP)
     MILO_ASSERT(TheNet.GetSearcher(), 0x110);
     static Symbol search_finished("search_finished");
     TheNet.GetSearcher()->AddSink(this, search_finished);
@@ -150,9 +149,9 @@ BandMatchmaker::~BandMatchmaker() {
     TheNetSession->RemoveSink(this, join_result);
     static Symbol mode_changed("mode_changed");
     TheGameMode->RemoveSink(this, mode_changed);
-#ifndef HX_NATIVE
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_APP)
     static Symbol search_finished("search_finished");
-    TheNet.GetSearcher()->RemoveSink(this, search_finished); // null searcher on native
+    TheNet.GetSearcher()->RemoveSink(this, search_finished);
 #endif
     SetName(nullptr, ObjectDir::Main());
 }

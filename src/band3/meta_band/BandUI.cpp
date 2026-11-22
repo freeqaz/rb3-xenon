@@ -66,27 +66,16 @@ BandUI::BandUI()
 BandUI::~BandUI() {}
 
 void BandUI::Init() {
-#ifndef HX_NATIVE
-    // Online/net/Wii-mic event subscriptions whose target globals live in
-    // subsystems excluded from the native link (TheNetSession/NetSession +
-    // TheNet are in network/ which isn't globbed; TheGameMicManager's Init is
-    // gated out in App.cpp; TheSaveLoadMgr is the excluded SaveLoadManager).
-    // Each is null natively → AddSink would fault in MsgSource::RemoveSink. These
-    // are online join/invite, USB-mic-change, and save/load-dialog notifications
-    // with no native meaning on the offline boot-to-menu path. Gate them; the
-    // AddSinks below to globals that ARE real natively (ThePlatformMgr — built by
-    // rb3_platform_native.cpp; TheRockCentral — its ctor is compiled;
-    // TheContentMgr — base ContentMgr) are kept.
+    // Natively BandUI.cpp is compiled only into rb3-app, whose App::Init has
+    // already built TheNet (session and searcher), TheGameMicManager and
+    // TheSaveLoadMgr, so every retail subscription runs.
     TheNetSession->AddSink(this, ProcessedJoinRequestMsg::Type());
     TheNetSession->AddSink(this, LocalUserLeftMsg::Type());
     TheNet.GetSearcher()->AddSink(this, InviteAcceptedMsg::Type());
-#endif
     ThePlatformMgr.AddSink(this, "connection_status_changed");
     ThePlatformMgr.AddSink(this, "disk_error");
-#ifndef HX_NATIVE
     TheGameMicManager->AddSink(this, GameMicsChangedMsg::Type());
     TheSaveLoadMgr->AddSink(this);
-#endif
     TheRockCentral.AddSink(this);
     // Retail X360 has no
     // `ThePlatformMgr.AddSink(this, NetErrorMsg::Type());` (and BandUI has no
@@ -105,17 +94,10 @@ void BandUI::Init() {
     // false); mUIOverlay = RndOverlay::Find(ui, false);`) — Init goes straight
     // from UIManager::Init() to WaitingUserGate::Init(). The overlay members
     // stay null from the ctor.
-#ifndef HX_NATIVE
-    // WaitingUserGate.cpp is in _NATIVE_FORK_EXCLUDE (CMakeLists.txt), so its
-    // ctor/dtor/Init are weak no-op stubs natively. `new WaitingUserGate()` then
-    // returns memory with an UNINITIALIZED vtable pointer; the symmetric
-    // `RELEASE(mWaitingUserGate)` in Terminate() below dereferences that bogus
-    // vtable and SIGSEGVs at the deleting-dtor virtual call. Skip the alloc on
-    // native; mWaitingUserGate stays null (ctor-default) and `Poll()` already
-    // null-guards it. No multiplayer/lock-step path runs offline-single-player.
+    // WaitingUserGate.cpp is compiled into rb3-app (the only native target that
+    // compiles this TU), so the gate is real there.
     WaitingUserGate::Init();
     mWaitingUserGate = new WaitingUserGate();
-#endif
     mInputInterceptor = new ShellInputInterceptor(TheBandUserMgr);
     TheUIStats->Init();
 }
@@ -129,21 +111,11 @@ void BandUI::Terminate() {
     InputMgr::Terminate();
     UIEventMgr::Terminate();
     NetSync::Terminate();
-#ifndef HX_NATIVE
-    // Symmetric tear-down for the AddSink calls gated out of Init() above —
-    // TheNet/TheNetSession/TheGameMicManager/TheSaveLoadMgr globals live in
-    // subsystems excluded from the native link. Their AddSink wasn't called,
-    // so RemoveSink would either deref null or walk a stub object's sinks.
-    // The native equivalents (ThePlatformMgr, TheRockCentral, TheContentMgr)
-    // remain wired below.
     TheNet.GetNetSession()->RemoveSink(this);
     TheNet.GetSearcher()->RemoveSink(this);
-#endif
     ThePlatformMgr.RemoveSink(this);
-#ifndef HX_NATIVE
     TheGameMicManager->RemoveSink(this);
     TheSaveLoadMgr->RemoveSink(this);
-#endif
     TheRockCentral.RemoveSink(this);
     if (mOvershell) {
         if (TheUIEventMgr) {
