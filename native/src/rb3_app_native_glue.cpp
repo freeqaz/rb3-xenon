@@ -219,11 +219,50 @@ extern "C" void OutputDebugStringA(const char *msg) { // ring: native-real
 // would fail by measurement and stop the boot.
 
 // Retail: SynthPreInit (synth/Synth.cpp) takes Synth::New(), the Xbox audio
-// synth; its HX_NATIVE arm asks for CreateNativeSynth() instead. rb3-app has
-// no audio device yet (A5 owns NativeSynth), so this returns the base null
-// Synth: the object retail itself builds when config synth/use_null_synth is
-// set, and the fallback SynthPreInit uses when a synth Fail()s. No sound plays.
-Synth *CreateNativeSynth() { return new Synth(); } // ring: native-real
+// synth (Synth360); its HX_NATIVE arm asks for CreateNativeSynth() instead.
+// The engine's NativeSynth (platform/Synth_Stub.cpp) is excluded here for its
+// DC3 header shape (native/CMakeLists.txt, MILO_ENGINE_DECOMP_PLATFORM_EXCLUDE),
+// so this is the xenon-side replacement for it.
+//
+// A10: the base Synth's HX_NATIVE NewStream/NewBufStream build a real
+// StandardStream (not retail base Synth's StreamNull), and StandardStream's
+// channels come from StreamReceiver::New, i.e. StreamReceiver::sFactory. In
+// retail that factory is registered by Synth360::Init (0x82B5DC78), which runs
+// Synth::Init (0x82700270), SynthSample360::Init (0x82B6CAB0) and then
+// StreamReceiver360::Init (0x82B6C688, the bl at 0x82B5DC94): one store,
+// sFactory = New360Receiver (0x82B6C608). SynthInit (0x82701710) reaches it
+// through TheSynth->Init() (vtable +0x58, 0x82701764). With the base Synth
+// nothing registered it, and App::Run's first streamed sound (splash_screen,
+// frame ~13) called through null in StreamReceiver::New (lane A9, gdb).
+//
+// So this Synth's Init does what Synth360::Init does for streams: the base
+// Init, then the stream receiver factory, here the engine's
+// StreamReceiverNative::Create (the receiver feeding AudioDevice), and the
+// output device that receiver mixes into (the engine NativeSynth's Init does
+// the same two). Headless, AudioDevice::Init opens nothing: rb3-app forces
+// MILO_HEADLESS=1 (main_app.cpp), which AudioDevice::Init honours by skipping
+// the device ("AudioDevice: skipped"); receivers are still created and fed,
+// just never rendered. MILO_AUDIO=1 overrides that. SynthSample360::Init's
+// native counterpart (sample voices) is not wired: no native SampleInst
+// backend is in rb3-app yet. rb3_app_gates.cpp checks the factory after
+// SynthInit.
+#include "audio/AudioDevice.h"
+#include "platform/StreamReceiver_Native.h"
+#include "synth/StreamReceiver.h"
+// ring-class: Rb3AppNativeSynth native-real
+class Rb3AppNativeSynth : public Synth {
+public:
+    virtual void Init() override {
+        Synth::Init();
+        StreamReceiver::sFactory = StreamReceiverNative::Create; // as StreamReceiver360::Init 0x82B6C688
+        AudioDevice::GetInstance().Init(44100); // the engine NativeSynth's rate
+    }
+    virtual void Terminate() override {
+        AudioDevice::GetInstance().Terminate();
+        Synth::Terminate();
+    }
+};
+Synth *CreateNativeSynth() { return new Rb3AppNativeSynth(); } // ring: native-real
 
 // Retail: TheMovieSys (movie/MovieSys.cpp) is bound to gBinkMovieSys, the
 // Bink/XAudio movie system (moviebink/*_Xbox.cpp, not native). rb3-app gives
