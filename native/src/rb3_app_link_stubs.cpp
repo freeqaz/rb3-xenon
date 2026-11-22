@@ -79,7 +79,8 @@ alignas(NetMessenger) unsigned char gRb3AppTheNetMessenger[sizeof(NetMessenger)]
 alignas(8) unsigned char gRb3AppTheXboxSynth[8] __asm__("TheXboxSynth"); // ring: online-netsession
 alignas(8) unsigned char gRb3AppTheSyncStore[8] __asm__("TheSyncStore"); // ring: online-net
 alignas(8) unsigned char gRb3AppTheHAQMgr[8] __asm__("TheHAQMgr"); // ring: a1-absent-body
-alignas(8) unsigned char gRb3AppTheGestureMgr[8] __asm__("TheGestureMgr"); // ring: a1-absent-body
+// TheGestureMgr: gone since lane rbx-net. Its one rb3-app use was a Dance Central
+// arm in UIScreen::Exit (SetInVoiceMode); retail RB3 has no GestureMgr.
 // gLSPLoginFilter (retail .data 0x82E103F4): the Quazal XboxLSP login filter
 // string Server.cpp's SetLSPLoginFilter assigns (XboxServer::Init, not run
 // natively). Quazal's XboxLSP code that defines and reads it is not in src/.

@@ -365,9 +365,7 @@ void RecursePatternInternal( // ring: native-real
 // rb3-app defines it here.
 extern XboxServer gXboxServer;
 Server &TheServer = gXboxServer; // ring: native-real
-extern "C" void rb3_app_net_init_offline(
-    void *self, void **session, void **searcher, void **server
-) { // ring: native-real
+extern "C" void rb3_app_net_init_offline(void *self, void **session, void **searcher, void **server) { // ring: native-real
     Net *net = static_cast<Net *>(self);
     net->SetName("net", ObjectDir::Main());
     net->mSession = NetSession::New();

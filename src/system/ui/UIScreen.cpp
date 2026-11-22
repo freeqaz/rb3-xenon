@@ -380,7 +380,10 @@ bool UIScreen::Entering() const {
 void UIScreen::Exit(UIScreen *to) {
 #ifdef HX_NATIVE
     printf("DC3 UI: Screen '%s' Exit (to '%s')\n", Name(), to ? to->Name() : "<null>");
-    TheGestureMgr->SetInVoiceMode(false);
+    // No TheGestureMgr->SetInVoiceMode(false) here: that is Dance Central's
+    // Kinect voice mode. Retail RB3 0x827F1370 goes straight to the static exit
+    // Message, and band.exe has no GestureMgr at all (no "GestureMgr" or
+    // "set_in_voice_mode" string). rb3-app reached it through a null pointer.
 #endif
     static Message msg("exit", 0);
     msg[0] = to;
