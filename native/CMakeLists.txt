@@ -2253,6 +2253,12 @@ set(RB3_APP_SOURCES
     ${REPO_ROOT}/src/network/net/NetSession_Xbox.cpp
     ${REPO_ROOT}/src/network/net/SessionMessages.cpp
     ${REPO_ROOT}/src/network/net/MatchmakingSettings.cpp
+    # A4: SessionMgr's ctor does `new BandNetGameData()` (SessionMgr.cpp:45).
+    # rb3-xenon-07 wrote this TU from retail clean TU5 0x82650B74..0x82651928
+    # (bngd, 672687738); with it the SessionMgr::Init gate is lifted
+    # (rb3_app_gates.cpp). Its ctor calls TheNet.SetGameData(this); TheNet is
+    # still zero storage natively (Net.cpp does not compile).
+    ${REPO_ROOT}/src/band3/meta_band/BandNetGameData.cpp
     # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
     # constructs TheBandUI at static init; natively TheUI was the engine's weak
     # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.

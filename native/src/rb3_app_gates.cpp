@@ -252,21 +252,14 @@ extern "C" void __wrap__ZN11SongSortMgr4InitEv(void) { // ring: native-real
 }
 
 extern "C" void __real__ZN10SessionMgr4InitEv(void);
-// GATED, not called (lane A2; reason updated by lane A3). Retail 360 makes this
-// call offline too. Since A3 the idle XboxSession exists (Net::Init's gate builds
-// it, TheNetSession is real), so the session is no longer the blocker. What is:
-// SessionMgr's ctor (SessionMgr.cpp:43) does `new BandNetGameData()`, and
-// BandNetGameData's ctor has NO source in the tree (sourceless retail code;
-// session rb3-xenon-07's bngd lane owns writing it from the retail bytes, and
-// this lane may not). Skipped LOUDLY; TheSessionMgr stays null (zero storage in
-// rb3_app_link_stubs.cpp), so its first reader crashes visibly rather than
-// talking to a half-built manager. SessionUsersProvidersInit and
-// BandMachineMgr::Init, which SessionMgr::Init also calls, are skipped with it.
-// Drop this gate when BandNetGameData's ctor lands.
-extern "C" void __wrap__ZN10SessionMgr4InitEv(void) { // ring: online-netsession
-    printf("  [GATED] rb3-app SessionMgr::Init() -- ring online-netsession: SessionMgr's ctor builds "
-           "BandNetGameData, whose ctor has no source yet (rb3-xenon-07 bngd); TheSessionMgr stays null, not called\n");
-    fflush(stdout);
+// Lane A2 gated this call and A3 narrowed the reason to the sourceless
+// BandNetGameData ctor. A4: rb3-xenon-07's bngd landed BandNetGameData.cpp
+// (written from retail TU5 bytes), rb3-app compiles it, so this is retail's
+// call again: SessionMgr's ctor (builds BandNetGameData, subscribes to the idle
+// XboxSession), SessionUsersProvidersInit, BandMachineMgr::Init.
+extern "C" void __wrap__ZN10SessionMgr4InitEv(void) { // ring: native-real
+    __real__ZN10SessionMgr4InitEv();
+    rb3_app_gate("SessionMgr::Init()");
 }
 
 extern "C" void __real__ZN10MemcardMgr4InitEv(void *self);
