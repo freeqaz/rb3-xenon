@@ -175,7 +175,7 @@ Ranked by judgement, then size. This is pin, name or wire work, not writing code
 |---|---:|---|---|---|
 | `0x826C8470`–`0x826C9094` | 3,108 | `GemPlayer::GemPlayer` 2,704 + 9 EH funclets 404 | just past GemPlayer.cpp's pins (10-07d §6 item 2) | **on path** (every song), R2 |
 | `0x825219A0`–`0x825227E8` | 3,616 | 23 StageKit `DataFunc`s (`set_stagekit_fog` …) + `FileEnumerate` 396 | `src/system/os/StageKit.cpp` ported but **not in `objects.json`** (item 2) | **on path**: registered at boot (R1); called by `LightPreset` during songs |
-| `0x822D6568`–`0x822D6EA0` (4 runs) | 1,792 | `ObjPtr<T>` dtor / `Load` instances (RndTransAnim, RndPartLauncher, RndText, RndPropAnim …) | spans unpinned inside StreakMeter's holes (07-10d item 6, W16-UM NO-BASE-OBJ) | **on path** (track HUD load), R2 |
+| `0x822D6568`–`0x822D6EA0` (4 runs) | 1,792 | `ObjPtr<T>` dtor / `Load` instances (RndTransAnim, RndPartLauncher, RndText, RndPropAnim …) | spans unpinned inside StreakMeter's holes (10-07d item 6, W16-UM NO-BASE-OBJ) | **on path** (track HUD load), R2 |
 | `0x82BAC148` | 316 | `Gem::Gem` | hole in Gem.cpp's span (item 6) | **on path**, R2 |
 | `0x82487880` | 168 | `RndEnvAnim::SetFrame` (vtable slot 7) | hole in EnvAnim's span | on path (venue env anims), R2 |
 | `0x823399C0` | 112 | `BandCharDesc::NewObject` | sandwiched hole (item 2) | **on path** (boot), R1 |
