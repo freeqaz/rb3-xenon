@@ -29,8 +29,8 @@ DWORD XMountUtilityDrive(BOOL fFormatClean, DWORD dwBytesPerCluster, DWORD dwFil
 DWORD XUnmountUtilityDrive();
 }
 
-// .data 0x82C78F24, "ugc_audition_temp_song". SongInfoCopy.cpp reads the same
-// pointer (it declares it static there); retail has one writable global.
+// .data 0x82C78F24, "ugc_audition_temp_song", defined in utl/SongInfoCopy.cpp;
+// retail has one writable global that both files read.
 extern const char *gUGCAuditionTempSongName;
 
 /** retail 0x825EC480: takes the audition song's Symbol; ThreadStart calls it
