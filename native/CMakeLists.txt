@@ -2227,6 +2227,12 @@ set(RB3_APP_SOURCES
     # compiles natively as-is. Its device/container calls land on TheMC,
     # platform/Memcard_Stub.cpp's MemcardXbox (A4 replaces that).
     ${REPO_ROOT}/src/system/meta/MemcardMgr_Xbox.cpp
+    # A1b: TheEntityUploader (App.cpp: TheEntityUploader.Init()) is a reference
+    # bound in this TU to gXboxEntityUploader, a static-init object (retail
+    # dynamic initializer 0x82C3F610). Init is offline: SetName, the submit
+    # time, an empty DataArray. Its upload paths go to RockCentral, whose entry
+    # points are aborting stubs (ring online-rockcentral).
+    ${REPO_ROOT}/src/band3/net_band/XboxEntityUploader.cpp
     ${REPO_ROOT}/src/band3/game/AccuracyTracker.cpp
     ${REPO_ROOT}/src/band3/game/BandPerformer.cpp
     ${REPO_ROOT}/src/band3/game/ChordPreview.cpp

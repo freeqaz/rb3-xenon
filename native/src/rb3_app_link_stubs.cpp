@@ -70,7 +70,6 @@ alignas(8) unsigned char gRb3AppTheNameGenerator[8] __asm__("TheNameGenerator");
 alignas(8) unsigned char gRb3AppTheSyncStore[8] __asm__("TheSyncStore"); // ring: online-net
 alignas(8) unsigned char gRb3AppTheHAQMgr[8] __asm__("TheHAQMgr"); // ring: a1-absent-body
 alignas(8) unsigned char gRb3AppTheGestureMgr[8] __asm__("TheGestureMgr"); // ring: a1-absent-body
-alignas(8) unsigned char gRb3AppTheEntityUploader[8] __asm__("TheEntityUploader"); // ring: online-rockcentral
 alignas(8) unsigned char gRb3AppTheServer[8] __asm__("TheServer"); // ring: online-net
 
 // ---- plain values the retail definition initialises to zero/false ------------

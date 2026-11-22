@@ -104,3 +104,21 @@ Synth *CreateNativeSynth() { return new Synth(); } // ring: native-real
 // the splash movies are skipped. Only the MovieSys interface is ever used
 // through TheMovieSys, never BinkMovieSys members. A2 owns real playback.
 MovieSys gRb3AppMovieSys __asm__("gBinkMovieSys"); // ring: native-real
+
+// Retail: BeatMatchInit (declared in beatmatch/BeatMatch.h) has no decompiled
+// body: its one instruction, at 0x8276E210, sits inside the DataFlex.c split
+// range (0x8276D858-0x8276E228), so no rb3-xenon TU owns it yet. The retail
+// bytes are `4807CF18  b 0x827EB128`, a tail call to MidiParser::Init
+// (tools/va_disasm.py 0x8276E210 8, lane A1b). This is that body, for rb3-app
+// only, until a carve gives it a TU.
+#include "beatmatch/BeatMatch.h"
+#include "midi/MidiParser.h"
+void BeatMatchInit() { MidiParser::Init(); } // ring: native-real
+
+// XBDM's DmMapDevkitDrive maps the devkit: drive on a development kit and
+// returns a failure HRESULT on a retail console, where xbdm is absent. A native
+// host is not a devkit, so this is that failure. Natively it is reached from
+// Locale::Init's HX_NATIVE devkit-locale-override arm (utl/Locale.cpp), which
+// then reads the shipped locale config, exactly as retail always does.
+#include "xdk/xbdm/xbdm.h"
+extern "C" HRESULT DmMapDevkitDrive() { return (HRESULT)0x82DA0000; } // ring: native-real (XBDM_NOERR is 0x02DA0000; 0x82DA... = a failure facility code, < 0)

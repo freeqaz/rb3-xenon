@@ -101,9 +101,15 @@ extern "C" void __wrap__ZN11AuditionMgr4InitEv(void *self) { // ring: native-rea
 }
 
 extern "C" void __real__ZN11RockCentral4InitEb(void *self, bool a0);
-extern "C" void __wrap__ZN11RockCentral4InitEb(void *self, bool a0) { // ring: native-real
-    __real__ZN11RockCentral4InitEb(self, a0);
-    rb3_app_gate("RockCentral::Init(bool)");
+// GATED, not called (lane A1b). TheRockCentral is zero storage in rb3-app
+// (rb3_app_link_stubs.cpp, ring online-rockcentral) and RockCentral::Init is an
+// aborting stub: retail connects the Rock Central web service here. Skipped
+// LOUDLY; every other RockCentral entry point is still an aborting stub.
+extern "C" void __wrap__ZN11RockCentral4InitEb(void *self, bool a0) { // ring: online-rockcentral
+    (void)self;
+    (void)a0;
+    printf("  [GATED] rb3-app RockCentral::Init(bool) -- ring online-rockcentral: no web service natively, not called\n");
+    fflush(stdout);
 }
 
 extern "C" void __real__ZN11TrainingMgr4InitEv(void);
@@ -149,9 +155,15 @@ extern "C" void __wrap__ZN17FixedSizeSaveable4InitEii(int a0, int a1) { // ring:
 }
 
 extern "C" void __real__ZN3Net4InitEv(void *self);
-extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: native-real
-    __real__ZN3Net4InitEv(self);
-    rb3_app_gate("Net::Init()");
+// GATED, not called (lane A1b). TheNet is zero storage in rb3-app
+// (rb3_app_link_stubs.cpp, ring online-net) and Net::Init is an aborting stub:
+// retail constructs the Quazal/online stack here, which rb3-app does not have.
+// The call is skipped LOUDLY; any later use of TheNet still reaches an aborting
+// stub or zero storage, so this hides nothing.
+extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
+    (void)self;
+    printf("  [GATED] rb3-app Net::Init() -- ring online-net: no network stack natively, not called\n");
+    fflush(stdout);
 }
 
 extern "C" void __real__ZN5Movie4InitEv(void);
