@@ -25,6 +25,10 @@
 #include "world/SpotlightDrawer.h"
 #include "os/ProfilePicture.h"
 #include "rndobj/Tex.h"
+#include "ui/UI.h"
+#include "ui/UIScreen.h"
+#include "obj/Msg.h"
+#include <new>
 
 extern "C" void rb3_app_gate(const char *step) { // ring: native-real
     printf("  [PASS] rb3-app %s\n", step);
@@ -688,4 +692,77 @@ extern "C" void __wrap__Z23SetSongMidiChecksumDatav(void) { // ring: native-real
                "no title update mounted (opted out or not found: see the rb3-app title update line), not registered\n");
         fflush(stdout);
     }
+}
+
+// A16: after a screen transition, a ui message reaches the current screen once
+// and never a screen that was popped. Retail UIManager::Handle tries mSink
+// first (HANDLE_MEMBER_PTR(mSink)) and the current screen last
+// (HANDLE_MEMBER_PTR(mCurrentScreen)); mSink is zeroed by the ctor
+// (fn_82804588, `stw r29,0x3c(r30)` at 0x82804648) and no other code in UI.cpp
+// stores to +0x3c, so retail delivers through mCurrentScreen alone. A
+// native-only `mSink = trans` in UIManager::Poll made every entering screen the
+// sink, and a pop left the sink naming the popped screen: on a returning boot
+// main_hub_screen's A press reached hint_rb3_welcome_screen's continue.btn
+// (pushed over main_hub, then popped), whose SELECT_MSG `{ui pop_screen}`
+// printed "No screen to pop", and main_hub_panel's state never moved.
+// The probe is a private UIManager (zeroed storage, like the static TheUI
+// retail constructs: the ctor leaves mCurrentScreen alone) with two bare
+// counting screens, TheUI swapped to it for the probe and restored after:
+// goto A, push B, pop B, then one probe message. Want: A once, B never.
+// Construct-only runs (main_app.cpp), which exit right after.
+namespace {
+class Rb3AppCountingScreen : public UIScreen { // ring: native-real
+public:
+    virtual DataNode Handle(DataArray *msg, bool warn) {
+        if (msg->Size() > 1 && msg->Type(1) == kDataSymbol && msg->Sym(1) == "rb3_app_ui_probe")
+            mProbes++;
+        return UIScreen::Handle(msg, warn);
+    }
+    int mProbes = 0;
+};
+
+bool Rb3AppSettle(UIManager *ui, UIScreen *want) { // ring: native-real
+    for (int i = 0; i < 32 && (ui->InTransition() || ui->CurrentScreen() != want); i++)
+        ui->Poll();
+    return !ui->InTransition() && ui->CurrentScreen() == want;
+}
+} // namespace
+
+void rb3_app_check_ui_sink() { // ring: native-real
+    alignas(UIManager) static unsigned char storage[sizeof(UIManager)];
+    memset(storage, 0, sizeof storage);
+    UIManager *ui = new (storage) UIManager();
+    UIManager *saved = TheUI;
+    TheUI = ui;
+    Rb3AppCountingScreen *a = new Rb3AppCountingScreen();
+    Rb3AppCountingScreen *b = new Rb3AppCountingScreen();
+    bool ok = true;
+    ui->GotoScreen(a, false, false);
+    ok = ok && Rb3AppSettle(ui, a);
+    if (ok) ui->PushScreen(b);
+    ok = ok && Rb3AppSettle(ui, b);
+    if (ok) ui->PopScreen(nullptr);
+    ok = ok && Rb3AppSettle(ui, a);
+    static Message probe("rb3_app_ui_probe");
+    if (ok) ui->Handle(probe, false);
+    TheUI = saved;
+    char what[320];
+    snprintf(what, sizeof what,
+             "UIManager: after goto A, push B, pop B, a ui message reached A %d time(s) and "
+             "the popped B %d time(s) (retail: mSink only zeroed, fn_82804588 0x82804648; "
+             "want 1 and 0)",
+             a->mProbes, b->mProbes);
+    if (!ok) {
+        printf("  [FAIL] rb3-app UIManager probe: a transition did not settle (current %p, "
+               "A %p, B %p)\n", (void *)ui->CurrentScreen(), (void *)a, (void *)b);
+    } else if (a->mProbes == 1 && b->mProbes == 0) {
+        rb3_app_gate(what);
+        return;
+    } else {
+        printf("  [FAIL] rb3-app %s\n", what);
+    }
+    printf("RESULT: GATE FAILED (ui sink)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
 }

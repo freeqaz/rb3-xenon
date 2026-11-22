@@ -46,6 +46,8 @@
 #include "ui/UI.h"
 #include "ui/UIScreen.h"
 
+void rb3_app_check_ui_sink(); // rb3_app_gates.cpp
+
 extern "C" void rb3_app_gate(const char *step);
 
 namespace {
@@ -135,6 +137,7 @@ int main(int argc, char **argv) {
     const char *run = getenv("RB3_APP_RUN");
     bool wantRun = run && *run && strcmp(run, "0") != 0;
     if ((co && *co && strcmp(co, "0") != 0) || !wantRun) {
+        rb3_app_check_ui_sink(); // A16 (rb3_app_gates.cpp): exits rc 7 on a failure
         printf("RESULT: APP CONSTRUCTED\n");
         fflush(stdout);
         fflush(stderr);
