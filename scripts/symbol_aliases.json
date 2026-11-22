@@ -103497,7 +103497,8 @@
     "?reserve@?$vector@V?$TickedInfo@M@@V?$StlNodeAlloc@V?$TickedInfo@M@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
     "?reserve@?$vector@UJukeboxItem@@V?$StlNodeAlloc@UJukeboxItem@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
     "?reserve@?$vector@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXI@Z",
-    "?reserve@?$vector@V?$Key@UDircutEntry@BandDirector@@@@V?$StlNodeAlloc@V?$Key@UDircutEntry@BandDirector@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z"
+    "?reserve@?$vector@V?$Key@UDircutEntry@BandDirector@@@@V?$StlNodeAlloc@V?$Key@UDircutEntry@BandDirector@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+    "?reserve@?$vector@VUpcomingFretRelease@GemPlayer@@V?$StlNodeAlloc@VUpcomingFretRelease@GemPlayer@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z"
    ],
    "evidence": "Created by lane W16-JE: see per-member records in `admitted`.",
    "lane": "W16-JE 2026-10-01",
@@ -103537,6 +103538,11 @@
      "spelling": "?reserve@?$vector@V?$Key@UDircutEntry@BandDirector@@@@V?$StlNodeAlloc@V?$Key@UDircutEntry@BandDirector@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
      "lane": "W16-NH 2026-10-02",
      "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED); 188 B retail / 188 B ours; retail body-twins 1. Retail call site(s) reaching the survivor where we call this spelling: 0x82297bd0."
+    },
+    {
+     "spelling": "?reserve@?$vector@VUpcomingFretRelease@GemPlayer@@V?$StlNodeAlloc@VUpcomingFretRelease@GemPlayer@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z",
+     "lane": "UNIDIV 2026-11-22",
+     "evidence": "tools/icf_pair_adjudicate.py --chase: CHASED T1 PROVEN, 0 CYCLE-ASSUMED (flat T1 REFUTED: relocation TARGETS disagree, template twin); 188 B retail / 188 B ours; retail body-twins 1. UpcomingFretRelease is {int, float}, 8 B trivially copyable, so the stride-8 body (srawi 3) is the same machine code as Vector2's. Retail call site reaching the survivor where we call this spelling: 0x826C8EE0 in ??0GemPlayer (mUpcomingFretReleases.reserve(10))."
     }
    ]
   },
