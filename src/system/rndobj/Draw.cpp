@@ -119,8 +119,8 @@ END_LOADS
 
 void RndDrawable::Draw() {
     if (mShowing) {
-#ifndef HX_NATIVE
-        // Frustum culling — disabled for native build (frustum setup not yet matching)
+#if 1
+        // World-sphere frustum cull, both builds: retail 0x824066A8 (operator> 0x824F0E80, RndCam+0x254)
         Sphere s;
         bool hasSphere = MakeWorldSphere(s, false);
         if (hasSphere && s > RndCam::Current()->WorldFrustum()) {
