@@ -463,7 +463,7 @@ def build_command(project_dir, obj, cls, scratch_obj, use_pch=False, all_classes
     # which unhooks the vftable header so its slots parse as MEMBERS of the class
     # above, or splices into a member row and renames the member (RockCentral's
     # `mSinks` read as `pragma`).  Where the splice lands depends on the TU's
-    # include order, so one class read as several layouts: 100 of the 141
+    # include order, so one class read as several layouts: 101 of the 141
     # "conflicts" emit_class_layouts.py reported on 2026-11-22 were this
     # (docs/decomp/LAYOUT_CONFLICTS_141_2026-11-22.md).  tools/layout_odr.py has
     # passed /w since 2026-10-06 for the same reason.  /w does not silence
