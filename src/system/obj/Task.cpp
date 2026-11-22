@@ -85,7 +85,11 @@ void MessageTask::Poll(float) {
 #pragma region ScriptTask
 
 ScriptTask::ScriptTask(DataArray *script, bool once, DataArray *updateVarsObjs)
-    : mThis(this, DataThis()), mScript(script), mOnce(once) {
+    :
+#ifdef HX_NATIVE
+      mObjects(this, kObjListOwnerControl),
+#endif
+      mThis(this, DataThis()), mScript(script), mOnce(once) {
     script->AddRef();
     static DataNode &taskvar = DataVariable("task");
     DataNode old = taskvar;
@@ -108,11 +112,9 @@ ScriptTask::~ScriptTask() {
         (*it)->Release(this);
     }
 #else
-    // Native (HX_NATIVE): Hmx::Object derives ObjRefOwner (not ObjRef), so it
-    // cannot register itself as a ring referrer via AddRef(ObjRef*). mObjects
-    // holds untracked raw pointers used only for identity comparison
-    // (ListFind / remove_if / Replace) — never dereferenced — so there is
-    // nothing to release here.
+    // Native: mObjects is an owner-control ObjPtrList whose destructor (run
+    // after this body) unlinks each node from its object's ring, which is the
+    // native form of retail's Release loop (0x82749F60..0x82749F74).
 #endif
     mScript->Release();
 }
@@ -129,17 +131,43 @@ void ScriptTask::Replace(ObjRef *from, Hmx::Object *to) {
     }
 }
 #else
+// The mObjects node `from` names, or end(). Native rings pass the ref node as
+// `from`, not the dying object.
+static ObjPtrList<Hmx::Object>::iterator
+WatchNode(ObjPtrList<Hmx::Object> &objects, ObjRef *from) {
+    for (ObjPtrList<Hmx::Object>::iterator it = objects.begin(); it != objects.end(); ++it) {
+        ObjRef *node = it.mNode;
+        if (node == from)
+            return it;
+    }
+    return objects.end();
+}
+
+// Retail 0x82749450 deletes the task when a watched object dies. When a
+// watched object is replaced by another (ReplaceRefsFrom), retail does
+// nothing in the body but the ring walk has already erased the task from the
+// old object's ref list and never adds it to the new one, so the task stops
+// watching both; erasing the node does the same here.
 void ScriptTask::Replace(ObjRef *from, Hmx::Object *to) {
+    ObjPtrList<Hmx::Object>::iterator watched = WatchNode(mObjects, from);
+    if (watched != mObjects.end()) {
+        if (!to) {
+            delete this;
+            return;
+        }
+        mObjects.erase(watched);
+        return;
+    }
     if (RefIs(from, mThis)) {
         mThis = to;
         if (mThis) {
             return;
         }
-    } else if (to || !ListFind(mObjects, reinterpret_cast<Hmx::Object *>(from))) {
+    } else {
         Hmx::Object::Replace(from, to);
+        return;
     }
     delete this;
-    return;
 }
 #endif
 
@@ -194,17 +222,20 @@ void ScriptTask::UpdateVarsObjects(DataArray *d) {
             UpdateVarsObjects(d->UncheckedArray(i));
         }
 
+#ifndef HX_NATIVE
         if (obj && obj != mThis && !ListFind(mObjects, obj)) {
             mObjects.push_back(obj);
-#ifndef HX_NATIVE
-            // Retail: register this ScriptTask as a ring referrer of `obj` so
-            // the ring dispatches our Replace when `obj` dies (as in
-            // RB3). Native's Hmx::Object is an ObjRefOwner, not an
-            // ObjRef, so it cannot self-register; the raw pointer is tracked
-            // for identity only (see ~ScriptTask).
+            // Retail 0x82749968: put this task on `obj`'s ref list, so the
+            // object's death runs ScriptTask::Replace.
             obj->AddRef(this);
-#endif
         }
+#else
+        // push_back links an owner-control node into `obj`'s ring; its death
+        // reaches ScriptTask::Replace(node, 0).
+        if (obj && obj != mThis && mObjects.find(obj) == mObjects.end()) {
+            mObjects.push_back(obj);
+        }
+#endif
     }
 }
 
@@ -234,8 +265,11 @@ void ThreadTask::Replace(ObjRef *from, Hmx::Object *to) {
 #else
 void ThreadTask::Replace(ObjRef *from, Hmx::Object *to) {
     if (mExecuting) {
-        Hmx::Object::Replace(from, to);
-        mObjects.remove_if(ObjMatchPr(reinterpret_cast<Hmx::Object *>(from)));
+        ObjPtrList<Hmx::Object>::iterator watched = WatchNode(mObjects, from);
+        if (watched != mObjects.end())
+            mObjects.erase(watched);
+        else
+            Hmx::Object::Replace(from, to);
         return;
     }
     ScriptTask::Replace(from, to);

@@ -68,7 +68,16 @@ public:
 
 protected:
     std::list<Var> mVars; // 0x28
+#ifdef HX_NATIVE
+    // Retail puts the task on each watched object's ref list with
+    // Hmx::Object::AddRef(ObjRefOwner *) (UpdateVarsObjects, 0x82749968) so the
+    // object's death runs ScriptTask::Replace. Native's ring is node-model, so
+    // each watched object gets an owner-control list node that forwards its
+    // death to Replace(node, 0) the same way.
+    ObjPtrList<Hmx::Object> mObjects;
+#else
     std::list<Hmx::Object *> mObjects; // 0x30
+#endif
     ObjOwnerPtr<Hmx::Object> mThis; // 0x38
     DataArray *mScript; // 0x44
     bool mOnce; // 0x48
