@@ -5,9 +5,14 @@
 #include "meta_band/BandUI.h"
 #include "meta_band/MetaPerformer.h"
 #include "meta_band/ModifierMgr.h"
+#include "meta_band/UIEventMgr.h"
 #include "meta_band/SessionMgr.h"
+#include "net/Net.h"
 #include "net/Server.h"
 #include "net_band/RockCentral.h"
+#include "math/Utl.h"
+#include "meta/ConnectionStatusPanel.h"
+#include "obj/ObjMacros.h"
 #include "obj/Data.h"
 #include "obj/Dir.h"
 #include "obj/Msg.h"
@@ -18,6 +23,7 @@
 #include "os/System.h"
 #include "ui/UI.h"
 #include "ui/UIScreen.h"
+#include "utl/DataPointMgr.h"
 #include "utl/Str.h"
 
 // Every body here is written from the retail XEX (TU5); no surviving source has
@@ -42,8 +48,27 @@ void PrepareAuditionSongFiles(Symbol);
     declared. Name ours. */
 class AuditionNetClient {
 public:
-    void SetEnabled(bool); // 0x82B8C928
+    /** What GetFileInfo reports for one file. Only the fields this TU reads
+        are named. */
+    struct FileInfo {
+        bool mDone; // 0x0
+        unsigned int mSize; // 0x4
+        int unk8[8]; // 0x8
+        unsigned int mReceived; // 0x28
+    };
+    /** 0x82B8C928. Name ours: state 4 passes false and resumes the
+        downloader, leaving state 4 passes true. */
+    void SetPaused(bool);
+    void GetFileInfo(int file, FileInfo *info); // 0x82B8D2E8
+
+    int unk0[3]; // 0x0
+    int mState; // 0xc -- AuditionDownloader::ClientStatus maps it
 };
+
+/** The files an audition download fetches, as indices into
+    AuditionDownloader::mEntries; 7 (the entry count) ends the list. Retail
+    .rdata 0x8219C73C. */
+static const int sAuditionFiles[] = { 0, 1, 2, 3, 7 };
 
 /** The downloader AuditionMgr creates in state 3 (`li r3,0xe4`, ctor
     0x82560B08). It holds the song name, the client and seven file entries, each
@@ -59,10 +84,22 @@ public:
     ~AuditionDownloader(); // 0x82561460
     void Poll(); // 0x825614F8
     void Close(); // 0x82560E80
+    /** 0x82560ED0: 0 = no client, else the client state mapped to 1-6. */
+    int ClientStatus();
+    /** 0x82561550: 0 = none/failed, 1 = connecting (2-3), 2 = lost (5-6). */
+    int NetworkStatus();
+    /** 0x825615A0: percent of the audition files received. */
+    float Progress();
+    /** 0x82561838: every audition file is present and complete. */
+    bool IsReady();
 
     void Disable() {
         mActive = false;
-        mClient->SetEnabled(true);
+        mClient->SetPaused(true);
+    }
+    void Enable() {
+        mClient->SetPaused(false);
+        mActive = true;
     }
 
     String mSong; // 0x0
@@ -92,7 +129,7 @@ void AuditionMgr::EnterStart() {
     mBuilder = new AuditionSessionBuilder(
         TheSessionMgr, TheBandUserMgr, overshell, TheSongMgrPtr, TheModifierMgr
     );
-    unk40 = false;
+    mValidationFailed = false;
     TheContentMgr.SetRefreshAllowed(false);
     mSavedBandNoFail = MetaPerformer::Current()->IsBandNoFailSet();
     MetaPerformer::Current()->SetBandNoFail(true);
@@ -113,9 +150,9 @@ void AuditionMgr::EnterEnd() {
 void AuditionMgr::Init() {
     SetName("audition_mgr", ObjectDir::Main());
     Symbol song(gUGCAuditionTempSongName);
-    unk48 = song;
+    mSong = song;
     static Symbol none("none");
-    unk4c = none;
+    mVenue = none;
 }
 
 // 0x82561168 (ThreadCallback slot 1)
@@ -126,7 +163,7 @@ int AuditionMgr::ThreadStart() {
         if (XMountUtilityDrive(true, 0x8000, 0x8000) != 0) {
             ret = 0;
         } else {
-            PrepareAuditionSongFiles(unk48);
+            PrepareAuditionSongFiles(mSong);
         }
         break;
     case 12:
@@ -155,7 +192,7 @@ void AuditionMgr::EnterDownload() {
     if (!mUser) {
         gamertag = "An Xbox Without A Signed In Gamer Profile";
     }
-    mDownloader = new AuditionDownloader(gamertag.c_str(), unk48.Str());
+    mDownloader = new AuditionDownloader(gamertag.c_str(), mSong.Str());
     SetState(4);
     UpdateScreen();
 }
@@ -171,13 +208,86 @@ void AuditionMgr::ExitLoad() {
 
 // 0x825613C8
 void AuditionMgr::EnterFinish() {
-    mBuilder->Finish();
-    TheSongMgr.RemoveSong(unk48);
+    mBuilder->RemoveAutoplayUsers();
+    TheSongMgr.RemoveSong(mSong);
     delete mBuilder;
     mBuilder = NULL;
     TheContentMgr.SetRefreshAllowed(true);
     SetState(0);
     UpdateScreen();
+}
+
+// 0x82560ED0
+int AuditionDownloader::ClientStatus() {
+    if (!mClient)
+        return 0;
+    switch (mClient->mState) {
+    case 0:
+        return 0;
+    case 3:
+        return 6;
+    case 5:
+    case 9:
+        return 3;
+    case 6:
+    case 7:
+        return 2;
+    case 10:
+        return 4;
+    case 11:
+        return 5;
+    default:
+        return 1;
+    }
+}
+
+// 0x82561550
+int AuditionDownloader::NetworkStatus() {
+    switch (ClientStatus()) {
+    case 2:
+    case 3:
+        return 1;
+    case 5:
+    case 6:
+        return 2;
+    default:
+        return 0;
+    }
+}
+
+// 0x825615A0
+float AuditionDownloader::Progress() {
+    if (mActive && NetworkStatus() == 1) {
+        unsigned int total = 0;
+        unsigned int missing = 0;
+        for (int i = 0; sAuditionFiles[i] != 7; i++) {
+            int file = sAuditionFiles[i];
+            AuditionNetClient::FileInfo info;
+            mClient->GetFileInfo(file, &info);
+            total += info.mSize;
+            if (!info.mDone) {
+                missing += info.mSize - info.mReceived;
+            } else if (mEntries[file].mFile) {
+                mEntries[file].mHasHash = true;
+            }
+        }
+        return (float)(total - missing) * 100.0f / (float)total;
+    }
+    return 0.0f;
+}
+
+// 0x82561838
+bool AuditionDownloader::IsReady() {
+    int status = ClientStatus();
+    if (status != 1 && status != 4)
+        return false;
+    for (int i = 0; sAuditionFiles[i] != 7; i++) {
+        AuditionNetClient::FileInfo info;
+        mClient->GetFileInfo(sAuditionFiles[i], &info);
+        if (!info.mSize || !info.mDone)
+            return false;
+    }
+    return true;
 }
 
 // 0x825618D8
@@ -188,6 +298,90 @@ AuditionMgr::~AuditionMgr() {
     }
 }
 
+// 0x825619A8
+int AuditionMgr::LoadedSongStatus() {
+    if (mDownloader) {
+        switch (mState) {
+        case 4:
+            if (mDownloader->IsReady())
+                return 2;
+            break;
+        case 5:
+        case 6:
+        case 7:
+            return 1;
+        }
+    }
+    return 0;
+}
+
+// 0x82561A08
+float AuditionMgr::DownloadProgress() {
+    if (mDownloader)
+        return Clamp(0.0f, 100.0f, mDownloader->Progress()) * 0.01f;
+    return 0.0f;
+}
+
+// 0x82561A70
+void AuditionMgr::SendToScreen(Message &msg) {
+    if (!TheUI->InTransition()) {
+        UIScreen *screen = TheUI->CurrentScreen();
+        if (screen && streq(screen->Name(), "audition_main_screen")) {
+            screen->Handle(msg, true);
+        }
+    }
+}
+
+// 0x82561CB0
+void AuditionMgr::ApplySlotSettings(AuditionSessionBuilder *builder) {
+    int numSlots = builder->mSlots.size();
+    for (int i = 0; i < numSlots; i++) {
+        BandUser *user = builder->mSlots[i]->mUser;
+        if (user) {
+            switch (builder->GetSlotTrack(i)) {
+            case 0:
+                user->SetTrackType(kTrackGuitar);
+                break;
+            case 1:
+                user->SetTrackType(kTrackBass);
+                break;
+            case 2:
+                user->SetTrackType(kTrackKeys);
+                break;
+            case 3:
+                user->SetTrackType(kTrackRealKeys);
+                break;
+            case 4:
+                user->SetTrackType(kTrackDrum);
+                user->SetPreferredScoreType(kScoreDrum);
+                break;
+            case 5:
+                user->SetTrackType(kTrackDrum);
+                user->SetPreferredScoreType(kScoreRealDrum);
+                break;
+            case 6:
+                user->SetTrackType(kTrackVocals);
+                user->SetPreferredScoreType(kScoreVocals);
+                break;
+            case 7:
+                user->SetTrackType(kTrackVocals);
+                user->SetPreferredScoreType(kScoreHarmony);
+                break;
+            }
+            user->SetDifficulty((Difficulty)builder->GetSlotDifficulty(i));
+        }
+    }
+}
+
+// 0x82561DE8
+void AuditionMgr::ApplySettings() {
+    mBuilder->ApplySettings();
+    ApplySlotSettings(mBuilder);
+    MetaPerformer *perf = MetaPerformer::Current();
+    perf->SetVenue(mVenue);
+    perf->SetSong(mSong);
+}
+
 // 0x82561EA0
 void AuditionMgr::UpdateScreen() {
     static Message update("update");
@@ -196,6 +390,75 @@ void AuditionMgr::UpdateScreen() {
         if (screen && streq(screen->Name(), "audition_main_screen")) {
             screen->Handle(update, true);
         }
+    }
+}
+
+// 0x82561FD0
+DataNode AuditionMgr::OnMsg(const SigninChangedMsg &msg) {
+    if (mState != 0 && mUser) {
+        int pad = mUser->GetPadNum();
+        if (msg.GetChangedMask() & (1 << pad)) {
+            if (!ThePlatformMgr.IsSignedIn(pad) || !ThePlatformMgr.IsSignedIntoLive(pad)) {
+                if (!TheUIEventMgr->HasActiveTransitionEvent()) {
+                    static Symbol sign_out("sign_out");
+                    static Message init("init", 0);
+                    init[0] = 5; // kRBNMemberSignedOut
+                    TheUIEventMgr->TriggerEvent(sign_out, init);
+                }
+                return 0;
+            }
+        }
+    }
+    return DataNode(kDataUnhandled, 0);
+}
+
+// 0x82562228
+DataNode AuditionMgr::OnMsg(const ConnectionStatusChangedMsg &msg) {
+    if (mState >= 4 && mState <= 7 && !msg.Connected()) {
+        if (!TheUIEventMgr->HasActiveTransitionEvent()) {
+            static Symbol lost_connection("lost_connection");
+            static Message init("init", 0);
+            init[0] = 0;
+            TheUIEventMgr->TriggerEvent(lost_connection, init);
+        }
+        return 0;
+    }
+    return DataNode(kDataUnhandled, 0);
+}
+
+// 0x82562418
+DataNode AuditionMgr::OnMsg(const ServerStatusChangedMsg &msg) {
+    if (mState >= 4 && mState <= 7 && !msg.Success()) {
+        if (!TheUIEventMgr->HasActiveTransitionEvent()) {
+            static Symbol lost_connection("lost_connection");
+            static Message init("init", 0);
+            init[0] = 1;
+            TheUIEventMgr->TriggerEvent(lost_connection, init);
+        }
+        return 0;
+    }
+    return DataNode(kDataUnhandled, 0);
+}
+
+// 0x82562608
+void AuditionMgr::EnterNetPoll() {
+    if (!ThePlatformMgr.IsConnected()) {
+        if (!TheUIEventMgr->HasActiveTransitionEvent()) {
+            static Symbol lost_connection("lost_connection");
+            static Message init("init", 0);
+            init[0] = 0;
+            TheUIEventMgr->TriggerEvent(lost_connection, init);
+        }
+    } else if (!TheServer.IsConnected()) {
+        if (!TheUIEventMgr->HasActiveTransitionEvent()) {
+            static Symbol lost_connection("lost_connection");
+            static Message init("init", 0);
+            init[0] = 1;
+            TheUIEventMgr->TriggerEvent(lost_connection, init);
+        }
+    } else {
+        mDownloader->Enable();
+        UpdateScreen();
     }
 }
 
@@ -214,6 +477,18 @@ void AuditionMgr::EnterUnmount() {
     delete mDownloader;
     mDownloader = NULL;
     ThreadCall(this);
+}
+
+// 0x825632F0
+void AuditionMgr::EnterValidationFailed() {
+    mValidationFailed = true;
+    Server *server = TheNet.GetServer();
+    if (mUser && server && server->IsConnected()) {
+        SendDataPoint("rbn/audition/fail", "pid", server->GetPlayerID(mUser->GetPadNum()));
+    }
+    UpdateScreen();
+    static Message on_validation_failed("on_validation_failed");
+    SendToScreen(on_validation_failed);
 }
 
 // 0x82563428
@@ -256,7 +531,7 @@ void AuditionMgr::SetState(int state) {
         EnterDownload();
         break;
     case 4:
-        EnterState4();
+        EnterNetPoll();
         break;
     case 5:
         EnterLoad();
@@ -265,7 +540,7 @@ void AuditionMgr::SetState(int state) {
         EnterValidated();
         break;
     case 7:
-        EnterState7();
+        EnterValidationFailed();
         break;
     case 11:
         EnterEnd();
@@ -320,3 +595,47 @@ void AuditionMgr::ThreadDone(int) {
         break;
     }
 }
+
+// 0x82563800
+void AuditionMgr::StartNetPoll() {
+    if (mState != 1 && mState != 2 && mState != 3) {
+        SetState(4);
+        UpdateScreen();
+    }
+}
+
+// 0x82563858
+void AuditionMgr::StartValidation() {
+    MILO_ASSERT(mDownloader && mDownloader->IsReady(), 0);
+    SetState(5);
+    UpdateScreen();
+}
+
+// 0x825638B0
+BEGIN_HANDLERS(AuditionMgr)
+    HANDLE_EXPR_STATIC(can_enter_audition, mState == 0)
+    HANDLE_ACTION_STATIC(enter_audition, (SetState(1), UpdateScreen()))
+    HANDLE_ACTION_STATIC(exit_audition, (SetState(11), UpdateScreen()))
+    HANDLE_EXPR_STATIC(
+        get_network_status, mDownloader ? mDownloader->NetworkStatus() : 0
+    )
+    HANDLE_EXPR_STATIC(get_loaded_song_status, LoadedSongStatus())
+    HANDLE_EXPR_STATIC(get_download_progress, DownloadProgress())
+    HANDLE_EXPR_STATIC(is_validating, mState == 5 || mState == 6)
+    HANDLE_EXPR_STATIC(has_validation_failed, mValidationFailed)
+    HANDLE_EXPR_STATIC(is_ready, mDownloader && mDownloader->IsReady())
+    HANDLE_ACTION_STATIC(start_net_poll, StartNetPoll())
+    HANDLE_ACTION_STATIC(start_validation, StartValidation())
+    HANDLE_ACTION_STATIC(toggle_drum_fills, mDrumFillsEnabled = !mDrumFillsEnabled)
+    HANDLE_EXPR_STATIC(are_drum_fills_enabled, mDrumFillsEnabled)
+    HANDLE_ACTION_STATIC(set_venue_sym, mVenue = _msg->Sym(2))
+    HANDLE_EXPR_STATIC(get_venue_sym, mVenue)
+    HANDLE_ACTION_STATIC(apply_settings, ApplySettings())
+    HANDLE_ACTION_STATIC(remove_autoplay_users, mBuilder->RemoveAutoplayUsers())
+    HANDLE_EXPR_STATIC(has_autoplayer, mBuilder->HasAutoplayer())
+    HANDLE_MESSAGE(SigninChangedMsg)
+    HANDLE_MESSAGE(ConnectionStatusChangedMsg)
+    HANDLE_MESSAGE(ServerStatusChangedMsg)
+    HANDLE_SUPERCLASS(Hmx::Object)
+    HANDLE_CHECK(0)
+END_HANDLERS

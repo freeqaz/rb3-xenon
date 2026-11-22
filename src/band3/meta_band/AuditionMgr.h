@@ -14,6 +14,9 @@ class AuditionDownloader;
 class FileCache;
 class Message;
 class AuditionSongBuffer;
+class SigninChangedMsg;
+class ConnectionStatusChangedMsg;
+class ServerStatusChangedMsg;
 
 /** TU5-only Rock Band Network audition support. Neither class has a body in
     our tree and no surviving source has them; only the surface AuditionSessionPanel
@@ -31,9 +34,14 @@ public:
     AuditionSessionBuilder(
         SessionMgr *, BandUserMgr *, OvershellPanel *, BandSongMgr *, ModifierMgr *
     );
-    /** retail 0x825EBF28; called on the builder just before AuditionMgr's
-        finish state deletes it. Name ours. */
-    void Finish();
+    /** retail 0x825EBF28: AuditionMgr's `remove_autoplay_users` handler calls
+        it, and so does the finish state just before it deletes the builder. */
+    void RemoveAutoplayUsers();
+    /** retail 0x825EAFA0: AuditionMgr's `has_autoplayer` handler. */
+    bool HasAutoplayer() const;
+    /** retail 0x825EBE70: called first by AuditionMgr's `apply_settings`
+        handler, before the slot settings are copied onto the users. Name ours. */
+    void ApplySettings();
     /** One audition slot. AuditionSessionPanel reads the user at +0 and a
         has-part flag at +0x10. */
     struct Slot {
@@ -116,8 +124,8 @@ public:
     /** Inline: retail has no out-of-line ctor; the static initializer
         (0x82C3FD60) carries it whole and leaves 0x54 unwritten. */
     AuditionMgr()
-        : mState(0), unk30(0), mBuilder(0), mUser(0), mDownloader(0), unk40(0),
-          unk44(0), unk50(0), mSavedBandNoFail(0), unk58(0), mSongBuffer(0),
+        : mState(0), unk30(0), mBuilder(0), mUser(0), mDownloader(0), mValidationFailed(0),
+          unk44(0), mDrumFillsEnabled(0), mSavedBandNoFail(0), unk58(0), mSongBuffer(0),
           unk60(0) {}
 
     /** 0x825610B8, called once from App::App right after TheUI's Init.
@@ -130,16 +138,44 @@ public:
     /** 0x82561EA0: sends `update` to the current screen when it is
         audition_main_screen and the UI is not in transition. */
     void UpdateScreen();
-    /** 0x82561A70; not yet written. */
+    /** 0x82561A70: sends a message to the current screen when it is
+        audition_main_screen and the UI is not in transition. */
     void SendToScreen(Message &);
+    /** 0x82561A08: the downloader's progress clamped to [0, 100] and scaled
+        to [0, 1]; 0 with no downloader. `get_download_progress`. */
+    float DownloadProgress();
+    /** 0x825619A8: 0 = none, 1 = loading (states 5-7), 2 = downloaded and
+        ready (state 4). `get_loaded_song_status`. */
+    int LoadedSongStatus();
+    /** 0x82561CB0: copies each builder slot's track and difficulty onto the
+        slot's user. */
+    void ApplySlotSettings(AuditionSessionBuilder *);
+    /** 0x82561DE8: `apply_settings`. */
+    void ApplySettings();
+    /** 0x82563800: `start_net_poll`; enters state 4 unless already starting
+        (states 1-3). */
+    void StartNetPoll();
+    /** 0x82563858: `start_validation`; enters state 5. */
+    void StartValidation();
+    /** 0x82561FD0: raises `sign_out` with reason 5 (kRBNMemberSignedOut) when
+        the RBN member user signs out mid-audition. */
+    DataNode OnMsg(const SigninChangedMsg &);
+    /** 0x82562228: raises `lost_connection` (0) in states 4-7. */
+    DataNode OnMsg(const ConnectionStatusChangedMsg &);
+    /** 0x82562418: raises `lost_connection` (1) in states 4-7. */
+    DataNode OnMsg(const ServerStatusChangedMsg &);
     void EnterStart(); // 0x82560CB0, state 1
     void EnterDownload(); // 0x825611F8, state 3
     void ExitLoad(); // 0x82561360, leaving state 5
     void EnterFinish(); // 0x825613C8, state 13
-    void EnterState4(); // 0x82562608, not yet written
+    /** 0x82562608, state 4: raises `lost_connection` (0 = no network, 1 = no
+        server), else resumes the downloader. */
+    void EnterNetPoll();
     void EnterLoad(); // 0x82562978, state 5, not yet written
     void EnterValidated(); // 0x82563158, state 6
-    void EnterState7(); // 0x825632F0, not yet written
+    /** 0x825632F0, state 7: sets has_validation_failed, logs the
+        `rbn/audition/fail` data point and sends on_validation_failed. */
+    void EnterValidationFailed();
     void EnterEnd(); // 0x82560DE8, state 11
     void EnterUnmount(); // 0x82563208, state 12
     void PollLoad(); // 0x82563578, polled in state 5, not yet written
@@ -151,11 +187,17 @@ public:
     LocalBandUser *mUser; // 0x38
     /** Created in state 3, deleted in state 12; slot 21 polls it. */
     AuditionDownloader *mDownloader; // 0x3c
-    bool unk40; // 0x40
+    /** `has_validation_failed`. */
+    bool mValidationFailed; // 0x40
     DataArray *unk44; // 0x44 -- Release()d and nulled by the dtor
-    Symbol unk48; // 0x48
-    Symbol unk4c; // 0x4c
-    bool unk50; // 0x50
+    /** The audition song (gUGCAuditionTempSongName); `apply_settings` passes it
+        to MetaPerformer::SetSong. */
+    Symbol mSong; // 0x48
+    /** `set_venue_sym`/`get_venue_sym`; `apply_settings` passes it to
+        MetaPerformer::SetVenue. */
+    Symbol mVenue; // 0x4c
+    /** `toggle_drum_fills`/`are_drum_fills_enabled`. */
+    bool mDrumFillsEnabled; // 0x50
     /** MetaPerformer's band no-fail flag, saved in state 1, restored in 11. */
     bool mSavedBandNoFail; // 0x51
     /** Deleted on leaving state 5; the ctor never writes it. */
