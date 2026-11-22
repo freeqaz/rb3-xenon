@@ -47,7 +47,6 @@ extern "C" [[noreturn]] void rb3_app_vcall_unreached() { // ring: reporter
 // ---- objects: zero bytes, never constructed ----------------------------------
 alignas(Net) unsigned char gRb3AppTheNet[sizeof(Net)] __asm__("TheNet"); // ring: online-net
 alignas(RockCentral) unsigned char gRb3AppTheRockCentral[sizeof(RockCentral)] __asm__("TheRockCentral"); // ring: online-rockcentral
-alignas(BandUI) unsigned char gRb3AppTheBandUI[sizeof(BandUI)] __asm__("TheBandUI"); // ring: a1-absent-body
 alignas(WiiFriendMgr) unsigned char gRb3AppTheWiiFriendMgr[sizeof(WiiFriendMgr)] __asm__("TheWiiFriendMgr"); // ring: a4-wii-residue
 alignas(WiiProfileMgr) unsigned char gRb3AppTheWiiProfileMgr[sizeof(WiiProfileMgr)] __asm__("TheWiiProfileMgr"); // ring: a4-wii-residue
 alignas(WiiFriendsProvider) unsigned char gRb3AppTheWiiFriendsProvider[sizeof(WiiFriendsProvider)] __asm__("TheWiiFriendsProvider"); // ring: a4-wii-residue

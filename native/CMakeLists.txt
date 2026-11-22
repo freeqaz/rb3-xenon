@@ -2233,6 +2233,10 @@ set(RB3_APP_SOURCES
     # time, an empty DataArray. Its upload paths go to RockCentral, whose entry
     # points are aborting stubs (ring online-rockcentral).
     ${REPO_ROOT}/src/band3/net_band/XboxEntityUploader.cpp
+    # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
+    # constructs TheBandUI at static init; natively TheUI was the engine's weak
+    # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.
+    ${REPO_ROOT}/src/band3/meta_band/BandUI.cpp
     ${REPO_ROOT}/src/band3/game/AccuracyTracker.cpp
     ${REPO_ROOT}/src/band3/game/BandPerformer.cpp
     ${REPO_ROOT}/src/band3/game/ChordPreview.cpp
