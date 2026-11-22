@@ -98,6 +98,8 @@ int RunCascadeNotifyPhase(void (*gate)(const char *, bool, const char *));
 int RunAsyncUnloadPhase(void (*gate)(const char *, bool, const char *));
 // native/src/proxy_chain_phase.cpp (A9)
 int RunProxyChainPhase(void (*gate)(const char *, bool, const char *));
+// native/src/charclip_refs_phase.cpp: CharClip transitions ref-count their clips
+int RunCharClipRefsPhase(void (*gate)(const char *, bool, const char *));
 
 namespace {
 
@@ -555,6 +557,9 @@ int main(int argc, char **argv) {
     // A9: a proxy RndDir's Enter chains its owning dir through the dir's
     // MsgSource subobject, as retail 0x82404EA8 does (native/src/proxy_chain_phase.cpp).
     RunProxyChainPhase(Gate);
+    // CharClip::Transitions holds every clip it names by reference, as retail
+    // AddNode/Clear/Replace do (native/src/charclip_refs_phase.cpp).
+    RunCharClipRefsPhase(Gate);
 
     printf("\nRESULT: %s (%d gate failure(s))\n",
            gFailures == 0 ? "ALL GATES PASSED" : "FAILED", gFailures);

@@ -29,6 +29,14 @@ public:
 
         CharClip *clip; // 0x0
         int size; // 0x4
+#ifdef HX_NATIVE
+        // Native only: the ring node through which this vector holds `clip`.
+        // Retail AddRefs the owning clip itself onto clip's std::list mRefs
+        // (Transitions::AddNode/Load) and Releases it in Clear/RemoveClip; the
+        // native intrusive ring needs one node per (owner, clip). It is heap
+        // allocated so Resize/memmove of the vectors never moves a linked node.
+        ObjOwnerPtr<CharClip> *ref;
+#endif
         CharGraphNode nodes[1]; // 0x8
     };
     class Transitions {
@@ -47,6 +55,10 @@ public:
         int BytesInMemory() const { return (intptr_t)mNodeEnd - (intptr_t)mNodeStart; }
 #ifdef HX_NATIVE
         void RemoveNodes(NodeVector *);
+        /** True if `ref` is one of this table's clip ring nodes. */
+        bool HoldsRef(const ObjRef *ref) const;
+        void HoldClip(NodeVector *);
+        void DropClip(NodeVector *);
 #endif
         void Save(BinStream &);
         void Load(BinStream &);
@@ -148,10 +160,8 @@ public:
     virtual void Save(BinStream &);
     virtual void Copy(const Hmx::Object *, Hmx::Object::CopyType);
     virtual void Load(BinStream &);
-#ifndef HX_NATIVE
     // retail fn_8237D810 (vtable slot +8): forwards to mTransitions.Replace
     virtual void Replace(ObjRef *, Hmx::Object *);
-#endif
     virtual void PreSave(BinStream &);
     virtual void PostSave(BinStream &) {}
     virtual void Print();
