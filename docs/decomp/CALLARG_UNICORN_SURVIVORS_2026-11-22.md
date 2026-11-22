@@ -144,10 +144,11 @@ Where the old name is "unplaced", its true retail address is not in the map toda
 
 - 27 rows were wrong map names that other lanes corrected between 09-11 and 10-06.
 - 1 row, #15, was a wrong map name still live today. It is nulled here, Δ0.
-- 13 rows have kept their name and now match retail bytes. 4 of them (`CharWeightable`,
-  `KillSustainForSlot`, `SustainedGemToKill`, `OggMap::Read`) were already at or near fuzzy
-  100 on 09-10, so their 09-10 divergence was a harness artifact. The other 9 reached 100
-  through source work since then.
+- 13 rows have kept their name and now match retail bytes. 6 of them (`CharWeightable` 100,
+  `OggMap::Read` 99.96, `UIListWidget` ctor 99.91, `vector<ActionRec>` copy ctor 99.83,
+  `SustainedGemToKill` 99.68, `KillSustainForSlot` 99.29) were already at or near fuzzy 100
+  on 09-10, so their 09-10 divergence was most likely a harness artifact. The other 7
+  reached 100 through source work since then.
 - 1 row (#38) is out of scope and byte-identical.
 
 The only sub-100 row left in this set, `~NetCacheMgrXbox`, is out of scope.
