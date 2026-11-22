@@ -105,8 +105,8 @@ Classified NON_STUB in `tools/native_stub_census.py`.
 
 Every X360-side change either sits in an HX_NATIVE arm or expands to the original
 tokens (`HX_CRT_RAND()` -> `rand()`, `HX_CRT_ATOI(s)` -> `atoi(s)`,
-`HX_CRT_WCSLEN(s)` -> `wcslen(s)`, `DWORD` = `unsigned long`). The expected Δ is 0.
-The ab_measure result is in the section below.
+`HX_CRT_WCSLEN(s)` -> `wcslen(s)`, `DWORD` = `unsigned long`). I predicted Δ0, and
+the measurement below confirms it.
 
 ## Not done
 
@@ -123,4 +123,18 @@ The ab_measure result is in the section below.
 
 ## Measurement
 
-(filled from ab_measure below)
+`python3 tools/ab_measure.py --worktree ~/tmp/wt-lp64-ab --patch <git diff main lp64 -- src> --label lp64`.
+Base: main `98f66d185`. Ruler: `functionRelocDiffs=name_check`, objdiff-cli
+sha256 `ec3badc0f33323e9`. Log: `~/tmp/lp64_ab_measure.log` (the run dir, removed with the scratch worktree, was
+`~/tmp/wt-lp64-ab/.ab_measure_runs/20261122-234656-lp64-294146/`).
+
+- Leg A: matched 55268, masked_equal 25360, honest 29908, code% 59.665310.
+- Leg B: 82 objs recompiled, split 0. Same numbers as leg A.
+- Δmatched +0, Δhonest +0, Δcode_bytes +0, Δfuzzy +0.000000 pp. Units at 100%: 635 -> 635 (mpn) and 548 -> 548 (fuzzy).
+- `none` ruler: Δmatched_code +0 B.
+
+The patch was the branch's whole src diff, including the FileGetPath commit: 17
+files, 16 tracked plus the new CrtCompat.h.
+
+Native: a full `cmake --build build` links all 4640 steps after the rebase
+(rc 0). An incremental rebuild after the FileGetPath change also links (rc 0).
