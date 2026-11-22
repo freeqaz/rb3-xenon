@@ -266,4 +266,16 @@ protected:
     /** "Whether the keyframes are locked (no editing allowed)" */
     bool mLocked; // 0xcc
     LightHue *mHue; // 0xd0
+#ifdef HX_NATIVE
+    // Retail puts the preset on the ref list of every object its four lists
+    // hold (Hmx::Object::AddRef(ObjRefOwner *), 0x8275BD08) and takes it off
+    // with Release (0x8275B378), so the object's death runs Replace. The native
+    // ring is node-model: each hold is one heap ring node owned by the preset,
+    // which forwards the object's death or replacement to Replace(node, to).
+    // Heap nodes, so growing or erasing this vector never moves a linked node.
+    void HoldRef(Hmx::Object *);
+    void DropRef(Hmx::Object *);
+    int HeldRefIndex(const ObjRef *) const;
+    std::vector<ObjOwnerPtr<Hmx::Object> *> mHeldRefs;
+#endif
 };
