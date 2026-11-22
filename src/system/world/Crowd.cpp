@@ -1206,10 +1206,8 @@ void WorldCrowd::DrawShowing() {
     START_AUTO_TIMER("crowd_draw");
     if (!mPlacementMesh) return;
     Draw3DChars();
-    // Retail RB3 X360 gates on raw Rnd::Mode value 4 here (dc3's newer enum
-    // shifted kDrawOcclusionDepth to 5); same -1 divergence as Shader.cpp's
-    // CalcShaderOpts/CheckForceCull raw-DrawMode casts.
-    if ((Rnd::Mode)4 == TheRnd.DrawMode()) return;
+    // Retail skips the crowd in the occlusion pass (Rnd::Mode 4).
+    if (Rnd::kDrawOcclusion == TheRnd.DrawMode()) return;
     MILO_ASSERT(!gImpostorMat->NextPass(), 0x3A0);
     std::vector<Hmx::Rect> rects;
     rects.reserve(12);
