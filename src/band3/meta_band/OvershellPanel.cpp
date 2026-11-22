@@ -126,21 +126,10 @@ OvershellPanel::~OvershellPanel() {
 #endif
 }
 
-bool SignInUser(User *u, unsigned long ul) {
-    static OvershellPanel *pOvershellPanel =
-        ObjectDir::Main()->Find<OvershellPanel>("overshell", true);
-    LocalBandUser *user = dynamic_cast<LocalBandUser *>(u);
-    if (user) {
-        OvershellSlot *slot = pOvershellPanel->FindSlotForUser(user);
-        if (slot->GetUser() == user) {
-            slot->ShowWiiProfileSelector((ul >> 1) & 1);
-            return true;
-        }
-    }
-    return false;
-}
-
-void OvershellPanel::Init() { ThePlatformMgr.RegisterSignInserCallback(SignInUser); }
+// No OvershellPanel::Init and no SignInUser callback on retail X360: the
+// callback (Wii PlatformMgr::RegisterSignInserCallback) opened the Wii profile
+// selector, and retail MetaPanel::Init (0x82574E20) never calls an
+// OvershellPanel::Init.
 
 void OvershellPanel::SetActiveStatus(OvershellActiveStatus status) {
     if (status != mActiveStatus) {

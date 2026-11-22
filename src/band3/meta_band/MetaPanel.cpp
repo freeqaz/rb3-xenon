@@ -112,41 +112,9 @@
 
 void UtlInit();
 
-// Classes with no header yet — defined inline for factory registration
-class WiiFriendsScreen : public UIPanel {
-public:
-    static void Init();
-    OBJ_CLASSNAME(WiiFriendsScreen);
-    NEW_OBJ(WiiFriendsScreen);
-};
-
-class WiiProfilePanel : public UIPanel {
-public:
-    WiiProfilePanel();
-    OBJ_CLASSNAME(WiiProfilePanel);
-    NEW_OBJ(WiiProfilePanel);
-    char unk_pad[0x44]; // sizeof(WiiProfilePanel) == 0x9c
-};
-
-class WiiFriendsDetailsProvider : public UIListProvider, public Hmx::Object {
-public:
-    WiiFriendsDetailsProvider();
-    virtual ~WiiFriendsDetailsProvider();
-    OBJ_CLASSNAME(WiiFriendsDetailsProvider);
-    NEW_OBJ(WiiFriendsDetailsProvider);
-
-    virtual void Text(int, int, UIListLabel *, UILabel *) const;
-    virtual int NumData() const;
-    virtual UIListWidgetState
-    SlotElementStateOverride(int, int, class UIListWidget *, UIListWidgetState) const;
-
-    int unk20; // 0x20
-    int unk24; // 0x24
-    int unk28; // 0x28
-    String unk2c; // 0x2c
-    char unk38[0x18]; // 0x38
-};
-
+// No WiiFriendsScreen, WiiProfilePanel or WiiFriendsDetailsProvider on retail
+// X360: none of the three class-name strings is in band.exe, and the retail
+// factory list below (58 slots) registers none of them.
 class WiiInvitationsProvider {
 public:
     void Init();
@@ -249,17 +217,6 @@ void MetaPanel::Init() {
     // called. Only the factory list was previously adjudicated (58 slots,
     // tools/reglist_rdata_adjudicate.py); the call sequence is read from the
     // same function's bl list.
-#ifdef HX_NATIVE
-    // ring: a4-wii-residue. The four Wii-lineage init calls are NOT made
-    // natively either (lane A1b): retail 360 does not make them (above), and
-    // natively OvershellPanel::Init reached PlatformMgr::
-    // RegisterSignInserCallback, a Wii entry point with no 360 body (an
-    // aborting stub in rb3-app, the only native caller of MetaPanel::Init).
-    // The factory registrations stay as they were.
-    REGISTER_OBJ_FACTORY(WiiFriendsScreen);
-    REGISTER_OBJ_FACTORY(WiiProfilePanel);
-    REGISTER_OBJ_FACTORY(WiiFriendsDetailsProvider);
-#endif
     GameModeInit();
     ModifierMgr::Init();
     SongSortMgr::Init();

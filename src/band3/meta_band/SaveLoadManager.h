@@ -98,7 +98,6 @@ public:
     bool IsInitialLoadDone() const;
     bool IsIdle();
     void Activate();
-    void PrintoutSaveSizeInfo();
     void Poll();
     void AutoSaveNow();
     virtual DataNode Handle(DataArray *, bool);

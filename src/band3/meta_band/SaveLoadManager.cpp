@@ -5,7 +5,6 @@
 #include "meta/FixedSizeSaveableStream.h"
 #include "meta/MemcardMgr.h"
 #include "meta/Profile.h"
-#include "meta/WiiProfileMgr.h"
 #include "meta_band/BandProfile.h"
 #include "meta_band/BandSongMgr.h"
 #include "meta_band/ProfileMgr.h"
@@ -1908,15 +1907,10 @@ void SaveLoadManager::ManualSave(LocalBandUser *user) {
     TheMemcardMgr.AddSink(this);
     SetState(kS_ManualLoadInit);
 }
-void SaveLoadManager::PrintoutSaveSizeInfo() {
-    FixedSizeSaveable::EnablePrintouts(true);
-    FormatString fmt("SAVESIZE\n");
-    TheDebug << fmt.Str();
-    unsigned int profileSize = BandProfile::SaveSize(0x97);
-    int symbolSize = FixedSizeSaveableStream::GetSymbolTableSize(0x97);
-    TheDebug << MakeString<int>("Symbol Table Size = %i\n", symbolSize);
-    TheDebug << MakeString<int>("SAVESIZE TOTAL = %i \n", WiiProfileMgr::SaveSize(0x97) + (symbolSize + profileSize));
-}
+// No PrintoutSaveSizeInfo on retail X360: none of its strings ("SAVESIZE",
+// "Symbol Table Size = %i", "SAVESIZE TOTAL = %i") nor its handler name
+// printout_savesize_info is in band.exe. It was the Wii dev-build save-size
+// dump, which summed WiiProfileMgr::SaveSize into the total.
 
 bool SaveLoadManager::IsReasonToUpload() {
     static Symbol saveload_skip_upload("saveload_skip_upload"); // retail: local static
@@ -2354,12 +2348,12 @@ BEGIN_HANDLERS(SaveLoadManager)
     HANDLE_ACTION(autosave, AutoSave())
     HANDLE_ACTION(autoload, AutoLoad())
 #ifndef RB3_STRIP_CHEAT_HANDLERS
-    // Retail X360 ships neither `delete_saves` nor `printout_savesize_info`:
-    // the in-COMDAT local-static Symbol chain of fn_82552660 runs
-    // autosave, autoload, manual_save, ... , activate and then goes straight to
-    // the ProfileSwappedMsg arm.  Both are DEV-build debug handlers, so
-    // they are gated out (via /DRB3_STRIP_CHEAT_HANDLERS) for the retail match
-    // but kept for native builds.
+    // Retail X360 ships no `delete_saves` arm: the in-COMDAT local-static
+    // Symbol chain of fn_82552660 runs autosave, autoload, manual_save, ... ,
+    // activate and then goes straight to the ProfileSwappedMsg arm. It is a
+    // DEV-build debug handler, gated out (via /DRB3_STRIP_CHEAT_HANDLERS) for
+    // the retail match but kept for native builds. (Its sibling
+    // printout_savesize_info is removed outright -- see PrintoutSaveSizeInfo.)
     HANDLE_ACTION(delete_saves, ManualDelete())
 #endif
     HANDLE_ACTION(manual_save, ManualSave(_msg->Obj<LocalBandUser>(2)))
@@ -2378,11 +2372,6 @@ BEGIN_HANDLERS(SaveLoadManager)
     HANDLE_EXPR(is_initial_load_done, IsInitialLoadDone())
     HANDLE_EXPR(is_idle, IsIdle())
     HANDLE_ACTION(activate, Activate())
-#ifndef RB3_STRIP_CHEAT_HANDLERS
-    // Retail ends at `activate`; printout_savesize_info is a DEV-only handler
-    // (see band.exe 0x82552660). Kept for native, gated out for the match.
-    HANDLE_ACTION(printout_savesize_info, PrintoutSaveSizeInfo())
-#endif
     HANDLE_MESSAGE(ProfileSwappedMsg)
     HANDLE_MESSAGE(DeviceChosenMsg)
     HANDLE_MESSAGE(NoDeviceChosenMsg)

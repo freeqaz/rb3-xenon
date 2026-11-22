@@ -710,52 +710,12 @@ _ZN10NetSession14UpdateUserDataEP4Userj: // ring: online-netsession
     leaq .Lname_67(%rip), %rsi
     jmp rb3_app_stub_reached
 
-// OvershellProfileProvider::ActOnProfile(int, LocalBandUser*, bool)
-.globl _ZN24OvershellProfileProvider12ActOnProfileEiP13LocalBandUserb
-.type _ZN24OvershellProfileProvider12ActOnProfileEiP13LocalBandUserb,@function
-_ZN24OvershellProfileProvider12ActOnProfileEiP13LocalBandUserb: // ring: a4-wii-residue
-    leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_68(%rip), %rsi
-    jmp rb3_app_stub_reached
-
-// OvershellProfileProvider::ActOnProfileConfirmed(LocalBandUser*)
-.globl _ZN24OvershellProfileProvider21ActOnProfileConfirmedEP13LocalBandUser
-.type _ZN24OvershellProfileProvider21ActOnProfileConfirmedEP13LocalBandUser,@function
-_ZN24OvershellProfileProvider21ActOnProfileConfirmedEP13LocalBandUser: // ring: a4-wii-residue
-    leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_69(%rip), %rsi
-    jmp rb3_app_stub_reached
-
 // OvershellProfileProvider::GetUser(int) const
 .globl _ZNK24OvershellProfileProvider7GetUserEi
 .type _ZNK24OvershellProfileProvider7GetUserEi,@function
 _ZNK24OvershellProfileProvider7GetUserEi: // ring: a4-wii-residue
     leaq .Lring_a4_wii_residue(%rip), %rdi
     leaq .Lname_70(%rip), %rsi
-    jmp rb3_app_stub_reached
-
-// OvershellProfileProvider::GetWiiProfileCount(LocalBandUser*) const
-.globl _ZNK24OvershellProfileProvider18GetWiiProfileCountEP13LocalBandUser
-.type _ZNK24OvershellProfileProvider18GetWiiProfileCountEP13LocalBandUser,@function
-_ZNK24OvershellProfileProvider18GetWiiProfileCountEP13LocalBandUser: // ring: a4-wii-residue
-    leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_71(%rip), %rsi
-    jmp rb3_app_stub_reached
-
-// OvershellProfileProvider::GetWiiProfileListMode()
-.globl _ZN24OvershellProfileProvider21GetWiiProfileListModeEv
-.type _ZN24OvershellProfileProvider21GetWiiProfileListModeEv,@function
-_ZN24OvershellProfileProvider21GetWiiProfileListModeEv: // ring: a4-wii-residue
-    leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_72(%rip), %rsi
-    jmp rb3_app_stub_reached
-
-// OvershellProfileProvider::GetWiiProfileSelectedName() const
-.globl _ZNK24OvershellProfileProvider25GetWiiProfileSelectedNameEv
-.type _ZNK24OvershellProfileProvider25GetWiiProfileSelectedNameEv,@function
-_ZNK24OvershellProfileProvider25GetWiiProfileSelectedNameEv: // ring: a4-wii-residue
-    leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_73(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // OvershellProfileProvider::OvershellProfileProvider(BandUserMgr*)
@@ -772,14 +732,6 @@ _ZN24OvershellProfileProviderC1EP11BandUserMgr: // ring: a4-wii-residue
 _ZN24OvershellProfileProvider6ReloadEv: // ring: a4-wii-residue
     leaq .Lring_a4_wii_residue(%rip), %rdi
     leaq .Lname_75(%rip), %rsi
-    jmp rb3_app_stub_reached
-
-// OvershellProfileProvider::SetWiiProfileListMode(OvershellProfileProvider::WiiProfileListMode, bool)
-.globl _ZN24OvershellProfileProvider21SetWiiProfileListModeENS_18WiiProfileListModeEb
-.type _ZN24OvershellProfileProvider21SetWiiProfileListModeENS_18WiiProfileListModeEb,@function
-_ZN24OvershellProfileProvider21SetWiiProfileListModeENS_18WiiProfileListModeEb: // ring: a4-wii-residue
-    leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_76(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // PlatformMgr::CanSeeUserCreatedContent(OnlineID const*) const
@@ -1348,54 +1300,6 @@ _Z19WaitForSingleObjectii: // ring: a1-absent-body
 _ZN13WebSvcRequest4PollEv: // ring: a1-absent-body
     leaq .Lring_a1_absent_body(%rip), %rdi
     leaq .Lname_147(%rip), %rsi
-    jmp rb3_app_stub_reached
-
-// WiiFriendsDetailsProvider::WiiFriendsDetailsProvider()
-.globl _ZN25WiiFriendsDetailsProviderC1Ev
-.type _ZN25WiiFriendsDetailsProviderC1Ev,@function
-_ZN25WiiFriendsDetailsProviderC1Ev: // ring: a4-wii-residue
-    leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_148(%rip), %rsi
-    jmp rb3_app_stub_reached
-
-// WiiProfileMgr::GetProfileForPad(int)
-.globl _ZN13WiiProfileMgr16GetProfileForPadEi
-.type _ZN13WiiProfileMgr16GetProfileForPadEi,@function
-_ZN13WiiProfileMgr16GetProfileForPadEi: // ring: a4-wii-residue
-    leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_149(%rip), %rsi
-    jmp rb3_app_stub_reached
-
-// WiiProfileMgr::IsDeleteQueueFull() const
-.globl _ZNK13WiiProfileMgr17IsDeleteQueueFullEv
-.type _ZNK13WiiProfileMgr17IsDeleteQueueFullEv,@function
-_ZNK13WiiProfileMgr17IsDeleteQueueFullEv: // ring: a4-wii-residue
-    leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_150(%rip), %rsi
-    jmp rb3_app_stub_reached
-
-// WiiProfileMgr::IsSlotAvailable() const
-.globl _ZNK13WiiProfileMgr15IsSlotAvailableEv
-.type _ZNK13WiiProfileMgr15IsSlotAvailableEv,@function
-_ZNK13WiiProfileMgr15IsSlotAvailableEv: // ring: a4-wii-residue
-    leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_151(%rip), %rsi
-    jmp rb3_app_stub_reached
-
-// WiiProfileMgr::SaveSize(int)
-.globl _ZN13WiiProfileMgr8SaveSizeEi
-.type _ZN13WiiProfileMgr8SaveSizeEi,@function
-_ZN13WiiProfileMgr8SaveSizeEi: // ring: a4-wii-residue
-    leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_152(%rip), %rsi
-    jmp rb3_app_stub_reached
-
-// WiiProfilePanel::WiiProfilePanel()
-.globl _ZN15WiiProfilePanelC1Ev
-.type _ZN15WiiProfilePanelC1Ev,@function
-_ZN15WiiProfilePanelC1Ev: // ring: a4-wii-residue
-    leaq .Lring_a4_wii_residue(%rip), %rdi
-    leaq .Lname_153(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // XBackgroundDownloadSetMode

@@ -153,7 +153,6 @@ public:
     DataNode OnMsg(const SessionBusyMsg &);
 
     NEW_OBJ(OvershellPanel);
-    static void Init();
     static void Register() { REGISTER_OBJ_FACTORY(OvershellPanel); }
 
     std::vector<OvershellSlot *> mSlots; // 0x74

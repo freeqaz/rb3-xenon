@@ -6,20 +6,8 @@
 class BandUserMgr;
 class LocalBandUser;
 
-enum WiiProfileActResult {
-    kWiiProfileActResult_Done = 0,
-    kWiiProfileActResult_NeedConfirm = 1,
-    kWiiProfileActResult_NewProfile = 2,
-    kWiiProfileActResult_EditLogo = 3,
-    kWiiProfileActResult_Failed = 4,
-    kWiiProfileActResult_SwapProfile = 5
-};
-
 class OvershellProfileProvider : public UIListProvider, public Hmx::Object {
 public:
-    enum WiiProfileListMode {
-    };
-
     OvershellProfileProvider(BandUserMgr *);
     virtual ~OvershellProfileProvider();
     virtual void Text(int, int, UIListLabel *, UILabel *) const;
@@ -27,18 +15,17 @@ public:
     virtual int NumData() const;
     virtual DataNode Handle(DataArray *, bool);
 
-    WiiProfileActResult ActOnProfile(int, LocalBandUser *, bool);
-    WiiProfileActResult ActOnProfileConfirmed(LocalBandUser *);
-    void SetWiiProfileListMode(WiiProfileListMode, bool);
-    WiiProfileListMode GetWiiProfileListMode();
-    int GetWiiProfileCount(LocalBandUser *) const;
+    // Retail X360 has no Wii profile-list API here (ActOnProfile,
+    // ActOnProfileConfirmed, Set/GetWiiProfileListMode, GetWiiProfileCount,
+    // GetWiiProfileSelectedName): the TU at 0x82667FC8-0x8266849C holds only
+    // GetUser, Handle, Text, Reload, the ctor and the dtors, and none of the
+    // OvershellSlot handler names that reached them is in band.exe.
     // Retail X360's call site (OvershellSlot::UpdateProfilesList) does a direct
     // `bl` with only `this` in r3 -- no GetUser()/IsLocal()/GetLocalBandUser()
     // chain feeding a second arg. Confirmed by full retail disassembly of both
     // the caller and callee (0x825deec8 / 0x826681a0): zero-arg on X360, unlike
     // a `Reload(LocalBandUser*)` form.
     void Reload();
-    const char *GetWiiProfileSelectedName() const;
 
     // Out of line in OvershellProfileProvider.cpp (retail 0x82667FC8, the
     // TU's first function); OvershellSlot calls it with a `bl`.

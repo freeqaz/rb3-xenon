@@ -8,7 +8,6 @@
 #include "game/BandUserMgr.h"
 #include "game/Defines.h"
 #include "game/GameMicManager.h"
-#include "meta/WiiProfileMgr.h"
 #include "meta_band/BandProfile.h"
 #include "meta_band/CharData.h"
 #include "meta_band/InputMgr.h"
@@ -606,16 +605,6 @@ void OvershellSlot::ShowEnterWiiSpeakOptions() {
     mOvershell->UpdateAll();
 }
 
-void OvershellSlot::ShowEnterWiiProfile() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x46E);
-    if (mSessionMgr->IsLocal()) {
-        pUser->SetOvershellSlotState(kState_EnterWiiProfile);
-    } else
-        pUser->SetOvershellSlotState(kState_WiiProfileDenial);
-    mOvershell->UpdateAll();
-}
-
 void OvershellSlot::AttemptDisconnect() {
     if (mSessionMgr->IsLocal()) {
         mSessionMgr->Disconnect();
@@ -698,197 +687,6 @@ void OvershellSlot::ToggleMuteUser(int i) {
     mOvershell->UpdateAll();
 }
 
-void OvershellSlot::ActOnUserProfile(int i) {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x52B);
-    HandleWiiProfileActResult(
-        mSwappableProfilesProvider->ActOnProfile(i, pUser->GetLocalBandUser(), false)
-    );
-}
-
-void OvershellSlot::ActOnUserProfileConfirm() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x534);
-    HandleWiiProfileActResult(
-        mSwappableProfilesProvider->ActOnProfileConfirmed(pUser->GetLocalBandUser())
-    );
-}
-
-void OvershellSlot::HandleWiiProfileActResult(WiiProfileActResult res) {
-    switch (res) {
-    case 1:
-        ShowWiiProfileConfirm();
-        break;
-    case 2:
-        ShowWiiProfilePreconfirm();
-        break;
-    case 3:
-        ShowWiiProfileSwitchConfirm();
-        break;
-    case 4:
-        ShowEnterWiiProfile();
-        break;
-    case 5: {
-        BandUser *pUser = GetUser();
-        MILO_ASSERT(pUser->IsLocal(), 0x54C);
-        if (mSessionMgr->IsLocal()) {
-            pUser->SetOvershellSlotState(kState_RegisterWiiProfile);
-        } else
-            pUser->SetOvershellSlotState(kState_RegisterWiiProfileDenial);
-        mOvershell->UpdateAll();
-        break;
-    }
-    case 6:
-        ShowWiiProfileFail();
-        break;
-    case 7:
-        ShowWiiProfileFailCreate();
-        break;
-    case 8:
-        ShowWiiProfilePostAction();
-        break;
-    case 9:
-        MILO_ASSERT(mSwappableProfilesProvider, 0x561);
-        // Wii-only path: the X360 provider has no last-index field (its
-        // 0x30 slot is the user vector), so index 0 stands in.
-        AttemptSwapUserProfile(0);
-        break;
-    default:
-        LeaveOptions();
-        break;
-    }
-}
-
-void OvershellSlot::SelectGuestProfile() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x594);
-    LocalBandUser *pLocUser = pUser->GetLocalBandUser();
-    MILO_ASSERT(pLocUser, 0x596);
-    int padnum = pLocUser->GetPadNum();
-    if (TheSaveLoadMgr)
-        TheSaveLoadMgr->AutoSaveNow();
-    BandProfile *profile = TheProfileMgr.GetProfileForUser(pLocUser);
-    if (profile) {
-        profile->DeleteAll();
-    }
-    TheWiiProfileMgr.SetPadToGuest(padnum);
-    pLocUser->UpdateOnlineID();
-}
-
-void OvershellSlot::ShowWiiProfileConfirm() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x5AD);
-    pUser->SetOvershellSlotState(kState_WiiProfileConfirm);
-    mOvershell->UpdateAll();
-}
-
-void OvershellSlot::ShowWiiProfilePreconfirm() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x5B5);
-    pUser->SetOvershellSlotState(kState_WiiProfilePreconfirm);
-    mOvershell->UpdateAll();
-}
-
-void OvershellSlot::ShowWiiProfileSwitchConfirm() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x5BD);
-    pUser->SetOvershellSlotState(kState_WiiProfileSwitchConfirm);
-    mOvershell->UpdateAll();
-}
-
-void OvershellSlot::ShowWiiProfileFail() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x5C5);
-    pUser->SetOvershellSlotState(kState_WiiProfileFail);
-    mOvershell->UpdateAll();
-}
-
-void OvershellSlot::ShowWiiProfileFailBusy() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x5CD);
-    pUser->SetOvershellSlotState(kState_WiiProfileFailBusy);
-    mOvershell->UpdateAll();
-}
-
-void OvershellSlot::ShowWiiProfileFailCreate() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x5D5);
-    pUser->SetOvershellSlotState(kState_WiiProfileFailCreate);
-    mOvershell->UpdateAll();
-}
-
-void OvershellSlot::ShowWiiProfileSwapFail() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x5DD);
-    pUser->SetOvershellSlotState(kState_WiiProfileSwapFail);
-    mOvershell->UpdateAll();
-}
-
-void OvershellSlot::ShowWiiProfilePostAction() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x5E5);
-    pUser->SetOvershellSlotState(kState_WiiProfilePostAction);
-    mOvershell->UpdateAll();
-}
-
-void OvershellSlot::SetWiiProfileListMode(int i, bool b) {
-    if (i != 0x10)
-        mSwappableProfilesProvider->SetWiiProfileListMode(
-            (OvershellProfileProvider::WiiProfileListMode)i, b
-        );
-}
-
-OvershellProfileProvider::WiiProfileListMode OvershellSlot::GetWiiProfileListMode() {
-    return mSwappableProfilesProvider->GetWiiProfileListMode();
-}
-
-// Wii-only: the X360 OvershellProfileProvider carries no last-index field.
-int OvershellSlot::GetWiiProfileLastIndex() { return 0; }
-
-bool OvershellSlot::IsWiiProfileFull() const {
-    return !TheWiiProfileMgr.IsSlotAvailable();
-}
-
-bool OvershellSlot::IsWiiProfileDeleteQueueFull() const {
-    return TheWiiProfileMgr.IsDeleteQueueFull();
-}
-
-const char *OvershellSlot::GetWiiProfileListSelectedName() const {
-    return mSwappableProfilesProvider->GetWiiProfileSelectedName();
-}
-
-void OvershellSlot::ShowWiiProfileList(int i) {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x60E);
-    SetWiiProfileListMode(i, false);
-    if (i == 0 || i == 2) {
-        pUser->SetOvershellSlotState(kState_EnterWiiProfile);
-    } else {
-        if (mSwappableProfilesProvider->GetWiiProfileCount(pUser->GetLocalBandUser())
-            <= 0) {
-            pUser->SetOvershellSlotState(kState_WiiProfileListEmpty);
-        } else
-            pUser->SetOvershellSlotState(kState_WiiProfileList);
-    }
-    mOvershell->UpdateAll();
-}
-
-// Was `OvershellSlot::unk28`. Retail X360 has neither the member (sizeof is
-// 0xC0, not 0xC4) nor any of the three Wii-profile-selector methods below, so
-// the saved state ID lives in a file-scope static here instead of growing the
-// class. See the note at the tail of OvershellSlot.h.
-static OvershellSlotStateID sWiiProfileReturnState = kState_JoinedDefault;
-
-void OvershellSlot::ShowWiiProfileOptions() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x62A);
-    LocalBandUser *pLocalUser = pUser->GetLocalBandUser();
-    MILO_ASSERT(pLocalUser, 0x62D);
-    sWiiProfileReturnState = kState_WiiProfileOptions;
-    pUser->SetOvershellSlotState(kState_WiiProfileOptions);
-    mOvershell->UpdateAll();
-}
-
 void OvershellSlot::ShowWaitWii() {
     BandUser *pUser = GetUser();
     MILO_ASSERT(pUser->IsLocal(), 0x638);
@@ -901,32 +699,6 @@ void OvershellSlot::LeaveWaitWii() {
     MILO_ASSERT(pUser->IsLocal(), 0x640);
     pUser->SetOvershellSlotState(kState_JoinedDefault);
     mOvershell->UpdateAll();
-}
-
-void OvershellSlot::ShowWiiProfileSelector(bool b) {
-    OvershellSlotState *ostate = GetState();
-    OvershellSlotStateID oid = kState_JoinedDefault;
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x64A);
-    if (ostate)
-        oid = ostate->GetStateID();
-    sWiiProfileReturnState = oid;
-    SetWiiProfileListMode(1, b);
-    if (mSwappableProfilesProvider->GetWiiProfileCount(pUser->GetLocalBandUser()) <= 0) {
-        ShowState(kState_WiiProfileListEmpty);
-    } else
-        ShowState(kState_WiiProfileList);
-}
-
-void OvershellSlot::CancelWiiProfileSelector() {
-    ShowState(sWiiProfileReturnState);
-    sWiiProfileReturnState = kState_WiiProfileOptions;
-}
-
-WiiProfile *OvershellSlot::GetUserWiiProfile() {
-    BandUser *pUser = GetUser();
-    MILO_ASSERT(pUser->IsLocal(), 0x669);
-    return TheWiiProfileMgr.GetProfileForPad(pUser->GetLocalBandUser()->GetPadNum());
 }
 
 void OvershellSlot::ToggleWiiSpeak() {
@@ -2115,39 +1887,20 @@ BEGIN_HANDLERS(OvershellSlot)
     HANDLE_ACTION_STATIC(update_profiles_list, UpdateProfilesList())
     HANDLE_EXPR_STATIC(can_change_synapse_option, CanChangeSynapseOption())
 #ifdef HX_NATIVE
-    // Wii-only Handle arms (wiiprofile/wii_speak/invitation/wii_profile_selector).
-    // Retail X360 OvershellSlot::Handle has NONE of these — objdiff proved the whole
-    // block is pure SRC-only inserts (no retail counterpart). Retail's Xbox profile
-    // arms (gamercard/friends/signin) live in a different token set. Gated to HX_NATIVE
-    // so the native engine keeps the Wii dispatch while the retail-match build drops it.
-    HANDLE_ACTION_STATIC(set_wiiprofile_list_mode, SetWiiProfileListMode(_msg->Int(2), false))
-    HANDLE_EXPR_STATIC(get_wiiprofile_list_mode, GetWiiProfileListMode())
-    HANDLE_EXPR_STATIC(get_wiiprofile_last_index, GetWiiProfileLastIndex())
-    HANDLE_EXPR_STATIC(is_wiiprofile_full, IsWiiProfileFull())
-    HANDLE_EXPR_STATIC(is_wiiprofile_delete_queue_full, IsWiiProfileDeleteQueueFull())
-    HANDLE_EXPR_STATIC(get_wiiprofile_list_selected_name, GetWiiProfileListSelectedName())
-    HANDLE_ACTION_STATIC(show_wiiprofile_list, ShowWiiProfileList(_msg->Int(2)))
-    HANDLE_ACTION_STATIC(act_on_user_profile, ActOnUserProfile(_msg->Int(2)))
-    HANDLE_ACTION_STATIC(act_on_user_profile_confirm, ActOnUserProfileConfirm())
-    HANDLE_ACTION_STATIC(show_enter_wiiprofile, ShowEnterWiiProfile())
-    HANDLE_ACTION_STATIC(show_register_wiiprofile, ShowEnterWiiProfile())
-    HANDLE_ACTION_STATIC(show_switch_wiiprofile, ShowEnterWiiProfile())
-    HANDLE_ACTION_STATIC(show_create_wiiprofile, ShowEnterWiiProfile())
-    HANDLE_ACTION_STATIC(show_delete_wiiprofile, ShowEnterWiiProfile())
-    HANDLE_EXPR_STATIC(get_user_wiiprofile, GetUserWiiProfile())
+    // Wii-only Handle arms (wii_speak/wait_wii/invitation). Retail X360
+    // OvershellSlot::Handle has NONE of these -- objdiff proved the whole block is
+    // pure SRC-only inserts, and none of the six handler names is in band.exe.
+    // The Wii-profile arms (set/get_wiiprofile_*, show_*_wiiprofile*,
+    // act_on_user_profile*, *_wii_profile_selector) and the methods behind them
+    // are gone from this TU altogether: none of their 22 names is in band.exe
+    // either (while update_profiles_list and attempt_swap_user_profile are),
+    // and the retail OvershellProfileProvider has no Wii profile-list API.
     HANDLE_ACTION_STATIC(toggle_wii_speak, ToggleWiiSpeak())
-    HANDLE_ACTION_STATIC(show_wiiprofile_confirm, ShowWiiProfileConfirm())
-    HANDLE_ACTION_STATIC(show_wiiprofile_options, ShowWiiProfileOptions())
-    HANDLE_ACTION_STATIC(show_wiiprofile_fail, ShowWiiProfileFail())
-    HANDLE_ACTION_STATIC(show_wiiprofile_fail_busy, ShowWiiProfileFailBusy())
-    HANDLE_ACTION_STATIC(show_wiiprofile_swap_fail, ShowWiiProfileSwapFail())
     HANDLE_ACTION_STATIC(show_wait_wii, ShowWaitWii())
     HANDLE_ACTION_STATIC(leave_wait_wii, LeaveWaitWii())
     HANDLE_ACTION_STATIC(show_choose_invitation, ShowState(kState_ChooseInvitation))
     HANDLE_ACTION_STATIC(show_accept_invitation, ShowState(kState_AcceptInvitation))
     HANDLE_ACTION_STATIC(show_no_invitations, ShowState(kState_NoInvitations))
-    HANDLE_ACTION_STATIC(show_wii_profile_selector, ShowWiiProfileSelector(false))
-    HANDLE_ACTION_STATIC(cancel_wii_profile_selector, CancelWiiProfileSelector())
 #endif
     HANDLE_MESSAGE(RockCentralOpCompleteMsg)
     HANDLE_MESSAGE(UIComponentScrollMsg)
