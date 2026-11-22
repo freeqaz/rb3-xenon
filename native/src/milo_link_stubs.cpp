@@ -78,14 +78,17 @@
 // DATA label, not a function gap — and no TU defines it. It is the heap-overlay
 // cursor: Rnd::OnToggleHeap (:1286-1288) increments it and wraps to -1 past
 // MemNumHeaps(), and Rnd::UpdateHeap (:1379-1387) reads -1 as "show every heap"
-// and any other value as a heap index. Retail's copy lives in .bss, so
-// ZERO-INITIALISED is the faithful state (overlay starts on heap 0), and a
-// plain tentative definition is exactly that — deliberately NOT `= -1`, which
-// would silently start the overlay in a different mode from retail.
+// and any other value as a heap index. The name is not a clean-TU5 address:
+// both retail functions (OnToggleHeap, UpdateHeap) load the cursor from
+// 0x82C6FB90, which is INITIALISED .data (offset 0xB790 into .data, inside its
+// 0x58200 raw bytes) holding 0xFFFFFFFF. OnToggleHeap only increments while
+// the overlay is showing, so retail's first toggle shows every heap and the
+// next selects heap 0; a zero-initialised definition showed only heap 0 first
+// and stayed one heap ahead of retail until the first wrap to -1.
 //
 // Reached only from Rnd::PreInit's overlay wiring in the render target;
 // --gc-sections drops it in rb3-milo.
-int lbl_82F14008;
+int lbl_82F14008 = -1;
 
 // char/Char.h:10 declares `extern float gCharHighlightY` and no TU defines it.
 // Char.cpp:146/168-169 uses -1 as the "nothing highlighted" sentinel (it reads

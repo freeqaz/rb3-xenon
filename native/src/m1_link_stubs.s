@@ -91,19 +91,29 @@ _ZNK14BandMachineMgr23IsSongAllowedToHavePartEi6Symbol:
 TheGameMode:
     .zero 8
 
-// TheProfileMgr (null manager pointer)
+// TheProfileMgr is held BY VALUE (`extern ProfileMgr TheProfileMgr`), not a pointer: retail's is
+// a ProfileMgr object in .bss at 0x82DFD818. 8 bytes let any member read past +8
+// (BandSongMgr.cpp is the consumer in this target) land in the next symbol.
+// Zero-filled, never constructed, as every by-value stub here; sized 0x400,
+// above native sizeof(ProfileMgr) (0x1b0, rb3-app nm, 2026-11-22), since an .s file
+// cannot static_assert it. docs/decomp/NATIVE_STUB_GLOBALS_VS_RETAIL_2026-11-22.md
 .weak TheProfileMgr
 .type TheProfileMgr,@object
-.size TheProfileMgr,8
+.size TheProfileMgr,0x400
 TheProfileMgr:
-    .zero 8
+    .zero 0x400
 
-// TheRockCentral (null manager pointer)
+// TheRockCentral is held BY VALUE (`extern RockCentral TheRockCentral`), not a pointer: retail's is
+// a RockCentral object in .bss at 0x82CC8F60. 8 bytes let any member read past +8
+// (BandSongMgr.cpp is the consumer in this target) land in the next symbol.
+// Zero-filled, never constructed, as every by-value stub here; sized 0x400,
+// above native sizeof(RockCentral) (0x1a8, rb3-app nm, 2026-11-22), since an .s file
+// cannot static_assert it. docs/decomp/NATIVE_STUB_GLOBALS_VS_RETAIL_2026-11-22.md
 .weak TheRockCentral
 .type TheRockCentral,@object
-.size TheRockCentral,8
+.size TheRockCentral,0x400
 TheRockCentral:
-    .zero 8
+    .zero 0x400
 
 // TheSaveLoadMgr (null manager pointer)
 .weak TheSaveLoadMgr
