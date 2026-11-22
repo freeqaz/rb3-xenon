@@ -67,7 +67,7 @@ alignas(8) unsigned char gRb3AppTheAuditionMgr[8] __asm__("TheAuditionMgr"); // 
 alignas(8) unsigned char gRb3AppTheSongDB[8] __asm__("TheSongDB"); // ring: a1-absent-body
 alignas(8) unsigned char gRb3AppTheSessionMgr[8] __asm__("TheSessionMgr"); // ring: online-netsession
 alignas(8) unsigned char gRb3AppTheTour[8] __asm__("TheTour"); // ring: a1-absent-body
-alignas(8) unsigned char gRb3AppTheNameGenerator[8] __asm__("TheNameGenerator"); // ring: a6-failing-tu
+// TheNameGenerator: real since lane A5 (NameGenerator.cpp is compiled into rb3-app).
 // NetMessenger.cpp is absent from the tree (A3): retail TheNetMessenger is a
 // static-init object holding only mLastSender; NetSession's send/deliver paths
 // name it and are online-only (their entry points abort, ring online-net).

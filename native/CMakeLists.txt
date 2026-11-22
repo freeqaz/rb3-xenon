@@ -2284,6 +2284,12 @@ set(RB3_APP_SOURCES
     # InqRequiredScoreTypes rows were a1-absent-body stubs). Retail ctor
     # 0x8266AED0 = Accomplishment ctor, empty condition list, Configure.
     ${REPO_ROOT}/src/band3/meta_band/AccomplishmentConditional.cpp
+    # A5: MetaPanel's ctor then builds TheNameGenerator (retail ctor 0x82643A60:
+    # hash_map ctor, TheNameGenerator = this, SetName, ConfigureNameData). The
+    # TU failed natively only on NameGenerator.h's STLport-only hash<Symbol>;
+    # rb3_hash_symbol_native.h (force-included, flags below) supplies the
+    # HX_NATIVE arm FixedSizeSaveableStream.h already carries.
+    ${REPO_ROOT}/src/band3/meta_band/NameGenerator.cpp
     # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
     # constructs TheBandUI at static init; natively TheUI was the engine's weak
     # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.
@@ -2569,6 +2575,11 @@ if(RB3X_BUILD_ENGINE)
     set_source_files_properties(${REPO_ROOT}/src/network/net/Net.cpp
         PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC"
         COMPILE_OPTIONS "-include;${CMAKE_SOURCE_DIR}/src/rb3_app_net_shim.h")
+    # A5: NameGenerator.cpp: X360's extra_cflags (RB3_HANDLE_LOCAL_STATIC) plus
+    # the native hash<Symbol> arm, defined before NameGenerator.h's STLport one.
+    set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/NameGenerator.cpp
+        PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC"
+        COMPILE_OPTIONS "-include;${CMAKE_SOURCE_DIR}/src/rb3_hash_symbol_native.h")
     # A2: the retail tables and registrars; rb3_app_gates.cpp calls them only
     # with a title update mounted (RB3_TITLE_UPDATE_DIR).
     list(APPEND _rb3_app_all ${REPO_ROOT}/src/ChecksumData_xbox.cpp)
