@@ -5629,7 +5629,7 @@ int main(int argc, char **argv) {
     // pass, and it tells by the Rnd draw mode (rndshape::kDrawModeReflection).
     // RB3's is 7: retail WorldReflection::DrawShowing does `li r10,7` and
     // `stw r10,0xfc(r11)` (Rnd +0xfc, the draw mode) at band.exe 0x824E8994,
-    // and src/system/world/Reflection.cpp sets (Rnd::Mode)7. The DC3 shape
+    // and src/system/world/Reflection.cpp sets Rnd::kDrawReflection (7). The DC3 shape
     // used to answer 8 (DC3's number) for rb3-xenon too, so the mirrored pass
     // never got its cull flip. Always on, and a failure exits 1 (the check
     // costs three state reads); RB3_REFLECTION_GATE=advisory reports it and
@@ -5637,6 +5637,8 @@ int main(int argc, char **argv) {
     static_assert(rndshape::kDrawModeReflection == 7,
                   "RB3's WorldReflection draws its mirrored pass in Rnd draw mode 7 "
                   "(band.exe 0x824E8994); the engine's DC3 shape must answer 7 here");
+    static_assert(rndshape::kDrawModeReflection == Rnd::kDrawReflection,
+                  "the engine's reflection draw mode and rndobj's Rnd::kDrawReflection must agree");
     {
         const Rnd::Mode oldMode = TheRnd.DrawMode();
         TheRnd.SetDrawMode((Rnd::Mode)7);
