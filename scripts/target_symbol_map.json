@@ -4781,7 +4781,7 @@
  "0x82273410": "?PhysicalUsage@@YAHXZ",
  "0x82273420": "?PhysicalAlloc@@YAPAXH@Z",
  "0x822734b8": "??1PhysMemTypeTracker@@QAA@XZ",
- "0x822734d8": "??2Node@?$ObjPtrList@VRndGroup@@VObjectDir@@@@SAPAXI@Z",
+ "0x822734d8": null,
  "0x822735b0": "XMemAlloc",
  "0x82273680": "??0PhysMemTypeTracker@@QAA@VSymbol@@@Z",
  "0x822736b8": "??1RndHighlightable@@UAA@XZ",
