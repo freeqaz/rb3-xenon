@@ -78,21 +78,21 @@ public:
     // Rnd::Mode).  The rename is FORCED to come with the accessor rename
     // below: a member function `DrawMode()` cannot coexist with a nested
     // type of the same name.
-    // ⚠ These values are the native renderer's, not RB3 retail's. In retail the
-    // velocity pass is mode 5: DxMesh::DrawShowing (0x82738E38) loads
-    // mDrawMode (+0xfc) and takes the velocity-buffer path on `cmpwi 5`, and
-    // RndShader::SelectConfig (0x824A5740) picks the shadowmap shader on 1.
-    // The match build therefore compares raw retail values at each site
-    // (Shader.cpp, VelocityBuffer.cpp, Crowd.cpp, rnddx9/Mesh.cpp) instead of
-    // these names.
+    // RB3 retail's values, by the pass that stores each into mDrawMode (+0xfc):
+    // RndShadowMap 1 (0x82464388), NgLight's projected-shadow pass 3 (0x82B8A834),
+    // RndVelocityBuffer::Draw 5 (0x82B85820), RndSoftParticleBuffer::DoPost 6
+    // (0x824A8C7C), WorldReflection::DrawShowing 7 (0x824E8994); 2 and 4 are only
+    // compared (Character::DrawLod 0x8236D460). DC3 inserted a mode and shifted
+    // 1..7 to 2..8; table and sources: native/src/rnd_mode_phase.cpp.
     enum Mode {
         kDrawNormal = 0,
         kDrawShadowDepth = 1,
         kDrawExtrude = 2,
         kDrawShadowColor = 3,
         kDrawOcclusion = 4,
-        kDrawOcclusionDepth = 5,
-        kDrawVelocity = 6
+        kDrawVelocity = 5,
+        kDrawSoftParticle = 6,
+        kDrawReflection = 7
     };
 
     struct PointTest {

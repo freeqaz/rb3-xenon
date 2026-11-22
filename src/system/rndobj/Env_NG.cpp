@@ -379,7 +379,7 @@ void NgEnviron::Select(const Vector3 *pos) {
     mProjectedBlend = (RndLight::ProjectedBlend)0;
 
     Rnd::Mode mode = TheRnd.DrawMode();
-    if (mode == 4 || mode == 2 || mode == 6 || mode == 3) {
+    if (mode == Rnd::kDrawShadowColor || mode == Rnd::kDrawShadowDepth || mode == Rnd::kDrawVelocity || mode == Rnd::kDrawExtrude) {
         RndEnviron::Select(pos);
         NgMat::SetCurrent(0);
 #ifdef HX_NATIVE
