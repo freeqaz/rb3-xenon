@@ -91,7 +91,35 @@ outside this lane's one-sided scope and is needed by the native ObjRef design. S
 
 ## Measurements
 
-MEASUREMENTS_PLACEHOLDER
+**Prediction:** every edit either removes an `#ifndef HX_NATIVE`/`#endif` pair around code
+X360 already compiles, or turns it into `#if !defined(HX_NATIVE) || defined(RB3_NATIVE_APP)`
+(true on X360). The Loader statements keep their order. So the X360 token stream is unchanged
+apart from comments, and the A/B should read Δ0 on every ruler.
+
+- **X360 A/B** (`tools/ab_measure.py --patch` of the two `src/` commits on main `7699130a4`,
+  ruler `name_check`, objdiff `sha256:ec3badc0f33323e9`). Leg A: matched 55,268,
+  masked_equal 25,360, honest 29,908, code% 59.665310. Leg B: the same. **Δmatched +0,
+  Δhonest +0, Δcode +0 B, Δfuzzy +0.000000 pp**. Units at 100%: 635 → 635. The `none` control
+  also reads +0. Leg B recompiled 10 TUs and settled in 2 iterations. Prediction held.
+- **Native link**: a full cold build of `~/tmp/wt-skipped-nb` (5,073 edges, every target
+  including rb3-app) gave rc=0, and so did the incremental rebuild after rebasing onto
+  `7699130a4` (74 edges). The compile DB shows `RB3_NATIVE_APP` on rb3-app's `Player.cpp`
+  and on none of the eight other targets that compile it.
+- **Native runs** (built tree, through `coord/no610m.sh`, the same arguments
+  `tools/native_health.sh` passes): `rb3-save` `=== ALL ROUND-TRIPS OK (0 check failures)`
+  (exercises FixedSizeSaveable and the Loader change); `rb3-vocal2`, `rb3-harmony`,
+  `rb3-score4` `Done.`; `rb3-score2` `RESULT: OK`; `rb3-crowd` `=== M12 complete`;
+  `rb3-milo` and `rb3-song` `RESULT: ALL GATES PASSED`. All rc=0. `rb3-render` reads
+  `RESULT: NO GPU` (rc=2), expected under no610m. **rb3-app was not run**: it is a GPU
+  target here. Its new code paths are mostly reached only during gameplay (Player::Hit,
+  tambourine, OnGameOver), which the boot run does not reach. The exceptions are the
+  BandUI/ProfileMgr/SaveLoadStatusPanel subscriptions, which run on the boot path, so the
+  coordinator's rb3-app gate is the check for those.
+- No new file under `native/src/`, so `tools/native_stub_census.py` needed no entry.
+  `tools/native_health.sh --selftest` was not run in this lane (GPU targets cannot run here).
+
+Not done on purpose: no change to any two-sided arm. No edit to Draw.cpp, Text.cpp or
+Spotlight*.cpp. No online-only send path enabled (send_update_energy, Synchronizable).
 
 ## Full table
 
