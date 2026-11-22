@@ -1,4 +1,5 @@
 #include "obj/DataFunc.h"
+#include "utl/CrtCompat.h"
 #include "math/Decibels.h"
 #include "math/Rand.h"
 #include "math/Utl.h"
@@ -531,7 +532,7 @@ DEF_DATA_FUNC(DataAsc) {
 DEF_DATA_FUNC(DataInt) {
     const DataNode &n = array->Evaluate(1);
     if (n.Type() == kDataSymbol)
-        return atoi(n.UncheckedStr());
+        return HX_CRT_ATOI(n.UncheckedStr());
     else if (n.Type() == kDataObject || n.Type() == kDataInt)
         return n.UncheckedInt();
     else

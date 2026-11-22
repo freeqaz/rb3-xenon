@@ -462,19 +462,22 @@ const char *FileRelativePathBuf(const char *iRoot, const char *iFilepath, char *
         std::list<char *> rootToks;
         std::list<char *> fpToks;
 
-        char *rootTok = strtok(rootBuf, "/");
+        // Same per-thread-cursor rule as FileMakePath (FILE_PATH_TOK above):
+        // each loop restarts the cursor with a non-null first argument.
+        FILE_PATH_TOK_STATE;
+        char *rootTok = FILE_PATH_TOK(rootBuf);
         if (rootTok != nullptr) {
             do {
                 rootToks.push_back(rootTok);
-                rootTok = strtok(nullptr, "/");
+                rootTok = FILE_PATH_TOK(nullptr);
             } while (rootTok != nullptr);
         }
 
-        char *fpTok = strtok(fpBuf, "/");
+        char *fpTok = FILE_PATH_TOK(fpBuf);
         if (fpTok != nullptr) {
             do {
                 fpToks.push_back(fpTok);
-                fpTok = strtok(nullptr, "/");
+                fpTok = FILE_PATH_TOK(nullptr);
             } while (fpTok != nullptr);
         }
 
@@ -544,19 +547,22 @@ const char *FileRelativePath(const char *iRoot, const char *iFilepath) {
         std::list<char *> rootToks;
         std::list<char *> fpToks;
 
-        char *rootTok = strtok(rootBuf, "/");
+        // Same per-thread-cursor rule as FileMakePath (FILE_PATH_TOK above):
+        // each loop restarts the cursor with a non-null first argument.
+        FILE_PATH_TOK_STATE;
+        char *rootTok = FILE_PATH_TOK(rootBuf);
         if (rootTok != nullptr) {
             do {
                 rootToks.push_back(rootTok);
-                rootTok = strtok(nullptr, "/");
+                rootTok = FILE_PATH_TOK(nullptr);
             } while (rootTok != nullptr);
         }
 
-        char *fpTok = strtok(fpBuf, "/");
+        char *fpTok = FILE_PATH_TOK(fpBuf);
         if (fpTok != nullptr) {
             do {
                 fpToks.push_back(fpTok);
-                fpTok = strtok(nullptr, "/");
+                fpTok = FILE_PATH_TOK(nullptr);
             } while (fpTok != nullptr);
         }
 

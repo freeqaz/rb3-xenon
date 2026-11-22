@@ -67,11 +67,15 @@ static DataArray *ResolveContextPath(const char *path) {
     strncpy(buf, path, 255);
     buf[255] = '\0';
 
-    char *token = strtok(buf, ".");
+    // strtok_r, not strtok: glibc's strtok keeps one cursor for the whole
+    // process, and DataArray accessors run on worker threads too
+    // (docs/decomp/NATIVE_LP64_CRT_TRIAGE_2026-11-22.md).
+    char *cursor = nullptr;
+    char *token = strtok_r(buf, ".", &cursor);
     while (token && node) {
         // Use FindArray with fail=false to avoid crashing on missing keys
         node = node->FindArray(token, false);
-        token = strtok(nullptr, ".");
+        token = strtok_r(nullptr, ".", &cursor);
     }
 
     return node;
@@ -459,7 +463,16 @@ int NodeCmp(const void *a, const void *b) {
 void DataArray::SortNodes() {
     if (mSize <= 0)
         return;
+    // The element size is a literal 8, sizeof(DataNode) on X360. Natively a
+    // DataNode is 16 bytes (an 8-byte value union, then the type), so 8 makes
+    // qsort sort half-nodes: NodeCmp reads the next value as the type, and
+    // values and types are swapped independently, mis-pairing pointers with
+    // int types (docs/decomp/NATIVE_LP64_CRT_TRIAGE_2026-11-22.md).
+#ifdef HX_NATIVE
+    qsort(mNodes, mSize, sizeof(DataNode), NodeCmp);
+#else
     qsort(mNodes, mSize, 8, NodeCmp);
+#endif
 }
 
 void DataArrayGlitchCB(float f, void *v) {

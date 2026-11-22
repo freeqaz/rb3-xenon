@@ -2,6 +2,7 @@
 #include "os/Debug.h"
 #include "synth/Stream.h"
 #include <stdlib.h>
+#include "utl/CrtCompat.h"
 
 class PitchMucker {
 public:
@@ -23,7 +24,9 @@ public:
             if (0.99800289f < curSpeed && curSpeed < 1.002001f) { // retail 0x3F7F7D1E
                 sSong->SetSpeed(targetPitch);
             }
-            mPeriod = rand() * 60 / 32767 + 60;
+            // HX_CRT_RAND: retail's rand() is 15-bit (RAND_MAX 0x7FFF), so this
+            // is a period of 60..120 frames; glibc's 31-bit rand() * 60 overflows.
+            mPeriod = HX_CRT_RAND() * 60 / 32767 + 60;
             mFrames = 0;
         }
     }

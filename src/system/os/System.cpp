@@ -106,10 +106,27 @@ int Hx_snprintf(char *c, unsigned int ui, char const *cc, ...) {
     std::va_list args;
     va_start(args, cc);
     int ret = vsnprintf(c, ui, cc, args);
+#ifdef HX_NATIVE
+    // MSVC's vsnprintf (the CRT retail links, pre-C99) returns -1 when the
+    // output does not fit; glibc's returns the length it WOULD have written,
+    // which can exceed ui. Callers (FormatString's `mBufSize -= n`,
+    // SuperFormatString's `tempFmtPos += n`) advance by the result, so the
+    // glibc value walks them past the end of their buffers. Report truncation
+    // the MSVC way. Exact fit (ret == ui) differs by one byte: MSVC writes all
+    // ui characters with no terminator, glibc writes ui-1 and a terminator;
+    // the native arm keeps the terminator and reports -1
+    // (docs/decomp/NATIVE_LP64_CRT_TRIAGE_2026-11-22.md).
+    if (ret < 0 || (unsigned int)ret >= ui) {
+        if (ui != 0)
+            c[ui - 1] = '\0';
+        return -1;
+    }
+#else
     if (ret < 0) {
         c[ui - 1] = '\0';
         return -1;
     }
+#endif
     return ret;
 }
 

@@ -1,4 +1,5 @@
 #include "obj/DataFile.h"
+#include "utl/CrtCompat.h"
 
 #include <map>
 #include "DataFlex.h"
@@ -346,7 +347,7 @@ bool ParseNode() {
         PushBack(DataNode(kDataUnhandled, 0));
         return true;
     } else if (token == kDataTokenInt) {
-        PushBack(atoi(yytext));
+        PushBack(HX_CRT_ATOI(yytext));
         return true;
     } else if (token == kDataTokenHex) {
         int i = 0;

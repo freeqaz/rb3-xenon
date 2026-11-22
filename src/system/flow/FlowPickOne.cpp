@@ -1,4 +1,5 @@
 #include "flow/FlowPickOne.h"
+#include "utl/CrtCompat.h"
 #include "flow/FlowNode.h"
 #include "flow/DrivenPropertyEntry.h"
 #include "math/Rand.h"
@@ -45,7 +46,7 @@ bool FlowPickOne::Activate() {
     PushDrivenProperties();
 
     if (mChance != (int)1.0f) {
-        unsigned int r = rand() % 100;
+        unsigned int r = HX_CRT_RAND() % 100;
         if ((float)(int)r > mChance * 100.0f) {
             return false;
         }
