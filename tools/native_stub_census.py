@@ -48,7 +48,10 @@ STUB_RE = re.compile(
     # W16-UR: W16-TR's XboxEnumeration/XboxPurchaser aborting stubs and W16-TS's phase link edge.
     r"w16tr_link_stubs\.cpp|w16ts_link_support\.cpp|"
     # A0: rb3-app's own stubs, each tagged `// ring: <tag>` (read by ring_map below).
-    r"rb3_app_link_stubs\.cpp|rb3_app_link_stubs\.s)\.o$"
+    r"rb3_app_link_stubs\.cpp|rb3_app_link_stubs\.s|"
+    # A1: rb3-app's real native substitutes for src/ globals and the Quazal data
+    # slice; each definition tagged `// ring: native-real` (or its online ring).
+    r"rb3_app_native_glue\.cpp|rb3_app_quazal_native\.cpp)\.o$"
 )
 
 # native/src objects that are linked but are NOT stubs: drivers and runtime
@@ -61,7 +64,9 @@ NON_STUB_RE = re.compile(
     r"/src/(main_[a-z0-9]+\.cpp|bandtrack_phase\.cpp|w16sh_phase\.cpp|"
     r"w16tf_phase\.cpp|w16tj_phase\.cpp|score_engine\.cpp|cc5_stub_probe\.c|"
     # W16-UR: the gate phases W16-TM .. W16-UJ added to rb3-render (drivers, not stubs).
-    r"w16t[mrswy]_phase\.cpp|w16u[bfj]_phase\.cpp)\.o$"
+    r"w16t[mrswy]_phase\.cpp|w16u[bfj]_phase\.cpp|"
+    # A1: rb3-app's boot-gate --wrap shims (call the real step, then print).
+    r"rb3_app_gates\.cpp)\.o$"
 )
 NATIVE_SRC_RE = re.compile(r"CMakeFiles/[^/]+\.dir/src/[^/]+\.o$")
 
