@@ -128,7 +128,8 @@ waits for input the hack does not send, the same place the first boot stops.
 - **`tools/native_health.sh --selftest`: not run.** The branch is not being landed.
   - `xdk_shims.cpp` is linked by every native target. The new `XUserReadGamerPicture` definition
     is unreferenced outside rb3-app, and no other target or stub file defines it.
-  - All native targets were built after the rebase; the result is in the lane report.
+  - After the rebase, all 19 native targets build and link (`cmake --build native/build`, rc 0,
+    19 `Linking CXX executable` lines). They were built, not run; only rb3-app was run.
 - **Gamer picture bytes:** the console model has no tile, so the picture is transparent. A real
   tile would need dashboard data, which is not in the game data.
 - **Not modelled:** other D3D texture shapes, sub-rect locks, and cross-thread use. No rb3-app
