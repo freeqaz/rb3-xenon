@@ -28,6 +28,7 @@
 #include "net/WiiFriendMgr.h"
 #include "net_band/RockCentral.h"
 #include "obj/Msg.h"
+#include "Platform/String.h"
 
 extern "C" [[noreturn]] void rb3_app_stub_reached(const char *ring, const char *fn) { // ring: reporter
     fprintf(stderr, "rb3-app: UNREACHED stub [ring %s] %s\n", ring, fn);
@@ -79,7 +80,12 @@ alignas(8) unsigned char gRb3AppTheXboxSynth[8] __asm__("TheXboxSynth"); // ring
 alignas(8) unsigned char gRb3AppTheSyncStore[8] __asm__("TheSyncStore"); // ring: online-net
 alignas(8) unsigned char gRb3AppTheHAQMgr[8] __asm__("TheHAQMgr"); // ring: a1-absent-body
 alignas(8) unsigned char gRb3AppTheGestureMgr[8] __asm__("TheGestureMgr"); // ring: a1-absent-body
-alignas(8) unsigned char gRb3AppTheServer[8] __asm__("TheServer"); // ring: online-net
+// gLSPLoginFilter (retail .data 0x82E103F4): the Quazal XboxLSP login filter
+// string Server.cpp's SetLSPLoginFilter assigns (XboxServer::Init, not run
+// natively). Quazal's XboxLSP code that defines and reads it is not in src/.
+alignas(Quazal::String) unsigned char gRb3AppLSPLoginFilter[sizeof(Quazal::String)] __asm__("gLSPLoginFilter"); // ring: online-quazal
+// TheServer: real since lane rbx-net (a reference to Server.cpp's gXboxServer,
+// defined in rb3_app_native_glue.cpp).
 
 // ---- plain values the retail definition initialises to zero/false ------------
 bool gRb3AppShowAssetName __asm__("gShowAssetName") = false; // ring: xbox-store

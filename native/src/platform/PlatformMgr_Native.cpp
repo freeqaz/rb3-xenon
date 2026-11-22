@@ -3,6 +3,7 @@
 // Non-platform methods are in PlatformMgr.cpp (shared)
 
 #include "os/PlatformMgr.h"
+#include "obj/Dir.h"
 #include "os/Debug.h"
 #include "utl/JobMgr.h"
 
@@ -33,7 +34,14 @@ int PlatformMgr::ThreadStart() { return -1; }
 void PlatformMgr::ThreadDone(int) {}
 
 // Platform-specific methods (Xbox stubs)
-void PlatformMgr::Init() {}
+// Retail 0x8251D378 (PlatformMgr_Xbox.cpp) starts with
+// SetName("platform_mgr", ObjectDir::Main()); that is the part kept here, so
+// the UI scripts' `{platform_mgr ...}` calls find the object. The rest is
+// XDK-only and skipped: the utility-drive probe (mHasHardDrive), WinSock and
+// XOnlineStartup, the XNotify listener, UpdateSigninState (a no-op below) and
+// the RBN member check (a Live job). Only rb3-app calls Init (SystemInit,
+// RB3_NATIVE_SYSTEM_NET_MGRS).
+void PlatformMgr::Init() { SetName("platform_mgr", ObjectDir::Main()); }
 void PlatformMgr::PreInit() {}
 void PlatformMgr::RegionInit() { SetRegion(kRegionNA); }
 void PlatformMgr::Poll() {}

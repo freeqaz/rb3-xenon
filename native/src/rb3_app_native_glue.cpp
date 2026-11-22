@@ -355,18 +355,46 @@ void RecursePatternInternal( // ring: native-real
 // and `mSearcher = SessionSearcher::New()`. The bodies are the compiled retail
 // TUs (NetSession_Xbox.cpp, SessionSearcher_Xbox.cpp, SessionSearcher.cpp).
 #include "net/Net.h"
+#include "net/Server_Xbox.h"
 #include "obj/Dir.h"
-extern "C" void rb3_app_net_init_offline(void *self, void **session, void **searcher) { // ring: native-real
+#include "os/PlatformMgr.h"
+// rbx-net: TheServer is a reference to the static XboxServer (Server.cpp,
+// compiled into rb3-app). Retail .data 0x82C6EB50 holds 0x82CBFD14, the object
+// gXboxServer's dynamic initializer 0x82C3EC40 constructs; Net::Init reads it
+// (`lwz r3, -0x14b0(r29)`, 0x823E06E4). No src/ TU defines the reference, so
+// rb3-app defines it here.
+extern XboxServer gXboxServer;
+Server &TheServer = gXboxServer; // ring: native-real
+extern "C" void rb3_app_net_init_offline(
+    void *self, void **session, void **searcher, void **server
+) { // ring: native-real
     Net *net = static_cast<Net *>(self);
     net->SetName("net", ObjectDir::Main());
     net->mSession = NetSession::New();
     net->mSearcher = SessionSearcher::New();
+    // rbx-net: retail's `TheServer.Init(); mServer = &TheServer;` (0x823E06E0-
+    // 0x823E06FC), offline. TheServer.Init() is XboxServer::Init (0x823EC980);
+    // of it this runs the first statement, Server::Init (0x823F5DD8: SetName
+    // "server", the net/server config, mPlayerIDs zeroed) and the last, the
+    // signin_changed sink on ThePlatformMgr. The Quazal LSP back-end setup in
+    // between (SetAccessKey, the login filter, `new LSPBackEndServices`) has
+    // no native body, so mBackEnd stays null. mLoginState stays 0 (the ctor's),
+    // so IsConnected() is false, as retail with no LIVE connection, and
+    // XboxServer::Poll touches nothing (no call contexts, not connected).
+    TheServer.Server::Init();
+    static Symbol signin_changed("signin_changed");
+    ThePlatformMgr.AddSink(&TheServer, signin_changed);
+    net->mServer = &TheServer;
     *session = net->mSession;
     *searcher = net->mSearcher;
+    *server = net->mServer;
 }
 // A7: the offline subset of Net::Poll (retail 0x823E03A8): mSearcher->Poll()
-// only. Why the other four are skipped: the gate in rb3_app_gates.cpp.
+// and, since rbx-net, mServer->Poll() (XboxServer::Poll, retail 0x823ED490),
+// in retail's order. Why the other three are skipped: the gate in
+// rb3_app_gates.cpp.
 extern "C" void rb3_app_net_poll_offline(void *self) { // ring: native-real
     Net *net = static_cast<Net *>(self);
     net->mSearcher->Poll();
+    net->mServer->Poll();
 }
