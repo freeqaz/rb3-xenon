@@ -311,16 +311,17 @@ Loader *LoadMgr::ForceGetLoader(const FilePath &fp) {
     }
 }
 
-#ifdef HX_NATIVE
-void LoadMgr::PollFrontLoader() {
-    if (!mLoading.empty()) {
-        mLoading.front()->PollLoading();
-    }
-}
-#else
 void LoadMgr::PollFrontLoader() {
     // Retail polls the front loader on its own heap and at its own position; it
-    // does no glitch reporting or load timing here.
+    // does no glitch reporting or load timing here. The position matters to
+    // nested loads: ObjDirPtr::LoadFile reads GetLoaderPos() to keep a stay-back
+    // loader's children stay-back.
+#ifdef HX_NATIVE
+    // Native-only: tolerate an empty queue (PollUntilLoaded can reach here
+    // before its loader is queued); retail assumes a front loader.
+    if (mLoading.empty())
+        return;
+#endif
     Loader *front = mLoading.front();
     LoaderPos savedPos = mLoaderPos;
     mLoaderPos = front->mPos;
@@ -330,7 +331,6 @@ void LoadMgr::PollFrontLoader() {
     }
     mLoaderPos = savedPos;
 }
-#endif
 
 void LoadMgr::Poll() {
     if (mPeriod > 0) {

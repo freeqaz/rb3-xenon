@@ -226,28 +226,9 @@ BinStream &operator>>(BinStream &bs, DateTime &dt) {
 }
 
 void DateTime::ToDateString(String &str) const {
-#ifdef HX_NATIVE
-    switch (GetDateFormatting()) {
-    case kMDY:
-        str += MakeString("%02d/%02d/%02d", Month(), mDay, Year() % 100);
-        break;
-    case kDMY:
-        str += MakeString("%02d/%02d/%02d", mDay, Month(), Year() % 100);
-        break;
-    case kYMD:
-        str += MakeString("%02d/%02d/%02d", Year() % 100, Month(), mDay);
-        break;
-    case kISO:
-        str += MakeString("%04d/%02d/%02d", Year(), Month(), mDay);
-        break;
-    default:
-        break;
-    }
-#else
     // Retail: month/day, then the four-digit year, whatever the date format.
     ToMiniDateString(str);
     str += MakeString("/%04d", Year());
-#endif
 }
 
 void DateTime::ToString(String &str) const {

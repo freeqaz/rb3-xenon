@@ -950,14 +950,6 @@ void StandardStream::setJumpSamplesFromMs(float fromMs, float toMs) {
     if (kStreamEndMs != fromMs) {
         mJumpFromSamples = MsToSamp(fromMs);
     }
-#ifdef HX_NATIVE
-    if (toMs != 0.0f) {
-        mJumpToSamples = MsToSamp(toMs);
-        if (SampToMs(mJumpToSamples) < toMs) {
-            mJumpToSamples++;
-        }
-    }
-#else
     // RB3 retail: no round-up of the jump-to sample, and the
     // two stream-length warnings (their String temp survives the strip).
     if (toMs != 0.0f) {
@@ -981,7 +973,6 @@ void StandardStream::setJumpSamplesFromMs(float fromMs, float toMs) {
             );
         }
     }
-#endif
 }
 
 bool StandardStream::IsPastStreamJumpPointOfNoReturn() {
