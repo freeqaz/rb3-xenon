@@ -25,7 +25,8 @@ from C++ source. Title ID `45410914`, target `orig/45410914/default.xex` (not co
   `orig/45410914/rb3dx-archive/`. ⚠ `orig/45410914/default_tu5.xex` holds **Deluxe** bytes
   despite its name and is the file the Ghidra program `default_tu5.xex-c5a170` was imported
   from: leave it in place (moving it imports a duplicate program). That program is wrong only
-  in 53 words in 10 groups at the same VAs, usable everywhere else. A raw address in a doc dated
+  in 53 words in 10 groups at the same VAs; since 2026-11-22 the tools default to the clean
+  program `default.xex-d56e7f` instead (see Ghidra MCP below). A raw address in a doc dated
   before 2026-07-15 is a **TU0** address unless the doc labels it TU5 (the 07-07..07-14
   `docs/plans/*tu5*` migration docs mix the two); check it against `band.exe` first.
   Record: `docs/decomp/W16PT_CLEAN_TU5_RETARGET_2026-10-06.md`.
@@ -370,7 +371,13 @@ cmake --build build
   top-level `RB3Xenon.gpr` is stale and `RB3Xenon/RB3Xenon.gpr` an empty shell; Xbox 360 Ghidra fork 12.3_DEV since 2026-10-02,
   `docs/plans/ghidra-install-swap-2026-10-02.md`). pyghidra caches decompiles in the repo-root
   `cache.db` keyed by binary hash (`--reinit` does not clear it); move it aside after any
-  Ghidra change. BinDiff at `/usr/bin/bindiff`, one BinExport copy per Ghidra version only.
+  Ghidra change. The project holds three programs: `default.xex-d56e7f` (clean TU5, the
+  default; override with `GHIDRA_PROGRAM`), the Deluxe `default_tu5.xex-c5a170` and TU0
+  `default.xex-35adb6`. The default carries the map's function names, vtable/RTTI labels,
+  prototypes and compiler class layouts as of its last sync: `tools/ghidra/ghidra-status.py`
+  prints a `Sync:` line and flags STALE, and `tools/ghidra/ghidra_sync.sh --swap` (from the
+  main checkout; about a minute of service downtime) re-applies them after map or header
+  changes. Record: `docs/plans/ghidra-data-sync-2026-11-22.md`. BinDiff at `/usr/bin/bindiff`, one BinExport copy per Ghidra version only.
 - **Skills** (`.claude/skills/`): `recon`, `compare-asm`, `stack-layout`, `vtable`,
   `data-diff`, `struct-info`, `dc3-pair` (engine oracle), `rb3wii-pair` (game oracle),
   `ab-measure`, `progress`, `batch-check`. Dated campaign workflows (bodyport/grind/permuter

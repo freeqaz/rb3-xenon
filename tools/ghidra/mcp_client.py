@@ -26,6 +26,13 @@ MCP_URL = "http://127.0.0.1:8002/mcp"
 SESSION_CACHE_FILE = Path("/tmp/claude/ghidra_mcp_session_rb3xenon.txt")
 # Binary name is dynamically resolved - pyghidra-mcp uses SHA1 hash suffix
 DEFAULT_BINARY = None  # Will be resolved via list_binaries()
+# The program a tool talks to when it names none. The live project holds three programs:
+#   default.xex-d56e7f      CLEAN retail TU5 (the decomp target, orig/45410914/default.xex) <- default
+#   default_tu5.xex-c5a170  RB3 Deluxe TU5 (53 words differ, same addresses), kept for comparison
+#   default.xex-35adb6      retail TU0 (pre-2026-07-15 target; TU0 addresses)
+# The service lists names with a leading "/". Override with GHIDRA_PROGRAM=<name>.
+TARGET_PROGRAM = os.environ.get("GHIDRA_PROGRAM", "default.xex-d56e7f")
+FALLBACK_PROGRAMS = ("default.xex-d56e7f", "default_tu5.xex-c5a170")
 
 
 class MCPError(Exception):
@@ -48,7 +55,7 @@ class MCPClient:
         """Get binary name, resolving dynamically if needed."""
         if not self._binary_resolved:
             self._resolve_binary()
-        return self._binary or "default.xex-997567"  # Fallback
+        return self._binary or TARGET_PROGRAM
 
     def _resolve_binary(self) -> None:
         """Resolve binary name by querying list_binaries."""
@@ -74,24 +81,30 @@ class MCPClient:
             else:
                 binary_list = []
 
+            names = []
             for binary in binary_list:
                 name = binary.get("name", "") if isinstance(binary, dict) else str(binary)
-                if name.startswith("default.xex"):
-                    self._binary = name.lstrip("/")
+                names.append(name.lstrip("/"))
+            # Exact names only: a prefix match on "default.xex" also hits the TU0 program, and
+            # list order is not stable. Never fall back silently to whatever is listed first.
+            for want in (TARGET_PROGRAM,) + FALLBACK_PROGRAMS:
+                if want in names:
+                    if want != TARGET_PROGRAM:
+                        print("Warning: Ghidra program %s not in project; using %s" % (TARGET_PROGRAM, want),
+                              file=sys.stderr)
+                    self._binary = want
                     self._binary_resolved = True
                     return
-
-            # If no match found, use first available binary
-            if binary_list:
-                first = binary_list[0]
-                name = first.get("name", "") if isinstance(first, dict) else str(first)
-                self._binary = name.lstrip("/")
+            if names:
+                print("Warning: none of %s in project %s; using %s"
+                      % ((TARGET_PROGRAM,) + FALLBACK_PROGRAMS, names, names[0]), file=sys.stderr)
+                self._binary = names[0]
 
             self._binary_resolved = True
 
         except MCPError:
             # Fall back to default
-            self._binary = "default.xex-997567"
+            self._binary = TARGET_PROGRAM
             self._binary_resolved = True
 
     def _next_id(self) -> int:

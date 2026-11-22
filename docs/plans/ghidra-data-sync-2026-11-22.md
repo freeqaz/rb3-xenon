@@ -1,0 +1,140 @@
+# Bring the RB3 Ghidra program up to what the repo knows today (2026-11-22)
+
+Owner: one Opus lane (`ghidra-sync`). Commit this file on the lane branch as
+`docs/plans/ghidra-data-sync-2026-11-22.md` and keep its status table current.
+
+## Why
+
+A decompile through `tools/ghidra/pcode_inspect.py` today prints `Function_82767BA0(...)` for
+`MsgSource::AddSink` and `*(undefined4 *)(param_1 + 0x34)` for a named member. The repo already knows
+both; Ghidra was last given names on 2026-07-18 and has never been given types.
+
+Measured on main `b285c0347`, before any work:
+
+| fact | value | how |
+|---|---|---|
+| rows in `scripts/target_symbol_map.json` | 36,394 | `len(json)` |
+| names in the Ghidra bank `tools/ghidra/rb3_symbol_map.full.json` (07-18) | 17,294 | `len(json)` |
+| map names the bank lacks | 19,882 | key set difference |
+| bank names the map no longer claims (stale) | 782 | key set difference |
+| same address, different name | 1,906 | value compare |
+| callees in the decompile of `0x82560CB0` that the map names but Ghidra does not | 6 of 10 | per-address lookup |
+
+The bank file is assumed to equal what is applied in the live program. Verify that first (phase 0): if
+the program holds a different set, every count above is about the file, not the program.
+
+Prior plan: `docs/plans/ghidra-improvement-plan-2026-10-01.md`. Its P1 (name re-sync) and P5
+(prototypes and class layouts) are this lane; neither was done. Its P2–P4 and P6–P10 (pdata decode,
+compiler spec, switch forms, ICF, EH) are out of scope here.
+
+## Ground rules
+
+- **Other agents are using the live service on :8002 right now.** Never stop it or write to
+  `ghidra_projects/RB3Xenon` while building. Work on a reflink copy
+  (`cp -a --reflink=always ghidra_projects/RB3Xenon ~/tmp/ghidra-sync/proj/`, 1.3 GB), apply and verify
+  there, then swap: stop the service, move the old project aside as a dated backup, move the new one
+  in, move the repo-root `cache.db*` aside (pyghidra keys its decompile cache on the binary hash, so it
+  would keep serving the old names), start, verify. Keep the backup until the after-census passes.
+  Tell the coordinator (SendMessage `main`) just before a swap and right after.
+- **Name nothing the repo does not already name.** Sources of truth, in order: retail bytes,
+  `scripts/target_symbol_map.json`, the compiler's class layouts
+  (`scripts/harvest/class_layout_report.py`), `tools/retail_rtti.py`. Header `// 0x..` comments and
+  `struct_db.sqlite` are derived and have been wrong; do not seed types from them.
+- The TU5 program `default_tu5.xex-c5a170` is the Deluxe image (53 words differ from retail, same
+  addresses). Do not import another program in this lane; whether to import clean TU5 is an open
+  question for the owner of the repo (see "Not in this lane").
+- Tool edits go in a worktree (`scripts/setup_worktree.sh ~/tmp/wt-ghidra-sync ghidra-sync`), never in
+  main. The Ghidra project itself is gitignored and lives only in main.
+
+## Phases, in order
+
+Each phase ends with a measured before/after and a commit. Stop at the first phase whose control
+fails and report.
+
+**0. Baseline.** Confirm which names the live TU5 program actually holds (count named functions
+through the service). Pick 20 retail bodies and save their decompiles: include `0x82560CB0`,
+`0x825610B8`, and a spread over `src/band3` and `src/system`. Count per body: unnamed call targets
+(`Function_`/`FUN_`), raw `param_1 + 0x..` accesses, `DAT_`/`PTR_DAT_` references. This is the ruler
+for every later phase.
+
+**1. Function names.** Rebuild the full name map from today's `target_symbol_map.json`
+(`build_full_symbol_map.py`) and apply it (`run_apply_symbols.sh --full`, on the copy). Add a
+reconciliation pass to `apply_symbols.py`: a name on a body the map no longer claims is removed, a
+changed name is replaced, and the delta is printed. Add the fold spellings from
+`scripts/symbol_aliases.json` as secondary labels.
+Control: unnamed call targets in the 20 bodies fall sharply, and `0x82767BA0` reads
+`MsgSource::AddSink`. No fall means the apply reached the wrong program.
+
+**2. Data names.** Label vtables and RTTI type descriptors from `tools/retail_rtti.py`
+(`??_7Class@@6B@` and friends), and any named non-placeholder data in
+`config/45410914/symbols.txt`. Control: `DAT_`/`PTR_DAT_` count in the 20 bodies, and a vtable load
+in a constructor prints the class name.
+
+**3. Prototypes.** Set each named function's prototype from its mangled name (pyghidra-mcp has
+`apply_demangled_signatures` and `set_function_prototype`; the first was skipped for RB3 because it
+assumed a linker map). Control: parameter and return types in the 20 bodies; spot-check five against
+the header declarations.
+
+**4. Class layouts.** Emit compiler layouts for every class the report can produce (measure how many
+that is first; start with `src/band3` and the `src/system` dirs the native port uses), load them
+into the data type manager, and apply `this` types. Control: raw `param_1 + 0x..` accesses in the 20
+bodies fall, and `tools/ghidra/struct_check.py` reports zero disagreement on seeded classes.
+
+**5. Make it repeatable.** One documented command that re-runs phases 1–4 incrementally, and a
+staleness line in `tools/ghidra/ghidra-status.py` ("program N names / map M rows / last sync").
+Report whether the semantic-search index (chromadb, built before the renames) needs a re-ingest and
+what that costs; do not start a long re-ingest unasked.
+
+## Status
+
+Ruler: `tools/ghidra/ghidra_sync_census.py` (headless, on a reflink copy) over the 20 bodies in
+`~/tmp/ghidra-sync/bodies20.txt` (0x82560CB0, 0x825610B8, 9 random `src/band3` + 9 random `src/system`
+functions of 400-1500 B, seed 20261122). Decompiles per phase are kept in `~/tmp/ghidra-sync/census/phaseN/`.
+Phase 0 has 19 bodies: 0x826D6660 (`StreakFocusTracker::GetNextFocusPlayer`) had no function until phase 1.
+
+| phase | state | before → after | commit |
+|---|---|---|---|
+| 0 baseline | done | program held 17,789 named fns (17,290 = the 07-18 bank exactly, 4 bank VAs default-named, 499 others: 410 ANALYSIS, 65 DEFAULT thunk names, 24 USER_DEFINED); 41,049 fns, 18 data types. Program vs map: 14,623 agree, 1,938 differ, 19,771 map-only. 20 bodies: 74 unnamed calls, 149 raw member, 157 DAT_, 166 auto-data, 19 `undefined` in signatures | bbaeb7128 |
+| 1 function names | **live on :8002** (11:42) | named 17,789 → 36,001; fns 41,049 → 48,080 (7,031 created at map VAs); map agree 14,623 → 35,578, differ 1,938 → 0; renamed 19,061, changed 1,892, removed 818 stale, 6,310 alias labels, 1,012 arbitrary-twin tags. 754 map rows not applied = data rows (go to phase 2) + `entry`. Ruler: unnamed calls 74 → 6 (3 each in 0x82560CB0 and the DxMesh ctor: map does not name them). Control: 0x82767BA0 = `?AddSink@MsgSource@@…` live; live function count 48,080 | bbaeb7128 |
+| 2 data names | **live on :8002** (swap 2, ~11:58) | 5,959 labels added (+1 made primary, 33 already): 800 map data rows, RTTI 1,415 TypeDescriptors / 1,795 COLs / 1,795 vftables, 300 `__imp_`. vftable-suffix control: 61/64 map rows agree with the RTTI-derived name (3 differ, map wins: an ObjPtr template arity, a PreloadPanel `6B@` the map gives a multi-vftable class, InterstitialMgr/CharUpperTwist base choice). Ruler: DAT_ 161 → 157, auto-data 170 → 160 (most DAT_ are `.data`/`.bss` globals the repo does not name: symbols.txt has 0 named `.data` objects). Control: DxMesh ctor stores `&??_7DxMesh@@6BRndMesh@@@` etc. | this commit |
+| 3 prototypes | **live on :8002** (swap 2) | 34,501 of 34,546 mangled fns got their demangled prototype (45 are not function names, 0 failures). Ruler: `undefined` in signatures 24 → 0, `undefined*` tokens 155 → 135, "Removing unreachable block" 17 → 4 (wrong arg types had been pruning live code; bodies grew 1,505 → 1,749 lines, which is why DAT_ rose 157 → 204). Spot-check vs headers 5/5: AddSink, GuitarFx::Poll, BSPFace::Set, SongStatusMgr::UpdateSongStats, Instarank::UpdateString1Label. Functions now sit in their class namespace; the mangled name stays the function name. Consumers checked live: the bare mangled name resolves (decompile, xrefs, pcode_inspect); `Class::Method` in pcode_inspect resolves exactly from the map or refuses (4f9aeb755). Fixed two tools that were broken before this lane: ghidra-xrefs.py (always 0 refs) and rtti_probe.py (TU0 thunk name) | 9ee16810b, 4f9aeb755 |
+| 4 class layouts | **live on :8002** (swap 4, 12:31, 30 s down) | `emit_class_layouts.py`: one `/d1reportAllClassLayout` compile per TU over src/band3 + the 17 src/system dirs native compiles (900 TUs, 0 failed, ~8 min at -j16 on a load-124 box): 16,458 classes, of which 141 dropped because their TUs disagree on size or member offsets (an ODR split or a per-TU gate; includes RndCam, SongStatusMgr, RockCentral, LightPreset, RndMultiMesh -- unexplained, worth a look). `apply_class_layouts.py` fills the class structure each `this` already points at: 1,317 classes applied (13,856 templates skipped, 1,174 with no Ghidra class namespace, 102 nested, 9 ambiguous by simple name), 21,176 members, 2,014 by-value class members typed as the class struct; read-back control 1,317/1,317 match the compiler (size and every member offset/name). Member TYPES are undefined bytes sized to the next member: the compiler's report names only class-typed members, so pointers print as `*(int *)(this->mCurWorld + 8)`. Ruler (19+1 bodies, phase 3 -> 4): raw member 177 -> 14, new `struct_overrun` metric (`param_1[2].mFoo`: a type indexed past its end, so the names are wrong) 0 -> 4. 0x82560CB0 prints member names but WRONG ones (`param_1[1].mTypeProps.mOwner`): the map does not name it, so `param_1` is `Object *` inferred from AddSink. With the unlanded `~/tmp/wt-audmgr` names applied on a throwaway copy (`census/phase4_audmgr_demo`), it reads `this->mBuilder = ...; this->unk40 = 0; this->unk51 = ...` (0x34 = mBuilder in the compiler's AuditionMgr layout), overrun 0 there. The 1 other overrun is BandUI::OnMsg returning DataNode by value: its `param_1` behaves like `this`, which suggests phase 3's demangled prototypes misplace the hidden return pointer on by-value returns (not verified). `tools/ghidra/struct_check.py` was not used as the control: it compares against `struct_db.sqlite`, which the plan's ground rules call derived and wrong | (this commit) |
+| 5 repeatable | done (not swapped: nothing changed) | `tools/ghidra/ghidra_sync.sh [--swap] [--layouts FILE] [--skip-layouts] [--program NAME]`: reflink copy -> phases 1-4 -> census + `sync_state.json` stamp -> optional swap (stop, back up, move, cache.db aside, start, wait <= 300 s for ready). Runs from a worktree too (resolves the main checkout; `--swap` refuses there). Measured second run on the synced program, `--layouts` reused (`~/tmp/ghidra-sync/run-wrapper-test/`, 12:32-12:34, 1.5 min): names renamed/changed/removed 0/0/0 (35,578 already), data 0 added, prototypes 34,501 re-applied, ruler identical (6 / 14 / 4 / 205 / 208 / 0). That run caught a non-fixed point: re-running apply_prototypes promotes the `Hmx` namespace to a Ghidra class, and the layout loader then skipped Hmx::Object and 25 other Hmx:: classes as "nested" (1,291 applied, not 1,317); fixed (a parent counts as a class only if the compiler reported it), re-run reads 1,317 again. A layout re-emit adds ~8 min. `ghidra-status.py` prints `Default program:` and `Sync: default.xex-d56e7f 36092 named fns, 35578 agree with the map / map 36332 rows at sync (now 36332, +0) / last sync 2026-11-22T12:28:22 at 27537c921`, flagging STALE when the map row count moves. chromadb: see handoff | (this commit) |
+| 6 clean TU5 program | **live on :8002, the default program** (swap 3, 12:17, ~1 min down) | `import_clean_tu5.py`: import + full analysis took 604 s; 63,110 fns before names (Deluxe program: 41,049). After phases 1-3: 67,935 fns, map agrees 35,578 / differs 0; 20-body ruler 6 / 177 / 204 / 207 / 0, the same as the Deluxe program after phase 3. 53 patched words (`check_patched_words.py` over `tools/pe_word_diff.py` output): clean TU5 program = 49 retail, 0 Deluxe, 4 other (the import thunks at 0x82C4C47C..90, which the XEX loader rewrites to `li r3,<ordinal>`; the ordinals there are the retail 0x242/0x24B); Deluxe program = 53 Deluxe. Scratch project `~/tmp/ghidra-sync/tu5scratch` (TU5Import / default.xex-d56e7f); pre-names copy `tu5scratch_analysed_pristine`; unnamed .gzf `~/tmp/ghidra-sync/default.xex-d56e7f.gzf`. Swap 3: `add_program_to_project.py` packed the scratch program (68,222 fns; the 67,935 above was counted before phase 2-3 created functions) and unpacked it into a reflink copy of the live project (68,222 fns both sides, 2.5 min); `seed_chroma_collection.py` copied the Deluxe semantic-search collection (37,482 docs) to `default.xex-d56e7f` so the service does not decompile 68k functions into chromadb at startup (service log: "Collection 'default.xex-d56e7f' exists; skipping code ingest"). `list_project_binaries` = 3 programs. `mcp_client.py` picks `default.xex-d56e7f` by exact name (override `GHIDRA_PROGRAM`); `pcode_inspect.py 0x82767BA0` prints `Program: default.xex-d56e7f` and `MsgSource::AddSink`. Main's unpatched client still resolves c5a170 (first listed) until this branch lands | (this commit) |
+
+## Handoff (2026-11-22, second agent)
+
+- **Live on :8002:** `default.xex-d56e7f` (clean retail TU5) is the default program everywhere, with phases 1-4
+  applied; `default_tu5.xex-c5a170` (Deluxe, phases 1-3) and `default.xex-35adb6` (TU0) sit beside it. Program
+  selection: `tools/ghidra/mcp_client.py` (`TARGET_PROGRAM`, env `GHIDRA_PROGRAM`), `pyghidra-service.sh`
+  (CLEAN_XEX_PATH), `run_apply_symbols.sh`, the `--program` defaults of `apply_*`/`ghidra_sync_census.py`.
+  `scripts/verify_target_image.py` names c5a170 only as a XEX sha1 identity, not a program: unchanged. Main's
+  copy of `mcp_client.py` still resolves c5a170 (first listed) until this branch lands.
+- **Re-sync after a map or header change lands:** `tools/ghidra/ghidra_sync.sh [--swap]` from the main checkout
+  (header comment lists the steps; `--layouts FILE` reuses an emitted layout JSON). Without `--swap` it builds
+  and censuses a copy and leaves the live project alone. `tools/ghidra/ghidra-status.py` prints
+  `Sync: ... / map N rows at sync (now M, +d) / last sync <time> at <head>` from the project's `sync_state.json`
+  and flags STALE when the map row count moved. When `~/tmp/wt-audmgr` lands, one run names 0x82560CB0 and its
+  `this` picks up the AuditionMgr layout (shown on a throwaway copy, `census/phase4_audmgr_demo`).
+- **Semantic search (chromadb):** the d56e7f collection is a copy of the Deluxe collection (37,482 docs; built
+  before the renames, so its text carries old names). A real re-ingest decompiles every function on the
+  service JVM (68k functions; pyghidra-mcp does it automatically for any program without a collection) --
+  not started. To force one: delete the `default.xex-d56e7f` collection in the copy before a swap.
+- **Open questions found on the way:** (1) 141 classes have TU-dependent layouts (list in
+  `~/tmp/ghidra-sync/layouts.json` "conflicts"; RndCam, SongStatusMgr, RockCentral, LightPreset, RndMultiMesh
+  among them); (2) BandUI::OnMsg's decompile suggests phase 3's demangled prototypes misplace the hidden
+  return pointer for by-value returns (DataNode); not verified; (3) member types: the compiler report has none
+  for scalars and pointers; CodeView from a `/Z7` recompile (the `stack-layout` skill's route) would supply them.
+- Backups to delete once the after-census is accepted:
+  - `ghidra_projects/RB3Xenon/RB3Xenon.bak-20261122-pre-ghidra-sync`
+  - `ghidra_projects/RB3Xenon/RB3Xenon.bak-20261122-phase1`
+  - `ghidra_projects/RB3Xenon/RB3Xenon.bak-20261122-pre-cleantu5` (swap 3)
+  - `ghidra_projects/RB3Xenon/RB3Xenon.bak-20261122-pre-layouts` (swap 4)
+  - `~/tmp/ghidra-sync/cachedb-aside*`
+
+## Not in this lane
+
+- Naming functions the map does not name, including the AuditionMgr TU around `0x82560CB0`: that
+  lane (`~/tmp/wt-audmgr`) adds map rows, and the repeatable command picks them up after it lands.
+- Fork work in `../ghidra` or `../pyghidra-mcp` beyond what a phase strictly needs; a rebuild of
+  either is a deployment every lane feels.

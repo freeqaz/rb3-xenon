@@ -28,6 +28,49 @@ sys.path.insert(0, str(Path(__file__).parent))
 from mcp_client import MCPClient, MCPError
 
 
+class AmbiguousName(MCPError):
+    """A qualified name matched more than one map row: refuse rather than guess."""
+
+
+def _qualified_to_mangled_prefixes(qual: str) -> list[str]:
+    """'MsgSource::AddSink' -> ['?AddSink@MsgSource@@']; ctor/dtor spellings too.
+    Only plain identifiers (no templates/operators); anything else returns []."""
+    parts = [p for p in qual.split("::") if p]
+    if len(parts) < 2 or not all(re.fullmatch(r"~?[A-Za-z_]\w*", p) for p in parts):
+        return []
+    method, scopes = parts[-1], parts[:-1]
+    scope = "@".join(reversed(scopes)) + "@@"
+    if method == scopes[-1]:
+        return ["??0" + scope]
+    if method == "~" + scopes[-1]:
+        return ["??1" + scope]
+    return ["?%s@%s" % (method, scope)]
+
+
+def resolve_qualified_from_map(qual: str):
+    """Exact Class::Method resolution against scripts/target_symbol_map.json.
+    Returns (mangled, "0x...") on exactly one hit, None on no hit, raises AmbiguousName on several."""
+    prefixes = _qualified_to_mangled_prefixes(qual)
+    if not prefixes:
+        return None
+    map_path = Path(__file__).resolve().parent.parent.parent / "scripts" / "target_symbol_map.json"
+    try:
+        import json
+        m = json.load(open(map_path))
+    except Exception:
+        return None
+    hits = sorted((v, k.lower()) for k, v in m.items()
+                  if k.lower().startswith("0x") and isinstance(v, str) and v
+                  and any(v.startswith(px) for px in prefixes))
+    if not hits:
+        return None
+    if len(hits) > 1:
+        raise AmbiguousName("'%s' names %d functions in target_symbol_map.json (overloads); pass the "
+                            "mangled name or the address:\n  %s" % (
+                                qual, len(hits), "\n  ".join("%s %s" % (a, n) for n, a in hits[:12])))
+    return hits[0][0], hits[0][1]
+
+
 def resolve_function(client: MCPClient, name_or_addr: str, verbose: bool = True) -> tuple[str, str]:
     """Resolve a function name or address to the exact symbol to decompile.
 
@@ -43,6 +86,16 @@ def resolve_function(client: MCPClient, name_or_addr: str, verbose: bool = True)
         # It's an address, use it directly
         addr = int(stripped, 16)
         return name_or_addr, f"0x{addr:08x}"
+
+    # A qualified C++ name resolves EXACTLY against the map first. The service's own fallback is a
+    # substring match that took "MsgSource::AddSink" to MsgSource::OnAddSink (2026-11-22).
+    if "::" in name_or_addr:
+        hit = resolve_qualified_from_map(name_or_addr.strip())
+        if hit is not None:
+            if verbose:
+                print(f"Resolved {name_or_addr} via target_symbol_map.json: {hit[0]} @ {hit[1]}",
+                      file=sys.stderr)
+            return hit
 
     # Search for the symbol
     if verbose:
@@ -117,6 +170,16 @@ def resolve_function(client: MCPClient, name_or_addr: str, verbose: bool = True)
             print(f"Using best match: {candidates[0][1]}", file=sys.stderr)
 
     best = candidates[0]
+    if "::" in name_or_addr:
+        # Not an exact map name: the pick below is a symbol-search SCORE, i.e. a guess.
+        top = [c for c in candidates if c[0] >= candidates[0][0] - 3 and not c[3]]
+        if len(top) > 1:
+            raise AmbiguousName("'%s' is not an exact name in target_symbol_map.json and symbol search "
+                                "found %d comparable candidates; pass the mangled name or the address:\n  %s"
+                                % (name_or_addr, len(top),
+                                   "\n  ".join("0x%s %s" % (c[2], c[1]) for c in top[:8])))
+        print(f"WARNING: '{name_or_addr}' is not an exact name in target_symbol_map.json; picked "
+              f"{best[1]} @ 0x{best[2]} by symbol-search score -- a GUESS, check it.", file=sys.stderr)
     return best[1], f"0x{best[2]}".lower()
 
 
@@ -464,6 +527,7 @@ def main():
     try:
         client = MCPClient()
         client.initialize()
+        print(f"Program: {client.binary}")
     except MCPError as e:
         print(f"Error connecting to Ghidra MCP: {e}", file=sys.stderr)
         print("Is pyghidra-mcp running? Check: ./tools/ghidra/pyghidra-service.sh status", file=sys.stderr)
@@ -479,9 +543,19 @@ def main():
             func_to_decompile = resolved_addr  # Use address for more reliable lookup
             if resolved_addr.startswith("0x"):
                 func_address = int(resolved_addr, 16)
+        except AmbiguousName as e:
+            print(f"ERROR: {e}", file=sys.stderr)
+            sys.exit(2)
         except MCPError as e:
             print(f"Warning: Symbol search failed: {e}", file=sys.stderr)
-            print("Trying direct lookup...", file=sys.stderr)
+            if "::" in args.function:
+                # Neither the map nor a symbol search knows this qualified name; the service would
+                # substring-guess. Refuse instead of printing a different function's body as fact.
+                print(f"ERROR: '{args.function}' is not an exact name in target_symbol_map.json or the "
+                      "Ghidra symbol table; refusing the service's substring guess. Pass the mangled "
+                      "name or the address.", file=sys.stderr)
+                sys.exit(2)
+            print("Trying direct lookup (service fallback: may be a substring GUESS)...", file=sys.stderr)
 
     # Decompile the function
     decompiled_code = None
