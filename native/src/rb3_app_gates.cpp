@@ -18,6 +18,8 @@
 #include "os/Memcard.h"
 #include "os/Memcard_Xbox.h"
 #include "world/SpotlightDrawer.h"
+#include "os/ProfilePicture.h"
+#include "rndobj/Tex.h"
 
 extern "C" void rb3_app_gate(const char *step) { // ring: native-real
     printf("  [PASS] rb3-app %s\n", step);
@@ -108,6 +110,91 @@ static void rb3_app_check_device_selector() { // ring: native-real
     fflush(stdout);
     fflush(stderr);
     _exit(7);
+}
+
+// profpic lane: a returning boot loads the saved profile, and
+// BandProfile::LoadSaved calls ProfilePicture::Update for a signed-in pad;
+// ProfileMgr::Poll -> BandProfile::Poll -> ProfilePicture::Poll (0x82B902F0)
+// then runs the fetch. Retail FetchUserPicture (0x82B903B8) creates a 64x64
+// D3D texture before it reads (bl D3DDevice_CreateTexture at 0x82B9040C),
+// locks it, and keeps the XUserReadGamerPicture read (0x82B9047C) only on
+// ERROR_IO_PENDING; a null texture skips the read without Fail (0x82B90428).
+// ReceiveUserPicture (0x82B904E0) copies the pixels into a new RndTex, releases
+// the D3D texture and the XOVERLAPPED, and Succeed sends
+// profile_picture_fetched_msg true. This drives one ProfilePicture for pad 0
+// (signed in locally in xdk_shims.cpp's console model) through that path with
+// a probe as its callback and checks each step: a texture and a read in
+// flight after the first Poll, then exactly one message (true), kComplete, a
+// 64x64 32 bpp mUserPicture, and every D3D texture released. Before this lane
+// the first Poll aborted in the D3DDevice_CreateTexture stub. The probe's
+// ProfilePicture is its own; its destructor releases the picture.
+extern "C" int rb3_app_d3d_live_textures();
+namespace {
+class Rb3AppProfilePictureProbe : public Hmx::Object {
+public:
+    int mResult = -1; // -1 nothing yet, else the message's bool
+    int mMessages = 0;
+    virtual DataNode Handle(DataArray *msg, bool) {
+        mMessages++;
+        if (msg && msg->Size() >= 3 && msg->Type(1) == kDataSymbol
+            && msg->Sym(1) == ProfilePictureFetchedMsg::Type())
+            mResult = msg->Int(2) != 0;
+        return DataNode(kDataInt, 0);
+    }
+};
+}
+
+static void rb3_app_profile_picture_fail(const char *what) { // ring: native-real
+    printf("  [FAIL] rb3-app ProfilePicture fetch for pad 0: %s (retail FetchUserPicture "
+           "0x82B903B8 creates the texture and reads into it; ReceiveUserPicture 0x82B904E0 "
+           "builds the RndTex and Succeed sends profile_picture_fetched_msg true)\n",
+           what);
+    printf("RESULT: GATE FAILED (profile picture)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+static void rb3_app_check_profile_picture() { // ring: native-real
+    Rb3AppProfilePictureProbe probe;
+    const int liveBefore = rb3_app_d3d_live_textures();
+    char why[256];
+    {
+        ProfilePicture pic(0, &probe);
+        pic.Update(); // kIdle -> kFetchingUserData (FetchUserData is empty)
+        pic.Poll();   // ReceiveUserData is true -> kFetchingUserPicture, FetchUserPicture
+        if (pic.mState != ProfilePicture::kFetchingUserPicture || !pic.mTexture
+            || !pic.mOverlapped) {
+            snprintf(why, sizeof why,
+                     "after the first Poll: state %d, texture %s, read %s, %d messages "
+                     "(want state 2 with a texture and a read in flight)",
+                     (int)pic.mState, pic.mTexture ? "created" : "NULL",
+                     pic.mOverlapped ? "in flight" : "not started", probe.mMessages);
+            rb3_app_profile_picture_fail(why);
+        }
+        int polls = 1;
+        for (; polls < 8 && probe.mMessages == 0; polls++) pic.Poll();
+        RndTex *t = pic.mUserPicture;
+        const int live = rb3_app_d3d_live_textures();
+        if (probe.mMessages != 1 || probe.mResult != 1 || pic.mState != ProfilePicture::kComplete
+            || !t || t->Width() != 64 || t->Height() != 64 || t->Bpp() != 32 || pic.mTexture
+            || pic.mOverlapped || live != liveBefore) {
+            snprintf(why, sizeof why,
+                     "after %d Poll: %d messages (result %d), state %d, picture %s %dx%d %d bpp, "
+                     "texture %s, read %s, %d live D3D textures (was %d)",
+                     polls, probe.mMessages, probe.mResult, (int)pic.mState, t ? "set" : "NULL",
+                     t ? t->Width() : 0, t ? t->Height() : 0, t ? t->Bpp() : 0,
+                     pic.mTexture ? "still held" : "released",
+                     pic.mOverlapped ? "still held" : "released", live, liveBefore);
+            rb3_app_profile_picture_fail(why);
+        }
+        printf("  [PASS] rb3-app ProfilePicture fetch for pad 0 answered "
+               "profile_picture_fetched_msg true after %d Poll: a 64x64 32 bpp picture, the "
+               "D3D texture released (retail FetchUserPicture 0x82B903B8, ReceiveUserPicture "
+               "0x82B904E0)\n",
+               polls);
+        fflush(stdout);
+    }
 }
 
 extern "C" void __real__Z10SystemInitPKc(const char * a0);
@@ -458,6 +545,7 @@ extern "C" void __real__ZN10ProfileMgr4InitEv(void *self);
 extern "C" void __wrap__ZN10ProfileMgr4InitEv(void *self) { // ring: native-real
     __real__ZN10ProfileMgr4InitEv(self);
     rb3_app_gate("ProfileMgr::Init()");
+    rb3_app_check_profile_picture();
 }
 
 extern "C" void __real__ZN13MetaPerformer4InitEv(void);

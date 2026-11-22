@@ -1160,6 +1160,26 @@ DWORD XUserGetName(DWORD dwUserIndex, LPSTR szUserName, DWORD cchUserName) {
     }
     return ERROR_SUCCESS;
 }
+// The signed-in local profile's gamer picture, read into the caller's buffer
+// (64x64, or 32x32 when fSmall) at dwPitch bytes per row. On a console an
+// offline profile has a picture (a dashboard tile stored with the profile),
+// and the read completes asynchronously: ERROR_IO_PENDING, then success
+// through XGetOverlappedResult. The one caller, ProfilePicture::
+// FetchUserPicture (retail 0x82B903B8, bl at 0x82B9047C), keeps the read only
+// on ERROR_IO_PENDING (0x82B90484) and ReceiveUserPicture (0x82B904E0) then
+// turns success into a 64x64 RndTex and profile_picture_fetched_msg true.
+// This console model holds no tile bytes (the dashboard's pictures are not in
+// the game data), so the read succeeds without writing: the caller's buffer
+// keeps what it held, which for ProfilePicture is the zero fill at 0x82B90460
+// (a transparent tile). An empty user index has no picture: ERROR_NO_SUCH_USER.
+DWORD XUserReadGamerPicture(DWORD dwUserIndex, BOOL fSmall, BYTE *pbTextureBuffer, DWORD dwPitch,
+                            DWORD dwHeight, XOVERLAPPED *pOverlapped) {
+    if (!ShimUserSignedIn(dwUserIndex)) return ShimComplete(ERROR_NO_SUCH_USER, pOverlapped);
+    const DWORD tile = fSmall ? 32 : 64;
+    if (!pbTextureBuffer || dwHeight < tile || dwPitch < tile * 4)
+        return ShimComplete(0x0057, pOverlapped); // ERROR_INVALID_PARAMETER
+    return ShimComplete(ERROR_SUCCESS, pOverlapped);
+}
 DWORD XShowTokenRedemptionUI(DWORD) { return 0; }
 DWORD XUserAreUsersFriends(DWORD, XUID *, DWORD, BOOL *pfResult, XOVERLAPPED *) {
     if (pfResult) *pfResult = 0;

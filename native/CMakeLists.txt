@@ -2271,8 +2271,9 @@ set(RB3_APP_SOURCES
     ${REPO_ROOT}/src/band3/net_band/XboxEntityUploader.cpp
     # A2: ProfileMgr::Init constructs a ProfilePicture per pad (retail ctor in
     # ProfilePicture_Xbox.cpp: six member stores, no Xbox call). The fetch path
-    # (XUserReadGamerPicture into a D3D texture) is the Xbox Live / D3D layer,
-    # whose entry points are aborting stubs (rings xbox-live, xbox-d3d).
+    # (XUserReadGamerPicture into a D3D texture) runs since lane profpic:
+    # xdk_shims.cpp answers the read for the offline profile and
+    # rb3_app_d3d_native.cpp backs the texture with an engine RndTex.
     ${REPO_ROOT}/src/system/os/ProfilePicture.cpp
     ${REPO_ROOT}/src/system/os/ProfilePicture_Xbox.cpp
     # A3: the idle online objects an OFFLINE retail 360 has. App::App always
@@ -2625,6 +2626,10 @@ if(RB3X_BUILD_ENGINE)
         ${CMAKE_SOURCE_DIR}/src/rb3_app_link_stubs.s
         # Real native definitions of the globals dta_link_stubs.s used to zero.
         ${CMAKE_SOURCE_DIR}/src/rb3_app_native_glue.cpp
+        # profpic: the D3D texture calls of ProfilePicture's gamer-picture
+        # fetch, backed by engine RndTex objects (retail 0x82B903B8 creates
+        # the texture before the read, so there is no texture-less path).
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_d3d_native.cpp
         # Quazal String/RootObject as plain data (DataResults, ProfileMgr ctor).
         ${CMAKE_SOURCE_DIR}/src/rb3_app_quazal_native.cpp
         # The engine's consumer seams (ShouldSkipMesh, DebugPanel::*).
