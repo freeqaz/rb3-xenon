@@ -2023,6 +2023,8 @@ rb3_add_executable(rb3-milo
     ${CMAKE_SOURCE_DIR}/src/rnd_mode_phase.cpp
     # A13: Spotlight::Generate is retail's body (no edit-mode regen).
     ${CMAKE_SOURCE_DIR}/src/spotlight_generate_phase.cpp
+    # A15: RndText::UpdateLineColor is retail's body (startIdx*4, no early-out).
+    ${CMAKE_SOURCE_DIR}/src/text_line_color_phase.cpp
     ${MILO_TARGET_COMMON_SOURCES}
     # W16-RW: Rnd::TestPoint asks the engine's point-test seam for an occlusion
     # tester (rndobj/Rnd.cpp, HX_NATIVE). rb3-render gets the seam's storage

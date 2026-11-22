@@ -104,6 +104,8 @@ int RunCharClipRefsPhase(void (*gate)(const char *, bool, const char *));
 int RunRndModePhase(void (*gate)(const char *, bool, const char *));
 // native/src/spotlight_generate_phase.cpp (A13)
 int RunSpotlightGeneratePhase(void (*gate)(const char *, bool, const char *));
+// native/src/text_line_color_phase.cpp (A15)
+int RunTextLineColorPhase(void (*gate)(const char *, bool, const char *));
 
 namespace {
 
@@ -570,6 +572,9 @@ int main(int argc, char **argv) {
     // A13: Spotlight::Generate keeps its beam in edit mode, as retail does
     // (native/src/spotlight_generate_phase.cpp).
     RunSpotlightGeneratePhase(Gate);
+    // A15: RndText::UpdateLineColor recolours the line it is given, after an
+    // earlier two-byte character (native/src/text_line_color_phase.cpp).
+    RunTextLineColorPhase(Gate);
 
     printf("\nRESULT: %s (%d gate failure(s))\n",
            gFailures == 0 ? "ALL GATES PASSED" : "FAILED", gFailures);
