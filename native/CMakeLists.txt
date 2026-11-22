@@ -2526,6 +2526,30 @@ if(RB3X_BUILD_ENGINE)
     # A2: the retail tables and registrars; rb3_app_gates.cpp calls them only
     # with a title update mounted (RB3_TITLE_UPDATE_DIR).
     list(APPEND _rb3_app_all ${REPO_ROOT}/src/ChecksumData_xbox.cpp)
+    # A4: TU5 is mounted by default when <checkout>/orig/45410914/tu5-package
+    # holds it (orig/ is gitignored, so a worktree may not have its own copy).
+    # The MAIN checkout comes from `git rev-parse --git-common-dir`, the same
+    # probe the MILO_ENGINE_PATH resolver above uses; the source tree is the
+    # fallback. Only this one TU sees the paths. Resolution and the opt-out
+    # (RB3_TITLE_UPDATE_DIR=none) are in rb3_app_native_glue.cpp.
+    set(_rb3_app_main_checkout "")
+    execute_process(COMMAND git rev-parse --git-common-dir
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE _rb3_app_gitcommon OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET RESULT_VARIABLE _rb3_app_git_rc)
+    if(_rb3_app_git_rc EQUAL 0 AND _rb3_app_gitcommon)
+        if(NOT IS_ABSOLUTE "${_rb3_app_gitcommon}")
+            set(_rb3_app_gitcommon "${CMAKE_SOURCE_DIR}/${_rb3_app_gitcommon}")
+        endif()
+        get_filename_component(_rb3_app_main_checkout "${_rb3_app_gitcommon}/.." ABSOLUTE)
+    endif()
+    get_filename_component(_rb3_app_source_checkout "${REPO_ROOT}" ABSOLUTE)
+    message(STATUS "rb3-app: title-update probe roots: main checkout "
+        "'${_rb3_app_main_checkout}', source tree '${_rb3_app_source_checkout}'")
+    set_property(SOURCE ${CMAKE_SOURCE_DIR}/src/rb3_app_native_glue.cpp APPEND PROPERTY
+        COMPILE_DEFINITIONS
+        "RB3_APP_MAIN_CHECKOUT=\"${_rb3_app_main_checkout}\""
+        "RB3_APP_SOURCE_CHECKOUT=\"${_rb3_app_source_checkout}\"")
     # A1: native/src/main_app.cpp drives App::App (data dir, headless, bounded);
     # src/Main.cpp is retail's main (App::Run, the frame loop: A2).
     list(REMOVE_ITEM _rb3_app_all ${REPO_ROOT}/src/Main.cpp)
