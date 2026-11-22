@@ -46,7 +46,10 @@ RULES = [
     # A3: RockCentral.cpp is compiled (TheRockCentral is a real static-init
     # object); its web-service plumbing stays aborting.
     (r"^(ContextWrapper|ContextWrapperPool|JsonObject|UpdateFriendsListJob)::", "online-rockcentral"),
-    (r"^(XNet|XUserMuteListQuery|XUserSetProperty)", "xbox-live"),
+    # A5: SessionSearcher_Xbox.cpp is compiled (the idle XSessionSearcher);
+    # its search and invite paths call XSessionSearchEx / XInviteGetAcceptedInfo.
+    (r"^(XNet|XUserMuteListQuery|XUserSetProperty|XSessionSearchEx|XInviteGetAcceptedInfo)",
+     "xbox-live"),
     (r"^(AssetOffer::|XMarketplace|XBackgroundDownload|StoreRootPanel::)", "xbox-store"),
     (r"^(XMsgCancelIORequest|XUserReadGamerPicture|XGetOverlappedResult|XStringVerify|ShowParentalControlUI|SessionUsersProvider::ShowGamercard)",
      "xbox-live"),

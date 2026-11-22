@@ -15,7 +15,7 @@
 //
 // The data globals below need their C++ type (for the size), so they are not
 // generated. They are NOT constructed objects: zero bytes where the real
-// global is an object (TheNet, TheRockCentral, TheBandUI, ...), null where it
+// global is an object (TheNetMessenger, TheWiiFriendMgr, ...), null where it
 // is a pointer or a reference. Reading one is an A1 crash site, not a value.
 #include <cstdio>
 #include <cstdlib>
@@ -46,7 +46,6 @@ extern "C" [[noreturn]] void rb3_app_vcall_unreached() { // ring: reporter
 }
 
 // ---- objects: zero bytes, never constructed ----------------------------------
-alignas(Net) unsigned char gRb3AppTheNet[sizeof(Net)] __asm__("TheNet"); // ring: online-net
 alignas(WiiFriendMgr) unsigned char gRb3AppTheWiiFriendMgr[sizeof(WiiFriendMgr)] __asm__("TheWiiFriendMgr"); // ring: a4-wii-residue
 alignas(WiiProfileMgr) unsigned char gRb3AppTheWiiProfileMgr[sizeof(WiiProfileMgr)] __asm__("TheWiiProfileMgr"); // ring: a4-wii-residue
 alignas(WiiFriendsProvider) unsigned char gRb3AppTheWiiFriendsProvider[sizeof(WiiFriendsProvider)] __asm__("TheWiiFriendsProvider"); // ring: a4-wii-residue
@@ -55,6 +54,8 @@ alignas(WiiFriendsProvider) unsigned char gRb3AppTheWiiFriendsProvider[sizeof(Wi
 alignas(16) unsigned char gRb3AppTheWiiInvitationsProvider[4096] __asm__("TheWiiInvitationsProvider"); // ring: a4-wii-residue
 // TheRockCentral (RockCentral.cpp) and TheNetSession (NetSession.cpp) are real
 // since lane A3: both TUs are compiled into rb3-app.
+// TheNet (Net.cpp) is real since lane A5: the static object with retail's
+// inlined ctor; the Net::Init gate (rb3_app_gates.cpp) builds its idle members.
 // gBinkMovieSys: a real base MovieSys in rb3_app_native_glue.cpp (A1).
 // Message globals the retail game constructs in a TU no native target compiles.
 alignas(Message) unsigned char gRb3AppPlayMsg[sizeof(Message)] __asm__("play_msg"); // ring: a1-absent-body
