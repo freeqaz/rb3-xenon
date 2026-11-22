@@ -347,3 +347,20 @@ void RecursePatternInternal( // ring: native-real
     String dirStr = pos <= 0 ? String(".") : pttn.substr(0, (unsigned int)pos);
     FileEnumerate(dirStr.c_str(), cb, recurse, pttn.c_str(), recurse_dirs);
 }
+
+// ---- Net::Init, the idle offline part (lane A5) ----------------------------
+// Called by the Net::Init gate (rb3_app_gates.cpp, which says what it skips).
+// Each step is retail Net::Init's own statement (0x823E0648), in its order:
+// the vcall SetName("net", ObjectDir::Main()), then `mSession = NetSession::New()`
+// and `mSearcher = SessionSearcher::New()`. The bodies are the compiled retail
+// TUs (NetSession_Xbox.cpp, SessionSearcher_Xbox.cpp, SessionSearcher.cpp).
+#include "net/Net.h"
+#include "obj/Dir.h"
+extern "C" void rb3_app_net_init_offline(void *self, void **session, void **searcher) { // ring: native-real
+    Net *net = static_cast<Net *>(self);
+    net->SetName("net", ObjectDir::Main());
+    net->mSession = NetSession::New();
+    net->mSearcher = SessionSearcher::New();
+    *session = net->mSession;
+    *searcher = net->mSearcher;
+}

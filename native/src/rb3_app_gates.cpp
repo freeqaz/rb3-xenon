@@ -155,26 +155,35 @@ extern "C" void __wrap__ZN17FixedSizeSaveable4InitEii(int a0, int a1) { // ring:
 }
 
 extern "C" void __real__ZN3Net4InitEv(void *self);
-// NARROWED (lane A3). Retail Net::Init (src/network/net/Net.cpp:79, 0x823E0648)
-// runs on an offline 360 too: it installs the Quazal allocator hooks, builds a
-// SyncStore, `mSession = NetSession::New()` (= new XboxSession, NetSession_Xbox.cpp:441,
-// which sets TheNetSession; state kIdle, online disabled), SessionSearcher::New(),
-// TheServer.Init(), a NetworkEmulator and TheNetMessenger.Init(). Natively this
-// gate runs ONLY the session construction: the idle session object is what
-// SessionMgr::Init, MemcardMgr and ProfileMgr::Init subscribe to, and its ctor
-// sends nothing (the Quazal settings it writes have native bodies in
-// rb3_app_quazal_native.cpp). Everything else Net::Init builds is networked and
-// is NOT built: TheNet itself stays zero storage (Net.cpp does not compile
-// natively), so TheNet.mSession/mSearcher/mServer stay null, and any later use
-// of them still reaches an aborting stub or zero storage. Net.cpp's body is not
-// called. Printed as GATED, not PASS, because it is not retail's whole call.
-extern "C" void *rb3_app_netsession_new() __asm__("_ZN10NetSession3NewEv");
+// NARROWED (lanes A3, A5). Retail Net::Init (src/network/net/Net.cpp, 0x823E0648)
+// runs on an offline 360 too, in this order: SetName("net", ObjectDir::Main()),
+// the two Quazal allocator hooks and the system-check hook, `new SyncStore`,
+// `mSession = NetSession::New()` (= new XboxSession, NetSession_Xbox.cpp; sets
+// TheNetSession; kIdle, online disabled), `mSearcher = SessionSearcher::New()`
+// (= new XSessionSearcher, 0x823EE140), TheServer.Init() and mServer, a
+// NetworkEmulator, TheNetMessenger.Init(), and the TerminateTheNet exit callback.
+// Since A5 TheNet is the real object (Net.cpp is compiled into rb3-app), and this
+// gate runs, in retail's order, the steps that touch no network:
+//   SetName, mSession = NetSession::New(), mSearcher = SessionSearcher::New()
+// (rb3_app_net_init_offline in rb3_app_native_glue.cpp; each a retail body).
+// NOT run, as the printed line says:
+//   * Quazal hooks: there is no Quazal stack natively to read them;
+//   * SyncStore: SyncStore.cpp is not compiled into rb3-app (nothing reached yet
+//     needs mSyncStore; Net::Poll would);
+//   * TheServer.Init (Quazal LSP back end), NetworkEmulator (Quazal emulation
+//     devices), TheNetMessenger.Init (NetMessenger.cpp absent): networked;
+//   * the exit callback: Net::Terminate calls TheServer.Terminate, which would
+//     reach an aborting stub at exit.
+// So TheNet.mServer, mEmulator and mSyncStore stay null. Net.cpp's own Init is
+// not called. Printed as GATED, not PASS, because it is not retail's whole call.
+extern "C" void rb3_app_net_init_offline(void *net, void **session, void **searcher);
 extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
-    (void)self;
-    void *session = rb3_app_netsession_new();
+    void *session = nullptr, *searcher = nullptr;
+    rb3_app_net_init_offline(self, &session, &searcher);
     printf("  [GATED] rb3-app Net::Init() -- ring online-net: built ONLY the idle XboxSession "
-           "(TheNetSession=%p); SyncStore/SessionSearcher/Server/NetworkEmulator/NetMessenger not built\n",
-           session);
+           "(TheNetSession=%p) and XSessionSearcher (TheNet.mSearcher=%p); Quazal hooks/SyncStore/"
+           "Server/NetworkEmulator/NetMessenger/exit callback not built\n",
+           session, searcher);
     fflush(stdout);
 }
 
@@ -252,21 +261,14 @@ extern "C" void __wrap__ZN11SongSortMgr4InitEv(void) { // ring: native-real
 }
 
 extern "C" void __real__ZN10SessionMgr4InitEv(void);
-// GATED, not called (lane A2; reason updated by lane A3). Retail 360 makes this
-// call offline too. Since A3 the idle XboxSession exists (Net::Init's gate builds
-// it, TheNetSession is real), so the session is no longer the blocker. What is:
-// SessionMgr's ctor (SessionMgr.cpp:43) does `new BandNetGameData()`, and
-// BandNetGameData's ctor has NO source in the tree (sourceless retail code;
-// session rb3-xenon-07's bngd lane owns writing it from the retail bytes, and
-// this lane may not). Skipped LOUDLY; TheSessionMgr stays null (zero storage in
-// rb3_app_link_stubs.cpp), so its first reader crashes visibly rather than
-// talking to a half-built manager. SessionUsersProvidersInit and
-// BandMachineMgr::Init, which SessionMgr::Init also calls, are skipped with it.
-// Drop this gate when BandNetGameData's ctor lands.
-extern "C" void __wrap__ZN10SessionMgr4InitEv(void) { // ring: online-netsession
-    printf("  [GATED] rb3-app SessionMgr::Init() -- ring online-netsession: SessionMgr's ctor builds "
-           "BandNetGameData, whose ctor has no source yet (rb3-xenon-07 bngd); TheSessionMgr stays null, not called\n");
-    fflush(stdout);
+// Lane A2 gated this call and A3 narrowed the reason to the sourceless
+// BandNetGameData ctor. A4: rb3-xenon-07's bngd landed BandNetGameData.cpp
+// (written from retail TU5 bytes), rb3-app compiles it, so this is retail's
+// call again: SessionMgr's ctor (builds BandNetGameData, subscribes to the idle
+// XboxSession), SessionUsersProvidersInit, BandMachineMgr::Init.
+extern "C" void __wrap__ZN10SessionMgr4InitEv(void) { // ring: native-real
+    __real__ZN10SessionMgr4InitEv();
+    rb3_app_gate("SessionMgr::Init()");
 }
 
 extern "C" void __real__ZN10MemcardMgr4InitEv(void *self);

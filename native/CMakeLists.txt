@@ -2253,6 +2253,43 @@ set(RB3_APP_SOURCES
     ${REPO_ROOT}/src/network/net/NetSession_Xbox.cpp
     ${REPO_ROOT}/src/network/net/SessionMessages.cpp
     ${REPO_ROOT}/src/network/net/MatchmakingSettings.cpp
+    # A4: SessionMgr's ctor does `new BandNetGameData()` (SessionMgr.cpp:45).
+    # rb3-xenon-07 wrote this TU from retail clean TU5 0x82650B74..0x82651928
+    # (bngd, 672687738); with it the SessionMgr::Init gate is lifted
+    # (rb3_app_gates.cpp). Its ctor calls TheNet.SetGameData(this), which is
+    # real since A5 (next entry).
+    ${REPO_ROOT}/src/band3/meta_band/BandNetGameData.cpp
+    # A5: TheNet is the real static object (retail dynamic initializer
+    # 0x82C3EB80), so BandNetGameData's ctor reaches retail Net::SetGameData
+    # (0x823E0420: store, then mSearcher->AllocateNetSearchResults()). The
+    # Net::Init gate (rb3_app_gates.cpp) builds the idle members an offline
+    # 360 has: the XboxSession and the XSessionSearcher (retail
+    # SessionSearcher::New 0x823EE140 = new XSessionSearcher, sizeof 0xCC).
+    # Per-file flags below, after the target is assembled.
+    ${REPO_ROOT}/src/network/net/Net.cpp
+    ${REPO_ROOT}/src/network/net/SessionSearcher.cpp
+    ${REPO_ROOT}/src/network/net/SessionSearcher_Xbox.cpp
+    # A5, pulled in by the three above: AllocateNetSearchResults news a
+    # NetSearchResult (retail NetSearchResult::New 0x823F5C20; its ctor builds
+    # an XSessionData and copies TheNetSession's settings, no network), and
+    # Net::ToggleLogging names the NetLog LogFile (a static-init object whose
+    # ctor only stores; retail 0x82c3ec00). Without NetLog.cpp the empty link
+    # made NetLog a FUNCTION stub, i.e. a data object backed by code bytes.
+    ${REPO_ROOT}/src/network/net/NetSearchResult.cpp
+    ${REPO_ROOT}/src/network/net/NetLog.cpp
+    # A5: with the Net stop gone, MetaPanel's ctor -> Campaign::Campaign ->
+    # AccomplishmentManager::Init builds every accomplishment; the song
+    # conditionals derive from AccomplishmentConditional, whose TU was not in
+    # rb3-app (the ctor/dtor/CanBeLaunched/GetRequiredDifficulty/
+    # InqRequiredScoreTypes rows were a1-absent-body stubs). Retail ctor
+    # 0x8266AED0 = Accomplishment ctor, empty condition list, Configure.
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentConditional.cpp
+    # A5: MetaPanel's ctor then builds TheNameGenerator (retail ctor 0x82643A60:
+    # hash_map ctor, TheNameGenerator = this, SetName, ConfigureNameData). The
+    # TU failed natively only on NameGenerator.h's STLport-only hash<Symbol>;
+    # rb3_hash_symbol_native.h (force-included, flags below) supplies the
+    # HX_NATIVE arm FixedSizeSaveableStream.h already carries.
+    ${REPO_ROOT}/src/band3/meta_band/NameGenerator.cpp
     # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
     # constructs TheBandUI at static init; natively TheUI was the engine's weak
     # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.
@@ -2523,6 +2560,26 @@ if(RB3X_BUILD_ENGINE)
     list(APPEND _rb3_app_all ${REPO_ROOT}/src/band3/meta_band/OvershellProfileProvider.cpp)
     set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/OvershellProfileProvider.cpp
         PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+    # A5: Net.cpp, SessionSearcher.cpp and NetSearchResult.cpp take
+    # RB3_HANDLE_LOCAL_STATIC, the
+    # same extra_cflags the X360 build gives them (config/45410914/objects.json):
+    # their handler Symbols (toggle_logging, stop_searching, get_mode_name) are
+    # function-local statics in retail. Net.cpp also force-includes
+    # rb3_app_net_shim.h, which gives native the retail-ABI MemOrPoolAlloc(int) /
+    # MemOrPoolFreeSTL(int, void*) its two Quazal allocator hooks call (the
+    # native MemMgr.h declares only the debug-argument forms). Native-only;
+    # no src/ edit.
+    set_source_files_properties(${REPO_ROOT}/src/network/net/SessionSearcher.cpp
+        ${REPO_ROOT}/src/network/net/NetSearchResult.cpp
+        PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC")
+    set_source_files_properties(${REPO_ROOT}/src/network/net/Net.cpp
+        PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC"
+        COMPILE_OPTIONS "-include;${CMAKE_SOURCE_DIR}/src/rb3_app_net_shim.h")
+    # A5: NameGenerator.cpp: X360's extra_cflags (RB3_HANDLE_LOCAL_STATIC) plus
+    # the native hash<Symbol> arm, defined before NameGenerator.h's STLport one.
+    set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/NameGenerator.cpp
+        PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC"
+        COMPILE_OPTIONS "-include;${CMAKE_SOURCE_DIR}/src/rb3_hash_symbol_native.h")
     # A2: the retail tables and registrars; rb3_app_gates.cpp calls them only
     # with a title update mounted (RB3_TITLE_UPDATE_DIR).
     list(APPEND _rb3_app_all ${REPO_ROOT}/src/ChecksumData_xbox.cpp)
