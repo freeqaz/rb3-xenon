@@ -98832,7 +98832,7 @@
   {
    "name": "RegisterHit",
    "address": "0x82bcd0e0",
-   "survivor": "?OnPacketLoopEnd@CX2SourceVoice@XAUDIO2@@UAAXPAXI@Z",
+   "survivor": "?OnVoiceProcessingPassEnd@CX2SourceVoice@XAUDIO2@@UAAXXZ",
    "folded": [
     "?RegisterHit@BeatMatchController@@QBAXW4HitType@@@Z"
    ],
