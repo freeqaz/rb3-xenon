@@ -34,6 +34,8 @@
 //                      killed by SIGALRM: `RESULT: APP STALLED IN FRAME N`, rc 5.
 // No teardown runs (_exit), as at the construct-only exit: ~App is not reached
 // in retail either.
+// A gate that checks state after an init step (rb3_app_gates.cpp) and finds it
+// wrong prints `[FAIL]`, then `RESULT: GATE FAILED (<what>)`, rc 7.
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>

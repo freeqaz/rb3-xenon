@@ -69,6 +69,8 @@ NON_STUB_RE = re.compile(
     r"cascade_notify_phase\.cpp|async_unload_phase\.cpp|"
     # A9: rb3-milo's proxy-chain gate (test code, not a stub).
     r"proxy_chain_phase\.cpp|"
+    # charclip: rb3-milo's CharClip transition ref-count gates (test code, not a stub).
+    r"charclip_refs_phase\.cpp|"
     # A1: rb3-app's boot-gate --wrap shims (call the real step, then print).
     r"rb3_app_gates\.cpp)\.o$"
 )

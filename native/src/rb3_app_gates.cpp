@@ -10,10 +10,39 @@
 // the Itanium ABI for a non-virtual direct call. Generated from App.cpp.o's
 // undefined symbols; the list is rb3_app_gates.txt.
 #include <cstdio>
+#include <unistd.h>
+#include "synth/StreamReceiver.h"
+#include "platform/StreamReceiver_Native.h"
 
 extern "C" void rb3_app_gate(const char *step) { // ring: native-real
     printf("  [PASS] rb3-app %s\n", step);
     fflush(stdout);
+}
+
+// A10: after SynthInit, StreamReceiver::New must have a factory. Retail
+// SynthInit (0x82701710) calls TheSynth->Init() (vtable +0x58, 0x82701764);
+// TheSynth is Synth::New()'s Synth360, whose Init (0x82B5DC78) runs Synth::Init
+// (0x82700270), SynthSample360::Init (0x82B6CAB0), then StreamReceiver360::Init
+// (0x82B6C688, the bl at 0x82B5DC94), which stores New360Receiver (0x82B6C608)
+// into StreamReceiver::sFactory (0x82E04ACC). The native equivalent is the
+// engine's StreamReceiverNative::Create. Unset, the first streamed sound
+// (splash_screen, frame ~13 of App::Run) calls through null in
+// StreamReceiver::New. A failure stops the boot here, rc 7, rather than there.
+static void rb3_app_check_stream_receiver_factory() { // ring: native-real
+    StreamReceiverFactoryFunc *f = StreamReceiver::sFactory;
+    if (f == &StreamReceiverNative::Create) {
+        rb3_app_gate("SynthInit() set StreamReceiver::sFactory = StreamReceiverNative::Create "
+                     "(retail Synth360::Init 0x82B5DC78 -> StreamReceiver360::Init 0x82B6C688)");
+        return;
+    }
+    printf("  [FAIL] rb3-app SynthInit() left StreamReceiver::sFactory = %s, not "
+           "StreamReceiverNative::Create (retail Synth360::Init 0x82B5DC78 -> "
+           "StreamReceiver360::Init 0x82B6C688 sets it)\n",
+           f ? "another function" : "NULL");
+    printf("RESULT: GATE FAILED (stream receiver factory)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
 }
 
 extern "C" void __real__Z10SystemInitPKc(const char * a0);
@@ -80,6 +109,7 @@ extern "C" void __real__Z9SynthInitv(void);
 extern "C" void __wrap__Z9SynthInitv(void) { // ring: native-real
     __real__Z9SynthInitv();
     rb3_app_gate("SynthInit()");
+    rb3_app_check_stream_receiver_factory();
 }
 
 extern "C" void __real__Z9TrackInitv(void);
