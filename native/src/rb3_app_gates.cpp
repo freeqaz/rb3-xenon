@@ -824,3 +824,79 @@ void rb3_app_check_tex_movie() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A19: the net cache's load fails the way it does on an offline 360, and
+// unloads cleanly. Retail NetCacheMgr::Load enters kNCMS_Load, whose
+// EnterLoadState calls NetCacheMgrXbox::LoadInit (0x827D7498): a non-local
+// server makes it XLSPConnection::Connect (0x827D9998), which goes to state 1
+// and runs StartEnumeration (0x827D9918). With no Live logon
+// XTitleServerCreateEnumerator fails (xdk_shims.cpp), and the nonzero result
+// takes the connection to state 4 (li r4,4 at 0x827D997C). The next
+// NetCacheMgrXbox::Poll (0x827D73E0) sees state 4 while mState < 2 and calls
+// SetFail (0x827D7480) with 1 if IsEthernetCableConnected (0x8251BE08) else 3;
+// mState stays kNCMS_Load and IsReady is false, which is what
+// MusicLibraryStore::Poll reads as "the store failed" (its state 1). Unload
+// then Disconnects (state 5, no enumerator to cancel, so 0) and Poll returns
+// the manager to kNCMS_Nil with mHasFailed cleared. Fails when
+// XTitleServerCreateEnumerator is an aborting stub (UNREACHED abort inside
+// Load) and when any of that state differs.
+#include "utl/NetCacheMgr_Xbox.h"
+#include "os/PlatformMgr.h"
+namespace {
+struct Rb3AppNetCacheProbe : NetCacheMgrXbox {
+    int State() const { return mState; }
+    int LoadCount() const { return mLoadCount; }
+    bool HasCache() const { return mCache != nullptr; }
+    const char *Filter() const { return mXLSPFilter.c_str(); }
+    int Conn() { return (int)mConnection.GetState(); }
+    int ConnRequest() const { return mConnection.GetConnectionRequest(); }
+};
+} // namespace
+void rb3_app_check_net_cache_offline() { // ring: native-real
+    NetCacheMgrXbox *mgr = dynamic_cast<NetCacheMgrXbox *>(TheNetCacheMgr);
+    if (!mgr) {
+        printf("  [FAIL] rb3-app net cache offline: TheNetCacheMgr=%p is not a NetCacheMgrXbox\n",
+               (void *)TheNetCacheMgr);
+        printf("RESULT: GATE FAILED (net cache offline)\n");
+        fflush(stdout);
+        _exit(7);
+    }
+    Rb3AppNetCacheProbe *p = static_cast<Rb3AppNetCacheProbe *>(mgr);
+    int state0 = p->State(), loads0 = p->LoadCount(), enums0 = rb3_app_xdk_live_enum_handles();
+    bool local = mgr->IsServerLocal();
+    bool cable = ThePlatformMgr.IsEthernetCableConnected();
+    mgr->Load((NetCacheMgr::CacheSize)0);
+    int connLoad = p->Conn(), stateLoad = p->State();
+    int polls = 0;
+    for (; polls < 10 && !mgr->GetHasFailed(); polls++)
+        mgr->Poll();
+    bool failed = mgr->GetHasFailed(), ready = mgr->IsReady();
+    int failType = (int)mgr->GetFailType(), stateFail = p->State(), connFail = p->Conn();
+    mgr->Unload();
+    for (int i = 0; i < 10 && p->State() != -1; i++)
+        mgr->Poll();
+    int state2 = p->State(), conn2 = p->Conn(), req2 = p->ConnRequest(), loads2 = p->LoadCount();
+    bool failed2 = mgr->GetHasFailed(), cache2 = p->HasCache();
+    int enums2 = rb3_app_xdk_live_enum_handles();
+    int wantType = cable ? 1 : 3;
+    char what[640];
+    snprintf(what, sizeof what,
+             "net cache offline: filter \"%s\", server %s, cable %d; before state %d loads %d; "
+             "Load -> state %d, XLSP %d; after %d Poll: failed %d type %d (want %d), state %d, "
+             "ready %d, XLSP %d; Unload -> state %d, loads %d, failed %d, cache %d, XLSP %d "
+             "request %d, live enumerators %d -> %d (want -1 0; 0 4; 1 %d 0 0 4; -1 0 0 0 0 0)",
+             p->Filter(), local ? "LOCAL" : "remote", (int)cable, state0, loads0, stateLoad,
+             connLoad, polls, (int)failed, failType, wantType, stateFail, (int)ready, connFail,
+             state2, loads2, (int)failed2, (int)cache2, conn2, req2, enums0, enums2, wantType);
+    if (state0 == -1 && loads0 == 0 && !local && stateLoad == 0 && connLoad == 4 && failed
+        && failType == wantType && stateFail == 0 && !ready && connFail == 4 && state2 == -1
+        && loads2 == 0 && !failed2 && !cache2 && conn2 == 0 && req2 == 0 && enums2 == enums0) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (net cache offline)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}

@@ -2030,6 +2030,8 @@ rb3_add_executable(rb3-milo
     ${CMAKE_SOURCE_DIR}/src/spotlight_generate_phase.cpp
     # A15: RndText::UpdateLineColor is retail's body (startIdx*4, no early-out).
     ${CMAKE_SOURCE_DIR}/src/text_line_color_phase.cpp
+    # A18: RndFont::Replace is retail's body plus the native MsgSinks forward.
+    ${CMAKE_SOURCE_DIR}/src/font_replace_phase.cpp
     # A ScriptTask ends when an object it watches dies (Task.cpp, retail 0x82749968).
     ${CMAKE_SOURCE_DIR}/src/script_task_watch_phase.cpp
     # strnode: DTA script ops on string nodes and native-width union reads.

@@ -191,7 +191,8 @@ void RndFont::Replace(ObjRef *from, Hmx::Object *to) {
             mTextureOwner = dynamic_cast<RndFont *>(to)->mTextureOwner;
     }
     return;
-#endif
+    // Unreachable after the return above; kept so the X360 token stream is
+    // unchanged.
     if (RefIs(from, mTextureOwner)) {
         RndFont *replace;
         if (mTextureOwner == this) {
@@ -208,6 +209,31 @@ void RndFont::Replace(ObjRef *from, Hmx::Object *to) {
         return;
     } else
         Hmx::Object::Replace(from, to);
+#else
+    // Native runs retail's body (0x82472D78) and adds ONE thing: refs that are
+    // not the texture owner go on to Hmx::Object::Replace. Retail needs no such
+    // forward because its Hmx::Object has no MsgSinks and its
+    // Hmx::Object::Replace is empty. HX_NATIVE adds Hmx::Object::mSinks
+    // (obj/Object.h, "absent from the retail binary layout") whose Sink entries
+    // are ObjOwnerPtrs owned by this font, so when a sink dies its death notice
+    // reaches the font only through this virtual. Native ReplaceRefs takes the
+    // ref out of the dead object's ring before the call, so if the notice stops
+    // here, MsgSinks keeps an entry aimed at freed memory. Gate:
+    // font-replace-sink-dies (native/src/font_replace_phase.cpp).
+    //
+    // The texture-owner case is retail's: a null replacement makes the font
+    // its own owner, any other adopts the replacement's owner. The old arm kept
+    // a self-owned font's owner on ReplaceRefs(other) and tolerated a non-font
+    // replacement; gate font-replace-owner-adopt.
+    if (RefIs(from, mTextureOwner)) {
+        if (!to)
+            mTextureOwner = this;
+        else
+            mTextureOwner = dynamic_cast<RndFont *>(to)->mTextureOwner;
+        return;
+    }
+    Hmx::Object::Replace(from, to);
+#endif
 }
 
 BEGIN_HANDLERS(RndFont)
