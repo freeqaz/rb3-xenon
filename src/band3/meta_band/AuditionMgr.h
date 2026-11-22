@@ -5,6 +5,15 @@
 #include "utl/Symbol.h"
 
 class LocalBandUser;
+class SessionMgr;
+class BandUserMgr;
+class OvershellPanel;
+class BandSongMgr;
+class ModifierMgr;
+class AuditionDownloader;
+class FileCache;
+class Message;
+class AuditionSongBuffer;
 
 /** TU5-only Rock Band Network audition support. Neither class has a body in
     our tree and no surviving source has them; only the surface AuditionSessionPanel
@@ -16,6 +25,15 @@ class LocalBandUser;
     0x820B954C (21 slots, i.e. a plain Hmx::Object subclass). */
 class AuditionSessionBuilder : public Hmx::Object {
 public:
+    /** retail 0x825EC118; AuditionMgr's session-start state passes
+        TheSessionMgr, TheBandUserMgr, TheBandUI's overshell, TheSongMgr and
+        TheModifierMgr, in that order. */
+    AuditionSessionBuilder(
+        SessionMgr *, BandUserMgr *, OvershellPanel *, BandSongMgr *, ModifierMgr *
+    );
+    /** retail 0x825EBF28; called on the builder just before AuditionMgr's
+        finish state deletes it. Name ours. */
+    void Finish();
     /** One audition slot. AuditionSessionPanel reads the user at +0 and a
         has-part flag at +0x10. */
     struct Slot {
@@ -95,26 +113,56 @@ public:
     virtual int ThreadStart();
     virtual void ThreadDone(int);
 
+    /** Inline: retail has no out-of-line ctor; the static initializer
+        (0x82C3FD60) carries it whole and leaves 0x54 unwritten. */
+    AuditionMgr()
+        : mState(0), unk30(0), mBuilder(0), mUser(0), mDownloader(0), unk40(0),
+          unk44(0), unk50(0), mSavedBandNoFail(0), unk58(0), mSongBuffer(0),
+          unk60(0) {}
+
     /** 0x825610B8, called once from App::App right after TheUI's Init.
         Names the object "audition_mgr" (Object slot 16) and fills the two
         Symbols at 0x48/0x4c. */
     void Init();
+    /** 0x82563428: runs the exit action of the current state, then the entry
+        action of the new one. Names of this and every helper below are ours. */
+    void SetState(int);
+    /** 0x82561EA0: sends `update` to the current screen when it is
+        audition_main_screen and the UI is not in transition. */
+    void UpdateScreen();
+    /** 0x82561A70; not yet written. */
+    void SendToScreen(Message &);
+    void EnterStart(); // 0x82560CB0, state 1
+    void EnterDownload(); // 0x825611F8, state 3
+    void ExitLoad(); // 0x82561360, leaving state 5
+    void EnterFinish(); // 0x825613C8, state 13
+    void EnterState4(); // 0x82562608, not yet written
+    void EnterLoad(); // 0x82562978, state 5, not yet written
+    void EnterValidated(); // 0x82563158, state 6
+    void EnterState7(); // 0x825632F0, not yet written
+    void EnterEnd(); // 0x82560DE8, state 11
+    void EnterUnmount(); // 0x82563208, state 12
+    void PollLoad(); // 0x82563578, polled in state 5, not yet written
 
     int mState; // 0x2c -- switched on by slot 21, ThreadStart and ThreadDone
     int unk30; // 0x30
     AuditionSessionBuilder *mBuilder; // 0x34
-    int unk38; // 0x38
-    /** slot 21 calls 0x825614F8 on it when non-null. */
-    void *unk3c; // 0x3c
+    /** The local user whose pad is PlatformMgr's RBN member pad (state 3). */
+    LocalBandUser *mUser; // 0x38
+    /** Created in state 3, deleted in state 12; slot 21 polls it. */
+    AuditionDownloader *mDownloader; // 0x3c
     bool unk40; // 0x40
     DataArray *unk44; // 0x44 -- Release()d and nulled by the dtor
     Symbol unk48; // 0x48
     Symbol unk4c; // 0x4c
     bool unk50; // 0x50
-    bool unk51; // 0x51
-    int unk54; // 0x54
+    /** MetaPerformer's band no-fail flag, saved in state 1, restored in 11. */
+    bool mSavedBandNoFail; // 0x51
+    /** Deleted on leaving state 5; the ctor never writes it. */
+    FileCache *mFileCache; // 0x54
     int unk58; // 0x58
-    int unk5c; // 0x5c
+    /** 0x104-byte object allocated in state 5, deleted on leaving it. */
+    AuditionSongBuffer *mSongBuffer; // 0x5c
     bool unk60; // 0x60
 };
 

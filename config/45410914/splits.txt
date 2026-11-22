@@ -8651,6 +8651,13 @@ band3/meta_band/UIStats.cpp:
 	.text       start:0x82C3FD28 end:0x82C3FD60
 	.text       start:0x82C45EE8 end:0x82C45F18
 
+band3/meta_band/AuditionMgr.cpp:
+	.pdata      start:0x8221CE18 end:0x8221D100
+	.pdata      start:0x8221D108 end:0x8221D220
+	.text       start:0x82560B08 end:0x82563258
+	.text       start:0x825632BC end:0x82564410
+	.text       start:0x82C45F18 end:0x82C46028
+
 band3/meta_band/NewAwardPanel.cpp:
 	.pdata      start:0x8222A4E8 end:0x8222A608
 	.text       start:0x82627A54 end:0x82628AD0
