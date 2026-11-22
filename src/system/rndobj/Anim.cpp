@@ -505,6 +505,19 @@ float AnimTask::TimeUntilEnd() {
 // StartAnim() now happens in the ctors instead of behind the mActive latch.
 // Tasks are deleted directly here (delete through vtable slot 0), not queued.
 void AnimTask::Poll(float time) {
+#ifdef HX_NATIVE
+    // The native ~ObjectDir cascade (Dir.cpp, HX_NATIVE Phase 0) clears refs
+    // with NullifyAllRefs -> ObjOwnerPtr::NullifyObj, which does not call the
+    // owner's Replace. In retail the anim's death reaches AnimTask::Replace,
+    // which deletes the task; natively the task outlives its anim with a null
+    // mAnim (measured: the splash anim task from Splash::Show, nulled by
+    // Splash::EndSplasher's ~RndDir, then polled on App::Run's first frame).
+    // Finish it the way Replace would have, then stop.
+    if (!mAnim) {
+        delete this;
+        return;
+    }
+#endif
     float blend = 1.0f;
     if (mBlendPeriod) {
         blend = time / mBlendPeriod;

@@ -2554,6 +2554,16 @@ if(RB3X_BUILD_ENGINE)
     set(_rb3_app_sym_cpp ${CMAKE_BINARY_DIR}/generated/rb3_app_symbols.cpp)
     file(GLOB _rb3_sym_headers ${REPO_ROOT}/src/system/utl/Symbols*.h)
     list(SORT _rb3_sym_headers)
+    # A7: a namespace-scope `Symbol poll;` is the linker symbol `poll`, so a
+    # definition here takes the C library's name for the whole process: the
+    # executable exports it and every shared object's poll() call (libdbus,
+    # loaded by the NVIDIA EGL/Vulkan driver) and the engine's own AudioDevice
+    # poll() jumped into a Symbol's 8 bytes (SIGSEGV in poll() <- libdbus, before
+    # SynthInit, on the 3090). These names are defined in libc/libz and no
+    # rb3-app TU names the Symbol (measured: no object holds `U <name>` for any
+    # of them except AudioDevice.cpp.o's libc poll), so none is defined; a TU
+    # that does name one fails to link instead of interposing libc.
+    set(_rb3_app_sym_libc_names compress login logout mount poll splice wait)
     set(_defs "")
     set(_interns "")
     foreach(_h IN LISTS _rb3_sym_headers)
@@ -2565,7 +2575,7 @@ if(RB3X_BUILD_ENGINE)
         list(TRANSFORM _hidden REPLACE "^#endif // ([A-Za-z_][A-Za-z0-9_]*):.*" "\\1")
         foreach(_l IN LISTS _lines)
             string(REGEX REPLACE "^extern Symbol ([A-Za-z_][A-Za-z0-9_]*);.*" "\\1" _n "${_l}")
-            if("${_n}" IN_LIST _hidden)
+            if("${_n}" IN_LIST _hidden OR "${_n}" IN_LIST _rb3_app_sym_libc_names)
                 continue()
             endif()
             string(APPEND _defs "__attribute__((weak)) Symbol ${_n};\n")
@@ -2710,6 +2720,10 @@ if(RB3X_BUILD_ENGINE)
     target_link_libraries(rb3-app PRIVATE milo-engine ZLIB::ZLIB)
     target_link_options(rb3-app PRIVATE -fuse-ld=lld -Wl,--error-limit=0
         -Wl,--wrap=_ZN6Symbol4InitEv)
+    # A7: main_app.cpp bounds App::Run's retail `while (true)` loop at its first
+    # call, SystemPoll(false): the wrapper counts frames (RB3_APP_FRAMES,
+    # RB3_APP_SECONDS) and exits at a frame boundary.
+    target_link_options(rb3-app PRIVATE -Wl,--wrap=_Z10SystemPollb)
     # A1 boot gates: each App::App init step is --wrap'ed by rb3_app_gates.cpp,
     # which prints `  [PASS] rb3-app <step>` when it returns.
     file(STRINGS ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.txt _rb3_app_gate_syms)
