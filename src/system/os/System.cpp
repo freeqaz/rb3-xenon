@@ -684,6 +684,16 @@ void SystemInit(const char *config) {
     TheLocale.Init();
     CheatsInit();
     FileCache::Init();
+#ifdef RB3_NATIVE_SYSTEM_NET_MGRS
+    // rb3-app only (the other native targets compile this TU without
+    // NetCacheMgr_Xbox.cpp): retail's NetCacheMgrInit and ThePlatformMgr.Init,
+    // in retail's place between FileCache::Init and TheContentMgr.Init (the
+    // #else arm). They name the "net_cache_mgr" and "platform_mgr" objects the
+    // UI scripts address. TheMC.Init, CacheMgrInit and TheVirtualKeyboard.Init
+    // stay skipped here.
+    NetCacheMgrInit();
+    ThePlatformMgr.Init();
+#endif
     TheContentMgr.Init();
     StageKitInit(); // registers the stagekit_* script functions, as below
     TheDebug.AddExitCallback(SystemTerminate);

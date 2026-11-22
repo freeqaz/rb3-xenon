@@ -50,6 +50,9 @@ RULES = [
     # its search and invite paths call XSessionSearchEx / XInviteGetAcceptedInfo.
     (r"^(XNet|XUserMuteListQuery|XUserSetProperty|XSessionSearchEx|XInviteGetAcceptedInfo)",
      "xbox-live"),
+    # rbx-net: XLSPConnection.cpp is compiled (NetCacheMgrXbox's member); its
+    # connect path enumerates LIVE title servers.
+    (r"^XTitleServerCreateEnumerator$", "xbox-live"),
     (r"^(AssetOffer::|XMarketplace|XBackgroundDownload|StoreRootPanel::)", "xbox-store"),
     (r"^(XMsgCancelIORequest|XUserReadGamerPicture|XGetOverlappedResult|XStringVerify|ShowParentalControlUI|SessionUsersProvider::ShowGamercard)",
      "xbox-live"),

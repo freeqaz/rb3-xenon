@@ -2676,6 +2676,27 @@ if(RB3X_BUILD_ENGINE)
     # none on X360 and none here.
     set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/AuditionSessionPanel.cpp
         PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC")
+    # rbx-net: the offline server and the two SystemInit managers.
+    #  * network/net/Server.cpp: Server's shared code and XboxServer, with the
+    #    static gXboxServer (retail dynamic initializer 0x82C3EC40, XboxServer
+    #    ctor 0x823EC638). rb3_app_native_glue.cpp binds TheServer to it (retail
+    #    .data 0x82C6EB50 holds &gXboxServer, 0x82CBFD14) and the Net::Init gate
+    #    runs its offline part. X360 extra_cflags: RB3_HANDLE_LOCAL_STATIC. Its
+    #    Quazal LSP calls (XboxServer::Init/Login/Terminate) stay aborting stubs.
+    #  * system/utl/NetCacheMgr_Xbox.cpp + system/net/XLSPConnection.cpp:
+    #    NetCacheMgrInit's `new NetCacheMgrXbox` (named "net_cache_mgr").
+    #    No X360 extra_cflags. The XLSP enumerate path's XDK calls stay stubs.
+    list(APPEND _rb3_app_all ${REPO_ROOT}/src/network/net/Server.cpp
+        ${REPO_ROOT}/src/system/utl/NetCacheMgr_Xbox.cpp
+        ${REPO_ROOT}/src/system/net/XLSPConnection.cpp)
+    set_source_files_properties(${REPO_ROOT}/src/network/net/Server.cpp
+        PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC")
+    # XLSPConnection::State is declared EMPTY (XLSPConnection.h), a placeholder
+    # like Metronome's OverrideEnabled, while both TUs compare it against the
+    # live states 1..5; clang keeps those compares (no -fstrict-enums).
+    set_source_files_properties(${REPO_ROOT}/src/system/utl/NetCacheMgr_Xbox.cpp
+        ${REPO_ROOT}/src/system/net/XLSPConnection.cpp
+        PROPERTIES COMPILE_OPTIONS "-Wno-tautological-constant-out-of-range-compare")
     # A2: the retail tables and registrars; rb3_app_gates.cpp calls them only
     # with a title update mounted (RB3_TITLE_UPDATE_DIR).
     list(APPEND _rb3_app_all ${REPO_ROOT}/src/ChecksumData_xbox.cpp)
@@ -2718,8 +2739,10 @@ if(RB3X_BUILD_ENGINE)
     # RB3_NATIVE_PROFILEPICTURE: ProfilePicture_Xbox.cpp is linked, so
     # ProfilePicture.cpp's state machine (Update/Poll/Succeed/Fail) is compiled
     # (other native targets compile that TU without the Xbox half).
+    # RB3_NATIVE_SYSTEM_NET_MGRS: NetCacheMgr_Xbox.cpp is linked, so the native
+    # SystemInit runs retail's NetCacheMgrInit and ThePlatformMgr.Init (System.cpp).
     target_compile_definitions(rb3-app PRIVATE RB3_ENGINE_RENDER=1 RB3_NATIVE_PRESENCEMGR
-        RB3_NATIVE_AUDITION RB3_NATIVE_PROFILEPICTURE)
+        RB3_NATIVE_AUDITION RB3_NATIVE_PROFILEPICTURE RB3_NATIVE_SYSTEM_NET_MGRS)
     target_link_libraries(rb3-app PRIVATE milo-engine ZLIB::ZLIB)
     target_link_options(rb3-app PRIVATE -fuse-ld=lld -Wl,--error-limit=0
         -Wl,--wrap=_ZN6Symbol4InitEv)
