@@ -178,13 +178,13 @@ void MusicLibrary::OnLoad() {
 
 void MusicLibrary::OnEnter() {
 #ifdef HX_NATIVE
-    /* Retail Xbox 360 OnEnter has NO SetHomeMenuEnabled call: enumerating all 62
-       `bl` targets in retail fn_82542238 (0x82542238, 1792 B) and mapping them
-       through target_symbol_map.json finds no
-       ?SetHomeMenuEnabled@PlatformMgr@@QAAX_N@Z — while the same enumeration DOES
-       find AddSink/SigninChangedMsg, so the search is not vacuous. The HOME menu
-       is a Wii-only concern; keep the call for the native host only. */
-    ThePlatformMgr.SetHomeMenuEnabled(false);
+    /* Retail TU5 OnEnter (fn_82542238) has NO SetHomeMenuEnabled call: its first
+       body store is `stb r22,0x50(r3)` (unk40 = true) at 0x82542250, and none of
+       its 62 `bl` targets is ?SetHomeMenuEnabled@PlatformMgr@@QAAX_N@Z. band.exe
+       has no such function at all (no "home_menu" string either): the HOME menu
+       is Wii-only. The native host has none, so native runs retail's body too;
+       the old native-only call reached an UNREACHED link stub at song select. */
+    // (no call: retail TU5)
 #endif
     unk40 = true;
     UIPanel *panel = ObjectDir::Main()->Find<UIPanel>("song_select_panel", true);
@@ -370,11 +370,11 @@ void MusicLibrary::OnExit() {
     unk40 = false;
     /* Retail has NO SetHomeMenuEnabled call here: fn_82542A00 ends
        `li r11,0; stb r11,0x50(this); addi r1,r31,0x90; b __restgprlr_27` — the
-       store of unk40 is the last thing before the epilogue, with no further bl.
-       Same Wii-only HOME-menu concern CO-2 removed from OnEnter; kept for the
-       native host only. */
+       store of unk40 is the last thing before the epilogue, with no further bl
+       (stb at 0x82542CE0, then `b 0x828292A4`). Wii-only, as in OnEnter: native
+       runs retail's body too. */
 #ifdef HX_NATIVE
-    ThePlatformMgr.SetHomeMenuEnabled(true);
+    // (no call: retail TU5)
 #endif
 }
 
