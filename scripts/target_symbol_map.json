@@ -18685,6 +18685,7 @@
  "0x826412e0": "?DataDir@UIPanel@@$4PPPPPPPM@EM@AAPAVObjectDir@@XZ",
  "0x826412f0": "?SetTypeDef@UIPanel@@$4PPPPPPPM@EM@AAXPAVDataArray@@@Z",
  "0x82641300": "??_ETokenRedemptionPanel@@$4PPPPPPPM@JA@AAPAXI@Z",
+ "0x82641320": "?Load@UIPanel@@$4PPPPPPPM@EM@AAXAAVBinStream@@@Z",
  "0x82641310": "?ClassName@TokenRedemptionPanel@@$4PPPPPPPM@A@BA?AVSymbol@@XZ",
  "0x82641338": "?SetType@TokenRedemptionPanel@@UAAXVSymbol@@@Z",
  "0x82641498": "?SetType@TokenRedemptionPanel@@$4PPPPPPPM@A@AAXVSymbol@@@Z",
