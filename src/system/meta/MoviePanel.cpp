@@ -204,14 +204,10 @@ void MoviePanel::Poll() {
     UIPanel::Poll();
     if (GetState() == kUnloaded)
         return;
-#ifdef HX_NATIVE
-    // If no movies were loaded, skip movie polling entirely
-    if (mMovies.empty())
-        return;
-    // Stub MovieImpl never opens successfully — avoid infinite movie_done loop
-    if (!mMovie.IsOpen())
-        return;
-#endif
+    // Retail 0x827B0118 has no early-out for an empty or unopened movie: a movie
+    // that is not playing sends movie_done, whose handler moves the flow on
+    // (intro_movie_panel: `{ui goto_screen splash_screen}`). Natively the
+    // MovieImpl never opens, so that is what happens on the first poll.
     if (!mMovie.Poll() && !TheUI->InTransition()) {
         static Message movie_done("movie_done");
         DataNode handled = HandleType(movie_done);
