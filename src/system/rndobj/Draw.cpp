@@ -119,14 +119,14 @@ END_LOADS
 
 void RndDrawable::Draw() {
     if (mShowing) {
-#if 1
+        // (the cull runs on both builds; this line was #ifndef HX_NATIVE)
         // World-sphere frustum cull, both builds: retail 0x824066A8 (operator> 0x824F0E80, RndCam+0x254)
         Sphere s;
         bool hasSphere = MakeWorldSphere(s, false);
         if (hasSphere && s > RndCam::Current()->WorldFrustum()) {
             return;
         }
-#endif
+        // (end of the former native guard)
         DrawShowing();
     }
 }
