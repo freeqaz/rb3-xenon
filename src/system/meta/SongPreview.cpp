@@ -24,7 +24,7 @@ const float SongPreview::kSilenceVal = -48;
 SongPreview::SongPreview(const SongMgr &mgr)
     : mSongMgr(mgr), mStream(0),
 #ifdef HX_NATIVE
-      mTexMovie(this), mPreviewDb(0.0f), mInitted(0), mSameSongRequested(0),
+      mTexMovie(this), mInitted(0), mSameSongRequested(0),
 #endif
       mFader(0), mMusicFader(0),
       mCrowdSingFader(0), mNumChannels(0), mAttenuation(0.0f),
@@ -109,10 +109,9 @@ void SongPreview::Init() {
         DataArray *cfg = SystemConfig("sound", "song_select");
         cfg->FindData("loop_forever", mLoopForever, true);
         cfg->FindData("fade_time", mFadeTime, true);
+        // Retail reads exactly these three keys (0x827A55CC/F8/0x827A5620);
+        // RB3's config/sound.dta song_select block has no DC3 `preview_db`.
         cfg->FindData("attenuation", mAttenuation, true);
-#ifdef HX_NATIVE
-        cfg->FindData("preview_db", mPreviewDb, true);
-#endif
         mFadeTime *= 1000.0f;
         mFader = Hmx::Object::New<Fader>();
         mMusicFader = Hmx::Object::New<Fader>();
@@ -190,13 +189,8 @@ void SongPreview::Start(Symbol song) {
         }
         mSong = song;
         mRestart = true;
-        // Retail RB3-360 has no preview_db member (see SongPreview.h);
-        // the match build sets the music fader to 0 dB here.
-#ifdef HX_NATIVE
-        mMusicFader->SetVal(mPreviewDb);
-#else
+        // Retail sets the music fader to 0 dB here (0x827A5878).
         mMusicFader->SetVal(0.0f);
-#endif
         mCrowdSingFader->SetVal(kDbSilence);
         switch (mState) {
         case kIdle:
