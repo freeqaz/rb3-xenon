@@ -122,3 +122,38 @@ void BeatMatchInit() { MidiParser::Init(); } // ring: native-real
 // then reads the shipped locale config, exactly as retail always does.
 #include "xdk/xbdm/xbdm.h"
 extern "C" HRESULT DmMapDevkitDrive() { return (HRESULT)0x82DA0000; } // ring: native-real (XBDM_NOERR is 0x02DA0000; 0x82DA... = a failure facility code, < 0)
+
+// Retail body, src/system/os/Memcard_Xbox.cpp:43 (MemcardMgr::Init calls it for
+// each of the four pads). That TU is not in rb3-app: the rest of it is the
+// XContent device/container layer, which natively is platform/Memcard_Stub.cpp
+// (A4 replaces that). This one member is three stores, so it is copied
+// verbatim rather than stubbed.
+#include "os/Memcard_Xbox.h"
+void ContainerId::Set(int idx, DWORD dw) { // ring: native-real
+    mUserIndex = idx;
+    unk8 = dw;
+    mDeviceId = XCONTENTDEVICE_ANY;
+}
+
+// Win32 MultiByteToWideChar (xdk/xapilibi/stringapiset.h). Retail calls the XDK
+// export (MemcardMgr::Init widens the localized title_name for
+// SetContainerDisplayName). Natively there is no code-page table: each byte
+// widens to the code unit of the same value (the Latin-1 view of CP_ACP),
+// which is exact for the ASCII the game passes and is the inverse of
+// rb3_app_quazal_native.cpp's WideCharToMultiByte convention. The Win32
+// contract is kept: cbMultiByte -1 means "through the NUL, counted";
+// cchWideChar 0 returns the size needed; a buffer too small returns 0.
+#include "xdk/xapilibi/stringapiset.h"
+#include <cstring>
+extern "C" int MultiByteToWideChar(UINT, DWORD, LPCSTR src, int cb, LPWSTR dst, int cch) { // ring: native-real
+    if (!src)
+        return 0;
+    int n = cb < 0 ? (int)std::strlen(src) + 1 : cb;
+    if (cch == 0)
+        return n;
+    if (!dst || cch < n)
+        return 0;
+    for (int i = 0; i < n; i++)
+        dst[i] = (unsigned char)src[i];
+    return n;
+}

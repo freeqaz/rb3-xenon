@@ -2233,6 +2233,12 @@ set(RB3_APP_SOURCES
     # time, an empty DataArray. Its upload paths go to RockCentral, whose entry
     # points are aborting stubs (ring online-rockcentral).
     ${REPO_ROOT}/src/band3/net_band/XboxEntityUploader.cpp
+    # A2: ProfileMgr::Init constructs a ProfilePicture per pad (retail ctor in
+    # ProfilePicture_Xbox.cpp: six member stores, no Xbox call). The fetch path
+    # (XUserReadGamerPicture into a D3D texture) is the Xbox Live / D3D layer,
+    # whose entry points are aborting stubs (rings xbox-live, xbox-d3d).
+    ${REPO_ROOT}/src/system/os/ProfilePicture.cpp
+    ${REPO_ROOT}/src/system/os/ProfilePicture_Xbox.cpp
     # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
     # constructs TheBandUI at static init; natively TheUI was the engine's weak
     # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.

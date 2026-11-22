@@ -219,3 +219,88 @@ extern "C" void __wrap__ZN9PrefabMgr4InitEP11BandUserMgr(void * a0) { // ring: n
     __real__ZN9PrefabMgr4InitEP11BandUserMgr(a0);
     rb3_app_gate("PrefabMgr::Init(BandUserMgr*)");
 }
+
+// ---- lane A2: MetaPanel::Init's steps, and the App::App steps after it ------
+extern "C" void __real__Z12GameModeInitv(void);
+extern "C" void __wrap__Z12GameModeInitv(void) { // ring: native-real
+    __real__Z12GameModeInitv();
+    rb3_app_gate("GameModeInit()");
+}
+
+extern "C" void __real__ZN11ModifierMgr4InitEv(void);
+extern "C" void __wrap__ZN11ModifierMgr4InitEv(void) { // ring: native-real
+    __real__ZN11ModifierMgr4InitEv();
+    rb3_app_gate("ModifierMgr::Init()");
+}
+
+extern "C" void __real__ZN11SongSortMgr4InitEv(void);
+extern "C" void __wrap__ZN11SongSortMgr4InitEv(void) { // ring: native-real
+    __real__ZN11SongSortMgr4InitEv();
+    rb3_app_gate("SongSortMgr::Init()");
+}
+
+extern "C" void __real__ZN10SessionMgr4InitEv(void);
+// GATED, not called (lane A2). Retail 360 makes this call offline too: Net::Init
+// has already built an idle XboxSession (NetSession::New, NetSession_Xbox.cpp)
+// whose base ctor configures the Quazal transport (RootTransport connection
+// timeout, Stream::s_oStreamSettings via PseudoSingleton contexts), and
+// SessionMgr/BandMatchmaker subscribe to it. rb3-app has none of that: Net::Init
+// is GATED, TheNetSession is null, and the Quazal StreamSettings / Stream /
+// PseudoSingleton bodies are absent from the tree, so the real NetSession ctor
+// cannot run. Skipped LOUDLY; TheSessionMgr stays null (zero storage in
+// rb3_app_link_stubs.cpp), so its first reader crashes visibly rather than
+// talking to a fake session. SessionUsersProvidersInit and BandMachineMgr::Init,
+// which SessionMgr::Init also calls, are skipped with it.
+extern "C" void __wrap__ZN10SessionMgr4InitEv(void) { // ring: online-netsession
+    printf("  [GATED] rb3-app SessionMgr::Init() -- ring online-netsession: no NetSession natively "
+           "(Net::Init gated), TheSessionMgr stays null, not called\n");
+    fflush(stdout);
+}
+
+extern "C" void __real__ZN10MemcardMgr4InitEv(void *self);
+extern "C" void __wrap__ZN10MemcardMgr4InitEv(void *self) { // ring: native-real
+    __real__ZN10MemcardMgr4InitEv(self);
+    rb3_app_gate("MemcardMgr::Init()");
+}
+
+extern "C" void __real__ZN10ProfileMgr4InitEv(void *self);
+extern "C" void __wrap__ZN10ProfileMgr4InitEv(void *self) { // ring: native-real
+    __real__ZN10ProfileMgr4InitEv(self);
+    rb3_app_gate("ProfileMgr::Init()");
+}
+
+extern "C" void __real__ZN13MetaPerformer4InitEv(void);
+extern "C" void __wrap__ZN13MetaPerformer4InitEv(void) { // ring: native-real
+    __real__ZN13MetaPerformer4InitEv();
+    rb3_app_gate("MetaPerformer::Init()");
+}
+
+extern "C" void __real__ZN14UploadErrorMgr4InitEv(void);
+extern "C" void __wrap__ZN14UploadErrorMgr4InitEv(void) { // ring: native-real
+    __real__ZN14UploadErrorMgr4InitEv();
+    rb3_app_gate("UploadErrorMgr::Init()");
+}
+
+extern "C" void __real__ZN25AppMiniLeaderboardDisplay4InitEv(void);
+extern "C" void __wrap__ZN25AppMiniLeaderboardDisplay4InitEv(void) { // ring: native-real
+    __real__ZN25AppMiniLeaderboardDisplay4InitEv();
+    rb3_app_gate("AppMiniLeaderboardDisplay::Init()");
+}
+
+extern "C" void __real__Z7UtlInitv(void);
+extern "C" void __wrap__Z7UtlInitv(void) { // ring: native-real
+    __real__Z7UtlInitv();
+    rb3_app_gate("UtlInit()");
+}
+
+extern "C" void __real__ZN11PresenceMgr4InitEv(void *self);
+extern "C" void __wrap__ZN11PresenceMgr4InitEv(void *self) { // ring: native-real
+    __real__ZN11PresenceMgr4InitEv(self);
+    rb3_app_gate("PresenceMgr::Init()");
+}
+
+extern "C" void __real__ZN12QuestManager4InitEP9DataArray(void *self, void *a0);
+extern "C" void __wrap__ZN12QuestManager4InitEP9DataArray(void *self, void *a0) { // ring: native-real
+    __real__ZN12QuestManager4InitEP9DataArray(self, a0);
+    rb3_app_gate("QuestManager::Init(DataArray*)");
+}

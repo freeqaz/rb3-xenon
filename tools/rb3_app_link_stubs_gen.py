@@ -36,7 +36,7 @@ RULES = [
     (r"^(Net::|SyncStore::)", "online-net"),
     (r"^RockCentral::", "online-rockcentral"),
     (r"^(AssetOffer::|XMarketplace|XBackgroundDownload|StoreRootPanel::)", "xbox-store"),
-    (r"^(XMsgCancelIORequest|XStringVerify|ShowParentalControlUI|SessionUsersProvider::ShowGamercard)",
+    (r"^(XMsgCancelIORequest|XUserReadGamerPicture|XGetOverlappedResult|XStringVerify|ShowParentalControlUI|SessionUsersProvider::ShowGamercard)",
      "xbox-live"),
     (r"^D3D", "xbox-d3d"),
     (r"^__v", "a1-xbox-vmx"),
