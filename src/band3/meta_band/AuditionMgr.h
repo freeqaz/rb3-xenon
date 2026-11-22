@@ -13,7 +13,7 @@ class ModifierMgr;
 class AuditionDownloader;
 class FileCache;
 class Message;
-class AuditionSongBuffer;
+class Validator;
 class SigninChangedMsg;
 class ConnectionStatusChangedMsg;
 class ServerStatusChangedMsg;
@@ -125,7 +125,7 @@ public:
         (0x82C3FD60) carries it whole and leaves 0x54 unwritten. */
     AuditionMgr()
         : mState(0), unk30(0), mBuilder(0), mUser(0), mDownloader(0), mValidationFailed(0),
-          unk44(0), mDrumFillsEnabled(0), mSavedBandNoFail(0), unk58(0), mSongBuffer(0),
+          mSongData(0), mDrumFillsEnabled(0), mSavedBandNoFail(0), mLoadStep(0), mValidator(0),
           unk60(0) {}
 
     /** 0x825610B8, called once from App::App right after TheUI's Init.
@@ -171,14 +171,23 @@ public:
     /** 0x82562608, state 4: raises `lost_connection` (0 = no network, 1 = no
         server), else resumes the downloader. */
     void EnterNetPoll();
-    void EnterLoad(); // 0x82562978, state 5, not yet written
+    /** 0x82562978, state 5: validates the downloaded songs.dta, registers the
+        audition song with TheSongMgr, then caches the midi, milo and weights
+        files for PollLoad to validate. */
+    void EnterLoad();
+    /** 0x82561B20: renames the downloaded song entry to mSong and points its
+        `(song (name ...))` at the audition song directory. Name ours. */
+    void FixupSongData();
     void EnterValidated(); // 0x82563158, state 6
     /** 0x825632F0, state 7: sets has_validation_failed, logs the
         `rbn/audition/fail` data point and sends on_validation_failed. */
     void EnterValidationFailed();
     void EnterEnd(); // 0x82560DE8, state 11
     void EnterUnmount(); // 0x82563208, state 12
-    void PollLoad(); // 0x82563578, polled in state 5, not yet written
+    /** 0x82563578, polled in state 5: once the FileCache is done, validates
+        the midi, the lipsync milo and the mogg (the last one 10 ms at a time),
+        then enters state 6 (validated) or 7 (failed). */
+    void PollLoad();
 
     int mState; // 0x2c -- switched on by slot 21, ThreadStart and ThreadDone
     int unk30; // 0x30
@@ -189,7 +198,9 @@ public:
     AuditionDownloader *mDownloader; // 0x3c
     /** `has_validation_failed`. */
     bool mValidationFailed; // 0x40
-    DataArray *unk44; // 0x44 -- Release()d and nulled by the dtor
+    /** The downloaded songs.dta array (EnterLoad); Release()d by the dtor and
+        on entering state 0. */
+    DataArray *mSongData; // 0x44
     /** The audition song (gUGCAuditionTempSongName); `apply_settings` passes it
         to MetaPerformer::SetSong. */
     Symbol mSong; // 0x48
@@ -202,9 +213,12 @@ public:
     bool mSavedBandNoFail; // 0x51
     /** Deleted on leaving state 5; the ctor never writes it. */
     FileCache *mFileCache; // 0x54
-    int unk58; // 0x58
-    /** 0x104-byte object allocated in state 5, deleted on leaving it. */
-    AuditionSongBuffer *mSongBuffer; // 0x5c
+    /** PollLoad's step: 1 = caching, 2 = midi, 3 = lipsync, 5 = mogg,
+        6 = failed, 7 = passed (EnterLoad sets 1). */
+    int mLoadStep; // 0x58
+    /** The UGC validator (0x104 bytes), allocated in state 5, deleted on
+        leaving it. */
+    Validator *mValidator; // 0x5c
     bool unk60; // 0x60
 };
 

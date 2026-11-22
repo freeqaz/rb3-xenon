@@ -719,6 +719,12 @@ void BandSongMgr::AddSongData(
    NOTE: in TU5 this function is UNREACHABLE -- see the refusal note in
    AddSongData. It has zero callers anywhere in TU5's .text and zero data
    references; TU0 calls it exactly once, from AddSongData. */
+// TU5 0x82576B70
+void BandSongMgr::AddAuditionSongData(DataArray *data, const char *path) {
+    std::vector<int> ids;
+    AddSongData(data, mUncachedSongMetadata, path, kLocationHDD, ids);
+}
+
 bool BandSongMgr::IsInExclusionList(const char *name, int songID) const {
     unsigned int i = 0;
     do {
