@@ -18,7 +18,14 @@ extern "C" unsigned int __cdecl _rotl(unsigned int, int);
 #pragma intrinsic(_rotl)
 #define rol(value, bits) _rotl(value, bits)
 #endif
+#ifdef HX_NATIVE
+// SHA-1 reads its message words big-endian. Retail's PPC loads them that way;
+// a little-endian host must swap each word as it first reads it (and store it
+// back, since blk() reads the block again).
+#define blk0(i) (m_block->l[i] = __builtin_bswap32(m_block->l[i]))
+#else
 #define blk0(i) m_block->l[i]
+#endif
 #define blk(i)                                                                           \
     (m_block->l[i & 15] =                                                                \
          rol(m_block->l[(i + 13) & 15] ^ m_block->l[(i + 8) & 15]                        \
@@ -43,7 +50,13 @@ extern "C" unsigned int __cdecl _rotl(unsigned int, int);
     w = rol(w, 30);
 
 void CSHA1::Transform(unsigned int *pState, const unsigned char *pBuffer) {
+#ifdef HX_NATIVE
+    // LP64: 32-bit working variables, as `unsigned long` is on X360. As 64-bit
+    // words the rol() shift-or pulls carry bits back into the low word.
+    unsigned int a, b, c, d, e;
+#else
     unsigned long a, b, c, d, e;
+#endif
 
     a = pState[0];
     b = pState[1];

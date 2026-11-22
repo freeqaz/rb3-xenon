@@ -311,14 +311,16 @@ cmake --build build
   `native/CMakeLists.txt` is a warn-only SHA and a CMake cache variable (an existing build dir
   keeps the old value; reconfigure with `-UMILO_ENGINE_PIN` before reading a mismatch as
   drift). Only the coordinator bumps it. Siblings resolve from the real repo, so a cold
-  worktree gates 18/18 without seeding. Lessons: memory `hub_native.md`, `docs/plans/x*.md`.
+  worktree gates 19/19 without seeding. Lessons: memory `hub_native.md`, `docs/plans/x*.md`.
 - **Before landing anything under `src/`, make `tools/native_health.sh --selftest` your
   last action** (a comment-only commit once broke the link). It runs
   `tools/native_build_gate.sh` itself (which runs `tools/layout_odr.py`, cross-TU class-layout
   ODR over every X360 TU and native program; a cold run after a wide header change takes
-  ~35 min, do not kill it — `docs/decomp/W16QD_LAYOUT_ODR_CHECK_2026-10-06.md`), then runs all
-  18 targets on real data (`docs/decomp/NATIVE_HEALTH.md`). Paste both contract lines
-  verbatim: `NATIVE_GATE_RESULT verdict=PASS expected=18 verified=18 skipped=0 partial=0
+  ~35 min, do not kill it — `docs/decomp/W16QD_LAYOUT_ODR_CHECK_2026-10-06.md`), then runs
+  18 targets on real data (`docs/decomp/NATIVE_HEALTH.md`). The link gate has 19 targets
+  since 2026-11-22: the 19th, `rb3-app` (the real `App` boot), is linked but not yet run,
+  so `runtime_total` stays 18 until it exits 0. Paste both contract lines
+  verbatim: `NATIVE_GATE_RESULT verdict=PASS expected=19 verified=19 skipped=0 partial=0
   failed=0 rc=0` (the prose `PASS` line differs from the incomplete one by one space) and
   `NATIVE_HEALTH_RESULT …`. rc: 0 pass · 1 broken · 2 could not run · 3 ran but
   incomplete/partial. If you seed a configure by hand, pin the compiler or CMake wipes the

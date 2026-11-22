@@ -2200,6 +2200,322 @@ set_source_files_properties(
     ${REPO_ROOT}/src/system/bandobj/OutfitConfig.cpp
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
 
+# ---- rb3-app: the real App boot (lane A0, 2026-11-22) -------------------------
+# src/Main.cpp + src/App.cpp, the band3/system TUs the boot can reach, and the
+# engine. It LINKS; it is not yet driven (A1 writes main_app.cpp). Sources are
+# every TU that compiles natively and that retail's boot can reach, so
+# --gc-sections decides reachability from main(). What is deliberately NOT here:
+#   * the Xbox store TUs (StoreEnumeration/StorePurchaser): replaced by rule,
+#     W16-TR's aborting stubs in w16tr_link_stubs.cpp stand in;
+#   * the online ring (RockCentral, Quazal context, entity upload, curl web
+#     services): rb3_app_link_stubs.cpp fails loudly if any of it is reached;
+#   * rb3-render's phase stub files (bandtrack_link_stubs.cpp,
+#     w16ts_link_support.cpp, w16sh_link_support.cpp): they stub bodies whose
+#     real TUs this target compiles, so they never meet a real TU here.
+# Bare `extern Symbol` globals: a generated TU defines every name declared in
+# utl/Symbols*.h (weak, so a hand definition elsewhere wins) and interns them
+# right after Symbol::Init() through a link-time --wrap. Measured against the
+# alternative of RB3_{SYNCPROP,HANDLE}_LOCAL_STATIC on every TU: those defines
+# leave 30 of 405 Symbol globals undefined; the generated TU leaves 0.
+set(RB3_APP_SOURCES
+    # ContextCheckerInit (App.cpp:240): ContextChecker.cpp's only host is
+    # OutfitConfig.cpp's owner region, which is `#if !HX_NATIVE` (X7), so no
+    # native TU emitted it and the census counted it reached. Compiled here.
+    ${REPO_ROOT}/src/band3/meta_band/ContextChecker.cpp
+    # A1: TheMemcardMgr is constructed at static init (meta/MemcardMgr.cpp);
+    # its ctor/dtor/Handle/Init are the retail 360 bodies in this TU, which
+    # compiles natively as-is. Its device/container calls land on TheMC,
+    # platform/Memcard_Stub.cpp's MemcardXbox (A4 replaces that).
+    ${REPO_ROOT}/src/system/meta/MemcardMgr_Xbox.cpp
+    # A1b: TheEntityUploader (App.cpp: TheEntityUploader.Init()) is a reference
+    # bound in this TU to gXboxEntityUploader, a static-init object (retail
+    # dynamic initializer 0x82C3F610). Init is offline: SetName, the submit
+    # time, an empty DataArray. Its upload paths go to RockCentral, whose entry
+    # points are aborting stubs (ring online-rockcentral).
+    ${REPO_ROOT}/src/band3/net_band/XboxEntityUploader.cpp
+    # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
+    # constructs TheBandUI at static init; natively TheUI was the engine's weak
+    # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.
+    ${REPO_ROOT}/src/band3/meta_band/BandUI.cpp
+    ${REPO_ROOT}/src/band3/game/AccuracyTracker.cpp
+    ${REPO_ROOT}/src/band3/game/BandPerformer.cpp
+    ${REPO_ROOT}/src/band3/game/ChordPreview.cpp
+    ${REPO_ROOT}/src/band3/game/DeployCountTracker.cpp
+    ${REPO_ROOT}/src/band3/game/FadePanel.cpp
+    ${REPO_ROOT}/src/band3/game/FreestylePanel.cpp
+    ${REPO_ROOT}/src/band3/game/GuitarFx.cpp
+    ${REPO_ROOT}/src/band3/game/HeldNote.cpp
+    ${REPO_ROOT}/src/band3/game/HitTracker.cpp
+    ${REPO_ROOT}/src/band3/game/KeysFx.cpp
+    ${REPO_ROOT}/src/band3/game/OverdriveTimeTracker.cpp
+    ${REPO_ROOT}/src/band3/game/PracticePanel.cpp
+    ${REPO_ROOT}/src/band3/game/PracticeSectionProvider.cpp
+    ${REPO_ROOT}/src/band3/game/PresenceMgr.cpp
+    ${REPO_ROOT}/src/band3/game/RGTrainerPanel.cpp
+    ${REPO_ROOT}/src/band3/game/RGTutor.cpp
+    ${REPO_ROOT}/src/band3/game/RKTrainerPanel.cpp
+    ${REPO_ROOT}/src/band3/game/RealGuitarGemPlayer.cpp
+    ${REPO_ROOT}/src/band3/game/ScoreTracker.cpp
+    ${REPO_ROOT}/src/band3/game/ScoreUtl.cpp
+    ${REPO_ROOT}/src/band3/game/Shuttle.cpp
+    ${REPO_ROOT}/src/band3/game/StatMemberTracker.cpp
+    ${REPO_ROOT}/src/band3/game/StreakTracker.cpp
+    ${REPO_ROOT}/src/band3/game/SyncGameStartPanel.cpp
+    ${REPO_ROOT}/src/band3/game/Tracker.cpp
+    ${REPO_ROOT}/src/band3/game/TrackerDisplay.cpp
+    ${REPO_ROOT}/src/band3/game/TrackerManager.cpp
+    ${REPO_ROOT}/src/band3/game/TrackerSource.cpp
+    ${REPO_ROOT}/src/band3/game/TrainerProgressMeter.cpp
+    ${REPO_ROOT}/src/band3/game/UISyncNetMsgs.cpp
+    ${REPO_ROOT}/src/band3/game/UITransitionNetMsgs.cpp
+    ${REPO_ROOT}/src/band3/game/VocalGuidePitch.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentCategory.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentDiscSongConditional.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentGroup.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentLessonDiscSongConditional.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentLessonSongListConditional.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentOneShot.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentSetlist.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentSongConditional.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentSongFilterConditional.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentTourConditional.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentTrainerCategoryConditional.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AccomplishmentTrainerListConditional.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AppInlineHelp.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AppMiniLeaderboardDisplay.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AppScoreDisplay.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandPreloadPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandScreen.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandStoreOffer.cpp
+    ${REPO_ROOT}/src/band3/meta_band/BandStoreUIPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CampaignGoalsLeaderboardChoicePanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CampaignKey.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CampaignLevel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CampaignSongInfoPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CharSync.cpp
+    ${REPO_ROOT}/src/band3/meta_band/ChooseColorPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/ContentDeletePanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/ContentLoadingPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/CymbalSelectionProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/EventDialogPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/EyebrowsProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/FaceHairProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/FaceTypeProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/GameTimePanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/HeaderPerformanceProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/InputMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/Instarank.cpp
+    ${REPO_ROOT}/src/band3/meta_band/InterstitialPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/LessonMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/LessonProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/LockStepMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/MainHubMessageProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/ManageBandPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/MetaNetMsgs.cpp
+    ${REPO_ROOT}/src/band3/meta_band/MultiSelectListPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/MusicLibraryStore.cpp
+    ${REPO_ROOT}/src/band3/meta_band/NewAwardPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/OutfitProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/OvershellPartSelectProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/OvershellSlotState.cpp
+    ${REPO_ROOT}/src/band3/meta_band/ParentalControlPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/PassiveMessagesPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/PassiveMessenger.cpp
+    ${REPO_ROOT}/src/band3/meta_band/PatchSelectPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/PlayerLeaderboards.cpp
+    ${REPO_ROOT}/src/band3/meta_band/RetryAudioPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SaveLoadStatusPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SelectDifficultyPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SetlistSortByLocation.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SetlistToStorePanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/ShellInputInterceptor.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SigninScreen.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongSetlistProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongSortByDiff.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongSortByRank.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongSortByRecent.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongSortByReview.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongSortBySong.cpp
+    ${REPO_ROOT}/src/band3/meta_band/SongSortByStars.cpp
+    ${REPO_ROOT}/src/band3/meta_band/StandInProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/TexLoadPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/TrainerProvider.cpp
+    ${REPO_ROOT}/src/band3/meta_band/TrainingMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/TrainingPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/UGCPurchasePanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/VoiceoverPanel.cpp
+    ${REPO_ROOT}/src/band3/meta_band/WaitingUserGate.cpp
+    ${REPO_ROOT}/src/band3/tour/FixedSetlist.cpp
+    ${REPO_ROOT}/src/band3/tour/GigFilter.cpp
+    ${REPO_ROOT}/src/band3/tour/Quest.cpp
+    ${REPO_ROOT}/src/band3/tour/QuestFilterPanel.cpp
+    ${REPO_ROOT}/src/band3/tour/QuestJournal.cpp
+    ${REPO_ROOT}/src/band3/tour/TourChallengeResultsPanel.cpp
+    ${REPO_ROOT}/src/band3/tour/TourCondition.cpp
+    ${REPO_ROOT}/src/band3/tour/TourDesc.cpp
+    ${REPO_ROOT}/src/band3/tour/TourDescPanel.cpp
+    ${REPO_ROOT}/src/band3/tour/TourGameModifier.cpp
+    ${REPO_ROOT}/src/band3/tour/TourGameRules.cpp
+    ${REPO_ROOT}/src/band3/tour/TourPerformer.cpp
+    ${REPO_ROOT}/src/band3/tour/TourPerformerLocal.cpp
+    ${REPO_ROOT}/src/band3/tour/TourPerformerRemote.cpp
+    ${REPO_ROOT}/src/band3/tour/TourProgress.cpp
+    ${REPO_ROOT}/src/band3/tour/TourProperty.cpp
+    ${REPO_ROOT}/src/band3/tour/TourPropertyCollection.cpp
+    ${REPO_ROOT}/src/band3/tour/TourQuestGameRules.cpp
+    ${REPO_ROOT}/src/band3/tour/TourReward.cpp
+    ${REPO_ROOT}/src/band3/tour/TourWeightManager.cpp
+    ${REPO_ROOT}/src/system/meta/CreditsPanel.cpp
+    ${REPO_ROOT}/src/system/meta/HeldButtonPanel.cpp
+    ${REPO_ROOT}/src/system/meta/MemcardMgr.cpp
+    ${REPO_ROOT}/src/system/meta/MetaMusicScene.cpp
+    ${REPO_ROOT}/src/system/meta/MoviePanel.cpp
+    ${REPO_ROOT}/src/system/meta/PreloadPanel.cpp
+    ${REPO_ROOT}/src/system/meta/SongPreview.cpp
+    ${REPO_ROOT}/src/system/movie/MovieImpl.cpp
+    ${REPO_ROOT}/src/system/movie/MovieSys.cpp
+    ${REPO_ROOT}/src/system/movie/Splash.cpp
+    ${REPO_ROOT}/src/system/synth/BinkClip.cpp
+    ${REPO_ROOT}/src/system/synth/BinkReader.cpp
+    ${REPO_ROOT}/src/system/synth/BitCrushEffect.cpp
+    ${REPO_ROOT}/src/system/synth/FxSendBitCrush.cpp
+    ${REPO_ROOT}/src/system/synth/MeterEffectMonitor.cpp
+    ${REPO_ROOT}/src/system/synth/WavMgr.cpp
+    ${REPO_ROOT}/src/system/synth/WavReader.cpp
+    ${REPO_ROOT}/src/system/synth/complex.cpp
+    ${REPO_ROOT}/src/system/synth/filterdesign.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandDirectorStubs.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandHighlight.cpp
+    ${REPO_ROOT}/src/system/bandobj/BandSwatch.cpp
+    ${REPO_ROOT}/src/system/bandobj/CheckboxDisplay.cpp
+    ${REPO_ROOT}/src/system/bandobj/DialogDisplay.cpp
+    ${REPO_ROOT}/src/system/bandobj/InstrumentDifficultyDisplay.cpp
+    ${REPO_ROOT}/src/system/bandobj/OvershellDir.cpp
+    ${REPO_ROOT}/src/system/bandobj/PatchRenderer.cpp
+    ${REPO_ROOT}/src/system/bandobj/PlayerDiffIcon.cpp
+    ${REPO_ROOT}/src/system/bandobj/ScoreDisplay.cpp
+    ${REPO_ROOT}/src/system/bandobj/ScrollbarDisplay.cpp
+    ${REPO_ROOT}/src/system/bandobj/StarDisplay.cpp
+    ${REPO_ROOT}/src/system/beatmatch/BeatMatcher.cpp
+    ${REPO_ROOT}/src/system/beatmatch/ButtonGuitarController.cpp
+    ${REPO_ROOT}/src/system/beatmatch/DrumFillTrackWatcherImpl.cpp
+    ${REPO_ROOT}/src/system/beatmatch/DrumPlayer.cpp
+    ${REPO_ROOT}/src/system/beatmatch/JoypadGuitarController.cpp
+    ${REPO_ROOT}/src/system/beatmatch/JoypadMidiController.cpp
+    ${REPO_ROOT}/src/system/beatmatch/JoypadTrackWatcherImpl.cpp
+    ${REPO_ROOT}/src/system/beatmatch/KeyboardController.cpp
+    ${REPO_ROOT}/src/system/beatmatch/MercurySwitchFilter.cpp
+    ${REPO_ROOT}/src/system/beatmatch/Output.cpp
+    ${REPO_ROOT}/src/system/beatmatch/Playback.cpp
+    ${REPO_ROOT}/src/system/beatmatch/RGGemMatcher.cpp
+    ${REPO_ROOT}/src/system/beatmatch/RealGuitarController.cpp
+    ${REPO_ROOT}/src/system/beatmatch/RealGuitarTrackWatcherImpl.cpp
+    ${REPO_ROOT}/src/system/flow/FlowAnimate.cpp
+    ${REPO_ROOT}/src/system/flow/FlowCommand.cpp
+    ${REPO_ROOT}/src/system/flow/FlowDistance.cpp
+    ${REPO_ROOT}/src/system/flow/FlowEventListener.cpp
+    ${REPO_ROOT}/src/system/flow/FlowMultiSetProperty.cpp
+    ${REPO_ROOT}/src/system/flow/FlowOutPort.cpp
+    ${REPO_ROOT}/src/system/flow/FlowPickOne.cpp
+    ${REPO_ROOT}/src/system/flow/FlowRun.cpp
+    ${REPO_ROOT}/src/system/flow/FlowSequence.cpp
+    ${REPO_ROOT}/src/system/flow/FlowSetProperty.cpp
+    ${REPO_ROOT}/src/system/flow/FlowSlider.cpp
+    ${REPO_ROOT}/src/system/flow/FlowSound.cpp
+    ${REPO_ROOT}/src/system/flow/FlowSwitch.cpp
+    ${REPO_ROOT}/src/system/flow/FlowTimer.cpp
+    ${REPO_ROOT}/src/system/flow/FlowWhile.cpp
+    ${REPO_ROOT}/src/system/flow/PropertyEventProvider.cpp
+)
+if(RB3X_BUILD_ENGINE)
+    set(_rb3_app_sym_cpp ${CMAKE_BINARY_DIR}/generated/rb3_app_symbols.cpp)
+    file(GLOB _rb3_sym_headers ${REPO_ROOT}/src/system/utl/Symbols*.h)
+    list(SORT _rb3_sym_headers)
+    set(_defs "")
+    set(_interns "")
+    foreach(_h IN LISTS _rb3_sym_headers)
+        set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_h}")
+        file(STRINGS "${_h}" _lines REGEX "^extern Symbol [A-Za-z_][A-Za-z0-9_]*;")
+        # Names the headers hide natively (`#endif // index: POSIX glibc name
+        # collision`): no native TU can name them, so none is defined.
+        file(STRINGS "${_h}" _hidden REGEX "^#endif // [A-Za-z_][A-Za-z0-9_]*: POSIX glibc name collision")
+        list(TRANSFORM _hidden REPLACE "^#endif // ([A-Za-z_][A-Za-z0-9_]*):.*" "\\1")
+        foreach(_l IN LISTS _lines)
+            string(REGEX REPLACE "^extern Symbol ([A-Za-z_][A-Za-z0-9_]*);.*" "\\1" _n "${_l}")
+            if("${_n}" IN_LIST _hidden)
+                continue()
+            endif()
+            string(APPEND _defs "__attribute__((weak)) Symbol ${_n};\n")
+            string(APPEND _interns "    ${_n} = Symbol(\"${_n}\");\n")
+        endforeach()
+    endforeach()
+    set(_body "// GENERATED by native/CMakeLists.txt (rb3-app) from src/system/utl/Symbols*.h.\n// Every bare `extern Symbol` global, default-null at static init (the ctor\n// needs gStringTable) and interned right after Symbol::Init().\n#include \"utl/Symbol.h\"\n\n${_defs}\nstatic void RB3AppInternSymbolGlobals() {\n${_interns}}\n\n// -Wl,--wrap=_ZN6Symbol4InitEv routes SystemInit's call here.\nextern \"C\" void __real__ZN6Symbol4InitEv();\nextern \"C\" void __wrap__ZN6Symbol4InitEv() {\n    __real__ZN6Symbol4InitEv();\n    RB3AppInternSymbolGlobals();\n}\n")
+    if(EXISTS "${_rb3_app_sym_cpp}")
+        file(READ "${_rb3_app_sym_cpp}" _old)
+    else()
+        set(_old "")
+    endif()
+    if(NOT "${_old}" STREQUAL "${_body}")
+        file(WRITE "${_rb3_app_sym_cpp}" "${_body}")
+    endif()
+
+    set(_rb3_app_all
+        ${REPO_ROOT}/src/Main.cpp
+        ${REPO_ROOT}/src/App.cpp
+        ${_rb3_app_sym_cpp}
+        # Failing stubs, each tagged with its ring (tools/native_stub_census.py
+        # --rings rb3-app). The .s is generated: tools/rb3_app_link_stubs_gen.py.
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_link_stubs.cpp
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_link_stubs.s
+        # Real native definitions of the globals dta_link_stubs.s used to zero.
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_native_glue.cpp
+        # Quazal String/RootObject as plain data (DataResults, ProfileMgr ctor).
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_quazal_native.cpp
+        # The engine's consumer seams (ShouldSkipMesh, DebugPanel::*).
+        ${CMAKE_SOURCE_DIR}/src/rb3_render_glue.cpp
+        # W16-TR's store stubs: abort if reached (the store TUs are excluded above).
+        ${CMAKE_SOURCE_DIR}/src/w16tr_link_stubs.cpp
+        ${W16TS_LINK_SOURCES} ${W16UF_LINK_SOURCES} ${VOCALTRACK_GAME_SOURCES}
+        ${W16SH_LINK_SOURCES} ${W16SH_DEP_SOURCES} ${W16TJ_LINK_SOURCES}
+        ${W16TJ_VOCAL_SOURCES} ${W16TM_LINK_SOURCES} ${W16TM_DEP_SOURCES}
+        ${W16TR_DEP_SOURCES} ${MILO_TARGET_COMMON_SOURCES}
+        ${RB3_APP_SOURCES})
+    # The real beatmatch/Output.cpp defines TheBeatMatchOutput here, so the
+    # M3B shim that stands in for it elsewhere must not meet it.
+    list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/beatmatch_native_support.cpp)
+    # A1: dta_link_stubs.s is 63 weak NO-OP stubs (return 0 / zero storage)
+    # written for rb3-dta, where none is on the parse path. rb3-app runs the
+    # real boot, so a silent no-op here could replace live behaviour. It is
+    # dropped; what rb3-app still needs from it is either an aborting
+    # ring-tagged stub in rb3_app_link_stubs.s or a real, commented native body
+    # in rb3_app_native_glue.cpp.
+    list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/dta_link_stubs.s)
+    # rb3_app_native_glue.cpp defines both checksum registrars (registering
+    # nothing, measured reason there) in place of the uncommented no-op every
+    # other target links.
+    list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/platform/ChecksumData_Stub.cpp)
+    # A1: native/src/main_app.cpp drives App::App (data dir, headless, bounded);
+    # src/Main.cpp is retail's main (App::Run, the frame loop: A2).
+    list(REMOVE_ITEM _rb3_app_all ${REPO_ROOT}/src/Main.cpp)
+    list(APPEND _rb3_app_all ${CMAKE_SOURCE_DIR}/src/main_app.cpp
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.cpp)
+    rb3_add_executable(rb3-app ${_rb3_app_all})
+    list(APPEND MILO_TARGETS rb3-app)
+    # RB3_NATIVE_PRESENCEMGR: the real PresenceMgr.cpp is linked (App::App calls
+    # ThePresenceMgr.Init()), so GamePanel.cpp's native SetSongID stub is off.
+    target_compile_definitions(rb3-app PRIVATE RB3_ENGINE_RENDER=1 RB3_NATIVE_PRESENCEMGR)
+    target_link_libraries(rb3-app PRIVATE milo-engine ZLIB::ZLIB)
+    target_link_options(rb3-app PRIVATE -fuse-ld=lld -Wl,--error-limit=0
+        -Wl,--wrap=_ZN6Symbol4InitEv)
+    # A1 boot gates: each App::App init step is --wrap'ed by rb3_app_gates.cpp,
+    # which prints `  [PASS] rb3-app <step>` when it returns.
+    file(STRINGS ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.txt _rb3_app_gate_syms)
+    foreach(_g IN LISTS _rb3_app_gate_syms)
+        target_link_options(rb3-app PRIVATE -Wl,--wrap=${_g})
+    endforeach()
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.txt)
+endif()
 foreach(_t IN LISTS MILO_TARGETS)
 target_compile_options(${_t} PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)

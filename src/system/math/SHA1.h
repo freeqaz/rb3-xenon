@@ -27,7 +27,15 @@ public:
 private:
     union SHA1_WORKSPACE_BLOCK {
         unsigned char c[64];
+#ifdef HX_NATIVE
+        // LP64: retail's `unsigned long` is 32 bits on X360. As 64-bit words the
+        // block is 128 bytes, so Transform's blk() writes l[8..15] past
+        // m_workspace (64 bytes) and over m_block itself (lane A1: segfault in
+        // CSHA1::Transform on the first checksummed file read).
+        unsigned int l[16];
+#else
         unsigned long l[16];
+#endif
     };
     void Transform(unsigned int *, const unsigned char *);
 

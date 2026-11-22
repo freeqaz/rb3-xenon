@@ -733,7 +733,11 @@ BEGIN_HANDLERS(BandUI)
     HANDLE_ACTION(set_vignettes_showing, mShowVignettes = _msg->Int(2))
     HANDLE_EXPR(get_vignettes_showing, mShowVignettes)
     HANDLE_ACTION(cycle_vignette_override, mInterstitialMgr->CycleRandomOverride())
-    HANDLE_EXPR(get_vignette_override, mInterstitialMgr->mRandomOverride)
+    // get_vignette_override is gone natively too (lane A1b): it read
+    // InterstitialMgr::mRandomOverride, which the retail layout does not have
+    // (it is the file-static sRandomOverride in InterstitialMgr.cpp; see
+    // InterstitialMgr.h), so this arm no longer compiled. Retail has no such
+    // handler either.
     HANDLE_ACTION(write_to_vignette_overlay, WriteToVignetteOverlay(_msg->Str(2)))
     HANDLE_ACTION_IF(
         toggle_vignette_overlay,

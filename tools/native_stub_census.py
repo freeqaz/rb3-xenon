@@ -46,7 +46,12 @@ STUB_RE = re.compile(
     r"beatmatch_native_support\.cpp|rb3_render_glue\.cpp|milo_object_factories\.cpp|"
     r"bandtrack_link_stubs\.cpp|w16sh_link_support\.cpp|"
     # W16-UR: W16-TR's XboxEnumeration/XboxPurchaser aborting stubs and W16-TS's phase link edge.
-    r"w16tr_link_stubs\.cpp|w16ts_link_support\.cpp)\.o$"
+    r"w16tr_link_stubs\.cpp|w16ts_link_support\.cpp|"
+    # A0: rb3-app's own stubs, each tagged `// ring: <tag>` (read by ring_map below).
+    r"rb3_app_link_stubs\.cpp|rb3_app_link_stubs\.s|"
+    # A1: rb3-app's real native substitutes for src/ globals and the Quazal data
+    # slice; each definition tagged `// ring: native-real` (or its online ring).
+    r"rb3_app_native_glue\.cpp|rb3_app_quazal_native\.cpp)\.o$"
 )
 
 # native/src objects that are linked but are NOT stubs: drivers and runtime
@@ -59,7 +64,9 @@ NON_STUB_RE = re.compile(
     r"/src/(main_[a-z0-9]+\.cpp|bandtrack_phase\.cpp|w16sh_phase\.cpp|"
     r"w16tf_phase\.cpp|w16tj_phase\.cpp|score_engine\.cpp|cc5_stub_probe\.c|"
     # W16-UR: the gate phases W16-TM .. W16-UJ added to rb3-render (drivers, not stubs).
-    r"w16t[mrswy]_phase\.cpp|w16u[bfj]_phase\.cpp)\.o$"
+    r"w16t[mrswy]_phase\.cpp|w16u[bfj]_phase\.cpp|"
+    # A1: rb3-app's boot-gate --wrap shims (call the real step, then print).
+    r"rb3_app_gates\.cpp)\.o$"
 )
 NATIVE_SRC_RE = re.compile(r"CMakeFiles/[^/]+\.dir/src/[^/]+\.o$")
 
@@ -184,9 +191,86 @@ for t, (objs, libs) in targets.items():
                 in_libs=sorted(lib_defs.get(s, [])),
             ))
 
+# ---- RING TAGS (A0, 2026-11-22) ---------------------------------------------
+# A stub source may tag each definition with a trailing `// ring: <tag>` (the
+# out-of-scope ring it stands in for), and a whole class with a line
+# `// ring-class: <Class> <tag>` (covers its vtable, typeinfo and members).
+# The tag is matched to the nm row by demangled qualified name. Every row gets a
+# `ring` field (None = untagged). --rings <target> lists that target's authored
+# stub rows with their tags and exits 4 if a row of a ring-tagged stub file
+# (one that carries any tag at all) is untagged.
+SRC_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "native", "src")
+_ring_cache = {}
+def ring_map(stub):
+    if stub in _ring_cache:
+        return _ring_cache[stub]
+    names, classes = {}, {}
+    path = os.path.join(SRC_DIR, stub)
+    if os.path.exists(path) and stub.endswith(".s"):
+        # generated stubs: `<mangled>: // ring: <tag>` on the label line
+        for line in open(path, errors="replace"):
+            m = re.match(r"^(\S+):\s*//\s*ring:\s*(\S+)", line)
+            if m:
+                names[m.group(1)] = m.group(2)
+    elif os.path.exists(path) and stub.endswith(".cpp"):
+        for line in open(path, errors="replace"):
+            m = re.match(r"\s*//\s*ring-class:\s*(\S+)\s+(\S+)", line)
+            if m:
+                classes[m.group(1)] = m.group(2)
+                continue
+            m = re.search(r"//\s*ring:\s*(\S+)", line)
+            if not m:
+                continue
+            code = line[:m.start()]
+            a = re.search(r'__asm__\("([^"]+)"\)', code)
+            if a:
+                names[a.group(1)] = m.group(1)
+                continue
+            f = re.search(r"((?:[A-Za-z_]\w*::)*~?[A-Za-z_]\w*)\s*\(", code)
+            if f and f.group(1) not in ("alignas", "sizeof", "decltype"):
+                names[f.group(1)] = m.group(1)
+                continue
+            d = re.search(r"((?:[A-Za-z_]\w*::)*[A-Za-z_]\w*)\s*(?:\[[^\]]*\])?\s*(?:=[^;]*)?;", code)
+            if d:
+                names[d.group(1)] = m.group(1)
+    _ring_cache[stub] = (names, classes)
+    return _ring_cache[stub]
+
+_dm = {}
+def demangle_all(syms):
+    todo = sorted(set(syms) - set(_dm))
+    if todo:
+        r = subprocess.run(["c++filt"], input="\n".join(todo), capture_output=True, text=True)
+        for a, b in zip(todo, r.stdout.splitlines()):
+            _dm[a] = b
+
+def ring_of(stub, sym):
+    names, classes = ring_map(stub)
+    if not names and not classes:
+        return None
+    if sym in names:
+        return names[sym]
+    d = _dm.get(sym, sym)
+    for pre in ("vtable for ", "typeinfo for ", "typeinfo name for "):
+        if d.startswith(pre):
+            return classes.get(d[len(pre):])
+    key = d.split("(")[0].strip()
+    if key in names:
+        return names[key]
+    cls = key.rsplit("::", 1)[0] if "::" in key else None
+    while cls:
+        if cls in classes:
+            return classes[cls]
+        cls = cls.rsplit("::", 1)[0] if "::" in cls else None
+    return None
+
+demangle_all([r["sym"] for r in rows])
+for r in rows:
+    r["ring"] = ring_of(r["stub"], r["sym"])
+
 json.dump(dict(targets={k: dict(objs=len(v[0]), libs=v[1]) for k, v in targets.items()},
                rows=rows), open(OUT, "w"), indent=1)
-if "--authored" in sys.argv:
+if "--authored" in sys.argv or "--rings" in sys.argv:
     # native_undecomp_stubs.cpp defines every stub __attribute__((weak)) on
     # purpose (the real src/ TU wins where it links), so its W defs are authored,
     # not header-inline COMDATs. Dropping them undercounts the inventory by 3.
@@ -200,4 +284,22 @@ if "--authored" in sys.argv:
         by[r["stub"]].add(r["sym"])
     for k in sorted(by):
         print("%6d  %s" % (len(by[k]), k))
+if "--rings" in sys.argv:
+    want = sys.argv[sys.argv.index("--rings") + 1]
+    mine = [r for r in rows if r["target"] == want]
+    untagged = []
+    print("--- %s: authored stub rows with their ring ---" % want)
+    for r in sorted(mine, key=lambda r: (r["stub"], r["ring"] or "", _dm.get(r["sym"], r["sym"]))):
+        tagged_file = bool(ring_map(r["stub"])[0] or ring_map(r["stub"])[1])
+        print("  %-24s %-22s %s" % (r["stub"], r["ring"] or "-", _dm.get(r["sym"], r["sym"])))
+        if tagged_file and not r["ring"]:
+            untagged.append(r)
+    rc = defaultdict(int)
+    for r in mine:
+        rc[(r["stub"], r["ring"] or "-")] += 1
+    for (st, rg), n in sorted(rc.items()):
+        print("%6d  %-24s ring=%s" % (n, st, rg))
+    print("%s: %d authored stub row(s); %d untagged in a ring-tagged file" % (want, len(mine), len(untagged)))
+    if untagged:
+        sys.exit(4)
 print("targets", len(targets), "rows", len(rows))

@@ -743,8 +743,10 @@ BEGIN_PROPSYNCS(GamePanel)
 END_PROPSYNCS
 #pragma pop
 
-#ifdef HX_NATIVE
+#if defined(HX_NATIVE) && !defined(RB3_NATIVE_PRESENCEMGR)
 // Native stub: retail-only presence hook has no native implementation.
+// A target that compiles the real band3/game/PresenceMgr.cpp (rb3-app)
+// defines RB3_NATIVE_PRESENCEMGR, so the two never meet in one link.
 void PresenceMgr::SetSongID(int) {}
 #endif
 

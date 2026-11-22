@@ -109,9 +109,13 @@ static LONG AppExceptionFilter(EXCEPTION_POINTERS *) {
 
 void App::Run() {
     gApp = this;
+#ifdef HX_NATIVE // no SEH trampoline natively: retail enters the loop through AppExceptionFilter
+    RunWithoutDebugging();
+#else
     LPTOP_LEVEL_EXCEPTION_FILTER old = SetUnhandledExceptionFilter(AppExceptionFilter);
     *(int *)0 = 1;
     gOldExceptionFilter = old;
+#endif
 }
 
 // Installed through Debug::SetModalCallback, so it has no direct callers.

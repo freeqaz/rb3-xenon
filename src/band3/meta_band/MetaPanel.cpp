@@ -59,9 +59,17 @@
 // trick tightly around just this include -- CreditsPanel.h is #pragma once and only
 // reached here, so this affects nothing else in this 60-header TU.
 #include "macros.h"
+#ifndef HX_NATIVE
 #undef MILO_DEBUG
+#endif
 #include "meta/CreditsPanel.h"
+#ifndef HX_NATIVE
 #define MILO_DEBUG
+#endif
+// Natively CreditsPanel.h gates mCheatOn on MILO_DEBUG && HX_NATIVE and
+// CreditsPanel.cpp keeps MILO_DEBUG, so the undef above would give this TU a
+// second CreditsPanel layout (layout_odr SPLIT, first seen when rb3-app linked
+// both TUs). X360 tokens are unchanged.
 #include "meta/HAQManager.h"
 #include "meta/HeldButtonPanel.h"
 #include "meta/MemcardMgr.h"
@@ -242,11 +250,13 @@ void MetaPanel::Init() {
     // tools/reglist_rdata_adjudicate.py); the call sequence is read from the
     // same function's bl list.
 #ifdef HX_NATIVE
-    OvershellPanel::Init();
-    WiiFriendsScreen::Init();
+    // ring: a4-wii-residue. The four Wii-lineage init calls are NOT made
+    // natively either (lane A1b): retail 360 does not make them (above), and
+    // natively OvershellPanel::Init reached PlatformMgr::
+    // RegisterSignInserCallback, a Wii entry point with no 360 body (an
+    // aborting stub in rb3-app, the only native caller of MetaPanel::Init).
+    // The factory registrations stay as they were.
     REGISTER_OBJ_FACTORY(WiiFriendsScreen);
-    TheWiiFriendsProvider.Init();
-    TheWiiInvitationsProvider.Init();
     REGISTER_OBJ_FACTORY(WiiProfilePanel);
     REGISTER_OBJ_FACTORY(WiiFriendsDetailsProvider);
 #endif
