@@ -2199,6 +2199,19 @@ set_source_files_properties(${CMAKE_SOURCE_DIR}/src/w16uj_phase.cpp
 set_source_files_properties(
     ${REPO_ROOT}/src/system/bandobj/OutfitConfig.cpp
     PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC;RB3_HANDLE_LOCAL_STATIC")
+# symempty (2026-11-22): rb3-milo links these three TUs without the intern step
+# rb3-render and rb3-app have, so their HANDLE/SYNC_PROP arms compared against
+# the empty `Symbol` globals milo_link_stubs.cpp default-constructs (measured
+# under gdb; docs/decomp/NATIVE_EMPTY_SYMBOLS_MEASURED_2026-11-22.md). Each gets
+# exactly the extra_cflags X360 gives it in config/45410914/objects.json, which
+# is the retail form: a function-local static built with the name. APPEND, so
+# no other property on these files is replaced. Native-only.
+set_property(SOURCE ${REPO_ROOT}/src/system/bandobj/BandCharacter.cpp
+    APPEND PROPERTY COMPILE_DEFINITIONS RB3_HANDLE_LOCAL_STATIC RB3_SYNCPROP_LOCAL_STATIC)
+set_property(SOURCE ${REPO_ROOT}/src/system/bandobj/BandConfiguration.cpp
+    APPEND PROPERTY COMPILE_DEFINITIONS RB3_HANDLE_LOCAL_STATIC)
+set_property(SOURCE ${REPO_ROOT}/src/system/world/EventAnim.cpp
+    APPEND PROPERTY COMPILE_DEFINITIONS RB3_SYNCPROP_LOCAL_STATIC)
 
 # ---- rb3-app: the real App boot (lane A0, 2026-11-22) -------------------------
 # src/Main.cpp + src/App.cpp, the band3/system TUs the boot can reach, and the

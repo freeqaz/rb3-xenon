@@ -80,6 +80,9 @@
 #include <string>
 #include <vector>
 
+// native/src/milo_link_stubs.cpp (linked by this target); call after Symbol::Init().
+void InternSymbolGlobals_MiloLinkStubs();
+
 extern void InitMakeString();
 // native/src/platform/File_Native.cpp
 extern void NativeSetDataDir(const char *dir);
@@ -322,6 +325,13 @@ int main(int argc, char **argv) {
     // ---- engine bring-up (identical prologue to main_ark.cpp) ------------
     InitMakeString();
     Symbol::Init();
+    // symempty (2026-11-22): intern milo_link_stubs.cpp's hand-defined Symbol
+    // globals, as main_render.cpp does. Measured under gdb, all 141 still held
+    // the empty Symbol at exit without this, and BandWardrobe::Handle (compiled
+    // inside world/Crowd.cpp here, which X360 gives no LOCAL_STATIC flag)
+    // dispatches on 18 of them. Must follow Symbol::Init(): the ctor needs
+    // gStringTable. docs/decomp/NATIVE_EMPTY_SYMBOLS_MEASURED_2026-11-22.md.
+    InternSymbolGlobals_MiloLinkStubs();
     // ★ FileInit() is REQUIRED, not optional. It sets gRoot and
     // FilePath::Root() to "." (os/File.cpp:390-398). Without it both are the
     // empty string, so FilePath("char/crowd/gen/x.milo_xbox") becomes
