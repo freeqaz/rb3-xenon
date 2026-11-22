@@ -51,7 +51,10 @@ STUB_RE = re.compile(
     r"rb3_app_link_stubs\.cpp|rb3_app_link_stubs\.s|"
     # A1: rb3-app's real native substitutes for src/ globals and the Quazal data
     # slice; each definition tagged `// ring: native-real` (or its online ring).
-    r"rb3_app_native_glue\.cpp|rb3_app_quazal_native\.cpp)\.o$"
+    r"rb3_app_native_glue\.cpp|rb3_app_quazal_native\.cpp|"
+    # profpic: rb3-app's native D3D texture calls backed by engine RndTex objects,
+    # each tagged `// ring: native-real`.
+    r"rb3_app_d3d_native\.cpp)\.o$"
 )
 
 # native/src objects that are linked but are NOT stubs: drivers and runtime
