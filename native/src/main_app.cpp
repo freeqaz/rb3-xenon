@@ -12,10 +12,15 @@
 //      MILO_SCREENSHOT_FRAMES capture frames) unless the caller set it.
 //   3. App::App(argc, argv) with argv[0] and any arguments after the data dir.
 //      Every init step prints its own gate (rb3_app_gates.cpp).
-//   4. RB3_APP_CONSTRUCT_ONLY=1: print `RESULT: APP CONSTRUCTED` and _exit(0)
-//      right after the constructor (the A1 milestone, unchanged).
-//      Otherwise App::Run(), the retail frame loop (App::RunWithoutDebugging,
+//   4. By default: print `RESULT: APP CONSTRUCTED` and _exit(0) right after
+//      the constructor (the A1 milestone; RB3_APP_CONSTRUCT_ONLY=1 still asks
+//      for it explicitly and wins over RB3_APP_RUN).
+//      RB3_APP_RUN=1: App::Run(), the retail frame loop (App::RunWithoutDebugging,
 //      `while (true)`; App.cpp's HX_NATIVE arm only drops the SEH trampoline).
+//      Opt-in while the loop does not yet survive its first frame natively:
+//      the splash's AnimTask outlives its anim through the ~ObjectDir cascade
+//      (Phase 0 nulls refs without the owner's Replace), so frame 1 polls a
+//      task whose mAnim is null.
 //
 // The loop has no exit, so the bound sits OUTSIDE it, at the one call every
 // frame starts with: SystemPoll(false) is -Wl,--wrap'ed (native/CMakeLists.txt;
@@ -125,7 +130,9 @@ int main(int argc, char **argv) {
     App *app = new App(appArgc, appArgv);
     rb3_app_gate("App::App.complete");
     const char *co = getenv("RB3_APP_CONSTRUCT_ONLY");
-    if (co && *co && strcmp(co, "0") != 0) {
+    const char *run = getenv("RB3_APP_RUN");
+    bool wantRun = run && *run && strcmp(run, "0") != 0;
+    if ((co && *co && strcmp(co, "0") != 0) || !wantRun) {
         printf("RESULT: APP CONSTRUCTED\n");
         fflush(stdout);
         fflush(stderr);
