@@ -103,6 +103,15 @@ void BeatMatchController::RegisterHit(HitType ty) const {
         mHitSink->Hit(ty);
 }
 
+// Retail 0x82BCD108 (HitSink slot 3, RGFret). ICF folded this 9-instruction
+// forwarder into an identical XAudio2 body, which is why it sits in the XDK
+// range; RealGuitarController::OnMsg(const RGFretMsg &) calls it at 0x82799FCC.
+void BeatMatchController::RegisterRGFret(int string, int fret) const {
+    if (mHitSink)
+        mHitSink->RGFret(string, fret);
+}
+
+// 0x8278FB08: HitSink slot 4 (RGStrum).
 void BeatMatchController::RegisterRGStrum(int i) const {
     if (mHitSink)
         mHitSink->RGStrum(i);

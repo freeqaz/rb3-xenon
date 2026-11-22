@@ -455,6 +455,19 @@ void LoadMgr::PollUntilLoaded(Loader *ldr1, Loader *ldr2) {
 #endif
 }
 
+// Retail 0x827BFB38 (0x58 B). Works on TheLoadMgr directly (r3 is never read):
+// saves mPeriod in f31, stores 1e30 to mCurrentPeriod then mPeriod, runs one
+// unbudgeted Poll(), and restores mPeriod then mCurrentPeriod. Retail has no
+// hang-detect bracket around it (no call besides Poll()).
+void LoadMgr::PollUntilEmpty() {
+    float savedPeriod = TheLoadMgr.mPeriod;
+    TheLoadMgr.mCurrentPeriod = 1e+30f;
+    TheLoadMgr.mPeriod = 1e+30f;
+    TheLoadMgr.Poll();
+    TheLoadMgr.mPeriod = savedPeriod;
+    TheLoadMgr.mCurrentPeriod = savedPeriod;
+}
+
 #pragma endregion
 #pragma region Handlers
 
