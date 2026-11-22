@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "7c9634e68",
+ "recorded_at": "967f69d29",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -15270,7 +15270,8 @@
     "?reserve@?$vector@V?$TickedInfo@M@@V?$StlNodeAlloc@V?$TickedInfo@M@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z": "PROVEN",
     "?reserve@?$vector@UJukeboxItem@@V?$StlNodeAlloc@UJukeboxItem@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z": "PROVEN",
     "?reserve@?$vector@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@V?$StlNodeAlloc@U?$pair@PAVRndMultiMesh@@U?$_List_iterator@UInstance@RndMultiMesh@@U?$_Nonconst_traits@UInstance@RndMultiMesh@@@stlpmtx_std@@@stlpmtx_std@@@stlpmtx_std@@@2@@stlpmtx_std@@QAAXI@Z": "PROVEN",
-    "?reserve@?$vector@V?$Key@UDircutEntry@BandDirector@@@@V?$StlNodeAlloc@V?$Key@UDircutEntry@BandDirector@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z": "PROVEN"
+    "?reserve@?$vector@V?$Key@UDircutEntry@BandDirector@@@@V?$StlNodeAlloc@V?$Key@UDircutEntry@BandDirector@@@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z": "PROVEN",
+    "?reserve@?$vector@VUpcomingFretRelease@GemPlayer@@V?$StlNodeAlloc@VUpcomingFretRelease@GemPlayer@@@stlpmtx_std@@@stlpmtx_std@@QAAXI@Z": "PROVEN"
    }
   },
   "0x824549c8": {
