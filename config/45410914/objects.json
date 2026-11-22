@@ -1550,6 +1550,7 @@
                 ]
             },
             "band3/meta_band/AuditionMgr.cpp": "NonMatching",
+            "band3/meta_band/AuditionSongFiles.cpp": "NonMatching",
             "band3/meta_band/AccomplishmentCategory.cpp": "NonMatching",
             "band3/meta_band/Award.cpp": "NonMatching",
             "band3/meta_band/AccomplishmentConditional.cpp": "NonMatching",

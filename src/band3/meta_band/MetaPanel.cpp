@@ -151,10 +151,11 @@ void MetaPanel::Init() {
     REGISTER_OBJ_FACTORY(CampaignGoalsLeaderboardChoicePanel);
     REGISTER_OBJ_FACTORY(CampaignSongInfoPanel);
     REGISTER_OBJ_FACTORY(AccomplishmentPanel);
-#ifndef HX_NATIVE
-    // AuditionSessionPanel's body (AuditionSessionPanel.cpp) is wired into the
-    // match build only; its collaborators (meta_band/AuditionMgr.h) have no
-    // bodies, so only the match build registers it.
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_AUDITION)
+    // Retail registers AuditionSessionPanel here. A native target registers it
+    // only when it links AuditionSessionPanel.cpp and AuditionMgr.cpp, which
+    // it says by defining RB3_NATIVE_AUDITION (rb3-app does; rb3-render does
+    // not, so it keeps skipping the registration).
     REGISTER_OBJ_FACTORY(AuditionSessionPanel);
 #endif
     REGISTER_OBJ_FACTORY(NewAwardPanel);

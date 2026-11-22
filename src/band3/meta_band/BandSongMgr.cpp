@@ -725,6 +725,31 @@ void BandSongMgr::AddAuditionSongData(DataArray *data, const char *path) {
     AddSongData(data, mUncachedSongMetadata, path, kLocationHDD, ids);
 }
 
+/** The song ID AuditionMgr gives the audition song (it writes 99000001 into
+    the downloaded songs.dta's `song_id`). Retail keeps it as a 4-byte .rdata
+    constant (0x8209DE20) whose address every find below passes as the key.
+    Name ours. */
+static const int kAuditionSongID = 99000001;
+
+// TU5 0x82577480
+void BandSongMgr::RemoveSong(Symbol song) {
+    std::hash_map<int, Symbol>::iterator nameIt = mSongNameLookup.find(kAuditionSongID);
+    if (nameIt != mSongNameLookup.end())
+        mSongNameLookup.erase(nameIt);
+    std::hash_map<Symbol, int>::iterator idIt = mSongIDLookup.find(song);
+    if (idIt != mSongIDLookup.end())
+        mSongIDLookup.erase(idIt);
+    std::hash_map<int, SongMetadata *>::iterator dataIt =
+        mUncachedSongMetadata.find(kAuditionSongID);
+    if (dataIt != mUncachedSongMetadata.end()) {
+        delete dataIt->second;
+        mUncachedSongMetadata.erase(dataIt);
+    }
+    std::set<int>::iterator availIt = mAvailableSongs.find(kAuditionSongID);
+    if (availIt != mAvailableSongs.end())
+        mAvailableSongs.erase(availIt);
+}
+
 bool BandSongMgr::IsInExclusionList(const char *name, int songID) const {
     unsigned int i = 0;
     do {
