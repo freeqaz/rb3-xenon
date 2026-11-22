@@ -96,11 +96,31 @@ Phase 0 has 19 bodies: 0x826D6660 (`StreakFocusTracker::GetNextFocusPlayer`) had
 |---|---|---|---|
 | 0 baseline | done | program held 17,789 named fns (17,290 = the 07-18 bank exactly, 4 bank VAs default-named, 499 others: 410 ANALYSIS, 65 DEFAULT thunk names, 24 USER_DEFINED); 41,049 fns, 18 data types. Program vs map: 14,623 agree, 1,938 differ, 19,771 map-only. 20 bodies: 74 unnamed calls, 149 raw member, 157 DAT_, 166 auto-data, 19 `undefined` in signatures | bbaeb7128 |
 | 1 function names | **live on :8002** (11:42) | named 17,789 → 36,001; fns 41,049 → 48,080 (7,031 created at map VAs); map agree 14,623 → 35,578, differ 1,938 → 0; renamed 19,061, changed 1,892, removed 818 stale, 6,310 alias labels, 1,012 arbitrary-twin tags. 754 map rows not applied = data rows (go to phase 2) + `entry`. Ruler: unnamed calls 74 → 6 (3 each in 0x82560CB0 and the DxMesh ctor: map does not name them). Control: 0x82767BA0 = `?AddSink@MsgSource@@…` live; live function count 48,080 | bbaeb7128 |
-| 2 data names | on copy, swap pending | 5,959 labels added (+1 made primary, 33 already): 800 map data rows, RTTI 1,415 TypeDescriptors / 1,795 COLs / 1,795 vftables, 300 `__imp_`. vftable-suffix control: 61/64 map rows agree with the RTTI-derived name (3 differ, map wins: an ObjPtr template arity, a PreloadPanel `6B@` the map gives a multi-vftable class, InterstitialMgr/CharUpperTwist base choice). Ruler: DAT_ 161 → 157, auto-data 170 → 160 (most DAT_ are `.data`/`.bss` globals the repo does not name: symbols.txt has 0 named `.data` objects). Control: DxMesh ctor stores `&??_7DxMesh@@6BRndMesh@@@` etc. | this commit |
-| 3 prototypes | on copy, swap pending | 34,501 of 34,546 mangled fns got their demangled prototype (45 are not function names, 0 failures). Ruler: `undefined` in signatures 24 → 0, `undefined*` tokens 155 → 135, "Removing unreachable block" 17 → 4 (wrong arg types had been pruning live code; bodies grew 1,505 → 1,749 lines, which is why DAT_ rose 157 → 204). Spot-check vs headers 5/5: AddSink, GuitarFx::Poll, BSPFace::Set, SongStatusMgr::UpdateSongStats, Instarank::UpdateString1Label | this commit |
-| 4 class layouts | not started | | |
-| 5 repeatable | not started | | |
-| 6 clean TU5 program | analysis running | `tools/ghidra/import_clean_tu5.py` into scratch project `~/tmp/ghidra-sync/tu5scratch`, log `~/tmp/ghidra-sync/import_tu5.log`; done when it prints `DONE gzf=` | |
+| 2 data names | **live on :8002** (swap 2, ~11:58) | 5,959 labels added (+1 made primary, 33 already): 800 map data rows, RTTI 1,415 TypeDescriptors / 1,795 COLs / 1,795 vftables, 300 `__imp_`. vftable-suffix control: 61/64 map rows agree with the RTTI-derived name (3 differ, map wins: an ObjPtr template arity, a PreloadPanel `6B@` the map gives a multi-vftable class, InterstitialMgr/CharUpperTwist base choice). Ruler: DAT_ 161 → 157, auto-data 170 → 160 (most DAT_ are `.data`/`.bss` globals the repo does not name: symbols.txt has 0 named `.data` objects). Control: DxMesh ctor stores `&??_7DxMesh@@6BRndMesh@@@` etc. | this commit |
+| 3 prototypes | **live on :8002** (swap 2) | 34,501 of 34,546 mangled fns got their demangled prototype (45 are not function names, 0 failures). Ruler: `undefined` in signatures 24 → 0, `undefined*` tokens 155 → 135, "Removing unreachable block" 17 → 4 (wrong arg types had been pruning live code; bodies grew 1,505 → 1,749 lines, which is why DAT_ rose 157 → 204). Spot-check vs headers 5/5: AddSink, GuitarFx::Poll, BSPFace::Set, SongStatusMgr::UpdateSongStats, Instarank::UpdateString1Label. Functions now sit in their class namespace; the mangled name stays the function name. Consumers checked live: the bare mangled name resolves (decompile, xrefs, pcode_inspect); `Class::Method` in pcode_inspect resolves exactly from the map or refuses (4f9aeb755). Fixed two tools that were broken before this lane: ghidra-xrefs.py (always 0 refs) and rtti_probe.py (TU0 thunk name) | 9ee16810b, 4f9aeb755 |
+| 4 class layouts | not started (handoff) | next: measure how many classes `scripts/harvest/class_layout_report.py` can emit; start with `src/band3`; turn each layout into a Ghidra Structure in the class category apply_prototypes created (the `this` types are empty placeholders today, which is why the raw-member count went 157 -> 177: accesses print as `this + 0x..`) | |
+| 5 repeatable | partly done | done: apply_symbols reconciles, plus build_data_symbol_map/apply_data_symbols/apply_prototypes/ghidra_sync_census, each re-runnable. Missing: one wrapper command (copy -> 1-3 -> census -> swap) and the staleness line in ghidra-status.py. chromadb: the service re-indexed by itself after swap 1 (the dir changed), so no manual re-ingest has been needed so far; not measured further | |
+| 6 clean TU5 program | analysed + phases 1-3 applied in **scratch**, not yet in the live project | `import_clean_tu5.py`: import + full analysis took 604 s; 63,110 fns before names (Deluxe program: 41,049). After phases 1-3: 67,935 fns, map agrees 35,578 / differs 0; 20-body ruler 6 / 177 / 204 / 207 / 0, the same as the Deluxe program after phase 3. 53 patched words (`check_patched_words.py` over `tools/pe_word_diff.py` output): clean TU5 program = 49 retail, 0 Deluxe, 4 other (the import thunks at 0x82C4C47C..90, which the XEX loader rewrites to `li r3,<ordinal>`; the ordinals there are the retail 0x242/0x24B); Deluxe program = 53 Deluxe. Scratch project `~/tmp/ghidra-sync/tu5scratch` (TU5Import / default.xex-d56e7f); pre-names copy `tu5scratch_analysed_pristine`; unnamed .gzf `~/tmp/ghidra-sync/default.xex-d56e7f.gzf` | |
+
+## Handoff (2026-11-22)
+
+- **Clean TU5 into the live project:** stop :8002, back up `RB3Xenon.rep`, add the program to the live project
+  headlessly (import the post-passes program as a .gzf, or re-run the three passes after importing
+  `default.xex-d56e7f.gzf`), start the service, then check that `list_project_binaries` shows three programs.
+- **Then make it the default program.** Files that name a program:
+  - `tools/ghidra/pyghidra-service.sh`: TU5_XEX_PATH and the stale "never load default.xex" comment.
+  - `tools/ghidra/run_apply_symbols.sh`: PROGRAM.
+  - `scripts/verify_target_image.py`: mentions c5a170.
+  - `tools/ghidra/mcp_client.py`: a **silent hazard**. `_resolve_binary` takes the first name that
+    `startswith("default.xex")`, but the service lists names with a leading "/", so nothing matches and the
+    first program listed wins. Today that is the Deluxe program by luck. Add the new program and the
+    default depends on list order. Strip the "/" and match `default.xex-d56e7f` explicitly.
+  - The new scripts (`apply_*`, `ghidra_sync_census.py`) take `--program`; their default is c5a170.
+- Backups to delete once the after-census is accepted:
+  - `ghidra_projects/RB3Xenon/RB3Xenon.bak-20261122-pre-ghidra-sync`
+  - `ghidra_projects/RB3Xenon/RB3Xenon.bak-20261122-phase1`
+  - `~/tmp/ghidra-sync/cachedb-aside*`
+
 
 ## Not in this lane
 
