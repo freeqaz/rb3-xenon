@@ -21,7 +21,14 @@ Symbol MsgSinks::GetPropSyncHandler(DataArray *arr) {
             if (array->Size() == arr->Size()) {
                 bool ret = true;
                 for (int j = 0; j < array->Size(); j++) {
+#ifdef HX_NATIVE
+                    // Retail compares each path element's whole 4-byte word, i.e.
+                    // the whole symbol pointer; UncheckedInt() keeps only the low
+                    // half of an 8-byte one. Compare the full union natively.
+                    if (array->Node(j).UncheckedObj() != arr->Node(j).UncheckedObj()) {
+#else
                     if (array->UncheckedInt(j) != arr->UncheckedInt(j)) {
+#endif
                         ret = false;
                         break;
                     }

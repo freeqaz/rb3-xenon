@@ -589,7 +589,8 @@ DataNode UIManager::OnGotoScreen(DataArray const *arr) {
             Hmx::Object *o = node.GetObj(nullptr);
             printf("DC3 UI: goto_screen from '%s' -> obj='%s'\n", curScr, o ? o->Name() : "<null>");
         } else if (node.Type() == kDataSymbol || node.Type() == kDataString) {
-            printf("DC3 UI: goto_screen from '%s' -> sym='%s'\n", curScr, node.Sym().Str());
+            // LiteralStr, not Sym(): Sym() of a kDataString fails "not Symbol".
+            printf("DC3 UI: goto_screen from '%s' -> sym='%s'\n", curScr, node.LiteralStr());
         } else {
             printf("DC3 UI: goto_screen from '%s' -> type=%d\n", curScr, (int)node.Type());
         }
