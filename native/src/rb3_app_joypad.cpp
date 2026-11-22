@@ -26,22 +26,14 @@
 // the pad. Nothing else is invented, so binding, actions and messages are
 // retail's.
 //
-// The native input source is the shared engine's scripted input
-// (MILO_INPUT_SCRIPT, platform/Joypad_Native.cpp: `N button`, `+N button`,
-// `wait_screen name`, ...; MILO_INPUT_LOG=1 logs each scripted press here). It
-// drives pad 0. With no script, every pad reads as unplugged
-// (dwPacketNumber -1), which is retail with no controller connected: the boot
-// is unchanged. (A windowed GLFW pad/keyboard is not wired; rb3-app runs
-// headless.)
-//
-// The engine's Joypad_Native.cpp cannot be linked as-is for xenon (its
-// JoypadReset writes JoypadData::mNumAnalogSticks, DC3's shape; xenon's
-// JoypadData has the retail bool mHasAnalogSticks at 0x4d), and its script
-// parser is file-static. So, as A10 did for Synth_Stub with a local subclass,
-// this TU compiles the engine's file inside itself with its four lifecycle
-// entry points renamed out of the way: that keeps ONE parser, the engine's,
-// with no engine change. The renamed EngineJoypad*_ bodies are never called;
-// the mNumAnalogSticks spelling exists only so the renamed JoypadReset compiles.
+// The native input sources are the shared engine's, through its game-agnostic
+// platform/JoypadNativeSource.h (JoypadNativeSourceAdvance once per poll,
+// JoypadNativeSourceRead once per pad): headless, the MILO_INPUT_SCRIPT script
+// on pad 0 (`N button`, `+N button`, `wait_screen name`, `wake`, `highlight`;
+// MILO_INPUT_LOG=1 logs each scripted poll here); in a GLFW window, the
+// keyboard as pad 0 and a GLFW gamepad on any pad. A pad no source drives
+// reads as unplugged (dwPacketNumber -1), which is retail with no controller:
+// a headless run with no script boots unchanged.
 #include "os/Joypad.h"
 #include "os/Joypad_Xbox.h"
 #include "os/Joypad_Xinput.h"
@@ -49,37 +41,59 @@
 #include "os/UserMgr.h"
 #include "os/User.h"
 #include "os/Debug.h"
+#include "ui/UI.h"
+#include "platform/JoypadNativeSource.h"
+#include "platform/JoypadScriptHook.h"
 #include "xdk/xapilibi/xinput.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <vector>
-
-#define JoypadInit EngineJoypadInit_
-#define JoypadReset EngineJoypadReset_
-#define JoypadPoll EngineJoypadPoll_
-#define JoypadTerminate EngineJoypadTerminate_
-#define mNumAnalogSticks mHasAnalogSticks
-void EngineJoypadReset_();
-#include RB3_APP_ENGINE_JOYPAD_NATIVE
-#undef mNumAnalogSticks
-#undef JoypadTerminate
-#undef JoypadPoll
-#undef JoypadReset
-#undef JoypadInit
 
 // The A14 gate (rb3_app_joypad_gate.cpp): a no-op unless RB3_APP_JOYPAD_GATE=1.
 void RB3AppJoypadGateInstall();
 void RB3AppJoypadGatePoll(int poll);
 
 namespace {
-int gPollCount = 0; // JoypadPoll calls; the script's frame number
-unsigned int gScriptButtons = 0; // pad 0's scripted buttons for this poll
+JoypadNativePadState gPad[kNumJoypads]; // this poll's native source state, per pad
 DWORD gPacket = 0;
 
-bool ScriptActive() {
-    if (!gInputScriptLoaded) LoadInputScript(); // engine: reads MILO_INPUT_SCRIPT once
-    return !gScript.empty();
+bool InputLogEnabled() {
+    static const bool on = [] {
+        const char *v = getenv("MILO_INPUT_LOG");
+        return v && v[0] && strcmp(v, "0") != 0;
+    }();
+    return on;
+}
+
+// The script's waits (wait_screen, highlight) see TheUI: the current screen's
+// name and whether a transition is running.
+bool ScriptUi(const char **screen, bool *inTransition) {
+    if (!TheUI) return false;
+    *screen = TheUI->CurrentScreen() ? TheUI->CurrentScreen()->Name() : nullptr;
+    *inTransition = TheUI->InTransition();
+    return true;
+}
+
+short StickToThumb(float v, bool flip) {
+    // GLFW: -1..1, y positive down. XInput: -32768..32767, y positive up.
+    float f = (flip ? -v : v) * 32767.0f;
+    if (f > 32767.0f) f = 32767.0f;
+    if (f < -32768.0f) f = -32768.0f;
+    return (short)f;
+}
+
+BYTE TriggerByte(const JoypadNativePadState &s, int i, JoypadButton bit) {
+    // ReadSingleXinputJoypad (Joypad_Xinput.cpp) presses kPad_L2/kPad_R2 for any
+    // nonzero trigger on an analog pad and clears them at zero, so the byte is
+    // nonzero exactly when the engine's source pressed the trigger's button (its
+    // 0.3 threshold): a scripted or keyboard LT/RT is a fully pulled trigger, a
+    // GLFW trigger past the threshold keeps its analog value.
+    if (!(s.buttons & (1u << bit))) return 0;
+    if (!s.hasTriggers) return 0xFF;
+    float f = s.triggers[i] * 255.0f;
+    if (f < 1.0f) f = 1.0f;
+    if (f > 255.0f) f = 255.0f;
+    return (BYTE)f;
 }
 } // namespace
 
@@ -88,18 +102,21 @@ void JoypadInit() {
     JoypadInitCommon(cfg);
     JoypadInitXboxPCDeadzone(cfg);
     JoypadReset();
-    // XinputJoypadThreadStart: no XInput thread natively. The source is polled
-    // on the frame, in GetXinputSinceLastFrame.
+    // XinputJoypadThreadStart: no XInput thread natively. The sources are read
+    // on the frame, in JoypadPoll.
+    JoypadScriptSetUiQuery(ScriptUi);
+    JoypadNativeSourceInit();
     RB3AppJoypadGateInstall();
 }
 
 void JoypadReset() { JoypadResetXboxPC(4); }
 
 void JoypadPoll() {
-    int poll = gPollCount++;
-    gScriptButtons = ScriptActive() ? GetScriptedButtons(poll) : 0;
-    if (gScriptButtons && InputLogEnabled())
-        printf("rb3-app joypad: poll %d pad 0 scripted buttons 0x%x\n", poll, gScriptButtons);
+    int poll = JoypadNativeSourceAdvance(); // loads MILO_INPUT_SCRIPT at poll 0
+    for (int pad = 0; pad < kNumJoypads; pad++)
+        JoypadNativeSourceRead(pad, &gPad[pad]);
+    if (gPad[0].buttons && InputLogEnabled())
+        printf("rb3-app joypad: poll %d pad 0 scripted buttons 0x%x\n", poll, gPad[0].buttons);
     JoypadPollCommon();
     RB3AppJoypadGatePoll(poll);
 }
@@ -107,21 +124,26 @@ void JoypadPoll() {
 void JoypadTerminate() { JoypadTerminateCommon(); }
 
 // Retail 0x825298E0 reads the XInput thread's latest XINPUT_STATE and ORs in the
-// buttons that went down since the last frame. Natively pad 0 is the script and
-// no other pad is plugged in.
+// buttons that went down since the last frame. Natively the state is this poll's
+// JoypadNativeSourceRead of the pad.
 void GetXinputSinceLastFrame(int pad, XINPUT_STATE *state, unsigned int *buttons) {
     memset(state, 0, sizeof(*state));
     *buttons = 0;
-    if (pad != 0 || !ScriptActive()) {
+    if (pad < 0 || pad >= kNumJoypads || !gPad[pad].connected) {
         state->dwPacketNumber = (DWORD)-1; // retail's "nothing plugged in"
         return;
     }
+    const JoypadNativePadState &s = gPad[pad];
     state->dwPacketNumber = ++gPacket;
-    // ReadSingleXinputJoypad sets kPad_L2/kPad_R2 from the triggers on an analog
-    // pad (and clears them otherwise), so a scripted LT/RT is a pulled trigger.
-    if (gScriptButtons & (1u << kPad_L2)) state->Gamepad.bLeftTrigger = 0xFF;
-    if (gScriptButtons & (1u << kPad_R2)) state->Gamepad.bRightTrigger = 0xFF;
-    *buttons = gScriptButtons;
+    state->Gamepad.bLeftTrigger = TriggerByte(s, 0, kPad_L2);
+    state->Gamepad.bRightTrigger = TriggerByte(s, 1, kPad_R2);
+    if (s.hasSticks) {
+        state->Gamepad.sThumbLX = StickToThumb(s.sticks[0][0], false);
+        state->Gamepad.sThumbLY = StickToThumb(s.sticks[0][1], true);
+        state->Gamepad.sThumbRX = StickToThumb(s.sticks[1][0], false);
+        state->Gamepad.sThumbRY = StickToThumb(s.sticks[1][1], true);
+    }
+    *buttons = s.buttons;
 }
 
 // Retail 0x82529AF8.
@@ -134,10 +156,11 @@ int ReadSingleJoypad(int pad, unsigned int *buttons, char *lx, char *ly, char *r
                                   pressures, pro_guitar);
 }
 
-// The scripted pad is a standard controller: XINPUT_DEVTYPE_GAMEPAD,
+// A natively driven pad is a standard controller: XINPUT_DEVTYPE_GAMEPAD,
 // XINPUT_DEVSUBTYPE_GAMEPAD, which ReadSingleXinputJoypad reads as kJoypadAnalog.
 DWORD XInputGetCapabilities(DWORD pad, DWORD, XINPUT_CAPABILITIES *caps) {
-    if (pad != 0 || !ScriptActive()) return 1167; // ERROR_DEVICE_NOT_CONNECTED
+    if (pad >= kNumJoypads || !JoypadNativeSourceConnected((int)pad))
+        return 1167; // ERROR_DEVICE_NOT_CONNECTED
     memset(caps, 0, sizeof(*caps));
     caps->Type = 1;
     caps->SubType = 1;

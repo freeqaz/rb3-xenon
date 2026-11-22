@@ -1169,7 +1169,10 @@ if(RB3X_BUILD_ENGINE)
     #                         shape gap — cheap to close later.
     #  FxSendNative.cpp       xenon's EQEffect::Params lacks mBand4Q/mBand5Freq
     #                         (DC3 synth-FxSend shape). Off the render path.
-    #  Joypad_Native.cpp      xenon's JoypadData lacks mNumAnalogSticks.
+    #  Joypad_Native.cpp      xenon's JoypadData lacks mNumAnalogSticks. (Its
+    #                         input sources are the engine's separate
+    #                         JoypadNativeSource.cpp, which is NOT excluded:
+    #                         rb3-app reads them through JoypadNativeSource.h.)
     #  Synth_Stub.cpp         xenon synth/VorbisReader.h ctor takes 5 args (engine
     #                         passes 4), StandardStream.h takes 6 (engine passes
     #                         7); NewStreamDecoder doesn't override.
@@ -2760,17 +2763,17 @@ if(RB3X_BUILD_ENGINE)
     # controller and sat on splash_screen waiting for Start. rb3_app_joypad.cpp
     # runs retail's 360 lifecycle (Joypad_Xbox.cpp: JoypadInitCommon,
     # JoypadResetXboxPC(4), JoypadPollCommon -> ReadSingleJoypad ->
-    # ReadSingleXinputJoypad) over the engine's scripted input (MILO_INPUT_SCRIPT),
-    # which it compiles in from the engine's Joypad_Native.cpp (excluded from
-    # libmilo-engine for xenon, see MILO_ENGINE_DECOMP_PLATFORM_EXCLUDE). With no
-    # script every pad is unplugged, as retail with no controller.
+    # ReadSingleXinputJoypad) over the engine's native input sources -- the
+    # MILO_INPUT_SCRIPT script headless, the GLFW keyboard and gamepad in a
+    # window -- read through the engine's game-agnostic
+    # platform/JoypadNativeSource.h (JoypadNativeSource.cpp is in
+    # libmilo-engine; the engine's DC3-shaped Joypad_Native.cpp stays excluded,
+    # see MILO_ENGINE_DECOMP_PLATFORM_EXCLUDE). A pad no source drives is
+    # unplugged, as retail with no controller.
     # rb3_app_joypad_gate.cpp is its gate (RB3_APP_JOYPAD_GATE=1).
     list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/platform/Joypad_Stub.cpp)
     list(APPEND _rb3_app_all ${CMAKE_SOURCE_DIR}/src/rb3_app_joypad.cpp
         ${CMAKE_SOURCE_DIR}/src/rb3_app_joypad_gate.cpp)
-    set_property(SOURCE ${CMAKE_SOURCE_DIR}/src/rb3_app_joypad.cpp APPEND PROPERTY
-        COMPILE_DEFINITIONS
-        "RB3_APP_ENGINE_JOYPAD_NATIVE=\"${MILO_ENGINE_PATH}/src/platform/Joypad_Native.cpp\"")
     # A4: TU5 is mounted by default when <checkout>/orig/45410914/tu5-package
     # holds it (orig/ is gitignored, so a worktree may not have its own copy).
     # The MAIN checkout comes from `git rev-parse --git-common-dir`, the same
