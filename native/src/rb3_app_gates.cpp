@@ -766,3 +766,61 @@ void rb3_app_check_ui_sink() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A17: a cached milo that embeds a movie loads, and its TexMovie exists.
+// ui/startup/gen/startup_movie_keep.milo_xbox holds splash.tmov, a TexMovie
+// (output_texture movie_splash.tex) whose Load passes the milo stream to its
+// Movie (TexMovie::Load -> DoBeginMovieFromFile, save rev 5 > 4), followed by
+// the embedded startup.bik. Retail Movie::Impl::Begin
+// (0x82745D90) reads those bytes with a front FileLoader on that stream, and
+// CheckOpen (0x82745428) keeps them as the preload buffer. rb3-app has no Bink
+// decoder, so BinkOpen fails and the movie is not open (IsOpen 0x82742F08,
+// Poll 0x82745628 returns false). Fails when TexMovie is an aborting stub
+// (UNREACHED abort at TexMovie::TexMovie, the a6-failing-tu stop) and when the
+// movie is a base MovieImpl (MILO_FAIL: cached load not implemented).
+#include "movie/TexMovie.h"
+#include "obj/Dir.h"
+#include "obj/DirLoader.h"
+const char *Rb3AppMoviePreload(MovieImpl *impl, int *len); // rb3_app_native_glue.cpp
+void NativeStreamAuditBegin(); // obj/DirLoader.cpp: each object must end on its 0xADDEADDE
+int NativeStreamAuditObjects();
+int NativeStreamAuditAnomalies();
+void rb3_app_check_tex_movie() { // ring: native-real
+    const char *path = "ui/startup/startup_movie_keep.milo";
+    NativeStreamAuditBegin(); // construct-only runs exit after the gates
+    int objs0 = NativeStreamAuditObjects(), bad0 = NativeStreamAuditAnomalies();
+    ObjectDir *dir = DirLoader::LoadObjects(FilePath(path), nullptr, nullptr);
+    int objs = NativeStreamAuditObjects() - objs0, bad = NativeStreamAuditAnomalies() - bad0;
+    TexMovie *tm = dir ? dir->Find<TexMovie>("splash.tmov", false) : nullptr;
+    int len = 0;
+    const char *buf = nullptr;
+    bool open = true, polled = true;
+    if (tm) {
+        for (int i = 0; i < 1000 && tm->GetMovie().CheckOpen(false); i++)
+            TheLoadMgr.Poll();
+        buf = Rb3AppMoviePreload(tm->GetMovie().GetImpl(), &len);
+        open = tm->IsOpen();
+        polled = tm->GetMovie().Poll();
+    }
+    bool tag = buf && len >= 4 && (!memcmp(buf, "iKIB", 4) || !memcmp(buf, "BIKi", 4));
+    char what[512];
+    snprintf(what, sizeof what,
+             "TexMovie: %s dir %s (%d objects, %d off their marker), splash.tmov %s, file %s, "
+             "preloaded %d bytes (tag %s), "
+             "open %d, poll %d (retail Begin 0x82745D90 reads the embedded movie, "
+             "BinkOpen fails natively; want 0 off marker, a TexMovie, a tagged buffer, open 0, "
+             "poll 0)",
+             path, dir ? "loaded" : "NOT loaded", objs, bad, tm ? "found" : "MISSING",
+             tm ? (tm->IsEmpty() ? "empty" : "set") : "-", len, tag ? "Bink" : "none",
+             open, polled);
+    if (dir && objs > 0 && bad == 0 && tm && !tm->IsEmpty() && tag && !open && !polled) {
+        rb3_app_gate(what);
+        delete dir;
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (tex movie)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
