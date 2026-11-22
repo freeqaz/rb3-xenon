@@ -266,14 +266,7 @@ bool RndVelocityBuffer::Draw(RndCam *cam, ObjPtrList<RndDrawable> &drawList) {
             auto _tmp0 = drawList.size();
             if (_tmp0 != 0) {
                 Rnd::Mode savedDrawMode = TheRnd.DrawMode();
-#ifdef HX_NATIVE
-                TheRnd.SetDrawMode(Rnd::kDrawVelocity);
-#else
-                // RB3 retail stores 5: its Rnd::Mode has no DC3
-                // kDrawOcclusionDepth, so velocity is 5, not 6 (same drift as
-                // RndShader::SelectConfig's raw compare).
-                TheRnd.SetDrawMode((Rnd::Mode)5);
-#endif
+                TheRnd.SetDrawMode(Rnd::kDrawVelocity); // retail stores 5
                 mMat->SetBlend((RndMat::Blend)3);
                 mMat->SetZMode(kZModeNormal);
                 auto _tmp1 = drawList.end();
