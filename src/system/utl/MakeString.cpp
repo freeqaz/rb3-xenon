@@ -53,12 +53,11 @@ void TerminateMakeString() {}
 
 bool MakeStringInitted() { return gLock != nullptr; }
 
-#ifdef HX_NATIVE
-bool ValidateThreadId(DWORD) {
-    return true; // Thread validation not meaningful on native
-}
-#else
-bool ValidateThreadId(DWORD id) {
+// `unsigned long`, as os/OSFuncs.h declares it (retail ?ValidateThreadId@@YA_NK@Z):
+// on X360 that is DWORD, natively DWORD is `unsigned int`, and a DWORD
+// parameter there defined an overload nothing calls. The native xdk shims
+// answer OpenThread/GetExitCodeThread for CreateThread's threads.
+bool ValidateThreadId(unsigned long id) {
     HANDLE hThread = OpenThread(0x40, false, id);
     if (!hThread) {
         return false;
@@ -69,7 +68,6 @@ bool ValidateThreadId(DWORD id) {
         return exitCode == 0x103;
     }
 }
-#endif
 
 char *NextBuf() {
     CritSecTracker cst(gLock);

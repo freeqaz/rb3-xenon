@@ -292,65 +292,10 @@ void BeatMatchInit() { MidiParser::Init(); } // ring: native-real
 #include "xdk/xbdm/xbdm.h"
 extern "C" HRESULT DmMapDevkitDrive() { return (HRESULT)0x82DA0000; } // ring: native-real (XBDM_NOERR is 0x02DA0000; 0x82DA... = a failure facility code, < 0)
 
-// Retail body, src/system/os/Memcard_Xbox.cpp:43 (MemcardMgr::Init calls it for
-// each of the four pads). That TU is not in rb3-app: the rest of it is the
-// XContent device/container layer, which natively is platform/Memcard_Stub.cpp
-// (A4 replaces that). This one member is three stores, so it is copied
-// verbatim rather than stubbed.
-#include "os/Memcard_Xbox.h"
-void ContainerId::Set(int idx, DWORD dw) { // ring: native-real
-    mUserIndex = idx;
-    unk8 = dw;
-    mDeviceId = XCONTENTDEVICE_ANY;
-}
-
-// Retail 0x8252AA40 (292 B), src/system/os/Memcard_Xbox.cpp's body: count the
-// saved-game packages named TheMC.FileName() on the container's device (any
-// device when mDeviceId is 0). It is XContent calls only, so it runs over the
-// xdk_shims.cpp console model (a hard drive with no saved game: the
-// synchronous XEnumerate returns ERROR_NO_MORE_FILES at once and the answer is
-// kMCFileNotFound). MemcardMgr reaches it after the splash screen's Start.
-MCResult MemcardXbox::FindValidUnit(ContainerId *pCid) { // ring: native-real
-    MILO_ASSERT(pCid, 0xBE);
-    bool deviceOk;
-    if ((unsigned int)pCid->mDeviceId == 0) {
-        deviceOk = true;
-    } else {
-        XDEVICE_DATA data;
-        data.DeviceID = pCid->mDeviceId;
-        deviceOk = XContentGetDeviceData(pCid->mDeviceId, &data) == ERROR_SUCCESS;
-    }
-    if (!deviceOk) {
-        return kMCNoCard;
-    }
-    HANDLE hEnum;
-    DWORD enumRes = XContentCreateEnumerator(
-        pCid->mUserIndex, pCid->mDeviceId, 1, 0x1000, 1, nullptr, &hEnum
-    );
-    if (enumRes != 0) {
-        if (enumRes == 0x12) {
-            return kMCFileNotFound;
-        }
-        return kMCGeneralError;
-    }
-    int num = 0;
-    DWORD returned = 0;
-    XCONTENT_DATA buffer;
-    while (XEnumerate(hEnum, &buffer, sizeof(buffer), &returned, nullptr) == 0) {
-        if (strncmp(buffer.szFileName, TheMC.FileName(), 0x2A) == 0) {
-            num++;
-            pCid->mDeviceId = (XCONTENTDEVICEID)buffer.DeviceID;
-        }
-    }
-    CloseHandle(hEnum);
-    if (num == 0) {
-        return kMCFileNotFound;
-    }
-    if (num == 1) {
-        return kMCFileExists;
-    }
-    return kMCMultipleFilesFound;
-}
+// ContainerId::Set (0x8252A828) and MemcardXbox::FindValidUnit (0x8252AA40)
+// lived here while platform/Memcard_Stub.cpp stood in for the XContent
+// device/container layer. rb3-app now compiles retail's
+// src/system/os/Memcard_Xbox.cpp (native/CMakeLists.txt), which defines both.
 
 // Win32 MultiByteToWideChar (xdk/xapilibi/stringapiset.h). Retail calls the XDK
 // export (MemcardMgr::Init widens the localized title_name for

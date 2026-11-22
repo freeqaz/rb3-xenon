@@ -13,6 +13,10 @@
 #include <unistd.h>
 #include "synth/StreamReceiver.h"
 #include "platform/StreamReceiver_Native.h"
+#include "obj/Data.h"
+#include "obj/Object.h"
+#include "os/Memcard.h"
+#include "os/Memcard_Xbox.h"
 
 extern "C" void rb3_app_gate(const char *step) { // ring: native-real
     printf("  [PASS] rb3-app %s\n", step);
@@ -40,6 +44,66 @@ static void rb3_app_check_stream_receiver_factory() { // ring: native-real
            "StreamReceiver360::Init 0x82B6C688 sets it)\n",
            f ? "another function" : "NULL");
     printf("RESULT: GATE FAILED (stream receiver factory)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// memcard lane: SaveLoadManager state 8 (kS_AutoloadSetDevice, the "no save
+// found" dialog's A press) calls TheMemcardMgr.SelectDevice, which calls
+// TheMC.ShowDeviceSelector(..., this, pad), and sets mWaiting; only
+// OnMsg(DeviceChosenMsg) (-> 0xB kS_AutoloadStartLoad) or
+// OnMsg(NoDeviceChosenMsg) moves it on. Retail MemcardXbox::ShowDeviceSelector
+// (0x8252B9A8) zeroes the XOVERLAPPED, calls XShowDeviceSelectorUI (bl at
+// 0x8252BA2C) and keeps the request pending only on ERROR_IO_PENDING (0x3E5,
+// 0x8252BA30); MemcardXbox::Poll (0x8252B858) fires once InternalLow is no
+// longer 0x3E5 (0x8252B880): device_chosen with the device, no_device_chosen
+// for DeviceID 0. This replays that handshake with a probe in the callback
+// slot, so it moves no game state (retail resets every field it touches on
+// the next ShowDeviceSelector). It must see device_chosen 1, the hard drive of
+// xdk_shims.cpp, within a few polls; the old platform/Memcard_Stub.cpp never
+// answered, which left state 8 waiting for good.
+namespace {
+class Rb3AppDeviceSelectorProbe : public Hmx::Object {
+public:
+    int mChosen = -2; // -2 nothing yet, -1 no_device_chosen, else the DeviceID
+    int mMessages = 0;
+    virtual DataNode Handle(DataArray *msg, bool) {
+        mMessages++;
+        if (msg && msg->Size() >= 2 && msg->Type(1) == kDataSymbol) {
+            Symbol s = msg->Sym(1);
+            if (s == DeviceChosenMsg::Type()) mChosen = msg->Int(2);
+            else if (s == NoDeviceChosenMsg::Type()) mChosen = -1;
+        }
+        return DataNode(kDataInt, 0);
+    }
+};
+}
+
+static void rb3_app_check_device_selector() { // ring: native-real
+    Rb3AppDeviceSelectorProbe probe;
+    ContainerId cid;
+    cid.Set(0, 0);
+    TheMC.ShowDeviceSelector(cid, false, &probe, 0);
+    int polls = 0;
+    for (; polls < 8 && probe.mChosen == -2; polls++) TheMC.Poll();
+    if (probe.mChosen == 1 && probe.mMessages == 1) {
+        printf("  [PASS] rb3-app TheMC.ShowDeviceSelector answered device_chosen 1 after %d "
+               "Poll (SaveLoadManager state 8 kS_AutoloadSetDevice -> 0xB kS_AutoloadStartLoad; "
+               "retail MemcardXbox::ShowDeviceSelector 0x8252B9A8, Poll 0x8252B858)\n",
+               polls);
+        fflush(stdout);
+        return;
+    }
+    printf("  [FAIL] rb3-app TheMC.ShowDeviceSelector answered %s after %d Poll (%d messages); "
+           "SaveLoadManager state 8 kS_AutoloadSetDevice would not reach 0xB (retail "
+           "MemcardXbox::ShowDeviceSelector 0x8252B9A8 + Poll 0x8252B858 deliver "
+           "device_chosen <DeviceID>)\n",
+           probe.mChosen == -2   ? "nothing"
+           : probe.mChosen == -1 ? "no_device_chosen"
+                                 : "device_chosen <not the hard drive>",
+           polls, probe.mMessages);
+    printf("RESULT: GATE FAILED (device selector)\n");
     fflush(stdout);
     fflush(stderr);
     _exit(7);
@@ -179,6 +243,7 @@ extern "C" void __real__ZN15SaveLoadManager4InitEv(void);
 extern "C" void __wrap__ZN15SaveLoadManager4InitEv(void) { // ring: native-real
     __real__ZN15SaveLoadManager4InitEv();
     rb3_app_gate("SaveLoadManager::Init()");
+    rb3_app_check_device_selector();
 }
 
 extern "C" void __real__ZN15UsbMidiKeyboard4InitEv(void);
