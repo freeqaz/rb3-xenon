@@ -9,6 +9,10 @@
 // (void) result. Member functions take `this` as the first argument, which is
 // the Itanium ABI for a non-virtual direct call. Generated from App.cpp.o's
 // undefined symbols; the list is rb3_app_gates.txt.
+#include <cstring>
+#include "utl/MakeString.h"
+#include "net/Net.h"
+#include "os/ContentMgr_Xbox.h"
 #include "net/SyncStore.h"
 #include <cstdio>
 #include <unistd.h>
@@ -391,6 +395,111 @@ extern "C" void __wrap__ZN17FixedSizeSaveable4InitEii(int a0, int a1) { // ring:
     rb3_app_gate("FixedSizeSaveable::Init(int, int)");
 }
 
+
+// postcal: TheContentMgr is retail's XboxContentMgr and its refresh completes.
+// RefreshDone (0x8251E510) is `mState == 1`; meta_loading's
+// kMetaLoading_Entered state waits on `content_mgr refresh_done`. The probe is
+// its own XboxContentMgr (static storage: XboxContentMgr's ctor leaves its
+// fields to the static-init zero fill, as retail's gContentMgr has), never
+// Init'd (Init would take the "content_mgr" name) and with no callbacks, so
+// no game state changes. It runs retail's StartRefresh (0x82520FD0): the
+// config's roots plus the cross-title enumerations over the content store,
+// then PollRefresh (0x82520C18 + base 0x8251F1E0) until RefreshDone. Needed:
+// TheContentMgr is an XboxContentMgr, the refresh is done within 16 polls,
+// it holds the one disc root and no package (the store's saved games are on
+// PollRefresh's ignored list), and every enumeration buffer was released.
+namespace {
+struct Rb3AppContentRefreshProbe : public XboxContentMgr {
+    void Run(int &polls, bool &done, int &contents, int &state) {
+        mDirty = true;
+        mState = kDone;
+        mRootLoaded = 0;
+        StartRefresh();
+        for (polls = 0; polls < 16 && !RefreshDone(); polls++) PollRefresh();
+        done = RefreshDone();
+        contents = (int)mContents.size();
+        state = (int)mState;
+        DeleteAll(mContents);
+    }
+};
+Rb3AppContentRefreshProbe gRb3AppContentProbe;
+} // namespace
+extern "C" int rb3_app_xdk_live_enum_handles();
+static void rb3_app_check_content_refresh() { // ring: native-real
+    bool isXbox = dynamic_cast<XboxContentMgr *>(&TheContentMgr) != nullptr;
+    int enumsBefore = rb3_app_xdk_live_enum_handles();
+    int polls = 0, contents = -1, state = -1;
+    bool done = false;
+    gRb3AppContentProbe.Run(polls, done, contents, state);
+    int enumsAfter = rb3_app_xdk_live_enum_handles();
+    if (!isXbox || !done || contents != 1 || enumsAfter != enumsBefore) {
+        printf("  [FAIL] rb3-app content refresh: TheContentMgr %s an XboxContentMgr; "
+               "after %d PollRefresh: state %d, refresh_done %d, %d contents, live enumerators "
+               "%d -> %d\n",
+               isXbox ? "is" : "is NOT", polls, state, (int)done, contents, enumsBefore, enumsAfter);
+        printf("RESULT: GATE FAILED (content refresh)\n");
+        fflush(stdout);
+        _exit(7);
+    }
+    printf("  [PASS] rb3-app content refresh: XboxContentMgr refresh_done after %d PollRefresh "
+           "(state 1, 1 root, 0 packages, enumerators released)\n", polls);
+    fflush(stdout);
+}
+
+// postcal: MakeString's per-thread buffer slots are reused once a thread
+// dies. NextBuf (0x827C3D80) scans the 6-entry id table with 4-byte loads
+// (0x827C3E08) and hands a dead thread's slot to a new one through
+// ValidateThreadId (bl at 0x827C3E44). Eight threads, one after another,
+// each MakeString while the main thread does too; more live slots than 6
+// would hit NextBuf's assert. Each thread's string must come back intact.
+static DWORD WINAPI Rb3AppMakeStringThread(LPVOID p) {
+    int i = (int)(intptr_t)p;
+    const char *s = MakeString("postcal-%d", i);
+    return strcmp(s, MakeString("postcal-%d", i)) == 0 && atoi(s + 8) == i ? 1 : 2;
+}
+static void rb3_app_check_makestring_threads() { // ring: native-real
+    int bad = -1;
+    for (int i = 0; i < 8 && bad < 0; i++) {
+        (void)MakeString("main-%d", i);
+        HANDLE h = CreateThread(nullptr, 0, Rb3AppMakeStringThread, (LPVOID)(intptr_t)i, 0, nullptr);
+        DWORD code = 0;
+        for (int w = 0; w < 2000; w++) {
+            GetExitCodeThread(h, &code);
+            if (code != 0x103) break;
+            usleep(1000);
+        }
+        CloseHandle(h);
+        if (code != 1) bad = i;
+        (void)MakeString("main-%d", i);
+    }
+    if (bad >= 0) {
+        printf("  [FAIL] rb3-app MakeString threads: thread %d did not get its own string\n", bad);
+        printf("RESULT: GATE FAILED (makestring threads)\n");
+        fflush(stdout);
+        _exit(7);
+    }
+    printf("  [PASS] rb3-app MakeString threads: 8 sequential threads and the main thread "
+           "each formatted through NextBuf's slots\n");
+    fflush(stdout);
+}
+
+// postcal: the offline Net::Init built TheNet.mSyncStore (retail `new
+// SyncStore`, 0x823E06C0) and it is TheSyncStore; NetSync::SyncScreen (retail
+// 0x8259CB48) polls it on a leader-local screen sync.
+static void rb3_app_check_sync_store(void *net) { // ring: native-real
+    SyncStore *store = static_cast<Net *>(net)->mSyncStore;
+    if (!store || store != TheSyncStore) {
+        printf("  [FAIL] rb3-app SyncStore: TheNet.mSyncStore=%p TheSyncStore=%p\n", (void *)store,
+               (void *)TheSyncStore);
+        printf("RESULT: GATE FAILED (sync store)\n");
+        fflush(stdout);
+        _exit(7);
+    }
+    store->Poll();
+    printf("  [PASS] rb3-app SyncStore: TheNet.mSyncStore is TheSyncStore and polls\n");
+    fflush(stdout);
+}
+
 extern "C" void __real__ZN3Net4InitEv(void *self);
 // NARROWED (lanes A3, A5). Retail Net::Init (src/network/net/Net.cpp, 0x823E0648)
 // runs on an offline 360 too, in this order: SetName("net", ObjectDir::Main()),
@@ -424,6 +533,9 @@ extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
            "hooks/NetworkEmulator/NetMessenger/exit callback not built\n",
            session, searcher, server, (void *)TheSyncStore);
     fflush(stdout);
+    rb3_app_check_sync_store(self);
+    rb3_app_check_content_refresh();
+    rb3_app_check_makestring_threads();
 }
 
 // A7: Net::Poll (App::RunWithoutDebugging, every frame). Retail 0x823E03A8:

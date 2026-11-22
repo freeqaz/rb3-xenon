@@ -1264,6 +1264,17 @@ DWORD XEnumerate(HANDLE hEnum, VOID *pvBuffer, DWORD cbBuffer, DWORD *pcItemsRet
     return ERROR_SUCCESS;
 }
 DWORD XContentFlush(LPCSTR, XOVERLAPPED *) { return 0; }
+// Gate support (rb3_app_gates.cpp): enumerator handles still open. An
+// enumeration a caller finished with is closed (CloseHandle), so a refresh
+// that released its buffers leaves this where it started.
+extern "C" int rb3_app_xdk_live_enum_handles() {
+    pthread_mutex_lock(&gHandleTableMutex);
+    int n = 0;
+    for (auto &kv : GetHandleTable())
+        if (kv.second && kv.second->type == kHandleEnum) n++;
+    pthread_mutex_unlock(&gHandleTableMutex);
+    return n;
+}
 // Cross-title enumeration over the same content store. The one caller is
 // XboxContentMgr::StartRefresh (retail 0x82520FD0): for each signed-in pad
 // 0..3 it asks for (user i, device 0 = any, type 2 = marketplace content,
