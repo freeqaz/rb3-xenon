@@ -2330,6 +2330,19 @@ set(RB3_APP_SOURCES
     # comparison is live in retail and clang keeps it (no -fstrict-enums), so
     # the warning is silenced for this TU only (flags below).
     ${REPO_ROOT}/src/band3/game/Metronome.cpp
+    # rbx-audmgr: App::App calls TheAuditionMgr->Init() after TheUI->Init (the
+    # AuditionMgr::Init stub was the a1-absent-body stop). AuditionMgr.cpp is
+    # the retail TU5 body; AuditionSongFiles.cpp holds the song-file paths it
+    # names (retail 0x825EC3A0..0x825EC4F8) and gUGCAuditionFiles. The
+    # audition-mode-only collaborators (the Validator class, the UGCNet_Server
+    # download client) have no source and stay aborting stubs (ring
+    # audition-only). AuditionSessionPanel.cpp is what the UI script's
+    # audition_session_screen builds (retail ctor 0x826033F8 = UIPanel ctor
+    # only); MetaPanel::Init registers it under RB3_NATIVE_AUDITION (below).
+    # Flags below.
+    ${REPO_ROOT}/src/band3/meta_band/AuditionMgr.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AuditionSongFiles.cpp
+    ${REPO_ROOT}/src/band3/meta_band/AuditionSessionPanel.cpp
     # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
     # constructs TheBandUI at static init; natively TheUI was the engine's weak
     # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.
@@ -2635,6 +2648,11 @@ if(RB3X_BUILD_ENGINE)
     # makes Poll's live `oe != 2` read as out of range.
     set_source_files_properties(${REPO_ROOT}/src/band3/game/Metronome.cpp
         PROPERTIES COMPILE_OPTIONS "-Wno-tautological-constant-out-of-range-compare")
+    # rbx-audmgr: AuditionSessionPanel.cpp: X360's extra_cflags
+    # (RB3_HANDLE_LOCAL_STATIC). AuditionMgr.cpp and AuditionSongFiles.cpp get
+    # none on X360 and none here.
+    set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/AuditionSessionPanel.cpp
+        PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC")
     # A2: the retail tables and registrars; rb3_app_gates.cpp calls them only
     # with a title update mounted (RB3_TITLE_UPDATE_DIR).
     list(APPEND _rb3_app_all ${REPO_ROOT}/src/ChecksumData_xbox.cpp)
@@ -2671,7 +2689,11 @@ if(RB3X_BUILD_ENGINE)
     list(APPEND MILO_TARGETS rb3-app)
     # RB3_NATIVE_PRESENCEMGR: the real PresenceMgr.cpp is linked (App::App calls
     # ThePresenceMgr.Init()), so GamePanel.cpp's native SetSongID stub is off.
-    target_compile_definitions(rb3-app PRIVATE RB3_ENGINE_RENDER=1 RB3_NATIVE_PRESENCEMGR)
+    # RB3_NATIVE_AUDITION: AuditionMgr.cpp and AuditionSessionPanel.cpp are
+    # linked, so MetaPanel::Init registers AuditionSessionPanel as retail does
+    # (rb3-render compiles MetaPanel.cpp without them and keeps skipping it).
+    target_compile_definitions(rb3-app PRIVATE RB3_ENGINE_RENDER=1 RB3_NATIVE_PRESENCEMGR
+        RB3_NATIVE_AUDITION)
     target_link_libraries(rb3-app PRIVATE milo-engine ZLIB::ZLIB)
     target_link_options(rb3-app PRIVATE -fuse-ld=lld -Wl,--error-limit=0
         -Wl,--wrap=_ZN6Symbol4InitEv)

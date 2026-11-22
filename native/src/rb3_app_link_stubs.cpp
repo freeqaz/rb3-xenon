@@ -64,7 +64,7 @@ alignas(Message) unsigned char gRb3AppPlayMsg[sizeof(Message)] __asm__("play_msg
 // (0x825DB930) does not have; that arm is removed.
 
 // ---- pointers and references: null -------------------------------------------
-alignas(8) unsigned char gRb3AppTheAuditionMgr[8] __asm__("TheAuditionMgr"); // ring: a1-absent-body
+// TheAuditionMgr: real since lane rbx-audmgr (AuditionMgr.cpp is compiled into rb3-app).
 alignas(8) unsigned char gRb3AppTheSongDB[8] __asm__("TheSongDB"); // ring: a1-absent-body
 alignas(8) unsigned char gRb3AppTheSessionMgr[8] __asm__("TheSessionMgr"); // ring: online-netsession
 alignas(8) unsigned char gRb3AppTheTour[8] __asm__("TheTour"); // ring: a1-absent-body
