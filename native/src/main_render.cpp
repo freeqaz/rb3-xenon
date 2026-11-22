@@ -2453,6 +2453,7 @@ namespace {
         int drawn = 0;
         int crowdDrawn = 0; // X6: WorldCrowd::Draw() calls issued
         int flaresDrawn = 0; // W16-RW: RndFlare::DrawShowing() calls issued
+        int cullRejected = 0; // A13: draws RndDrawable::Draw's frustum cull rejected (RB3_DRAW_CULL)
         int skinned = 0;
         int withMat = 0;
         int withTex = 0;
@@ -4576,6 +4577,29 @@ namespace {
         // whole picture. Neither is on by default: no shipped cell has one.
         std::vector<WorldReflection *> reflections;
         const bool reflectionOnly = getenv("RB3_REFLECTION_ONLY") != nullptr;
+        // A13: RB3_DRAW_CULL=1 issues the world's mesh and crowd draws through
+        // RndDrawable::Draw (retail 0x824066A8: the world-sphere frustum cull,
+        // then DrawShowing), the way RndDir/RndGroup reach them in the game,
+        // instead of calling DrawShowing directly. Off by default, so the
+        // default cells never exercise the cull. The count of draws the cull
+        // rejected is gated as reported; the frames tell whether any of them
+        // had pixels on screen.
+        const bool drawCull = getenv("RB3_DRAW_CULL") != nullptr;
+        auto issueDraw = [&](RndDrawable *d, CellResult &res, int frame) {
+            if (!drawCull) {
+                d->DrawShowing();
+                return;
+            }
+            Sphere ws;
+            RndCam *cc = RndCam::Current();
+            if (cc && d->MakeWorldSphere(ws, false) && ws > cc->WorldFrustum()) {
+                res.cullRejected++;
+                if (frame == 0)
+                    printf("  cull: %s rejected (sphere r=%.2f at %.1f %.1f %.1f)\n",
+                           d->Name(), ws.radius, ws.center.x, ws.center.y, ws.center.z);
+            }
+            d->Draw();
+        };
         if (deep && (reflectionOnly || getenv("RB3_DRAW_REFLECTIONS") != nullptr))
             reflections = CollectDeep<WorldReflection>(dir);
         if (!reflections.empty()) {
@@ -5154,7 +5178,7 @@ namespace {
                 // eight characters on the venue origin. It is drawn below,
                 // once per baked instance transform, instead.
                 if (gArchetypeMeshSet.count(m)) continue;
-                m->DrawShowing();
+                issueDraw(m, r, f);
                 r.drawn++;
             }
             // ★ X6: the placed crowd. Positions come from the asset's baked
@@ -5181,7 +5205,7 @@ namespace {
                             RndMesh *cm = am[mi];
                             if (!cm->Showing()) continue;
                             if (gOnlyMesh && !strstr(cm->Name(), gOnlyMesh)) continue;
-                            cm->DrawShowing();
+                            issueDraw(cm, r, f);
                             r.crowdDrawn++;
                         }
                     }
@@ -5265,6 +5289,12 @@ namespace {
                      r.drawn, r.meshes, frames, r.crowdDrawn / (frames ? frames : 1),
                      r.flaresDrawn / (frames ? frames : 1));
             Gate("draws-issued", r.drawn > 0, d);
+        }
+        if (drawCull) {
+            char d[128];
+            snprintf(d, sizeof(d), "RB3_DRAW_CULL: %d draw(s) over %d frame(s) rejected by "
+                     "RndDrawable::Draw's frustum cull", r.cullRejected, frames);
+            Gate("draw-cull-reported", true, d);
         }
 
         if (dumpRnd) DumpRndMembers("after the last EndDrawing");

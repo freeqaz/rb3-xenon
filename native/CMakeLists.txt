@@ -2021,6 +2021,8 @@ rb3_add_executable(rb3-milo
     ${CMAKE_SOURCE_DIR}/src/charclip_refs_phase.cpp
     # A11: Rnd::Mode is RB3 retail's numbering; SelectConfig keys off it.
     ${CMAKE_SOURCE_DIR}/src/rnd_mode_phase.cpp
+    # A13: Spotlight::Generate is retail's body (no edit-mode regen).
+    ${CMAKE_SOURCE_DIR}/src/spotlight_generate_phase.cpp
     ${MILO_TARGET_COMMON_SOURCES}
     # W16-RW: Rnd::TestPoint asks the engine's point-test seam for an occlusion
     # tester (rndobj/Rnd.cpp, HX_NATIVE). rb3-render gets the seam's storage

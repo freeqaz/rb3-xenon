@@ -102,6 +102,8 @@ int RunProxyChainPhase(void (*gate)(const char *, bool, const char *));
 int RunCharClipRefsPhase(void (*gate)(const char *, bool, const char *));
 // native/src/rnd_mode_phase.cpp (A11)
 int RunRndModePhase(void (*gate)(const char *, bool, const char *));
+// native/src/spotlight_generate_phase.cpp (A13)
+int RunSpotlightGeneratePhase(void (*gate)(const char *, bool, const char *));
 
 namespace {
 
@@ -565,6 +567,9 @@ int main(int argc, char **argv) {
     // A11: Rnd::Mode carries RB3 retail's draw-mode values; the soft-particle
     // pass does not select the velocity shader (native/src/rnd_mode_phase.cpp).
     RunRndModePhase(Gate);
+    // A13: Spotlight::Generate keeps its beam in edit mode, as retail does
+    // (native/src/spotlight_generate_phase.cpp).
+    RunSpotlightGeneratePhase(Gate);
 
     printf("\nRESULT: %s (%d gate failure(s))\n",
            gFailures == 0 ? "ALL GATES PASSED" : "FAILED", gFailures);
