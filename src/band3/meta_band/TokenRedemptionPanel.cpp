@@ -45,52 +45,73 @@ void TokenRedemptionPanel::Enter() {
 }
 
 UNPOOL_DATA
+// Retail fn_82641670 (entered through the UIPanel subobject, so offsets read
+// -4). A finished enumeration that succeeded copies each EnumProduct's name
+// into mListData (the list the panel's provider shows); the offers are only
+// "ready" when that list is non-empty. token_offers_ready is sent for both
+// enumeration kinds, and a fresh-token enumeration then also sends
+// token_redemption_ready. A failed or empty enumeration reports
+// token_error_no_previous_offers / token_redemption_error by state.
+// All statics are function-local (one guard word, nine bits in this order).
 void TokenRedemptionPanel::Poll() {
     UIPanel::Poll();
     switch (mRedemptionState) {
     case kEnumeratingOffers:
-    case kEnumeratingPreviousOffers:
+    case kEnumeratingPreviousOffers: {
         MILO_ASSERT(mEnumeration, 0x4A);
         mEnumeration->Poll();
-        if (!mEnumeration->IsEnumerating()) {
-            bool succ = mEnumeration->IsSuccess();
-            if (!succ && mRedemptionState == kEnumeratingPreviousOffers) {
-                succ = true;
+        if (mEnumeration->IsEnumerating())
+            break;
+        bool succ = mEnumeration->IsSuccess();
+        if (succ) {
+            mListData.clear();
+            std::list<EnumProduct> &products = mEnumeration->mContentList;
+            for (std::list<EnumProduct>::iterator it = products.begin();
+                 it != products.end();
+                 ++it) {
+                mListData.push_back(it->mName);
             }
-            if (succ) {
-                if (mRedemptionState != kEnumeratingPreviousOffers) {
-                    static Message token_msg("token_redemption_msg", gNullStr);
-                    token_msg[0] = token_redemption_ready;
-                    HandleType(token_msg);
-                } else {
-                    static Message offersReadyMsg("token_offers_ready");
-                    HandleType(offersReadyMsg);
-                }
-            } else {
+        }
+        // Retail evaluates this branchlessly (subfic/subfe mask AND succ).
+        if (!mListData.empty() ? succ : false) {
+            static Message offersReadyMsg("token_offers_ready");
+            HandleType(offersReadyMsg);
+            if (mRedemptionState != kEnumeratingPreviousOffers) {
+                static Symbol token_redemption_ready("token_redemption_ready");
                 static Message token_msg("token_redemption_msg", gNullStr);
-                if (mRedemptionState == kEnumeratingPreviousOffers) {
-                    token_msg[0] = token_error_no_previous_offers;
-                } else {
-                    token_msg[0] = token_redemption_error;
-                }
+                token_msg[0] = token_redemption_ready;
                 HandleType(token_msg);
             }
-            mRedemptionState = 0;
-            RELEASE(mEnumeration);
+        } else {
+            static Symbol token_error_no_previous_offers("token_error_no_previous_offers");
+            static Symbol token_redemption_error("token_redemption_error");
+            static Message token_msg("token_redemption_msg", gNullStr);
+            if (mRedemptionState == kEnumeratingPreviousOffers) {
+                token_msg[0] = token_error_no_previous_offers;
+            } else {
+                token_msg[0] = token_redemption_error;
+            }
+            HandleType(token_msg);
         }
+        mRedemptionState = kIdle;
+        RELEASE(mEnumeration);
         break;
+    }
     case kPurchasing:
         MILO_ASSERT(mPurchaser, 0xA8);
         mPurchaser->Poll();
         if (!mPurchaser->IsPurchasing()) {
             if (mPurchaser->IsSuccess()) {
-                bool result = mPurchaser->PurchaseMade();
-                mRedemptionState = 0;
+                // Retail calls PurchaseMade() twice: once here with the result
+                // discarded, and again for the message argument below.
+                mPurchaser->PurchaseMade();
+                mRedemptionState = kIdle;
                 static Message checkout_msg("checkout_finished", 0);
-                checkout_msg[0] = result;
+                checkout_msg[0] = mPurchaser->PurchaseMade();
                 HandleType(checkout_msg);
             } else {
-                mRedemptionState = 0;
+                mRedemptionState = kIdle;
+                static Symbol token_redemption_error("token_redemption_error");
                 static Message token_msg("token_redemption_msg", gNullStr);
                 token_msg[0] = token_redemption_error;
                 HandleType(token_msg);
