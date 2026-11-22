@@ -46,7 +46,7 @@ BIN="$OUT/gate_$$"
 
 CXXFLAGS=(-std=c++17 -w -O0 -g -fno-omit-frame-pointer -fsanitize=address
           -fms-extensions -fms-compatibility -fms-compatibility-version=19.29
-          -fdelayed-template-parsing -DHX_NATIVE=1
+          -fdelayed-template-parsing -DHX_NATIVE=1 -include "$WT/native/src/msvc_compat.h"
           # native/CMakeLists.txt MS_COMPAT_FLAGS/ATOMIC_COMPAT_FLAGS: -fms-compatibility hides these from <atomic>
           -D__GCC_ATOMIC_TEST_AND_SET_TRUEVAL=1 -D__GCC_ATOMIC_BOOL_LOCK_FREE=2 -D__GCC_ATOMIC_CHAR_LOCK_FREE=2
           -D__GCC_ATOMIC_WCHAR_T_LOCK_FREE=2 -D__GCC_ATOMIC_CHAR16_T_LOCK_FREE=2
@@ -84,7 +84,7 @@ for c in $("$BIN" --list); do
     why=""
     if [ $rc -eq 124 ]; then why="hung (10 s timeout)"
     elif [ "$asan" -ge 1 ]; then
-        why="ASan: $(command grep -a -m1 'ERROR: AddressSanitizer' "$log" | sed 's/.*AddressSanitizer: //; s/ on address.*//') at $(command grep -a -m1 -E '#[0-9]+ .* in .*xdk_shims\.cpp' "$log" | sed 's/.* in //; s/ .*\//:/')"
+        why="ASan: $(command grep -a -m1 'ERROR: AddressSanitizer' "$log" | sed 's/.*AddressSanitizer: //; s/ on address.*//') at $(command grep -a -m1 -E '#[0-9]+ .* in .*xdk_shims[^/ ]*\.cpp' "$log" | sed 's/.* in //; s/ .*\//:/')"
     elif [ $rc -ne 0 ]; then why="$(command grep -a -m1 'FAIL' "$log" || echo "rc=$rc")"
     fi
     if [ -z "$why" ]; then

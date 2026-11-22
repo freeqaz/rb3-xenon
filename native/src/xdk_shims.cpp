@@ -18,6 +18,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <map>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -91,11 +92,25 @@ int RtlTryEnterCriticalSection(RTL_CRITICAL_SECTION *cs) {
 // Handle Management (handleapi.h)
 // ============================================================================
 
-// Simple handle table for events, threads, mutexes, etc.
+// Handle table for events, threads, mutexes, files and XContent enumerations.
+//
+// Win32 separates a handle from the object it names: CloseHandle drops one
+// reference, and the object lives while anything still refers to it. Here
+// every handle is a std::shared_ptr<HandleEntry> in the table; LookupHandle
+// hands its caller another reference, so a SetEvent, a wait or a ReadFile in
+// progress keeps the entry (and its mutex, condvar or fd) alive across a
+// concurrent CloseHandle, and ~HandleEntry frees the resources when the last
+// reference goes. A thread's state is a separate ShimThread shared by its
+// handles and by the running thread itself, so a thread can outlive every
+// handle to it and a handle can outlive the thread.
+struct ShimThread;
+
 enum HandleType { kHandleNone, kHandleEvent, kHandleThread, kHandleMutex, kHandleSemaphore, kHandleFile, kHandleTimer, kHandleNotify, kHandleFindFile, kHandleEnum };
 
 struct HandleEntry {
     HandleType type;
+    std::shared_ptr<ShimThread> thr; // kHandleThread only
+    ~HandleEntry();
     union {
         struct {
             pthread_mutex_t mutex;
@@ -103,11 +118,6 @@ struct HandleEntry {
             bool signaled;
             bool manualReset;
         } event;
-        struct {
-            pthread_t thread;
-            bool finished;
-            DWORD exitCode;
-        } thread;
         struct {
             pthread_mutex_t mutex;
         } mutex;
@@ -126,24 +136,40 @@ struct HandleEntry {
 static pthread_mutex_t gHandleTableMutex = PTHREAD_MUTEX_INITIALIZER;
 static uintptr_t gNextHandle = 0x1000;
 
-static std::map<HANDLE, HandleEntry *> &GetHandleTable() {
-    static std::map<HANDLE, HandleEntry *> table;
-    return table;
+typedef std::shared_ptr<HandleEntry> HandleRef;
+
+// Never destroyed: a detached thread still running at exit() may look a
+// handle up after static destructors have run.
+static std::map<HANDLE, HandleRef> &GetHandleTable() {
+    static std::map<HANDLE, HandleRef> *table = new std::map<HANDLE, HandleRef>;
+    return *table;
 }
 
+// Takes ownership of entry.
 static HANDLE AllocHandle(HandleEntry *entry) {
+    HandleRef ref(entry);
     pthread_mutex_lock(&gHandleTableMutex);
     HANDLE h = (HANDLE)(void *)gNextHandle++;
-    GetHandleTable()[h] = entry;
+    GetHandleTable()[h] = std::move(ref);
     pthread_mutex_unlock(&gHandleTableMutex);
     return h;
 }
 
-static HandleEntry *LookupHandle(HANDLE h) {
+static HANDLE AllocHandleRef(HandleRef ref) {
+    pthread_mutex_lock(&gHandleTableMutex);
+    HANDLE h = (HANDLE)(void *)gNextHandle++;
+    GetHandleTable()[h] = std::move(ref);
+    pthread_mutex_unlock(&gHandleTableMutex);
+    return h;
+}
+
+// A new reference: valid for as long as the caller holds it, whatever
+// CloseHandle does meanwhile.
+static HandleRef LookupHandle(HANDLE h) {
     pthread_mutex_lock(&gHandleTableMutex);
     auto &table = GetHandleTable();
     auto it = table.find(h);
-    HandleEntry *e = (it != table.end()) ? it->second : nullptr;
+    HandleRef e = (it != table.end()) ? it->second : HandleRef();
     pthread_mutex_unlock(&gHandleTableMutex);
     return e;
 }
@@ -156,31 +182,43 @@ BOOL CloseHandle(HANDLE hObject) {
         pthread_mutex_unlock(&gHandleTableMutex);
         return 0;
     }
-    HandleEntry *e = it->second;
+    HandleRef e = std::move(it->second);
     table.erase(it);
     pthread_mutex_unlock(&gHandleTableMutex);
+    // e goes out of scope here; ~HandleEntry runs only if no wait, SetEvent,
+    // ReadFile etc. still holds a reference.
+    return 1;
+}
 
-    switch (e->type) {
+HandleEntry::~HandleEntry() {
+    switch (type) {
     case kHandleEvent:
-        pthread_cond_destroy(&e->event.cond);
-        pthread_mutex_destroy(&e->event.mutex);
-        break;
-    case kHandleThread:
+        pthread_cond_destroy(&event.cond);
+        pthread_mutex_destroy(&event.mutex);
         break;
     case kHandleMutex:
-        pthread_mutex_destroy(&e->mutex.mutex);
+        pthread_mutex_destroy(&mutex.mutex);
         break;
     case kHandleFile:
-        if (e->file.fd >= 0) close(e->file.fd);
+        if (file.fd >= 0) close(file.fd);
         break;
     case kHandleEnum:
-        delete e->enumer.items;
+        delete enumer.items;
         break;
-    default:
+    default: // kHandleThread: thr's destructor; the rest own nothing
         break;
     }
-    delete e;
-    return 1;
+}
+
+// An absolute CLOCK_REALTIME deadline dwMilliseconds from now.
+static void DeadlineAfterMs(struct timespec *ts, DWORD dwMilliseconds) {
+    clock_gettime(CLOCK_REALTIME, ts);
+    ts->tv_sec += dwMilliseconds / 1000;
+    ts->tv_nsec += (dwMilliseconds % 1000) * 1000000;
+    if (ts->tv_nsec >= 1000000000) {
+        ts->tv_sec++;
+        ts->tv_nsec -= 1000000000;
+    }
 }
 
 BOOL DuplicateHandle(HANDLE, HANDLE, HANDLE, LPHANDLE lpTargetHandle,
@@ -194,12 +232,6 @@ BOOL DuplicateHandle(HANDLE, HANDLE, HANDLE, LPHANDLE lpTargetHandle,
 // Thread Functions (processthreadsapi.h)
 // ============================================================================
 
-struct ThreadStartData {
-    LPTHREAD_START_ROUTINE *func;
-    LPVOID param;
-    HandleEntry *entry;
-};
-
 // Win32's STILL_ACTIVE: GetExitCodeThread's answer while a thread runs.
 static const DWORD kShimStillActive = 0x103;
 
@@ -210,26 +242,108 @@ static const DWORD kShimStillActive = 0x103;
 // 0x827BB7C4, GetExitCodeThread at 0x827BB7E0, alive iff the code is 0x103.
 // NextBuf (0x827C3D80, the call at 0x827C3E44) hands a dead thread's
 // MakeString buffers to the calling thread and keeps a live one's.
+// The record outlives the thread object, so an id whose every handle was
+// closed still reads its exit code.
 static pthread_mutex_t gShimThreadExitMutex = PTHREAD_MUTEX_INITIALIZER;
 static std::map<DWORD, DWORD> &ShimThreadExitCodes() {
-    static std::map<DWORD, DWORD> codes;
-    return codes;
+    static std::map<DWORD, DWORD> *codes = new std::map<DWORD, DWORD>;
+    return *codes;
 }
-static void ShimSetThreadExitCode(DWORD id, DWORD code) {
-    pthread_mutex_lock(&gShimThreadExitMutex);
-    ShimThreadExitCodes()[id] = code;
-    pthread_mutex_unlock(&gShimThreadExitMutex);
+// Live thread objects by id, so OpenThread's handle names the same object as
+// CreateThread's. Guarded by gShimThreadExitMutex.
+static std::map<DWORD, std::weak_ptr<ShimThread>> &ShimLiveThreads() {
+    static auto *live = new std::map<DWORD, std::weak_ptr<ShimThread>>;
+    return *live;
 }
+
+// A Win32 thread object. Shared by every handle to the thread and by the
+// running thread itself (tCurrentShimThread), and freed after the last of
+// them lets go: CloseHandle while the thread runs is harmless, and a handle
+// may outlive the thread. The pthread is detached; waits use the condvar,
+// so any number of threads can wait, with timeouts.
+struct ShimThread {
+    pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+    bool finished = false;
+    DWORD exitCode = kShimStillActive;
+    DWORD id = 0;
+
+    ~ShimThread() {
+        if (id != 0) {
+            pthread_mutex_lock(&gShimThreadExitMutex);
+            auto &live = ShimLiveThreads();
+            auto it = live.find(id);
+            // A newer thread may have been given the same id; leave its entry.
+            if (it != live.end() && it->second.expired()) live.erase(it);
+            pthread_mutex_unlock(&gShimThreadExitMutex);
+        }
+        pthread_cond_destroy(&cond);
+        pthread_mutex_destroy(&mutex);
+    }
+
+    // The first call wins (ExitThread, then the start routine's unwind).
+    void Finish(DWORD code) {
+        pthread_mutex_lock(&mutex);
+        bool first = !finished;
+        if (first) {
+            finished = true;
+            exitCode = code;
+            pthread_cond_broadcast(&cond);
+        }
+        pthread_mutex_unlock(&mutex);
+        if (first && id != 0) {
+            pthread_mutex_lock(&gShimThreadExitMutex);
+            ShimThreadExitCodes()[id] = code;
+            pthread_mutex_unlock(&gShimThreadExitMutex);
+        }
+    }
+
+    DWORD ExitCode() {
+        pthread_mutex_lock(&mutex);
+        DWORD code = exitCode;
+        pthread_mutex_unlock(&mutex);
+        return code;
+    }
+
+    // WAIT_OBJECT_0 once the thread has finished, WAIT_TIMEOUT after
+    // dwMilliseconds (0 polls, INFINITE never times out).
+    DWORD Wait(DWORD dwMilliseconds) {
+        pthread_mutex_lock(&mutex);
+        if (dwMilliseconds == 0xFFFFFFFF) {
+            while (!finished) pthread_cond_wait(&cond, &mutex);
+        } else if (!finished) {
+            struct timespec ts;
+            DeadlineAfterMs(&ts, dwMilliseconds);
+            while (!finished) {
+                if (pthread_cond_timedwait(&cond, &mutex, &ts) == ETIMEDOUT) break;
+            }
+        }
+        bool done = finished;
+        pthread_mutex_unlock(&mutex);
+        return done ? 0 : 0x102; // WAIT_OBJECT_0 : WAIT_TIMEOUT
+    }
+};
+
+// The running thread's own reference to its object. A thread_local, so
+// ExitThread's pthread_exit releases it too (its destructor runs at thread
+// exit whether or not the start routine's frame is unwound).
+static thread_local std::shared_ptr<ShimThread> tCurrentShimThread;
+
+struct ThreadStartData {
+    LPTHREAD_START_ROUTINE *func;
+    LPVOID param;
+    std::shared_ptr<ShimThread> thr;
+};
 
 static void *ThreadStartRoutine(void *arg) {
     ThreadStartData *data = (ThreadStartData *)arg;
-    DWORD id = GetCurrentThreadId();
-    ShimSetThreadExitCode(id, kShimStillActive);
-    DWORD result = data->func(data->param);
-    data->entry->thread.exitCode = result;
-    data->entry->thread.finished = true;
-    ShimSetThreadExitCode(id, result);
+    tCurrentShimThread = std::move(data->thr);
+    LPTHREAD_START_ROUTINE *func = data->func;
+    LPVOID param = data->param;
     delete data;
+    DWORD result = func(param);
+    tCurrentShimThread->Finish(result);
+    tCurrentShimThread.reset();
     return nullptr;
 }
 
@@ -237,40 +351,51 @@ HANDLE CreateThread(LPSECURITY_ATTRIBUTES, SIZE_T stackSize,
                     LPTHREAD_START_ROUTINE lpStartAddress,
                     LPVOID lpParameter, DWORD dwCreationFlags,
                     LPDWORD lpThreadId) {
-    HandleEntry *e = new HandleEntry;
-    e->type = kHandleThread;
-    e->thread.finished = false;
-    e->thread.exitCode = kShimStillActive; // GetExitCodeThread while it runs
+    std::shared_ptr<ShimThread> thr = std::shared_ptr<ShimThread>(new ShimThread);
 
     ThreadStartData *data = new ThreadStartData;
     data->func = lpStartAddress;
     data->param = lpParameter;
-    data->entry = e;
+    data->thr = thr;
 
     pthread_attr_t attr;
     pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
     if (stackSize > 0) {
         pthread_attr_setstacksize(&attr, stackSize);
     }
 
-    int rc = pthread_create(&e->thread.thread, &attr, ThreadStartRoutine, data);
+    // Register the id before the new thread can finish (Finish takes this
+    // lock to record its exit code) or anyone can OpenThread it.
+    pthread_mutex_lock(&gShimThreadExitMutex);
+    pthread_t pt;
+    int rc = pthread_create(&pt, &attr, ThreadStartRoutine, data);
+    if (rc == 0) {
+        thr->id = (DWORD)(uintptr_t)pt;
+        ShimThreadExitCodes()[thr->id] = kShimStillActive;
+        ShimLiveThreads()[thr->id] = thr;
+    }
+    pthread_mutex_unlock(&gShimThreadExitMutex);
     pthread_attr_destroy(&attr);
 
     if (rc != 0) {
         delete data;
-        delete e;
         return nullptr;
     }
 
     if (lpThreadId) {
-        *lpThreadId = (DWORD)(uintptr_t)e->thread.thread;
+        *lpThreadId = thr->id;
     }
 
+    HandleEntry *e = new HandleEntry;
+    e->type = kHandleThread;
+    e->thr = std::move(thr);
     return AllocHandle(e);
 }
 
 VOID ExitThread(DWORD dwExitCode) {
-    pthread_exit((void *)(uintptr_t)dwExitCode);
+    if (tCurrentShimThread) tCurrentShimThread->Finish(dwExitCode);
+    pthread_exit(nullptr);
 }
 
 DWORD GetCurrentThreadId() {
@@ -278,28 +403,35 @@ DWORD GetCurrentThreadId() {
 }
 
 BOOL GetExitCodeThread(HANDLE hThread, LPDWORD lpExitCode) {
-    HandleEntry *e = LookupHandle(hThread);
+    HandleRef e = LookupHandle(hThread);
     if (!e || e->type != kHandleThread) return 0;
-    if (lpExitCode) *lpExitCode = e->thread.exitCode;
+    if (lpExitCode) *lpExitCode = e->thr->ExitCode();
     return 1;
 }
 
 int GetThreadPriority(HANDLE) { return 0; }
-// A handle that answers GetExitCodeThread for the thread with that id (see
-// ShimThreadExitCodes). A thread CreateThread did not start (the main thread,
-// a host std::thread) has no record and reads as running, which is all a
-// caller can see of it while it holds an id.
+// A handle to the thread with that id. A thread CreateThread started and
+// whose object is still alive shares that object (waits and exit codes track
+// it). One whose object is gone answers from its exit-code record. A thread
+// CreateThread did not start (the main thread, a host std::thread) has no
+// record and reads as running, which is all a ValidateThreadId caller asks.
 HANDLE OpenThread(DWORD, BOOL, DWORD dwThreadId) {
+    std::shared_ptr<ShimThread> thr;
     DWORD code = kShimStillActive;
     pthread_mutex_lock(&gShimThreadExitMutex);
+    auto lit = ShimLiveThreads().find(dwThreadId);
+    if (lit != ShimLiveThreads().end()) thr = lit->second.lock();
     auto it = ShimThreadExitCodes().find(dwThreadId);
     if (it != ShimThreadExitCodes().end()) code = it->second;
     pthread_mutex_unlock(&gShimThreadExitMutex);
+    if (!thr) {
+        thr = std::shared_ptr<ShimThread>(new ShimThread); // id 0: not registered
+        thr->finished = code != kShimStillActive;
+        thr->exitCode = code;
+    }
     HandleEntry *e = new HandleEntry;
     e->type = kHandleThread;
-    e->thread.thread = pthread_t();
-    e->thread.finished = code != kShimStillActive;
-    e->thread.exitCode = code;
+    e->thr = std::move(thr);
     return AllocHandle(e);
 }
 DWORD ResumeThread(HANDLE) { return 0; }
@@ -363,7 +495,7 @@ HANDLE CreateEventA(LPSECURITY_ATTRIBUTES, BOOL bManualReset,
 }
 
 BOOL SetEvent(HANDLE hEvent) {
-    HandleEntry *e = LookupHandle(hEvent);
+    HandleRef e = LookupHandle(hEvent);
     if (!e || e->type != kHandleEvent) return 0;
     pthread_mutex_lock(&e->event.mutex);
     e->event.signaled = true;
@@ -376,7 +508,7 @@ BOOL SetEvent(HANDLE hEvent) {
 }
 
 BOOL ResetEvent(HANDLE hEvent) {
-    HandleEntry *e = LookupHandle(hEvent);
+    HandleRef e = LookupHandle(hEvent);
     if (!e || e->type != kHandleEvent) return 0;
     pthread_mutex_lock(&e->event.mutex);
     e->event.signaled = false;
@@ -399,7 +531,7 @@ HANDLE CreateMutexA(LPSECURITY_ATTRIBUTES, BOOL bInitialOwner, LPCSTR) {
 }
 
 BOOL ReleaseMutex(HANDLE hMutex) {
-    HandleEntry *e = LookupHandle(hMutex);
+    HandleRef e = LookupHandle(hMutex);
     if (!e || e->type != kHandleMutex) return 0;
     pthread_mutex_unlock(&e->mutex.mutex);
     return 1;
@@ -415,7 +547,7 @@ BOOL ReleaseSemaphore(HANDLE h, LONG, LPLONG) {
 }
 
 DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds) {
-    HandleEntry *e = LookupHandle(hHandle);
+    HandleRef e = LookupHandle(hHandle);
     if (!e) return 0xFFFFFFFF; // WAIT_FAILED
 
     if (e->type == kHandleEvent) {
@@ -426,13 +558,7 @@ DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds) {
             }
         } else {
             struct timespec ts;
-            clock_gettime(CLOCK_REALTIME, &ts);
-            ts.tv_sec += dwMilliseconds / 1000;
-            ts.tv_nsec += (dwMilliseconds % 1000) * 1000000;
-            if (ts.tv_nsec >= 1000000000) {
-                ts.tv_sec++;
-                ts.tv_nsec -= 1000000000;
-            }
+            DeadlineAfterMs(&ts, dwMilliseconds);
             while (!e->event.signaled) {
                 if (pthread_cond_timedwait(&e->event.cond, &e->event.mutex, &ts) != 0) {
                     pthread_mutex_unlock(&e->event.mutex);
@@ -447,13 +573,18 @@ DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds) {
         return 0; // WAIT_OBJECT_0
     }
     else if (e->type == kHandleThread) {
-        if (e->thread.finished) return 0;
-        pthread_join(e->thread.thread, nullptr);
-        e->thread.finished = true;
-        return 0;
+        return e->thr->Wait(dwMilliseconds);
     }
     else if (e->type == kHandleMutex) {
-        pthread_mutex_lock(&e->mutex.mutex);
+        if (dwMilliseconds == 0xFFFFFFFF) {
+            pthread_mutex_lock(&e->mutex.mutex);
+        } else if (dwMilliseconds == 0) {
+            if (pthread_mutex_trylock(&e->mutex.mutex) != 0) return 0x102; // WAIT_TIMEOUT
+        } else {
+            struct timespec ts;
+            DeadlineAfterMs(&ts, dwMilliseconds);
+            if (pthread_mutex_timedlock(&e->mutex.mutex, &ts) != 0) return 0x102;
+        }
         return 0;
     }
 
@@ -670,7 +801,7 @@ BOOL GetFileAttributesExA(LPCSTR lpFileName, GET_FILEEX_INFO_LEVELS, LPVOID lpFi
 }
 
 BOOL GetFileInformationByHandle(HANDLE hFile, LPBY_HANDLE_FILE_INFORMATION lpInfo) {
-    HandleEntry *e = LookupHandle(hFile);
+    HandleRef e = LookupHandle(hFile);
     if (!e || e->type != kHandleFile) return 0;
     struct stat st;
     if (fstat(e->file.fd, &st) != 0) return 0;
@@ -681,7 +812,7 @@ BOOL GetFileInformationByHandle(HANDLE hFile, LPBY_HANDLE_FILE_INFORMATION lpInf
 }
 
 DWORD GetFileSize(HANDLE hFile, LPDWORD lpFileSizeHigh) {
-    HandleEntry *e = LookupHandle(hFile);
+    HandleRef e = LookupHandle(hFile);
     if (!e || e->type != kHandleFile) return 0xFFFFFFFF;
     struct stat st;
     if (fstat(e->file.fd, &st) != 0) return 0xFFFFFFFF;
@@ -690,7 +821,7 @@ DWORD GetFileSize(HANDLE hFile, LPDWORD lpFileSizeHigh) {
 }
 
 BOOL GetFileSizeEx(HANDLE hFile, PLARGE_INTEGER lpFileSize) {
-    HandleEntry *e = LookupHandle(hFile);
+    HandleRef e = LookupHandle(hFile);
     if (!e || e->type != kHandleFile) return 0;
     struct stat st;
     if (fstat(e->file.fd, &st) != 0) return 0;
@@ -700,7 +831,7 @@ BOOL GetFileSizeEx(HANDLE hFile, PLARGE_INTEGER lpFileSize) {
 
 BOOL ReadFile(HANDLE hFile, LPVOID lpBuffer, DWORD nNumberOfBytesToRead,
               LPDWORD lpNumberOfBytesRead, LPOVERLAPPED) {
-    HandleEntry *e = LookupHandle(hFile);
+    HandleRef e = LookupHandle(hFile);
     if (!e || e->type != kHandleFile) return 0;
     ssize_t n = read(e->file.fd, lpBuffer, nNumberOfBytesToRead);
     if (n < 0) return 0;
@@ -710,7 +841,7 @@ BOOL ReadFile(HANDLE hFile, LPVOID lpBuffer, DWORD nNumberOfBytesToRead,
 
 BOOL WriteFile(HANDLE hFile, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrite,
                LPDWORD lpNumberOfBytesWritten, LPOVERLAPPED) {
-    HandleEntry *e = LookupHandle(hFile);
+    HandleRef e = LookupHandle(hFile);
     if (!e || e->type != kHandleFile) return 0;
     ssize_t n = write(e->file.fd, lpBuffer, nNumberOfBytesToWrite);
     if (n < 0) return 0;
@@ -720,7 +851,7 @@ BOOL WriteFile(HANDLE hFile, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrite,
 
 DWORD SetFilePointer(HANDLE hFile, LONG lDistanceToMove,
                      PLONG lpDistanceToMoveHigh, DWORD dwMoveMethod) {
-    HandleEntry *e = LookupHandle(hFile);
+    HandleRef e = LookupHandle(hFile);
     if (!e || e->type != kHandleFile) return 0xFFFFFFFF;
     int whence = SEEK_SET;
     if (dwMoveMethod == 1) whence = SEEK_CUR;
@@ -731,7 +862,7 @@ DWORD SetFilePointer(HANDLE hFile, LONG lDistanceToMove,
 }
 
 BOOL SetEndOfFile(HANDLE hFile) {
-    HandleEntry *e = LookupHandle(hFile);
+    HandleRef e = LookupHandle(hFile);
     if (!e || e->type != kHandleFile) return 0;
     off_t pos = lseek(e->file.fd, 0, SEEK_CUR);
     return ftruncate(e->file.fd, pos) == 0 ? 1 : 0;
@@ -1119,7 +1250,7 @@ DWORD XContentCreateEnumerator(DWORD, DWORD DeviceID, DWORD dwContentType, DWORD
 // a synchronous one returns ERROR_NO_MORE_FILES with no items.
 DWORD XEnumerate(HANDLE hEnum, VOID *pvBuffer, DWORD cbBuffer, DWORD *pcItemsReturned, XOVERLAPPED *pOverlapped) {
     if (pcItemsReturned) *pcItemsReturned = 0;
-    HandleEntry *e = LookupHandle(hEnum);
+    HandleRef e = LookupHandle(hEnum);
     if (!e || e->type != kHandleEnum) return kShimErrorInvalidHandle;
     if (!pvBuffer || cbBuffer < 0x134) return ShimComplete(0x007A, pOverlapped); // ERROR_INSUFFICIENT_BUFFER
     if (e->enumer.next >= e->enumer.items->size()) return ShimComplete(ERROR_NO_MORE_FILES, pOverlapped);
