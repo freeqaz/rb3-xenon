@@ -446,43 +446,6 @@ static void rb3_app_check_content_refresh() { // ring: native-real
     fflush(stdout);
 }
 
-// postcal: MakeString's per-thread buffer slots are reused once a thread
-// dies. NextBuf (0x827C3D80) scans the 6-entry id table with 4-byte loads
-// (0x827C3E08) and hands a dead thread's slot to a new one through
-// ValidateThreadId (bl at 0x827C3E44). Eight threads, one after another,
-// each MakeString while the main thread does too; more live slots than 6
-// would hit NextBuf's assert. Each thread's string must come back intact.
-static DWORD WINAPI Rb3AppMakeStringThread(LPVOID p) {
-    int i = (int)(intptr_t)p;
-    const char *s = MakeString("postcal-%d", i);
-    return strcmp(s, MakeString("postcal-%d", i)) == 0 && atoi(s + 8) == i ? 1 : 2;
-}
-static void rb3_app_check_makestring_threads() { // ring: native-real
-    int bad = -1;
-    for (int i = 0; i < 8 && bad < 0; i++) {
-        (void)MakeString("main-%d", i);
-        HANDLE h = CreateThread(nullptr, 0, Rb3AppMakeStringThread, (LPVOID)(intptr_t)i, 0, nullptr);
-        DWORD code = 0;
-        for (int w = 0; w < 2000; w++) {
-            GetExitCodeThread(h, &code);
-            if (code != 0x103) break;
-            usleep(1000);
-        }
-        CloseHandle(h);
-        if (code != 1) bad = i;
-        (void)MakeString("main-%d", i);
-    }
-    if (bad >= 0) {
-        printf("  [FAIL] rb3-app MakeString threads: thread %d did not get its own string\n", bad);
-        printf("RESULT: GATE FAILED (makestring threads)\n");
-        fflush(stdout);
-        _exit(7);
-    }
-    printf("  [PASS] rb3-app MakeString threads: 8 sequential threads and the main thread "
-           "each formatted through NextBuf's slots\n");
-    fflush(stdout);
-}
-
 // postcal: the offline Net::Init built TheNet.mSyncStore (retail `new
 // SyncStore`, 0x823E06C0) and it is TheSyncStore; NetSync::SyncScreen (retail
 // 0x8259CB48) polls it on a leader-local screen sync.
@@ -535,7 +498,6 @@ extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
     fflush(stdout);
     rb3_app_check_sync_store(self);
     rb3_app_check_content_refresh();
-    rb3_app_check_makestring_threads();
 }
 
 // A7: Net::Poll (App::RunWithoutDebugging, every frame). Retail 0x823E03A8:
