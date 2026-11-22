@@ -160,7 +160,16 @@ const char *FileGetPath(const char *file) {
     static char static_path[256];
     char *p2;
     if (file != 0) {
+#ifdef HX_NATIVE
+        // Retail (0x82516564..0x82516578) inlines this strcpy as a forward
+        // byte loop, so FileGetPath(FileGetPath(x)) -- BandSongMgr::AddSongData
+        // -- copies static_path onto itself harmlessly. glibc's strcpy on
+        // overlapping buffers is undefined; memmove gives the retail result
+        // (docs/decomp/NATIVE_LP64_CRT_TRIAGE_2026-11-22.md).
+        memmove(static_path, file, strlen(file) + 1);
+#else
         strcpy(static_path, file);
+#endif
         p2 = static_path + strlen(static_path);
         p2--;
         while (p2 >= static_path && *p2 != '/' && *p2 != '\\') {

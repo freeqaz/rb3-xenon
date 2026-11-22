@@ -126,6 +126,18 @@ namespace {
         });
     }
 
+    // FileGetPath(FileGetPath(x)) (BandSongMgr::AddSongData) hands
+    // FileGetPath its own static buffer. Retail's inlined byte copy makes that
+    // an identity copy; natively strcpy there is undefined (ASan reports
+    // strcpy-param-overlap). Without a sanitizer glibc usually gives the same
+    // bytes, so this is a control on the result; the fix is the memmove.
+    void FileGetPathCases() {
+        const char *p = FileGetPath(FileGetPath("songs/foo/foo.mid"));
+        Gate("control-file-get-path-nested", strcmp(p, "songs") == 0,
+             "FileGetPath(FileGetPath(\"songs/foo/foo.mid\")) -> \"%s\" (want \"songs\")",
+             p);
+    }
+
     // ---- 3. rand: retail's per-thread LCG, seed 1 at thread start ----
     // Reference values from the retail formula (0x8282E8A8..0x8282E8C4).
     std::vector<int> RetailRandFromSeed1(int count) {
@@ -332,6 +344,7 @@ int RunLp64CrtPhase(GateFn gate) {
     printf("\n=== lp64_crt_phase: retail CRT and LP64 behaviour ===\n");
     SnprintfCases();
     StrtokCases();
+    FileGetPathCases();
     RandCases();
     AtoiCases();
     SortCases();

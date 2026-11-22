@@ -38,6 +38,7 @@ Addresses are clean-TU5 VAs, read with `python3 tools/va_disasm.py`.
 | MemMgr ThreadMemStack walks gThreadIds 4 bytes at a time | `lwz r11,0(r28)` / `addi r28,r28,4` at 0x827BB92C..0x827BB940; `lwz r3,0(r28)` / `addi r28,r28,4` at 0x827BB970..0x827BB988 | kept, rewritten to `DWORD *` (the same type as `unsigned long` on X360), matching main's MakeString fix `79633851d` instead of the WIP's `#ifdef` typedef |
 | MakeString NextBuf walk | main already fixed it (`79633851d`, DWORD*) | WIP hunk dropped in the rebase, main's file taken whole |
 | Hx_snprintf returns MSVC's results natively | see below | finished |
+| FileGetPath copies with `memmove` natively (coordinator item: ASan strcpy-param-overlap at File.cpp:163, from BandSongMgr::AddSongData's `FileGetPath(FileGetPath(...))`) | FileGetPath 0x82516550 inlines the strcpy as a forward byte loop (`lbz`/`stbx`/`addi`, 0x82516564..0x82516578), so a source equal to static_path is an identity copy. glibc's strcpy on overlapping buffers is undefined. The overlap exists only natively. | added; `memmove` gives retail's result for any source at or after static_path |
 
 No WIP change was wrong. The WIP's snprintf arm also returned -1 on an exact fit,
 which retail does not do; that is fixed (next section).
@@ -67,7 +68,11 @@ output and 0 for empty output.
 
 ## Gate: rb3-milo `lp64_crt_phase`
 
-`native/src/lp64_crt_phase.cpp` has 13 defect gates and 10 controls. It uses only
+`native/src/lp64_crt_phase.cpp` has 13 defect gates and 11 controls. The 11th
+control, `control-file-get-path-nested`, was added with the FileGetPath fix. It
+checks the nested call's result (`"songs"`). Without a sanitizer, glibc's
+overlapping strcpy happens to produce the same bytes, so this gate cannot detect
+the UB. Only an ASan build can, and I did not rerun one. It uses only
 APIs that exist without the fixes, so it can be built against main's src. The sort
 and ThreadMemStack cases run in a forked child with a 20 s alarm, and the parent
 gates on its exit status.
@@ -77,7 +82,8 @@ Run: `no610m.sh env RB3_ASSETS=<xbox-zip> ./rb3-milo <xbox-zip> ui/track/gen/tra
 | | controls pass | defect gates pass | rb3-milo RESULT |
 |---|---|---|---|
 | before (branch src reverted to main with `git apply -R`, gate kept) | 10/10 | 0/13 | FAILED (13) |
-| after (branch tip) | 10/10 | 13/13 | ALL GATES PASSED (0) |
+| after (fixes at `0d9a1c286`, before the FileGetPath control) | 10/10 | 13/13 | ALL GATES PASSED (0) |
+| after (branch tip, rebased on main `98f66d185`) | 11/11 | 13/13 | ALL GATES PASSED (0) |
 
 Before-run values, which show each defect:
 - snprintf: `"abcdef"` into 4 returned 6; `"abc"` into 3 left `61 62 00`; `"abc"` into 0 returned 3.
@@ -112,6 +118,7 @@ The ab_measure result is in the section below.
   small values, where truncation and clamping agree.
 - STLport's `random_shuffle` (`__random_number` 0x8253B1D8) was not checked for
   `rand` use natively.
+- The FileGetPath fix was not confirmed under ASan.
 - `native_health --selftest` was not run; the coordinator's landing gate runs it.
 
 ## Measurement
