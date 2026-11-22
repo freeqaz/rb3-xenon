@@ -1457,6 +1457,14 @@ void Rnd::DrawPreClear() {
     // placed-band path (RB3_BAND_PLACE=1) crashes, rc=139, before its first
     // frame with either polarity, so X21's black frame is not reachable from
     // rb3-render today.
+    //
+    // ⚠ NOT YET LANDABLE (A18). rb3-app is where the OutfitConfigs register:
+    // on the a16 menu walk this arm dispatches OutfitConfig::DrawPreClear
+    // (9171 calls by main_hub) and MatSwap::Compose, and the run then crashes
+    // as the band characters load at main_hub -> meta_loading_main (free():
+    // invalid pointer; SIGSEGV; CharLipSync::PlayBack::Set) in 3 of 4 runs,
+    // where the old arm passed that point 3 of 3 times. That crash is the
+    // compose path's bug, and it is fixed there, not here.
     // Gate: rb3-render preclear-select-* (native/src/preclear_select_phase.cpp).
     //
     // X21 M2: separates "the pre-clear dispatcher is never called" from "it is
