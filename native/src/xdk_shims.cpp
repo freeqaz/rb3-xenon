@@ -91,7 +91,7 @@ int RtlTryEnterCriticalSection(RTL_CRITICAL_SECTION *cs) {
 // ============================================================================
 
 // Simple handle table for events, threads, mutexes, etc.
-enum HandleType { kHandleNone, kHandleEvent, kHandleThread, kHandleMutex, kHandleSemaphore, kHandleFile, kHandleTimer, kHandleNotify, kHandleFindFile };
+enum HandleType { kHandleNone, kHandleEvent, kHandleThread, kHandleMutex, kHandleSemaphore, kHandleFile, kHandleTimer, kHandleNotify, kHandleFindFile, kHandleEnum };
 
 struct HandleEntry {
     HandleType type;
@@ -728,48 +728,140 @@ DWORD XUserCheckPrivilege(DWORD, unsigned int, BOOL *pfResult) {
     return 0;
 }
 
-XUSER_SIGNIN_STATE XUserGetSigninState(DWORD) {
-    return eXUserSigninState_NotSignedIn;
+// ---------------------------------------------------------------------------
+// The console model the XUser* and XContent* shims answer for: ONE local
+// profile is signed in on user index 0, offline (signed in locally, never to
+// Live); user indices 1-3 are empty. The hard drive is present and holds no
+// saved game. Each answer below is the one the retail caller is written to
+// receive from that console:
+//   * PlatformMgr::UpdateSigninState (retail 0x8251C620) tests
+//     XUserGetSigninState != 0, asks XUserGetSigninInfo(i, 2 = online XUID
+//     only) and falls back to XUserGetXUID when that left the xuid zero, so a
+//     local profile's XUID arrives through XUserGetXUID.
+//   * PlatformMgr::IsPadAGuest compares XUserGetSigninInfo's result with
+//     ERROR_NO_SUCH_USER for an empty index.
+//   * PlatformMgr::GetOnlineID (retail 0x8251BE80) writes the id only when
+//     XUserGetXUID returns 0.
+// An offline XUID carries 0xE in its top nibble (a Live XUID 0x0009...).
+// ---------------------------------------------------------------------------
+static const XUID kShimOfflineXuid = 0xE000000052423301ULL;
+static const DWORD kShimErrorFunctionFailed = 0x065B; // ERROR_FUNCTION_FAILED
+static const DWORD kShimErrorInvalidHandle = 0x0006;  // ERROR_INVALID_HANDLE
+// The one storage device: the hard drive. Its DeviceID is nonzero (0 is
+// XCONTENTDEVICE_ANY, which CacheMgrXbox::PollChoose reads as a cancel).
+static const DWORD kShimHddDeviceId = 1;
+
+static bool ShimUserSignedIn(DWORD dwUserIndex) { return dwUserIndex == 0; }
+
+XUSER_SIGNIN_STATE XUserGetSigninState(DWORD dwUserIndex) {
+    return ShimUserSignedIn(dwUserIndex) ? eXUserSigninState_SignedInLocally
+                                         : eXUserSigninState_NotSignedIn;
 }
 
-DWORD XUserGetXUID(DWORD, XUID *pxuid) {
-    if (pxuid) *pxuid = 0;
-    return 0;
+DWORD XUserGetXUID(DWORD dwUserIndex, XUID *pxuid) {
+    if (!ShimUserSignedIn(dwUserIndex)) {
+        if (pxuid) *pxuid = 0;
+        return ERROR_NO_SUCH_USER;
+    }
+    if (pxuid) *pxuid = kShimOfflineXuid;
+    return ERROR_SUCCESS;
 }
 
 VOID XUserSetContext(DWORD, DWORD, DWORD) {}
 
 DWORD XUserWriteAchievements(DWORD, XUSER_ACHIEVEMENT *, XOVERLAPPED *) { return 0; }
 DWORD XContentClose(LPCSTR, XOVERLAPPED *) { return 0; }
-DWORD XContentGetDeviceData(DWORD, XDEVICE_DATA *) { return 1; }
+// The hard drive (XCONTENTDEVICETYPE_HDD = 1), 20 GB with 10 GB free;
+// CacheXbox::GetFreeSpaceSync adds ulDeviceFreeBytes to its own count.
+DWORD XContentGetDeviceData(DWORD DeviceID, XDEVICE_DATA *pDeviceData) {
+    if (DeviceID != kShimHddDeviceId) return ERROR_DEVICE_NOT_CONNECTED;
+    if (pDeviceData) {
+        memset(pDeviceData, 0, sizeof(*pDeviceData));
+        pDeviceData->DeviceID = kShimHddDeviceId;
+        pDeviceData->DeviceType = 1;
+        pDeviceData->ulDeviceBytes = 20ULL << 30;
+        pDeviceData->ulDeviceFreeBytes = 10ULL << 30;
+        const char *name = "Hard Drive";
+        for (int i = 0; name[i]; i++) pDeviceData->wszFriendlyName[i] = (WCHAR)name[i];
+    }
+    return ERROR_SUCCESS;
+}
 DWORD XCancelOverlapped(XOVERLAPPED *) { return 0; }
-DWORD XGetOverlappedExtendedError(XOVERLAPPED *) { return 0; }
+// The XDK reports an asynchronous failure as ERROR_FUNCTION_FAILED from
+// XGetOverlappedResult with the real code (an HRESULT) here; CacheMgrXbox's
+// PollMount masks it to its low 16 bits.
+DWORD XGetOverlappedExtendedError(XOVERLAPPED *pOverlapped) {
+    return pOverlapped ? pOverlapped->dwExtendedError : 0;
+}
 
 DWORD XShowKeyboardUI(DWORD, DWORD, LPCWSTR, LPCWSTR, LPCWSTR, LPWSTR, DWORD, XOVERLAPPED *) { return 1; }
 
 DWORD XContentCrossTitleCreate(DWORD, LPCSTR, XCONTENT_CROSS_TITLE_DATA *, DWORD, DWORD *, DWORD *, SIZE_T, ULARGE_INTEGER, XOVERLAPPED *) { return 1; }
 DWORD XContentCrossTitleDelete(DWORD, const XCONTENT_CROSS_TITLE_DATA *, XOVERLAPPED *) { return 0; }
-DWORD XGetOverlappedResult(XOVERLAPPED *, DWORD *pdwResult, BOOL) {
-    if (pdwResult) *pdwResult = 0;
-    return 0;
+// An operation's status is InternalLow (ERROR_IO_PENDING while it runs) and
+// its result (bytes, items) is InternalHigh. The shims complete every
+// operation before they return, so a still-pending one only appears when a
+// caller polls an XOVERLAPPED no shim filled in. Shims that leave the
+// caller's zeroed XOVERLAPPED untouched read as success with a result of 0,
+// as before.
+DWORD XGetOverlappedResult(XOVERLAPPED *pOverlapped, DWORD *pdwResult, BOOL) {
+    if (!pOverlapped) {
+        if (pdwResult) *pdwResult = 0;
+        return ERROR_SUCCESS;
+    }
+    if (pOverlapped->InternalLow == ERROR_IO_PENDING) return ERROR_IO_INCOMPLETE;
+    if (pdwResult) *pdwResult = (DWORD)pOverlapped->InternalHigh;
+    return (DWORD)pOverlapped->InternalLow;
 }
-DWORD XUserGetSigninInfo(DWORD, DWORD, XUSER_SIGNIN_INFO *pInfo) {
+// Flags bit 2 is XUSER_GET_SIGNIN_INFO_ONLINE_XUID_ONLY: a local profile has
+// no online XUID, so that query leaves the xuid zero (and UpdateSigninState
+// then asks XUserGetXUID). dwInfoFlags 0: not a guest, not Live-enabled.
+DWORD XUserGetSigninInfo(DWORD dwUserIndex, DWORD dwFlags, XUSER_SIGNIN_INFO *pInfo) {
     if (pInfo) memset(pInfo, 0, sizeof(*pInfo));
-    return 0;
+    if (!ShimUserSignedIn(dwUserIndex)) return ERROR_NO_SUCH_USER;
+    if (pInfo) {
+        pInfo->xuid = (dwFlags & 2) ? 0 : kShimOfflineXuid;
+        pInfo->UserSigninState = eXUserSigninState_SignedInLocally;
+        strncpy(pInfo->szUserName, "Player", sizeof(pInfo->szUserName) - 1);
+    }
+    return ERROR_SUCCESS;
 }
 DWORD XSetThreadProcessor(HANDLE, DWORD) { return 0; }
 DWORD XContentCreateEx(DWORD, LPCSTR, const XCONTENT_DATA *, DWORD, DWORD *, DWORD *, SIZE_T, ULARGE_INTEGER, XOVERLAPPED *) { return 1; }
 DWORD XContentGetCreator(DWORD, const XCONTENT_DATA *, BOOL *, XUID *, XOVERLAPPED *) { return 0; }
 DWORD XContentGetDeviceState(DWORD, XOVERLAPPED *) { return 0; }
 DWORD XContentDelete(DWORD, const XCONTENT_DATA *, XOVERLAPPED *) { return 0; }
-DWORD XContentCreateEnumerator(DWORD, DWORD, DWORD, DWORD, DWORD, DWORD *pcbBuffer, HANDLE *phEnum) {
-    if (pcbBuffer) *pcbBuffer = 0;
-    if (phEnum) *phEnum = nullptr;
-    return 0;
+// A content enumerator over a drive that holds no content. Retail's caller,
+// CacheMgrXbox::SearchAsync (0x827D7878), passes user 0xFE (any), device 0
+// (any), type 1 (saved game), cItem 1; it treats 0x12 as "no storage device",
+// requires 0 plus a handle other than INVALID_HANDLE_VALUE, and its (compiled
+// out) assert expects the buffer size of one XCONTENT_DATA. It then calls
+// XEnumerate with an XOVERLAPPED and requires ERROR_IO_PENDING.
+DWORD XContentCreateEnumerator(DWORD, DWORD, DWORD, DWORD, DWORD cItem, DWORD *pcbBuffer, HANDLE *phEnum) {
+    if (pcbBuffer) *pcbBuffer = cItem * (DWORD)sizeof(XCONTENT_DATA);
+    if (phEnum) {
+        HandleEntry *e = new HandleEntry();
+        e->type = kHandleEnum;
+        *phEnum = AllocHandle(e);
+    }
+    return ERROR_SUCCESS;
 }
-DWORD XEnumerate(HANDLE, VOID *, DWORD, DWORD *pcItemsReturned, XOVERLAPPED *) {
+// The enumeration is empty. Asynchronously that completes at once as a failed
+// operation: XGetOverlappedResult returns ERROR_FUNCTION_FAILED and the
+// extended error is HRESULT_FROM_WIN32(ERROR_NO_MORE_FILES), which
+// CacheMgrXbox::PollSearch (0x827D7E38) turns into kCache_ErrorCacheNotFound.
+// Synchronously it returns ERROR_NO_MORE_FILES with no items.
+DWORD XEnumerate(HANDLE hEnum, VOID *, DWORD, DWORD *pcItemsReturned, XOVERLAPPED *pOverlapped) {
     if (pcItemsReturned) *pcItemsReturned = 0;
-    return 0;
+    HandleEntry *e = LookupHandle(hEnum);
+    if (!e || e->type != kHandleEnum) return kShimErrorInvalidHandle;
+    if (pOverlapped) {
+        pOverlapped->InternalHigh = 0;
+        pOverlapped->dwExtendedError = 0x80070000u | ERROR_NO_MORE_FILES;
+        pOverlapped->InternalLow = kShimErrorFunctionFailed;
+        return ERROR_IO_PENDING;
+    }
+    return ERROR_NO_MORE_FILES;
 }
 DWORD XContentFlush(LPCSTR, XOVERLAPPED *) { return 0; }
 ULONGLONG XContentCalculateSize(ULONGLONG cbData, DWORD) { return cbData; }
@@ -791,11 +883,13 @@ INT XMemSize(LPVOID, DWORD) { return 0; }
 DWORD XPhysicalSize(LPVOID) { return 0; }
 DWORD XUserAwardGamerPicture(DWORD, DWORD, DWORD, XOVERLAPPED *) { return 0; }
 DWORD XUserAwardAvatarAssets(DWORD, const XUSER_AVATARASSET *, XOVERLAPPED *) { return 0; }
-DWORD XUserGetName(DWORD, LPSTR szUserName, DWORD cchUserName) {
+DWORD XUserGetName(DWORD dwUserIndex, LPSTR szUserName, DWORD cchUserName) {
+    if (!ShimUserSignedIn(dwUserIndex)) return ERROR_NO_SUCH_USER;
     if (szUserName && cchUserName > 0) {
         strncpy(szUserName, "Player", cchUserName);
+        szUserName[cchUserName - 1] = '\0';
     }
-    return 0;
+    return ERROR_SUCCESS;
 }
 DWORD XShowTokenRedemptionUI(DWORD) { return 0; }
 DWORD XUserAreUsersFriends(DWORD, XUID *, DWORD, BOOL *pfResult, XOVERLAPPED *) {
@@ -804,8 +898,24 @@ DWORD XUserAreUsersFriends(DWORD, XUID *, DWORD, BOOL *pfResult, XOVERLAPPED *) 
 }
 DWORD XShowNuiMarketplaceUI(DWORD, DWORD, DWORD, QWORD, DWORD) { return 0; }
 DWORD XShowMarketplaceUI(DWORD, DWORD, QWORD, DWORD) { return 0; }
-DWORD XShowNuiDeviceSelectorUI(DWORD, DWORD, DWORD, DWORD, ULARGE_INTEGER, DWORD *, XOVERLAPPED *) { return 0; }
-DWORD XShowDeviceSelectorUI(DWORD, DWORD, DWORD, ULARGE_INTEGER, DWORD *, XOVERLAPPED *) { return 0; }
+// With a single storage device the system picks it without showing the
+// selector. Retail's callers (CacheMgrXbox::ShowUserSelectUIAsync 0x827D79C8,
+// MemcardXbox::ShowDeviceSelector 0x82518458) require ERROR_IO_PENDING and
+// then poll the XOVERLAPPED; a DeviceID of 0 on completion means cancelled.
+static DWORD ShimDeviceSelected(DWORD *pdwDeviceID, XOVERLAPPED *pOverlapped) {
+    if (pdwDeviceID) *pdwDeviceID = kShimHddDeviceId;
+    if (!pOverlapped) return ERROR_SUCCESS;
+    pOverlapped->InternalHigh = 0;
+    pOverlapped->dwExtendedError = 0;
+    pOverlapped->InternalLow = ERROR_SUCCESS;
+    return ERROR_IO_PENDING;
+}
+DWORD XShowNuiDeviceSelectorUI(DWORD, DWORD, DWORD, DWORD, ULARGE_INTEGER, DWORD *pdwDeviceID, XOVERLAPPED *pOverlapped) {
+    return ShimDeviceSelected(pdwDeviceID, pOverlapped);
+}
+DWORD XShowDeviceSelectorUI(DWORD, DWORD, DWORD, ULARGE_INTEGER, DWORD *pdwDeviceID, XOVERLAPPED *pOverlapped) {
+    return ShimDeviceSelected(pdwDeviceID, pOverlapped);
+}
 DWORD XGetGameRegion() { return 0x00FF; } // All regions
 DWORD XShowNuiDirtyDiscErrorUI(DWORD, DWORD) { exit(1); }
 DWORD XShowDirtyDiscErrorUI(DWORD) { exit(1); }
@@ -850,7 +960,28 @@ VOID GlobalMemoryStatus(LPMEMORYSTATUS lpBuffer) {
 // Timezone API (timezoneapi.h)
 // ============================================================================
 
-// FileTimeToSystemTime etc. - stub if needed
+// FILETIME is 100 ns ticks since 1601-01-01 UTC. DateTime::FromFileTime
+// (os/DateTime.cpp) and CacheXbox's directory listing convert through this.
+BOOL FileTimeToSystemTime(const FILETIME *lpFileTime, LPSYSTEMTIME lpSystemTime) {
+    if (!lpFileTime || !lpSystemTime) return 0;
+    unsigned long long t = ((unsigned long long)lpFileTime->dwHighDateTime << 32) |
+                           lpFileTime->dwLowDateTime;
+    const unsigned long long kEpochDelta = 116444736000000000ULL; // 1601 -> 1970
+    if (t < kEpochDelta) return 0;
+    unsigned long long ticks = t - kEpochDelta;
+    time_t secs = (time_t)(ticks / 10000000ULL);
+    struct tm tmv;
+    if (!gmtime_r(&secs, &tmv)) return 0;
+    lpSystemTime->wYear = tmv.tm_year + 1900;
+    lpSystemTime->wMonth = tmv.tm_mon + 1;
+    lpSystemTime->wDayOfWeek = tmv.tm_wday;
+    lpSystemTime->wDay = tmv.tm_mday;
+    lpSystemTime->wHour = tmv.tm_hour;
+    lpSystemTime->wMinute = tmv.tm_min;
+    lpSystemTime->wSecond = tmv.tm_sec;
+    lpSystemTime->wMilliseconds = (WORD)((ticks / 10000ULL) % 1000ULL);
+    return 1;
+}
 
 // ============================================================================
 // XGRAPHICS functions

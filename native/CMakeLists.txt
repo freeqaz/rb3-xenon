@@ -2696,9 +2696,16 @@ if(RB3X_BUILD_ENGINE)
     #  * system/utl/NetCacheMgr_Xbox.cpp + system/net/XLSPConnection.cpp:
     #    NetCacheMgrInit's `new NetCacheMgrXbox` (named "net_cache_mgr").
     #    No X360 extra_cflags. The XLSP enumerate path's XDK calls stay stubs.
+    #  * system/utl/CacheMgr_Xbox.cpp + system/utl/Cache_Xbox.cpp (postsplash):
+    #    CacheMgrInit's `new CacheMgrXbox` (TheCacheMgr). SaveLoadManager's
+    #    song-cache search (state 0x14) runs on the first Start press and
+    #    dereferences TheCacheMgr. Its XContent calls go to xdk_shims.cpp, which
+    #    model a hard drive that holds no saved game. No X360 extra_cflags.
     list(APPEND _rb3_app_all ${REPO_ROOT}/src/network/net/Server.cpp
         ${REPO_ROOT}/src/system/utl/NetCacheMgr_Xbox.cpp
-        ${REPO_ROOT}/src/system/net/XLSPConnection.cpp)
+        ${REPO_ROOT}/src/system/net/XLSPConnection.cpp
+        ${REPO_ROOT}/src/system/utl/CacheMgr_Xbox.cpp
+        ${REPO_ROOT}/src/system/utl/Cache_Xbox.cpp)
     set_source_files_properties(${REPO_ROOT}/src/network/net/Server.cpp
         PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC")
     # XLSPConnection::State is declared EMPTY (XLSPConnection.h), a placeholder

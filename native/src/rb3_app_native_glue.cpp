@@ -304,6 +304,54 @@ void ContainerId::Set(int idx, DWORD dw) { // ring: native-real
     mDeviceId = XCONTENTDEVICE_ANY;
 }
 
+// Retail 0x8252AA40 (292 B), src/system/os/Memcard_Xbox.cpp's body: count the
+// saved-game packages named TheMC.FileName() on the container's device (any
+// device when mDeviceId is 0). It is XContent calls only, so it runs over the
+// xdk_shims.cpp console model (a hard drive with no saved game: the
+// synchronous XEnumerate returns ERROR_NO_MORE_FILES at once and the answer is
+// kMCFileNotFound). MemcardMgr reaches it after the splash screen's Start.
+MCResult MemcardXbox::FindValidUnit(ContainerId *pCid) { // ring: native-real
+    MILO_ASSERT(pCid, 0xBE);
+    bool deviceOk;
+    if ((unsigned int)pCid->mDeviceId == 0) {
+        deviceOk = true;
+    } else {
+        XDEVICE_DATA data;
+        data.DeviceID = pCid->mDeviceId;
+        deviceOk = XContentGetDeviceData(pCid->mDeviceId, &data) == ERROR_SUCCESS;
+    }
+    if (!deviceOk) {
+        return kMCNoCard;
+    }
+    HANDLE hEnum;
+    DWORD enumRes = XContentCreateEnumerator(
+        pCid->mUserIndex, pCid->mDeviceId, 1, 0x1000, 1, nullptr, &hEnum
+    );
+    if (enumRes != 0) {
+        if (enumRes == 0x12) {
+            return kMCFileNotFound;
+        }
+        return kMCGeneralError;
+    }
+    int num = 0;
+    DWORD returned = 0;
+    XCONTENT_DATA buffer;
+    while (XEnumerate(hEnum, &buffer, sizeof(buffer), &returned, nullptr) == 0) {
+        if (strncmp(buffer.szFileName, TheMC.FileName(), 0x2A) == 0) {
+            num++;
+            pCid->mDeviceId = (XCONTENTDEVICEID)buffer.DeviceID;
+        }
+    }
+    CloseHandle(hEnum);
+    if (num == 0) {
+        return kMCFileNotFound;
+    }
+    if (num == 1) {
+        return kMCFileExists;
+    }
+    return kMCMultipleFilesFound;
+}
+
 // Win32 MultiByteToWideChar (xdk/xapilibi/stringapiset.h). Retail calls the XDK
 // export (MemcardMgr::Init widens the localized title_name for
 // SetContainerDisplayName). Natively there is no code-page table: each byte
@@ -402,6 +450,15 @@ void RecursePatternInternal( // ring: native-real
 // gXboxServer's dynamic initializer 0x82C3EC40 constructs; Net::Init reads it
 // (`lwz r3, -0x14b0(r29)`, 0x823E06E4). No src/ TU defines the reference, so
 // rb3-app defines it here.
+// Retail 0x8251BE80 (PlatformMgr_Xbox.cpp): the id is written only when the
+// pad has a XUID. XUserGetXUID answers from the xdk_shims.cpp console model
+// (index 0 is a signed-in local profile with an offline XUID).
+void PlatformMgr::GetOnlineID(int padNum, OnlineID *id) const { // ring: native-real
+    XUID xuid;
+    if (XUserGetXUID(padNum, &xuid) == 0) {
+        id->SetXUID(xuid);
+    }
+}
 extern XboxServer gXboxServer;
 Server &TheServer = gXboxServer; // ring: native-real
 extern "C" void rb3_app_net_init_offline(void *self, void **session, void **searcher, void **server) { // ring: native-real

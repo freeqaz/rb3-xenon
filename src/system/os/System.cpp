@@ -686,11 +686,14 @@ void SystemInit(const char *config) {
     FileCache::Init();
 #ifdef RB3_NATIVE_SYSTEM_NET_MGRS
     // rb3-app only (the other native targets compile this TU without
-    // NetCacheMgr_Xbox.cpp): retail's NetCacheMgrInit and ThePlatformMgr.Init,
-    // in retail's place between FileCache::Init and TheContentMgr.Init (the
-    // #else arm). They name the "net_cache_mgr" and "platform_mgr" objects the
-    // UI scripts address. TheMC.Init, CacheMgrInit and TheVirtualKeyboard.Init
-    // stay skipped here.
+    // CacheMgr_Xbox.cpp and NetCacheMgr_Xbox.cpp): retail's CacheMgrInit,
+    // NetCacheMgrInit and ThePlatformMgr.Init, in retail's place between
+    // FileCache::Init and TheContentMgr.Init (the #else arm). NetCacheMgr and
+    // PlatformMgr name the "net_cache_mgr" and "platform_mgr" objects the UI
+    // scripts address; TheCacheMgr is what SaveLoadManager's song-cache states
+    // search and mount after the splash screen's Start press. TheMC.Init and
+    // TheVirtualKeyboard.Init stay skipped here.
+    CacheMgrInit();
     NetCacheMgrInit();
     ThePlatformMgr.Init();
 #endif
