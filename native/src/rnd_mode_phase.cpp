@@ -27,9 +27,9 @@
 //   6      RndSoftParticleBuffer::DoPost          stw 6 at 0x824A8C7C
 //   7      WorldReflection::DrawShowing           stw 7 at 0x824E8994
 //
-// Names 0..4 are the RB3 (Wii) decomp's enum, whose shared passes store the same
-// values (ShadowMap 1, Reflection 7, Crowd compares kDrawOcclusion 4); 5..7 are
-// named for the pass. DC3 numbers 1..7 as 2..8.
+// Each name is the pass that stores or compares that value in the table above:
+// kDrawShadowDepth 1, kDrawExtrude 2, kDrawShadowColor 3, kDrawOcclusion 4,
+// kDrawVelocity 5, kDrawSoftParticle 6, kDrawReflection 7. DC3 numbers 1..7 as 2..8.
 //
 // The behavioural cases run SelectConfig in a forked child against a stand-in
 // TheRnd and TheShaderMgr (rb3-milo links no renderer: both are null
