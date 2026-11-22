@@ -71,41 +71,72 @@ static __declspec(align(4)) unsigned short gRev_CharClip = 0;
 
 // Retail (fn_8237D470): each NodeVector's clip is ref-counted against mOwner
 // (AddRef in AddNode / Load, Release in Clear / RemoveClip), so the clip ring
-// dispatches Replace(dying clip, replacement) here via CharClip::Replace.
+// dispatches Replace(dying clip, replacement) here via CharClip::Replace: a
+// NULL (or non-CharClip) replacement drops the vector, a CharClip retargets it.
+// Natively the ring node is the vector's own `ref` (an ObjOwnerPtr whose
+// Replace forwards itself to mOwner->Replace), so `from` names the node, not
+// the dying clip. The node is heap-held, so dropping the vector here is safe
+// inside a ring walk: no ring node moves.
 void CharClip::Transitions::Replace(ObjRef *from, Hmx::Object *to) {
-#ifdef HX_NATIVE
-    NodeVector *vector = reinterpret_cast<NodeVector *>(from);
-    vector->clip = (CharClip *)to;
-    if (!vector->clip) {
-        RemoveNodes(vector);
-    }
-    return;
-#else
     for (NodeVector *it = mNodeStart; it < mNodeEnd; it = it->Next()) {
+#ifdef HX_NATIVE
+        if (it->ref == from) {
+#else
         if (it->clip == reinterpret_cast<Hmx::Object *>(from)) {
+#endif
             CharClip *toClip = dynamic_cast<CharClip *>(to);
             if (!toClip) {
                 RemoveClip(it->clip);
             } else {
+#ifdef HX_NATIVE
+                it->clip = toClip;
+                *it->ref = toClip; // Release the old clip, AddRef the new one
+#else
                 it->clip->Release(mOwner);
                 it->clip = toClip;
                 it->clip->AddRef(mOwner);
+#endif
             }
             return;
         }
     }
-#endif
 }
 
 // Retail (fn_8237D1E8): Release every clip, then drop the storage.
 void CharClip::Transitions::Clear() {
-#ifndef HX_NATIVE
     for (NodeVector *it = mNodeStart; it < mNodeEnd; it = it->Next()) {
+#ifdef HX_NATIVE
+        DropClip(it);
+#else
         it->clip->Release(mOwner);
-    }
 #endif
+    }
     Resize(0, 0);
 }
+
+#ifdef HX_NATIVE
+bool CharClip::Transitions::HoldsRef(const ObjRef *ref) const {
+    for (NodeVector *it = mNodeStart; it < mNodeEnd; it = it->Next()) {
+        if (it->ref == ref)
+            return true;
+    }
+    return false;
+}
+
+// Native AddRef: a fresh ring node on `n->clip` owned by mOwner. Built empty
+// and then assigned so ObjOwnerPtr's self-seed stays null (the seed is for
+// `mX(this, this)` members; this one is never re-seeded on teardown).
+void CharClip::Transitions::HoldClip(NodeVector *n) {
+    n->ref = new ObjOwnerPtr<CharClip>(mOwner);
+    *n->ref = n->clip;
+}
+
+// Native Release: unlink and free the vector's ring node.
+void CharClip::Transitions::DropClip(NodeVector *n) {
+    delete n->ref;
+    n->ref = nullptr;
+}
+#endif
 
 int CharClip::Transitions::Size() const {
     int size = 0;
@@ -188,6 +219,9 @@ void CharClip::Transitions::AddNode(CharClip *clip, const CharGraphNode &node) {
         resized = Resize(BytesInMemory() + kHeader + 8, mNodeEnd);
         resized->clip = clip;
         resized->size = 0;
+#ifdef HX_NATIVE
+        HoldClip(resized);
+#endif
     }
     int i = 0;
     for (; i < resized->size; i++) {
@@ -206,8 +240,10 @@ void CharClip::Transitions::AddNode(CharClip *clip, const CharGraphNode &node) {
 void CharClip::Transitions::RemoveClip(CharClip *clip) {
 #ifdef HX_NATIVE
     NodeVector *node = FindNodes(clip);
-    if (node)
+    if (node) {
+        DropClip(node);
         RemoveNodes(node);
+    }
 #else
     NodeVector *found = FindNodes(clip);
     if (found) {
@@ -299,6 +335,9 @@ void CharClip::Transitions::Load(BinStream &bs) {
                 clip->AddRef(mOwner);
 #endif
                 it->clip = clip;
+#ifdef HX_NATIVE
+                HoldClip(it);
+#endif
                 bs >> it->size;
                 for (int j = 0; j < it->size; j++) {
                     bs >> it->nodes[j].curBeat;
@@ -321,9 +360,17 @@ void CharClip::Transitions::Load(BinStream &bs) {
     }
 }
 
-#ifndef HX_NATIVE
-void CharClip::Replace(ObjRef *from, Hmx::Object *to) { mTransitions.Replace(from, to); }
+void CharClip::Replace(ObjRef *from, Hmx::Object *to) {
+#ifdef HX_NATIVE
+    // Natively Hmx::Object::Replace forwards to mSinks, so a ref that is not a
+    // transition's clip node goes there (retail's base Replace is empty).
+    if (!mTransitions.HoldsRef(from)) {
+        Hmx::Object::Replace(from, to);
+        return;
+    }
 #endif
+    mTransitions.Replace(from, to);
+}
 
 #pragma endregion
 #pragma region FacingSet
