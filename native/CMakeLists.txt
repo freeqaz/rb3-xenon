@@ -2421,8 +2421,15 @@ if(RB3X_BUILD_ENGINE)
     foreach(_h IN LISTS _rb3_sym_headers)
         set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${_h}")
         file(STRINGS "${_h}" _lines REGEX "^extern Symbol [A-Za-z_][A-Za-z0-9_]*;")
+        # Names the headers hide natively (`#endif // index: POSIX glibc name
+        # collision`): no native TU can name them, so none is defined.
+        file(STRINGS "${_h}" _hidden REGEX "^#endif // [A-Za-z_][A-Za-z0-9_]*: POSIX glibc name collision")
+        list(TRANSFORM _hidden REPLACE "^#endif // ([A-Za-z_][A-Za-z0-9_]*):.*" "\\1")
         foreach(_l IN LISTS _lines)
             string(REGEX REPLACE "^extern Symbol ([A-Za-z_][A-Za-z0-9_]*);.*" "\\1" _n "${_l}")
+            if("${_n}" IN_LIST _hidden)
+                continue()
+            endif()
             string(APPEND _defs "__attribute__((weak)) Symbol ${_n};\n")
             string(APPEND _interns "    ${_n} = Symbol(\"${_n}\");\n")
         endforeach()
@@ -2437,7 +2444,7 @@ if(RB3X_BUILD_ENGINE)
         file(WRITE "${_rb3_app_sym_cpp}" "${_body}")
     endif()
 
-    rb3_add_executable(rb3-app
+    set(_rb3_app_all
         ${REPO_ROOT}/src/Main.cpp
         ${REPO_ROOT}/src/App.cpp
         ${_rb3_app_sym_cpp}
@@ -2451,8 +2458,14 @@ if(RB3X_BUILD_ENGINE)
         ${W16TJ_VOCAL_SOURCES} ${W16TM_LINK_SOURCES} ${W16TM_DEP_SOURCES}
         ${W16TR_DEP_SOURCES} ${MILO_TARGET_COMMON_SOURCES}
         ${RB3_APP_SOURCES})
+    # The real beatmatch/Output.cpp defines TheBeatMatchOutput here, so the
+    # M3B shim that stands in for it elsewhere must not meet it.
+    list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/beatmatch_native_support.cpp)
+    rb3_add_executable(rb3-app ${_rb3_app_all})
     list(APPEND MILO_TARGETS rb3-app)
-    target_compile_definitions(rb3-app PRIVATE RB3_ENGINE_RENDER=1)
+    # RB3_NATIVE_PRESENCEMGR: the real PresenceMgr.cpp is linked (App::App calls
+    # ThePresenceMgr.Init()), so GamePanel.cpp's native SetSongID stub is off.
+    target_compile_definitions(rb3-app PRIVATE RB3_ENGINE_RENDER=1 RB3_NATIVE_PRESENCEMGR)
     target_link_libraries(rb3-app PRIVATE milo-engine ZLIB::ZLIB)
     target_link_options(rb3-app PRIVATE -fuse-ld=lld -Wl,--error-limit=0
         -Wl,--wrap=_ZN6Symbol4InitEv)
