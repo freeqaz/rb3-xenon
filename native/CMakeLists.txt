@@ -2715,8 +2715,11 @@ if(RB3X_BUILD_ENGINE)
     # RB3_NATIVE_AUDITION: AuditionMgr.cpp and AuditionSessionPanel.cpp are
     # linked, so MetaPanel::Init registers AuditionSessionPanel as retail does
     # (rb3-render compiles MetaPanel.cpp without them and keeps skipping it).
+    # RB3_NATIVE_PROFILEPICTURE: ProfilePicture_Xbox.cpp is linked, so
+    # ProfilePicture.cpp's state machine (Update/Poll/Succeed/Fail) is compiled
+    # (other native targets compile that TU without the Xbox half).
     target_compile_definitions(rb3-app PRIVATE RB3_ENGINE_RENDER=1 RB3_NATIVE_PRESENCEMGR
-        RB3_NATIVE_AUDITION)
+        RB3_NATIVE_AUDITION RB3_NATIVE_PROFILEPICTURE)
     target_link_libraries(rb3-app PRIVATE milo-engine ZLIB::ZLIB)
     target_link_options(rb3-app PRIVATE -fuse-ld=lld -Wl,--error-limit=0
         -Wl,--wrap=_ZN6Symbol4InitEv)
