@@ -85,8 +85,8 @@ void PerformanceData::SaveFixed(FixedSizeSaveableStream &stream) const {
     stream << mStats.mUnisonPhraseCompleted;
     stream << mStats.mUnisonPhraseCount;
     FixedSizeSaveable::SaveStd(stream, mStats.mBestSolos, 3, 4);
-    unsigned short hitStreakCount = mStats.mHitStreaks.size();
-    stream << (int)hitStreakCount;
+    int hitStreakCount = mStats.mHitStreaks.size();
+    stream << hitStreakCount;
     for (int i = 0; i < 3; i++) {
         if (i < hitStreakCount) {
             const Stats::StreakInfo &info = mStats.GetHitStreak(i);
@@ -97,8 +97,8 @@ void PerformanceData::SaveFixed(FixedSizeSaveableStream &stream) const {
             stream << 0;
         }
     }
-    unsigned short missStreakCount = mStats.mMissStreaks.size();
-    stream << (int)missStreakCount;
+    int missStreakCount = mStats.mMissStreaks.size();
+    stream << missStreakCount;
     for (int i = 0; i < 3; i++) {
         if (i < missStreakCount) {
             const Stats::StreakInfo &info = mStats.GetMissStreak(i);
@@ -109,8 +109,8 @@ void PerformanceData::SaveFixed(FixedSizeSaveableStream &stream) const {
             stream << 0;
         }
     }
-    unsigned short odDeployCount = mStats.mBestOverdriveDeployments.size();
-    stream << (int)odDeployCount;
+    int odDeployCount = mStats.mBestOverdriveDeployments.size();
+    stream << odDeployCount;
     for (int i = 0; i < 3; i++) {
         if (i < odDeployCount) {
             const Stats::MultiplierInfo &info = mStats.GetBestOverdriveDeployment(i);
@@ -127,8 +127,8 @@ void PerformanceData::SaveFixed(FixedSizeSaveableStream &stream) const {
             stream << 0;
         }
     }
-    unsigned short multCount = mStats.mBestStreakMultipliers.size();
-    stream << (int)multCount;
+    int multCount = mStats.mBestStreakMultipliers.size();
+    stream << multCount;
     for (int i = 0; i < 3; i++) {
         if (i < multCount) {
             const Stats::MultiplierInfo &info = mStats.GetBestStreakMultiplier(i);

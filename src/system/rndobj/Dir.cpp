@@ -19,7 +19,9 @@
 
 RndDir::RndDir() : mEnv(this) {}
 
+// Retail 0x82402F68 calls MsgSource::Replace before RndTransformable::Replace.
 void RndDir::Replace(ObjRef *ref, Hmx::Object *obj) {
+    MsgSource::Replace(ref, obj);
     RndTransformable::Replace(ref, obj);
 }
 

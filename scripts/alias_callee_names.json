@@ -1,7 +1,7 @@
 {
  "_comment": "Written by tools/alias_callee_name_drift.py (lane W16-TV). Per placed alias group: the retail callee addresses its survivor reaches in <= `depth` relocation steps, and the membership_verdict of each folded member when recorded. `callee_names` holds the applied map name at each address (null = unnamed). The build's --check re-proves a group when any of those names changes. Do not edit by hand: run --reprove --write on a built tree.",
  "depth": 3,
- "recorded_at": "7044f6cac",
+ "recorded_at": "7c9634e68",
  "callee_names": {
   "0x820009a8": null,
   "0x820009ec": null,
@@ -2471,8 +2471,8 @@
   "0x82b644d0": "??1FxSendWah360@@UAA@XZ",
   "0x82b670a0": "??$_M_allocate_and_copy@PBH@?$vector@HV?$StlNodeAlloc@H@stlpmtx_std@@@stlpmtx_std@@IAAPAHIPBH0@Z",
   "0x82b67b50": "??1FxSendReverb360@@UAA@XZ",
-  "0x82b69868": null,
-  "0x82b699e8": null,
+  "0x82b69868": "?Cleanup@FxSend360@@QAAXXZ",
+  "0x82b699e8": "??1FxSend360@@UAA@XZ",
   "0x82b74488": "??0?$_Vector_base@UVoice@GranularSynth@Synapse@DSP@@V?$StlNodeAlloc@UVoice@GranularSynth@Synapse@DSP@@@stlpmtx_std@@@stlpmtx_std@@QAA@IABV?$StlNodeAlloc@UVoice@GranularSynth@Synapse@DSP@@@1@@Z",
   "0x82b744e8": "??$__uninitialized_fill_n@PAUGranule@GranularSynth@Synapse@DSP@@IU1234@@stlpmtx_std@@YAPAUGranule@GranularSynth@Synapse@DSP@@PAU1234@IABU1234@ABU__false_type@0@@Z",
   "0x82b7fab0": "??1TourChar@@UAA@XZ",

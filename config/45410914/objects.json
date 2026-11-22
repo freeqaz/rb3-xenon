@@ -605,6 +605,7 @@
             "system/os/Archive.cpp": "NonMatching",
             "system/os/AsyncFileHolmes.cpp": "NonMatching",
             "system/os/File_Win.cpp": "NonMatching",
+            "system/os/StageKit.cpp": "NonMatching",
             "system/os/Memcard.cpp": "NonMatching",
             "system/os/NetStream.cpp": "NonMatching",
             "system/os/OnlineID.cpp": "NonMatching",

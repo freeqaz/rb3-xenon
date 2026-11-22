@@ -50,8 +50,10 @@ namespace {
 
     // 0x82521B30: queue one raw command; a full ring drops its oldest entry.
     void SendRaw(unsigned char left, unsigned char right) {
-        sRaw[sRawWrite].left = left;
-        sRaw[sRawWrite].right = right;
+        RawCmd cmd;
+        cmd.left = left;
+        cmd.right = right;
+        sRaw[sRawWrite] = cmd;
         sRawWrite = (sRawWrite + 1) % kRawSize;
         if (sRawWrite == sRawRead)
             sRawRead = (sRawRead + 1) % kRawSize;
