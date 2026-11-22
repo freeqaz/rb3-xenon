@@ -19,7 +19,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--project-location", required=True)
     ap.add_argument("--project-name", default="RB3Xenon")
-    ap.add_argument("--program", default="default_tu5.xex-c5a170")
+    ap.add_argument("--program", default="default.xex-d56e7f")
     ap.add_argument("--limit", type=int, default=0)
     args = ap.parse_args()
 

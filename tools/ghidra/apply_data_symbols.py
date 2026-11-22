@@ -7,7 +7,7 @@ Reconciles its own previous run: a USER_DEFINED label whose name is a data-mangl
 (??_7 / ??_R / ??_C@ / __real@ / __imp_) on an address the map no longer lists is removed.
 
   run.sh tools/ghidra/apply_data_symbols.py --project-location <dir with RB3Xenon.gpr> \
-      --program default_tu5.xex-c5a170 --map ~/tmp/ghidra-sync/data_map.json [--dry-run]
+      --program default.xex-d56e7f --map ~/tmp/ghidra-sync/data_map.json [--dry-run]
 """
 import argparse
 import json
@@ -20,7 +20,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--project-location", required=True)
     ap.add_argument("--project-name", default="RB3Xenon")
-    ap.add_argument("--program", default="default_tu5.xex-c5a170")
+    ap.add_argument("--program", default="default.xex-d56e7f")
     ap.add_argument("--map", required=True)
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()

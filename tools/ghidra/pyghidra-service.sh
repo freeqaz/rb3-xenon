@@ -16,22 +16,21 @@ PROJECT_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
 PORT=8002
 HOST=127.0.0.1
 PROJECT_PATH="$PROJECT_DIR/ghidra_projects/RB3Xenon/RB3Xenon"
-# POST-FLIP (2026-07-15): the decomp target is now TU5 v0.0.5.1, so the live
-# orig/45410914/default.xex holds TU5 bytes and TU0 was archived. The two
-# co-resident Ghidra programs are addressed by the paths that reproduce their
-# existing names (basename + sha1[:6]); NEVER load the live default.xex here —
-# it would import a THIRD, duplicate TU5 program (default.xex-c5a170).
-#   TU5 program          = default_tu5.xex-c5a170  (RB3 Deluxe lineage TU5)
-#   TU0 reference prog   = default.xex-35adb6      (pre-flip base; kept for xref)
-# W16-PT (2026-10-06): the decomp target is now CLEAN retail TU5 (default.xex sha1
-# d56e7f31). The c5a170 program is the RB3 Deluxe image, which differs from it in
-# 53 words (10 in-place patch groups, docs/decomp/W16PT_CLEAN_TU5_RETARGET_2026-10-06.md
-# section 2); every other byte and every address is identical, so it stays usable
-# for xrefs and decompiles OUTSIDE those groups. orig/45410914/default_tu5.xex is
-# kept holding the Deluxe bytes so this program keeps its name -- moving it would
-# import a duplicate program.
+# Programs in the project (pyghidra-mcp names an import basename + sha1[:6] and
+# re-opens, never re-imports, a program already in the project under that name):
+#   default.xex-d56e7f      CLEAN retail TU5 = orig/45410914/default.xex, the decomp
+#                           target; the default program of every tool (2026-11-22,
+#                           docs/plans/ghidra-data-sync-2026-11-22.md)
+#   default_tu5.xex-c5a170  RB3 Deluxe TU5 = orig/45410914/default_tu5.xex (Deluxe bytes
+#                           despite the name; 53 words differ from retail, same VAs).
+#                           Kept for comparison; moving that file would import a duplicate.
+#   default.xex-35adb6      retail TU0 = orig/45410914/tu0-archive/default.xex (TU0 VAs)
+# Each path below must hash to the name above, or the service imports and fully
+# re-analyses a NEW program at startup (~10 min) and then decompiles all of it into
+# chromadb; scripts/verify_target_image.py guards the clean one.
 XEX_PATH="$PROJECT_DIR/orig/45410914/tu0-archive/default.xex"   # -> default.xex-35adb6 (TU0)
-TU5_XEX_PATH="$PROJECT_DIR/orig/45410914/default_tu5.xex"       # -> default_tu5.xex-c5a170 (TU5)
+TU5_XEX_PATH="$PROJECT_DIR/orig/45410914/default_tu5.xex"       # -> default_tu5.xex-c5a170 (Deluxe TU5)
+CLEAN_XEX_PATH="$PROJECT_DIR/orig/45410914/default.xex"         # -> default.xex-d56e7f (clean TU5)
 MILOHAX_DIR="$(cd "$PROJECT_DIR/.." && pwd)"
 PYGHIDRA_MCP="$MILOHAX_DIR/pyghidra-mcp"
 PIDFILE="/tmp/claude/pyghidra-mcp-rb3xenon.pid"
@@ -93,11 +92,12 @@ cmd_start() {
     # Ensure log directory exists
     mkdir -p "$(dirname "$LOGFILE")" 2>/dev/null || true
 
-    # Binaries to serve: TU5 target + TU0 reference, each only when present.
+    # Binaries to serve: clean TU5 target, Deluxe TU5, TU0 reference, each only when present.
     # pyghidra-mcp serves ALL programs already in the project and skips
     # re-importing ones it recognizes (basename + sha1[:6]), so restarts are
-    # cheap and these paths just ensure a fresh project re-imports the same two.
+    # cheap and these paths just ensure a fresh project re-imports the same three.
     local BIN_PATHS=()
+    [[ -f "$CLEAN_XEX_PATH" ]] && BIN_PATHS+=("$CLEAN_XEX_PATH")
     [[ -f "$TU5_XEX_PATH" ]] && BIN_PATHS+=("$TU5_XEX_PATH")
     [[ -f "$XEX_PATH" ]] && BIN_PATHS+=("$XEX_PATH")
 

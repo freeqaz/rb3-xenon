@@ -100,25 +100,18 @@ Phase 0 has 19 bodies: 0x826D6660 (`StreakFocusTracker::GetNextFocusPlayer`) had
 | 3 prototypes | **live on :8002** (swap 2) | 34,501 of 34,546 mangled fns got their demangled prototype (45 are not function names, 0 failures). Ruler: `undefined` in signatures 24 → 0, `undefined*` tokens 155 → 135, "Removing unreachable block" 17 → 4 (wrong arg types had been pruning live code; bodies grew 1,505 → 1,749 lines, which is why DAT_ rose 157 → 204). Spot-check vs headers 5/5: AddSink, GuitarFx::Poll, BSPFace::Set, SongStatusMgr::UpdateSongStats, Instarank::UpdateString1Label. Functions now sit in their class namespace; the mangled name stays the function name. Consumers checked live: the bare mangled name resolves (decompile, xrefs, pcode_inspect); `Class::Method` in pcode_inspect resolves exactly from the map or refuses (4f9aeb755). Fixed two tools that were broken before this lane: ghidra-xrefs.py (always 0 refs) and rtti_probe.py (TU0 thunk name) | 9ee16810b, 4f9aeb755 |
 | 4 class layouts | not started (handoff) | next: measure how many classes `scripts/harvest/class_layout_report.py` can emit; start with `src/band3`; turn each layout into a Ghidra Structure in the class category apply_prototypes created (the `this` types are empty placeholders today, which is why the raw-member count went 157 -> 177: accesses print as `this + 0x..`) | |
 | 5 repeatable | partly done | done: apply_symbols reconciles, plus build_data_symbol_map/apply_data_symbols/apply_prototypes/ghidra_sync_census, each re-runnable. Missing: one wrapper command (copy -> 1-3 -> census -> swap) and the staleness line in ghidra-status.py. chromadb: the service re-indexed by itself after swap 1 (the dir changed), so no manual re-ingest has been needed so far; not measured further | |
-| 6 clean TU5 program | analysed + phases 1-3 applied in **scratch**, not yet in the live project | `import_clean_tu5.py`: import + full analysis took 604 s; 63,110 fns before names (Deluxe program: 41,049). After phases 1-3: 67,935 fns, map agrees 35,578 / differs 0; 20-body ruler 6 / 177 / 204 / 207 / 0, the same as the Deluxe program after phase 3. 53 patched words (`check_patched_words.py` over `tools/pe_word_diff.py` output): clean TU5 program = 49 retail, 0 Deluxe, 4 other (the import thunks at 0x82C4C47C..90, which the XEX loader rewrites to `li r3,<ordinal>`; the ordinals there are the retail 0x242/0x24B); Deluxe program = 53 Deluxe. Scratch project `~/tmp/ghidra-sync/tu5scratch` (TU5Import / default.xex-d56e7f); pre-names copy `tu5scratch_analysed_pristine`; unnamed .gzf `~/tmp/ghidra-sync/default.xex-d56e7f.gzf` | |
+| 6 clean TU5 program | **live on :8002, the default program** (swap 3, 12:17, ~1 min down) | `import_clean_tu5.py`: import + full analysis took 604 s; 63,110 fns before names (Deluxe program: 41,049). After phases 1-3: 67,935 fns, map agrees 35,578 / differs 0; 20-body ruler 6 / 177 / 204 / 207 / 0, the same as the Deluxe program after phase 3. 53 patched words (`check_patched_words.py` over `tools/pe_word_diff.py` output): clean TU5 program = 49 retail, 0 Deluxe, 4 other (the import thunks at 0x82C4C47C..90, which the XEX loader rewrites to `li r3,<ordinal>`; the ordinals there are the retail 0x242/0x24B); Deluxe program = 53 Deluxe. Scratch project `~/tmp/ghidra-sync/tu5scratch` (TU5Import / default.xex-d56e7f); pre-names copy `tu5scratch_analysed_pristine`; unnamed .gzf `~/tmp/ghidra-sync/default.xex-d56e7f.gzf`. Swap 3: `add_program_to_project.py` packed the scratch program (68,222 fns; the 67,935 above was counted before phase 2-3 created functions) and unpacked it into a reflink copy of the live project (68,222 fns both sides, 2.5 min); `seed_chroma_collection.py` copied the Deluxe semantic-search collection (37,482 docs) to `default.xex-d56e7f` so the service does not decompile 68k functions into chromadb at startup (service log: "Collection 'default.xex-d56e7f' exists; skipping code ingest"). `list_project_binaries` = 3 programs. `mcp_client.py` picks `default.xex-d56e7f` by exact name (override `GHIDRA_PROGRAM`); `pcode_inspect.py 0x82767BA0` prints `Program: default.xex-d56e7f` and `MsgSource::AddSink`. Main's unpatched client still resolves c5a170 (first listed) until this branch lands | (this commit) |
 
 ## Handoff (2026-11-22)
 
-- **Clean TU5 into the live project:** stop :8002, back up `RB3Xenon.rep`, add the program to the live project
-  headlessly (import the post-passes program as a .gzf, or re-run the three passes after importing
-  `default.xex-d56e7f.gzf`), start the service, then check that `list_project_binaries` shows three programs.
-- **Then make it the default program.** Files that name a program:
-  - `tools/ghidra/pyghidra-service.sh`: TU5_XEX_PATH and the stale "never load default.xex" comment.
-  - `tools/ghidra/run_apply_symbols.sh`: PROGRAM.
-  - `scripts/verify_target_image.py`: mentions c5a170.
-  - `tools/ghidra/mcp_client.py`: a **silent hazard**. `_resolve_binary` takes the first name that
-    `startswith("default.xex")`, but the service lists names with a leading "/", so nothing matches and the
-    first program listed wins. Today that is the Deluxe program by luck. Add the new program and the
-    default depends on list order. Strip the "/" and match `default.xex-d56e7f` explicitly.
-  - The new scripts (`apply_*`, `ghidra_sync_census.py`) take `--program`; their default is c5a170.
+- **Clean TU5 is live and the default** (swap 3). Program selection lives in `tools/ghidra/mcp_client.py`
+  (`TARGET_PROGRAM`, env `GHIDRA_PROGRAM`), `pyghidra-service.sh` (CLEAN_XEX_PATH), `run_apply_symbols.sh`
+  and the `--program` defaults of `apply_*`/`ghidra_sync_census.py`. `scripts/verify_target_image.py` names
+  c5a170 only as a XEX sha1 identity, not a program: unchanged.
 - Backups to delete once the after-census is accepted:
   - `ghidra_projects/RB3Xenon/RB3Xenon.bak-20261122-pre-ghidra-sync`
   - `ghidra_projects/RB3Xenon/RB3Xenon.bak-20261122-phase1`
+  - `ghidra_projects/RB3Xenon/RB3Xenon.bak-20261122-pre-cleantu5` (swap 3)
   - `~/tmp/ghidra-sync/cachedb-aside*`
 
 

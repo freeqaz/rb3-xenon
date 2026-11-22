@@ -41,7 +41,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--project-location", required=True)
     ap.add_argument("--project-name", default="RB3Xenon")
-    ap.add_argument("--program", default="default_tu5.xex-c5a170")
+    ap.add_argument("--program", default="default.xex-d56e7f")
     ap.add_argument("--map", default=os.path.join(REPO, "scripts/target_symbol_map.json"))
     ap.add_argument("--bodies", default=None)
     ap.add_argument("--out-dir", required=True)

@@ -44,8 +44,8 @@ def main():
     ap.add_argument("--project-location", required=True,
                     help="Directory containing <name>.gpr")
     ap.add_argument("--project-name", default="RB3Xenon")
-    ap.add_argument("--program", default=None,
-                    help="Program name in project (default: first program found)")
+    ap.add_argument("--program", default="default.xex-d56e7f",
+                    help="Program name in project (default: default.xex-d56e7f, clean retail TU5)")
     ap.add_argument("--map", default=os.path.join(REPO, "tools/ghidra/rb3_symbol_map.json"))
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--verbose", action="store_true", help="print every CHANGE/REMOVE")
@@ -76,7 +76,7 @@ def main():
         print("[apply_symbols] programs in project: %s" % names)
         target_name = args.program
         if target_name is None:
-            cands = [n for n in names if n.startswith("default.xex")] or names
+            cands = [n for n in names if n == "default.xex-d56e7f"] or names
             if not cands:
                 print("[apply_symbols] ERROR: no programs in project")
                 return 2

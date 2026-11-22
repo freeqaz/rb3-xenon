@@ -527,6 +527,7 @@ def main():
     try:
         client = MCPClient()
         client.initialize()
+        print(f"Program: {client.binary}")
     except MCPError as e:
         print(f"Error connecting to Ghidra MCP: {e}", file=sys.stderr)
         print("Is pyghidra-mcp running? Check: ./tools/ghidra/pyghidra-service.sh status", file=sys.stderr)
