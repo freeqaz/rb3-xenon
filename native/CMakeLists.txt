@@ -2309,6 +2309,12 @@ set(RB3_APP_SOURCES
     # the expression-form MILO_ASSERT in two handlers (the same force-include
     # as the campaign panels, flags below).
     ${REPO_ROOT}/src/band3/meta_band/SongSelectPanel.cpp
+    # A6: then JoinInvitePanel (its ctor stub was the a6-failing-tu stop; retail
+    # ctor 0x826308C0 = UIPanel ctor, mJoiningUser = 0, as the source). With
+    # X360's extra_cflags (RB3_HANDLE_LOCAL_STATIC, flags below) it compiles
+    # as-is: PLAN 2.1's `undeclared set_joining_user` is its handler Symbol,
+    # a function-local static in retail.
+    ${REPO_ROOT}/src/band3/meta_band/JoinInvitePanel.cpp
     # A1b: TheUI. Retail binds `UIManager *TheUI = &TheBandUI` in this TU and
     # constructs TheBandUI at static init; natively TheUI was the engine's weak
     # null, so BandInit -> BandButton::Init -> TheUI->InitResources crashed.
@@ -2607,6 +2613,9 @@ if(RB3X_BUILD_ENGINE)
         ${REPO_ROOT}/src/band3/meta_band/SongSelectPanel.cpp
         PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC"
         COMPILE_OPTIONS "-include;${CMAKE_SOURCE_DIR}/src/rb3_assert_expr_native.h")
+    # A6: JoinInvitePanel.cpp: X360's extra_cflags only.
+    set_source_files_properties(${REPO_ROOT}/src/band3/meta_band/JoinInvitePanel.cpp
+        PROPERTIES COMPILE_DEFINITIONS "RB3_HANDLE_LOCAL_STATIC")
     # A2: the retail tables and registrars; rb3_app_gates.cpp calls them only
     # with a title update mounted (RB3_TITLE_UPDATE_DIR).
     list(APPEND _rb3_app_all ${REPO_ROOT}/src/ChecksumData_xbox.cpp)
