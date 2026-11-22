@@ -1169,7 +1169,15 @@ DEF_DATA_FUNC(DataDirname) {
     return s + (x == FixedString::npos ? 0 : x + 1);
 }
 
+// Retail 0x82761C08 stores strstr's result as the int node (stw r3 at
+// 0x82761C48): the match pointer, nonzero when found. Natively `(int)` keeps
+// only the pointer's low 4 bytes, which are 0 for a match at a 4 GiB-aligned
+// address, so a found substring read as not found. Natively return found/not.
+#ifdef HX_NATIVE
+DEF_DATA_FUNC(DataHasSubStr) { return strstr(array->Str(1), array->Str(2)) != nullptr; }
+#else
 DEF_DATA_FUNC(DataHasSubStr) { return (int)strstr(array->Str(1), array->Str(2)); }
+#endif
 
 DEF_DATA_FUNC(DataHasAnySubStr) {
     DataArray *a = array->Array(2);

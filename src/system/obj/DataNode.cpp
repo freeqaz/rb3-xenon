@@ -716,6 +716,14 @@ bool DataNode::Equal(const DataNode &n, DataArray *a, bool warn) const {
             // On 64-bit, UncheckedInt() truncates the 8-byte symbol pointer to 4 bytes.
             // Compare the full pointers instead.
             res = first.UncheckedStr() == second.UncheckedStr();
+        } else if (firstType == kDataObject || firstType == kDataVar
+                   || firstType == kDataFunc || (firstType & kDataArray)) {
+            // Same for every pointer-valued type: retail's same-type compare is
+            // one full-word `lwz 0(r3) / lwz 0(r4) / subf / cntlzw`
+            // (0x8274ABF0..0x8274AC00), i.e. the whole pointer. Comparing
+            // UncheckedInt() here compared only the low 4 bytes of an 8-byte
+            // pointer, so two objects (arrays, vars, funcs) 4 GiB apart read equal.
+            res = first.UncheckedObj() == second.UncheckedObj();
 #endif
         } else {
             res = second.UncheckedInt() == first.UncheckedInt();
@@ -860,6 +868,16 @@ DataNode &DataVariable(Symbol s) { return gDataVars[s]; }
 
 void DataNode::Load(BinStream &d) {
     static char buf[128];
+#ifdef HX_NATIVE
+    // Retail's union is one 4-byte word, so the 4-byte value read of the int and
+    // float cases (bl 0x827C5058 at 0x8274BB28) overwrites all of it. Natively
+    // the union is 8 bytes and those cases write only the low 4, and
+    // DataArray::Load (0x8274D460) reads the node after an #ifdef / #ifndef /
+    // #define / #else / skipped node into the SAME slot: an int or float that
+    // follows a symbol kept the symbol pointer's high half. NotNull then read a
+    // loaded 0 as true. Clear the whole union first.
+    mValue.object = nullptr;
+#endif
     d >> (int &)mType;
     switch (mType) {
     case kDataFunc: {

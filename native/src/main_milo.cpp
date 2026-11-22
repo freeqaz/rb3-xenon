@@ -110,6 +110,8 @@ int RunSpotlightGeneratePhase(void (*gate)(const char *, bool, const char *));
 int RunTextLineColorPhase(void (*gate)(const char *, bool, const char *));
 // A ScriptTask ends when an object it watches dies (script_task_watch_phase.cpp).
 int RunScriptTaskWatchPhase(void (*gate)(const char *, bool, const char *));
+// DTA script ops on string nodes and native-width union reads (string_node_phase.cpp).
+int RunStringNodePhase(void (*gate)(const char *, bool, const char *));
 
 namespace {
 
@@ -586,6 +588,10 @@ int main(int argc, char **argv) {
     // ScriptTask watches the objects its script names, as retail
     // UpdateVarsObjects 0x82749968 does (native/src/script_task_watch_phase.cpp).
     RunScriptTaskWatchPhase(Gate);
+    // ==, find_elem, switch and has_substr read a kDataString's characters, and
+    // no compare or loaded int reads only half of the 8-byte union
+    // (native/src/string_node_phase.cpp).
+    RunStringNodePhase(Gate);
 
     printf("\nRESULT: %s (%d gate failure(s))\n",
            gFailures == 0 ? "ALL GATES PASSED" : "FAILED", gFailures);
