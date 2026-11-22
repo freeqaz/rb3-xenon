@@ -96,7 +96,7 @@ static void rb3_app_check_device_selector() { // ring: native-real
         return;
     }
     printf("  [FAIL] rb3-app TheMC.ShowDeviceSelector answered %s after %d Poll (%d messages); "
-           "SaveLoadManager state 8 kS_AutoloadSetDevice would wait on it (retail "
+           "SaveLoadManager state 8 kS_AutoloadSetDevice would not reach 0xB (retail "
            "MemcardXbox::ShowDeviceSelector 0x8252B9A8 + Poll 0x8252B858 deliver "
            "device_chosen <DeviceID>)\n",
            probe.mChosen == -2   ? "nothing"
