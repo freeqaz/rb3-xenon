@@ -6,6 +6,10 @@
 // call to ~Object, referenced from the ctor's base-class unwind), HasAsset,
 // the ctor, and the implicit ~AssetOffer / scalar-deleting dtor (vtable
 // 0x820D8644 slot 0).
+//
+// 0x8266B4C0 stays unnamed in the target map on purpose: it is the one ICF
+// survivor of every trivial `b ~Object` dtor, so naming it charges callers
+// in other units that spell their own folded dtor (14 rows / 560 B measured).
 
 bool AssetOffer::HasAsset(Symbol asset) const {
     for (unsigned int i = 0; i < mAssets.size(); i++) {
