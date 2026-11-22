@@ -30,6 +30,10 @@ gpu /etc/vulkan/*
 gpu /usr/share/glvnd/*
 gpu /usr/share/egl/*
 gpu /usr/share/drirc.d/*
+# Mesa opens the drirc.d directory itself, and RADV (vulkan-radeon, enumerated by the
+# Vulkan loader even when the NVIDIA device is the one used) reads the AMD device table.
+gpu /usr/share/drirc.d
+gpu /usr/share/libdrm/amdgpu.ids
 gpu /etc/drirc
 gpu ~/.drirc
 gpu ~/.local/share/vulkan/*
