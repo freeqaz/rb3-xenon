@@ -831,7 +831,7 @@ void rb3_app_check_tex_movie() { // ring: native-real
 // server makes it XLSPConnection::Connect (0x827D9998), which goes to state 1
 // and runs StartEnumeration (0x827D9918). With no Live logon
 // XTitleServerCreateEnumerator fails (xdk_shims.cpp), and the nonzero result
-// takes the connection to state 4 (0x827D9978). The next
+// takes the connection to state 4 (li r4,4 at 0x827D997C). The next
 // NetCacheMgrXbox::Poll (0x827D73E0) sees state 4 while mState < 2 and calls
 // SetFail (0x827D7480) with 1 if IsEthernetCableConnected (0x8251BE08) else 3;
 // mState stays kNCMS_Load and IsReady is false, which is what

@@ -1330,14 +1330,16 @@ extern "C" unsigned long XEnumerateCrossTitle(void *hEnum, void *pvBuffer, int c
 // logon, so a console whose only profile is signed in locally (the model
 // above) has none to enumerate and the call fails synchronously. The one
 // caller is XLSPConnection::StartEnumeration (retail 0x827D9918, entered from
-// SetState(1) at 0x827D9908 when NetCacheMgrXbox::LoadInit, 0x827D7498, calls
+// SetState(1) at 0x827D990C when NetCacheMgrXbox::LoadInit, 0x827D7498, calls
 // Connect): it passes (filter "Harmonix", cItem 8, &mEnumBufferSize,
-// &mEnumHandle) (bl 0x82A6B4E0 at 0x827D993C), tests only `cmplwi r3,0`
-// (0x827D9940) and on any nonzero result goes to SetState(4), the failed state
-// (li r4,4 at 0x827D9978), without allocating the buffer or calling XEnumerate.
+// &mEnumHandle) (bl 0x82A6B4E0 at 0x827D9940), tests only `cmplwi r3,0`
+// (0x827D9944) and on any nonzero result goes to SetState(4), the failed state
+// (li r4,4 at 0x827D997C), without allocating the buffer or calling XEnumerate.
+// (These are VAs; build/45410914/asm/XLSPConnection.s's address column reads
+// 4 bytes lower here, e.g. it shows `.fn fn_827D9918` at 0x827D9914.)
 // NetCacheMgrXbox::Poll (0x827D73E0) then sees connection state 4 and calls
 // SetFail (0x827D7480) with 1 (cable connected) or 3, and MusicLibraryStore
-// carries on without the store. The exact code is not visible to retail; this
+// carries on without the store. Retail never inspects the exact code; this
 // is the Win32 one for "no logged-on session", ERROR_NOT_LOGGED_ON. The outputs
 // are left as the caller set them (mEnumHandle stays INVALID_HANDLE_VALUE).
 DWORD XTitleServerCreateEnumerator(LPCSTR pszServerInfo, DWORD cItem, DWORD *pcbBuffer, HANDLE *phEnum) {
