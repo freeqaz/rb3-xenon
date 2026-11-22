@@ -2117,6 +2117,8 @@ set_source_files_properties(
 if(RB3X_BUILD_ENGINE)
     rb3_add_executable(rb3-render
         ${CMAKE_SOURCE_DIR}/src/main_render.cpp
+        # A18: Rnd::DrawPreClear selects retail's list (fn_824158B8).
+        ${CMAKE_SOURCE_DIR}/src/preclear_select_phase.cpp
         # The engine's two CONSUMER SEAMS (ShouldSkipMesh, DebugPanel::*) —
         # header-declared, deliberately undefined in libmilo-engine.a. See the
         # file for why RB3's answers differ from DC3's.
