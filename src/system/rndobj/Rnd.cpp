@@ -1149,7 +1149,11 @@ Rnd::CompressTexDesc::~CompressTexDesc() {
 
 // Retail (0x82415B68) allocates the request and queues it; it does not walk the
 // queue for a duplicate first. Native keeps the duplicate notify.
+#ifdef HX_NATIVE
+intptr_t Rnd::CompressTexture(
+#else
 int Rnd::CompressTexture(
+#endif
     RndTex *tex, RndTex::AlphaCompress a, CompressTextureCallback *cb
 ) {
 #ifdef HX_NATIVE
@@ -1162,7 +1166,13 @@ int Rnd::CompressTexture(
 #endif
     CompressTexDesc *desc = new CompressTexDesc(tex, a, cb);
     mCompressTexQueue.push_back(desc);
+#ifdef HX_NATIVE
+    // Retail fn_82415B68 +0x070 returns the request (`mr r3, r30`); its
+    // destructor calls back with the same address. Keep all 64 bits (A35).
+    return (intptr_t)desc;
+#else
     return (int)desc;
+#endif
 }
 
 // Retail 0x82412A58 (called from ~BandCharacter): every queued request that
@@ -1415,6 +1425,45 @@ void Rnd::DrawPreClear() {
             SetEvent(gRndTextureEvent);
         }
     }
+#else
+    // A35: natively nothing serviced mCompressTexQueue, so a queued request was
+    // never destroyed and its callback never ran. BandCharacter::Compress queues
+    // one per composed outfit texture while its FileMerger loads async, and
+    // BandCharacter::IsLoading is true while any is outstanding, so once
+    // OutfitConfig::DrawPreClear ran (retail's list select, above) every band
+    // stayed loading and game_screen never finished loading (BandWardrobe::
+    // AllCharsLoaded false forever, ReadyForMidiParsers 0).
+    //
+    // Retail fn_824158B8 runs one request at a time on CompressThread: when it
+    // is done (+0x030..+0x038, sCompressDone) the front request is erased and
+    // destroyed (+0x0A0 erase, +0x0A8 bl fn_824118D8, the CompressTexDesc dtor
+    // that calls TextureCompressed(this) at +0x02C..+0x040); then, idle, it drops
+    // requests whose texture is gone or whose callback was cancelled
+    // (+0x10C..+0x124: desc+0x8 tex, desc+0x10 callback; destroyed through the
+    // same dtor at +0x150, so a request whose texture died still retires its
+    // ID, and only a cancelled one stays silent) and starts the front one.
+    // Native has no DXT path for a GPU render target: RndTex::Compress is the
+    // no-op that BandCharacter::Compress's synchronous arm already calls. So
+    // the same prune runs here and the front request is completed synchronously,
+    // one per call, as retail retires at most one per pass.
+    if (!mCompressTexQueue.empty()) {
+        std::list<CompressTexDesc *>::iterator it = mCompressTexQueue.begin();
+        while (it != mCompressTexQueue.end()) {
+            CompressTexDesc *desc = *it;
+            if (desc->tex && desc->callback) {
+                ++it;
+            } else {
+                it = mCompressTexQueue.erase(it);
+                delete desc;
+            }
+        }
+        if (!mCompressTexQueue.empty()) {
+            CompressTexDesc *first = mCompressTexQueue.front();
+            mCompressTexQueue.pop_front();
+            first->tex->Compress((RndTex::AlphaCompress)first->alpha);
+            delete first;
+        }
+    }
 #endif // !HX_NATIVE
     ObjPtrList<RndDrawable> *drawList;
     // Retail fn_824158B8 (band.exe TU5; listing 0x82415640, the select at
@@ -1458,13 +1507,18 @@ void Rnd::DrawPreClear() {
     // frame with either polarity, so X21's black frame is not reachable from
     // rb3-render today.
     //
-    // ⚠ NOT YET LANDABLE (A18). rb3-app is where the OutfitConfigs register:
-    // on the a16 menu walk this arm dispatches OutfitConfig::DrawPreClear
-    // (9171 calls by main_hub) and MatSwap::Compose, and the run then crashes
-    // as the band characters load at main_hub -> meta_loading_main (free():
-    // invalid pointer; SIGSEGV; CharLipSync::PlayBack::Set) in 3 of 4 runs,
-    // where the old arm passed that point 3 of 3 times. That crash is the
-    // compose path's bug, and it is fixed there, not here.
+    // rb3-app is where the OutfitConfigs register. A18 (2026-11-22) found that
+    // with this arm the a16 menu walk crashed as the band characters loaded at
+    // main_hub -> meta_loading_main (free(): invalid pointer; SIGSEGV;
+    // CharLipSync::PlayBack::Set) in 3 of 4 runs. A35 (2026-11-23, base
+    // 2a91559e0) did not reproduce it in 8 walks past that point; the native
+    // memory fixes that landed since (~RndTex's GPU entry, CharClipDriver::
+    // DeleteRef, the ReplaceRefs drain, ...) are the likely reason, though no
+    // single one was bisected. What this arm did expose is that
+    // nothing serviced mCompressTexQueue natively: OutfitConfig::DrawPreClear's
+    // MatSwap::Compress queues one request per composed texture, the
+    // BandCharacter stays IsLoading until each calls back, and game_screen never
+    // loaded. That is fixed at the queue, in the HX_NATIVE arm above.
     // Gate: rb3-render preclear-select-* (native/src/preclear_select_phase.cpp).
     //
     // X21 M2: separates "the pre-clear dispatcher is never called" from "it is

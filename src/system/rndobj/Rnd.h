@@ -261,7 +261,12 @@ public:
     void SetPostProcBlacklightOverride(RndPostProc *);
     void PreClearDrawAddOrRemove(RndDrawable *, bool, bool);
     RndTex *GetNullTexture();
+#ifdef HX_NATIVE
+    // A35: the ID is the request's address, so it is pointer-sized natively.
+    intptr_t CompressTexture(RndTex *, RndTex::AlphaCompress, CompressTextureCallback *);
+#else
     int CompressTexture(RndTex *, RndTex::AlphaCompress, CompressTextureCallback *);
+#endif
     void CompressTextureCancel(CompressTextureCallback *);
     void Modal(bool &, char *, bool);
     void PushClipPlanes(ObjPtrVec<RndTransformable> &planes) {

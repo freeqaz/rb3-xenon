@@ -2390,3 +2390,83 @@ void rb3_app_check_session_settings_unranked() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A35: Rnd::DrawPreClear services the texture-compress queue natively. Retail
+// fn_824158B8 retires the front CompressTexDesc once CompressThread is done
+// (+0x0A0 erase, +0x0A8 the dtor fn_824118D8, which calls TextureCompressed with
+// the request's address at +0x02C..+0x040) and drops requests whose texture died
+// or whose callback was cancelled (+0x10C..+0x124). CompressTexture
+// (fn_82415B68 +0x070) returns that address as the ID. Natively nothing drained
+// the queue, so BandCharacter::IsLoading (its mCompressedTextureIDs) stayed true
+// for good once OutfitConfig::DrawPreClear ran, and game_screen never loaded;
+// and the ID was an `int`, so the 64-bit callback argument never matched it.
+// Three requests: a live one, a cancelled one and one whose texture is deleted.
+// Within four DrawPreClear passes the queue must be empty; the live and the
+// dead-texture callbacks must each have run exactly once, with the very ID
+// CompressTexture returned (the prune destroys a dead request through the same
+// dtor, +0x150 bl fn_824118D8, so its ID is retired too); the cancelled one must
+// never call back.
+#include "rndobj/Rnd.h"
+namespace {
+    struct A35CompressProbe : Rnd::CompressTextureCallback {
+        intptr_t mGot;
+        int mCalls;
+        A35CompressProbe() : mGot(0), mCalls(0) {}
+        virtual void TextureCompressed(intptr_t id) {
+            mGot = id;
+            mCalls++;
+        }
+    };
+    struct A35RndPeek : Rnd {
+        static void PreClear(Rnd &r) { static_cast<A35RndPeek &>(r).Rnd::DrawPreClear(); }
+        static int Queued(Rnd &r) {
+            return (int)static_cast<A35RndPeek &>(r).mCompressTexQueue.size();
+        }
+        static int Draws(Rnd &r) { return (int)static_cast<A35RndPeek &>(r).mDraws.size(); }
+    };
+}
+void rb3_app_check_compress_queue_drain() { // ring: native-real
+    RndTex *liveTex = Hmx::Object::New<RndTex>();
+    RndTex *cancelTex = Hmx::Object::New<RndTex>();
+    RndTex *deadTex = Hmx::Object::New<RndTex>();
+    A35CompressProbe live, cancelled, dead;
+    int before = A35RndPeek::Queued(TheRnd);
+    intptr_t liveID = TheRnd.CompressTexture(liveTex, (RndTex::AlphaCompress)0, &live);
+    TheRnd.CompressTexture(cancelTex, (RndTex::AlphaCompress)0, &cancelled);
+    intptr_t deadID = TheRnd.CompressTexture(deadTex, (RndTex::AlphaCompress)0, &dead);
+    TheRnd.CompressTextureCancel(&cancelled);
+    delete deadTex;
+    int queued = A35RndPeek::Queued(TheRnd);
+    int draws = A35RndPeek::Draws(TheRnd);
+    int passes = 0;
+    while (passes < 4 && A35RndPeek::Queued(TheRnd) > before) {
+        A35RndPeek::PreClear(TheRnd);
+        passes++;
+    }
+    int left = A35RndPeek::Queued(TheRnd) - before;
+    bool sameID = live.mGot == liveID && dead.mGot == deadID;
+    // Whatever stays queued holds probes on this stack; never leave it behind.
+    if (left > 0) {
+        TheRnd.CompressTextureCancel(&live);
+        TheRnd.CompressTextureCancel(&dead);
+    }
+    delete liveTex;
+    delete cancelTex;
+    char what[384];
+    snprintf(what, sizeof what,
+             "compress queue drain: queued %d (+%d already, mDraws %d), %d DrawPreClear pass(es), "
+             "%d left; callbacks live %d dead tex %d, same ids %d; cancelled %d "
+             "(want 3, 0 left, 1 1 1, 0) (retail fn_824158B8 +0x0A8/+0x150 -> fn_824118D8)",
+             queued - before, before, draws, passes, left, live.mCalls, dead.mCalls,
+             (int)sameID, cancelled.mCalls);
+    if (queued - before == 3 && left == 0 && live.mCalls == 1 && dead.mCalls == 1 && sameID
+        && cancelled.mCalls == 0) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (compress queue drain)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}

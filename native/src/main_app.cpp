@@ -71,6 +71,7 @@ void rb3_app_check_typeprops_remove_one(); // rb3_app_gates.cpp
 void rb3_app_check_poll_sorter_search_id(); // rb3_app_gates.cpp
 void rb3_app_check_cube_tex_gpu_cleanup(); // rb3_app_gates.cpp
 void rb3_app_check_session_settings_unranked(); // rb3_app_gates.cpp
+void rb3_app_check_compress_queue_drain(); // rb3_app_gates.cpp
 
 extern "C" void rb3_app_gate(const char *step);
 void rb3_app_determinism_init(); // rb3_app_determinism.cpp (RB3_APP_DETERMINISTIC)
@@ -190,6 +191,7 @@ int main(int argc, char **argv) {
         rb3_app_check_poll_sorter_search_id(); // A34 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_cube_tex_gpu_cleanup(); // A36 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_session_settings_unranked(); // A36 (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_compress_queue_drain(); // A35 (rb3_app_gates.cpp): exits rc 7 on a failure
         printf("RESULT: APP CONSTRUCTED\n");
         fflush(stdout);
         fflush(stderr);
