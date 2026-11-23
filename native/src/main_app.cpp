@@ -78,6 +78,8 @@ void rb3_app_check_owner_ptr_replace(); // rb3_app_gates.cpp
 void rb3_app_check_bones_typeprops_replace(); // rb3_app_gates.cpp
 void rb3_app_check_reserved_vocal_slot(); // rb3_app_gates.cpp
 void rb3_app_check_spotlight_disk(); // rb3_app_gates.cpp
+void rb3_app_check_glyph_atlas_rgb(); // rb3_app_gates.cpp
+void rb3_app_check_album_art_path(); // rb3_app_gates.cpp
 void rb3_app_check_music_library_on_exit(); // rb3_app_gates.cpp
 void rb3_app_check_clip_group_replace(); // rb3_app_gates.cpp
 void rb3_app_check_clip_transition_drop(); // rb3_app_gates.cpp
@@ -98,6 +100,7 @@ void rb3_app_check_unnamed_mesh_not_text(); // rb3_app_gates.cpp
 void rb3_app_check_cam_screen_y_down(); // rb3_app_gates.cpp
 void rb3_app_check_crowd_force_3d(); // rb3_app_gates.cpp
 void SetGameMarksTextGlyphMeshes(bool marks); // milo-native-engine platform/MeshGpuCache.h
+void SetGameGlyphAtlasesKeepRGB(bool keepRGB); // milo-native-engine platform/MeshGpuCache.h
 
 extern "C" void rb3_app_gate(const char *step);
 void rb3_app_determinism_init(); // rb3_app_determinism.cpp (RB3_APP_DETERMINISTIC)
@@ -334,6 +337,12 @@ int main(int argc, char **argv) {
     // (WorldCrowd's impostor cards, spotlight beams, ribbons, gem tails) shades
     // with its own material instead of as an alpha atlas.
     SetGameMarksTextGlyphMeshes(true);
+    // A56: and every glyph page samples its atlas RGB. Retail RndText draws a
+    // page with the font's own material (Text.cpp SetMat(font->GetMat())) and
+    // the standard shader samples the texel's RGBA like any texture's; the
+    // engine's text default routes atlas alpha into colour, which drew the
+    // coloured button and icon glyphs (Y/A/RB, star, mic) as white discs.
+    SetGameGlyphAtlasesKeepRGB(true);
     App *app = new App(appArgc, appArgv);
     rb3_app_gate("App::App.complete");
     const char *co = getenv("RB3_APP_CONSTRUCT_ONLY");
@@ -374,6 +383,8 @@ int main(int argc, char **argv) {
         rb3_app_check_unnamed_mesh_not_text(); // A49 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_cam_screen_y_down(); // A51 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_crowd_force_3d(); // A53 (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_glyph_atlas_rgb(); // A56 (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_album_art_path(); // A56 (rb3_app_gates.cpp): exits rc 7 on a failure
         printf("RESULT: APP CONSTRUCTED\n");
         fflush(stdout);
         fflush(stderr);
