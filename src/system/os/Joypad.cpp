@@ -767,9 +767,14 @@ void JoypadPollCommon() {
             LocalUser *user = data.mUser;
             bool justDisconnected = false;
             bool justConnected = false;
-            if (SystemMs() - data.mLastActivityMs > gKeepaliveThresholdMs) {
+            // Retail (0x82526DBC..0x82526DDC) is a wrapping subf + signed cmpw, and the
+            // re-arm is addis/addi, also wrapping: SystemMs() + 0x7FFFFFFF is a far-future
+            // stamp only because it wraps. In C++ both are signed overflow (UBSan); doing the
+            // arithmetic unsigned and converting back gives the same bits.
+            if ((int)((unsigned int)SystemMs() - (unsigned int)data.mLastActivityMs)
+                > gKeepaliveThresholdMs) {
                 padType = kJoypadNone;
-                data.mLastActivityMs = SystemMs() + 0x7FFFFFFF;
+                data.mLastActivityMs = (int)((unsigned int)SystemMs() + 0x7FFFFFFFu);
             }
             if (padType == kJoypadNone) {
                 if (data.mConnected == true) {
@@ -912,7 +917,7 @@ void JoypadPollCommon() {
             } else if (justConnected) {
                 JoypadConnectionMsg msg(user, true, padType);
                 Export(msg);
-                data.mLastActivityMs = SystemMs() + 0x7FFFFFFF;
+                data.mLastActivityMs = (int)((unsigned int)SystemMs() + 0x7FFFFFFFu);
             }
         }
 

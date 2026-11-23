@@ -14,7 +14,16 @@ END_MESSAGE
 #include "utl/Symbol.h"
 #include <list>
 
+// Values are the cases of PassiveMessageQueue::HandlePassiveMessage (retail 0x825CD3A8),
+// each named after the setup message it sends: setup_message_text, _icon, _careerstep,
+// _careergoal, _careermulti. The enum was empty, so every value but 0 was out of range
+// (UBSan, lane asanwalk). An int-sized enum either way: layout and mangling unchanged.
 enum PassiveMessageType {
+    kPassiveMessageText = 0,
+    kPassiveMessageIcon = 1,
+    kPassiveMessageCareerStep = 2,
+    kPassiveMessageCareerGoal = 3,
+    kPassiveMessageCareerMulti = 4
 };
 
 class PassiveMessage {
