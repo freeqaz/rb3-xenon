@@ -13,7 +13,7 @@ can A/B two builds and a one-byte behaviour change shows up as a divergence. Opt
 ## What changed
 
 - `native/src/rb3_app_determinism.cpp` (new; classified in
-  `tools/native_stub_census.py` `NON_STUB_RE`). Three hooks, all pass-through unless
+  `tools/native_stub_census.py` `NON_STUB_RE`). Three fixes and a per-frame record, all inert unless
   `RB3_APP_DETERMINISTIC` is set:
   - `__wrap__Z8SeedRandi`: SystemInit's `SeedRand(time.wMilliseconds)`
     (os/System.cpp, native arm) seeds with `RB3_APP_SEED` (default 0). Every later
