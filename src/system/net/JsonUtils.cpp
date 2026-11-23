@@ -142,27 +142,11 @@ JsonDouble *JsonConverter::NewDouble(double d) {
 }
 
 JsonObject *JsonConverter::LoadFromString(const String &str) {
-#ifdef HX_NATIVE
-    printbuf *buf = printbuf_new();
-    if (!buf) {
-        return nullptr;
-    }
-    printbuf_memappend(buf, str.c_str(), str.length());
-    json_object *obj = json_tokener_parse(buf->buf);
-    if (!obj) {
-        printbuf_free(buf);
-        return nullptr;
-    }
-    JsonObject *jObj = new JsonObject();
-    jObj->Set(obj);
-    printbuf_free(buf);
-    JsonObject *temp = jObj;
-    json_object_get(obj);
-    mObjects.push_back(temp);
-    return jObj;
-#else
     // Retail (fn_82B82440): the object is allocated first, the parse result is
     // stored without an error check, and the length is a strlen of the text.
+    // Native runs this body too: callers (DataResultList::Update) dereference
+    // the result without a null test, and a JSON `null` text must come back as
+    // a kType_Null object rather than nullptr.
     JsonObject *jObj = new JsonObject();
     printbuf *buf = printbuf_new();
     if (!buf) {
@@ -175,7 +159,6 @@ JsonObject *JsonConverter::LoadFromString(const String &str) {
     jObj->AddRef();
     mObjects.push_back(temp);
     return jObj;
-#endif
 }
 
 JsonObject *JsonConverter::GetValue(JsonArray *inArray, int inIdx) {
