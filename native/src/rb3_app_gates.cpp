@@ -1756,3 +1756,32 @@ void rb3_app_check_reserved_vocal_slot() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A25: after boot (WorldInit -> Spotlight::Init -> BuildBoard), the shared
+// spotlight disk must exist. Retail BuildBoard fn_824DC5E8 builds a 4-vert,
+// 2-face RndMesh into sDiskMesh (stw at +0x18); SpotlightDrawer's
+// DrawAccessories<LensExtract> and Spotlight's lens/floor-spot draws use it
+// unchecked. The native host used to skip the build, so the first lit
+// game_screen frame crashed in RndDrawable::Showing. Fails (rc 7) when the
+// skip is restored.
+#include "world/Spotlight.h"
+#include "rndobj/Mesh.h"
+void rb3_app_check_spotlight_disk() { // ring: native-real
+    RndMesh *disk = Spotlight::GetDiskMesh();
+    int verts = disk ? (int)disk->Verts().size() : -1;
+    int faces = disk ? (int)disk->Faces().size() : -1;
+    char what[256];
+    snprintf(what, sizeof what,
+             "spotlight disk: sDiskMesh %s, verts %d faces %d (want 4 2) "
+             "(retail Spotlight::BuildBoard fn_824DC5E8)",
+             disk ? "set" : "NULL", verts, faces);
+    if (disk && verts == 4 && faces == 2) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (spotlight disk)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
