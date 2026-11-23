@@ -135,6 +135,8 @@ void SetGameGlyphAtlasesKeepRGB(bool keepRGB); // milo-native-engine platform/Me
 extern "C" void rb3_app_gate(const char *step);
 void rb3_app_determinism_init(); // rb3_app_determinism.cpp (RB3_APP_DETERMINISTIC)
 void rb3_app_determinism_frame(int frame); // rb3_app_determinism.cpp
+int RB3AppHz(); // rb3_app_determinism.cpp (RB3_APP_HZ; 0 = legacy)
+bool RB3AppDeterministic(); // rb3_app_determinism.cpp
 
 namespace {
 int gFramesStarted = 0; // SystemPoll calls since App::Run (frame N starts at call N)
@@ -144,6 +146,38 @@ bool gInRun = false;
 timespec gRunStart;
 const UIScreen *gLastScreen = nullptr;
 bool gLastTransition = false;
+
+// Frame pacing (lane framerate, 2026-11-23). Retail's loop runs at most one frame per
+// 60 Hz refresh (DxRnd::Present waits for D3DRS_PRESENTINTERVAL 1; see RB3AppHz). A
+// normal rb3-app launch is headless and had no pacer, so it ran as fast as it could
+// (~170-700 frames a second on the dev box), and every per-frame count in the game
+// (tilt filter, UI select delay) passed that many times faster. PaceFrame holds each
+// frame start to the next 1/RB3AppHz() s boundary since App::Run. A frame that overran
+// waits for the boundary after it, as a missed vblank does on the console (no catch-up
+// burst). A deterministic walk does not sleep: its virtual clock already steps 1/hz s.
+timespec gPaceNext; // next frame boundary (CLOCK_MONOTONIC)
+bool gPaceArmed = false;
+
+void PaceFrame() {
+    int hz = RB3AppHz();
+    if (hz <= 0 || RB3AppDeterministic()) return;
+    const long period = 1000000000L / hz;
+    timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    if (!gPaceArmed) {
+        gPaceNext = now;
+        gPaceArmed = true;
+        return;
+    }
+    auto ns = [](const timespec &t) { return (long long)t.tv_sec * 1000000000LL + t.tv_nsec; };
+    long long next = ns(gPaceNext) + period;
+    if (ns(now) > next) // overran: wait for the next boundary on the same grid
+        next += ((ns(now) - next) / period + 1) * period;
+    gPaceNext.tv_sec = next / 1000000000LL;
+    gPaceNext.tv_nsec = next % 1000000000LL;
+    while (clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &gPaceNext, nullptr) != 0) {
+    }
+}
 
 double SecondsSinceRun() {
     timespec now;
@@ -523,6 +557,7 @@ extern "C" void __wrap__Z10SystemPollb(bool b) { // ring: native-real
         int framesDone = gFramesStarted; // every earlier frame ran to its DrawRegular
         if (framesDone >= gFrameCap) Finish(framesDone, "", 0);
         if (SecondsSinceRun() >= gSecondsCap) Finish(framesDone, " (wall-clock cap)", 4);
+        PaceFrame();
         ++gFramesStarted;
         rb3_app_determinism_frame(gFramesStarted);
         UIScreen *cur = TheUI ? TheUI->CurrentScreen() : nullptr;
@@ -629,6 +664,23 @@ int main(int argc, char **argv) {
     gSecondsCap = EnvInt("RB3_APP_SECONDS", 120);
     printf("rb3-app: App::App constructed; App::Run (cap %d frames, %.0f s)\n", gFrameCap,
            gSecondsCap);
+    // Lane framerate: with a real frame rate (RB3AppHz() > 0) the UI and task clocks must
+    // be clocks. MILO_HEADLESS makes UIManager::Poll (ui/UI.cpp) and TaskMgr::Poll
+    // (obj/Task.cpp) add a fixed 1/30 s per poll instead of reading their Timers, which
+    // only equals time at 30 frames a second. Retail reads the Timers (__mftb; natively
+    // steady_clock, which a deterministic walk makes the 1/hz-per-frame virtual clock).
+    // Both cache getenv("MILO_HEADLESS") in a function-local static at their first poll;
+    // the engine read it already (window, audio) inside App::App. So clearing it here,
+    // before App::Run's first UIManager::Poll, gives both the retail clock as long as
+    // neither polled during the constructor (the det line's `seconds`/`ui` show it).
+    if (RB3AppHz() > 0) {
+        unsetenv("MILO_HEADLESS");
+        printf("rb3-app: frame rate %d Hz (%s; RB3_APP_HZ), UI/task clocks from Timer\n",
+               RB3AppHz(), RB3AppDeterministic() ? "virtual clock" : "paced");
+    } else {
+        printf("rb3-app: frame rate legacy (RB3_APP_HZ=legacy: 1/30 s virtual frame, unpaced, "
+               "fixed-step UI/task clocks)\n");
+    }
     fflush(stdout);
     signal(SIGALRM, OnStall);
     alarm((unsigned)gSecondsCap + 15);

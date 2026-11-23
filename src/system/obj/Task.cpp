@@ -532,7 +532,10 @@ void TaskMgr::Poll() {
     // timeouts and expect real-time pacing. Without this, headless mode runs
     // at thousands of fps and DTA timeouts (e.g. autosave_warning 4s) never
     // trigger within the frame budget.
-    static bool sHeadless = !!getenv("MILO_HEADLESS");
+    // Read every poll, not cached: rb3-app (native/src/main_app.cpp) clears
+    // MILO_HEADLESS after App::App when it runs at a real frame rate, and
+    // this poll already ran during the constructor (Splash::Draw).
+    bool sHeadless = getenv("MILO_HEADLESS") != nullptr;
     static float sFakeSeconds = 0.0f;
     if (sHeadless && mAutoSecondsBeats) {
         sFakeSeconds += 1.0f / 30.0f;

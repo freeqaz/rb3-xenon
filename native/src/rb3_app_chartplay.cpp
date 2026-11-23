@@ -61,6 +61,9 @@
 //                                   the xbox_mercury_switch axis) for 15 polls (TU5
 //                                   beatmatch.dta any_sign_filter: 12 frames >= 0.93) whenever
 //                                   the player has half a bar and is not deploying
+//   RB3_APP_CHARTPLAY_TILT_MS=N     (lane framerate) hold each tilt for N ms of song time
+//                                   instead of 15 polls, at most one tilt per 1000 ms, so
+//                                   one hold is the same input at any frame rate
 //   RB3_APP_CHARTPLAY_CODA=mash|blow  big rock ending: `mash` skips the chart's gems
 //                                   inside the coda freestyle (GetCodaFreestyleExtents)
 //                                   and instead holds all five frets and strums every
@@ -118,6 +121,7 @@ struct Knobs {
     // lane codawalk
     int whammy = 0; // 1 sustains of overdrive-phrase gems, 2 every sustain
     bool tilt = false;
+    float tiltMs = 0; // lane framerate: hold a tilt this long (song ms) instead of 15 polls
     int coda = 0; // 1 mash the freestyle, 2 blow the ending
 };
 
@@ -161,6 +165,7 @@ const Knobs &K() {
         k.whammy = PickKnob("RB3_APP_CHARTPLAY_WHAMMY", kWhammy, 3);
         k.coda = PickKnob("RB3_APP_CHARTPLAY_CODA", kCoda, 3);
         k.tilt = EnvOn("RB3_APP_CHARTPLAY_TILT");
+        if (const char *v = getenv("RB3_APP_CHARTPLAY_TILT_MS")) k.tiltMs = atof(v);
         // _LOG=2 also switches on the game's own beatmatch trace (TheBeatMatchOutput,
         // the SWING / NOSWING / HIT / MISS lines BeatMatcher and the watchers print),
         // which LogFile writes to its file pattern in the run directory.
@@ -171,8 +176,8 @@ const Knobs &K() {
                    k.offset, k.missPct, k.missFrom, k.missTo, k.seed, k.tapHopo ? "tap" : "strum", k.sustain);
             printf("rb3-app-chartplay: mute %s slide %s bend %d deploy %s hands %d\n",
                    kMute[k.mute], kSlide[k.slide], (int)k.bend, kDeploy[k.deploy], (int)k.hands);
-            printf("rb3-app-chartplay: whammy %s tilt %d coda %s\n", kWhammy[k.whammy],
-                   (int)k.tilt, kCoda[k.coda]);
+            printf("rb3-app-chartplay: whammy %s tilt %d tilt-ms %.0f coda %s\n",
+                   kWhammy[k.whammy], (int)k.tilt, k.tiltMs, kCoda[k.coda]);
             fflush(stdout);
         }
         return k;
@@ -222,6 +227,7 @@ struct Song {
     int holdGem = -1;
     float holdEnd = -1;
     int tiltHeld = 0, tiltLast = -1000;
+    float tiltUntil = -1, tiltLastMs = -1e9f; // _TILT_MS: hold end and start (song ms)
     Song() {
         for (int i = 0; i < 25; i++) keyUpAt[i] = -1;
     }
@@ -793,7 +799,20 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
         }
         // _TILT: tilt for 15 polls with half a bar of energy, not deploying, at
         // most once a second.
-        if (gSong.tiltHeld > 0) {
+        if (k.tiltMs > 0) {
+            // _TILT_MS: the hold and the once-a-second gate in song time.
+            if (now >= gSong.tiltUntil && k.tilt && gPadPlayer
+                && gPadPlayer->GetBandEnergy() >= 0.5f && !gPadPlayer->IsDeployingBandEnergy()
+                && now - gSong.tiltLastMs >= 1000) {
+                gSong.tiltUntil = now + k.tiltMs;
+                gSong.tiltLastMs = now;
+                gSong.tilts++;
+                if (k.log)
+                    printf("rb3-app-chartplay: poll %d tilt %.0f ms (energy %.4f) now %.1f\n",
+                           poll, k.tiltMs, gPadPlayer->GetBandEnergy(), now);
+            }
+            gSong.tiltHeld = now < gSong.tiltUntil ? 1 : 0;
+        } else if (gSong.tiltHeld > 0) {
             gSong.tiltHeld--;
         } else if (k.tilt && gPadPlayer && gPadPlayer->GetBandEnergy() >= 0.5f
                    && !gPadPlayer->IsDeployingBandEnergy() && poll - gSong.tiltLast >= 30) {
