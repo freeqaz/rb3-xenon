@@ -52,6 +52,8 @@
 #include "meta_band/OvershellPanel.h"
 #include "meta_band/OvershellSlot.h"
 #include "meta_band/OvershellSlotState.h"
+#include "tour/Tour.h"
+#include "tour/TourProgress.h"
 
 void rb3_app_check_ui_sink(); // rb3_app_gates.cpp
 void rb3_app_check_tex_movie(); // rb3_app_gates.cpp
@@ -190,6 +192,35 @@ void LogFocus(UIScreen *cur) {
     }
 }
 
+// RB3_APP_FOCUS_LOG=1 also logs the tour state on change: `rb3-app: frame N tour=<desc>
+// on=<0|1> gigs=<completed>/<total> cur=<gig> stars=<total> won=<last quest won>`, so a
+// tour walk can check progression across gigs and boots. Read-only accessors only.
+void LogTour() {
+    static const bool on = [] {
+        const char *v = getenv("RB3_APP_FOCUS_LOG");
+        return v && v[0] && strcmp(v, "0") != 0;
+    }();
+    if (!on || !TheTour) return;
+    TourProgress *p = TheTour->GetTourProgress();
+    char buf[256];
+    if (!p)
+        snprintf(buf, sizeof buf, "tour=(no progress)");
+    else {
+        Symbol desc = p->GetTourDesc();
+        bool hasDesc = desc != "" && TheTour->GetTourDesc(desc);
+        snprintf(buf, sizeof buf, "tour=%s on=%d gigs=%d/%d cur=%d stars=%d won=%d",
+                 desc.Str(), p->IsOnTour(), p->GetNumCompletedGigs(),
+                 hasDesc ? p->GetNumTotalGigs() : -1, p->GetCurrentGigNum(), p->GetNumStars(),
+                 (int)p->GetWonQuest());
+    }
+    static char last[256];
+    if (strcmp(buf, last)) {
+        strcpy(last, buf);
+        printf("rb3-app: frame %d %s\n", gFramesStarted, buf);
+        fflush(stdout);
+    }
+}
+
 int EnvInt(const char *name, int dflt) {
     const char *v = getenv(name);
     return v && *v ? atoi(v) : dflt;
@@ -215,6 +246,7 @@ extern "C" void __wrap__Z10SystemPollb(bool b) { // ring: native-real
             gLastTransition = tr;
         }
         LogFocus(cur);
+        LogTour();
     }
     __real__Z10SystemPollb(b);
 }
