@@ -1,0 +1,20 @@
+# trainwalk2 reload: boot on a store a trainer walk saved; open the drum lesson list and scroll it
+wait_screen splash_screen
++30 start
+wait_screen main_hub_screen
++300 down
++360 down
++420 a
++560 down
++620 a
+wait_screen training_screen
++120 a
++400 down
++460 down
++520 down
++580 down
++640 down
++700 down
++760 b
++900 b
++1000 b
