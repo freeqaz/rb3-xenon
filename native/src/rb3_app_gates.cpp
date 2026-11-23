@@ -508,14 +508,15 @@ extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
 // TheNetMessenger.Poll() (0x823F5460), mSyncStore->Poll(), mSession->Poll(),
 // mSearcher->Poll(), mServer->Poll() (vtable +8). The Net::Init gate above built
 // mSession, mSearcher and (rbx-net) the offline mServer. This gate runs
-// mSyncStore->Poll() (postcal), mSearcher->Poll() and mServer->Poll()
-// (rb3_app_net_poll_offline; the retail
-// XSessionSearcher and XboxServer bodies; offline, XboxServer::Poll has no call
-// context to poll and is not connected) and NOT:
-//   * TheNetMessenger.Poll: NetMessenger.cpp is absent from src/;
-//   * mSession->Poll: XboxSession::Poll (NetSession_Xbox.cpp:494) starts with
-//     NetSession::Poll, which reaches QuazalSession::Poll, an aborting
-//     online-netsession stub (the Quazal session layer, rb3-xenon-07's ring);
+// mSyncStore->Poll() (postcal), (A23) mSession->Poll(), mSearcher->Poll() and
+// mServer->Poll() (rb3_app_net_poll_offline; the retail SyncStore,
+// XboxSession, XSessionSearcher and XboxServer bodies; offline the session has
+// no Quazal session and XboxServer::Poll has no call context to poll and is not
+// connected) and NOT:
+//   * TheNetMessenger.Poll: NetMessenger.cpp is absent from src/.
+// A23: the session poll is what enters the game (NetSession::Poll ->
+// EnterInGameState -> SyncStartGameMsg); rb3_app_check_offline_game_start
+// checks it. QuazalSession::Poll is QuazalSession.cpp's retail body.
 // GATED once, on the first frame.
 extern "C" void rb3_app_net_poll_offline(void *net);
 extern "C" void __wrap__ZN3Net4PollEv(void *self) { // ring: online-net
@@ -523,7 +524,7 @@ extern "C" void __wrap__ZN3Net4PollEv(void *self) { // ring: online-net
     if (!sPrinted) {
         sPrinted = true;
         printf("  [GATED] rb3-app Net::Poll() -- ring online-net: polls ONLY mSyncStore, "
-               "mSearcher and the offline mServer; NetMessenger/Session(Quazal) not polled\n");
+               "the session, mSearcher and the offline mServer; NetMessenger not polled\n");
         fflush(stdout);
     }
     rb3_app_net_poll_offline(self);
@@ -1212,6 +1213,117 @@ void rb3_app_check_pre_clear_unregister() { // ring: native-real
     }
     printf("  [FAIL] rb3-app %s; Y removed %d\n", what, (int)yGone);
     printf("RESULT: GATE FAILED (pre-clear unregister)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A23: an offline song starts. SyncGameStartPanel (game_screen's sync panel)
+// is loaded only once it reaches its synced state, which only
+// OnMsg(SyncStartGameMsg) sets. Offline the local machine leads a one-machine
+// session: the leader's lock-step completes locally (LockStepMgr::RespondToLock
+// -> OnLockResponseMsg -> CheckAllMachinesResponded -> ReleaseLock, all on the
+// local machine), the panel's LockStepCompleteMsg handler calls
+// TheNetSession->StartGame(), and BeginGameStartCountdown sets mGameState to
+// kStartingGame with no start time (IsLocal). The message itself is sent by
+// NetSession::Poll (0x823E67A8): mGameState@0x4C == 1 and a null
+// mGameStartTime -> EnterInGameState (0x823E2810, bl at 0x823E6828) ->
+// kInLocalGame + Handle(SyncStartGameMsg). Net::Poll (0x823E03A8) runs it
+// through mSession->Poll() (0x823E03D0..E0 -> XboxSession::Poll 0x823F06F0).
+// The native offline Net::Poll used to skip the session, so the walk stalled in
+// tv3_a_screen -> game_screen until the frame cap.
+// Here: a LockStepMgr whose callback does what SyncGameStartPanel's two
+// handlers do (LockStepCompleteMsg as leader: StartGame; SyncStartGameMsg:
+// synced), and is a TheNetSession sink as the panel is. StartLock, then
+// RespondToLock(true) as the panel's state-2 poll does; then Net::Poll up to
+// three frames. It must see LockStepCompleteMsg, kStartingGame, then
+// SyncStartGameMsg and IsInGame. Afterwards EndGame returns the session to the
+// lobby (LeaveInGameState, kInLocalGame arm). Fails (rc 7) when Net::Poll
+// does not poll the session (sabotage: drop the mSession->Poll() line in
+// rb3_app_net_poll_offline).
+#include "meta_band/LockStepMgr.h"
+#include "meta_band/SessionMgr.h"
+#include "net/NetSession.h"
+namespace {
+    struct A23GameStartSink : public Hmx::Object {
+        int completes = 0, starts = 0;
+        bool startingAtComplete = false;
+        virtual DataNode Handle(DataArray *msg, bool warn) override {
+            Symbol sym = msg->Sym(1);
+            if (sym == LockStepCompleteMsg::Type()) {
+                completes++;
+                // SyncGameStartPanel::OnMsg(LockStepCompleteMsg), leader arm
+                TheNetSession->StartGame();
+                startingAtComplete = TheNetSession->IsStartingGame();
+                return 1;
+            }
+            if (sym == SyncStartGameMsg::Type()) {
+                starts++;
+                return 1;
+            }
+            return Hmx::Object::Handle(msg, warn);
+        }
+    };
+}
+void rb3_app_check_offline_game_start() { // ring: native-real
+    char what[640];
+    if (!TheSessionMgr || !TheNetSession) {
+        snprintf(what, sizeof what, "offline game start: TheSessionMgr %p, TheNetSession %p",
+                 (void *)TheSessionMgr, (void *)TheNetSession);
+        printf("  [FAIL] rb3-app %s\n", what);
+        printf("RESULT: GATE FAILED (offline game start)\n");
+        fflush(stdout);
+        _exit(7);
+    }
+    bool lobby0 = !TheNetSession->IsInGame() && !TheNetSession->IsStartingGame();
+    // A walk reaches song select through a mode change, and
+    // BandMatchmaker::OnMsg(ModeChangedMsg) stores SetRanked(IsRanked()), false
+    // for quickplay. Construct-only has had no mode change, and neither the
+    // SessionSettings ctor (retail 0x823F3C78) nor Clear (0x823F3BE8) writes
+    // mRanked@0xC, so the gate stores the quickplay value itself; otherwise
+    // StartGame would read an unset byte and may take the ranked
+    // (arbitration) arm.
+    SessionSettings *settings = TheNetSession->GetSessionSettings();
+    if (settings)
+        settings->SetRanked(false);
+    A23GameStartSink *sink = new A23GameStartSink();
+    TheNetSession->AddSink(sink);
+    int startsAtPoll[3] = { -1, -1, -1 };
+    bool inGame = false;
+    {
+        LockStepMgr lock("a23_game_start", sink);
+        lock.StartLock(); // SyncGameStartPanel state 0, leader local
+        bool inLock = lock.InLock();
+        lock.RespondToLock(true); // state 2 -> 3
+        bool released = !lock.InLock();
+        for (int i = 0; i < 3; i++) {
+            TheNet.Poll();
+            startsAtPoll[i] = sink->starts;
+        }
+        inGame = TheNetSession->IsInGame();
+        snprintf(what, sizeof what,
+                 "offline game start: lobby %d; lock in %d, released %d; LockStepCompleteMsg "
+                 "x%d (want 1), kStartingGame after StartGame %d (want 1); SyncStartGameMsg "
+                 "after Net::Poll 1/2/3: %d/%d/%d (want 1/1/1), in game %d (want 1) (retail "
+                 "Net::Poll 0x823E03A8 polls the session at 0x823E03D0; NetSession::Poll "
+                 "0x823E67A8 -> EnterInGameState 0x823E2810)",
+                 (int)lobby0, (int)inLock, (int)released, sink->completes,
+                 (int)sink->startingAtComplete, startsAtPoll[0], startsAtPoll[1],
+                 startsAtPoll[2], (int)inGame);
+    }
+    bool ok = lobby0 && sink->completes == 1 && sink->startingAtComplete
+        && startsAtPoll[0] == 1 && startsAtPoll[2] == 1 && inGame;
+    if (TheNetSession->IsInGame())
+        TheNetSession->EndGame(0, false, 0.0f);
+    bool lobby1 = !TheNetSession->IsInGame() && !TheNetSession->IsStartingGame();
+    TheNetSession->RemoveSink(sink);
+    delete sink;
+    if (ok && lobby1) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s; back in lobby %d\n", what, (int)lobby1);
+    printf("RESULT: GATE FAILED (offline game start)\n");
     fflush(stdout);
     fflush(stderr);
     _exit(7);

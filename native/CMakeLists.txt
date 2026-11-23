@@ -2319,6 +2319,14 @@ set(RB3_APP_SOURCES
     ${REPO_ROOT}/src/network/net/NetSession_Xbox.cpp
     ${REPO_ROOT}/src/network/net/SessionMessages.cpp
     ${REPO_ROOT}/src/network/net/MatchmakingSettings.cpp
+    # A23: the offline Net::Poll now polls the session (retail 0x823E03D0,
+    # XboxSession::Poll -> NetSession::Poll), whose last call is the static
+    # QuazalSession::Poll (0x823F2B80): it frees a terminating Quazal session's
+    # call context and NetZ once the call has left CallPending. None exists
+    # offline, so it does nothing; the TU's other bodies (HasHostLeft, the
+    # make-session job) are reached only with a Quazal session (mQNet), which
+    # offline is never made. No X360 extra_cflags.
+    ${REPO_ROOT}/src/network/net/QuazalSession.cpp
     # A4: SessionMgr's ctor does `new BandNetGameData()` (SessionMgr.cpp:45).
     # rb3-xenon-07 wrote this TU from retail clean TU5 0x82650B74..0x82651928
     # (bngd, 672687738); with it the SessionMgr::Init gate is lifted
