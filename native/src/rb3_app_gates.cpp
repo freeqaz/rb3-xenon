@@ -2470,3 +2470,63 @@ void rb3_app_check_compress_queue_drain() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A37: a kObjListNoNull ObjPtrList must drop the entry of a referent that dies
+// inside a ReplaceList. ~Object runs ReplaceRefs(nullptr) with gInReplaceList
+// set (obj/Object.cpp), and each ring ref of the dying object is stepped with
+// Replace(nullptr) -> ObjPtrList::ReplaceNode. BandCharacter::SyncObjects's
+// drain (retail fn_8228A2A0 +0x1B8..+0x1EC) is
+//     while (unk610.size() /* 0x688 */) { df = head(0x68c)->obj;
+//         df->Mesh() /* lwz r3,0x30(r30), no null test, +0x1C4 */ ...;
+//         delete df /* vtbl[0](df, 1), +0x1E0 */; }
+// so retail relies on that erase: the list holds no null, and each delete
+// shrinks it by one. A native guard once suppressed the erase whenever
+// gInReplaceList was set (copied from ObjPtrVec, whose inline nodes do move on
+// erase), which left a null at front(): the RB3_BAND_PLACE SIGSEGV in
+// RndMeshDeform::Mesh() <- SyncObjects, and a loop that could never empty. X9
+// (278a38920) removed it for ObjPtrList. The check: two deforms in a NoNull
+// list; delete the first -> one entry left, and it is the second; then the
+// SyncObjects-shaped drain, bounded at four steps, must empty the list in one
+// step without ever reading a null front. Only addresses are compared.
+#include "rndobj/MeshDeform.h"
+void rb3_app_check_nonull_list_replace_drain() { // ring: native-real
+    RndMeshDeform *owner = Hmx::Object::New<RndMeshDeform>();
+    RndMeshDeform *a = Hmx::Object::New<RndMeshDeform>();
+    RndMeshDeform *b = Hmx::Object::New<RndMeshDeform>();
+    ObjPtrList<RndMeshDeform> *list = new ObjPtrList<RndMeshDeform>(owner, kObjListNoNull);
+    list->push_back(a);
+    list->push_back(b);
+    int sizeHeld = (int)list->size();
+    delete a; // ~Object -> ReplaceRefs(nullptr) under gInReplaceList
+    int sizeAfter = (int)list->size();
+    int nulls = 0;
+    for (ObjPtrList<RndMeshDeform>::iterator it = list->begin(); it != list->end(); ++it)
+        if (!*it) nulls++;
+    bool frontIsB = sizeAfter > 0 && list->front() == b;
+    int steps = 0, nullFront = 0;
+    while (!list->empty() && steps < 4) {
+        RndMeshDeform *df = list->front();
+        if (!df) { nullFront = 1; break; }
+        delete df;
+        steps++;
+    }
+    int left = (int)list->size();
+    char what[384];
+    snprintf(what, sizeof what,
+             "nonull list replace drain: held %d; first deleted -> size %d, nulls %d, front is "
+             "the second %d; drain steps %d, null front %d, left %d (want 2, 1 0 1, 1 0 0) "
+             "(retail SyncObjects fn_8228A2A0 +0x1B8..+0x1EC)",
+             sizeHeld, sizeAfter, nulls, (int)frontIsB, steps, nullFront, left);
+    if (sizeHeld == 2 && sizeAfter == 1 && nulls == 0 && frontIsB && steps == 1 &&
+        !nullFront && left == 0) {
+        delete list;
+        delete owner;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (nonull list replace drain)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
