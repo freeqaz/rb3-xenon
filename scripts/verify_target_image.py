@@ -35,6 +35,15 @@ Exit codes
     1   a listed file is missing or hashes to something else (nothing written)
     2   the manifest is unreadable, malformed, or empty
 
+It also refuses a build/<v>/obj that is a symlink out of this tree. The split
+REWRITES obj/ (dtk regenerates every target obj; the renamer then patches them
+in place), so a worktree whose obj/ links to the main checkout's rewrites
+main's target objs, raw and un-renamed, under every other reader of them
+(2026-11-23: three ab_measure refusals in such trees -- an atexit pass that
+saw no ??__F names, and `CHECK TARGET OBJS RENAMED` at 0.0% -- traced to
+scripts/configure_existing_worktree.sh linking obj/). This edge runs before
+the split, so the guard stops that write rather than reporting it after.
+
 `--stamp-out` writes the verified lines to a stamp file, only when its content
 changes, so the ninja edge can use restat and stay quiet on an unchanged image.
 `--selftest` builds a scratch manifest and requires both a pass and a fail.
@@ -104,6 +113,23 @@ def check(manifest, root):
     return problems, verified
 
 
+def shared_obj_problem(root, version):
+    """Return a problem string if build/<version>/obj is a symlink out of root."""
+    obj = Path(root) / "build" / version / "obj"
+    if not obj.is_symlink():
+        return None
+    dest = obj.resolve()
+    here = Path(root).resolve()
+    if dest == here or here in dest.parents:
+        return None
+    return (f"build/{version}/obj is a symlink to {dest}, outside this tree.\n"
+            "    The split rewrites obj/, so building here would rewrite that "
+            "tree's target objs\n    under every reader of them. Replace the link "
+            "with a reflinked copy:\n"
+            f"      rm {obj.absolute()}\n"
+            f"      cp -a --reflink=auto {dest} {obj.absolute()}")
+
+
 def write_if_changed(path, text):
     p = Path(path)
     if p.is_file() and p.read_text() == text:
@@ -136,8 +162,21 @@ def selftest():
             pass
         else:
             raise AssertionError("empty manifest was accepted")
+        other = Path(d) / "other_obj"
+        other.mkdir()
+        objdir = Path(d) / "build" / "T" / "obj"
+        assert shared_obj_problem(d, "T") is None  # no obj/ yet
+        objdir.mkdir(parents=True)
+        assert shared_obj_problem(d, "T") is None  # a real directory
+        objdir.rmdir()
+        objdir.symlink_to(Path(tempfile.gettempdir()))  # a link out of the tree
+        assert shared_obj_problem(d, "T") is not None
+        objdir.unlink()
+        objdir.symlink_to(other)  # a link that stays inside the tree
+        assert shared_obj_problem(d, "T") is None
     print("verify_target_image selftest: PASS (match passes; changed bytes, "
-          "missing file and empty manifest all fail)")
+          "missing file and empty manifest all fail; an obj/ linked out of the tree "
+          "fails, a real or in-tree one passes)")
     return 0
 
 
@@ -157,6 +196,10 @@ def main(argv=None):
     except (OSError, ValueError) as e:
         print(f"verify_target_image: cannot read manifest: {e}", file=sys.stderr)
         return 2
+    shared = shared_obj_problem(a.root, Path(a.manifest).parent.name)
+    if shared:
+        print("verify_target_image: FAIL -- " + shared, file=sys.stderr)
+        return 1
     if problems:
         print("verify_target_image: FAIL -- the target image is not the one this "
               "tree is written against.", file=sys.stderr)
