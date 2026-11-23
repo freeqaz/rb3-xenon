@@ -1331,12 +1331,12 @@ void ObjPtrList<T1, T2>::sort(const S &cmp) {
             for (Node *inner = outer; inner != sentinel; inner = inner->prev) {
                 Node *prev = inner->prev;
                 if (cmp(inner->Obj(), prev->Obj())) {
-                    // Both nodes stay in the list; set membership is unchanged,
-                    // so just swap the held objects — no ring Release/AddRef.
-                    // Same shape as ObjPtrList::sort.
+                    // Each native node is its own ring-ref, so an object moves with its ring entry (a raw swap left a dying
+                    // object's ring on the node now holding the other, so ~Object erased the live one; band.exe swaps words
+                    // at 0x8240F1EC/F0 only because the list is the ring-ref and Replace 0x8236F338 matches by object).
                     T1 *tmp = inner->mObject;
-                    inner->mObject = prev->mObject;
-                    prev->mObject = tmp;
+                    inner->SetObjConcrete(prev->mObject);
+                    prev->SetObjConcrete(tmp);
                 } else {
                     break;
                 }
