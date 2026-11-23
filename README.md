@@ -235,6 +235,11 @@ sets this by default). Press Space for Start, Enter to confirm, and use the
 arrow keys in menus. In a song, hold 1–5 for green through orange, strum with
 J or K, and use Tab for overdrive.
 
+Run `tools/playtest-macos.sh` for a complete TU5 Quickplay check with an
+isolated save. It plays a chart with both hits and misses, checks the score
+and return to the song library, and prints the location of the log and
+gameplay screenshot. Pass the disc directory as its first argument if needed.
+
 The next milestone is tying these subsystems together into a playable game
 loop. To keep the native build healthy alongside the matching work, every
 change to shared `src/` must pass `tools/native_build_gate.sh` (18/18 targets,
