@@ -1,6 +1,6 @@
 # Lane sanitize — the headless native targets under ASan + UBSan (2026-11-23)
 
-Branch `sanitize`, worktree `~/tmp/wt-sanitize`, based on main `98f66d185`.
+Branch `sanitize`, worktree `~/tmp/wt-sanitize`. Measured on main `98f66d185`; rebased onto main `c99af95d2` (rbx-uaf-a20) before reporting, rerun in §7.
 Build: `native/build-ubsan`, configured `-DRB3X_SANITIZE=address,undefined` (new option
 value, `native/CMakeLists.txt`): W16-UO's ASan flags plus `-fsanitize=undefined
 -fsanitize-recover=undefined`. That is the default UBSan group, `vptr` and `function` included
@@ -177,7 +177,7 @@ each source location once per process. The runner script is in scratch
   frames.
 - **Unknown.** Which value the 360 sees (and so which behaviour is retail's) is not settled
   here. Leads: which merger reloads, and what the splash stream is.
-- **Decision.** The hunk is backed out (commit `0e825f8b9`) rather than land a behaviour change
+- **Decision.** The hunk is backed out (commit `aa753bc48`) rather than land a behaviour change
   whose direction is unknown.
 
 ## 5. X360 Δ
@@ -204,3 +204,16 @@ recompiled 42 MSVC objs, so the edits reached X360 TUs.
 - rb3-app's frame loop was run to 300 frames only. It stays on splash_screen, so the
   cal_welcome path (the UnloadPanels UAF another session owns) was not reached.
 - No new native/src file, so `tools/native_stub_census.py` needed no row.
+
+## 7. Rerun after the rebase onto `c99af95d2`
+
+Same build dir (rebuilt), same runner, same options:
+
+- **ASan: 0 reports** on all 12 targets and on rb3-app's 300-frame loop.
+- Every target rc 0 with its completion line.
+- UBSan counts as before the rebase:
+  - 2 per small target that loads charts (row 11), 0 for rb3-song, rb3-score2 and rb3-save;
+  - rb3-milo 2;
+  - rb3-app construct-only 15, frame loop 17 (rows 10, 12–17).
+- The frame loop still reaches `VorbisReader::CheckHmxHeader` (the Keygen site fires), so the
+  splash stream starts as before this lane.
