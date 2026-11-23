@@ -2772,6 +2772,79 @@ void rb3_app_check_postproc_noise_map() { // ring: native-real
     _exit(7);
 }
 
+// A55: rb3-app grades through Rock Band 3's own Xbox 360 post chain, not
+// PostProcPass's generic composite. The engine (milo-native-engine
+// rndshape::kRetailPostChain, RndShape_DC3.h) takes RB3's chain only when it
+// sees RndPostProc::GetColorModulation() (PostProc.h HX_NATIVE) in a shape
+// without DC3's chain; without it every frame silently falls back to the
+// generic composite (lane A54: luma 102 vs retail 80, no bloom). Retail
+// band.exe TU5 NgPostProc::DoPost (fn_82B89A08): DoBloom (fn_82B884A0, c6 =
+// bloomColor * BloomIntensity()) then ModulateColorXfm (the 3x3 times
+// mColorModulation +0x12C). Also the depth of field: retail's DOFProc::Init
+// (fn_82466298) New<DOFProc>() resolves to NgDOFProc (registered under the
+// DOFProc name by NgRnd::PreInit), whose Set (fn_82B8BF78) enables it when
+// maxBlur > 0; the engine's DofPass reads that object. The check: the chain is
+// selected and is the default, it fills c6 and the matrix from a post-process,
+// an opaque material writes the bloom mask and an alpha-blended one does not,
+// and DOFProc's factory makes an NgDOFProc that Set enables. The chain must be
+// the one running: MILO_RB3_RETAIL_POST=0 (the generic composite) fails it too.
+#include "gfx/RB3RetailPost.h"
+#include "rndobj/Cam.h"
+#include "rndobj/DOFProc.h"
+#include "rndobj/DOFProc_NG.h"
+#include "rndobj/Mat.h"
+void rb3_app_check_retail_post_chain() { // ring: native-real
+    const bool chain = rndshape::kRetailPostChain;
+    const char *env = getenv("MILO_RB3_RETAIL_POST");
+    const int mode = rndshape::RetailPostMode();
+    RndPostProc *pp = Hmx::Object::New<RndPostProc>();
+    pp->SetProperty("bloom_intensity", DataNode(0.5f));
+    RetailPostParams rp;
+    rndshape::FillRetailPost(pp, 1.0f, rp);
+    const bool c6 = rp.bloom && rp.bloomColor[0] == 0.5f && rp.bloomColor[1] == 0.5f &&
+                    rp.bloomColor[2] == 0.5f && rp.xfm[0][0] == 1.0f && rp.xfm[1][1] == 1.0f &&
+                    rp.xfm[2][2] == 1.0f;
+    RndMat *opaque = Hmx::Object::New<RndMat>();
+    RndMat *blended = Hmx::Object::New<RndMat>();
+    blended->SetBlend(BaseMaterial::kBlendSrcAlpha);
+    const bool maskOpaque = rndshape::AllowsBloomMask(rndshape::Mat(opaque));
+    const bool maskBlended = rndshape::AllowsBloomMask(rndshape::Mat(blended));
+    DOFProc *dof = Hmx::Object::New<DOFProc>();
+    const bool ngDof = dynamic_cast<NgDOFProc *>(dof) != nullptr;
+    RndCam *cam = Hmx::Object::New<RndCam>();
+    dof->Set(cam, 10.0f, 0.5f, 0.75f, 0.0f);
+    const bool dofOn = dof->Enabled();
+    dof->UnSet();
+    const bool dofOff = !dof->Enabled();
+    const bool theNg = !TheDOFProc || dynamic_cast<NgDOFProc *>(TheDOFProc) != nullptr;
+    delete cam;
+    delete dof;
+    delete opaque;
+    delete blended;
+    delete pp;
+    const bool ok = chain && mode == 1 && c6 && maskOpaque && !maskBlended && ngDof &&
+                    dofOn && dofOff && theNg;
+    char what[640];
+    snprintf(what, sizeof what,
+             "retail post chain: RB3 X360 chain selected %d, mode %d (MILO_RB3_RETAIL_POST=%s), "
+             "c6 (%.3f %.3f %.3f) bloom %d, bloom mask opaque %d / src-alpha %d, DOFProc factory "
+             "makes NgDOFProc %d, Set enables %d, UnSet disables %d, TheDOFProc NgDOFProc %d "
+             "(want 1, 1, (0.500 0.500 0.500) 1, 1 / 0, 1, 1, 1, 1: retail NgPostProc::DoPost "
+             "fn_82B89A08 DoBloom fn_82B884A0, NgDOFProc::Set fn_82B8BF78)",
+             (int)chain, mode, env ? env : "unset", rp.bloomColor[0], rp.bloomColor[1],
+             rp.bloomColor[2], (int)rp.bloom, (int)maskOpaque, (int)maskBlended, (int)ngDof,
+             (int)dofOn, (int)dofOff, (int)theNg);
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (retail post chain)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
 // A49: only RndText's glyph pages take the engine's text path. The engine
 // (milo-native-engine platform/MaterialSetup.cpp MeshShadesAsText /
 // MeshDrawsAsGlyph) draws a glyph page with no depth test, no culling, forced

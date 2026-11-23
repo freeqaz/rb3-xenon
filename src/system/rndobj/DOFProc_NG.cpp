@@ -22,6 +22,14 @@ NgDOFProc::NgDOFProc()
     : mEnabled(0), mDepthOfFieldScale(1), mDepthOfFieldBias(0), mFocalPlane(1), mBlurDepth(1), mMinBlur(0),
       mMaxBlur(1) {
     TheRnd.RegisterPostProcessor(this);
+#ifdef HX_NATIVE
+    // The native backend has no pre-process texture: its depth of field
+    // (milo-native-engine gfx/DofPass) owns its own targets and reads this
+    // object's Enabled / FocalPlane / BlurDepth / MaxBlur / MinBlur. DoPost
+    // needs PreProcessTexture() and PreDepthTexture() and so never draws.
+    mBlurTex[0] = mBlurTex[1] = nullptr;
+    return;
+#endif
     MILO_ASSERT(TheNgRnd.PreProcessTexture(), 0x41);
     int w = TheNgRnd.PreProcessTexture()->Width() >> 2;
     int h = TheNgRnd.PreProcessTexture()->Height() >> 2;
@@ -43,14 +51,10 @@ void NgDOFProc::Set(const RndCam *cam, float focalPlane, float blurDepth, float 
     mMaxBlur = Clamp(0.0f, 1.0f, dof.mMaxBlurScale * maxBlur + dof.mMaxBlurOffset);
     mMinBlur = Clamp(0.0f, 1.0f, dof.mMinBlurScale * minBlur + dof.mMinBlurOffset);
 
-#ifndef HX_NATIVE
-    // Retail (0x82B8BF78): a plain assignment, no game-screen test.
+    // Retail (0x82B8BF78): a plain assignment, no game-screen test. Native
+    // too (lane A55): the game-screen-only latch was DC3's, never retail
+    // RB3's, and it could only switch the depth of field on.
     mEnabled = mMaxBlur > 0.0f;
-#else
-    if (mMaxBlur > 0.0f && TheUI->IsGameScreenActive()) {
-        mEnabled = true;
-    }
-#endif
 
     if (mBlurDepth <= 0.001f) {
         mBlurDepth = 0.001f;
