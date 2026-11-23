@@ -32,7 +32,18 @@ BandTrack::BandTrack(Hmx::Object *o)
       unk78(0), mEndgameFeedback(o, 0), unk88(0), unk8c(0), mParent(o, 0),
       mRetractTrig(o, 0), mResetTrig(o, 0), mDeployTrig(o, 0), mStopDeployTrig(o, 0),
       mIntroTrig(o, 0), unkd8(o, 0), unke4(o, 0), unkf0(o, 0), mBeatAnimsGrp(this, 0),
-      mShowOverDriveMeter(1), mShowCrowdMeter(1), mTrackIdx(-1) {}
+      mShowOverDriveMeter(1), mShowCrowdMeter(1), mTrackIdx(-1) {
+#ifdef HX_NATIVE
+    // Retail's ctor (0x8234E308, which this one matches) never stores +0x10; only
+    // SetInstrument does. A track reset before it is assigned (Retract -> Reset)
+    // reads it in SetupPlayerIntro (`0 <= inst < 8` sets the intro's icon and name
+    // label), TrackPanelDirBase::UpdateTrackSpeed and GemTrackDir::TrackReset
+    // (instrument_setup.anim frame). Natively the heap byte pattern decides whether
+    // that unassigned track takes the icon branch (UBSan's invalid-enum site, lane
+    // ubsantri); start it as kInstNone, the unassigned value the source tests for.
+    mTrackInstrument = kInstNone;
+#endif
+}
 
 BEGIN_COPYS(BandTrack)
 END_COPYS
