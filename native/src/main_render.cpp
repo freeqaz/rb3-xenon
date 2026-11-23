@@ -177,6 +177,9 @@ extern DataArray *gSystemConfig;
 // native/src/preclear_select_phase.cpp (A18)
 int RunPreClearSelectPhase(void (*gate)(const char *, bool, const char *));
 
+// A42 probe (MILO_DUMP_RT): engine Tex_Wgpu.cpp writes every live render target to a PNG.
+void DumpGpuRenderTargets(const char *dir, int frame);
+
 namespace {
 
     int gFailures = 0;
@@ -4600,6 +4603,17 @@ namespace {
             }
             d->Draw();
         };
+        // A42 probe: every Character under the venue, with its class, dir and world origin.
+        if (getenv("RB3_A42_CHARS")) {
+            std::vector<Character *> chars = CollectDeep<Character>(dir);
+            for (size_t ci = 0; ci < chars.size(); ci++) {
+                Character *c = chars[ci];
+                const Vector3 &p = c->WorldXfm().v;
+                printf("  [A42] char '%s' class=%s showing=%d dir='%s' at (%.1f %.1f %.1f)\n",
+                       c->Name() ? c->Name() : "?", c->ClassName().Str(), (int)c->Showing(),
+                       c->Dir() ? PathName(c->Dir()) : "-", p.x, p.y, p.z);
+            }
+        }
         if (deep && (reflectionOnly || getenv("RB3_DRAW_REFLECTIONS") != nullptr))
             reflections = CollectDeep<WorldReflection>(dir);
         if (!reflections.empty()) {
@@ -4617,7 +4631,12 @@ namespace {
 
         std::vector<WorldCrowd *> crowds;
         bool drawCrowd = getenv("RB3_NO_CROWD_DRAW") == nullptr;
-        if (drawCrowd && deep) {
+        // A42: the crowd walk runs whether or not the placed crowd is drawn.
+        // RB3_NO_CROWD_DRAW only drops the placed draws (below, `crowds` is
+        // cleared): the archetype exclusion must still run, or the eight
+        // chars.milo archetypes draw at their own default transform, coincident
+        // on the venue origin -- the "black/white blotch" figure on the stage.
+        if (deep) {
             crowds = CollectDeep<WorldCrowd>(dir);
             // ⛔ RETRACTED HYPOTHESIS, kept because the refutation is the
             // useful part. I first wrote this flag as a pure diagnostic on the
@@ -4641,7 +4660,7 @@ namespace {
             // (the `_ps3` names imply a platform/quality selector), but that
             // selector is not ported, so choosing which to show would be MY
             // judgement rather than the asset's. Both frames are in evidence.
-            if (gCrowdShowAll) {
+            if (gCrowdShowAll && drawCrowd) {
                 for (size_t ci = 0; ci < crowds.size(); ci++)
                     crowds[ci]->SetShowing(true);
             }
@@ -4687,6 +4706,12 @@ namespace {
             printf("  crowd archetypes: %d character(s), %d mesh(es) moved out of "
                    "the flat loop\n",
                    (int)gArchetypeMeshes.size(), (int)gArchetypeMeshSet.size());
+            if (!drawCrowd) {
+                printf("  crowd: RB3_NO_CROWD_DRAW -- %d WorldCrowd(s) not drawn; "
+                       "archetypes still excluded from the flat loop\n",
+                       (int)crowds.size());
+                crowds.clear();
+            }
         }
         for (size_t mi = 0; mi < meshes.size(); mi++) {
             RndMesh *m = meshes[mi];
@@ -5322,6 +5347,10 @@ namespace {
             return r;
         }
         Gate("png", true, r.png.c_str());
+        // A42 probe: MILO_DUMP_RT writes every live render target beside the frame.
+        if (getenv("MILO_DUMP_RT")) {
+            ::DumpGpuRenderTargets(outDir, 0);
+        }
 
         r.stats = Analyse(px.data(), w, h);
         {
