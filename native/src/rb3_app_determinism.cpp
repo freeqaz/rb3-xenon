@@ -60,6 +60,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <pthread.h>
+#include <malloc.h>
 #include "math/Rand.h"
 #include "os/ThreadCall.h"
 #include "obj/Task.h"
@@ -108,6 +109,65 @@ void ArmAutoplay() {
         BandUser *u = users[i];
         if (u && u->IsLocal() && !u->mAutoplay) u->SetAutoplay(true);
     }
+}
+
+// RB3_APP_HEAPSNAP (lane leaks, 2026-11-23): a heap snapshot a fixed number of
+// frames after each entry into a named screen. Value "1" means
+// coop_endgame_screen; otherwise one screen name. RB3_APP_HEAPSNAP_DELAY frames
+// (default 100) after the entry it prints `rb3-app-heap: snap K frame N ...`
+// with glibc mallinfo2 and, in an ASan build, the sanitizer's live-heap byte
+// count. RB3_APP_HEAPSNAP_PROFILE=1 adds ASan's live-heap profile (every
+// allocation stack, largest first) and RB3_APP_HEAPSNAP_LSAN=1 a recoverable
+// LeakSanitizer check. rb3-app ends with _exit, so LSan's own at-exit check
+// never runs; this is the only leak check it gets. Independent of
+// RB3_APP_DETERMINISTIC; unset, HeapSnapFrame returns at its first test.
+extern "C" size_t __sanitizer_get_current_allocated_bytes() __attribute__((weak));
+extern "C" void __sanitizer_print_memory_profile(size_t, size_t) __attribute__((weak));
+extern "C" int __lsan_do_recoverable_leak_check() __attribute__((weak));
+
+int gSnapMode = -1; // -1 unread, 0 off, 1 on
+std::string gSnapScreen;
+int gSnapDelay = 100;
+bool gSnapProfile = false, gSnapLsan = false;
+bool gSnapWasIn = false;
+int gSnapAt = -1, gSnapCount = 0;
+
+void HeapSnapFrame(int frame, const char *curName) {
+    if (gSnapMode < 0) {
+        const char *v = getenv("RB3_APP_HEAPSNAP");
+        gSnapMode = v && *v && strcmp(v, "0") != 0;
+        if (!gSnapMode) return;
+        gSnapScreen = strcmp(v, "1") == 0 ? "coop_endgame_screen" : v;
+        const char *d = getenv("RB3_APP_HEAPSNAP_DELAY");
+        if (d && *d) gSnapDelay = atoi(d);
+        const char *pr = getenv("RB3_APP_HEAPSNAP_PROFILE");
+        gSnapProfile = pr && *pr && strcmp(pr, "0") != 0;
+        const char *ls = getenv("RB3_APP_HEAPSNAP_LSAN");
+        gSnapLsan = ls && *ls && strcmp(ls, "0") != 0;
+    }
+    if (!gSnapMode) return;
+    bool in = gSnapScreen == curName;
+    if (in && !gSnapWasIn) gSnapAt = frame + gSnapDelay;
+    gSnapWasIn = in;
+    if (frame != gSnapAt) return;
+    gSnapCount++;
+    struct mallinfo2 mi = mallinfo2();
+    size_t asan = __sanitizer_get_current_allocated_bytes ? __sanitizer_get_current_allocated_bytes() : 0;
+    printf("rb3-app-heap: snap %d frame %d screen %s arena %zu inuse %zu mmap %zu mmapn %zu free %zu "
+           "asan_live %zu\n",
+           gSnapCount, frame, curName, mi.arena, mi.uordblks, mi.hblkhd, mi.hblks, mi.fordblks, asan);
+    fflush(stdout);
+    if (gSnapProfile && __sanitizer_print_memory_profile) {
+        fprintf(stderr, "rb3-app-heap: profile %d begin\n", gSnapCount);
+        __sanitizer_print_memory_profile(100, 1000000);
+        fprintf(stderr, "rb3-app-heap: profile %d end\n", gSnapCount);
+    }
+    if (gSnapLsan && __lsan_do_recoverable_leak_check) {
+        fprintf(stderr, "rb3-app-heap: lsan %d begin\n", gSnapCount);
+        int r = __lsan_do_recoverable_leak_check();
+        fprintf(stderr, "rb3-app-heap: lsan %d end leaks=%d\n", gSnapCount, r);
+    }
+    fflush(stderr);
 }
 
 void AddPerf(uint64_t &h, std::string &out, const Performer *p, bool withStars) {
@@ -211,6 +271,7 @@ void rb3_app_determinism_init() { // ring: native-real
 // Called by the SystemPoll wrapper at the start of frame `frame` (1-based).
 void rb3_app_determinism_frame(int frame) { // ring: native-real
     ArmAutoplay();
+    HeapSnapFrame(frame, Name(TheUI ? TheUI->CurrentScreen() : nullptr));
     if (!gDet) return;
     int64_t start = kBaseNs + (int64_t)frame * kFrameNs;
     if (gVirtNs < start) gVirtNs = start;

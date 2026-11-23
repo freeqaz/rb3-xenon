@@ -57,6 +57,7 @@ WorldDir::WorldDir()
 WorldDir::~WorldDir() {
 #ifdef HX_NATIVE
     RELEASE(mHUDDir);
+    RELEASE(mGlowMat); // retail deletes it too (below); native leaked one RndMat per WorldDir
 #else
     // Retail deletes the HUD dir and the ctor-created glow material, nulling neither.
     delete mHUDDir;
