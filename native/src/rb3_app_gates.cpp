@@ -1699,3 +1699,60 @@ void rb3_app_check_bones_typeprops_replace() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A25: TrackPanel::UpdateReservedVocalSlot must find the vocal slot. Retail
+// fn_82B912A8 walks mTrackSlots at sizeof(TrackSlot) == 8 on X360 (the literal 8
+// in our source); on LP64 the slot is 16 bytes, so the literal stride read
+// half-slots and named the wrong vocal slot, and game_screen's
+// TrackPanelDir::AssignTrack failed ReservedVocalPlayerSlot (0x10A). Here: put
+// kInstVocals in each slot k in turn and in none; the reserved slot must be k,
+// and 4 when no slot sings (fn_82B912A8+0x58). Fails with the literal stride
+// natively (rc 7).
+#include "bandtrack/TrackPanel.h"
+namespace {
+    struct A25TrackPanelPeek : public TrackPanel { // reads protected members via member pointers
+        static std::vector<TrackPanel::TrackSlot> TrackPanel::*Slots() {
+            return &A25TrackPanelPeek::mTrackSlots;
+        }
+    };
+}
+void rb3_app_check_reserved_vocal_slot() { // ring: native-real
+    TrackPanel *saved = TheTrackPanel;
+    TrackPanel *tp = new TrackPanel();
+    std::vector<TrackPanel::TrackSlot> &slots = tp->*A25TrackPanelPeek::Slots();
+    char found[64];
+    int n = 0;
+    bool ok = slots.size() == 5;
+    for (int want = 0; want <= (int)slots.size(); want++) {
+        for (int i = 0; i < (int)slots.size(); i++) {
+            slots[i].mTrack = nullptr;
+            slots[i].mInstrument = i == want ? kInstVocals : kInstGuitar;
+        }
+        tp->UpdateReservedVocalSlot();
+        int got = -1;
+        for (int i = 0; i < (int)slots.size(); i++)
+            if (tp->SlotReservedForVocals(i))
+                got = i;
+        int expect = want < (int)slots.size() ? want : 4;
+        ok = ok && got == expect;
+        n += snprintf(found + n, sizeof found - n, "%s%d", want ? " " : "", got);
+    }
+    for (int i = 0; i < (int)slots.size(); i++)
+        slots[i].mInstrument = kInstNone;
+    char what[384];
+    snprintf(what, sizeof what,
+             "reserved vocal slot: vocals in slot 0..4 then none -> reserved %s "
+             "(want 0 1 2 3 4 4) (retail TrackPanel::UpdateReservedVocalSlot fn_82B912A8)",
+             found);
+    delete tp;
+    TheTrackPanel = saved;
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (reserved vocal slot)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
