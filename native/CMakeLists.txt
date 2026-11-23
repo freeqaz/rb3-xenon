@@ -1093,7 +1093,7 @@ set(MILO_ENGINE_PATH "${_rb3x_milo_default}"
 # repo's native/build was still carrying 40dd2a12 while this file said
 # cb124a75, i.e. the bump had never taken effect in the build directory.
 # dc3-decomp's pin has carried FORCE since 2026-08-19 for the same reason.
-set(MILO_ENGINE_PIN "2dcbb1770238a290ddf5efbfde473e1097f24d9d"
+set(MILO_ENGINE_PIN "25073057a2ea5b0f4a145b22b8858818c5ea93e4"
     CACHE STRING "Engine commit SHA verified against" FORCE)
 
 # Dawn (WebGPU) lives in the shared dc3 deps tree; glfw3 is system-installed.
