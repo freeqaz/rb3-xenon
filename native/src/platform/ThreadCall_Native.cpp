@@ -21,7 +21,10 @@ namespace {
     int gCurCall;
     int gFreeCall;
 
-    void *MyThreadFunc(void *) {
+    // DWORD, as CreateThread's start routine is typed (the retail TU's is
+    // `uint MyThreadFunc(void *)`); a void* return called through the cast
+    // was a mistyped call (UBSan -fsanitize=function, lane sanitize).
+    DWORD MyThreadFunc(void *) {
         WaitForSingleObject(gThreadSema, 0xFFFFFFFF);
         while (!gTerminate) {
             switch (gData[gCurCall].mType) {
@@ -40,7 +43,7 @@ namespace {
             WaitForSingleObject(gThreadSema, 0xFFFFFFFF);
         }
         CloseHandle(gThreadSema);
-        return nullptr;
+        return 0;
     }
 }
 
@@ -75,7 +78,7 @@ void ThreadCallInit() {
     if (!gThreadSema) {
         MILO_LOG("CreateSemaphore() failed.\n");
     } else {
-        gThreadHandle = CreateThread(nullptr, 0x10000, (DWORD (*)(LPVOID))MyThreadFunc, nullptr, 0, nullptr);
+        gThreadHandle = CreateThread(nullptr, 0x10000, MyThreadFunc, nullptr, 0, nullptr);
         if (!gThreadHandle) {
             MILO_LOG("CreateThread() failed.\n");
         }

@@ -44,6 +44,11 @@ TrackWatcherImpl::TrackWatcherImpl(
     // TheUserMgr; this guard is HX_NATIVE-only and the #else is the exact retail
     // line, so preprocessed X360 output is unchanged.
     mIsLocalUser = true;
+    // Retail's ctor (0x82797298) stores 0x68 and 0x70 but never
+    // mButtonMashingMode (0x6c), so the first CheckForCodaLanes compares
+    // against heap garbage there. Natively that is an invalid-bool load
+    // (UBSan: ASan's 0xBE fill); start it false, the value a zeroed heap gives.
+    mButtonMashingMode = false;
 #else
     mIsLocalUser = TheUserMgr->GetUser(mUserGuid, true)->IsLocal();
 #endif

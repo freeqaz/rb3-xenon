@@ -29,13 +29,24 @@ public:
             }
         };
 
+        // Retail's ctor (0x8232DCF8) stores mProxy (0x28) and mPreClear (0x2a)
+        // but not mForceReload (0x29), and operator= does not copy it, so
+        // NeedsLoad reads it unset until SetSelected. Natively both ctors start
+        // it false (UBSan, lane sanitize: an invalid-bool load in NeedsLoad).
         Merger(Hmx::Object *o)
-            : mProxy(0), mPreClear(0),
-              mSubdirs(MergeFilter::kMergeInlinedMoveSharedSubdirs), mDir(o),
-              mLoadedObjects(o), mLoadedSubdirs(o) {}
+            : mProxy(0),
+#ifdef HX_NATIVE
+              mForceReload(0),
+#endif
+              mPreClear(0), mSubdirs(MergeFilter::kMergeInlinedMoveSharedSubdirs),
+              mDir(o), mLoadedObjects(o), mLoadedSubdirs(o) {
+        }
         Merger(const Merger &m)
             : mDir(m.mDir.Owner()), mLoadedObjects(m.mLoadedObjects.Owner()),
               mLoadedSubdirs(m.mLoadedSubdirs.Owner()) {
+#ifdef HX_NATIVE
+            mForceReload = false;
+#endif
             *this = m;
         }
         ~Merger() {}
