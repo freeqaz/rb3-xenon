@@ -348,6 +348,31 @@ std::string ScoreState(uint64_t &h) {
                 h = Fnv(h, hv, sizeof hv);
                 snprintf(buf, sizeof buf, " harm %d pst %d", hv[0], hv[1]);
                 out += buf;
+                static const void *sListed = nullptr;
+                static size_t sListedW = 0;
+                size_t wsz = 0;
+                for (int k = 0; k < np; k++)
+                    if (vp->mVocalParts[k]) wsz += vp->mVocalParts[k]->mNoteWeights.size() + 1;
+                if (sListed != vp || sListedW != wsz) {
+                    // When a VocalPlayer's parts (re)load: each part's note list (notes,
+                    // phrases, phrases holding notes, summed note weight), outside the hash.
+                    sListed = vp;
+                    sListedW = wsz;
+                    for (int k = 0; k < np; k++) {
+                        VocalPart *pt = vp->mVocalParts[k];
+                        if (!pt || !pt->mVocalNoteList) continue;
+                        VocalNoteList *nl = pt->mVocalNoteList;
+                        int full = 0;
+                        for (size_t q = 0; q < nl->mPhrases.size(); q++)
+                            full += nl->mPhrases[q].unk10 != nl->mPhrases[q].unk14;
+                        float w = 0;
+                        for (size_t q = 0; q < pt->mNoteWeights.size(); q++) w += pt->mNoteWeights[q];
+                        printf("rb3-app-det: vocal part %d notes %d phrases %d with-notes %d weights %d "
+                               "sum %.2f\n",
+                               k, (int)nl->mNotes.size(), (int)nl->mPhrases.size(), full,
+                               (int)pt->mNoteWeights.size(), w);
+                    }
+                }
                 for (int k = 0; k < np; k++) {
                     VocalPart *pt = vp->mVocalParts[k];
                     if (!pt) continue;
