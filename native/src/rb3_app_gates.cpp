@@ -2852,6 +2852,62 @@ void rb3_app_check_retail_post_chain() { // ring: native-real
     _exit(7);
 }
 
+// A58: the retail chain keeps the post-process noise. Retail band.exe TU5
+// NgPostProc::CheckNoise (fn_82B89100) noises only when mNoiseIntensity
+// (+0x13C) is non-zero and mNoiseMap (+0x144) is set, and RB3's shipped
+// postprocess.ps (bit 2, sampler 13, c112 / c113) overlays the map between
+// the bloom screen blend and the colour matrix. A55's chain dropped it (the
+// engine's RB3 composite had only the procedural grain A49 refuted), which
+// regressed A49's map noise. The check: the parameters the engine's
+// PostProcPass hands RB3's composite (PostProcPass::FillRB3Chain, the same
+// call Run makes) carry the post-process's map and intensity; the zero-
+// intensity control carries none; and the composite's shipped WGSL samples
+// the map. MILO_RB3_POST_SKIP=32 (the engine's noise inspection skip) or a
+// chain that drops the noise fails it.
+#include "gfx/PostProcPass.h"
+#include "gfx/ShippedWgsl.h"
+void rb3_app_check_retail_post_noise() { // ring: native-real
+    const int mode = rndshape::RetailPostMode();
+    RndPostProc *pp = Hmx::Object::New<RndPostProc>();
+    RndTex *map = Hmx::Object::New<RndTex>();
+    map->SetBitmap(16, 16, 32, RndTex::kRegular, false, "");
+    if (u8 *px = map->Bitmap().Pixels()) {
+        for (int i = 0; i < map->Bitmap().PixelBytes(); i++)
+            px[i] = (u8)(i * 13 + 0x40);
+    }
+    pp->SetProperty("noise_map", DataNode(map));
+    pp->SetProperty("noise_intensity", DataNode(0.375f));
+    PostProcPass pass;  // FillRB3Chain is the CPU half of Run: no Init needed
+    RetailPostParams rp;
+    pass.FillRB3Chain(pp, mode, 1.0f, 720, rp);
+    const bool on = (bool)rp.noiseMap && rp.noiseParams[3] == 0.375f;
+    pp->SetProperty("noise_intensity", DataNode(0.0f));
+    RetailPostParams rp0;
+    pass.FillRB3Chain(pp, mode, 1.0f, 720, rp0);
+    const bool offWithoutIntensity = !rp0.noiseMap;
+    const char *wgsl = RB3RetailPostWgslSource();
+    const bool shaderSamples = wgsl && strstr(wgsl, "textureSample(noiseTex, noiseSamp, baseUv)") &&
+                               strstr(wgsl, "textureSample(noiseTex, noiseSamp, topUv)");
+    delete pp;
+    delete map;
+    const bool ok = mode == 1 && on && offWithoutIntensity && shaderSamples;
+    char what[512];
+    snprintf(what, sizeof what,
+             "retail post chain noise: mode %d, chain takes the map %d (intensity %.3f), none at "
+             "intensity 0 %d, composite samples the map %d (want 1, 1 (0.375), 1, 1: retail "
+             "NgPostProc::CheckNoise fn_82B89100, postprocess.ps bit 2)",
+             mode, (int)on, rp.noiseParams[3], (int)offWithoutIntensity, (int)shaderSamples);
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (retail post chain noise)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
 // A49: only RndText's glyph pages take the engine's text path. The engine
 // (milo-native-engine platform/MaterialSetup.cpp MeshShadesAsText /
 // MeshDrawsAsGlyph) draws a glyph page with no depth test, no culling, forced
