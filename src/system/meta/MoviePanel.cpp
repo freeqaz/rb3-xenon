@@ -206,8 +206,8 @@ void MoviePanel::Poll() {
         return;
     // Retail 0x827B0118 has no early-out for an empty or unopened movie: a movie
     // that is not playing sends movie_done, whose handler moves the flow on
-    // (intro_movie_panel: `{ui goto_screen splash_screen}`). Natively the
-    // MovieImpl never opens, so that is what happens on the first poll.
+    // (intro_movie_panel: `{ui goto_screen splash_screen}`). A movie plays
+    // until Movie::Poll reports its end; one that fails to open ends at once.
     if (!mMovie.Poll() && !TheUI->InTransition()) {
         static Message movie_done("movie_done");
         DataNode handled = HandleType(movie_done);
@@ -255,9 +255,11 @@ lol:
 }
 
 bool MoviePanel::IsLoaded() const {
-#ifdef HX_NATIVE
-    // Native Movie stub's Ready() always returns false — skip the check
-    // so screen transitions don't block forever on video playback.
+#ifdef __EMSCRIPTEN__
+    // Web: WebMovieImpl's Ready() is the <video> element's state, which can
+    // stay false; skip the check so screen transitions don't block on it.
+    // Desktop native keeps the retail test (0x827AF968): its movie is ready
+    // once its loader is done, as retail's is.
     return UIPanel::IsLoaded();
 #endif
     if (!mMovie.Ready()) {

@@ -10,6 +10,7 @@
 #include "moviebink/BinkMovieSys.h"
 extern BinkMovieSys gBinkMovieSys;
 MovieSys &TheMovieSys = gBinkMovieSys;
+BinkMovieSys &TheBinkMovieSys = gBinkMovieSys;
 #endif
 
 MovieSys::MovieSys() : isInitalized(false) {}

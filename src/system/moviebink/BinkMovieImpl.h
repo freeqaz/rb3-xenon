@@ -45,7 +45,7 @@ public:
     virtual bool IsOpen() const;
     virtual bool IsLoading() const;
     virtual bool CheckOpen(bool);
-    virtual bool SetPaused(bool);
+    virtual void SetPaused(bool);
     virtual bool Paused() const;
     virtual void UnlockThread();
     virtual void LockThread();
