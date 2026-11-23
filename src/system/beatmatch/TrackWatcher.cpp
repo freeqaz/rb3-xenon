@@ -47,12 +47,18 @@ TrackWatcherImpl *NewTrackWatcherImpl(
     Symbol watchType = ControllerTypeToTrackWatcherType(cntType);
     TrackType trackType = data->TrackTypeAt(track);
     GameGemList *gemList = data->GetGemList(track);
-#ifdef HX_NATIVE
+#if defined(HX_NATIVE) && !defined(RB3_NATIVE_APP)
     // Native M3b wires only the guitar/bass 5-fret hit-detection impl. The other
     // per-instrument impls (joypad/keyboard/drum-fill/real-guitar) are not
-    // compiled natively, so instantiating them here would fail to link. This
-    // guard is HX_NATIVE-only; the #else below is the exact retail dispatch, so
-    // preprocessed X360 output is unchanged.
+    // compiled into those targets, so instantiating them here would fail to link.
+    // rb3-app (RB3_NATIVE_APP) compiles all of them and takes the retail dispatch
+    // below (0x8279D990 constructs GuitarTrackWatcherImpl 0x827A0FC8,
+    // DrumFillTrackWatcherImpl 0x827A0C70, JoypadTrackWatcherImpl 0x827A0668,
+    // KeyboardTrackWatcherImpl 0x827A04F8 and RealGuitarTrackWatcherImpl
+    // 0x8279F0E0): with this arm a drum, keys or pro part was scored by the guitar
+    // impl, whose Swing drops every non-strum swing outside a solo, so no drum
+    // hit ever counted (lane chartplay). This guard is HX_NATIVE-only; the #else
+    // is the exact retail dispatch, so preprocessed X360 output is unchanged.
     (void)trackType;
     return new GuitarTrackWatcherImpl(track, u, slot, data, gemList, parent, cfg);
 #else
