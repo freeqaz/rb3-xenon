@@ -331,11 +331,10 @@ Synth *CreateNativeSynth() { return new Rb3AppNativeSynth(); } // ring: native-r
 //    marker. A streamed (not preloaded) movie needs no bytes read first.
 //  * CheckOpen (0x82745428): when the loader is done the buffer is kept as
 //    the preload buffer; the streamed arm runs the `videos stream_begin`
-//    script. Then MovieOpen/FinishOpen/SharedFinishOpen: open (here FFmpeg on
-//    the movie's file; retail opens a preloaded movie from the buffer, which
-//    holds the same file's bytes), pause, and unpause when asked (Poll asks,
-//    Save does not). A movie only a cached .milo carries has no file to open
-//    and stays closed, as before.
+//    script. Then MovieOpen/FinishOpen/SharedFinishOpen: open (FFmpeg, as
+//    retail: a preloaded movie from the buffer, BeginFromMemory, so a movie
+//    only a cached .milo carries opens too; a streamed one from its file),
+//    pause, and unpause when asked (Poll asks, Save does not).
 //  * Poll (0x82745628): true while loading; false with no movie; a timed
 //    movie (movie.dta is_timed_movie) is paused while the task manager's
 //    delta is 0; false once Bink's FrameNum reaches Frames with no loop, i.e.
@@ -354,7 +353,8 @@ Synth *CreateNativeSynth() { return new Rb3AppNativeSynth(); } // ring: native-r
 //  * Save (Impl::Save): a cached save writes the preload buffer back.
 // Not modelled: the shared frame buffers of several movies opened together
 // (SharedFinishOpen's refcount, which also mutes all but one), the async
-// decode thread, the BIKi endian swap, and the disc contention report.
+// decode thread, and the disc contention report. The BIKi endian swap is the
+// engine reader's inverse (it unswaps 'iKIB' for FFmpeg; see MovieOpen).
 // Clock: with a sound track on the audio device the picture follows it, as
 // Bink's does. Without one (headless has no audio device, or a silent movie),
 // and always under RB3_APP_DETERMINISTIC, it follows TheTaskMgr's UI clock,
@@ -608,6 +608,8 @@ public:
         }
     }
     // Probes for rb3_app_check_tex_movie (rb3_app_gates.cpp).
+    bool OpenedFromPreload() const { return OpenFromMemory() && MemoryReader()
+            && mPreloadBuf && MemoryReader()->Size() == mPreloadBufLen; }
     const char *PreloadBuf() const { return mPreloadBuf; }
     int PreloadBufLen() const { return mPreloadBufLen; }
 
@@ -619,10 +621,20 @@ private:
             return;
         // FFmpegMovieImpl applies MovieOpen's track rule: a non-zero track
         // selects Bink track (set_bink_track's override, else mTrack) - 1.
-        if (!FFmpegMovieImpl::BeginFromFile(
-                mFilename.c_str(), 0.0f, mNoSound, mLoopMovie, mPreload, mFillWidth, mTrack,
-                nullptr, kLoadFront
-            )) {
+        // CheckOpen (0x82745428) opens a preloaded movie FROM ITS BUFFER,
+        // MovieOpen(mPreloadBuf, 0x4000400) = BINKFROMMEMORY |
+        // BINKNOFRAMEBUFFERS, and a streamed one from its file handle
+        // (0x800400). The buffer may be the only copy: a cached .milo embeds
+        // the movie (splash.tmov in startup_movie_keep). It is freed in End
+        // after the movie is closed, as retail's is. Retail swaps a 'BIKi'
+        // (PC-order) buffer into the 360's word order for its Bink; FFmpeg
+        // reads the PC order, and the engine's reader unswaps an 'iKIB' one.
+        bool opened = mPreloadBuf
+            ? FFmpegMovieImpl::BeginFromMemory(mPreloadBuf, mPreloadBufLen, mFilename.c_str(),
+                                               mNoSound, mLoopMovie, mTrack)
+            : FFmpegMovieImpl::BeginFromFile(mFilename.c_str(), 0.0f, mNoSound, mLoopMovie,
+                                             mPreload, mFillWidth, mTrack, nullptr, kLoadFront);
+        if (!opened) {
             MILO_WARN("BinkOpen '%s' error: %s\n", mFilename.c_str(), "FFmpeg open failed");
             return;
         }
@@ -690,6 +702,13 @@ private:
     float mDetLast;
     bool mEndLogged;
 };
+
+bool Rb3AppMoviesPlay() { return !Rb3AppMoviesOff(); } // ring: native-real
+
+bool Rb3AppMovieOpenedFromPreload(MovieImpl *impl) { // ring: native-real
+    Rb3AppMovieImpl *m = dynamic_cast<Rb3AppMovieImpl *>(impl);
+    return m && m->OpenedFromPreload();
+}
 
 const char *Rb3AppMoviePreload(MovieImpl *impl, int *len) { // ring: native-real
     Rb3AppMovieImpl *m = dynamic_cast<Rb3AppMovieImpl *>(impl);

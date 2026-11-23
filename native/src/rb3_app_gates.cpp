@@ -780,9 +780,14 @@ void rb3_app_check_ui_sink() { // ring: native-real
 // (UNREACHED abort at TexMovie::TexMovie, the a6-failing-tu stop) and when the
 // movie is a base MovieImpl (MILO_FAIL: cached load not implemented).
 #include "movie/TexMovie.h"
+#include "obj/Task.h"
+#include "platform/FFmpegMovieImpl.h"
+#include <vector>
 #include "obj/Dir.h"
 #include "obj/DirLoader.h"
 const char *Rb3AppMoviePreload(MovieImpl *impl, int *len); // rb3_app_native_glue.cpp
+bool Rb3AppMovieOpenedFromPreload(MovieImpl *impl);        // rb3_app_native_glue.cpp
+bool Rb3AppMoviesPlay();                                   // rb3_app_native_glue.cpp
 void NativeStreamAuditBegin(); // obj/DirLoader.cpp: each object must end on its 0xADDEADDE
 int NativeStreamAuditObjects();
 int NativeStreamAuditAnomalies();
@@ -795,26 +800,67 @@ void rb3_app_check_tex_movie() { // ring: native-real
     TexMovie *tm = dir ? dir->Find<TexMovie>("splash.tmov", false) : nullptr;
     int len = 0;
     const char *buf = nullptr;
-    bool open = true, polled = true;
+    bool open = true, polled = true, fromMem = false;
+    int frames = 0, frame0 = -1, frame1 = -1, w = 0, h = 0;
+    long changed = 0;
     if (tm) {
         for (int i = 0; i < 1000 && tm->GetMovie().CheckOpen(false); i++)
             TheLoadMgr.Poll();
         buf = Rb3AppMoviePreload(tm->GetMovie().GetImpl(), &len);
         open = tm->IsOpen();
+        fromMem = Rb3AppMovieOpenedFromPreload(tm->GetMovie().GetImpl());
+        frames = tm->GetMovie().NumFrames();
         polled = tm->GetMovie().Poll();
+        // The picture moves. Shown, as Splash::Show shows it (SetShowing,
+        // then TexMovie::Poll unpauses and polls the movie), at two times
+        // 2 s apart on the UI clock, which the movie follows here (no audio
+        // device, or a deterministic run). The clock is put back after.
+        FFmpegMovieImpl *ff = dynamic_cast<FFmpegMovieImpl *>(tm->GetMovie().GetImpl());
+        if (ff && open && ff->GetDecodedWidth() > 0) {
+            float ui = TheTaskMgr.UISeconds();
+            tm->SetShowing(true);
+            TheTaskMgr.SetUISeconds(ui + 0.5f, false);
+            tm->Poll();
+            size_t n = (size_t)ff->GetDecodedWidth() * ff->GetDecodedHeight() * 4;
+            std::vector<unsigned char> first(ff->GetRGBABuffer(), ff->GetRGBABuffer() + n);
+            frame0 = tm->GetMovie().GetFrame();
+            TheTaskMgr.SetUISeconds(ui + 2.5f, false);
+            tm->Poll();
+            frame1 = tm->GetMovie().GetFrame();
+            for (size_t i = 0; i < n; i++)
+                changed += first[i] != ff->GetRGBABuffer()[i];
+            w = ff->GetDecodedWidth();
+            h = ff->GetDecodedHeight();
+            TheTaskMgr.SetUISeconds(ui, false);
+        }
     }
     bool tag = buf && len >= 4 && (!memcmp(buf, "iKIB", 4) || !memcmp(buf, "BIKi", 4));
-    char what[512];
+    // Retail CheckOpen (0x82745428) opens the preload buffer itself,
+    // MovieOpen(mPreloadBuf, BINKFROMMEMORY | BINKNOFRAMEBUFFERS): with movies
+    // on, the embedded startup.bik must be open from that buffer, have frames,
+    // and poll as playing. With movies off (BinkOpen modelled as failing) it
+    // must stay closed and poll as done.
+    bool play = Rb3AppMoviesPlay();
+    bool movieOk = play ? (open && fromMem && frames > 0 && polled && frame1 > frame0
+                           && changed > 0)
+                        : (!open && !fromMem && !polled);
+    char moved[160] = "";
+    if (play)
+        snprintf(moved, sizeof moved, ", %dx%d picture: frame %d -> %d over 2 s of UI "
+                 "clock (TexMovie::Poll), %ld RGBA bytes changed", w, h, frame0, frame1, changed);
+    char what[800];
     snprintf(what, sizeof what,
              "TexMovie: %s dir %s (%d objects, %d off their marker), splash.tmov %s, file %s, "
-             "preloaded %d bytes (tag %s), "
-             "open %d, poll %d (retail Begin 0x82745D90 reads the embedded movie, "
-             "BinkOpen fails natively; want 0 off marker, a TexMovie, a tagged buffer, open 0, "
-             "poll 0)",
+             "preloaded %d bytes (tag %s), movies %s: open %d, from the preload buffer %d, "
+             "%d frames, poll %d%s (retail Begin 0x82745D90 reads the embedded movie, CheckOpen "
+             "0x82745428 opens it from memory; want 0 off marker, a TexMovie, a tagged buffer, "
+             "and %s)",
              path, dir ? "loaded" : "NOT loaded", objs, bad, tm ? "found" : "MISSING",
              tm ? (tm->IsEmpty() ? "empty" : "set") : "-", len, tag ? "Bink" : "none",
-             open, polled);
-    if (dir && objs > 0 && bad == 0 && tm && !tm->IsEmpty() && tag && !open && !polled) {
+             play ? "on" : "off", open, fromMem, frames, polled, moved,
+             play ? "open 1 from memory, frames > 0, poll 1, the picture changes"
+                  : "open 0, poll 0");
+    if (dir && objs > 0 && bad == 0 && tm && !tm->IsEmpty() && tag && movieOk) {
         rb3_app_gate(what);
         delete dir;
         return;
