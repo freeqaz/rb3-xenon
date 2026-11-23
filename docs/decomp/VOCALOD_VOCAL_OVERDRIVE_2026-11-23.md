@@ -75,7 +75,12 @@ unchanged (no deploy, so no multiplier change); no new FAIL.
 |---|---|---|---|---|
 | A2 (scorewalk) | bin-fix2 | 60,325 | none: 0.0000 throughout | 23,600 (31/31) / 32,400 (40/40) |
 | O1 | bin-od1 | 36,570 | 2116: .251, 2613: .502, 3477: .753, 3802: 1.0; reset 8941; 10039: .251, 10490: .502, 10917: .753, 11806: 1.0 | 23,600 (31/31) / 32,400 (40/40) |
-| O2 | bin-od1 | O2_FRAMES | O2_ENERGY | O2_SCORE |
+| O2 | bin-od1 | 51,171 | same 10 change frames and values as O1 | 23,600 (31/31) / 32,400 (40/40) |
+
+**O2 = O1: IDENTICAL over all 36,570 common frames** (full record, `state`/`chain` included;
+last common line `frame 36570 state eb844210 chain f8ac5d1f96f8f495`). Against A2, O2 diverges on
+the same frames as O1 (full record 2116; `beat` only at 14229; `rand` from 17628), 0 FAIL lines.
+A2 = B2 (scorewalk) and O1 = O2, so every A2/O1 difference comes from the binary change.
 
 - **The step is the configured award.** 0.2510 each, which is `scoring.dta`
   `(spotlight_phrase 0.251)` (read in the Deluxe ark copy's `config/scoring.dta:983`),
