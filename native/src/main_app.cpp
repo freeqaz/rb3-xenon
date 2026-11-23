@@ -135,6 +135,10 @@ void SetGameGlyphAtlasesKeepRGB(bool keepRGB); // milo-native-engine platform/Me
 extern "C" void rb3_app_gate(const char *step);
 void rb3_app_determinism_init(); // rb3_app_determinism.cpp (RB3_APP_DETERMINISTIC)
 void rb3_app_determinism_frame(int frame); // rb3_app_determinism.cpp
+int RB3AppHz(); // rb3_app_determinism.cpp (RB3_APP_HZ; 0 = legacy)
+bool RB3AppDeterministic(); // rb3_app_determinism.cpp
+void TaskMgrSetHeadlessFixedStep(bool on); // obj/Task.cpp (HX_NATIVE)
+void UIManagerSetHeadlessFixedStep(bool on); // ui/UI.cpp (HX_NATIVE)
 
 namespace {
 int gFramesStarted = 0; // SystemPoll calls since App::Run (frame N starts at call N)
@@ -144,6 +148,38 @@ bool gInRun = false;
 timespec gRunStart;
 const UIScreen *gLastScreen = nullptr;
 bool gLastTransition = false;
+
+// Frame pacing (lane framerate, 2026-11-23). Retail's loop runs at most one frame per
+// 60 Hz refresh (DxRnd::Present waits for D3DRS_PRESENTINTERVAL 1; see RB3AppHz). A
+// normal rb3-app launch is headless and had no pacer, so it ran as fast as it could
+// (~170-700 frames a second on the dev box), and every per-frame count in the game
+// (tilt filter, UI select delay) passed that many times faster. PaceFrame holds each
+// frame start to the next 1/RB3AppHz() s boundary since App::Run. A frame that overran
+// waits for the boundary after it, as a missed vblank does on the console (no catch-up
+// burst). A deterministic walk does not sleep: its virtual clock already steps 1/hz s.
+timespec gPaceNext; // next frame boundary (CLOCK_MONOTONIC)
+bool gPaceArmed = false;
+
+void PaceFrame() {
+    int hz = RB3AppHz();
+    if (hz <= 0 || RB3AppDeterministic()) return;
+    const long period = 1000000000L / hz;
+    timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+    if (!gPaceArmed) {
+        gPaceNext = now;
+        gPaceArmed = true;
+        return;
+    }
+    auto ns = [](const timespec &t) { return (long long)t.tv_sec * 1000000000LL + t.tv_nsec; };
+    long long next = ns(gPaceNext) + period;
+    if (ns(now) > next) // overran: wait for the next boundary on the same grid
+        next += ((ns(now) - next) / period + 1) * period;
+    gPaceNext.tv_sec = next / 1000000000LL;
+    gPaceNext.tv_nsec = next % 1000000000LL;
+    while (clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &gPaceNext, nullptr) != 0) {
+    }
+}
 
 double SecondsSinceRun() {
     timespec now;
@@ -523,6 +559,7 @@ extern "C" void __wrap__Z10SystemPollb(bool b) { // ring: native-real
         int framesDone = gFramesStarted; // every earlier frame ran to its DrawRegular
         if (framesDone >= gFrameCap) Finish(framesDone, "", 0);
         if (SecondsSinceRun() >= gSecondsCap) Finish(framesDone, " (wall-clock cap)", 4);
+        PaceFrame();
         ++gFramesStarted;
         rb3_app_determinism_frame(gFramesStarted);
         UIScreen *cur = TheUI ? TheUI->CurrentScreen() : nullptr;
@@ -553,6 +590,17 @@ int main(int argc, char **argv) {
         return 2;
     }
     setenv("MILO_HEADLESS", "1", 0);
+    // Lane framerate: the clock source, chosen once. At a real frame rate (RB3AppHz() > 0)
+    // TaskMgr::Poll and UIManager::Poll read their Timers as retail does (natively steady_clock, which a
+    // deterministic walk makes the 1/hz-per-frame virtual clock) instead of MILO_HEADLESS's
+    // fixed +1/30 s per poll, which equals time only at 30 frames a second. Chosen before
+    // App::App because TaskMgr::Poll first runs inside it (Splash::Draw). MILO_HEADLESS
+    // itself stays set (the engine's window and audio read it). Legacy: not called, so
+    // Task.cpp and UI.cpp read MILO_HEADLESS at their first poll as before.
+    if (RB3AppHz() > 0) {
+        TaskMgrSetHeadlessFixedStep(false);
+        UIManagerSetHeadlessFixedStep(false);
+    }
     printf("rb3-app: data %s\n", data);
     rb3_app_gate("main.chdir");
     // argv for App: the program name plus everything after the data dir.

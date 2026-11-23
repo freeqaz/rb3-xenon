@@ -18,7 +18,8 @@
 //      load budget and UIManager's timer. -Wl,--wrap of steady_clock::now
 //      routes every call in the link here. On the main thread it returns a
 //      virtual clock: frame N starts at kBaseNs + N * kFrameNs (1/30 s, the
-//      step headless TaskMgr::Poll and UIManager::Poll already use), and each
+//      step headless TaskMgr::Poll and UIManager::Poll already use; since lane
+//      framerate 1/60 s, retail's rate, see RB3AppHz), and each
 //      call advances it by kTickNs (1 us, __mftb's resolution) so a loop that
 //      waits on a timer still ends. A frame that consumes more than kFrameNs
 //      of ticks pushes the next frame's start later (the clock never goes
@@ -98,9 +99,59 @@
 
 int RB3AppExtraPadCount(); // rb3_app_joypad.cpp (RB3_APP_EXTRA_PADS)
 
+// The loop's frame rate (lane framerate, 2026-11-23). Retail paces App::RunWithoutDebugging
+// with the GPU: system default.dta `(rnd (sync 1))` (no TU5 dtb overrides it or sends
+// `set_sync`), Rnd::PreInit reads it and DxRnd::SetSync (0x8273B108) sets
+// D3DRS_PRESENTINTERVAL 1, and DxRnd::Present (0x82739830) waits for that interval before
+// each swap: one frame per 60 Hz refresh at most. JoypadPoll runs once per frame
+// (SystemPoll 0x82510270), so every per-poll count in the game (the tilt filter's
+// `num_frames 12`, UIComponent's `select_frames 15`) is a count of 60 Hz frames.
+// Decided once, at the first call (main's first line), and printed:
+//   RB3_APP_HZ=N        N frames a second (N > 0): a deterministic walk's virtual frame
+//                       is 1/N s, a normal launch sleeps to N frames a second
+//                       (main_app.cpp), and the UI / task clocks read their Timers.
+//   RB3_APP_HZ=legacy   (or 0) the loop as it was before this lane: virtual frame 1/30 s,
+//                       unpaced, MILO_HEADLESS fixed-step UI and task clocks. Returns 0.
+//   unset, a harness run (MILO_INPUT_SCRIPT, RB3_APP_DETERMINISTIC or
+//                       RB3_APP_JOYPAD_GATE set): legacy, so walks written in 30 Hz
+//                       frames keep their frame indices and det baselines.
+//   unset, otherwise (a normal launch): 60, retail's rate.
+// The intended end state is 60 for harness runs too, once the walk suites have migrated.
+int RB3AppHz() { // ring: native-real
+    static int hz = -1;
+    if (hz < 0) {
+        const char *e = getenv("RB3_APP_HZ");
+        const char *why;
+        if (e && *e) {
+            hz = !strcmp(e, "legacy") || atoi(e) < 0 ? 0 : atoi(e);
+            why = "RB3_APP_HZ";
+        } else {
+            auto set = [](const char *n) {
+                const char *v = getenv(n);
+                return v && *v && strcmp(v, "0") != 0;
+            };
+            const char *s = getenv("MILO_INPUT_SCRIPT");
+            bool harness = (s && *s) || set("RB3_APP_DETERMINISTIC") || set("RB3_APP_JOYPAD_GATE");
+            hz = harness ? 0 : 60;
+            why = harness ? "harness default (MILO_INPUT_SCRIPT, RB3_APP_DETERMINISTIC or "
+                            "RB3_APP_JOYPAD_GATE set; RB3_APP_HZ=60 runs retail's rate)"
+                          : "default: retail's rnd sync 1, one frame per 60 Hz vsync";
+        }
+        if (hz > 0)
+            printf("rb3-app: frame rate %d Hz, UI/task clocks from Timer (%s)\n", hz, why);
+        else
+            printf("rb3-app: frame rate legacy 30 Hz, fixed-step UI/task clocks (%s)\n", why);
+        fflush(stdout);
+    }
+    return hz;
+}
+bool RB3AppDeterministic(); // below
+
 namespace {
 const int64_t kBaseNs = 1000000000000LL; // 1000 s: __mftb's 32-bit us counter stays far from wrap
-const int64_t kFrameNs = 33333333; // 1/30 s
+// One virtual frame: 1 / RB3AppHz() s (lane framerate: 1/60 s, retail's vsync rate, by
+// default; 1/30 s under RB3_APP_HZ=legacy, the pre-framerate step).
+int64_t kFrameNs = 33333333;
 const int64_t kTickNs = 1000; // 1 us per main-thread clock read
 
 bool gDet = false;
@@ -512,10 +563,13 @@ std::string BandState(uint64_t &h) {
 }
 } // namespace
 
+bool RB3AppDeterministic() { return gDet; } // ring: native-real
+
 // Called first thing in main(), before App::App (SystemInit seeds the RNG).
 void rb3_app_determinism_init() { // ring: native-real
     const char *v = getenv("RB3_APP_DETERMINISTIC");
     gDet = v && *v && strcmp(v, "0") != 0;
+    if (RB3AppHz() > 0) kFrameNs = 1000000000LL / RB3AppHz();
     const char *a = getenv("RB3_APP_AUTOPLAY");
     gAutoplay = a && *a && strcmp(a, "0") != 0;
     if (gAutoplay) {
@@ -551,8 +605,23 @@ void rb3_app_determinism_frame(int frame) { // ring: native-real
     AutoDeploy(frame);
     HeapSnapFrame(frame, Name(TheUI ? TheUI->CurrentScreen() : nullptr));
     if (!gDet) return;
-    int64_t start = kBaseNs + (int64_t)frame * kFrameNs;
-    if (gVirtNs < start) gVirtNs = start;
+    if (RB3AppHz() > 0) {
+        // Lane framerate: frame N starts one frame after frame N-1, or, when frame N-1's
+        // clock reads ran past that, at the next 1/hz boundary after them -- the vsync
+        // schedule (a frame that misses a refresh presents at the next one). The legacy
+        // absolute grid (below) made a long frame (a load's clock reads at 1 us each)
+        // freeze the clock for every following frame until the grid caught up: 570
+        // frames at 44 us each on the calibration screen's load, which the fixed-step
+        // UI clock had hidden.
+        static int64_t prevStart = kBaseNs;
+        int64_t start = prevStart + kFrameNs;
+        if (gVirtNs > start) start += ((gVirtNs - start) / kFrameNs + 1) * kFrameNs;
+        prevStart = start;
+        gVirtNs = start;
+    } else {
+        int64_t start = kBaseNs + (int64_t)frame * kFrameNs;
+        if (gVirtNs < start) gVirtNs = start;
+    }
     UIScreen *cur = TheUI ? TheUI->CurrentScreen() : nullptr;
     bool tr = TheUI && TheUI->InTransition();
     const char *curName = Name(cur);
