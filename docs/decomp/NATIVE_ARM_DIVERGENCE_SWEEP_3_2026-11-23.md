@@ -101,10 +101,13 @@ Prediction: Δ0 on every ruler. Both edits delete text the X360 preprocessor nev
   neither touched file, `rb3-app` is linked but not run by the gate, and `rb3-render` needs
   the sanctioned GPU overlay that `no610m.sh` lacks (sweep 2 record). The native health
   selftest was not run (lane brief).
-- **X360 A/B: PENDING at the lane's budget cap.** `python3 tools/ab_measure.py --worktree
-  ~/tmp/wt-narms3 --revert HEAD --label narms3-c1` (PID 1077486, started 00:35, log
-  `~/tmp/narms3/ab1.log`, written only at exit because stdout is buffered) was still in its
-  obj-patcher phase at 01:32 under a box load average of 75-100, with a second lane's
-  ab_measure running alongside. Read it with `tail -40 ~/tmp/narms3/ab1.log`: the run ends
-  in an `rc=` line; any rc other than 0 means the tool refused and printed no numbers.
-  Expected Δ0 on `name_check` and on `none`.
+- **X360 A/B (src commit `ecf23896c`):** `python3 tools/ab_measure.py --worktree
+  ~/tmp/wt-narms3 --revert HEAD --label narms3-c1`, rc 0, shipped `name_check` ruler plus the
+  `none` control leg, objdiff sha256 `ec3badc0f33323e9`. Both legs: matched=55268,
+  masked_equal=25360, honest=29908, code%=59.665310; `none` leg matched=55322,
+  code%=60.032020 on both; Δfuzzy +0.000000pp (64.709015 on both); units at 100% 635→635
+  (mpn) and 548→548 (all-rows-fuzzy); split=0. **Δ0, as predicted.** Leg B recompiled 2,511
+  objects over 3 settle iterations for a 2-file patch. That is a wide recompile for this
+  patch (a second lane's ab_measure was running on the box at the same time); the tool
+  discards every pre-quiescent reading, so the Δ stands. The run took 01:35 wall clock under
+  a load average of 75-100.
