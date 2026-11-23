@@ -1149,7 +1149,11 @@ Rnd::CompressTexDesc::~CompressTexDesc() {
 
 // Retail (0x82415B68) allocates the request and queues it; it does not walk the
 // queue for a duplicate first. Native keeps the duplicate notify.
+#ifdef HX_NATIVE
+intptr_t Rnd::CompressTexture(
+#else
 int Rnd::CompressTexture(
+#endif
     RndTex *tex, RndTex::AlphaCompress a, CompressTextureCallback *cb
 ) {
 #ifdef HX_NATIVE
@@ -1162,7 +1166,13 @@ int Rnd::CompressTexture(
 #endif
     CompressTexDesc *desc = new CompressTexDesc(tex, a, cb);
     mCompressTexQueue.push_back(desc);
+#ifdef HX_NATIVE
+    // Retail fn_82415B68 +0x070 returns the request (`mr r3, r30`); its
+    // destructor calls back with the same address. Keep all 64 bits (A35).
+    return (intptr_t)desc;
+#else
     return (int)desc;
+#endif
 }
 
 // Retail 0x82412A58 (called from ~BandCharacter): every queued request that
@@ -1415,87 +1425,102 @@ void Rnd::DrawPreClear() {
             SetEvent(gRndTextureEvent);
         }
     }
+#else
+    // A35: natively nothing serviced mCompressTexQueue, so a queued request was
+    // never destroyed and its callback never ran. BandCharacter::Compress queues
+    // one per composed outfit texture while its FileMerger loads async, and
+    // BandCharacter::IsLoading is true while any is outstanding, so once
+    // OutfitConfig::DrawPreClear ran (retail's list select, above) every band
+    // stayed loading and game_screen never finished loading (BandWardrobe::
+    // AllCharsLoaded false forever, ReadyForMidiParsers 0).
+    //
+    // Retail fn_824158B8 runs one request at a time on CompressThread: when it
+    // is done (+0x030..+0x038, sCompressDone) the front request is erased and
+    // destroyed (+0x0A0 erase, +0x0A8 bl fn_824118D8, the CompressTexDesc dtor
+    // that calls TextureCompressed(this) at +0x02C..+0x040); then, idle, it drops
+    // requests whose texture is gone or whose callback was cancelled
+    // (+0x10C..+0x124: desc+0x8 tex, desc+0x10 callback; destroyed through the
+    // same dtor at +0x150, so a request whose texture died still retires its
+    // ID, and only a cancelled one stays silent) and starts the front one.
+    // Native has no DXT path for a GPU render target: RndTex::Compress is the
+    // no-op that BandCharacter::Compress's synchronous arm already calls. So
+    // the same prune runs here and the front request is completed synchronously,
+    // one per call, as retail retires at most one per pass.
+    if (!mCompressTexQueue.empty()) {
+        std::list<CompressTexDesc *>::iterator it = mCompressTexQueue.begin();
+        while (it != mCompressTexQueue.end()) {
+            CompressTexDesc *desc = *it;
+            if (desc->tex && desc->callback) {
+                ++it;
+            } else {
+                it = mCompressTexQueue.erase(it);
+                delete desc;
+            }
+        }
+        if (!mCompressTexQueue.empty()) {
+            CompressTexDesc *first = mCompressTexQueue.front();
+            mCompressTexQueue.pop_front();
+            first->tex->Compress((RndTex::AlphaCompress)first->alpha);
+            delete first;
+        }
+    }
 #endif // !HX_NATIVE
     ObjPtrList<RndDrawable> *drawList;
-#ifndef HX_NATIVE
-    // Retail selects mPreClearDraws when mReleaseImmediate is set (lwz/lbz at
-    // 0x150, then 0x128 vs 0x13c), the polarity the X21 note below derived.
+    // Retail fn_824158B8 (band.exe TU5; the select at +0x1E0..+0x1F0,
+    // 0x82415A98..0x82415AA8): lbz r11, 0x150(r26) (mReleaseImmediate), addi
+    // r11, r26, 0x128 (mPreClearDraws), bne keeps it, else addi r11, r26, 0x13c
+    // (mDraws). So mReleaseImmediate picks mPreClearDraws and a normal frame
+    // dispatches mDraws. Both builds run this one line.
     drawList = mReleaseImmediate ? &mPreClearDraws : &mDraws;
-#else
-    drawList = mReleaseImmediate ? &mDraws : &mPreClearDraws;
-#endif
 #ifdef HX_NATIVE
-    // ★ X21 — THE PRE-CLEAR LIST SELECTION WAS INVERTED,
-    // AND THAT IS WHY THE OUTFIT COMPOSE PASS NEVER RUNS.
+    // A18: native used to run the opposite arm,
+    //     drawList = mReleaseImmediate ? &mDraws : &mPreClearDraws;
+    // with retail's polarity opt-in behind RB3_X21_PRECLEAR_POLARITY_FIX.
     //
-    //   correct (rndobj/Rnd.cpp, original member names):
-    //       drawList = unk130 ? &unk110 : &mDraws;
-    //   here:
-    //       drawList = mReleaseImmediate ? &mDraws : &mPreClearDraws;
-    //
-    // The member correspondence is exact, by offset and by order: Wii's
-    // unk110@0x110 / mDraws@0x120 / unk130@0x130 are this class's
-    // mPreClearDraws@0x128 / mDraws@0x13c / mReleaseImmediate@0x150 — first
-    // list, second list, and the bool immediately after the second list. So the
-    // two ARMS ARE SWAPPED, not the members renamed.
-    //
-    // It matters because BOTH builds register the same way:
-    // Rnd::PreClearDrawAddOrRemove is `b3 ? mPreClearDraws : mDraws` in this
-    // tree AND `b3 ? unk110 : mDraws` by original names, and OutfitConfig::
-    // UpdatePreClearState (bandobj/OutfitConfig.cpp:865)
-    // calls it with b3=FALSE — i.e. every OutfitConfig lands in
-    // mDraws. With mReleaseImmediate false (its value all frame: only
-    // movie/Splash.cpp:190,252 ever writes it, for the boot splash) the
-    // inverted expression reads mPreClearDraws, so the 40 registered
-    // OutfitConfigs are never dispatched and nothing ever paints the
-    // *_diffuse_output render targets.
-    //
-    // MEASURED before this fix, in the same run and from the same env
-    // predicate that emitted 734 other trace lines (so the zeros are absences,
-    // not a dead instrument):
-    //     [X21] Rnd::DrawPreClear ENTER releaseImmediate=0
-    //           mPreClearDraws=0 mDraws=40 listUsed=0
-    //     OutfitConfig::DrawPreClear  -> 0 calls
-    //     OutfitConfig::MatSwap::Compose -> 0 calls
-    //
-    // ⚠ THIS FUNCTION CANNOT BE SCORED. `?DrawPreClear@Rnd@@MAAXXZ` has
-    // target_size=0 in objdiff, has no ICF alias, and the string does not occur
-    // anywhere under build/45410914/asm — there is no X360 target body to diff
-    // against. So the correction is asserted from the original drawList form plus the
-    // offset correspondence above, NOT from a match measurement, and it is
-    // confined to HX_NATIVE: the X360 arm above is left byte-identical and this
-    // change's blast radius on the scored build is zero by construction.
-    // A scored lane should revisit the retail arm if a target body ever appears.
-    //
-    // ⛔ OPT-IN, NOT DEFAULT-ON — DELIBERATELY, AND THIS IS THE LANE'S SECOND
-    // FINDING. The house rule makes native render fixes default-ON once ON-vs-OFF
-    // evidence exists. The evidence exists and it says DO NOT SHIP THIS ALONE.
-    //
-    // With the corrected polarity the dispatch is demonstrably repaired:
-    //     listUsed 0 -> 40, OutfitConfig::DrawPreClear 0 -> 40 calls,
-    //     MatSwap::Compose 0 -> 44 calls
-    // and then the FRAME DIES. The composite opens render-target passes that the
-    // dc3 GPU backend cannot host at this point in the frame:
+    // WHY IT WAS FLIPPED. Not to make up for registration: registration is
+    // the same in both builds. PreClearDrawAddOrRemove (retail fn_82415C10,
+    // band.exe TU5) is `b3 ? 0x128 : 0x13c`, and its callers pass
+    // b3 = false (OutfitConfig::UpdatePreClearState, TexRenderer, TexProc,
+    // StreamRenderer: all land in mDraws) or b3 = GetReleaseImmediate()
+    // (TexMovie). The inverted arm was a decompilation error. X21 (2026-08-03)
+    // found it and left the fix opt-in because, with it on, the 40
+    // OutfitConfigs of a placed band dispatched MatSwap::Compose, which on the
+    // dc3 backend opened a render-target pass inside "MainPassResume":
     //     WebGPU error: Recording in [CommandEncoder "FrameEncoder"] which is
     //     locked while [RenderPassEncoder "MainPassResume"] is open
-    //     -> [FAIL] image-not-empty — coverage 0.00%, 1 distinct colour
-    // A black frame is a regression against a venue that currently renders, and
-    // "a crash is not a frame" (X7). So the correction stays reachable for the
-    // lane that fixes the backend, and stays OFF until then.
+    // and that frame came out black (docs/plans/x21-compose-path-2026-08-03.md
+    // section 4).
     //
-    // The downstream half is an ENGINE change and is filed as such — see
-    // docs/plans/x21-compose-path-2026-08-03.md §"Engine change request".
-    // Short form: rb3-xenon builds MILO_ENGINE_GPU_BACKEND=dc3, whose DrawRect
-    // path (engine src/gfx/DrawRect2D.cpp) has no colorMod awareness, drops
-    // mat->GetColor() entirely, has no 2-texture interp pass and no pipeline
-    // cache — so even once dispatched it cannot perform the composite. The
-    // working implementation lives in the engine's `rb3` flavor only
-    // (src/platform/RB3Quad.cpp:366-459), which this build does not link.
-    {
-        static int on = -1;
-        if (on < 0) on = getenv("RB3_X21_PRECLEAR_POLARITY_FIX") ? 1 : 0;
-        if (on) drawList = mReleaseImmediate ? &mPreClearDraws : &mDraws;
-    }
+    // WHY THAT IS NOT A REASON TO KEEP IT. The inverted arm did not skip the
+    // compose alone. It skipped the pre-clear draw of every mDraws entry
+    // (every TexRenderer, TexProc, StreamRenderer and OutfitConfig) on every
+    // normal frame, and during the splash it dispatched mDraws instead of the
+    // TexMovies in mPreClearDraws. A backend that cannot host a compose pass
+    // gets fixed in the backend, not by never calling the drawables.
+    //
+    // MEASURED, A18 (2026-11-22; base 26cadc5ed, engine 6b34583, RTX 3090):
+    // the old binary with RB3_X21_PRECLEAR_POLARITY_FIX=1 against without it,
+    // on the 11 default rb3-render cells and on small_club_01, gave 0
+    // differing frames and no WebGPU error. No OutfitConfig registers in
+    // those cells (OutfitConfig::DrawPreClear: 0 calls either way). The
+    // placed-band path (RB3_BAND_PLACE=1) crashes, rc=139, before its first
+    // frame with either polarity, so X21's black frame is not reachable from
+    // rb3-render today.
+    //
+    // rb3-app is where the OutfitConfigs register. A18 (2026-11-22) found that
+    // with this arm the a16 menu walk crashed as the band characters loaded at
+    // main_hub -> meta_loading_main (free(): invalid pointer; SIGSEGV;
+    // CharLipSync::PlayBack::Set) in 3 of 4 runs. A35 (2026-11-23, base
+    // 2a91559e0) did not reproduce it in 8 walks past that point; the native
+    // memory fixes that landed since (~RndTex's GPU entry, CharClipDriver::
+    // DeleteRef, the ReplaceRefs drain, ...) are the likely reason, though no
+    // single one was bisected. What this arm did expose is that
+    // nothing serviced mCompressTexQueue natively: OutfitConfig::DrawPreClear's
+    // MatSwap::Compress queues one request per composed texture, the
+    // BandCharacter stays IsLoading until each calls back, and game_screen never
+    // loaded. That is fixed at the queue, in the HX_NATIVE arm above.
+    // Gate: rb3-render preclear-select-* (native/src/preclear_select_phase.cpp).
+    //
     // X21 M2: separates "the pre-clear dispatcher is never called" from "it is
     // called over an EMPTY list". Those have different owners and different
     // fixes, and a zero at OutfitConfig::DrawPreClear cannot tell them apart.

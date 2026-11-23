@@ -275,7 +275,12 @@ public:
     ObjPtr<BandCharacter> unk6c0; // 0x750
     std::list<String> mDircuts; // 0x75c
     bool mInTourEnding; // 0x764
+#ifdef HX_NATIVE
+    // A35: the IDs are CompressTexDesc addresses (BandCharacter::TextureCompressed).
+    std::list<intptr_t> mCompressedTextureIDs;
+#else
     std::list<int> mCompressedTextureIDs; // 0x768 (retail: precedes unk6d8; see below)
+#endif
     std::list<BoneState> unk6e4; // 0x770
     CharDriver *unk6ec; // 0x778
     int unk6f0; // 0x77c

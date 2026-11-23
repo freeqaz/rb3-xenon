@@ -174,6 +174,9 @@ extern void RegisterMiloObjectFactories();
 // os/System.cpp:58
 extern DataArray *gSystemConfig;
 
+// native/src/preclear_select_phase.cpp (A18)
+int RunPreClearSelectPhase(void (*gate)(const char *, bool, const char *));
+
 namespace {
 
     int gFailures = 0;
@@ -5569,6 +5572,10 @@ int main(int argc, char **argv) {
         return 1;
     }
     Gate("archive-mounted", true, TheArchive->GetArkfileName(0));
+    // A18: Rnd::DrawPreClear dispatches mDraws on a normal frame and
+    // mPreClearDraws under mReleaseImmediate, as retail fn_824158B8 does
+    // (native/src/preclear_select_phase.cpp).
+    RunPreClearSelectPhase(Gate);
 
     // ⛔ THE SKINNING SMEAR IS ROOT-CAUSED HERE, AND THE ONE-LINE FIX IS
     // DELIBERATELY NOT APPLIED. READ THIS BEFORE ADDING `SetGfxMode(kNewGfx)`.

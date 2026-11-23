@@ -2423,21 +2423,33 @@ void BandCharacter::Compress(RndTex *tex, RndTex::AlphaCompress b) {
 }
 
 // See the declaration in BandCharacter.h: the parameter is intptr_t under LP64
-// so the override binds to Rnd::CompressTextureCallback's pure virtual. The
-// body is unchanged -- `i` is compared against a std::list<int> of texture IDs,
-// which narrows identically on ILP32.
+// so the override binds to Rnd::CompressTextureCallback's pure virtual. The ID
+// is the request's address: CompressTexture (retail fn_82415B68 +0x070,
+// `mr r3, r30`) returns the new CompressTexDesc, and its destructor
+// (fn_824118D8 +0x02C..+0x040) calls back with `this`. Natively both the
+// returned ID and mCompressedTextureIDs are intptr_t (A35): with an `int` list
+// the stored ID was the pointer's low 32 bits while the callback passed all
+// 64, so no ID ever matched and IsLoading stayed true. ILP32 is unchanged.
 #ifdef HX_NATIVE
 void BandCharacter::TextureCompressed(intptr_t i) {
 #else
 void BandCharacter::TextureCompressed(int i) {
 #endif
+#ifdef HX_NATIVE
+    std::list<intptr_t>::iterator it;
+#else
     std::list<int>::iterator it;
+#endif
     for (it = mCompressedTextureIDs.begin();
          it != mCompressedTextureIDs.end() && *it != i;
          ++it)
         ;
     if (it == mCompressedTextureIDs.end())
+#ifdef HX_NATIVE
+        MILO_WARN("%s Could not find compress texture id %lld\n", PathName(this), (long long)i);
+#else
         MILO_WARN("%s Could not find compress texture id %d\n", PathName(this), i);
+#endif
     else
         mCompressedTextureIDs.erase(it);
 }

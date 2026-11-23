@@ -82,6 +82,8 @@ NON_STUB_RE = re.compile(
     r"text_line_color_phase\.cpp|"
     # A18: rb3-milo's RndFont::Replace gate (test code, not a stub).
     r"font_replace_phase\.cpp|"
+    # A18: rb3-render's Rnd::DrawPreClear list-select gate (test code, not a stub).
+    r"preclear_select_phase\.cpp|"
     # scripttask: rb3-milo's ScriptTask watched-object gates (test code, not a stub).
     r"script_task_watch_phase\.cpp|"
     # lightpreset: rb3-milo's LightPreset held-object ref gates (test code, not a stub).
