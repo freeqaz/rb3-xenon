@@ -721,10 +721,12 @@ void VocalPart::HandlePhraseEnd(
             }
         }
         VocalNoteList *list = mVocalNoteList;
-#ifdef HX_NATIVE
-        // Headless: no BandUser (GetUserGuid) and no TheGameConfig track table.
-        // The spotlight-phrase id feeds overdrive/unison display only; the phrase
-        // rating/score above is unaffected.
+#if defined(HX_NATIVE) && !defined(RB3_NATIVE_APP)
+        // Headless vocal harnesses: no BandUser (GetUserGuid) and no TheGameConfig
+        // track table, so no spotlight (overdrive) phrase id. rb3-app has both and
+        // takes retail's arm (0x826F3370..0x826F3394: GetUserGuid ->
+        // GameConfig::GetTrackNum -> SongDB::GetCommonPhraseID); forcing -1 there
+        // meant VocalPlayer::HandlePhraseEnd never saw an overdrive phrase.
         (void)list;
         mSpotlightPhraseID = -1;
 #else

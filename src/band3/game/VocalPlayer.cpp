@@ -1334,14 +1334,18 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
     }
     mTambourineManager.SetTambourine(mVocalParts.front()->InTambourinePhrase());
     const bool bSpotlightPhraseHit = iSpotlightPhraseID != -1 && iPhraseRating >= 4;
-#ifdef HX_NATIVE
-    // Headless: mTrack is a non-null sentinel with no VocalTrackDir render object
-    // and no net session, so the retail render/net phrase-end leaves
-    // (VocalTrack::OnPhraseComplete, LocalScorePhrase -> VocalTrackDir feedback,
-    // the send_score_phrase net message, and the CommonPhraseCapturer overdrive
-    // arbiter which needs mTrack->mTrackConfig) are skipped. The REAL per-part
-    // rating / stats / points accumulation above (cur->HandlePhraseEnd,
-    // CalculatePhraseRating, AddPoints, UpdateCrowdMeter) still runs.
+#if defined(HX_NATIVE) && !defined(RB3_NATIVE_APP)
+    // Headless vocal harnesses: mTrack is a non-null sentinel with no
+    // VocalTrackDir render object and no net session, so the retail render/net
+    // phrase-end leaves (VocalTrack::OnPhraseComplete, LocalScorePhrase ->
+    // VocalTrackDir feedback, the send_score_phrase net message, and the
+    // CommonPhraseCapturer overdrive arbiter which needs mTrack->mTrackConfig)
+    // are skipped. The REAL per-part rating / stats / points accumulation above
+    // still runs. rb3-app (RB3_NATIVE_APP) has a real VocalTrack and takes
+    // retail's arm (0x826E9C94 OnPhraseComplete .. 0x826EA06C
+    // CommonPhraseCapturer::HandleVocalPhrase, then UpdateSectionStats); without
+    // it a hit overdrive phrase never reached Player::CompleteCommonPhrase, so
+    // vocal energy stayed 0.
     (void)bSpotlightPhraseHit;
 #else
     if (mTrack) {
