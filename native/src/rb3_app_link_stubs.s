@@ -113,8 +113,6 @@
 .Lname_92: .asciz "RemoveLocalPlayerJob::RemoveLocalPlayerJob(void*, int)"
 .Lname_93: .asciz "RemoveRemotePlayerJob::RemoveRemotePlayerJob(void*, unsigned long long)"
 .Lname_94: .asciz "SessionUsersProvider::ShowGamercard(int, LocalBandUser*)"
-.Lname_95: .asciz "SetupHXDrums(int, _XINPUT_CAPABILITIES const&)"
-.Lname_96: .asciz "SetupHXGuitar(int, _XINPUT_CAPABILITIES const&)"
 .Lname_97: .asciz "SetupHXKeytar(int, _XINPUT_CAPABILITIES const&)"
 .Lname_98: .asciz "SetupHXRealGuitar(int, _XINPUT_CAPABILITIES const&)"
 .Lname_99: .asciz "ShowParentalControlUI(int, _XOVERLAPPED*)"
@@ -935,22 +933,6 @@ _ZN21RemoveRemotePlayerJobC1EPvy: // ring: online-netsession
 _ZN20SessionUsersProvider13ShowGamercardEiP13LocalBandUser: // ring: xbox-live
     leaq .Lring_xbox_live(%rip), %rdi
     leaq .Lname_94(%rip), %rsi
-    jmp rb3_app_stub_reached
-
-// SetupHXDrums(int, _XINPUT_CAPABILITIES const&)
-.globl _Z12SetupHXDrumsiRK20_XINPUT_CAPABILITIES
-.type _Z12SetupHXDrumsiRK20_XINPUT_CAPABILITIES,@function
-_Z12SetupHXDrumsiRK20_XINPUT_CAPABILITIES: // ring: peripheral-only
-    leaq .Lring_peripheral_only(%rip), %rdi
-    leaq .Lname_95(%rip), %rsi
-    jmp rb3_app_stub_reached
-
-// SetupHXGuitar(int, _XINPUT_CAPABILITIES const&)
-.globl _Z13SetupHXGuitariRK20_XINPUT_CAPABILITIES
-.type _Z13SetupHXGuitariRK20_XINPUT_CAPABILITIES,@function
-_Z13SetupHXGuitariRK20_XINPUT_CAPABILITIES: // ring: peripheral-only
-    leaq .Lring_peripheral_only(%rip), %rdi
-    leaq .Lname_96(%rip), %rsi
     jmp rb3_app_stub_reached
 
 // SetupHXKeytar(int, _XINPUT_CAPABILITIES const&)

@@ -2857,9 +2857,14 @@ if(RB3X_BUILD_ENGINE)
     # the headless harnesses (rb3-score*, rb3-vocal*, rb3-harmony, rb3-render) also
     # compile run their retail subscriptions to those objects only here
     # (lane skipped, docs/decomp/NATIVE_SKIPPED_RETAIL_BLOCKS_2026-11-22.md).
+    # RB3_NATIVE_HAS_BEATMATCHER (gemwalk): RB3_APP_SOURCES links
+    # beatmatch/BeatMatcher.cpp, and GemPlayer's ctor hands its BeatMatcher to
+    # SongData::AddBeatMatcher, so SongData.cpp must compile its BeatMatcher
+    # loops (PostLoad / AddTrack / dynamic add) here; without the define the
+    # first guitar or drum player hits AddBeatMatcher's MILO_FAIL.
     target_compile_definitions(rb3-app PRIVATE RB3_ENGINE_RENDER=1 RB3_NATIVE_PRESENCEMGR
         RB3_NATIVE_AUDITION RB3_NATIVE_PROFILEPICTURE RB3_NATIVE_SYSTEM_NET_MGRS
-        RB3_NATIVE_APP)
+        RB3_NATIVE_APP RB3_NATIVE_HAS_BEATMATCHER)
     target_link_libraries(rb3-app PRIVATE milo-engine ZLIB::ZLIB)
     target_link_options(rb3-app PRIVATE -fuse-ld=lld -Wl,--error-limit=0
         -Wl,--wrap=_ZN6Symbol4InitEv)
