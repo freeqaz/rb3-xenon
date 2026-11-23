@@ -179,6 +179,16 @@ int RunPreClearSelectPhase(void (*gate)(const char *, bool, const char *));
 
 // A42 probe (MILO_DUMP_RT): engine Tex_Wgpu.cpp writes every live render target to a PNG.
 void DumpGpuRenderTargets(const char *dir, int frame);
+#include "char/CharBoneOffset.h"
+// A42 probe: read a CharBoneOffset's protected dest/offset.
+struct A42BoneOffsetPeek : CharBoneOffset {
+    static RndTransformable *Dest(CharBoneOffset *c) {
+        return static_cast<A42BoneOffsetPeek *>(c)->mDest;
+    }
+    static const Vector3 &Offset(CharBoneOffset *c) {
+        return static_cast<A42BoneOffsetPeek *>(c)->mOffset;
+    }
+};
 
 namespace {
 
@@ -4612,6 +4622,43 @@ namespace {
                 printf("  [A42] char '%s' class=%s showing=%d dir='%s' at (%.1f %.1f %.1f)\n",
                        c->Name() ? c->Name() : "?", c->ClassName().Str(), (int)c->Showing(),
                        c->Dir() ? PathName(c->Dir()) : "-", p.x, p.y, p.z);
+                if (!dynamic_cast<BandCharacter *>(c)) continue;
+                std::vector<CharBoneOffset *> bos = CollectDeep<CharBoneOffset>(c);
+                for (size_t bi = 0; bi < bos.size(); bi++) {
+                    RndTransformable *d = A42BoneOffsetPeek::Dest(bos[bi]);
+                    const Vector3 &o = A42BoneOffsetPeek::Offset(bos[bi]);
+                    printf("  [A42]   boneoffset '%s' (%s) dest '%s' %p (%s) offset (%.3f %.3f "
+                           "%.3f) destLocal (%.3f %.3f %.3f)\n",
+                           bos[bi]->Name() ? bos[bi]->Name() : "?",
+                           bos[bi]->Dir() ? PathName(bos[bi]->Dir()) : "-",
+                           d && d->Name() ? d->Name() : "-", (void *)d,
+                           d && d->Dir() ? PathName(d->Dir()) : "-", o.x, o.y, o.z,
+                           d ? d->LocalXfm().v.x : 0.f, d ? d->LocalXfm().v.y : 0.f,
+                           d ? d->LocalXfm().v.z : 0.f);
+                }
+                // Skinned-mesh model frame per bone: W(bone) * offset. For a mesh
+                // bound consistently every bone gives the same frame.
+                std::vector<RndMesh *> ms = CollectDeep<RndMesh>(c);
+                for (size_t mi = 0; mi < ms.size(); mi++) {
+                    RndMesh *m = ms[mi];
+                    const char *mn = m->Name() ? m->Name() : "";
+                    if (strcmp(mn, "eyes.mesh") && strcmp(mn, "head.mesh")) continue;
+                    for (int bi = 0; bi < m->NumBones() && bi < 6; bi++) {
+                        RndTransformable *b = m->BoneTransAt(bi);
+                        if (!b) continue;
+                        Transform model;
+                        Multiply(m->BoneOffsetAt(bi), b->WorldXfm(), model);
+                        printf("  [A42]   %s bone[%d] '%s' (%s) parent '%s' world (%.2f %.2f "
+                               "%.2f) model (%.2f %.2f %.2f) local (%.2f %.2f %.2f)\n",
+                               mn, bi, b->Name() ? b->Name() : "?",
+                               b->Dir() ? PathName(b->Dir()) : "-",
+                               b->TransParent() && b->TransParent()->Name()
+                                   ? b->TransParent()->Name() : "-",
+                               b->WorldXfm().v.x, b->WorldXfm().v.y, b->WorldXfm().v.z,
+                               model.v.x, model.v.y, model.v.z, b->LocalXfm().v.x,
+                               b->LocalXfm().v.y, b->LocalXfm().v.z);
+                    }
+                }
             }
         }
         if (deep && (reflectionOnly || getenv("RB3_DRAW_REFLECTIONS") != nullptr))
