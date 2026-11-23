@@ -292,13 +292,10 @@ void MusicLibrary::OnEnter() {
        fn_82542238: the ten Type()/AddSink pairs present are Primary­ProfileChanged,
        ProfileChanged, SigninChanged, LocalUserLeft, RemoteUserLeft,
        AddLocalUserResult, NewRemoteUser, ServerStatusChanged,
-       RemoteMachineUpdated, RemoteMachineLeft — in that order, matching ours once
-       the two below are removed. Both are Wii-only: the Wii friends list, and
-       TheServer = gWiiServer (also a zeroed weak stub on the native link, which is
-       why UserLoginMsg was already excluded from native and now belongs nowhere). */
-#ifdef HX_NATIVE
-    ThePlatformMgr.AddSink(this, FriendsListChangedMsg::Type());
-#endif
+       RemoteMachineUpdated, RemoteMachineLeft — in that order, which is our list
+       in both builds. Both missing sinks are Wii-only: the Wii friends list, and
+       TheServer = gWiiServer. The native build kept a FriendsListChangedMsg sink
+       until lane narms4; Handle has no arm for it, so it only cost a dispatch. */
     TheSessionMgr->AddSink(this, LocalUserLeftMsg::Type());
     TheSessionMgr->AddSink(this, RemoteUserLeftMsg::Type());
     TheSessionMgr->AddSink(this, AddLocalUserResultMsg::Type());
@@ -340,15 +337,11 @@ void MusicLibrary::OnExit() {
        RemoteUserLeft (fn_823E0D28), AddLocalUserResult (fn_8253A9A0),
        NewRemoteUser (fn_823E0C28), ServerStatusChanged (fn_823EC318),
        RemoteMachineUpdated (fn_8253A8A0), RemoteMachineLeft (fn_8253A920) — which
-       is our list, in our order, once the two below are gone. The receiver
+       is our list, in our order, in both builds. The receiver
        multiset agrees independently: ProfileMgr x2, PlatformMgr x1, SessionMgr x4,
        RockCentral x1, MachineMgr x2. That enumeration is NOT vacuous: 3 of the 22
        addresses looked up returned no name, so the map can and does answer "no".
-       Both removed sinks are Wii-only (the Wii friends list; TheServer = gWiiServer,
-       also a zeroed weak stub on the native link). */
-#ifdef HX_NATIVE
-    ThePlatformMgr.RemoveSink(this, FriendsListChangedMsg::Type());
-#endif
+       Both missing sinks are Wii-only (the Wii friends list; TheServer = gWiiServer). */
     TheSessionMgr->RemoveSink(this, LocalUserLeftMsg::Type());
     TheSessionMgr->RemoveSink(this, RemoteUserLeftMsg::Type());
     TheSessionMgr->RemoveSink(this, AddLocalUserResultMsg::Type());

@@ -498,12 +498,8 @@ void EntityUploader::RecordSubmissionTime() { GetDateAndTime(mSubmittedTime); }
 
 bool EntityUploader::HasServerTimedOut() {
     DateTime dt;
-#if defined(MILO_DEBUG) && defined(HX_NATIVE)
-    // An Abort() does not count as a timeout here: retail TU5
-    // (0x8250D4C8) has no unk34 test here.
-    if (unk34)
-        return true;
-#endif
+    // An Abort() does not count as a timeout here: retail TU5 (0x8250D4C8) has
+    // no unk34 test, so native has no early return either.
     GetDateAndTime(dt);
     return dt.ToCode() - mSubmittedTime.ToCode() >= 15;
 }

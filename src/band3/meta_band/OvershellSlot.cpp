@@ -111,15 +111,9 @@ OvershellSlot::OvershellSlot(
 
 OvershellSlot::~OvershellSlot() {
     mSessionMgr->RemoveSink(this, LocalUserLeftMsg::Type());
-#ifdef HX_NATIVE
-    // Symmetric with the ctor's removed AddSink(UserLoginMsg::Type()) call
-    // (see the comment at the end of the ctor above): retail X360's dtor
-    // (0x825e1490) has NO TheServer.RemoveSink(UserLoginMsg::Type()) call at
-    // all -- the Ghidra decomp goes straight from the LocalUserLeftMsg
-    // RemoveSink into the RELEASE(mFriendsProvider) chain at offset 0xB4.
-    // Keep it native-only so we don't leave a dangling subscription there.
-    TheServer.RemoveSink(this, UserLoginMsg::Type());
-#endif
+    // Retail X360's dtor (0x825e1490) makes exactly one RemoveSink call (the
+    // LocalUserLeftMsg one above) and no TheServer.RemoveSink(UserLoginMsg): the
+    // ctor never adds that sink in either build, so there is nothing to remove.
     RELEASE(mFriendsProvider);
     RELEASE(mSwappableProfilesProvider);
     RELEASE(mCharProvider);
@@ -1093,9 +1087,6 @@ void OvershellSlot::UpdateState() {
 // retail scratch: https://decomp.me/scratch/AdUgA
 UNPOOL_DATA
 void OvershellSlot::UpdateView() {
-#ifdef HX_NATIVE
-    bool b1 = false;
-#endif
     Symbol s2ac = mState ? mState->GetView() : gNullStr;
     Symbol s2b0 = s2ac;
     // retail declares these as function-local statics (guard bits 0/1/2 of the
@@ -1159,13 +1150,10 @@ void OvershellSlot::UpdateView() {
         updateLocalStatusMsg[0] = user->IsLocal();
         mOvershellDir->HandleType(updateLocalStatusMsg);
         mSessionMgr->IsLocal();
-#ifdef HX_NATIVE
-        // Retail X360 has no "update_restart_allowed"
-        // message here (no such string, and no guard bit, in fn_825DB930)
-        static Message updateRestartAllowedMsg("update_restart_allowed", 0);
-        updateRestartAllowedMsg[0] = mSessionMgr->IsLocalToLeader(user);
-        mOvershellDir->HandleType(updateRestartAllowedMsg);
-#endif
+        // Retail X360 sends no "update_restart_allowed" message here (band.exe has
+        // no such string, and fn_825DB930 has no guard bit for it); the native
+        // build no longer sends it either, so overshell_restart keeps the state
+        // the retail flow gives it.
         // retail X360 gates the local branch on the TU5-hoisted User::IsNullUser too
         if (user->IsLocal() && !user->IsNullUser()) {
             b17 = c14 == 2;
@@ -1180,11 +1168,8 @@ void OvershellSlot::UpdateView() {
             static Message updatePadNumMsg("update_pad_num", 0);
             updatePadNumMsg[0] = l14->GetPadNum() + 1;
             mOvershellDir->HandleType(updatePadNumMsg);
-#ifdef HX_NATIVE
-            // Retail X360 has neither the
-            // UpdateProfilesList() call nor the RockCentral invitation flag here
-            UpdateProfilesList();
-#endif
+            // Retail X360 has neither an UpdateProfilesList() call here (no bl
+            // to 0x825DEEC8 in fn_825DB930) nor the RockCentral invitation flag.
             i4 = TheGameMicManager;
             if (i4) {
                 i2 = i4->HasMic(MicClientID(0, -1));

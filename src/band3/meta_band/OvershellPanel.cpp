@@ -99,13 +99,10 @@ OvershellPanel::OvershellPanel(SessionMgr *smgr, BandUserMgr *umgr)
     mSessionMgr->GetMachineMgr()->AddSink(this);
     ThePlatformMgr.AddSink(this);
     TheRockCentral.AddSink(this);
-    // Retail fn_825B4AA8 stops here: the typed ThePlatformMgr invite/utility
-    // sinks and the TheServer profanity sink are dev-build only.
-#if defined(MILO_DEBUG) && defined(HX_NATIVE)
-    ThePlatformMgr.AddSink(this, InviteReceivedMsg::Type());
-    ThePlatformMgr.AddSink(this, InviteExpiredMsg::Type());
-    ThePlatformMgr.AddSink(this, NetStartUtilityFinishedMsg::Type());
-#endif
+    // Retail fn_825B4AA8 stops here (six AddSink calls: GameMicsChangedMsg plus
+    // the five untyped ones above). No typed ThePlatformMgr invite/utility
+    // sinks: on top of the untyped ThePlatformMgr.AddSink(this) they would
+    // deliver NetStartUtilityFinishedMsg twice.
 }
 
 OvershellPanel::~OvershellPanel() {
@@ -118,12 +115,7 @@ OvershellPanel::~OvershellPanel() {
     if (TheGameMicManager) {
         TheGameMicManager->RemoveSink(this, GameMicsChangedMsg::Type());
     }
-    // Retail fn_825B6188 ends here; the Wii-friend/online sinks are dev-only.
-#if defined(MILO_DEBUG) && defined(HX_NATIVE)
-    TheWiiFriendMgr.RemoveSink(this, InviteReceivedMsg::Type());
-    TheWiiFriendMgr.RemoveSink(this, InviteExpiredMsg::Type());
-    ThePlatformMgr.RemoveSink(this, NetStartUtilityFinishedMsg::Type());
-#endif
+    // Retail fn_825B6188 ends here (see the ctor: no typed invite/utility sinks).
 }
 
 // No OvershellPanel::Init and no SignInUser callback on retail X360: the
@@ -266,24 +258,18 @@ void OvershellPanel::BeginOverrideFlow(OvershellOverrideFlow type) {
 
 void OvershellPanel::EndOverrideFlow(OvershellOverrideFlow type, bool b2) {
 #ifdef HX_NATIVE
-    // OVER-PRESS HARDEN (native debug HTTP surface). A DOUBLE / out-of-order
-    // `end_override_flow` debug verb ends a flow that is no longer active: the
-    // first end set mPanelOverrideFlow to kOverrideFlow_None, so InOverrideFlow
-    // (type) is now false and the Wii assert below fatally Debug::Fail's
-    // ("InOverrideFlow(type)", OvershellPanel.cpp:0x1B0 == line 432). Treat a
-    // redundant / mismatched end as an inert no-op on native so abnormal
-    // debug-verb sequences (our own review harness's failure mode) don't crash
-    // the process. Wii keeps the assert — a double-end never happens in normal
-    // play (it's only reachable by the headless /api/input debug surface).
+    // Retail strips this assert and runs the body below for a flow that is not
+    // active too (clears the flow, exports OvershellOverrideEndedMsg, UpdateAll).
+    // Natively MILO_ASSERT aborts, so warn instead and still run retail's body;
+    // the old native early return skipped it (reachable from the
+    // end_override_flow script handler).
     if (!InOverrideFlow(type)) {
-        if (getenv("GAME_DBG"))
-            MILO_LOG("GAME_DBG: OvershellPanel::EndOverrideFlow no-op — flow not "
-                     "active (type=%d cancel=%d curFlow=%d)\n",
-                     type, b2, mPanelOverrideFlow);
-        return;
+        MILO_WARN("EndOverrideFlow(%d): flow not active (current %d)", type,
+                  mPanelOverrideFlow);
     }
-#endif
+#else
     MILO_ASSERT(InOverrideFlow(type), 0x1B0);
+#endif
     mPanelOverrideFlow = kOverrideFlow_None;
     if (type == kOverrideFlow_SongSettings && !b2) {
         SetSongOptionsRequired(true);
@@ -969,26 +955,12 @@ void OvershellPanel::ResolvePartWaitStates() {
                 }
                 UpdateAll();
             } else if (allWaiting) {
-#if defined(HX_NATIVE)
-                // The part resolver decides which of SEVERAL users contending for
-                // the SAME representative part gets a ChoosePartWarn ("you won the
-                // part, others wanted it — confirm"). With no contention
-                // (priorityUsers empty — the common single-player / lone-guitarist
-                // case), `resolvingUsers` is just this user, so the resolver
-                // trivially "picks" them and shows a spurious ChoosePartWarn whose
-                // confirm-yes (-> ShowChoosePartWait) lands right back in
-                // ChoosePartWait -> here -> ChoosePartWarn: an inescapable loop
-                // that strands the player on part_difficulty (confirm_action) and
-                // never reaches choose_diff. There is genuinely nothing to resolve
-                // for a lone uncontested player, so resolve the part directly to
-                // kState_ChooseDiff — the faithful outcome (the part stands; the
-                // disc shows no warn when no one else wants it). The multi-user
-                // contention path (priorityUsers non-empty) is unchanged.
-                if (priorityUsers.empty()) {
-                    user->SetOvershellSlotState(kState_ChooseDiff);
-                    UpdateAll();
-                } else
-#endif
+                // Retail runs the resolver even for a lone uncontested user
+                // (resolvingUsers == {user}): it picks that user and, if local,
+                // hands it kState_ChooseDiff below. The native-only shortcut that
+                // sat here worked around a ChoosePartWarn loop that came from a
+                // decomp error (fixed below); it also moved a REMOTE lone user,
+                // which retail never does.
                 {
                 mPartResolver.Seed(mPartResolverSeed);
                 std::vector<BandUser *> resolvingUsers;
@@ -1011,9 +983,9 @@ void OvershellPanel::ResolvePartWaitStates() {
                     // kState_ChoosePartWarn (0x4e) -- objdiff: the target's
                     // `li r4, 0xc` was the last remaining difference in this
                     // function. That also means the ChoosePartWarn confirm loop
-                    // the HX_NATIVE block above works around never existed on
-                    // the disc: the resolver hands the winner straight to the
-                    // difficulty screen.
+                    // a former native-only shortcut above worked around never
+                    // existed on the disc: the resolver hands the winner straight
+                    // to the difficulty screen.
                     picked->SetOvershellSlotState(kState_ChooseDiff);
                     UpdateAll();
                 }
