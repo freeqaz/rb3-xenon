@@ -197,16 +197,26 @@ void DataNode::Print(TextStream &ts, bool b) const {
             ts << mValue.var->mValue.symbol;
         else {
             ts << "\"";
-            char *tok = strtok((char *)mValue.var->mValue.symbol, "\"");
+            // Retail's CRT strtok keeps its cursor per thread; glibc's is one
+            // process-wide cursor, so natively the cursor is local to the call
+            // (docs/decomp/NATIVE_LP64_CRT_TRIAGE_2026-11-22.md).
+#ifdef HX_NATIVE
+            char *tokCursor = nullptr;
+#define DATANODE_PRINT_TOK(s) strtok_r((s), "\"", &tokCursor)
+#else
+#define DATANODE_PRINT_TOK(s) strtok((s), "\"")
+#endif
+            char *tok = DATANODE_PRINT_TOK((char *)mValue.var->mValue.symbol);
             while (tok) {
                 ts << tok;
-                tok = strtok(0, "\"");
+                tok = DATANODE_PRINT_TOK(0);
                 if (tok) {
                     ts << "\\q";
                     tok[-1] = '\"';
                 }
             }
             ts << "\"";
+#undef DATANODE_PRINT_TOK
         }
         break;
     case kDataSymbol:

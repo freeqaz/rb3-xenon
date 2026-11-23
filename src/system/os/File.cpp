@@ -160,7 +160,16 @@ const char *FileGetPath(const char *file) {
     static char static_path[256];
     char *p2;
     if (file != 0) {
+#ifdef HX_NATIVE
+        // Retail (0x82516564..0x82516578) inlines this strcpy as a forward
+        // byte loop, so FileGetPath(FileGetPath(x)) -- BandSongMgr::AddSongData
+        // -- copies static_path onto itself harmlessly. glibc's strcpy on
+        // overlapping buffers is undefined; memmove gives the retail result
+        // (docs/decomp/NATIVE_LP64_CRT_TRIAGE_2026-11-22.md).
+        memmove(static_path, file, strlen(file) + 1);
+#else
         strcpy(static_path, file);
+#endif
         p2 = static_path + strlen(static_path);
         p2--;
         while (p2 >= static_path && *p2 != '/' && *p2 != '\\') {
@@ -462,19 +471,22 @@ const char *FileRelativePathBuf(const char *iRoot, const char *iFilepath, char *
         std::list<char *> rootToks;
         std::list<char *> fpToks;
 
-        char *rootTok = strtok(rootBuf, "/");
+        // Same per-thread-cursor rule as FileMakePath (FILE_PATH_TOK above):
+        // each loop restarts the cursor with a non-null first argument.
+        FILE_PATH_TOK_STATE;
+        char *rootTok = FILE_PATH_TOK(rootBuf);
         if (rootTok != nullptr) {
             do {
                 rootToks.push_back(rootTok);
-                rootTok = strtok(nullptr, "/");
+                rootTok = FILE_PATH_TOK(nullptr);
             } while (rootTok != nullptr);
         }
 
-        char *fpTok = strtok(fpBuf, "/");
+        char *fpTok = FILE_PATH_TOK(fpBuf);
         if (fpTok != nullptr) {
             do {
                 fpToks.push_back(fpTok);
-                fpTok = strtok(nullptr, "/");
+                fpTok = FILE_PATH_TOK(nullptr);
             } while (fpTok != nullptr);
         }
 
@@ -544,19 +556,22 @@ const char *FileRelativePath(const char *iRoot, const char *iFilepath) {
         std::list<char *> rootToks;
         std::list<char *> fpToks;
 
-        char *rootTok = strtok(rootBuf, "/");
+        // Same per-thread-cursor rule as FileMakePath (FILE_PATH_TOK above):
+        // each loop restarts the cursor with a non-null first argument.
+        FILE_PATH_TOK_STATE;
+        char *rootTok = FILE_PATH_TOK(rootBuf);
         if (rootTok != nullptr) {
             do {
                 rootToks.push_back(rootTok);
-                rootTok = strtok(nullptr, "/");
+                rootTok = FILE_PATH_TOK(nullptr);
             } while (rootTok != nullptr);
         }
 
-        char *fpTok = strtok(fpBuf, "/");
+        char *fpTok = FILE_PATH_TOK(fpBuf);
         if (fpTok != nullptr) {
             do {
                 fpToks.push_back(fpTok);
-                fpTok = strtok(nullptr, "/");
+                fpTok = FILE_PATH_TOK(nullptr);
             } while (fpTok != nullptr);
         }
 

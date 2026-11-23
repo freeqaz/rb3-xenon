@@ -1,4 +1,5 @@
 #include "meta_band/EditSetlistPanel.h"
+#include "utl/CrtCompat.h"
 #include "meta_band/MusicLibrary.h"
 #include "game/BandUser.h"
 #include "game/Defines.h"
@@ -479,10 +480,10 @@ void EditSetlistPanel::VerifyStrings(const char *name, const char *desc) {
     NativeStringData *sd = new NativeStringData[2];
     sd[0].str = new unsigned short[strlen(name) + 1];
     UTF8toUTF16(sd[0].str, name);
-    sd[0].len = wcslen((const wchar_t *)sd[0].str) + 1;
+    sd[0].len = HX_CRT_WCSLEN(sd[0].str) + 1;
     sd[1].str = new unsigned short[strlen(desc) + 1];
     UTF8toUTF16(sd[1].str, desc);
-    sd[1].len = wcslen((const wchar_t *)sd[1].str) + 1;
+    sd[1].len = HX_CRT_WCSLEN(sd[1].str) + 1;
     unk90 = (unsigned short **)sd;
     // The response header, then one result per string (retail: 6 + 2*4 = 14).
     const unsigned int cbResults = sizeof(NativeVerifyResponse) + 2 * sizeof(unsigned int);

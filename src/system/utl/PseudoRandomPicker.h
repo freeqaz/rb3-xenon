@@ -1,6 +1,7 @@
 #pragma once
 #include "os/Debug.h"
 #include <cstdlib>
+#include "utl/CrtCompat.h"
 #include <list>
 #include <vector>
 
@@ -31,7 +32,7 @@ public:
             mItems.erase(first);
             Size();
             // Pick a random position and insert there
-            int idx = rand() % size;
+            int idx = HX_CRT_RAND() % size;
             typename std::list<T>::iterator it = mItems.begin();
             if (idx != 0) {
                 for (int i = idx; i != 0; i--) {
@@ -80,15 +81,15 @@ public:
             break;
         case 2: {
             int s = Size();
-            idx = rand() % (s - mNumGets % s);
+            idx = HX_CRT_RAND() % (s - mNumGets % s);
             break;
         }
         case 3:
-            idx = rand() % Size();
+            idx = HX_CRT_RAND() % Size();
             break;
         default: {
             int i1 = mSeed * (float)Size() + 1.01f;
-            idx = rand() % i1;
+            idx = HX_CRT_RAND() % i1;
             break;
         }
         }

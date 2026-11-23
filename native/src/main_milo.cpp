@@ -114,6 +114,9 @@ int RunFontReplacePhase(void (*gate)(const char *, bool, const char *));
 int RunScriptTaskWatchPhase(void (*gate)(const char *, bool, const char *));
 // DTA script ops on string nodes and native-width union reads (string_node_phase.cpp).
 int RunStringNodePhase(void (*gate)(const char *, bool, const char *));
+// Retail CRT and LP64 behaviour: snprintf, strtok, rand, atoi, qsort size,
+// thread-id walks (lp64_crt_phase.cpp).
+int RunLp64CrtPhase(void (*gate)(const char *, bool, const char *));
 
 namespace {
 
@@ -597,6 +600,10 @@ int main(int argc, char **argv) {
     // no compare or loaded int reads only half of the 8-byte union
     // (native/src/string_node_phase.cpp).
     RunStringNodePhase(Gate);
+    // Hx_snprintf, strtok, rand and atoi behave as retail's CRT does, and
+    // SortNodes and ThreadMemStack step by the native element width
+    // (native/src/lp64_crt_phase.cpp).
+    RunLp64CrtPhase(Gate);
 
     printf("\nRESULT: %s (%d gate failure(s))\n",
            gFailures == 0 ? "ALL GATES PASSED" : "FAILED", gFailures);

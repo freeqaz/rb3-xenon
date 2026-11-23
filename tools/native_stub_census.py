@@ -88,6 +88,8 @@ NON_STUB_RE = re.compile(
     r"lightpreset_refs_phase\.cpp|"
     # strnode: rb3-milo's DTA string-op and native-width union gates (test code, not a stub).
     r"string_node_phase\.cpp|"
+    # lp64: rb3-milo's retail-CRT and LP64 gates (test code, not a stub).
+    r"lp64_crt_phase\.cpp|"
     # A1: rb3-app's boot-gate --wrap shims (call the real step, then print).
     r"rb3_app_gates\.cpp|"
     # A14: rb3-app's joypad layer (retail Joypad_Xbox.cpp's lifecycle over the

@@ -1401,7 +1401,16 @@ int NodeCmp(const void *a, const void *b) {
 
 DataNode BandWardrobe::OnSortTargets(DataArray *da) {
     DataArray *arr = da->Array(2);
+    // The element size is a literal 8, sizeof(DataNode) on X360. Natively a
+    // DataNode is 16 bytes (an 8-byte value union, then the type), so 8 makes
+    // qsort sort half-nodes: NodeCmp reads the next value as the type, and
+    // values and types are swapped independently, mis-pairing pointers with
+    // int types (docs/decomp/NATIVE_LP64_CRT_TRIAGE_2026-11-22.md).
+#ifdef HX_NATIVE
+    qsort(&arr->Node(0), arr->Size(), sizeof(DataNode), NodeCmp);
+#else
     qsort(&arr->Node(0), arr->Size(), 8, NodeCmp);
+#endif
     return DataNode(0);
 }
 

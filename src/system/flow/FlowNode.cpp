@@ -1,4 +1,5 @@
 #include "flow/FlowNode.h"
+#include "utl/CrtCompat.h"
 #include "flow/DrivenPropertyEntry.h"
 #include "flow/FlowLabel.h"
 #include "obj/Data.h"
@@ -255,12 +256,12 @@ void FlowNode::MiloPreRun() {
 void FlowNode::MoveIntoDir(ObjectDir *from, ObjectDir *to) {
     if (Dir() == NULL || Dir() == to) {
         String suffix("a");
-        suffix[0] = rand() % 25 + 'a';
+        suffix[0] = HX_CRT_RAND() % 25 + 'a';
         const char *name = NextName(MakeString("%s", (char *)suffix.c_str()), from);
 
         if (to) {
             while (!strcmp(to->Name(), name) || !strcmp(from->Name(), name)) {
-                suffix[0] = rand() % 25 + 'a';
+                suffix[0] = HX_CRT_RAND() % 25 + 'a';
                 name = MakeString("%s%s", name, suffix.c_str());
             }
         }

@@ -9,6 +9,17 @@
 #include <cstdlib>
 #include <cstring>
 
+// Retail's CRT strtok keeps its cursor per thread; glibc's is one process-wide
+// cursor, so natively each parser keeps a cursor local to the call
+// (docs/decomp/NATIVE_LP64_CRT_TRIAGE_2026-11-22.md). X360 tokens unchanged.
+#ifdef HX_NATIVE
+#define INSTARANK_TOK_STATE char *instarankTokCursor = nullptr
+#define INSTARANK_TOK(s) strtok_r((s), "|", &instarankTokCursor)
+#else
+#define INSTARANK_TOK_STATE
+#define INSTARANK_TOK(s) strtok((s), "|")
+#endif
+
 Instarank::Instarank()
     : mIsValid(0), unk8(0), unkc(0), mScoreType(kScoreBand), mInstaRank(0),
       mIsPercentile(0) {}
@@ -52,7 +63,8 @@ bool Instarank::HasHighscore() const {
     MILO_ASSERT(mIsValid, 0x4B);
     char buf[0x100];
     strncpy(buf, mStr1.c_str(), 0xff);
-    const char *tok = strtok(buf, "|");
+    INSTARANK_TOK_STATE;
+    const char *tok = INSTARANK_TOK(buf);
     char tokc = *tok;
     return tokc == 'a' || tokc == 'b';
 }
@@ -62,7 +74,8 @@ void Instarank::UpdateString1Label(UILabel *label) {
     MILO_ASSERT(label, 0x59);
     char buf[0x100];
     strncpy(buf, mStr1.c_str(), sizeof(buf) - 1);
-    char tokc = *strtok(buf, "|");
+    INSTARANK_TOK_STATE;
+    char tokc = *INSTARANK_TOK(buf);
     const char *fontc = GetFontCharFromScoreType(mScoreType, 0);
     switch (tokc) {
     case 'a': {
@@ -76,7 +89,7 @@ void Instarank::UpdateString1Label(UILabel *label) {
         );
     } break;
     case 'c': {
-        int ic = atoi_s(strtok(0, "|"));
+        int ic = atoi_s(INSTARANK_TOK(0));
         static Symbol instarank_previousbest_rank("instarank_previousbest_rank");
         label->SetTokenFmt(
             instarank_previousbest_rank,
@@ -86,8 +99,8 @@ void Instarank::UpdateString1Label(UILabel *label) {
         );
     } break;
     case 'd': {
-        int id1 = atoi_s(strtok(0, "|"));
-        int id2 = atoi_s(strtok(0, "|"));
+        int id1 = atoi_s(INSTARANK_TOK(0));
+        int id2 = atoi_s(INSTARANK_TOK(0));
         static Symbol instarank_rival_percentile("instarank_rival_percentile");
         label->SetTokenFmt(
             instarank_rival_percentile,
@@ -97,8 +110,8 @@ void Instarank::UpdateString1Label(UILabel *label) {
         );
     } break;
     case 'e': {
-        int ie1 = atoi_s(strtok(0, "|"));
-        int ie2 = atoi_s(strtok(0, "|"));
+        int ie1 = atoi_s(INSTARANK_TOK(0));
+        int ie2 = atoi_s(INSTARANK_TOK(0));
         static Symbol instarank_rival_rank("instarank_rival_rank");
         label->SetTokenFmt(
             instarank_rival_rank,
@@ -118,7 +131,8 @@ void Instarank::UpdateString2Label(UILabel *label) {
     MILO_ASSERT(label, 0x95);
     char buf[0xff];
     strncpy(buf, mStr2.c_str(), sizeof(buf));
-    char tokc = *strtok(buf, "|");
+    INSTARANK_TOK_STATE;
+    char tokc = *INSTARANK_TOK(buf);
     const char *fontc = GetFontCharFromScoreType(mScoreType, 0);
     switch (tokc) {
     case 'f': {
@@ -126,8 +140,8 @@ void Instarank::UpdateString2Label(UILabel *label) {
         label->SetTextToken(instarank_nofriend_beat);
     } break;
     case 'g': {
-        const char *tokg = strtok(0, "|");
-        int ig = atoi_s(strtok(0, "|"));
+        const char *tokg = INSTARANK_TOK(0);
+        int ig = atoi_s(INSTARANK_TOK(0));
         bool nonzero = (ig != 0);
         String strg;
         if (nonzero) {
@@ -139,9 +153,9 @@ void Instarank::UpdateString2Label(UILabel *label) {
         label->SetTokenFmt(instarank_friend_beat, strg.c_str(), fontc);
     } break;
     case 'h': {
-        const char *tokh = strtok(0, "|");
-        int ih1 = atoi_s(strtok(0, "|"));
-        int ih2 = atoi_s(strtok(0, "|"));
+        const char *tokh = INSTARANK_TOK(0);
+        int ih1 = atoi_s(INSTARANK_TOK(0));
+        int ih2 = atoi_s(INSTARANK_TOK(0));
         bool nonzero = (ih2 != 0);
         String strh;
         if (nonzero) {
@@ -153,9 +167,9 @@ void Instarank::UpdateString2Label(UILabel *label) {
         label->SetTokenFmt(instarank_friend_beat_and_more, fontc, strh.c_str(), ih1);
     } break;
     case 'i': {
-        int ii1 = atoi_s(strtok(0, "|"));
-        const char *toki = strtok(0, "|");
-        int ii2 = atoi_s(strtok(0, "|"));
+        int ii1 = atoi_s(INSTARANK_TOK(0));
+        const char *toki = INSTARANK_TOK(0);
+        int ii2 = atoi_s(INSTARANK_TOK(0));
         bool nonzero = (ii2 != 0);
         String stri;
         if (nonzero) {
