@@ -1691,9 +1691,12 @@ void VocalPlayer::HandleChangeVolume(JoypadButton but) {
 // (vtable slots 0x158 InFreestyleSection and 0x190 DeployBandEnergyIfPossible, then
 // a 0 store to +0x360).
 bool VocalPlayer::OnMsg(const ButtonDownMsg &msg) {
-#ifdef HX_NATIVE
+#if defined(HX_NATIVE) && !defined(RB3_NATIVE_APP)
     // Off-path: the tambourine button-down path pulls TheUI / TheBandUI overshell
     // + PracticePanel RTTI (no UI headless). Not wired to the synthetic-mic run.
+    // rb3-app (RB3_NATIVE_APP) has the UI, the overshell and a real VocalTrack, and
+    // takes the retail body below (0x826E64A0): without it a gamepad singer's
+    // Select in a freestyle section never deploys overdrive (lane deploywalk).
     (void)msg;
     return 0;
 #else

@@ -80,6 +80,7 @@
 #include "game/Player.h"
 #include "game/Scoring.h"
 #include "game/VocalPlayer.h"
+#include "game/GemPlayer.h"
 #include "ui/UI.h"
 #include <string>
 #include "ui/UIScreen.h"
@@ -100,6 +101,26 @@ const int64_t kTickNs = 1000; // 1 us per main-thread clock read
 bool gDet = false;
 bool gAutoplay = false;
 bool gBandWalk = false; // RB3_APP_EXTRA_PADS names at least one extra pad
+// RB3_APP_DET_OD=1 (lane deploywalk): the overdrive state of every player and the
+// band -- phrases, deploy count, failed-deploy flag, the player's and band's
+// multipliers, saves -- in the det line, with or without extra pads. Off, the line
+// is byte-for-byte the earlier walks'.
+bool gOdWalk = false;
+// RB3_APP_AUTODEPLOY=1 (lane deploywalk): stand-in for the guitarist's tilt /
+// Select. Retail ignores the mercury switch while the beatmatcher autoplays
+// (BeatMatcher::ForceMercurySwitch 0x82791490 and MercurySwitch 0x827913D8 both
+// test mAutoplay, `lbz 0xb1` + `bne`), so an autoplayed gem player never deploys
+// from input. With this set, every frame each local autoplayed GemPlayer that
+// CanDeployOverdrive() is sent `deploy_if_possible` -- Player's own handler
+// (DeployBandEnergyIfPossible(false)), the message retail Game::OnMsg(ButtonDownMsg)
+// sends every player for its R2 action -- so the deploy, the band multiplier,
+// the drain and saves all run through retail code. Vocal players are left to
+// input (Select in a freestyle section, VocalPlayer::OnMsg), which autoplay does
+// not block.
+bool gAutoDeploy = false;
+// RB3_APP_AUTOPLAY_SKIP=<pad digits>, e.g. "3": local users on those pads are not
+// autoplayed, so they miss, fail and become saveable (band saves).
+const char *gAutoplaySkip = "";
 pthread_t gMainThread;
 int64_t gVirtNs = kBaseNs; // main thread only
 uint64_t gChain = 0xcbf29ce484222325ULL;
@@ -125,7 +146,28 @@ void ArmAutoplay() {
     std::vector<BandUser *> &users = TheBandUserMgr->GetBandUsers();
     for (size_t i = 0; i < users.size(); i++) {
         BandUser *u = users[i];
-        if (u && u->IsLocal() && !u->mAutoplay) u->SetAutoplay(true);
+        if (!u || !u->IsLocal() || u->mAutoplay) continue;
+        if (*gAutoplaySkip && u->GetLocalUser()) {
+            char pad = (char)('0' + u->GetLocalUser()->GetPadNum());
+            if (strchr(gAutoplaySkip, pad)) continue;
+        }
+        u->SetAutoplay(true);
+    }
+}
+
+// RB3_APP_AUTODEPLOY: see gAutoDeploy.
+void AutoDeploy(int frame) {
+    if (!gAutoDeploy || !TheGame) return;
+    std::vector<Player *> &players = TheGame->GetActivePlayers();
+    for (size_t i = 0; i < players.size(); i++) {
+        Player *p = players[i];
+        if (!p || !p->IsLocal() || !p->IsAutoplay() || !dynamic_cast<GemPlayer *>(p)) continue;
+        if (!p->CanDeployOverdrive()) continue;
+        static Message deploy("deploy_if_possible");
+        float before = p->GetBandEnergy();
+        p->Handle(deploy, true);
+        printf("rb3-app-det: autodeploy frame %d p%d track %d energy %.4f -> deploying %d\n",
+               frame, (int)i, (int)p->GetTrackType(), before, p->IsDeployingBandEnergy());
     }
 }
 
@@ -229,7 +271,7 @@ std::string ScoreState(uint64_t &h) {
                  multOn ? "" : "(off)");
         out += buf;
         if (Performer *bp = band->GetBand()) AddPerf(h, out, bp, true);
-        if (gBandWalk) {
+        if (gBandWalk || gOdWalk) {
             // Band walk (RB3_APP_EXTRA_PADS): the band's shared overdrive /
             // unison state too -- multiplier and bonus level (Band::Poll's
             // deploy sum), the crowd ratings, and the CommonPhraseCapturer
@@ -290,13 +332,29 @@ std::string ScoreState(uint64_t &h) {
             snprintf(buf, sizeof buf, " vtrack %d singers %d parts %d scoring %d", vt, ns, np, se);
             out += buf;
         }
-        if (gBandWalk) {
+        if (gBandWalk || gOdWalk) {
             const Stats &st = p->GetStats();
             int o[5] = {st.GetUnisonPhrasesCompleted(), st.GetUnisonPhraseCount(),
                         st.GetOverdrivePhrasesCompleted(), st.GetOverdrivePhraseCount(),
                         st.GetDeployCount()};
             h = Fnv(h, o, sizeof o);
             snprintf(buf, sizeof buf, " uni %d/%d od %d/%d deploys %d", o[0], o[1], o[2], o[3], o[4]);
+            out += buf;
+        }
+        if (gOdWalk) {
+            // Player::GetMultiplier(true, ...): the player's own scoring multiplier
+            // (streak x band overdrive multiplier) as AddPoints applies it; the
+            // individual (streak) multiplier; Stats' failed-deploy flag and
+            // players-saved count (Player::LocalDeployBandEnergy); the per-player
+            // overdrive bookkeeping DeployOverdrive / StopDeployingOverdrive keep.
+            const Stats &st = p->GetStats();
+            int m1 = 0, m2 = 0, m3 = 0;
+            int mult = p->GetMultiplier(true, m1, m2, m3);
+            int ind = p->GetIndividualMultiplier();
+            int q[7] = {mult, m1, m2, m3, ind, (int)st.GetFailedDeploy(), st.GetPlayersSaved()};
+            h = Fnv(h, q, sizeof q);
+            snprintf(buf, sizeof buf, " mult %d (%d,%d,%d) ind %d faildep %d saved %d", q[0], q[1],
+                     q[2], q[3], q[4], q[5], q[6]);
             out += buf;
         }
         AddPerf(h, out, p, true);
@@ -347,8 +405,16 @@ void rb3_app_determinism_init() { // ring: native-real
         printf("rb3-app-det: autoplay on (BandUser::mAutoplay for every local user)\n");
         fflush(stdout);
     }
+    const char *ad = getenv("RB3_APP_AUTODEPLOY");
+    gAutoDeploy = gAutoplay && ad && *ad && strcmp(ad, "0") != 0;
+    if (const char *sk = getenv("RB3_APP_AUTOPLAY_SKIP")) gAutoplaySkip = sk;
+    if (gAutoDeploy || *gAutoplaySkip)
+        printf("rb3-app-det: autodeploy %d, autoplay skips pads '%s'\n", gAutoDeploy, gAutoplaySkip);
     if (!gDet) return;
     gBandWalk = RB3AppExtraPadCount() > 0;
+    const char *od = getenv("RB3_APP_DET_OD");
+    gOdWalk = od && *od && strcmp(od, "0") != 0;
+    if (gOdWalk) printf("rb3-app-det: overdrive fields on (RB3_APP_DET_OD)\n");
     gMainThread = pthread_self();
     printf("rb3-app-det: deterministic walk on (seed %d, frame %lld ns, tick %lld ns)\n",
            atoi(getenv("RB3_APP_SEED") ? getenv("RB3_APP_SEED") : "0"), (long long)kFrameNs,
@@ -359,6 +425,7 @@ void rb3_app_determinism_init() { // ring: native-real
 // Called by the SystemPoll wrapper at the start of frame `frame` (1-based).
 void rb3_app_determinism_frame(int frame) { // ring: native-real
     ArmAutoplay();
+    AutoDeploy(frame);
     HeapSnapFrame(frame, Name(TheUI ? TheUI->CurrentScreen() : nullptr));
     if (!gDet) return;
     int64_t start = kBaseNs + (int64_t)frame * kFrameNs;
