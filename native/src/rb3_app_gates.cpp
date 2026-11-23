@@ -3160,6 +3160,69 @@ void rb3_app_check_crowd_force_3d() { // ring: native-real
     _exit(7);
 }
 
+// A59: an environ's left/right fade reaches a fade_out material. Retail
+// NgEnviron::Select (band.exe TU5 fn_82B86738) builds two planes from the
+// environ's left_out/left_opaque/right_opaque/right_out along its fade_ref's x
+// axis when the environ fades out, and uploads them as VConstant/PConstant
+// 0x35/0x36 for the fade_out shader option; the vocal HUD's track.env
+// (fade_out, lr -12 -10 10 12) is how retail fades lyric words in the last two
+// units of the lane, and the lyric font material (Pentatonic_..._fadeout.mat)
+// declares fade_out (lane A54/A57: native drew them full strength). The
+// engine fills SceneUniforms lrFadeLeft/lrFadeRight (rndshape::EnvLRFadePlanes)
+// and sets colorMod.w bit 11 (rndshape::MatFadesOut); the shader multiplies the
+// output alpha by saturate(dot(left, p)) * saturate(dot(right, p)).
+// The check: the planes evaluate to retail's fade at x = 0, 10, 11, 12, -11,
+// -12, and the material's fade_out is seen.
+#include "rndobj/Env.h"
+#include "rndobj/Mat.h"
+void rb3_app_check_environ_lr_fade() { // ring: native-real
+    RndEnviron *env = Hmx::Object::New<RndEnviron>();
+    RndMat *mat = Hmx::Object::New<RndMat>();
+    env->SetProperty("fade_out", 1);
+    env->SetProperty("fade_start", 0.0f);
+    env->SetProperty("fade_end", 1000.0f);
+    env->SetProperty("left_out", -12.0f);
+    env->SetProperty("left_opaque", -10.0f);
+    env->SetProperty("right_opaque", 10.0f);
+    env->SetProperty("right_out", 12.0f);
+    mat->SetProperty("fade_out", 1);
+    float l[4] = {0, 0, 0, 0}, r[4] = {0, 0, 0, 0};
+    bool planes = rndshape::EnvLRFadePlanes(env, l, r);
+    bool matFades = rndshape::MatFadesOut(mat);
+    auto fade = [&](float x) {
+        float a = l[0] * x + l[3], b = r[0] * x + r[3];
+        a = a < 0 ? 0 : (a > 1 ? 1 : a);
+        b = b < 0 ? 0 : (b > 1 ? 1 : b);
+        return a * b;
+    };
+    auto near = [](float a, float b) { return a - b < 1e-4f && b - a < 1e-4f; };
+    float f0 = fade(0), f10 = fade(10), f11 = fade(11), f12 = fade(12), fm11 = fade(-11), fm12 = fade(-12);
+    bool ok = planes && matFades && near(f0, 1) && near(f10, 1) && near(f11, 0.5f) && near(f12, 0)
+        && near(fm11, 0.5f) && near(fm12, 0);
+    // An environ that does not fade out gives no planes (the shader then leaves alpha alone).
+    env->SetProperty("fade_out", 0);
+    float l2[4] = {0, 0, 0, 0}, r2[4] = {0, 0, 0, 0};
+    bool planesOff = rndshape::EnvLRFadePlanes(env, l2, r2);
+    ok = ok && !planesOff;
+    delete mat;
+    delete env;
+    char what[384];
+    snprintf(what, sizeof what,
+             "environ lr fade: planes %d, material fade_out %d, fade at x 0/10/11/12/-11/-12 = "
+             "%.3f %.3f %.3f %.3f %.3f %.3f, planes with fade_out off %d (want 1 1, 1 1 0.5 0 "
+             "0.5 0, 0; retail NgEnviron::Select c53/c54)",
+             (int)planes, (int)matFades, f0, f10, f11, f12, fm11, fm12, (int)planesOff);
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (environ lr fade)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
 // A56: RndText glyph pages sample their atlas RGB. Retail draws a page with the
 // font's own material (RndText SetMat(font->GetMat()), the plain field load at
 // every SetMat site of rndobj/Text.cpp) and its standard shader samples the
@@ -3283,6 +3346,49 @@ void rb3_app_check_lyric_line_color_kept() { // ring: native-real
     }
     printf("  [FAIL] rb3-app %s\n", what);
     printf("RESULT: GATE FAILED (lyric line colour)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A64: the UI drawn after the world starts on a cleared depth buffer. Retail
+// DxRnd::DoWorldEnd (band.exe TU5 fn_8273D610, +0x30) ends with SavePreBuffer
+// (fn_8273B3B8), whose second D3DDevice_Resolve (+0xB8 li r4,0x300 =
+// RT0 | CLEARRENDERTARGET | CLEARDEPTHSTENCIL, +0x9C ClearZ = 0.0f, the far
+// plane under DxRnd's default reverse Z; +0xC0 the call) clears the EDRAM depth
+// after the world's depth went to mFrontBufferDepth (+0x68 li r4,0x14, +0x90).
+// The native frame pass kept the world's depth, so every UI quad with z mode
+// "normal" (the song list's row backings: function_setlist.mat, the red
+// SETLISTS band, and song_disc_dark/light.mat) failed its depth test behind
+// the menu's 3D scene and only the z-off header bars drew (lane A61 2b).
+// The check drives one frame: before EndWorld the frame pass draws into the
+// world's depth; after it, into a separate depth, cleared on open, while the
+// world's depth stays the sampled one.
+#include "rndobj/Rnd.h"
+void NativeFrameDepthState(int out[4]); // milo-native-engine platform/Rnd_Wgpu.cpp
+void rb3_app_check_world_end_depth_clear() { // ring: native-real
+    int before[4] = {-1, -1, -1, -1}, after[4] = {-1, -1, -1, -1};
+    TheRnd.BeginDrawing();
+    NativeFrameDepthState(before);
+    TheRnd.EndWorld();
+    NativeFrameDepthState(after);
+    TheRnd.EndDrawing();
+    char what[512];
+    snprintf(what, sizeof what,
+             "world-end depth clear: before EndWorld resolved %d post-world %d (want 0 0); "
+             "after EndWorld resolved %d, pass on post-world depth %d, cleared on open %d, "
+             "world depth kept apart %d (want 1 1 1 1; retail SavePreBuffer fn_8273B3B8 "
+             "resolves with D3DRESOLVE_CLEARDEPTHSTENCIL, so z-tested UI is not hidden by "
+             "the world)",
+             before[0], before[3], after[0], after[1], after[2], after[3]);
+    bool ok = before[0] == 0 && before[3] == 0 && after[0] == 1 && after[1] == 1
+        && after[2] == 1 && after[3] == 1;
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (world-end depth clear)\n");
     fflush(stdout);
     fflush(stderr);
     _exit(7);

@@ -87,6 +87,8 @@ void rb3_app_check_spotlight_disk(); // rb3_app_gates.cpp
 void rb3_app_check_glyph_atlas_rgb(); // rb3_app_gates.cpp
 void rb3_app_check_album_art_path(); // rb3_app_gates.cpp
 void rb3_app_check_lyric_line_color_kept(); // rb3_app_gates.cpp
+void rb3_app_check_environ_lr_fade(); // rb3_app_gates.cpp
+void rb3_app_check_world_end_depth_clear(); // rb3_app_gates.cpp
 void rb3_app_check_music_library_on_exit(); // rb3_app_gates.cpp
 void rb3_app_check_clip_group_replace(); // rb3_app_gates.cpp
 void rb3_app_check_clip_transition_drop(); // rb3_app_gates.cpp
@@ -463,6 +465,8 @@ int main(int argc, char **argv) {
         rb3_app_check_crowd_force_3d(); // A53 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_glyph_atlas_rgb(); // A56 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_lyric_line_color_kept(); // A57 (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_environ_lr_fade(); // A59 (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_world_end_depth_clear(); // A64 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_album_art_path(); // A56 (rb3_app_gates.cpp): exits rc 7 on a failure
         printf("RESULT: APP CONSTRUCTED\n");
         fflush(stdout);
