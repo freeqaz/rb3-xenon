@@ -47,6 +47,8 @@ TUs plus the four TUs that `#include` one of them (`rndobj/Lit_NG.cpp`, `synth/S
 touched files uses `__LINE__` (asserts carry hex literals), so the line shifts are inert for
 the match build.
 
+`cmake --build ~/tmp/narms5/nb --target rb3-app rb3-vocal2 rb3-harmony` in that configure (log `~/tmp/narms5/nbuild.log`) compiled 1,409 edges and linked all three, rc 0, 0 `error:` lines.
+
 Not done: no native binary was run and `tools/native_health.sh --selftest` was not run (both
 excluded by the brief). The next lane should run the app through `no610m.sh` and check: (1)
 venue camera shots with no targets (#525 changes every such shot's transform), (2) that the
