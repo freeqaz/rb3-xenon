@@ -2771,3 +2771,42 @@ void rb3_app_check_postproc_noise_map() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A49: only RndText's glyph pages take the engine's text path. The engine
+// (milo-native-engine platform/MaterialSetup.cpp MeshShadesAsText /
+// MeshDrawsAsGlyph) draws a glyph page with no depth test, no culling, forced
+// prelit and the atlas ALPHA as its colour. Unless the game says it marks its
+// pages, it infers a page from an empty name, and rb3-xenon builds many
+// unnamed meshes that are not text: WorldCrowd::BuildBillboard's impostor
+// cards (retail fn_824E2AF0's caller set, gImpostorMat: use_environ 1,
+// alpha cut 0x80), spotlight beams, ribbons, lines, gem tails. The crowd's
+// cards therefore drew as their render target's alpha, i.e. flat white
+// silhouettes through the stage (lane A49). The check: an unnamed
+// non-text mesh is not shaded as text; a marked glyph page is.
+#include "platform/MaterialSetup.h"
+#include "platform/MeshGpuCache.h"
+#include "rndobj/Mesh.h"
+void rb3_app_check_unnamed_mesh_not_text() { // ring: native-real
+    RndMesh *card = Hmx::Object::New<RndMesh>();
+    RndMesh *page = Hmx::Object::New<RndMesh>();
+    MarkTextGlyphMesh(page);
+    bool cardText = MeshShadesAsText(card), cardGlyph = MeshDrawsAsGlyph(card, false);
+    bool pageText = MeshShadesAsText(page), pageGlyph = MeshDrawsAsGlyph(page, false);
+    delete card;
+    delete page;
+    char what[384];
+    snprintf(what, sizeof what,
+             "unnamed mesh vs glyph page: card shades as text %d, draws as glyph %d; marked "
+             "page shades as text %d, draws as glyph %d (want 0 0 1 1; the crowd's impostor "
+             "card is lit through gImpostorMat, not an atlas)",
+             (int)cardText, (int)cardGlyph, (int)pageText, (int)pageGlyph);
+    if (!cardText && !cardGlyph && pageText && pageGlyph) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (unnamed mesh shaded as text)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}

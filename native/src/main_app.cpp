@@ -86,6 +86,8 @@ void rb3_app_check_nonull_list_replace_drain(); // rb3_app_gates.cpp
 void rb3_app_check_bone_merge_repoint(); // rb3_app_gates.cpp
 void rb3_app_check_credits_auto_scroll(); // rb3_app_gates.cpp
 void rb3_app_check_postproc_noise_map(); // rb3_app_gates.cpp
+void rb3_app_check_unnamed_mesh_not_text(); // rb3_app_gates.cpp
+void SetGameMarksTextGlyphMeshes(bool marks); // milo-native-engine platform/MeshGpuCache.h
 
 extern "C" void rb3_app_gate(const char *step);
 void rb3_app_determinism_init(); // rb3_app_determinism.cpp (RB3_APP_DETERMINISTIC)
@@ -267,6 +269,11 @@ int main(int argc, char **argv) {
     int appArgc = argc > 1 ? argc - 1 : argc;
     char **appArgv = argc > 1 ? argv + 1 : argv;
     appArgv[0] = argv[0];
+    // A49: rb3-app marks its RndText glyph pages (rndobj/Text.cpp, HX_NATIVE), so
+    // the engine draws only those as text; an unnamed mesh that is not a page
+    // (WorldCrowd's impostor cards, spotlight beams, ribbons, gem tails) shades
+    // with its own material instead of as an alpha atlas.
+    SetGameMarksTextGlyphMeshes(true);
     App *app = new App(appArgc, appArgv);
     rb3_app_gate("App::App.complete");
     const char *co = getenv("RB3_APP_CONSTRUCT_ONLY");
@@ -304,6 +311,7 @@ int main(int argc, char **argv) {
         rb3_app_check_bone_merge_repoint(); // A41 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_credits_auto_scroll(); // credits lane (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_postproc_noise_map(); // A49 (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_unnamed_mesh_not_text(); // A49 (rb3_app_gates.cpp): exits rc 7 on a failure
         printf("RESULT: APP CONSTRUCTED\n");
         fflush(stdout);
         fflush(stderr);

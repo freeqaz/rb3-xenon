@@ -1956,6 +1956,17 @@ RndFont *RndText::SupportChar(unsigned short us, RndFont *font) {
         MeshInfo &meshInfo = it->second;
         if (!meshInfo.mesh) {
             meshInfo.mesh = Hmx::Object::New<RndMesh>();
+#ifdef HX_NATIVE
+            // A glyph page: the native renderer draws it as text (no depth
+            // test, no culling, atlas alpha as colour). rb3-app says it marks
+            // its pages (SetGameMarksTextGlyphMeshes), so every other unnamed
+            // mesh (crowd impostor cards, spotlight beams, ribbons) keeps its
+            // material's shading (lane A49).
+            {
+                extern void MarkTextGlyphMesh(RndMesh *);
+                MarkTextGlyphMesh(meshInfo.mesh);
+            }
+#endif
             meshInfo.mesh->SetTransParent(this, false);
             meshInfo.mesh->SetTransConstraint((Constraint)2, nullptr, false);
             meshInfo.syncFlags = 0;

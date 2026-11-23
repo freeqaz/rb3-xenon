@@ -38,7 +38,6 @@
 #include <cfloat>
 #ifdef HX_NATIVE
 inline double __fsel(double a, double b, double c) { return a >= 0.0 ? b : c; }
-#include <unordered_map>
 #else
 #include "xdk/LIBCMT/ppcintrinsics.h"
 #endif
@@ -48,9 +47,6 @@ static RndCam *gImpostorCamera = nullptr;
 static RndMat *gImpostorMat = nullptr;
 static int gNumCrowd = 0;
 static WorldCrowd *gParent = nullptr;
-#ifdef HX_NATIVE
-static std::unordered_map<Character *, RndTex *> sImpostorCache;
-#endif
 
 namespace {
     void GetMeshShaderFlags(RndMat *mat, std::list<unsigned int> &flags) {
@@ -184,12 +180,6 @@ WorldCrowd::~WorldCrowd() {
         }
         RELEASE(gImpostorCamera);
         RELEASE(gImpostorMat);
-#ifdef HX_NATIVE
-        for (auto &pair : sImpostorCache) {
-            RELEASE(pair.second);
-        }
-        sImpostorCache.clear();
-#endif
     }
 }
 
@@ -1222,142 +1212,6 @@ void WorldCrowd::DrawShowing() {
                 numInstances++;
             }
             if ((unsigned long)(int)numInstances != 0) {
-#ifdef HX_NATIVE
-                // Native cached impostor path: render each character type to a
-                // dedicated texture ONCE, then reuse on all subsequent frames.
-                // Characters don't animate on native (no clip subdirs), so a
-                // single snapshot is sufficient.
-                RndTex *cachedTex = nullptr;
-                {
-                    auto cacheIt = sImpostorCache.find(curChar);
-                    if (cacheIt != sImpostorCache.end()) {
-                        cachedTex = cacheIt->second;
-                    }
-                }
-                if (!cachedTex) {
-                    cachedTex = Hmx::Object::New<RndTex>();
-                    cachedTex->SetBitmap(256, 512, 32, RndTex::kRendered, true, nullptr);
-
-                    gImpostorCamera->SetTargetTex(cachedTex);
-
-                    RndCam *curCam = RndCam::Current();
-                    Transform camXfmCopy;
-                    memcpy(&camXfmCopy, &curCam->WorldXfm(), sizeof(Transform) - sizeof(Vector3));
-
-                    float halfHeight = charIt->mDef.mHeight * 0.5f;
-
-                    // Position impostor camera at distance along camera's -Y axis
-                    const Transform &placementXfm = mPlacementMesh->WorldXfm();
-                    const Transform &curCamXfm = curCam->WorldXfm();
-                    float dx = curCamXfm.v.x - placementXfm.v.x;
-                    float dy = curCamXfm.v.y - placementXfm.v.y;
-                    float dz = curCamXfm.v.z - placementXfm.v.z - halfHeight;
-                    float dist = std::sqrt(dx * dx + dy * dy + dz * dz);
-                    float minDist = curCam->NearPlane() + halfHeight;
-                    if (dist < minDist) dist = minDist;
-                    float negDist = -dist;
-                    camXfmCopy.v.x = camXfmCopy.m.y.x * negDist;
-                    camXfmCopy.v.y = camXfmCopy.m.y.y * negDist;
-                    camXfmCopy.v.z = camXfmCopy.m.y.z * negDist + halfHeight;
-                    gImpostorCamera->SetLocalXfm(camXfmCopy);
-                    float yFov = std::atan((double)(halfHeight / dist)) * 2.0f;
-                    gImpostorCamera->SetFrustum(
-                        curCam->NearPlane(), curCam->FarPlane(), yFov, 1.0f
-                    );
-
-                    // Orient character based on crowd rotation mode
-                    Transform charXfm;
-                    if (mCrowdRotate == kCrowdRotateNone) {
-                        memcpy(&charXfm, &mPlacementMesh->WorldXfm(), 0x30);
-                    } else {
-                        const Transform &meshXfm = mPlacementMesh->WorldXfm();
-                        float upX = meshXfm.m.z.x;
-                        float upY = meshXfm.m.z.y;
-                        float upZ = meshXfm.m.z.z;
-                        // Both operands of each product must vary per arm: the
-                        // Face row is cross(up, camY) and the Away row is
-                        // cross(camY, up), a clean negation pair -- exactly
-                        // what the PPC path below (adjudicated on retail
-                        // bytes) spells out.  Pinning the camera components to
-                        // .y/.z across both arms, and varying only the up
-                        // component, made the Face row
-                        // camY.y*up.y - camY.z*up.z: a dot-product-shaped
-                        // quantity that is no component of any cross product.
-                        float fwdY, fwdZ, camA, upA, camB, upB;
-                        if (mCrowdRotate == kCrowdRotateFace) {
-                            const Transform &camWXfm = curCam->WorldXfm();
-                            fwdZ = camWXfm.m.y.y * upX - camWXfm.m.y.x * upY;
-                            fwdY = camWXfm.m.y.x * upZ - camWXfm.m.y.z * upX;
-                            camA = camWXfm.m.y.z; upA = upY;
-                            camB = camWXfm.m.y.y; upB = upZ;
-                        } else {
-                            const Transform &camWXfm = curCam->WorldXfm();
-                            fwdY = camWXfm.m.y.z * upX - camWXfm.m.y.x * upZ;
-                            fwdZ = camWXfm.m.y.x * upY - camWXfm.m.y.y * upX;
-                            camA = camWXfm.m.y.y; upA = upZ;
-                            camB = camWXfm.m.y.z; upB = upY;
-                        }
-                        charXfm.m.x.x = camA * upA - camB * upB;
-                        charXfm.m.x.y = fwdY;
-                        charXfm.m.x.z = fwdZ;
-                        Normalize(charXfm.m.x, charXfm.m.x);
-                        charXfm.m.y.x = charXfm.m.x.y * upX - upY * charXfm.m.x.x;
-                        charXfm.m.y.y = upZ * charXfm.m.x.x - charXfm.m.x.z * upX;
-                        charXfm.m.y.z = charXfm.m.x.z * upY - charXfm.m.x.y * upZ;
-                        charXfm.m.z.x = upX;
-                        charXfm.m.z.y = upY;
-                        charXfm.m.z.z = upZ;
-                    }
-                    charXfm.v.x = 0;
-                    charXfm.v.y = 0;
-                    charXfm.v.z = 0;
-                    curChar->SetWorldXfm(charXfm);
-
-                    // Render character to the cached impostor texture
-                    RndEnviron *env = mEnviron;
-                    bool savedApprox = true;
-                    if (env) {
-                        savedApprox = env->UsesApproxGlobal();
-                        env->SetUseApproxGlobal(false);
-                    }
-                    {
-                        const Transform &charWorldXfm = curChar->WorldXfm();
-                        RndEnvironTracker tracker(env, &charWorldXfm.v);
-                        gImpostorCamera->Select();
-                        curChar->SetShowing(true);
-#ifdef RB3_WORLDCROWD_DC3_REV
-                        if (mCharForceLod != kLODPerFrame) {
-                            curChar->SetLodType(mCharForceLod);
-                        }
-#endif
-                        curChar->DrawShowing();
-#ifdef RB3_WORLDCROWD_DC3_REV
-                        if (mCharForceLod != kLODPerFrame) {
-                            curChar->SetLodType(kLODPerFrame);
-                        }
-#endif
-                    }
-                    if (env) {
-                        env->SetUseApproxGlobal(savedApprox);
-                    }
-                    curCam->Select();
-
-                    gImpostorCamera->SetTargetTex(gImpostorTex[mLod]);
-                    sImpostorCache[curChar] = cachedTex;
-                }
-
-                gImpostorMat->SetDiffuseTex(cachedTex);
-                // Character materials don't write alpha, so the RT alpha stays
-                // at the clear value (0). Use additive blend to bypass alpha:
-                // black background adds nothing (0+scene=scene), character
-                // color adds on top. Disable alpha cut since alpha is all zero.
-                gImpostorMat->SetAlphaCut(false);
-                gImpostorMat->SetBlend(RndMat::kBlendAdd);
-                DrawMultiMeshWithEnviron(mmesh);
-                gImpostorMat->SetAlphaCut(true);
-                gImpostorMat->SetBlend(RndMat::kBlendSrc);
-                continue;
-#endif
                 SetMatAndCameraLod();
                 RndCam *curCam = RndCam::Current();
                 Transform camXfmCopy;
