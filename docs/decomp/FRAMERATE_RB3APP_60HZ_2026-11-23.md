@@ -124,9 +124,8 @@ first commit). Every leg rc 0 at its frame cap.
 
 **Clocks (walk.txt, seed 0, 6000 frames).** d0 (base) and d2L (`legacy`) identical over 6000
 frames. d2 (60 Hz): menu task/UI seconds advance 2.5 s per 150 frames (1/60 a frame; legacy
-1/30 a frame), the song's 5.0 s per 300 frames; the song started at frame 1281, 21.8 virtual s
-(legacy: frame ~1100, ~37 s, of which ~10 s is the frozen-grid artefact above being absent at
-30 Hz only because the fixed step hid it). Normal launch n2 (bin-f2, 4000 frames): 88.2 s,
+1/30 a frame), the song's 5.0 s per 300 frames; game_screen settled at frame 1281 (legacy d0: frame 1112,
+which at 1/30 s is about 1.7x the virtual time). Normal launch n2 (bin-f2, 4000 frames): 88.2 s,
 the song at ~58 frames/s with four other rb3-app runs on the box; n0 (base) ran 6000 frames
 in 33.1 s.
 
