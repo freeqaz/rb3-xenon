@@ -56,8 +56,7 @@ rb3-ark, rb3-dta and rb3-frame have **0** uninitialised-value errors. Scratch, s
 **rb3-render is partial.** Under memcheck it does not finish inside the 1,500 s cap. Two runs exist, both rc
 124 by the cap:
 - On perturb's binaries (`v_pt/`) it reached 51 of 414 `[PASS]` gates and ended at 982 errors / 8 contexts.
-- On this lane's build (`v_gpu/`) it was still running when this record was written; see
-  `~/tmp/stackuninit/HANDOFF.md`.
+- On this lane's build (`v_gpu/`) it reached 55 of 414 gates and gave the same 982 errors / 8 contexts.
 
 In both runs, all uninitialised-value contexts come from H3. The other 4 contexts are driver notes. So
 rb3-render's later cells (venues, characters) have not been covered by memcheck.
