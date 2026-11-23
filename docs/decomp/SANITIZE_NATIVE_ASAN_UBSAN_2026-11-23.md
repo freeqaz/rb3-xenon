@@ -157,6 +157,10 @@ each source location once per process. The runner script is in scratch
 
 ## 4. The FileMerger fix, measured and backed out (row 10)
 
+> **Superseded 2026-11-23 by `FORCERELOAD_MERGER_INIT_2026-11-23.md`.** The init is landed. The stream
+> starts either way; the byte only moves the shell-music pick through RNG draws (v16 vs v11 mogg), and the
+> Keygen marker below fires only for v12–16.
+
 - **Retail.** Retail's `Merger(Hmx::Object *)` (`0x8232DCF8`) stores `mProxy` (0x28) and
   `mPreClear` (0x2A) but not `mForceReload` (0x29), and `operator=` (`0x8232DE80`) does not copy
   it. So `NeedsLoad` (`FileMerger.cpp:488`) reads it unset until `SetSelected`.
