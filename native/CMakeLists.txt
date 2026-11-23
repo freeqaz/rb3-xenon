@@ -2813,7 +2813,13 @@ if(RB3X_BUILD_ENGINE)
     # rb3_app_joypad_gate.cpp is its gate (RB3_APP_JOYPAD_GATE=1).
     list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/platform/Joypad_Stub.cpp)
     list(APPEND _rb3_app_all ${CMAKE_SOURCE_DIR}/src/rb3_app_joypad.cpp
-        ${CMAKE_SOURCE_DIR}/src/rb3_app_joypad_gate.cpp)
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_joypad_gate.cpp
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_chartplay.cpp)
+    # chartplay: RB3_APP_CHARTPLAY=1 plays pad 0's chart through real pad input. The
+    # driver reads the GemPlayer's BeatMatcher, watcher and controller members, so
+    # access checking is relaxed for that one driver file (no decomp TU changes).
+    set_source_files_properties(${CMAKE_SOURCE_DIR}/src/rb3_app_chartplay.cpp
+        PROPERTIES COMPILE_OPTIONS "-fno-access-control")
     # stubring (2026-11-23): bodies for in-scope link stubs, record
     # docs/decomp/STUBRING_RB3APP_INSCOPE_STUBS_2026-11-23.md.
     #  * rb3_app_stubring_native.cpp: the three VMX intrinsics SndAnalysis's
