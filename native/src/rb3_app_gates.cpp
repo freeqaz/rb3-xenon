@@ -1931,3 +1931,53 @@ void rb3_app_check_clip_transition_drop() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A30: BandCharDesc::sDrumVenueMappings is retail's 11-word table at 0x82C6D728
+// (NameToDrumVenue fn_82334250, lis/addi at +0xC/+0x14): five {name, venue}
+// pairs and a "" terminator (0x82000C55) that ends the loop (lbz at +0x5C). The
+// decomp had ten entries, wrong venues and no terminator, so an unmatched name
+// walked off the array (lane A29 ASan: SetTempoGenreVenue <- OnUnloadVenue).
+// The check never reads past the table: it takes the count from the defining TU
+// and finds the loop's terminator inside it before calling NameToDrumVenue with
+// a miss, so a missing terminator fails (rc 7) without ASan.
+int BandCharDescDrumVenueMappingCount(); // BandCharDesc.cpp (HX_NATIVE)
+void rb3_app_check_drum_venue_lookup() { // ring: native-real
+    const char **tbl = BandCharDesc::sDrumVenueMappings;
+    int count = BandCharDescDrumVenueMappingCount();
+    int term = -1; // the even index whose string is "": where the retail loop stops
+    for (int i = 0; i < count; i += 2) {
+        if (*tbl[i] == 0) {
+            term = i;
+            break;
+        }
+    }
+    bool bounded = count == 11 && term == 10;
+    static const char *const kWant[][2] = { { "small_club", "small_club" },
+                                            { "arena", "arena" },
+                                            { "big_club", "big_club" },
+                                            { "festival", "arena" },
+                                            { "video", "big_club" } };
+    int matched = 0;
+    for (const auto &w : kWant) {
+        char name[64];
+        snprintf(name, sizeof name, "venue_%s_test", w[0]);
+        if (BandCharDesc::NameToDrumVenue(name) == Symbol(w[1]))
+            matched++;
+    }
+    bool miss = bounded && BandCharDesc::NameToDrumVenue("no_such_venue") == Symbol(tbl[0]);
+    char what[320];
+    snprintf(what, sizeof what,
+             "drum venue lookup: table %d entries, terminator at %d (want 11, 10); "
+             "pairs matched %d (want 5); miss -> %s %d (want 1) "
+             "(retail NameToDrumVenue fn_82334250, table 0x82C6D728)",
+             count, term, matched, tbl[0], (int)miss);
+    if (bounded && matched == 5 && miss) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (drum venue lookup)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
