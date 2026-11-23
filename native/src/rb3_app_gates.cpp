@@ -2029,3 +2029,68 @@ void rb3_app_check_replace_refs_shifted_entry() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A32: ~Object's ReplaceRefs steps each ref of a dying object with
+// Replace(nullptr) -> SetObj(nullptr), and it runs after the derived
+// destructors. For a CharBonesBlender, ~CharBones has by then reset the shared
+// vptr of the CharBonesObject subobject to CharBones' own vtable, which has no
+// virtual-base slot. SetObj compared `mObject != root_obj`, which converts
+// mObject to its virtual base Hmx::Object and so reads the virtual-base offset
+// from that vtable: the ASan global-buffer-overflow 8 bytes before `vtable for
+// CharBones` on every walk (A31, ~CharBonesBlender <- FileMerger::Merger::Clear
+// on the BandCharacter reload). The ref and its ring were sound. The check
+// makes that slot deterministic: a live blender's vptr is pointed, for one
+// Replace(nullptr) with the rings dirty as in that walk, at a copy of its
+// vtable header whose virtual-base slot would convert mObject to null. A
+// compare that reads the slot finds `null == null` and keeps the ref (rc 7);
+// the T1* compare clears it. Then a real delete of a held blender.
+#include "char/CharBonesBlender.h"
+void rb3_app_check_bones_ref_dying_compare() { // ring: native-real
+    Hmx::Object *owner = Hmx::Object::New<Hmx::Object>();
+    CharBonesBlender *blender = Hmx::Object::New<CharBonesBlender>();
+    CharBonesObject *bones = blender;
+    ObjPtr<CharBonesObject> ref(owner, bones);
+    bool held = ref.Ptr() == bones && blender->RefCount() == 1;
+    void **vptrSlot = reinterpret_cast<void **>(bones);
+    void *realVptr = *vptrSlot;
+    const intptr_t *realHdr = reinterpret_cast<const intptr_t *>(realVptr) - 3;
+    intptr_t vbase = static_cast<intptr_t>(
+        reinterpret_cast<char *>(static_cast<Hmx::Object *>(bones)) - reinterpret_cast<char *>(bones));
+    bool layout = realHdr[0] == vbase; // Itanium: virtual-base offset at vptr - 3 words
+    int cleared = -1, refsAfter = -1;
+    if (held && layout) {
+        intptr_t fakeHdr[3] = { -reinterpret_cast<intptr_t>(bones), realHdr[1], realHdr[2] };
+        bool dirty = Hmx::Object::sRingsDirty;
+        Hmx::Object::sRingsDirty = true;
+        // A virtual Replace through an opaque ObjRef*, as ReplaceRefs steps it,
+        // so the compare is not folded against a constant null.
+        ObjRef *volatile step = &ref;
+        *vptrSlot = fakeHdr + 3; // no virtual call goes through it in SetObj(nullptr)
+        step->Replace(nullptr);
+        *vptrSlot = realVptr;
+        Hmx::Object::sRingsDirty = dirty;
+        cleared = ref.Ptr() == nullptr;
+        refsAfter = blender->RefCount();
+    }
+    CharBonesBlender *blender2 = Hmx::Object::New<CharBonesBlender>();
+    ObjPtr<CharBonesObject> ref2(owner, blender2);
+    delete blender2; // the walk's path: ~Object -> ReplaceRefs -> SetObj(nullptr)
+    bool deleted = ref2.Ptr() == nullptr;
+    char what[320];
+    snprintf(what, sizeof what,
+             "bones ref dying compare: held %d, vbase slot found %d; with the "
+             "slot reading null -> Replace(nullptr) cleared %d, blender refs %d; deleted blender -> ref null %d "
+             "(want 1 1 1 0 1)",
+             (int)held, (int)layout, cleared, refsAfter, (int)deleted);
+    if (held && layout && cleared == 1 && refsAfter == 0 && deleted) {
+        delete blender;
+        delete owner;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (bones ref dying compare)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
