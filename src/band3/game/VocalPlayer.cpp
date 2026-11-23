@@ -1347,6 +1347,23 @@ void VocalPlayer::HandlePhraseEnd(float f1) {
     // it a hit overdrive phrase never reached Player::CompleteCommonPhrase, so
     // vocal energy stayed 0.
     (void)bSpotlightPhraseHit;
+#ifdef RB3_NATIVE_APP
+    // rb3-app hooks the real VocalTrack (HookupTrack's retail arm), so mTrack
+    // carries a real mTrackConfig: run retail's overdrive arbiter for a hit
+    // spotlight (overdrive) phrase, which is what awards a singer energy and
+    // counts the phrase (Player::CompleteCommonPhrase). Retail 0x826EA014..
+    // 0x826EA06C: bSpotlightPhraseHit, ScoringEnabled(), mTrack (0x30c) != 0,
+    // then HandleVocalPhrase(mCommonPhraseCapturer (0x264), this,
+    // mTrack->mTrackConfig.TrackNum(), iSpotlightPhraseID, bSpotlightPhraseHit).
+    // Without it an autoplayed singer hit every phrase and completed 0 of 9
+    // overdrive phrases, energy 0 (lane bandwalk, 2026-11-23). The render and
+    // net leaves above stay skipped.
+    if (bSpotlightPhraseHit && ScoringEnabled() && mTrack) {
+        mCommonPhraseCapturer->HandleVocalPhrase(
+            this, mTrack->mTrackConfig.TrackNum(), iSpotlightPhraseID, bSpotlightPhraseHit
+        );
+    }
+#endif
 #else
     if (mTrack) {
         if (ScoringEnabled()) {
