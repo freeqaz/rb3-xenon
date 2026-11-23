@@ -261,7 +261,8 @@ extern "C" void OutputDebugStringA(const char *msg) { // ring: native-real
 #include "synth/StreamReceiver.h"
 // ring-class: Rb3AppNativeSynth native-real
 bool rb3_app_sung_mic_init();
-Mic *rb3_app_sung_mic();
+Mic *rb3_app_sung_mic(int);
+int rb3_app_sung_mic_count();
 int rb3_app_sung_mic_next_available();
 void rb3_app_sung_mic_capture(int, bool);
 bool rb3_app_sung_mic_changed();
@@ -278,18 +279,22 @@ public:
         Synth::Terminate();
     }
     // micwalk: RB3_APP_SUNG_MIC=1 (rb3_app_mic_native.cpp) gives this Synth one
-    // connected mic, mic 0, singing the chart; the base Synth's mic virtuals
+    // connected mic, mic 0, singing the chart (micwalk2: RB3_APP_SUNG_MIC_COUNT=n gives
+    // n mics, mic k singing part k); the base Synth's mic virtuals
     // (no mic connected, none available) stand while it is off. Retail's
     // Synth360 answers the same calls from MicManagerXbox.
     Rb3AppNativeSynth() { mSungMic = rb3_app_sung_mic_init(); }
     virtual Mic *GetMic(int idx) override {
-        return mSungMic && idx == 0 ? rb3_app_sung_mic() : Synth::GetMic(idx);
+        Mic *m = mSungMic ? rb3_app_sung_mic(idx) : nullptr;
+        return m ? m : Synth::GetMic(idx);
     }
-    virtual int GetNumConnectedMics() override { return mSungMic ? 1 : 0; }
+    virtual int GetNumConnectedMics() override { return mSungMic ? rb3_app_sung_mic_count() : 0; }
     virtual int GetNextAvailableMicID() const override {
         return mSungMic ? rb3_app_sung_mic_next_available() : -1;
     }
-    virtual bool IsMicConnected(int id) const override { return mSungMic && id == 0; }
+    virtual bool IsMicConnected(int id) const override {
+        return mSungMic && id >= 0 && id < rb3_app_sung_mic_count();
+    }
     virtual void CaptureMic(int id) override {
         if (mSungMic) rb3_app_sung_mic_capture(id, true);
     }
