@@ -1015,10 +1015,23 @@ bool VocalPlayer::FindBestPart(
     MILO_ASSERT(i_pSinger, 0x5DA);
     o_rpBestPart = NULL;
     o_rfBestScore = 0.0f;
+#ifdef HX_NATIVE
+    // CouldScoreAgainstPart returns true on an unpitched (talky) note without
+    // storing outPitch (retail 0x826F2C70 returns 1 past the stfs at 0x826F2CEC),
+    // so fTargetPitch can be copied out here unwritten. Retail keeps it in one
+    // stack slot (0x50(r1) at 0x826E4CBC) for the whole loop, so it carries the
+    // previous part's value; only the first part can read stack garbage. Natively
+    // that garbage reached Singer::mBestTargetPitch, SendVocalState and the
+    // harness output (memcheck, stack origin). One slot, cleared once, keeps the
+    // carry and replaces only the garbage, with the value the miss path stores.
+    float fTargetPitch = 0.0f;
+#endif
     for (std::vector<VocalPart *>::iterator it = i_rParts.begin(); it != i_rParts.end();
          ++it) {
         VocalPart *pPart = *it;
+#ifndef HX_NATIVE
         float fTargetPitch;
+#endif
         float fShiftedPitch
             = 12.0f
                 * (float
