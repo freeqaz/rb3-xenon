@@ -70,9 +70,17 @@ if [ -f "$MAIN_REPO/.clangd" ]; then
     ln -sf "$MAIN_REPO/.clangd" "$WORKTREE_PATH/"
 fi
 
-echo "    Symlinking orig/ (target binary)"
-rm -rf "$WORKTREE_PATH/orig"
-ln -sf "$MAIN_REPO/orig" "$WORKTREE_PATH/orig"
+# orig/ is a reflinked copy INTO the tracked directory, as setup_worktree.sh
+# makes it. Replacing the directory with a symlink (this script's old way)
+# deleted the tracked orig/45410914/.gitkeep, so every such worktree showed
+# `D orig/45410914/.gitkeep` and lanes hid it with --skip-worktree.
+echo "    Copying orig/ (target binary, reflinked)"
+if [ -L "$WORKTREE_PATH/orig" ]; then
+    rm "$WORKTREE_PATH/orig"
+    git -C "$WORKTREE_PATH" checkout -- orig
+fi
+mkdir -p "$WORKTREE_PATH/orig"
+cp -a --reflink=auto "$MAIN_REPO/orig/." "$WORKTREE_PATH/orig/"
 
 echo "    Symlinking bin/objdiff-cli"
 mkdir -p "$WORKTREE_PATH/bin"
