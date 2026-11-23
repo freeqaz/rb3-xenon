@@ -52,6 +52,20 @@
 //                                   controller's OD button (mForceMercuryBut)
 //   RB3_APP_CHARTPLAY_HANDS=1       pro keys: low/high hand-placement bytes from
 //                                   the held keys
+// Lane codawalk (record docs/decomp/CODAWALK_INSONG_BONUS_WALK_2026-11-23.md), guitar/bass:
+//   RB3_APP_CHARTPLAY_WHAMMY=od|all  move the whammy (XInput sThumbRX, which the
+//                                   joypad.dta whammy entry GetWhammyBar reads) full
+//                                   travel every other poll while a sustain is held:
+//                                   of a gem in an overdrive phrase (od) or any (all)
+//   RB3_APP_CHARTPLAY_TILT=1        deploy overdrive by tilt (sThumbRY full negative,
+//                                   the xbox_mercury_switch axis) for 6 polls whenever
+//                                   the player has half a bar and is not deploying
+//   RB3_APP_CHARTPLAY_CODA=mash|blow  big rock ending: `mash` skips the chart's gems
+//                                   inside the coda freestyle (GetCodaFreestyleExtents)
+//                                   and instead holds all five frets and strums every
+//                                   third poll (drums: one pad a poll in rotation);
+//                                   `blow` plays the freestyle as charted and skips
+//                                   every gem after it (the ending's last gems)
 //   RB3_APP_CHARTPLAY_LOG=1         one line per gem (`rb3-app-chartplay: gem ...`) and
 //                                   per pressing poll (what JoypadData made of it);
 //                                   2 also turns on TheBeatMatchOutput (see K())
@@ -75,6 +89,8 @@
 #include "os/UsbMidiKeyboard.h"
 #include "beatmatch/GemInfo.h"
 #include "beatmatch/SongData.h"
+#include "game/SongDB.h"
+#include "utl/TimeConversion.h"
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
@@ -98,6 +114,10 @@ struct Knobs {
     bool bend = false; // pitch-bend byte up through a gem with a bend string
     int deploy = 0; // pro keys overdrive: 1 sustain pedal, 2 stomp pedal, 3 OD button
     bool hands = false; // pro keys low/high hand-placement bytes from the held keys
+    // lane codawalk
+    int whammy = 0; // 1 sustains of overdrive-phrase gems, 2 every sustain
+    bool tilt = false;
+    int coda = 0; // 1 mash the freestyle, 2 blow the ending
 };
 
 int PickKnob(const char *n, const char *const *names, int count) {
@@ -135,6 +155,11 @@ const Knobs &K() {
         k.deploy = PickKnob("RB3_APP_CHARTPLAY_DEPLOY", kDeploy, 4);
         k.bend = EnvOn("RB3_APP_CHARTPLAY_BEND");
         k.hands = EnvOn("RB3_APP_CHARTPLAY_HANDS");
+        static const char *const kWhammy[] = {"off", "od", "all"};
+        static const char *const kCoda[] = {"off", "mash", "blow"};
+        k.whammy = PickKnob("RB3_APP_CHARTPLAY_WHAMMY", kWhammy, 3);
+        k.coda = PickKnob("RB3_APP_CHARTPLAY_CODA", kCoda, 3);
+        k.tilt = EnvOn("RB3_APP_CHARTPLAY_TILT");
         // _LOG=2 also switches on the game's own beatmatch trace (TheBeatMatchOutput,
         // the SWING / NOSWING / HIT / MISS lines BeatMatcher and the watchers print),
         // which LogFile writes to its file pattern in the run directory.
@@ -145,6 +170,8 @@ const Knobs &K() {
                    k.offset, k.missPct, k.missFrom, k.missTo, k.seed, k.tapHopo ? "tap" : "strum", k.sustain);
             printf("rb3-app-chartplay: mute %s slide %s bend %d deploy %s hands %d\n",
                    kMute[k.mute], kSlide[k.slide], (int)k.bend, kDeploy[k.deploy], (int)k.hands);
+            printf("rb3-app-chartplay: whammy %s tilt %d coda %s\n", kWhammy[k.whammy],
+                   (int)k.tilt, kCoda[k.coda]);
             fflush(stdout);
         }
         return k;
@@ -186,6 +213,14 @@ struct Song {
     int deploys = 0;
     int lowHand = 0, highHand = 0;
     int slides = 0, mutedPlayed = 0, bends = 0;
+    // lane codawalk: the coda freestyle in song ms (-1: none / not read yet), the
+    // held gem whose sustain is whammied, tilt bookkeeping
+    float codaStartMs = -1, codaEndMs = -1;
+    bool codaRead = false;
+    int codaPolls = 0, codaSkipped = 0, whammyPolls = 0, tilts = 0;
+    int holdGem = -1;
+    float holdEnd = -1;
+    int tiltHeld = 0, tiltLast = -1000;
     Song() {
         for (int i = 0; i < 25; i++) keyUpAt[i] = -1;
     }
@@ -200,6 +235,10 @@ bool gRawOn = false;
 
 bool Skip(int gem) {
     const Knobs &k = K();
+    // Lane codawalk _CODA=blow: every gem after the coda freestyle is left unplayed.
+    if (k.coda == 2 && gSong.codaEndMs >= 0 && gSong.list && gem < gSong.list->NumGems()
+        && gSong.list->GetGem(gem).mMs >= gSong.codaEndMs)
+        return true;
     if (k.missPct <= 0 || gem < k.missFrom) return false;
     if (k.missTo > 0 && gem >= k.missTo) return false;
     uint32_t h = 2166136261u ^ k.seed;
@@ -216,9 +255,11 @@ bool Skip(int gem) {
 void Summary(const char *why) {
     if (!gSong.list) return;
     printf("rb3-app-chartplay: song %s: gems %d acted %d skipped %d late %d (max %.1f ms) "
-           "same-pad collisions %d muted %d slides %d bends %d deploys %d\n",
+           "same-pad collisions %d muted %d slides %d bends %d deploys %d coda-polls %d "
+           "coda-skipped %d whammy-polls %d tilts %d\n",
            why, gSong.numGems, gSong.acted, gSong.skipped, gSong.late, gSong.maxLate,
-           gSong.collide, gSong.mutedPlayed, gSong.slides, gSong.bends, gSong.deploys);
+           gSong.collide, gSong.mutedPlayed, gSong.slides, gSong.bends, gSong.deploys,
+           gSong.codaPolls, gSong.codaSkipped, gSong.whammyPolls, gSong.tilts);
     fflush(stdout);
 }
 
@@ -329,6 +370,20 @@ void RGToRaw() {
 } // namespace
 
 bool RB3AppChartPlayOn() { return K().on; }
+
+namespace {
+short gAxisRX = 0, gAxisRY = 0;
+bool gAxesOn = false;
+} // namespace
+
+// Lane codawalk: the whammy (sThumbRX) and tilt (sThumbRY) axes the chart player
+// gives pad `pad` this poll; false leaves the pad's own sticks.
+bool RB3AppChartPlayAxes(int pad, short *rx, short *ry) {
+    if (pad != 0 || !gAxesOn) return false;
+    *rx = gAxisRX;
+    *ry = gAxisRY;
+    return true;
+}
 
 // Lane chartplay2: the raw report the chart player gives pad `pad` this poll, or
 // null (the native ReadSingleJoypad then leaves it zeroed, as before).
@@ -620,6 +675,49 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
 
     unsigned buttons = 0;
     int n = gl->NumGems();
+    // Lane codawalk: the coda freestyle extent (GemPlayer::GetCodaFreestyleExtents,
+    // ticks -> song ms), read once per song.
+    if (!gSong.codaRead && gPadPlayer) {
+        gSong.codaRead = true;
+        Extent e;
+        if (gPadPlayer->GetCodaFreestyleExtents(e)) {
+            gSong.codaStartMs = TickToMs(e.unk0);
+            gSong.codaEndMs = TickToMs(e.unk4);
+        }
+        int lastIn = -1, after = 0;
+        for (int i = 0; i < n; i++) {
+            float ms = gl->GetGem(i).mMs;
+            if (gSong.codaStartMs >= 0 && ms >= gSong.codaStartMs && ms < gSong.codaEndMs) lastIn = i;
+            if (gSong.codaEndMs >= 0 && ms >= gSong.codaEndMs) after++;
+        }
+        printf("rb3-app-chartplay: poll %d coda freestyle ms %.1f..%.1f last gem inside %d, "
+               "gems after %d\n",
+               poll, gSong.codaStartMs, gSong.codaEndMs, lastIn, after);
+        fflush(stdout);
+    }
+    bool inCoda = gSong.codaStartMs >= 0 && now >= gSong.codaStartMs - dt / 2 && now < gSong.codaEndMs;
+    if (k.coda == 1 && inCoda) {
+        // Mash: the chart's gems inside the freestyle are passed over unpressed.
+        while (gSong.next < n && gl->GetGem(gSong.next).mMs < gSong.codaEndMs - dt) {
+            gSong.next++;
+            gSong.codaSkipped++;
+        }
+        int ph = gSong.codaPolls++;
+        if (gc) {
+            gSong.frets = 0x1f;
+            gSong.fretsUpAt = -1;
+            buttons |= SlotsToButtons(c, 0x1f);
+            if (ph % 3 == 2) {
+                const std::vector<int> &sb = gc->mStrumBarButtons;
+                buttons |= 1u << (sb.empty() ? kPad_DDown : sb[gSong.strumAlt++ % sb.size()]);
+            }
+        } else if (jc) {
+            unsigned b = SlotsToButtons(c, 1u << (ph % 5));
+            if (!(b & gSong.prevButtons)) buttons |= b;
+        }
+        gSong.prevButtons = buttons;
+        return buttons;
+    }
     if (gc) {
         // Frets: up at a sustain's end; the next acted gem's frets go down one
         // poll before its time (a tapped HOPO's at its time, with no strum).
@@ -653,6 +751,8 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
                     gSong.frets = gem.mSlots;
                     float dur = gem.mIgnoreDuration ? 0 : (float)gem.mDurationMs;
                     gSong.fretsUpAt = dur > 0 && k.sustain < 1 ? t + dur * k.sustain : -1;
+                    gSong.holdGem = dur > 0 ? g : -1;
+                    gSong.holdEnd = dur > 0 ? t + dur * k.sustain : -1;
                     gSong.lastEnd = dur > 0 ? t + dur * k.sustain : t + dt;
                     if (tap) {
                         what = "tap";
@@ -677,6 +777,33 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
         // Confirm, so holding it would swallow the walk's presses).
         if (gSong.next >= n && now >= gSong.lastEnd) gSong.frets = 0;
         buttons |= SlotsToButtons(c, gSong.frets);
+        // Lane codawalk _WHAMMY: the whammy goes full travel and back every other
+        // poll while the last acted gem's sustain is held (frets still down).
+        gAxesOn = k.whammy || k.tilt;
+        gAxisRX = -32768;
+        gAxisRY = 0;
+        if (k.whammy && gSong.holdGem >= 0 && now < gSong.holdEnd && gSong.frets) {
+            bool od = TheSongDB && gPadPlayer
+                && TheSongDB->GetPhraseID(gPadPlayer->GetTrackNum(), gSong.holdGem) != -1;
+            if (k.whammy == 2 || od) {
+                gSong.whammyPolls++;
+                if ((poll >> 1) & 1) gAxisRX = 32767;
+            }
+        }
+        // _TILT: tilt for 6 polls with half a bar of energy, not deploying, at
+        // most once a second.
+        if (gSong.tiltHeld > 0) {
+            gSong.tiltHeld--;
+        } else if (k.tilt && gPadPlayer && gPadPlayer->GetBandEnergy() >= 0.5f
+                   && !gPadPlayer->IsDeployingBandEnergy() && poll - gSong.tiltLast >= 30) {
+            gSong.tiltHeld = 6;
+            gSong.tiltLast = poll;
+            gSong.tilts++;
+            if (k.log)
+                printf("rb3-app-chartplay: poll %d tilt (energy %.4f) now %.1f\n", poll,
+                       gPadPlayer->GetBandEnergy(), now);
+        }
+        if (gSong.tiltHeld > 0) gAxisRY = -32768;
     } else {
         // Drums: every gem due this poll (a pad held last poll waits one poll).
         while (gSong.next < n) {

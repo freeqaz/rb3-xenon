@@ -81,6 +81,8 @@
 #include "game/Scoring.h"
 #include "game/VocalPlayer.h"
 #include "game/GemPlayer.h"
+#include "game/SongDB.h"
+#include "beatmatch/BeatMatchController.h"
 #include "ui/UI.h"
 #include <string>
 #include "ui/UIScreen.h"
@@ -109,6 +111,15 @@ bool gBandWalk = false; // RB3_APP_EXTRA_PADS names at least one extra pad
 // multipliers, saves -- in the det line, with or without extra pads. Off, the line
 // is byte-for-byte the earlier walks'.
 bool gOdWalk = false;
+// RB3_APP_DET_SCORE=1 (lane codawalk): the in-song bonus state of every gem
+// player and the band -- solo (GemPlayer's solo start tick / in-solo / solo-data
+// read / disabled-in-solo flags, Stats' solo bonus, percentage and best-solo
+// count), big rock ending (in coda, finished, blown, GemPlayer::mCodaPoints,
+// Stats' coda points; Band's coda-checked flag and result 1 won / 2 blown) and
+// whammy (GemPlayer's whammy-active flag, the controller's GetWhammyBar). Plus
+// one `rb3-app-det: song coda tick` line whenever the song's coda start changes.
+// Off, the line is byte-for-byte the earlier walks'.
+bool gScoreWalk = false;
 // RB3_APP_DET_HARM=1 (lane harmwalk): the vocal player's harmony state in the det
 // line -- whether harmonies are on (MetaPerformer::IsNowUsingVocalHarmony, the
 // user's preferred score type), each VocalPart's phrase index / phrase score / cap
@@ -281,6 +292,18 @@ std::string ScoreState(uint64_t &h) {
                  multOn ? "" : "(off)");
         out += buf;
         if (Performer *bp = band->GetBand()) AddPerf(h, out, bp, true);
+        if (gScoreWalk) {
+            int c[2] = {(int)band->unk40, band->unk44};
+            h = Fnv(h, c, sizeof c);
+            snprintf(buf, sizeof buf, " bcoda %d/%d", c[0], c[1]);
+            out += buf;
+            static int sCodaTick = -2;
+            int ct = TheSongDB ? TheSongDB->GetCodaStartTick() : -3;
+            if (ct != sCodaTick) {
+                sCodaTick = ct;
+                printf("rb3-app-det: song coda tick %d\n", ct);
+            }
+        }
         if (gBandWalk || gOdWalk) {
             // Band walk (RB3_APP_EXTRA_PADS): the band's shared overdrive /
             // unison state too -- multiplier and bonus level (Band::Poll's
@@ -326,7 +349,7 @@ std::string ScoreState(uint64_t &h) {
         h = Fnv(h, &energy, sizeof energy);
         h = Fnv(h, &deploy, sizeof deploy);
         h = Fnv(h, &longest, sizeof longest);
-        char buf[128];
+        char buf[192];
         snprintf(buf, sizeof buf, " p%d track %d en %d auto %d energy %.4f deploy %d long %d",
                  (int)i, track, enabled, autoOn, energy, deploy, longest);
         out += buf;
@@ -435,6 +458,22 @@ std::string ScoreState(uint64_t &h) {
                      q[2], q[3], q[4], q[5], q[6]);
             out += buf;
         }
+        if (gScoreWalk) {
+            if (GemPlayer *gp = dynamic_cast<GemPlayer *>(p)) {
+                const Stats &st = gp->GetStats();
+                int whammy = gp->mController ? (int)(gp->mController->GetWhammyBar() * -100.0f) : -1;
+                int q[13] = {(int)gp->unk310, (int)gp->unk315, (int)gp->unk316, (int)gp->unk314,
+                             (int)gp->mIsInCoda, (int)gp->mHasFinishedCoda, (int)gp->mHasBlownCoda,
+                             gp->mCodaPoints, st.GetSolo(), st.GetSoloPercentage(),
+                             st.GetCodaPoints(), (int)gp->unk348, whammy};
+                h = Fnv(h, q, sizeof q);
+                snprintf(buf, sizeof buf,
+                         " solo %d/%d/%d/%d coda %d/%d/%d pts %d ssolo %d spct %d scoda %d whm %d/%d",
+                         q[0], q[1], q[2], q[3], q[4], q[5], q[6], q[7], q[8], q[9], q[10], q[11],
+                         q[12]);
+                out += buf;
+            }
+        }
         AddPerf(h, out, p, true);
     }
     return out;
@@ -493,6 +532,9 @@ void rb3_app_determinism_init() { // ring: native-real
     const char *od = getenv("RB3_APP_DET_OD");
     gOdWalk = od && *od && strcmp(od, "0") != 0;
     if (gOdWalk) printf("rb3-app-det: overdrive fields on (RB3_APP_DET_OD)\n");
+    const char *sc = getenv("RB3_APP_DET_SCORE");
+    gScoreWalk = sc && *sc && strcmp(sc, "0") != 0;
+    if (gScoreWalk) printf("rb3-app-det: bonus fields on (RB3_APP_DET_SCORE)\n");
     const char *hm = getenv("RB3_APP_DET_HARM");
     gHarmWalk = hm && *hm && strcmp(hm, "0") != 0;
     if (gHarmWalk) printf("rb3-app-det: harmony fields on (RB3_APP_DET_HARM)\n");
