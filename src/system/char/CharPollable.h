@@ -14,8 +14,8 @@ class CharPollableSorter {
 public:
     struct Dep {
         // Retail's map<Object*, Dep>::operator[] (fn_82373BB0) builds the
-        // default value on its stack: obj (+0x80) and poll (+0x84) zeroed, the
-        // list sentinel self-linked (+0x94, +0x98), searchID (r31+0x70) never
+        // default value on its stack: obj (+0x60) and poll (+0x6C) zeroed, the
+        // list sentinel self-linked (+0x64, +0x68), searchID (r31+0x70) never
         // written. The Dep copy (fn_823710E8, `lwz r11,0x10(r30)` +0x3C) then
         // copies that stack slot into the node, so a fresh node's searchID is
         // stale stack bytes. ChangedByRecurse (fn_8236E980) compares it with
