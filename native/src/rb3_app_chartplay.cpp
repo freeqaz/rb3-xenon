@@ -31,7 +31,9 @@
 //                                   alone at its time, no strum (default: strum)
 //   RB3_APP_CHARTPLAY_SUSTAIN=f     hold a sustain for fraction f of its length
 //                                   (default 1); frets go up after that
-//   RB3_APP_CHARTPLAY_LOG=1         one line per gem (`rb3-app-chartplay: gem ...`)
+//   RB3_APP_CHARTPLAY_LOG=1         one line per gem (`rb3-app-chartplay: gem ...`) and
+//                                   per pressing poll (what JoypadData made of it);
+//                                   2 also turns on TheBeatMatchOutput (see K())
 // Every song also prints a summary line when its gem list goes away or is
 // replaced. Record: docs/decomp/CHARTPLAY_CHART_DRIVEN_PAD_WALK_2026-11-23.md.
 #include "beatmatch/BeatMatcher.h"
@@ -44,6 +46,7 @@
 #include "game/Game.h"
 #include "game/GemPlayer.h"
 #include "os/User.h"
+#include "beatmatch/Output.h"
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
@@ -59,7 +62,7 @@ struct Knobs {
     unsigned seed = 0;
     bool tapHopo = false;
     float sustain = 1;
-    bool log = false;
+    int log = 0;
 };
 
 bool EnvOn(const char *n) {
@@ -77,7 +80,11 @@ const Knobs &K() {
         if (const char *v = getenv("RB3_APP_CHARTPLAY_SEED")) k.seed = (unsigned)atoi(v);
         if (const char *v = getenv("RB3_APP_CHARTPLAY_HOPO")) k.tapHopo = !strcmp(v, "tap");
         if (const char *v = getenv("RB3_APP_CHARTPLAY_SUSTAIN")) k.sustain = (float)atof(v);
-        k.log = EnvOn("RB3_APP_CHARTPLAY_LOG");
+        if (const char *v = getenv("RB3_APP_CHARTPLAY_LOG")) k.log = atoi(v);
+        // _LOG=2 also switches on the game's own beatmatch trace (TheBeatMatchOutput,
+        // the SWING / NOSWING / HIT / MISS lines BeatMatcher and the watchers print),
+        // which LogFile writes to its file pattern in the run directory.
+        if (k.on && k.log >= 2) TheBeatMatchOutput.SetActive(true);
         if (k.on) {
             printf("rb3-app-chartplay: on (pad 0) offset %.1f ms miss %d%% from gem %d seed %u "
                    "hopo %s sustain %.2f\n",
@@ -94,6 +101,8 @@ struct Song {
     int next = 0; // first gem not yet acted on
     unsigned frets = 0; // guitar: fret slots held
     float fretsUpAt = -1; // guitar: song ms the held frets go up (sustain end), -1 never
+    float lastEnd = 0; // song ms the last acted gem ends (its sustain, else one poll after it)
+    bool done = false; // every gem acted on and the last one's frets released
     unsigned prevButtons = 0; // last poll's levels
     int strumAlt = 0;
     float prevNow = 0;
@@ -158,7 +167,7 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
         gl = m->mWatcher->mImpl->mGemList;
     float now = gl ? m->GetNow() : 0;
     if (gl != gSong.list || (gl && now + 1000 < gSong.prevNow)) {
-        Summary(gl ? "replaced" : "ended");
+        if (!gSong.done) Summary(gl ? "replaced" : "ended");
         gSong = Song();
         gSong.list = gl;
         if (!gl) return 0;
@@ -212,6 +221,7 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
                     gSong.frets = gem.mSlots;
                     float dur = gem.mIgnoreDuration ? 0 : (float)gem.mDurationMs;
                     gSong.fretsUpAt = dur > 0 && k.sustain < 1 ? t + dur * k.sustain : -1;
+                    gSong.lastEnd = dur > 0 ? t + dur * k.sustain : t + dt;
                     if (tap) {
                         what = "tap";
                     } else {
@@ -224,12 +234,16 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
                 }
                 if (k.log)
                     printf("rb3-app-chartplay: poll %d gem %d ms %.1f dur %d slots 0x%x hopo %d "
-                           "now %.1f (%+.1f) %s\n",
+                           "now %.1f (%+.1f) %s buttons 0x%x\n",
                            poll, g, gem.mMs, (int)gem.mDurationMs, gem.mSlots,
-                           (int)gem.GetForceStrum(), now, now - gem.mMs, what);
+                           (int)gem.GetForceStrum(), now, now - gem.mMs, what,
+                           buttons | SlotsToButtons(c, gSong.frets));
                 gSong.next++;
             }
         }
+        // After the last gem the frets go up (a held green is the endgame screens'
+        // Confirm, so holding it would swallow the walk's presses).
+        if (gSong.next >= n && now >= gSong.lastEnd) gSong.frets = 0;
         buttons |= SlotsToButtons(c, gSong.frets);
     } else {
         // Drums: every gem due this poll (a pad held last poll waits one poll).
@@ -259,11 +273,36 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
             }
             if (k.log)
                 printf("rb3-app-chartplay: poll %d gem %d ms %.1f slots 0x%x cymbal %d now %.1f "
-                       "(%+.1f) %s\n",
-                       poll, g, gem.mMs, gem.mSlots, (int)gem.IsCymbal(), now, now - gem.mMs, what);
+                       "(%+.1f) %s buttons 0x%x\n",
+                       poll, g, gem.mMs, gem.mSlots, (int)gem.IsCymbal(), now, now - gem.mMs, what,
+                       SlotsToButtons(c, gem.mSlots));
             gSong.next++;
         }
     }
+    if (!gSong.done && gSong.next >= n && !buttons) {
+        gSong.done = true;
+        Summary("done");
+    }
     gSong.prevButtons = buttons;
     return buttons;
+}
+
+bool RB3AppChartPlayLog() { return K().on && K().log > 0; }
+
+// _LOG: after JoypadPollCommon on a pressing poll, what the controller and the
+// BeatMatcher made of it.
+void RB3AppChartPlayAfterPoll(int poll) {
+    BeatMatcher *m = PadMatcher(0);
+    if (!m || !m->mController) return;
+    BeatMatchController *c = m->mController;
+    int disabled = c->IsDisabled(), mask = -1, cuser = -1;
+    if (JoypadController *jc = dynamic_cast<JoypadController *>(c)) {
+        mask = jc->mFretMask;
+        cuser = jc->mLocalUser ? jc->mLocalUser->GetPadNum() : -2;
+    } else if (GuitarController *gc = dynamic_cast<GuitarController *>(c)) {
+        mask = gc->mFretMask;
+    }
+    printf("rb3-app-chartplay: poll %d controller disabled %d fretmask 0x%x user-pad %d "
+           "matcher auto %d now %.1f lastswing %.1f\n",
+           poll, disabled, mask, cuser, (int)m->mAutoplay, m->GetNow(), m->mLastSwing);
 }

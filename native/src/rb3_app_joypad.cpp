@@ -57,6 +57,8 @@ void RB3AppJoypadGatePoll(int poll);
 // rb3_app_chartplay.cpp (lane chartplay): RB3_APP_CHARTPLAY=1 plays pad 0's chart.
 bool RB3AppChartPlayOn();
 unsigned int RB3AppChartPlayButtons(int pad, int poll);
+bool RB3AppChartPlayLog();
+void RB3AppChartPlayAfterPoll(int poll);
 
 namespace {
 JoypadNativePadState gPad[kNumJoypads]; // this poll's native source state, per pad
@@ -314,6 +316,14 @@ void JoypadPoll() {
         gPad[pad].buttons |= gChart[pad];
     }
     JoypadPollCommon();
+    if (gChart[0] && RB3AppChartPlayLog()) {
+        // What the retail path made of the chart player's levels on pad 0.
+        JoypadData *d = JoypadGetPadData(0);
+        printf("rb3-app-chartplay: poll %d pad 0 levels 0x%x -> JoypadData type %d buttons 0x%x "
+               "newly 0x%x\n",
+               poll, gChart[0], (int)d->mType, d->mButtons, d->mNewPressed);
+        RB3AppChartPlayAfterPoll(poll);
+    }
     if (InputLogEnabled()) {
         // Lane keyswalk: what the retail path made of each press -- the pad's
         // JoypadType, its joypad.dta controller and the button's action there.
