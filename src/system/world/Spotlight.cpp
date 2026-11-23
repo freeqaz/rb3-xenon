@@ -783,9 +783,13 @@ void Spotlight::Init() {
 }
 
 void Spotlight::BuildBoard() {
-#ifdef HX_NATIVE
-    return; // Skip mesh setup on native — no renderer
-#endif
+    // Retail fn_824DC5E8 builds the shared lens/floor-spot disk on every boot
+    // (sDiskMesh, the stw to lbl_82CC786C at +0x18). The native host used to
+    // return here ("no renderer", from the 2026-05 scaffold), leaving sDiskMesh
+    // NULL for SpotlightDrawer's DrawAccessories<LensExtract> and the asserting
+    // Spotlight draws; game_screen's first lit frame then crashed in
+    // RndDrawable::Showing. The native renderer is real now: build the disk;
+    // only the D3D step below is skipped.
     MILO_ASSERT(!sDiskMesh, 0x42E);
     sDiskMesh = Hmx::Object::New<RndMesh>();
     RndMesh::VertVector &verts = sDiskMesh->Verts();
@@ -812,8 +816,12 @@ void Spotlight::BuildBoard() {
     faces[0].Set(0, 1, 2);
     faces[1].Set(1, 3, 2);
     sDiskMesh->Sync(0x13F);
+#ifndef HX_NATIVE
+    // The one D3D-only step (fn_827378B8, the bl at fn_824DC5E8+0x244): the native
+    // RndMesh is the WebGPU mesh, not a DxMesh, and builds its own buffers in Sync.
     DxMesh *dxDiskMesh = static_cast<DxMesh *>(sDiskMesh);
     dxDiskMesh->GetMultimeshFaces();
+#endif
     sDiskMesh->UpdateSphere();
 }
 
