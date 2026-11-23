@@ -100,6 +100,9 @@ NON_STUB_RE = re.compile(
     # detwalk: rb3-app's opt-in deterministic-walk hooks (RB3_APP_DETERMINISTIC;
     # seed, clock and ThreadCall wrappers that pass through when unset).
     r"rb3_app_determinism\.cpp|"
+    # chartplay: rb3-app's opt-in chart-driven pad input (RB3_APP_CHARTPLAY; presses the
+    # chart's gems through the joypad layer, passes through when unset); no stubs.
+    r"rb3_app_chartplay\.cpp|"
     # stubring: rb3-app's ported bodies for in-scope link stubs (VMX intrinsics,
     # PlatformMgr::SwapUserPads/IsGuestOnlineID, XRemapUserDevices,
     # DmCaptureStackBackTrace); real bodies, nothing aborts.
