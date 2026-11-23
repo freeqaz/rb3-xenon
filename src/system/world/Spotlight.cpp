@@ -205,8 +205,17 @@ Spotlight::~Spotlight() {
 // test against SetObj's return value, which retail does not have.
 void Spotlight::Replace(ObjRef *from, Hmx::Object *to) {
     RndTransformable::Replace(from, to);
+#ifdef HX_NATIVE
+    // Retail fn_824D81C0+0x3C (`cmplw cr6,r11,r30`) compares the held color
+    // owner with `from`, the dying object on X360. The native ring passes the
+    // ObjRef member itself (obj/Object.h RefIs), so that compare never matched
+    // natively, and the `!Ptr() -> this` tail (+0x70..+0x84) could not cover it:
+    // the member still held the dying Spotlight, not null. Lane A26.
+    if (RefIs(from, mColorOwner)) {
+#else
     if (static_cast<Hmx::Object *>(mColorOwner.Ptr())
         == reinterpret_cast<Hmx::Object *>(from)) {
+#endif
         mColorOwner.SetOwnerObj(dynamic_cast<Spotlight *>(to));
     }
     if (!mColorOwner.Ptr()) {
