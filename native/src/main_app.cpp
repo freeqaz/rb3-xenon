@@ -54,6 +54,14 @@
 #include "meta_band/OvershellSlotState.h"
 #include "tour/Tour.h"
 #include "tour/TourProgress.h"
+#include "meta_band/ModifierMgr.h"
+#include "meta_band/MetaPerformer.h"
+#include "game/Game.h"
+#include "game/GemPlayer.h"
+#include "bandtrack/TrackPanel.h"
+#include "bandobj/TrackPanelDirBase.h"
+#include "bandobj/GemTrackDir.h"
+#include "beatmatch/BeatMatcher.h"
 
 void rb3_app_check_ui_sink(); // rb3_app_gates.cpp
 void rb3_app_check_tex_movie(); // rb3_app_gates.cpp
@@ -225,6 +233,55 @@ void LogTour() {
     }
 }
 
+// RB3_APP_MOD_LOG=1: one `rb3-app: frame N mods ...` line whenever the modifier state or any
+// value a modifier sets changes, so a walk can check each modifier's effect (lane modwalk):
+// active= the modifiers ModifierMgr::IsModifierActive reports; nofail= MetaPerformer::
+// IsNoFailActive; fills= Game::mDrumFillsMod; hud= TrackPanelDirBase mPerformanceMode (nohud),
+// mDoubleSpeedActive, mIndependentTrackSpeeds; view= each in-use gem track's instrument and
+// ViewTimeSeconds; p= each GemPlayer's miss-sound flag (unk408) and BeatMatcher fill logic.
+// Read-only: every call below only reads members (IsModifierActive(Modifier*) writes only when
+// a modifier is locked, and IsModifierUnlocked is always true in retail).
+void LogModifiers() {
+    static const bool on = [] {
+        const char *v = getenv("RB3_APP_MOD_LOG");
+        return v && v[0] && strcmp(v, "0") != 0;
+    }();
+    if (!on || !TheModifierMgr) return;
+    char buf[1024];
+    int n = snprintf(buf, sizeof buf, "active=");
+    for (Modifier *m : TheModifierMgr->mModifiers)
+        if (TheModifierMgr->IsModifierActive(m))
+            n += snprintf(buf + n, sizeof buf - n, "%s,", m->mData->Sym(0).Str());
+    if (MetaPerformer::Current())
+        n += snprintf(buf + n, sizeof buf - n, " nofail=%d", MetaPerformer::Current()->IsNoFailActive());
+    if (TheGame) {
+        n += snprintf(buf + n, sizeof buf - n, " fills=%d p=", TheGame->DrumFillsMod());
+        for (Player *pl : TheGame->mAllActivePlayers) {
+            GemPlayer *gp = dynamic_cast<GemPlayer *>(pl);
+            if (gp && n < (int)sizeof buf - 64)
+                n += snprintf(buf + n, sizeof buf - n, "miss%d/fill%d,", gp->unk408,
+                              gp->mMatcher ? (int)gp->mMatcher->mFillLogic : -1);
+        }
+    }
+    TrackPanelDirBase *tpd = TheTrackPanel ? TheTrackPanel->mTrackPanelDir : nullptr;
+    if (tpd) {
+        n += snprintf(buf + n, sizeof buf - n, " hud=perf%d/dbl%d/indep%d view=",
+                      tpd->mPerformanceMode, tpd->mDoubleSpeedActive, tpd->mIndependentTrackSpeeds);
+        for (int i = 0; i < (int)tpd->mGemTracks.size() && n < (int)sizeof buf - 64; i++) {
+            GemTrackDir *g = tpd->mGemTracks[i];
+            if (g && g->InUse())
+                n += snprintf(buf + n, sizeof buf - n, "%s:%.3f,", g->GetInstrumentSymbol().Str(),
+                              g->ViewTimeSeconds());
+        }
+    }
+    static char last[1024];
+    if (strcmp(buf, last)) {
+        strcpy(last, buf);
+        printf("rb3-app: frame %d mods %s\n", gFramesStarted, buf);
+        fflush(stdout);
+    }
+}
+
 int EnvInt(const char *name, int dflt) {
     const char *v = getenv(name);
     return v && *v ? atoi(v) : dflt;
@@ -251,6 +308,7 @@ extern "C" void __wrap__Z10SystemPollb(bool b) { // ring: native-real
         }
         LogFocus(cur);
         LogTour();
+        LogModifiers();
     }
     __real__Z10SystemPollb(b);
 }
