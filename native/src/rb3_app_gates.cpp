@@ -2816,7 +2816,14 @@ void rb3_app_check_retail_post_chain() { // ring: native-real
     const bool dofOn = dof->Enabled();
     dof->UnSet();
     const bool dofOff = !dof->Enabled();
-    const bool theNg = !TheDOFProc || dynamic_cast<NgDOFProc *>(TheDOFProc) != nullptr;
+    // The singleton the way the game makes it: CameraManager's ctor calls
+    // DOFProc::Init (retail fn_82466298, `if (!TheDOFProc) TheDOFProc =
+    // New<DOFProc>()`); construct mode exits after the gates, so making it
+    // here early changes nothing later. 0: none, 1: the plain DOFProc (the
+    // depth of field can never run), 2: NgDOFProc.
+    DOFProc::Init();
+    const int theKind = !TheDOFProc ? 0 : dynamic_cast<NgDOFProc *>(TheDOFProc) ? 2 : 1;
+    const bool theNg = theKind == 2;
     delete cam;
     delete dof;
     delete opaque;
@@ -2828,12 +2835,12 @@ void rb3_app_check_retail_post_chain() { // ring: native-real
     snprintf(what, sizeof what,
              "retail post chain: RB3 X360 chain selected %d, mode %d (MILO_RB3_RETAIL_POST=%s), "
              "c6 (%.3f %.3f %.3f) bloom %d, bloom mask opaque %d / src-alpha %d, DOFProc factory "
-             "makes NgDOFProc %d, Set enables %d, UnSet disables %d, TheDOFProc NgDOFProc %d "
-             "(want 1, 1, (0.500 0.500 0.500) 1, 1 / 0, 1, 1, 1, 1: retail NgPostProc::DoPost "
+             "makes NgDOFProc %d, Set enables %d, UnSet disables %d, TheDOFProc kind %d "
+             "(want 1, 1, (0.500 0.500 0.500) 1, 1 / 0, 1, 1, 1, 2: retail NgPostProc::DoPost "
              "fn_82B89A08 DoBloom fn_82B884A0, NgDOFProc::Set fn_82B8BF78)",
              (int)chain, mode, env ? env : "unset", rp.bloomColor[0], rp.bloomColor[1],
              rp.bloomColor[2], (int)rp.bloom, (int)maskOpaque, (int)maskBlended, (int)ngDof,
-             (int)dofOn, (int)dofOff, (int)theNg);
+             (int)dofOn, (int)dofOff, theKind);
     if (ok) {
         rb3_app_gate(what);
         return;
