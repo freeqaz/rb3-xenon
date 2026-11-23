@@ -1466,8 +1466,8 @@ void Rnd::DrawPreClear() {
     }
 #endif // !HX_NATIVE
     ObjPtrList<RndDrawable> *drawList;
-    // Retail fn_824158B8 (band.exe TU5; listing 0x82415640, the select at
-    // 0x82415820..0x82415830): lbz r11, 0x150(r26) (mReleaseImmediate), addi
+    // Retail fn_824158B8 (band.exe TU5; the select at +0x1E0..+0x1F0,
+    // 0x82415A98..0x82415AA8): lbz r11, 0x150(r26) (mReleaseImmediate), addi
     // r11, r26, 0x128 (mPreClearDraws), bne keeps it, else addi r11, r26, 0x13c
     // (mDraws). So mReleaseImmediate picks mPreClearDraws and a normal frame
     // dispatches mDraws. Both builds run this one line.
@@ -1479,7 +1479,7 @@ void Rnd::DrawPreClear() {
     //
     // WHY IT WAS FLIPPED. Not to make up for registration: registration is
     // the same in both builds. PreClearDrawAddOrRemove (retail fn_82415C10,
-    // listing 0x82415998) is `b3 ? 0x128 : 0x13c`, and its callers pass
+    // band.exe TU5) is `b3 ? 0x128 : 0x13c`, and its callers pass
     // b3 = false (OutfitConfig::UpdatePreClearState, TexRenderer, TexProc,
     // StreamRenderer: all land in mDraws) or b3 = GetReleaseImmediate()
     // (TexMovie). The inverted arm was a decompilation error. X21 (2026-08-03)

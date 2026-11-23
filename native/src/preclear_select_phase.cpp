@@ -1,13 +1,13 @@
 // rb3-xenon native -- A18: Rnd::DrawPreClear dispatches the list retail does.
 //
 // THE REFERENCE is band.exe (TU5, base 0x82000000), fn_824158B8, the
-// ?DrawPreClear@Rnd@@MAAXXZ body (listing 0x82415640..0x824158BC). Its list
-// select is at 0x82415820..0x82415830:
+// ?DrawPreClear@Rnd@@MAAXXZ body (0x824158B8..0x82415B34). Its list
+// select is at +0x1E0..+0x1F0 (0x82415A98..0x82415AA8):
 //     lbz   r11, 0x150(r26)     mReleaseImmediate
 //     addi  r11, r26, 0x128     mPreClearDraws
-//     bne   .L_82415834         set: keep it
+//     bne   +0x1F4              set: keep it
 //     addi  r11, r26, 0x13c     clear: mDraws
-// and PreClearDrawAddOrRemove (fn_82415C10, listing 0x82415998) files a drawable
+// and PreClearDrawAddOrRemove (fn_82415C10) files a drawable
 // in 0x128 when b3 is set and in 0x13c when it is not. So a drawable registered
 // with b3 = false (OutfitConfig, TexRenderer, TexProc, StreamRenderer) is drawn on
 // a normal frame, and one registered with b3 = true (TexMovie during the splash)
