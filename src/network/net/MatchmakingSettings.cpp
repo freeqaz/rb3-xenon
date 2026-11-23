@@ -69,7 +69,23 @@ void MatchmakingSettings::Load(BinStream &bs) {
     }
 }
 
-SessionSettings::SessionSettings() : Synchronizable("sessionsettings") { Clear(); }
+SessionSettings::SessionSettings() : Synchronizable("sessionsettings") {
+#ifdef HX_NATIVE
+    // Retail writes no mRanked@0xC here: band.exe TU5 fn_823F3C78 stores the
+    // vtables, mModeName@0x4 and the two vectors, constructs Synchronizable
+    // (+0x78), then runs Clear inline: mModeFilter@0x8 = -1 (+0x9C),
+    // ClearCustomSettings (+0xA0), mPublic@0x48 = 0 (+0xA4). Clear
+    // (fn_823F3BE8: +0x18, +0x1C, +0x24) does not write it either, so retail
+    // reads whatever its heap held until BandMatchmaker::OnMsg(ModeChangedMsg)
+    // stores SetRanked(IsRanked()). Natively that byte is uninitialized heap,
+    // and a StartGame reached with no mode change took the ranked
+    // (arbitration) arm. Start at false, the quickplay value; the ctor only,
+    // since retail's Clear keeps the value. A36; gate
+    // rb3_app_check_session_settings_unranked (native/src/rb3_app_gates.cpp).
+    mRanked = false;
+#endif
+    Clear();
+}
 
 void SessionSettings::Clear() {
     mModeFilter = -1;
