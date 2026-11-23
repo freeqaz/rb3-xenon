@@ -105,7 +105,7 @@ BYTE TriggerByte(const JoypadNativePadState &s, int i, JoypadButton bit) {
 //
 //   RB3_APP_EXTRA_PADS=KIND=SCRIPT[,KIND=SCRIPT...]
 //
-// names pads 1, 2, 3 in order. KIND is gamepad, guitar or drums, the same
+// names pads 1, 2, 3 in order. KIND is gamepad, guitar, drums, keys or proguitar, the same
 // XInput subtypes RB3_APP_JOYPAD_KIND gives pad 0 (a bass player is a guitar pad
 // that picks bass in the overshell). SCRIPT is that pad's own input script in
 // the engine's MILO_INPUT_SCRIPT grammar, subset: `wait_screen NAME`, `+N
@@ -158,11 +158,22 @@ int ExtraButtonBit(const char *n) {
     _Exit(2);
 }
 
+// The XInput subtype of each pad kind (RB3_APP_JOYPAD_KIND and
+// RB3_APP_EXTRA_PADS share it); 0 for an unknown kind.
+BYTE KindToSubType(const char *v) {
+    if (!strcmp(v, "gamepad")) return 1;  // XINPUT_DEVSUBTYPE_GAMEPAD
+    if (!strcmp(v, "guitar")) return 6;   // XINPUT_DEVSUBTYPE_GUITAR
+    if (!strcmp(v, "drums")) return 8;    // XINPUT_DEVSUBTYPE_DRUM_KIT
+    if (!strcmp(v, "keys")) return 15;    // the keytar's subtype (SetupHXKeytar)
+    if (!strcmp(v, "proguitar")) return 25; // the pro guitar's (SetupHXRealGuitar)
+    return 0;
+}
+#define RB3_APP_KINDS "gamepad, guitar, drums, keys or proguitar"
+
 BYTE KindSubType(const char *v) {
-    if (!strcmp(v, "gamepad")) return 1;
-    if (!strcmp(v, "guitar")) return 6;
-    if (!strcmp(v, "drums")) return 8;
-    ExtraFail("kind is not gamepad, guitar or drums:", v);
+    BYTE sub = KindToSubType(v);
+    if (!sub) ExtraFail("kind is not " RB3_APP_KINDS ":", v);
+    return sub;
 }
 
 void LoadExtraScript(ExtraPad &x, int pad, const char *path) {
@@ -340,14 +351,19 @@ namespace {
 // first-generation guitar, `strat_xbox` (GUITAR_WITHOUT_CALBERT, so calibration
 // stays the manual screens: there is no Calbert sensor to read natively).
 // `drums`: XINPUT_DEVSUBTYPE_DRUM_KIT (8), Flags 0, which SetupHXDrums reads as
-// kJoypadXboxDrums, `hx_drums_xbox`. Any other value fails at the first query.
+// kJoypadXboxDrums, `hx_drums_xbox`. Lane keyswalk (2026-11-23): `keys`:
+// subtype 15 with sThumbLY 0, which SetupHXKeytar reads as kJoypadXboxKeytar
+// (not the MIDI Pro Adapter's keyboard, 0x1730); `proguitar`: subtype 25,
+// sThumbLY 0, which SetupHXRealGuitar reads as kJoypadXboxButtonGuitar (the
+// button-fretted pro guitar; 0x1530 is the 22-fret one). Any other value fails
+// at the first query.
 BYTE PadSubType() {
     static const BYTE sub = [] {
         const char *v = getenv("RB3_APP_JOYPAD_KIND");
-        if (!v || !v[0] || !strcmp(v, "gamepad")) return (BYTE)1;
-        if (!strcmp(v, "guitar")) return (BYTE)6;
-        if (!strcmp(v, "drums")) return (BYTE)8;
-        fprintf(stderr, "rb3-app joypad: RB3_APP_JOYPAD_KIND=%s is not gamepad, guitar or drums\n", v);
+        if (!v || !v[0]) return (BYTE)1;
+        BYTE k = KindToSubType(v);
+        if (k) return k;
+        fprintf(stderr, "rb3-app joypad: RB3_APP_JOYPAD_KIND=%s is not " RB3_APP_KINDS "\n", v);
         fflush(stderr);
         _Exit(2);
     }();
@@ -355,10 +371,11 @@ BYTE PadSubType() {
 }
 } // namespace
 
-// ReadSingleXinputJoypad (Joypad_Xinput.cpp) classifies a guitar (subtype 6/11)
-// or drum kit (subtype 8) through these two Joypad_Xbox.cpp functions. That TU
+// ReadSingleXinputJoypad (Joypad_Xinput.cpp) classifies a guitar (subtype 6/11),
+// drum kit (8), keytar (15) or pro guitar (25) through these four Joypad_Xbox.cpp
+// functions. That TU
 // is not in rb3-app (its XInput2 thread and JoypadInit/Poll are this file's job),
-// so the two bodies are here, as retail:
+// so the four bodies are here, as retail:
 //   SetupHXGuitar 0x82529E20: Flags bit 1 -> JoypadData +0x4b (mIsWireless),
 //     bit 0 -> +0x4a (mHasCapFlag1); sThumbLX (caps+8) == 0x1BAD -> GetBreedData,
 //     return 0x1d (kJoypadXboxCoreGuitar); else bit1 && (bit0 || sThumbRX
@@ -391,6 +408,27 @@ JoypadType SetupHXDrums(int pad, const XINPUT_CAPABILITIES &c) {
     if (rb2) return kJoypadXboxDrumsRb2;
     if (rockOfAges) return kJoypadXboxRoDrums;
     return kJoypadXboxDrums;
+}
+
+// SetupHXKeytar 0x82529BA0 (lane keyswalk): `lhz r11,0xa(r4)` (sThumbLY),
+// `rlwinm r11,r11,0,0,27` (& ~0xF), `cmplwi 0x1730`: 0x20
+// (kJoypadXboxMidiBoxKeyboard, the MIDI Pro Adapter in keyboard mode) on a
+// match, else 0x22 (kJoypadXboxKeytar). It never touches the pad's JoypadData
+// (r3 is dead), unlike the guitar and drums bodies above.
+JoypadType SetupHXKeytar(int, const XINPUT_CAPABILITIES &c) {
+    if (((unsigned short)c.Gamepad.sThumbLY & ~0xFu) == 0x1730) return kJoypadXboxMidiBoxKeyboard;
+    return kJoypadXboxKeytar;
+}
+
+// SetupHXRealGuitar 0x82529DC8 (lane keyswalk): the same masked sThumbLY. 0x1530
+// returns 0x1f (kJoypadXboxRealGuitar22Fret); otherwise retail computes
+// `is1430 || !is1530` into r10 and returns `r10 ? 0x1e : 2` through
+// subfic/subfe/rlwinm/addi. With 0x1530 already handled, r10 is always 1, so
+// every other value is 0x1e (kJoypadXboxButtonGuitar) and the `2` arm is dead.
+// No JoypadData store either.
+JoypadType SetupHXRealGuitar(int, const XINPUT_CAPABILITIES &c) {
+    if (((unsigned short)c.Gamepad.sThumbLY & ~0xFu) == 0x1530) return kJoypadXboxRealGuitar22Fret;
+    return kJoypadXboxButtonGuitar;
 }
 
 // A natively driven pad reports XINPUT_DEVTYPE_GAMEPAD with PadSubType()'s

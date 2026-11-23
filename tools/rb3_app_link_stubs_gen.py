@@ -81,8 +81,10 @@ RULES = [
     # Joypad_Xbox.cpp bodies (not compiled: XInput2 thread). rb3-app's pad
     # (rb3_app_joypad.cpp) reports a standard gamepad, subtype 1, by default;
     # since lane gemwalk RB3_APP_JOYPAD_KIND=guitar|drums reports subtype 6/8,
-    # and rb3_app_joypad.cpp defines SetupHXGuitar/SetupHXDrums itself, so
-    # only Keytar and RealGuitar are still undefined (and stubbed).
+    # and rb3_app_joypad.cpp defines SetupHXGuitar/SetupHXDrums itself; since
+    # lane keyswalk (KIND=keys|proguitar, subtype 15/25) it defines
+    # SetupHXKeytar/SetupHXRealGuitar too, so none of the four is undefined and
+    # this rule matches nothing (kept so a future peripheral stub is tagged).
     (r"^SetupHX(Guitar|Drums|Keytar|RealGuitar)\(", "peripheral-only"),
     (r".*", "a1-absent-body"),
 ]
