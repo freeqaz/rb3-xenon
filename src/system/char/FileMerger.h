@@ -29,13 +29,32 @@ public:
             }
         };
 
+        // mForceReload (0x29): retail's ctor (0x8232DCF8) stores mProxy (0x28)
+        // and mPreClear (0x2a) but not 0x29; the copy ctor (0x8232E6D0) calls
+        // operator= (0x8232DE80), which does not copy it. Mergers reach
+        // mMergers through ObjVector::resize (0x823951E8) -> copy ctor, so on
+        // the 360 the byte is whatever the vector's MemOrPoolAllocSTL block
+        // (0x827BD208: PoolAlloc <= 0x80 B, else MemAlloc, neither clears)
+        // last held. NeedsLoading (0x8239117C) reads it; every writer stores 0
+        // except Select's argument. Natively both ctors start it false so the
+        // first StartLoadInternal no longer depends on heap contents (an
+        // unset byte reloads every empty merger, and the extra
+        // FileMergerOrganizer::StartLoad RandomInt draws move the shell-music
+        // pick). Record: docs/decomp/FORCERELOAD_MERGER_INIT_2026-11-23.md.
         Merger(Hmx::Object *o)
-            : mProxy(0), mPreClear(0),
-              mSubdirs(MergeFilter::kMergeInlinedMoveSharedSubdirs), mDir(o),
-              mLoadedObjects(o), mLoadedSubdirs(o) {}
+            : mProxy(0),
+#ifdef HX_NATIVE
+              mForceReload(0),
+#endif
+              mPreClear(0), mSubdirs(MergeFilter::kMergeInlinedMoveSharedSubdirs),
+              mDir(o), mLoadedObjects(o), mLoadedSubdirs(o) {
+        }
         Merger(const Merger &m)
             : mDir(m.mDir.Owner()), mLoadedObjects(m.mLoadedObjects.Owner()),
               mLoadedSubdirs(m.mLoadedSubdirs.Owner()) {
+#ifdef HX_NATIVE
+            mForceReload = false;
+#endif
             *this = m;
         }
         ~Merger() {}
