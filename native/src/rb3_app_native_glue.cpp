@@ -655,3 +655,14 @@ int Synth360::GetChatData(int, void *, int) { // ring: native-real
     MILO_ASSERT(mMics.empty(), 0);
     return -1;
 }
+// Lane dropwalk: retail 0x82B5BBA8 is `if (!mMics.empty())
+// MicManagerXbox::GetInstance()->ActivateLocalChat(pad, active);` (lwz 0xA8/0xAC,
+// cmplw, beq past both calls). XboxSession::RemoveLocalFromSession (0x823EEEF8)
+// calls it unconditionally, so every local user leaving the session -- the
+// overshell's "leave band" (OvershellSlot::RemoveUser -> SessionMgr ->
+// NetSession::RemoveLocalUser), in song or on a menu -- reached the aborting
+// online-netsession stub. TheXboxSynth holds no mics natively (above), so this is
+// retail's empty-mics arm: nothing.
+void Synth360::ActivateLocalChat(int, bool) { // ring: native-real
+    MILO_ASSERT(mMics.empty(), 0);
+}
