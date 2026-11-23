@@ -3,7 +3,12 @@
 #include "obj/Data.h"
 #include "obj/Msg.h"
 
+// Values and names from config/macros.dta (kTrackerChallengeType_*).
 enum TrackerChallengeType {
+    kTrackerChallengeType_None = 0,
+    kTrackerChallengeType_Accuracy = 1,
+    kTrackerChallengeType_Overdrive = 2,
+    kTrackerChallengeType_Streak = 3
 };
 
 enum TrackerBandDisplayType {
@@ -53,7 +58,16 @@ public:
 
 class TrackerPlayerDisplay : public TrackerDisplay {
 public:
+    // The message SendPlayerDisplayMsg passes to the remote copy, one per
+    // display call (RemotePlayerDisplayMsg switches on it). Retail's names are
+    // not known; these name the TrackerPlayerDisplay method that sends each.
     enum NetDisplayMsg {
+        kNetDisplay_Enable = 0,
+        kNetDisplay_GainFocus = 1,
+        kNetDisplay_LoseFocus = 2,
+        kNetDisplay_Pulse = 3,
+        kNetDisplay_FillProgressAndReset = 4,
+        kNetDisplay_SecondaryStateLevel = 5
     };
 
     TrackerPlayerDisplay();

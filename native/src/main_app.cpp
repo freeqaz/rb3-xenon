@@ -57,6 +57,9 @@
 #include "tour/TourPerformer.h"
 #include "tour/TourDesc.h"
 #include "meta_band/AccomplishmentProgress.h"
+#include "meta_band/Accomplishment.h"
+#include "meta_band/AccomplishmentManager.h"
+#include "meta_band/Campaign.h"
 #include "meta_band/ModifierMgr.h"
 #include "meta_band/MetaPerformer.h"
 #include "game/Game.h"
@@ -283,16 +286,33 @@ void LogTour() {
         if (hasDesc && k > 0 && k < (int)sizeof buf) {
             TourDesc *td = TheTour->GetTourDesc(desc);
             BandProfile *prof = TheProfileMgr.GetPrimaryProfile();
-            int accs = 0;
+            int accs = 0, awards = 0, assets = -1, meta = -1;
+            const char *level = "";
             if (prof) {
                 const AccomplishmentProgress &ap = prof->GetAccomplishmentProgress();
                 accs = ap.IsAccomplished(td->GetTourBronzeGoal())
                     | ap.IsAccomplished(td->GetTourSilverGoal()) << 1
                     | ap.IsAccomplished(td->GetTourGoldGoal()) << 2;
+                // Lane tourwalk3: whether the profile holds each medal accomplishment's
+                // award (acc_tourbronzelocal1 -> uncommon_nightin ...), how many closet
+                // assets it holds, and its meta score and campaign level (the level gates
+                // the later tours, TourDesc required_campaign_level).
+                Symbol goals[3] = {td->GetTourBronzeGoal(), td->GetTourSilverGoal(),
+                                   td->GetTourGoldGoal()};
+                for (int g = 0; g < 3; g++) {
+                    Accomplishment *a = TheAccomplishmentMgr
+                        ? TheAccomplishmentMgr->GetAccomplishment(goals[g]) : nullptr;
+                    if (a && ap.HasAward(a->GetAward())) awards |= 1 << g;
+                }
+                assets = (int)prof->mProfileAssets.mAssets.size();
+                meta = ap.GetMetaScore();
+                if (TheCampaign) level = TheCampaign->GetCampaignLevelForMetaScore(meta).Str();
             }
-            snprintf(buf + k, sizeof buf - k, " most=%d medals=%d%d%d accs=%d",
+            snprintf(buf + k, sizeof buf - k,
+                     " most=%d medals=%d%d%d accs=%d awards=%d assets=%d meta=%d level=%s",
                      p->GetTourMostStars(desc), (int)TheTour->HasBronzeMedal(desc),
-                     (int)TheTour->HasSilverMedal(desc), (int)TheTour->HasGoldMedal(desc), accs);
+                     (int)TheTour->HasSilverMedal(desc), (int)TheTour->HasGoldMedal(desc), accs,
+                     awards, assets, meta, level);
         }
     }
     static char last[512];

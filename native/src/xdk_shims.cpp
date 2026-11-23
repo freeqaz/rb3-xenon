@@ -840,6 +840,18 @@ BOOL ReadFile(HANDLE hFile, LPVOID lpBuffer, DWORD nNumberOfBytesToRead,
     return 1;
 }
 
+// RB3_APP_FOCUS_LOG=1 (lane tourwalk3): log every content-package mount and every
+// WriteFile, so a walk can see when the game writes its save (MCContainerXbox::Mount
+// mounts the profile package for each save and load). xdk_shims.cpp has no frame
+// counter; the rb3-app-det line printed every frame brackets these lines.
+static bool ShimSaveLog() {
+    static const bool on = [] {
+        const char *v = getenv("RB3_APP_FOCUS_LOG");
+        return v && v[0] && strcmp(v, "0") != 0;
+    }();
+    return on;
+}
+
 BOOL WriteFile(HANDLE hFile, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrite,
                LPDWORD lpNumberOfBytesWritten, LPOVERLAPPED) {
     HandleRef e = LookupHandle(hFile);
@@ -847,6 +859,10 @@ BOOL WriteFile(HANDLE hFile, LPCVOID lpBuffer, DWORD nNumberOfBytesToWrite,
     ssize_t n = write(e->file.fd, lpBuffer, nNumberOfBytesToWrite);
     if (n < 0) return 0;
     if (lpNumberOfBytesWritten) *lpNumberOfBytesWritten = (DWORD)n;
+    if (ShimSaveLog()) {
+        printf("rb3-app: content write fd=%d bytes=%zd\n", e->file.fd, n);
+        fflush(stdout);
+    }
     return 1;
 }
 
@@ -1165,6 +1181,11 @@ DWORD XContentCreateEx(DWORD, LPCSTR szRootName, const XCONTENT_DATA *pContentDa
         }
     }
     if (pdwDisposition) *pdwDisposition = exists ? 2 : 1;
+    if (ShimSaveLog()) {
+        printf("rb3-app: content mount root=%s pkg=%s disp=%u %s\n", szRootName, name.c_str(),
+               (unsigned)disposition, exists ? "existing" : "created");
+        fflush(stdout);
+    }
     pthread_mutex_lock(&gShimMountMutex);
     ShimMounts()[szRootName] = dir;
     pthread_mutex_unlock(&gShimMountMutex);
