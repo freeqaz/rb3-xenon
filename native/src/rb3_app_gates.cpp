@@ -2291,3 +2291,102 @@ void rb3_app_check_poll_sorter_search_id() {
     fflush(stderr);
     _exit(7);
 }
+
+// A36: a deleted cube map leaves the engine's GPU table.
+// Retail's cube map is DxCubeTex; its dtor (fn_8273F040) runs DxCubeTex::Reset
+// (fn_8273EFF0, bl at +0x2C), which releases the D3D texture at 0x1A4, before
+// ??1RndCubeTex (fn_82495410, bl at +0x34). Natively the GPU copy sits in
+// Tex_Wgpu.cpp's sCubeTexGpuData, keyed on the RndCubeTex ADDRESS, and
+// GetGpuCubeTexView serves any entry marked uploaded. Here: cube A gets six
+// 16x16 faces and is uploaded through GetGpuCubeTexView (the draw path's call);
+// then `delete A`. A's entry must be gone (GetGpuCubeTexMipLevels -1, holders
+// one fewer), and a fresh faceless cube B must get no view. B is often placed
+// at A's address; with a stale entry B would be served A's faces. Fails when
+// ~RndCubeTex (rndobj/CubeTex.cpp, HX_NATIVE) does not call CleanupGpuCubeTex.
+// A's freed block is only used as a map key, never dereferenced.
+#include "rndobj/CubeTex.h"
+void rb3_app_check_cube_tex_gpu_cleanup() { // ring: native-real
+    RndCubeTex *a = Hmx::Object::New<RndCubeTex>();
+    bool px = true;
+    for (int f = 0; f < RndCubeTex::kNumCubeFaces; f++) {
+        RndBitmap &bm = a->GetBitmap((RndCubeTex::CubeFace)f);
+        bm.Create(16, 16, 0, 32, 0, nullptr, nullptr, nullptr);
+        u8 *p = bm.Pixels();
+        if (!p) {
+            px = false;
+            continue;
+        }
+        for (int i = 0; i < bm.PixelBytes(); i++)
+            p[i] = (u8)(i * 5 + f * 37 + 0x11);
+    }
+    bool view0 = (bool)GetGpuCubeTexView(a);
+    int mips0 = GetGpuCubeTexMipLevels(a);
+    size_t holders0 = GpuTexHolderCount();
+    void *aAddr = a;
+    delete a;
+    int mips1 = GetGpuCubeTexMipLevels((RndCubeTex *)aAddr);
+    size_t holders1 = GpuTexHolderCount();
+    RndCubeTex *b = Hmx::Object::New<RndCubeTex>();
+    bool sameAddr = (void *)b == aAddr;
+    bool viewB = (bool)GetGpuCubeTexView(b);
+    delete b;
+    size_t holders2 = GpuTexHolderCount();
+    char what[512];
+    snprintf(what, sizeof what,
+             "cube tex gpu cleanup: pixels %d; A view %d mips %d, holders %zu; delete A -> A "
+             "mips %d (want -1), holders %zu (want %zu); fresh faceless B view %d (want 0, B at "
+             "A's address %d); after delete B holders %zu (retail DxCubeTex dtor 0x8273F040 -> "
+             "Reset 0x8273EFF0)",
+             (int)px, (int)view0, mips0, holders0, mips1, holders1, holders0 - 1, (int)viewB,
+             (int)sameAddr, holders2);
+    bool ok = px && view0 && mips0 >= 1 && mips1 == -1 && holders1 == holders0 - 1 && !viewB
+        && holders2 == holders1;
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (cube tex gpu cleanup)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A36: a fresh SessionSettings is unranked.
+// Neither the SessionSettings ctor (retail fn_823F3C78) nor Clear
+// (fn_823F3BE8) writes mRanked@0xC; retail's heap supplies it until
+// BandMatchmaker::OnMsg(ModeChangedMsg) stores SetRanked(IsRanked()). Natively
+// the ctor now starts it at false, the quickplay value (MatchmakingSettings.cpp,
+// HX_NATIVE). The check makes the garbage deterministic: a SessionSettings is
+// placement-built over bytes that are all 0x01, and must read Ranked() false,
+// with Clear's mModeFilter -1 and mPublic false. Then Clear on a ranked
+// settings must keep it ranked, as retail's Clear does. Fails (rc 7) when the
+// HX_NATIVE init is dropped.
+#include "net/MatchmakingSettings.h"
+void rb3_app_check_session_settings_unranked() { // ring: native-real
+    alignas(SessionSettings) unsigned char buf[sizeof(SessionSettings)];
+    memset(buf, 0x01, sizeof buf);
+    SessionSettings *s = new (buf) SessionSettings();
+    int ranked0 = (int)s->Ranked();
+    int filter0 = s->ModeFilter();
+    int public0 = (int)s->mPublic;
+    s->mRanked = true; // SetRanked would SetSyncDirty; the field itself is the subject
+    s->Clear();
+    int rankedAfterClear = (int)s->Ranked();
+    s->~SessionSettings();
+    char what[384];
+    snprintf(what, sizeof what,
+             "session settings unranked: fresh over 0x01 bytes -> ranked %d (want 0), mode "
+             "filter %d (want -1), public %d (want 0); ranked then Clear -> ranked %d (want 1) "
+             "(retail ctor 0x823F3C78 and Clear 0x823F3BE8 write no 0xC)",
+             ranked0, filter0, public0, rankedAfterClear);
+    if (ranked0 == 0 && filter0 == -1 && public0 == 0 && rankedAfterClear == 1) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (session settings unranked)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}

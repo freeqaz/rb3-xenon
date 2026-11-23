@@ -39,6 +39,11 @@ public:
 
     OBJ_CLASSNAME(CubeTex);
     OBJ_SET_TYPE(CubeTex);
+#ifdef HX_NATIVE
+    // Native only: releases the engine's GPU entry (CubeTex.cpp). X360 keeps the
+    // implicit dtor, retail ??1RndCubeTex fn_82495410.
+    virtual ~RndCubeTex();
+#endif
     virtual DataNode Handle(DataArray *, bool);
     virtual bool SyncProperty(DataNode &, DataArray *, int, PropOp);
     virtual void Save(BinStream &);
