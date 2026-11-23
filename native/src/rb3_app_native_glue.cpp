@@ -316,40 +316,66 @@ Synth *CreateNativeSynth() { return new Rb3AppNativeSynth(); } // ring: native-r
 // (initialized flag, TexMovie::Init, exit callback). Only the MovieSys
 // interface is ever used through TheMovieSys, never BinkMovieSys members.
 //
-// A17: every movie is an Rb3AppMovieImpl: retail RB3's Movie::Impl (the
+// Every movie is an Rb3AppMovieImpl: retail RB3's Movie::Impl (the
 // decompiled !HX_NATIVE arm of movie/Movie.cpp, TU5 0x82742C08-0x82746128)
-// with no Bink decoder. rb3-app links none: the engine's FFmpegMovieImpl is
-// excluded from this tree's engine build (native/CMakeLists.txt,
-// MILO_ENGINE_DECOMP_PLATFORM_EXCLUDE). So BinkOpen is modelled as failing,
-// and the rest is retail's own path for a movie that Bink cannot open:
+// with the shared engine's FFmpegMovieImpl standing in for Bink. The front end
+// is retail's; FFmpeg is opened where retail calls BinkOpen, and every query
+// answers as retail's does for an open HBINK (lane movie, 2026-11-23; record
+// docs/decomp/MOVIE_FFMPEG_PLAYBACK_RB3APP_2026-11-23.md). Before that lane
+// BinkOpen was modelled as failing, so every movie ended on its first poll.
 //  * Begin (0x82745D90): a preloaded movie is read by a front FileLoader,
 //    from the milo stream itself when that stream is cached (TexMovie::Load
 //    passes it). That consumes the movie bytes a cached .milo embeds
 //    (ui/startup/gen/startup_movie_keep.milo_xbox's splash.tmov carries
 //    startup.bik), so the DirLoader resumes on the object's 0xADDEADDE
-//    marker. The base MovieImpl MILO_FAILs on a cached stream instead.
-//    A streamed (not preloaded) movie needs no bytes read before BinkOpen.
+//    marker. A streamed (not preloaded) movie needs no bytes read first.
 //  * CheckOpen (0x82745428): when the loader is done the buffer is kept as
-//    the preload buffer, the streamed arm runs the `videos stream_begin`
-//    script, and MovieOpen's BinkOpen fails: mBink stays null.
-//  * IsOpen (0x82742F08) is mBink != null: false. Poll (0x82745628) returns
-//    false once CheckOpen is done (`if (!mBink) return false`), so TexMovie
-//    ends the movie and MoviePanel sends movie_done.
+//    the preload buffer; the streamed arm runs the `videos stream_begin`
+//    script. Then MovieOpen/FinishOpen/SharedFinishOpen: open (here FFmpeg on
+//    the movie's file; retail opens a preloaded movie from the buffer, which
+//    holds the same file's bytes), pause, and unpause when asked (Poll asks,
+//    Save does not). A movie only a cached .milo carries has no file to open
+//    and stays closed, as before.
+//  * Poll (0x82745628): true while loading; false with no movie; a timed
+//    movie (movie.dta is_timed_movie) is paused while the task manager's
+//    delta is 0; false once Bink's FrameNum reaches Frames with no loop, i.e.
+//    once frame Frames-1 is decoded (FrameNum is the frame being decoded,
+//    one past the one shown).
+//  * Draw (0x827436A8): with an open movie, the frame drawn over SetRect's
+//    rectangle (0x82743040: aspect fit, fill_width, Rnd YRatio) with a
+//    pre-lit, unblended, z-off, clamped material (MovieInternalBuffers::New).
+//    Retail draws the Bink YUV planes with kMovieShader; here the decoded
+//    frame is uploaded as RGBA to a render-target texture.
+//  * GetFrame (0x82743828): FrameNum - 1, or Frames while FrameNum is 1;
+//    MsPerFrame/NumFrames (0x82743898/0x82743938): 0 with no movie.
 //  * End (0x82744BF0): runs `videos stream_end` when there is no preload
-//    buffer, then releases the loader and the buffer.
+//    buffer, then closes the movie, releases the loader, buffer and frame
+//    texture.
 //  * Save (Impl::Save): a cached save writes the preload buffer back.
-// Not modelled, since they act on an open Bink: the shared frame buffers
-// (SharedFinishOpen), the BIKi endian swap of the buffer before BinkOpen,
-// pause/volume/frame queries, and the disc contention report.
-// Real playback is the engine backend (FFmpegMovieImpl), and needs work there
-// first: it ignores the stream, so it cannot play an embedded movie yet.
+// Not modelled: the shared frame buffers of several movies opened together
+// (SharedFinishOpen's refcount, which also mutes all but one), the async
+// decode thread, the BIKi endian swap, and the disc contention report.
+// Clock: with a sound track on the audio device the picture follows it, as
+// Bink's does. Without one (headless has no audio device, or a silent movie),
+// and always under RB3_APP_DETERMINISTIC, it follows TheTaskMgr's UI clock,
+// so a headless walk sees the movie take its retail length in game time and
+// stays reproducible.
 #include "movie/MovieImpl.h"
 #include "obj/Data.h"
 #include "os/File.h"
 #include "os/System.h"
+#include "obj/Task.h"
+#include "platform/FFmpegMovieImpl.h"
+#include "platform/TexGpu.h"
+#include "rndobj/Mat.h"
+#include "rndobj/Rnd.h"
+#include "rndobj/Tex.h"
 #include "utl/Loader.h"
 #include "utl/MemMgr.h"
 #include "utl/Str.h"
+#include <algorithm>
+#include <cstdlib>
+float TaskMgrDeltaSeconds(); // movie/Movie.h
 namespace {
 void Rb3AppMovieScript(const char *name) { // ring: native-real
     DataArray *videos = SystemConfig()->FindArray("videos", false);
@@ -359,18 +385,54 @@ void Rb3AppMovieScript(const char *name) { // ring: native-real
             script->ExecuteScript(1, nullptr, nullptr, 1);
     }
 }
+// RB3_APP_MOVIE_LOG=1: one line per pause change and per end (walk probe).
+bool Rb3AppMovieLog() { // ring: native-real
+    static int sLog = -1;
+    if (sLog < 0) {
+        const char *e = getenv("RB3_APP_MOVIE_LOG");
+        sLog = e && *e && *e != '0';
+    }
+    return sLog;
+}
+bool Rb3AppMovieDeterministic() { // ring: native-real
+    static int sDet = -1;
+    if (sDet < 0) {
+        const char *e = getenv("RB3_APP_DETERMINISTIC");
+        sDet = e && *e && *e != '0';
+    }
+    return sDet;
+}
 } // namespace
 
-class Rb3AppMovieImpl : public MovieImpl { // ring-class: Rb3AppMovieImpl native-real
+class Rb3AppMovieImpl : public FFmpegMovieImpl { // ring-class: Rb3AppMovieImpl native-real
 public:
     Rb3AppMovieImpl()
-        : mLoader(nullptr), mLoading(false), mPreloadBuf(nullptr), mPreloadBufLen(0) {}
+        : mLoader(nullptr), mLoading(false), mPreloadBuf(nullptr), mPreloadBufLen(0),
+          mNoSound(false), mLoopMovie(false), mPreload(false), mFillWidth(false), mTrack(0),
+          mWidth(0), mHeight(0), mTimed(false), mTex(nullptr), mMat(nullptr),
+          mHasPicture(false), mDetMs(0), mDetLast(0), mEndLogged(false) {
+        // Impl::Impl (0x827450A0): a movie is timed when the script says so.
+        static Symbol movie("movie");
+        static Symbol is_timed_movie("is_timed_movie");
+        mTimed = SystemConfig(movie, is_timed_movie)->ExecuteScript(1, nullptr, nullptr, 1)
+            != DataNode(0);
+    }
     virtual ~Rb3AppMovieImpl() { End(); }
+    virtual void SetWidthHeight(int w, int h) {
+        mWidth = w;
+        mHeight = h;
+        FFmpegMovieImpl::SetWidthHeight(w, h);
+    }
     virtual bool BeginFromFile(
-        const char *file, float, bool, bool, bool preload, bool, int, BinStream *stream,
-        LoaderPos
+        const char *file, float, bool noSound, bool loop, bool preload, bool fillWidth,
+        int track, BinStream *stream, LoaderPos
     ) {
         mFilename = FileMakePath(FileRoot(), file);
+        mPreload = preload;
+        mLoopMovie = loop;
+        mNoSound = noSound;
+        mTrack = track;
+        mFillWidth = fillWidth;
         if (preload) {
             const char *name = mFilename.c_str();
             mLoader = new FileLoader(
@@ -382,9 +444,9 @@ public:
         return true;
     }
     virtual bool Ready() const { return mLoader ? mLoader->IsLoaded() : true; }
-    virtual bool IsOpen() { return false; } // mBink: BinkOpen failed
+    virtual bool IsOpen() { return FFmpegMovieImpl::IsOpen(); } // mBink != null
     virtual bool IsLoading() { return mLoader != nullptr; }
-    virtual bool CheckOpen(bool) {
+    virtual bool CheckOpen(bool unpause) {
         if (!mLoading)
             return false;
         if (mLoader) {
@@ -403,13 +465,99 @@ public:
             mLoading = false;
             Rb3AppMovieScript("stream_begin");
         }
-        return false; // MovieOpen: BinkOpen returns null
+        MovieOpen(unpause);
+        return false;
     }
-    virtual bool Poll() { return CheckOpen(true); } // then `if (!mBink) return false`
+    virtual bool Poll() {
+        if (CheckOpen(true))
+            return true;
+        if (!IsOpen())
+            return false;
+        if (mTimed)
+            SetPaused(TaskMgrDeltaSeconds() == 0.0f);
+        if (Rb3AppMovieDeterministic() || !AudioOut()) {
+            // No sound track to pace the picture (headless has no audio
+            // device), or a deterministic walk: the picture follows the task
+            // manager's UI clock, the one every other UI animation follows.
+            float now = TheTaskMgr.UISeconds() * 1000.0f;
+            if (!Paused())
+                mDetMs += now - mDetLast;
+            mDetLast = now;
+            SetVirtualTime(mDetMs);
+        }
+        bool playing = FFmpegMovieImpl::Poll();
+        // Bink's FrameNum == Frames (no loop): FrameNum = frames decoded + 1.
+        int frames = FFmpegMovieImpl::NumFrames();
+        if (playing && !mLoopMovie && frames > 0 && FFmpegMovieImpl::GetFrame() + 1 >= frames)
+            playing = false;
+        if (!playing && !mEndLogged && Rb3AppMovieLog()) {
+            mEndLogged = true;
+            printf("rb3-app movie: end %s at frame %d of %d (%.0f ms)\n", mFilename.c_str(),
+                   FFmpegMovieImpl::GetFrame(), frames, mDetMs);
+        }
+        return playing;
+    }
+    virtual void SetPaused(bool paused) {
+        // Impl::SetPaused (0x82744348): a timed movie stays paused while the
+        // task manager is stopped; nothing happens with no movie.
+        if (mTimed && TaskMgrDeltaSeconds() == 0.0f)
+            paused = true;
+        if (!IsOpen())
+            return;
+        if (paused != Paused() && Rb3AppMovieLog())
+            printf("rb3-app movie: %s %s at frame %d\n", paused ? "pause" : "play",
+                   mFilename.c_str(), FFmpegMovieImpl::GetFrame());
+        FFmpegMovieImpl::SetPaused(paused);
+    }
+    virtual void Draw() {
+        if (!IsOpen()) {
+            FFmpegMovieImpl::Draw();
+            return;
+        }
+        if (HasDecodedFrame()) {
+            int w = GetDecodedWidth();
+            int h = GetDecodedHeight();
+            if (!mTex || mTex->Width() != w || mTex->Height() != h) {
+                if (!mTex)
+                    mTex = Hmx::Object::New<RndTex>();
+                mTex->SetBitmap(w, h, 32, RndTex::kRendered, false, nullptr);
+            }
+            if (!mMat) {
+                // MovieInternalBuffers::New's material.
+                mMat = Hmx::Object::New<RndMat>();
+                mMat->SetPreLit(true);
+                mMat->SetUseEnv(false);
+                mMat->SetBlend(RndMat::kBlendSrc);
+                mMat->SetAlphaWrite(false);
+                mMat->SetZMode(kZModeDisable);
+                mMat->SetTexWrap(kTexWrapClamp);
+            }
+            mMat->SetDiffuseTex(mTex);
+            UploadRGBAToRndTex(mTex, GetRGBABuffer(), w, h);
+            mHasPicture = true;
+        }
+        FFmpegMovieImpl::Draw(); // the frame is consumed
+        if (!mHasPicture)
+            return;
+        Hmx::Rect r;
+        SetRect(r);
+        TheRnd.DrawRect(r, Hmx::Color(1.0f, 1.0f, 1.0f, 1.0f), mMat, nullptr, nullptr);
+    }
+    virtual int GetFrame() const {
+        if (!OpenNow())
+            return 0;
+        int decoded = FFmpegMovieImpl::GetFrame();
+        return decoded == 0 ? FFmpegMovieImpl::NumFrames() : decoded;
+    }
+    virtual float MsPerFrame() const {
+        return OpenNow() ? FFmpegMovieImpl::MsPerFrame() : 0.0f;
+    }
+    virtual int NumFrames() const { return OpenNow() ? FFmpegMovieImpl::NumFrames() : 0; }
     virtual void End() {
         mLoading = false;
         if (!mPreloadBuf)
             Rb3AppMovieScript("stream_end");
+        FFmpegMovieImpl::End();
         delete mLoader;
         mLoader = nullptr;
         if (mPreloadBuf) {
@@ -417,6 +565,11 @@ public:
             mPreloadBuf = nullptr;
         }
         mPreloadBufLen = 0;
+        delete mMat;
+        mMat = nullptr;
+        delete mTex;
+        mTex = nullptr;
+        mHasPicture = false;
     }
     virtual void Save(BinStream *bs) {
         if (bs->Cached()) {
@@ -430,11 +583,81 @@ public:
     int PreloadBufLen() const { return mPreloadBufLen; }
 
 private:
+    bool OpenNow() const { return const_cast<Rb3AppMovieImpl *>(this)->IsOpen(); }
+    // MovieOpen + FinishOpen + SharedFinishOpen for one movie.
+    void MovieOpen(bool unpause) {
+        // FFmpegMovieImpl applies MovieOpen's track rule: a non-zero track
+        // selects Bink track (set_bink_track's override, else mTrack) - 1.
+        if (!FFmpegMovieImpl::BeginFromFile(
+                mFilename.c_str(), 0.0f, mNoSound, mLoopMovie, mPreload, mFillWidth, mTrack,
+                nullptr, kLoadFront
+            )) {
+            MILO_WARN("BinkOpen '%s' error: %s\n", mFilename.c_str(), "FFmpeg open failed");
+            return;
+        }
+        mDetMs = 0;
+        mDetLast = TheTaskMgr.UISeconds() * 1000.0f;
+        mEndLogged = false;
+        FFmpegMovieImpl::SetPaused(true); // FinishOpen
+        if (unpause)
+            SetPaused(false); // SharedFinishOpen
+    }
+    // Impl::SetRect (0x82743040).
+    void SetRect(Hmx::Rect &rect) const {
+        float w, h, avail;
+        if (mWidth != 0) {
+            w = mWidth;
+            avail = mHeight;
+            h = avail;
+        } else {
+            w = TheRnd.Width();
+            h = TheRnd.Height();
+            avail = std::min(TheRnd.YRatio() * w, h);
+        }
+        float aspect = (float)GetDecodedHeight() / (float)GetDecodedWidth();
+        float movieW, movieH;
+        if (mFillWidth) {
+            movieH = aspect * w;
+            movieW = w;
+            if (movieH > avail) {
+                movieH = avail;
+                movieW = avail / aspect;
+            }
+        } else {
+            movieW = avail / aspect;
+            movieH = avail;
+            if (movieW > w) {
+                movieW = w;
+                movieH = aspect * w;
+            }
+        }
+        float dx = (w - movieW) * 0.5f;
+        float dy = (h - std::min(movieH / avail * h, h)) * 0.5f;
+        rect.x = dx;
+        rect.w = w - dx * 2.0f;
+        rect.y = dy;
+        rect.h = h - dy * 2.0f;
+    }
+
     FileLoader *mLoader;
     bool mLoading;
     char *mPreloadBuf;
     int mPreloadBufLen;
     String mFilename;
+    bool mNoSound;
+    bool mLoopMovie;
+    bool mPreload;
+    bool mFillWidth;
+    int mTrack;
+    int mWidth;
+    int mHeight;
+    bool mTimed;
+    RndTex *mTex;
+    RndMat *mMat;
+    bool mHasPicture;
+    float mDetMs;
+    float mDetLast;
+    bool mEndLogged;
 };
 
 const char *Rb3AppMoviePreload(MovieImpl *impl, int *len) { // ring: native-real
