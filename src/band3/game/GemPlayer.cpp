@@ -869,16 +869,20 @@ void GemPlayer::FilteredWhammyBar(float val) {
         return;
     else {
 #ifdef HX_NATIVE
-        // Native robustness: val (f3 from TrackWatcherImpl::CheckForPitchBend,
-        // (whammy - mBiggestWhammy) / (1 + mBiggestWhammy)) is analytically in
-        // [-1, 0], but float rounding at the -1.0 boundary can slip just past -1
-        // and some controller breeds can drive whammy below -1 / leave it
-        // uninitialized (GuitarController::GetWhammyBar). On native a MILO_FAIL ->
-        // Debug::Fail -> PlatformDebugBreak (abort/SIGABRT, exit 134) where the Wii
-        // build only shows a Continue dialog. Clamp so the bounds assert holds.
-        val = Clamp<float>(-1.0f, 0.0f, val);
-#endif
+        // Retail fn_826C17D8 strips this range assert and uses val as given (no
+        // clamp). Natively MILO_ASSERT aborts, so report an out-of-range value
+        // once and run retail's unclamped body; the clamp that sat here hid
+        // bad whammy input (GuitarController::GetWhammyBar) from the pitch bend.
+        if (val < -1.0f || val > 0.0f) {
+            static bool sWarned = false;
+            if (!sWarned) {
+                sWarned = true;
+                MILO_WARN("FilteredWhammyBar: whammy %f outside [-1, 0]", val);
+            }
+        }
+#else
         MILO_ASSERT_RANGE_EQ(val, -1, 0, 0x4EE);
+#endif
         HeldNote *note = FindFirstActiveHeldNote();
         if (note != nullptr && mWhammyOverdriveEnabled) {
             int phraseID = TheSongDB->GetPhraseID(mTrackNum, note->unk_0x4);

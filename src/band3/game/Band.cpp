@@ -408,12 +408,9 @@ Player *Band::AddPlayerDynamically(BeatMaster *m, BandUser *u) {
     GetTrackPanel()->PostHandleAddPlayer(p);
     p->PostDynamicAdd();
     UpdateBonusLevel(TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f);
-#if defined(MILO_DEBUG) && defined(HX_NATIVE)
-    // Retail TU5 (0x8269C760) returns straight after
-    // UpdateBonusLevel.
-    p->SetMultiplierActive(mMultiplierActive);
-    p->SetCrowdMeterActive(mBandPerformer->GetCrowdMeterActive());
-#endif
+    // Retail TU5 (0x8269C760) returns straight after UpdateBonusLevel: a
+    // drop-in player does not copy the band's multiplier-active or crowd-meter
+    // state here (the rb3-Wii dev build did; native used to as well).
     return p;
 }
 

@@ -59,9 +59,6 @@ TambourineManager::TambourineManager(VocalPlayer &p)
 #endif
       mTambourineParser(0),
       mTambourineIdx(0), unk48(1), unk4c(0), mTambourineActive(0), unk60(0), unk68(0),
-#ifdef HX_NATIVE
-      unk74(0),
-#endif
       unk78(0), unk7c(0) {
     DataArray *cfg = SystemConfig("scoring", "vocals");
 #ifdef HX_NATIVE
@@ -129,28 +126,12 @@ const std::vector<int> &TambourineManager::TambourineGems() const {
 
 void TambourineManager::Poll(float ms) {
     if (unk60 <= 0 || (unsigned int)mTambourineIdx == TambourineGems().size()) {
-#ifdef HX_NATIVE
-        // headless: no TheProfileMgr mic-level restore object (audio-only)
-        unk74 = false;
-#endif
         return;
     }
-#ifdef HX_NATIVE
-    // headless: the synthetic-mic harness has no TheSynth (Synth/Fonix mic stack).
-    // This block only mutes the physical mics during a tambourine gem window, which
-    // is irrelevant to scoring; guard the null TheSynth so charts that author
-    // tambourine gems (vicarious had none) don't crash here.
-    if (!unk74 && TheSynth) {
-        for (int i = 0; i < 3; i++) {
-            Mic *mic = TheSynth->GetMic(i);
-            if (mic) {
-                mic->SetGain(0.0f);
-                mic->SetVolume(-96.0f);
-            }
-        }
-        unk74 = true;
-    }
-#endif
+    // Retail 0x826FB308 goes from this guard straight to MsToTick (bl 0x827C90B8):
+    // it never touches the mics. The DC3 mic-mute block that sat here natively
+    // (gain 0 / volume -96 on every mic for the tambourine window, never
+    // restored) silenced a real singer's mic for the rest of the song.
     int tick = (int)MsToTick(ms);
     int delta = tick - TambourineGems()[mTambourineIdx];
     if (mIsLocal) {
