@@ -87,7 +87,7 @@ the song reads `energy 1.0000 deploy 0`. An autoplayed singer fills overdrive bu
 deploys it, because deploying is a player action. A deploy-count challenge therefore earns
 nothing. To exercise this quest, a later walk needs a scripted deploy press.
 
-### 4. The whole tour finishes (t7, bin-t1, 57,472 frames, rc 0, `^FAIL` 0)
+### 4. The whole tour finishes (t7, bin-t1, ran to the 90,000-frame cap: `RESULT: APP RAN 90000 FRAMES screen=tour_welcome_screen`, rc 0, `^FAIL` 0)
 
 ```
 frame 37729  gigs=1/3 cur=1 stars=30 won=1   (gig 2 song 2: 5 more stars, again 0 challenge stars)
