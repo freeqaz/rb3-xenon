@@ -19,6 +19,11 @@ VocalPart::VocalPart(VocalPlayer *vp, int idx)
       unkb4(0), mFirstPhraseMsToScore(0), unkbc(-1.0f), mBestSinger(0),
       mBestSingerPitchDistance(FLT_MAX), unkc8(6), mScoringEnabled(1), mPhraseRank(0) {
 #ifdef HX_NATIVE
+    // Retail's ctor (0x826F34D0) stores +0x38 (mPhraseScoreMax) and +0x40 but not
+    // unk38 (+0x3C), which ScoreSinger (0x826F3658) reads into Min(unk38,
+    // mPhraseScoreMax) before the first phrase boundary zeroes it. On the 360 it
+    // is the heap block's previous contents; zero is a never-used block's value.
+    unk38 = 0;
     // Headless has no BandUser; the native VocalPlayer ctor sets
     // gNativeVocalDifficulty, which Singer and TambourineManager read the same way.
     // (Retail: mPlayer->GetUser()->GetDifficulty().)

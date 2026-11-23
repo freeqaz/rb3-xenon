@@ -16,6 +16,16 @@
 
 VoiceBeat::VoiceBeat() {
     mEnabled = true;
+#ifdef HX_NATIVE
+    // Retail's ctor (0x82718578) and Reset (0x827182B8) never store mVoiceEnergy
+    // (+0x128) or mFullBandEnergy (+0x130); Analyze (0x82717D38) only smooths them
+    // (load, then store), so on the 360 they start from the heap block's previous
+    // contents. Their ratio sets unk1, which VocalPart::CouldScoreAgainstPart
+    // reads for unpitched notes, and with a silent mic both decay at one rate, so
+    // the starting ratio persists. Zero is a never-used block's value.
+    mVoiceEnergy = 0;
+    mFullBandEnergy = 0;
+#endif
     Reset();
 }
 
