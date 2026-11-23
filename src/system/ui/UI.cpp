@@ -415,11 +415,12 @@ bool UIManager::BlockHandlerDuringTransition(Symbol s, DataArray *da) {
 
 void UIManager::GotoScreenImpl(UIScreen *scr, bool b1, bool b2) {
 #ifdef HX_NATIVE
-    // Skip screens that require campaign/performer session state.
-    if (scr && strstr(scr->Name(), "campaign")) {
-        MILO_WARN("Skipping screen '%s' on native (campaign not supported)", scr->Name());
-        return;
-    }
+    // No screen is skipped by name. Retail fn_828036E8 has no name test (its
+    // first test is b1 at +0x01C). A DC3-inherited early return for any name
+    // containing "campaign" used to sit here; in rb3-app it dropped
+    // campaign_rewardvignette_firstgig_screen after a band song, and since
+    // PushScreen has already cleared mCurrentScreen the UI was left with no
+    // screen at all.
     if (DebugUIFlow()) printf("DC3 UI: GotoScreenImpl -> '%s' (force=%d, b2=%d)\n",
            scr ? scr->Name() : "<null>", b1, b2);
 #endif
