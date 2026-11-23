@@ -2054,6 +2054,11 @@ rb3_add_executable(rb3-milo
     # dependency-free TU (it includes only its own header) and, registering no
     # tester, keeps TestPoint's "visible, unoccluded" fallback.
     ${MILO_ENGINE_PATH}/src/platform/PointTestHook.cpp
+    # Text.cpp marks each glyph page it creates (HX_NATIVE; rb3-app has no render
+    # hook, so it says SetGameMarksTextGlyphMeshes). The marks' table is the
+    # engine's dependency-free TextGlyphMarks.cpp; rb3-milo compiles it alone, as
+    # it does PointTestHook.cpp above.
+    ${MILO_ENGINE_PATH}/src/platform/TextGlyphMarks.cpp
 )
 set(MILO_TARGETS rb3-milo)
 
