@@ -1587,3 +1587,115 @@ void rb3_app_check_owner_ptr_replace() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A27: the two unconditional Replace bodies A26's census left. Both compare
+// `from`, the dying object on X360, with a held pointer; natively `from` is the
+// ring ref itself, so neither compare ever matched. Retail (band.exe TU5):
+//   CharBonesMeshes::Replace fn_8237B338: dummy guard +0x38 `cmplw cr6,r4,r11`,
+//     entry compare +0x68 `cmplw cr6,r11,r4`; match: entry := to as
+//     RndTransformable (+0x98, SetOwnerObj +0xA4), null -> dummy (+0xBC).
+//   TypeProps::Replace fn_827663D8 -> ReplaceObject fn_82766338, compare +0x20
+//     `cmplw cr6,r3,r5`; match: Release from +0x2C, value := to, AddRef to +0x6C.
+//     Same for an object-valued prop and each object element of an array prop.
+// CharBonesMeshes: {T1, dummy}; T1->ReplaceRefs(T2) -> {T2, dummy};
+// T2->ReplaceRefs(NULL) -> {dummy, dummy}; dummy->ReplaceRefs(T3) leaves both on
+// the dummy (the guard). TypeProps: X as prop "obj" AND element 0 of array prop
+// "arr" (two nodes, two ring entries), W as element 1; X->ReplaceRefs(Y) moves
+// both values to Y and both nodes onto Y's ring (Y gains 2 refs), W untouched;
+// Y->ReplaceRefs(NULL) nulls both values and takes both nodes off Y's ring; and a
+// plain `delete Z` of prop "z"'s value leaves "z" null, not the freed address.
+// ReplaceRefs for the first two, as A24/A26 (a dir delete hides this class).
+// Fails with the retail compares natively (rc 7).
+#include "char/CharBonesMeshes.h"
+#include "rndobj/Trans.h"
+namespace {
+    struct A27BonesPeek : public CharBonesMeshes {
+        static ObjVector<ObjOwnerPtr<RndTransformable> > CharBonesMeshes::*Meshes() {
+            return &A27BonesPeek::mMeshes;
+        }
+        static RndTransformable *CharBonesMeshes::*Dummy() { return &A27BonesPeek::mDummyMesh; }
+    };
+    Hmx::Object *A27Val(TypeProps *tp, const char *key) {
+        DataNode *n = tp->KeyValue(Symbol(key), false);
+        return n && n->Type() == kDataObject ? n->UncheckedObj() : (Hmx::Object *)-1;
+    }
+    Hmx::Object *A27Elem(TypeProps *tp, const char *key, int i) {
+        DataNode *n = tp->KeyValue(Symbol(key), false);
+        if (!n || n->Type() != kDataArray || n->UncheckedArray()->Size() <= i)
+            return (Hmx::Object *)-1;
+        DataNode &e = n->UncheckedArray()->Node(i);
+        return e.Type() == kDataObject ? e.UncheckedObj() : (Hmx::Object *)-1;
+    }
+}
+void rb3_app_check_bones_typeprops_replace() { // ring: native-real
+    CharBonesMeshes *b = new CharBonesMeshes();
+    ObjVector<ObjOwnerPtr<RndTransformable> > &meshes = b->*A27BonesPeek::Meshes();
+    RndTransformable *dummy = b->*A27BonesPeek::Dummy();
+    RndTransformable *t1 = Hmx::Object::New<RndTransformable>();
+    RndTransformable *t2 = Hmx::Object::New<RndTransformable>();
+    RndTransformable *t3 = Hmx::Object::New<RndTransformable>();
+    meshes.resize(2);
+    meshes[0] = t1;
+    meshes[1] = dummy;
+    bool bonesSet = meshes[0].Ptr() == t1 && meshes[1].Ptr() == dummy;
+    t1->ReplaceRefs(t2);
+    bool bonesOnT2 = meshes[0].Ptr() == t2 && meshes[1].Ptr() == dummy;
+    t2->ReplaceRefs(nullptr);
+    bool bonesDummy = meshes[0].Ptr() == dummy && meshes[1].Ptr() == dummy;
+    dummy->ReplaceRefs(t3);
+    bool bonesGuard = meshes[0].Ptr() == dummy && meshes[1].Ptr() == dummy;
+    bool bones = bonesSet && bonesOnT2 && bonesDummy && bonesGuard;
+
+    RndTransformable *owner = Hmx::Object::New<RndTransformable>();
+    RndTransformable *x = Hmx::Object::New<RndTransformable>();
+    RndTransformable *y = Hmx::Object::New<RndTransformable>();
+    RndTransformable *w = Hmx::Object::New<RndTransformable>();
+    RndTransformable *z = Hmx::Object::New<RndTransformable>();
+    TypeProps *tp = new TypeProps(owner);
+    tp->SetKeyValue(Symbol("a27_obj"), DataNode(x), true);
+    DataArray *arr = new DataArray(0);
+    tp->SetKeyValue(Symbol("a27_arr"), DataNode(arr, kDataArray), false);
+    arr->Release();
+    tp->InsertArrayValue(Symbol("a27_arr"), 0, DataNode(x), nullptr);
+    tp->InsertArrayValue(Symbol("a27_arr"), 1, DataNode(w), nullptr);
+    tp->SetKeyValue(Symbol("a27_z"), DataNode(z), true);
+    bool tpSet = A27Val(tp, "a27_obj") == x && A27Elem(tp, "a27_arr", 0) == x
+        && A27Elem(tp, "a27_arr", 1) == w && A27Val(tp, "a27_z") == z;
+    int yRefs0 = y->RefCount();
+    x->ReplaceRefs(y);
+    int yGain = y->RefCount() - yRefs0;
+    bool tpOnY = A27Val(tp, "a27_obj") == y && A27Elem(tp, "a27_arr", 0) == y
+        && A27Elem(tp, "a27_arr", 1) == w && yGain == 2;
+    y->ReplaceRefs(nullptr);
+    bool tpNull = A27Val(tp, "a27_obj") == nullptr && A27Elem(tp, "a27_arr", 0) == nullptr
+        && A27Elem(tp, "a27_arr", 1) == w && y->RefCount() == yRefs0;
+    delete z; // a plain delete: ~Object's ReplaceRefs(nullptr) walk
+    bool tpDeleted = A27Val(tp, "a27_z") == nullptr;
+    bool typeProps = tpSet && tpOnY && tpNull && tpDeleted;
+
+    char what[512];
+    snprintf(what, sizeof what,
+             "bones typeprops replace: CharBonesMeshes {T1,D} %d, {T2,D} %d, {D,D} %d, "
+             "dummy guard %d; TypeProps set %d, on Y %d (Y gained %d refs), null %d, "
+             "deleted value null %d (want all 1)",
+             (int)bonesSet, (int)bonesOnT2, (int)bonesDummy, (int)bonesGuard, (int)tpSet,
+             (int)tpOnY, yGain, (int)tpNull, (int)tpDeleted);
+    if (bones && typeProps) {
+        delete tp;
+        delete owner;
+        delete x;
+        delete y;
+        delete w;
+        delete b;
+        delete t1;
+        delete t2;
+        delete t3;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (bones typeprops replace)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
