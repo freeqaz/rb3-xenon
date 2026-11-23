@@ -1,0 +1,66 @@
+# bandwalk pad 3 (a guitar pad playing bass). Joins on the hub 30 polls after it settles (before
+# pad 0's first hub press at +60); on part_difficulty_screen, A leaves the
+# overshell's choose_profile (first row: continue without a profile),
+# DOWN moves the part list from guitar to bass, A picks the part, A the difficulty.
+# Song 2: after the endgame (a song outlasts wait_screen's 1800-poll timeout, so
+# the wait is chained as in walk1.txt), part and difficulty again.
+wait_screen main_hub_screen
++30 a
+wait_screen part_difficulty_screen
++40 a
++70 down
++80 a
++120 a
+# deploywalk: Select (kPad_Select) every 300 polls from +2000 to +8300 after game_screen;
+# a press with energy < 0.5 is a failed deploy (Player::DeployBandEnergyIfPossible).
+wait_screen game_screen
++2000 select
++2300 select
++2600 select
++2900 select
++3200 select
++3500 select
++3800 select
++4100 select
++4400 select
++4700 select
++5000 select
++5300 select
++5600 select
++5900 select
++6200 select
++6500 select
++6800 select
++7100 select
++7400 select
++7700 select
++8000 select
++8300 select
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen part_difficulty_screen
++40 a
++80 a
++120 a
