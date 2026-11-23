@@ -96,3 +96,24 @@ float HeldNote::GetPointFraction() {
         return fraction;
     }
 }
+
+#ifdef HX_NATIVE
+// Retail emits no out-of-line GetGem, GetAwardedPercent or GetAwardedPoints
+// (see the head of this file), and has no caller for them either: their one
+// caller, GemPlayer::PrintFinishHeldNote, is the held-note line of the
+// gem-player debug overlay, whose call (GemPlayer.cpp) is
+// `#if defined(MILO_DEBUG) && defined(HX_NATIVE)` and whose format string
+// ("held%s (%.2f) %.2f pts") is absent from retail TU5. The native build
+// keeps that overlay line, so it needs the three accessors: they read the
+// members as the class declares them (mGem asserted at line 0x44).
+const GameGem *HeldNote::GetGem() {
+    MILO_ASSERT(mGem, 0x44);
+    return mGem;
+}
+
+float HeldNote::GetAwardedPercent() const {
+    return unk_0x18 == 0 ? 0.0f : unk_0x14 / (float)unk_0x18;
+}
+
+float HeldNote::GetAwardedPoints() const { return unk_0x14; }
+#endif
