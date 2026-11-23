@@ -332,6 +332,12 @@ void CharBonesSamples::Set(
 
 void CharBonesSamples::Clone(const CharBonesSamples &samp) {
     Set(samp.mBones, samp.mNumSamples, samp.mCompression);
+#ifdef HX_NATIVE
+    // A clip with no samples has null buffers on both sides and a 0-byte
+    // size; retail (0x823DF8C0) calls memcpy regardless, which is undefined
+    // behaviour for null pointers in C++.
+    if (mRawData)
+#endif
     memcpy(mRawData, samp.mRawData, AllocateSize());
     mFrames = samp.mFrames;
 }

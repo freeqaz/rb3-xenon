@@ -606,7 +606,11 @@ RndText::RndText()
       mCurWidth(0) {
     mRotateLineVerts = false;
 #ifdef HX_NATIVE
+    // Native-only flags in retail's padding (0x18d-0x18f): retail's ctor
+    // (0x82456CB0) stops at 0x18c, so all three start cleared here.
     mMeshDirty = false;
+    mManualLines = false;
+    mFramesSinceDraw = 0;
 #endif
 }
 
