@@ -1785,3 +1785,247 @@ void rb3_app_check_spotlight_disk() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A28: song_select's panel `exit` handler runs `{music_library on_exit}`, and
+// that DTA message must reach MusicLibrary::OnExit. Retail Handle fn_82542D20
+// compares "on_exit" (0x820915B4) and calls OnExit fn_82542A00 (bl at +0xCC),
+// whose MusicLibraryStore::ClearPreview (fn_825BC908) deletes the store preview
+// manager (+0x4C). Natively the handler's Symbol was the stringified text
+// `Symbol("on_exit")` (RB3_HANDLE_LOCAL_STATIC), so the message went unhandled,
+// the manager outlived the screen, and the second song_select load FAILed
+// "store_preview_mgr already exists". Unlike A21's music_library_exit gate this
+// one dispatches through Handle, as the DTA does. Fails (rc 7) when the
+// stringified handler comes back.
+#include "obj/Msg.h"
+void rb3_app_check_music_library_on_exit() { // ring: native-real
+    if (!TheMusicLibrary) {
+        SongPreview *prev = new SongPreview(TheSongMgr);
+        MusicLibrary::Init(*prev);
+    }
+    MusicLibrary *lib = TheMusicLibrary;
+    MusicLibraryStore *prevStore = lib->unk19c;
+    lib->OnLoad();
+    MusicLibraryStore *store = lib->unk19c;
+    bool named0 = ObjectDir::Main()->Find<Hmx::Object>("store_preview_mgr", false) != nullptr;
+    lib->unk40 = true;
+    static Message msg("on_exit");
+    DataNode r = lib->Handle(msg, false);
+    bool handled = r.Type() != kDataUnhandled;
+    bool previewMgr1 = store && store->mPreviewMgr;
+    bool named1 = ObjectDir::Main()->Find<Hmx::Object>("store_preview_mgr", false) != nullptr;
+    if (store && store->mPreviewMgr) { // the unhandled path: undo by hand
+        delete store->mPreviewMgr;
+        store->mPreviewMgr = nullptr;
+    }
+    lib->unk40 = false;
+    delete store;
+    lib->unk19c = prevStore;
+    TheNetCacheMgr->Unload();
+    for (int i = 0; i < 10 && !TheNetCacheMgr->IsUnloaded(); i++)
+        TheNetCacheMgr->Poll();
+    char what[384];
+    snprintf(what, sizeof what,
+             "music library on_exit: OnLoad -> store_preview_mgr named %d; Handle(on_exit) "
+             "%s; preview mgr %d, named %d (want 1, handled, 0 0) (retail Handle fn_82542D20 "
+             "-> OnExit fn_82542A00 -> ClearPreview fn_825BC908)",
+             (int)named0, handled ? "handled" : "UNHANDLED", (int)previewMgr1, (int)named1);
+    if (store && named0 && handled && !previewMgr1 && !named1) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (music library on_exit)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A28: a CharClipGroup must forget a clip that is deleted. Retail Replace
+// fn_8238F270 compares each entry's held clip (+8) with the dying object (r4,
+// at +0x58) and erases the entry. Natively the compare was against the ObjRef
+// the native ObjOwnerPtr passes, so it never matched; the second song's crowd
+// anim merge (CharClipGroup::Copy, kCopyFromMax -> FindClip) then read a freed
+// clip's name: SIGSEGV in streq (walk w1, core 2812177). Fails (rc 7) when the
+// raw compare comes back.
+#include "char/CharClipGroup.h"
+#include "char/CharClip.h"
+void rb3_app_check_clip_group_replace() { // ring: native-real
+    CharClipGroup *group = Hmx::Object::New<CharClipGroup>();
+    CharClip *a = Hmx::Object::New<CharClip>();
+    CharClip *b = Hmx::Object::New<CharClip>();
+    a->SetName("a28_clip_a", ObjectDir::Main());
+    b->SetName("a28_clip_b", ObjectDir::Main());
+    group->AddClip(a);
+    group->AddClip(b);
+    bool both0 = group->HasClip(a) && group->HasClip(b);
+    CharClip *aAddr = a;
+    delete a;
+    bool keptA = group->HasClip(aAddr); // compares addresses only
+    bool keptB = group->HasClip(b);
+    bool found = !keptA && group->FindClip("a28_clip_b") == b;
+    char what[320];
+    snprintf(what, sizeof what,
+             "clip group replace: A and B in group %d; A deleted -> group holds A %d, B %d, "
+             "FindClip(B) %d (want 1 0 1 1) (retail CharClipGroup::Replace fn_8238F270)",
+             (int)both0, (int)keptA, (int)keptB, (int)found);
+    if (both0 && !keptA && keptB && found) {
+        delete group;
+        delete b;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (clip group replace)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A29: a clip's transition table drops the vector whose ring node is dying, not
+// the first vector on the same clip. Retail Transitions::Replace fn_8237D470
+// matches by clip (cmplw at +0x24) and drops with RemoveNodes(it->clip)
+// fn_8237D3C8 (bl at +0x74), whose FindNodes finds that same `it`. Natively the
+// match is by ring node and a retarget (the D2 -> D replace below) leaves two
+// vectors on D, so re-finding by clip freed the other vector's node while the
+// dying clip's ReplaceRefs snapshot still held it (lane A28 core h2: ~CharClip
+// <- Merger::Clear, "calling get obj on abstract ObjRef", SIGSEGV). The check
+// calls Replace for the second vector's node directly, so a regression fails
+// (rc 7) on node identity before anything is freed under a ring walk.
+void rb3_app_check_clip_transition_drop() { // ring: native-real
+    CharClip *x = Hmx::Object::New<CharClip>();
+    CharClip *d = Hmx::Object::New<CharClip>();
+    CharClip *d2 = Hmx::Object::New<CharClip>();
+    CharGraphNode node;
+    node.curBeat = 0;
+    node.nextBeat = 0;
+    CharClip::Transitions &t = x->GetTransitions();
+    t.AddNode(d2, node);
+    t.AddNode(d, node);
+    d2->ReplaceRefs(d); // vector 0 retargets onto d: two vectors on d
+    bool two = t.Size() == 2 && t.GetNodes(0)->clip == d && t.GetNodes(1)->clip == d;
+    ObjRef *first = t.GetNodes(0)->ref;
+    ObjRef *second = two ? t.GetNodes(1)->ref : nullptr;
+    if (two)
+        x->Replace(second, nullptr); // the ring step for the second vector's node
+    bool keptFirst = two && t.Size() == 1 && t.GetNodes(0)->ref == first;
+    bool cleared = false;
+    if (keptFirst) {
+        delete d; // the remaining node's own ring step drops the last vector
+        cleared = t.Size() == 0;
+    }
+    char what[320];
+    snprintf(what, sizeof what,
+             "clip transition drop: D2 retargeted onto D -> two vectors %d; D's second "
+             "node steps -> first vector kept %d; D deleted -> table empty %d (want 1 1 1) "
+             "(retail Transitions::Replace fn_8237D470 -> RemoveNodes fn_8237D3C8)",
+             (int)two, (int)keptFirst, (int)cleared);
+    if (two && keptFirst && cleared) {
+        delete x;
+        delete d2;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (clip transition drop)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A30: BandCharDesc::sDrumVenueMappings is retail's 11-word table at 0x82C6D728
+// (NameToDrumVenue fn_82334250, lis/addi at +0xC/+0x14): five {name, venue}
+// pairs and a "" terminator (0x82000C55) that ends the loop (lbz at +0x5C). The
+// decomp had ten entries, wrong venues and no terminator, so an unmatched name
+// walked off the array (lane A29 ASan: SetTempoGenreVenue <- OnUnloadVenue).
+// The check never reads past the table: it takes the count from the defining TU
+// and finds the loop's terminator inside it before calling NameToDrumVenue with
+// a miss, so a missing terminator fails (rc 7) without ASan.
+int BandCharDescDrumVenueMappingCount(); // BandCharDesc.cpp (HX_NATIVE)
+void rb3_app_check_drum_venue_lookup() { // ring: native-real
+    const char **tbl = BandCharDesc::sDrumVenueMappings;
+    int count = BandCharDescDrumVenueMappingCount();
+    int term = -1; // the even index whose string is "": where the retail loop stops
+    for (int i = 0; i < count; i += 2) {
+        if (*tbl[i] == 0) {
+            term = i;
+            break;
+        }
+    }
+    bool bounded = count == 11 && term == 10;
+    static const char *const kWant[][2] = { { "small_club", "small_club" },
+                                            { "arena", "arena" },
+                                            { "big_club", "big_club" },
+                                            { "festival", "arena" },
+                                            { "video", "big_club" } };
+    int matched = 0;
+    for (const auto &w : kWant) {
+        char name[64];
+        snprintf(name, sizeof name, "venue_%s_test", w[0]);
+        if (BandCharDesc::NameToDrumVenue(name) == Symbol(w[1]))
+            matched++;
+    }
+    bool miss = bounded && BandCharDesc::NameToDrumVenue("no_such_venue") == Symbol(tbl[0]);
+    char what[320];
+    snprintf(what, sizeof what,
+             "drum venue lookup: table %d entries, terminator at %d (want 11, 10); "
+             "pairs matched %d (want 5); miss -> %s %d (want 1) "
+             "(retail NameToDrumVenue fn_82334250, table 0x82C6D728)",
+             count, term, matched, tbl[0], (int)miss);
+    if (bounded && matched == 5 && miss) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (drum venue lookup)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A31: Hmx::Object::ReplaceRefs steps every ref of a dying object, including a
+// ref that an owner's Replace moves back onto it. A merge retarget (E -> D)
+// leaves CharClipGroup holding D twice; deleting D steps the first entry,
+// whose erase (retail CharClipGroup::Replace fn_8238F270, erase at +0xD8)
+// shifts D's second entry down a slot (AddRef'd back onto D) and X into the
+// second slot. The native vector snapshot then stepped the second slot's
+// address, now X's entry, so the group dropped X and kept D after D was freed:
+// the ASan heap-use-after-free in ObjRef::AddRef under ~CharClip <-
+// FileMerger::Merger::Clear (A31 asan1) and A28's endgame SIGSEGV. The check
+// reads only addresses until the group is known to be clean, so a regression
+// fails (rc 7) before anything touches the freed clip.
+void rb3_app_check_replace_refs_shifted_entry() { // ring: native-real
+    CharClipGroup *group = Hmx::Object::New<CharClipGroup>();
+    CharClip *d = Hmx::Object::New<CharClip>();
+    CharClip *e = Hmx::Object::New<CharClip>();
+    CharClip *x = Hmx::Object::New<CharClip>();
+    d->SetName("a31_clip_d", ObjectDir::Main());
+    e->SetName("a31_clip_e", ObjectDir::Main());
+    x->SetName("a31_clip_x", ObjectDir::Main());
+    group->AddClip(d);
+    group->AddClip(e);
+    group->AddClip(x);
+    e->ReplaceRefs(d); // the merge retarget: the group now holds D, D, X
+    bool twice = d->RefCount() == 2 && !group->HasClip(e) && x->RefCount() == 1;
+    CharClip *dAddr = d;
+    delete d;
+    bool keptD = group->HasClip(dAddr); // compares addresses only
+    bool keptX = group->HasClip(x);
+    int xRefs = (!keptD && keptX) ? x->RefCount() : -1;
+    char what[320];
+    snprintf(what, sizeof what,
+             "replace refs shifted entry: group holds D twice %d; D deleted -> group holds D %d, "
+             "X %d, X refs %d (want 1 0 1 1) (retail CharClipGroup::Replace fn_8238F270)",
+             (int)twice, (int)keptD, (int)keptX, xRefs);
+    if (twice && !keptD && keptX && xRefs == 1) {
+        delete group;
+        delete e;
+        delete x;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (replace refs shifted entry)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}

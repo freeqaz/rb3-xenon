@@ -38,10 +38,23 @@ ObjectDir *gDeforms;
 Symbol gInstNames[6] = { Symbol(), Symbol(), Symbol(), Symbol(), Symbol(), Symbol() };
 BandCharDesc *gBandCharDescMe;
 
+// Retail's table is 11 words at 0x82C6D728 (lis -0x7d39 / addi -0x28d8 at
+// NameToDrumVenue fn_82334250+0xC/+0x14): five {name, venue} pairs, then one
+// pointer to "" (0x82000C55), which ends NameToDrumVenue's loop (lbz at +0x5C).
+// DrumCallback fn_82334300 walks the first four names only (bound = table+0x20
+// at +0x54). The old ten-entry table had the wrong venues and no terminator, so
+// an unmatched name read past the array (lane A29 ASan, OnUnloadVenue).
 const char *BandCharDesc::sDrumVenueMappings[] = { "small_club", "small_club", "arena",
-                                                   "big_club",   "big_club",   "big_club",
-                                                   "festival",   "big_club",   "video",
-                                                   "none" };
+                                                   "arena",      "big_club",   "big_club",
+                                                   "festival",   "arena",      "video",
+                                                   "big_club",   "" };
+#ifdef HX_NATIVE
+// Gate hook: the table's entry count, which another TU cannot take from the
+// unsized declaration.
+int BandCharDescDrumVenueMappingCount() {
+    return sizeof(BandCharDesc::sDrumVenueMappings) / sizeof(*BandCharDesc::sDrumVenueMappings);
+}
+#endif
 
 ObjectDir *BandCharDesc::GetPrefabs() { return gPrefabs; }
 

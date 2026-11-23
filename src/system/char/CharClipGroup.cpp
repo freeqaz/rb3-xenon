@@ -199,6 +199,9 @@ void CharClipGroup::Replace(ObjRef *from, Hmx::Object *to) {
         // `from` (obj/Object.h RefIs), so the compare never matched: the
         // retarget (SetOwnerObj, bl at +0x80) and the erase (+0xD8) never ran,
         // and a ReplaceRefs walk left the entry on the dying clip. Lane A26.
+        // Lane A28's walks hit the same miss as a SIGSEGV in FindClip on the
+        // song-2 crowd anim merge (a deleted clip left in mClips). Only the
+        // entry the ring is walking is retargeted, never a peer entry.
         if (RefIs(from, mClips[idx])) {
 #else
         if (mClips[idx] == reinterpret_cast<Hmx::Object *>(from)) {

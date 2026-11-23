@@ -26,37 +26,6 @@ bool gInReplaceList = false;
 // Check if an ObjRef's alive sentinel is still set. Reads potentially freed
 // memory during cascading destruction — suppress ASAN for this specific check.
 // Under glibc, freed memory is typically zeroed → sentinel reads as 0 → dead.
-// Snapshot ring entries into a vector, skipping freed nodes.
-// During cascading ObjectDir destruction, some ObjRefs may be freed but still
-// linked in the ring (~ObjRefConcrete skipped Release). Their mAliveSentinel
-// was cleared by ~ObjRef(). We read the sentinel and next pointer from these
-// freed nodes — suppress ASAN since the memory is quarantined but readable.
-#if defined(__SANITIZE_ADDRESS__) || (defined(__has_feature) && __has_feature(address_sanitizer))
-__attribute__((noinline, no_sanitize("address")))
-#endif
-static void SnapshotRing(ObjRef *sentinel, std::vector<ObjRef *> &out) {
-    constexpr size_t kSentinelOffset = 3 * sizeof(void *);
-    constexpr size_t kNextOffset = sizeof(void *);
-    constexpr size_t kMaxRingSize = 100000; // safety limit
-    ObjRef *first = *(ObjRef **)((const char *)sentinel + kNextOffset);
-    size_t count = 0;
-    for (ObjRef *it = first; it != sentinel; ) {
-        if ((uintptr_t)it < 0x10000)
-            break;
-        if (++count > kMaxRingSize) {
-            MILO_LOG("SnapshotRing: RING CORRUPTION — walked %zu nodes without returning to sentinel %p (first=%p, cur=%p)\n",
-                count, (void*)sentinel, (void*)first, (void*)it);
-            break;
-        }
-        // Read mAliveSentinel to check if node was freed
-        uint32_t alive = *(const uint32_t *)((const char *)it + kSentinelOffset);
-        ObjRef *nextNode = *(ObjRef **)((const char *)it + kNextOffset);
-        if (alive == 0xCAFEBABE)
-            out.push_back(it);
-        it = nextNode;
-    }
-}
-
 void ObjRef::ReplaceList(Hmx::Object *obj) {
     // Suppress ObjPtrVec::erase and Transitions::RemoveNodes during ring walk.
     bool wasInReplace = gInReplaceList;
@@ -542,24 +511,106 @@ const char *Hmx::Object::FindPathName() {
 void Hmx::Object::ReplaceRefs(Hmx::Object *obj) {
     if (mRefs.begin() != mRefs.end()) {
 #ifdef HX_NATIVE
-        // Snapshot approach: copy ring entries to a vector, then iterate.
-        // Immune to ring modifications during Replace callbacks (owners may
-        // delete ObjRefs, modify other ring entries, or trigger cascading
-        // destructions). The mAliveSentinel field (set in ObjRef constructor,
-        // cleared in ~ObjRef) detects freed entries in the snapshot.
+        // Drain approach (lane A31): the entries are moved onto `pending`, a
+        // consistent local ring, and Replace(obj) is called on pending.next
+        // until it is empty, as NullifyAllRefs drains its `pending` and
+        // ReplaceList its `other`. A Replace callback that frees an entry
+        // (its ~ObjRef unlinks it from `pending`) or retargets one (SetObj
+        // moves it onto its new object's ring) takes it off `pending`, so it
+        // is never stepped as a stale node.
+        //
+        // The vector snapshot this replaces held entry ADDRESSES. An owner
+        // that keeps its refs by value in a std::vector erases by shifting:
+        // CharClipGroup::Replace (retail fn_8238F270, erase at +0xD8) does
+        // mClips.erase, and each later ObjOwnerPtr<CharClip> is assigned from
+        // its successor (SetOwnerObj: Release, then AddRef onto the clip). With
+        // the dying clip D in a group twice, the step for the first entry
+        // shifted D's second entry down a slot -- AddRef'ing it back onto D's
+        // cleared ring -- and destroyed the last slot. The snapshot then
+        // stepped that last slot's address (a destroyed ObjOwnerPtr: "calling
+        // get obj on abstract ObjRef") or a shifted slot that now held another
+        // clip (which it dropped from the group), and D was freed with the
+        // group still holding it: ASan heap-use-after-free in AddRef on the
+        // next erase that shifted it, then RING CORRUPTION and a SIGSEGV in
+        // ~CharClip <- FileMerger::Merger::Clear on coop_endgame ->
+        // meta_loading_continue (lanes A28 core h2, A31 asan1/w1).
+        //
+        // Retail X360 (below) walks the live std::list and erases each entry
+        // before its Replace, so an entry AddRef'd back onto the dying object
+        // is appended and reached by the same walk. Natively an entry that
+        // comes back onto mRefs during a drain is stepped by another pass.
+        // Entries this object owns itself are left on mRefs after the first
+        // pass, as the snapshot left them, so a self-seeded member that
+        // re-seeds onto its owner cannot loop.
+        //
+        // takeInto moves the live entries of mRefs onto `pending` in ring
+        // order and leaves mRefs empty; an entry whose RefOwner() is
+        // `keepOwner` (when non-null) stays on mRefs. It skips freed nodes:
+        // during cascading ObjectDir destruction some ObjRefs may be freed but
+        // still linked (~ObjRefConcrete skipped Release), their mAliveSentinel
+        // cleared by ~ObjRef(). It reads the sentinel and next pointer from
+        // those nodes, so ASan is suppressed: the memory is quarantined but
+        // readable. Returns the number of entries moved onto `pending`.
+        auto takeInto = [this](ObjRef *pending, Hmx::Object *keepOwner)
+            __attribute__((noinline, no_sanitize("address"))) -> size_t {
+            constexpr size_t kSentinelOffset = 3 * sizeof(void *);
+            constexpr size_t kNextOffset = sizeof(void *);
+            constexpr size_t kMaxRingSize = 100000; // safety limit
+            ObjRef *sentinel = &mRefs;
+            ObjRef *first = *(ObjRef **)((const char *)sentinel + kNextOffset);
+            ObjRef kept;
+            size_t count = 0, moved = 0;
+            for (ObjRef *it = first; it != sentinel;) {
+                if ((uintptr_t)it < 0x10000)
+                    break;
+                if (++count > kMaxRingSize) {
+                    MILO_LOG("SnapshotRing: RING CORRUPTION — walked %zu nodes without returning to sentinel %p (first=%p, cur=%p)\n",
+                             count, (void *)sentinel, (void *)first, (void *)it);
+                    break;
+                }
+                uint32_t alive = *(const uint32_t *)((const char *)it + kSentinelOffset);
+                ObjRef *nextNode = *(ObjRef **)((const char *)it + kNextOffset);
+                if (alive == ObjRef::kAliveSentinel) {
+                    it->DetachSelf();
+                    if (keepOwner && it->RefOwner() == keepOwner) {
+                        it->AddRef(&kept);
+                    } else {
+                        it->AddRef(pending);
+                        moved++;
+                    }
+                }
+                it = nextNode;
+            }
+            sentinel->DetachSelf();
+            while (!kept.empty()) {
+                ObjRef *ref = kept.next;
+                ObjRef::SafeReleaseFromRing(ref);
+                ref->AddRef(sentinel);
+            }
+            return moved;
+        };
         bool wasInReplace = gInReplaceList;
         gInReplaceList = true;
-        std::vector<ObjRef *> snapshot;
-        SnapshotRing(&mRefs, snapshot);
-        mRefs.Clear();
-        for (ObjRef *ref : snapshot) {
-            // Self-loop each ref so that Release() inside SetObj() writes
-            // to itself (harmless) instead of to ring prev/next neighbors
-            // that may reside in already-freed objects. The ring has been
-            // cleared above, so maintaining ring structure is unnecessary.
-            ref->next = ref;
-            ref->prev = ref;
-            ref->Replace(obj);
+        constexpr int kMaxPasses = 8;
+        int pass = 0;
+        for (; pass < kMaxPasses && !mRefs.empty(); pass++) {
+            ObjRef pending;
+            if (takeInto(&pending, pass ? this : nullptr) == 0)
+                break;
+            while (!pending.empty()) {
+                // Take the entry off `pending` before its Replace, as the
+                // snapshot self-looped it: a Replace may self-loop and free
+                // its own node without unlinking it (MsgSourceSinkRef::Replace
+                // -> SinkDied, Msg.cpp), and a Release inside SetObj then
+                // writes only to the node itself.
+                ObjRef *ref = pending.next;
+                ObjRef::SafeReleaseFromRing(ref);
+                ref->Replace(obj);
+            }
+        }
+        if (pass == kMaxPasses && !mRefs.empty()) {
+            MILO_LOG("ReplaceRefs: %s keeps gaining refs after %d passes\n",
+                     Name() ? Name() : "", kMaxPasses);
         }
         gInReplaceList = wasInReplace;
 #else
@@ -659,7 +710,7 @@ void Hmx::Object::NullifyAllRefs() {
         // Read next pointer before potentially dead memory is reused.
         // Dead ObjRefs (from freed ObjPtrVec buffers during cascade) are
         // still linked in the ring — skip them, but keep walking via their
-        // next pointer (same technique as SnapshotRing).
+        // next pointer (same technique as ReplaceRefs' takeInto).
         ObjRef *nxt = *(ObjRef **)((const char *)cur + kNextOffset);
         uint32_t alive = *(const uint32_t *)((const char *)cur + kSentinelOffset);
         if (alive == ObjRef::kAliveSentinel) {
