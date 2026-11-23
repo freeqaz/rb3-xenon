@@ -156,12 +156,13 @@ void BandDirector::Enter() {
         mPostProcA = mWorldPostProc;
         mPostProcB = mWorldPostProc;
         mPostProcBlend = 0;
-#if defined(MILO_DEBUG) && defined(HX_NATIVE)
-        // RB3-360 retail: the string "motion_blur" occurs ZERO times in
-        // orig/45410914/band.exe, and Enter() emits no Symbol("rnd")/Symbol("motion_blur").
-        // The config read is dev-build only; kept for the native host.
-        BandDirector::sMotionBlurBlendAmount = SystemConfig("rnd", "motion_blur")->Float(1);
-#endif
+        // No config read here, on any build. Retail Enter (band.exe TU5 fn_8229A760)
+        // goes from mPostProcBlend = 0 straight to mCamPostProc's release: it makes no
+        // SystemConfig call, and band.exe holds no bare "motion_blur" string (only
+        // PostProc's motion_blur_blend/_weight/_exposure/_velocity props). The native
+        // host used to read SystemConfig("rnd", "motion_blur") here (a DC3-era dev
+        // read, `#if MILO_DEBUG && HX_NATIVE`); rb3's config has no such section, so
+        // Enter died on game_screen. sMotionBlurBlendAmount is read nowhere.
         mCamPostProc.ReleaseObjConcrete();
         mLightPresetCatA = mLightPresetCatB = gNullStr;
         mLightPresetCatBlend = 0;

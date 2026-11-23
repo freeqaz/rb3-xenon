@@ -29,8 +29,16 @@ RndParticleSysAnim::RndParticleSysAnim() : mParticleSys(this), mKeysOwner(this, 
 // fallback, and the cast arm must bind a reference so &q->mKeysOwner stays
 // materialized (addi r11,r3,0x64; lwz r4,0x8(r11)).
 void RndParticleSysAnim::Replace(ObjRef *from, Hmx::Object *to) {
+#ifdef HX_NATIVE
+    // Retail fn_8247F168+0x34 (`cmplw cr6,r11,r4`): same shape and same native
+    // miss as RndCamAnim::Replace -- the native ring passes the ObjRef member
+    // as `from` (obj/Object.h RefIs), so the `this` restore / retarget
+    // (SetOwnerObj, bl at +0x74) never ran natively. Lane A26.
+    if (RefIs(from, mKeysOwner)) {
+#else
     if (static_cast<Hmx::Object *>(mKeysOwner.Ptr())
         == reinterpret_cast<Hmx::Object *>(from)) {
+#endif
         if (!to) {
             mKeysOwner.SetOwnerObj(this);
         } else {

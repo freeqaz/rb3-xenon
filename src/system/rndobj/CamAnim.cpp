@@ -36,8 +36,17 @@ void RndCamAnim::Print() {
 }
 
 void RndCamAnim::Replace(ObjRef *from, Hmx::Object *to) {
+#ifdef HX_NATIVE
+    // Retail fn_82485C80+0x34 (`cmplw cr6,r11,r4`) compares the held keys
+    // owner with `from`, the dying object on X360. The native ring passes the
+    // ObjRef member itself (obj/Object.h RefIs), so that compare never matched
+    // natively: neither the `this` restore nor the retarget (SetOwnerObj, bl at
+    // +0x74) ran, and a ReplaceRefs walk left mKeysOwner on the dying anim. A26.
+    if (RefIs(from, mKeysOwner)) {
+#else
     if (static_cast<Hmx::Object *>(mKeysOwner.Ptr())
         == reinterpret_cast<Hmx::Object *>(from)) {
+#endif
         if (!to) {
             mKeysOwner.SetOwnerObj(this);
         } else {

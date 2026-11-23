@@ -107,8 +107,20 @@ Character::~Character() {
 // witnesses a member type.
 void Character::Replace(ObjRef *from, Hmx::Object *to) {
     RndDir::Replace(from, to);
+#ifdef HX_NATIVE
+    // Retail fn_8236DBF8+0x3C (`cmplw cr6,r30,r11`) compares `from`, the dying
+    // object on X360, with the held sphere base. The native ring passes the
+    // ObjRef member itself (obj/Object.h RefIs), so that compare never matched
+    // natively and the retarget (+0x70) and the `this` restore (+0x94) never
+    // ran: a ReplaceRefs walk dropped the ref with mSphereBase still aimed at
+    // the dying object. A BandCharacter's sphere base left on a temp merge
+    // Character that FileMerger::FinishLoading deleted was read by
+    // BandCharacter::CalcBoundingSphere (ASan, rb3-app tv3 -> game_screen; A24).
+    if (RefIs(from, mSphereBase)) {
+#else
     if (reinterpret_cast<void *>(from)
         == reinterpret_cast<void *>(static_cast<Hmx::Object *>(mSphereBase.Ptr()))) {
+#endif
         // The binding is load-bearing: retail materializes &mSphereBase
         // (subi r30,r31,0x58) BEFORE the __RTDynamicCast call.  Assigning to
         // mSphereBase directly schedules that addi after the call instead.

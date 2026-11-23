@@ -508,14 +508,15 @@ extern "C" void __wrap__ZN3Net4InitEv(void *self) { // ring: online-net
 // TheNetMessenger.Poll() (0x823F5460), mSyncStore->Poll(), mSession->Poll(),
 // mSearcher->Poll(), mServer->Poll() (vtable +8). The Net::Init gate above built
 // mSession, mSearcher and (rbx-net) the offline mServer. This gate runs
-// mSyncStore->Poll() (postcal), mSearcher->Poll() and mServer->Poll()
-// (rb3_app_net_poll_offline; the retail
-// XSessionSearcher and XboxServer bodies; offline, XboxServer::Poll has no call
-// context to poll and is not connected) and NOT:
-//   * TheNetMessenger.Poll: NetMessenger.cpp is absent from src/;
-//   * mSession->Poll: XboxSession::Poll (NetSession_Xbox.cpp:494) starts with
-//     NetSession::Poll, which reaches QuazalSession::Poll, an aborting
-//     online-netsession stub (the Quazal session layer, rb3-xenon-07's ring);
+// mSyncStore->Poll() (postcal), (A23) mSession->Poll(), mSearcher->Poll() and
+// mServer->Poll() (rb3_app_net_poll_offline; the retail SyncStore,
+// XboxSession, XSessionSearcher and XboxServer bodies; offline the session has
+// no Quazal session and XboxServer::Poll has no call context to poll and is not
+// connected) and NOT:
+//   * TheNetMessenger.Poll: NetMessenger.cpp is absent from src/.
+// A23: the session poll is what enters the game (NetSession::Poll ->
+// EnterInGameState -> SyncStartGameMsg); rb3_app_check_offline_game_start
+// checks it. QuazalSession::Poll is QuazalSession.cpp's retail body.
 // GATED once, on the first frame.
 extern "C" void rb3_app_net_poll_offline(void *net);
 extern "C" void __wrap__ZN3Net4PollEv(void *self) { // ring: online-net
@@ -523,7 +524,7 @@ extern "C" void __wrap__ZN3Net4PollEv(void *self) { // ring: online-net
     if (!sPrinted) {
         sPrinted = true;
         printf("  [GATED] rb3-app Net::Poll() -- ring online-net: polls ONLY mSyncStore, "
-               "mSearcher and the offline mServer; NetMessenger/Session(Quazal) not polled\n");
+               "the session, mSearcher and the offline mServer; NetMessenger not polled\n");
         fflush(stdout);
     }
     rb3_app_net_poll_offline(self);
@@ -1212,6 +1213,574 @@ void rb3_app_check_pre_clear_unregister() { // ring: native-real
     }
     printf("  [FAIL] rb3-app %s; Y removed %d\n", what, (int)yGone);
     printf("RESULT: GATE FAILED (pre-clear unregister)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A23: an offline song starts. SyncGameStartPanel (game_screen's sync panel)
+// is loaded only once it reaches its synced state, which only
+// OnMsg(SyncStartGameMsg) sets. Offline the local machine leads a one-machine
+// session: the leader's lock-step completes locally (LockStepMgr::RespondToLock
+// -> OnLockResponseMsg -> CheckAllMachinesResponded -> ReleaseLock, all on the
+// local machine), the panel's LockStepCompleteMsg handler calls
+// TheNetSession->StartGame(), and BeginGameStartCountdown sets mGameState to
+// kStartingGame with no start time (IsLocal). The message itself is sent by
+// NetSession::Poll (0x823E67A8): mGameState@0x4C == 1 and a null
+// mGameStartTime -> EnterInGameState (0x823E2810, bl at 0x823E6828) ->
+// kInLocalGame + Handle(SyncStartGameMsg). Net::Poll (0x823E03A8) runs it
+// through mSession->Poll() (0x823E03D0..E0 -> XboxSession::Poll 0x823F06F0).
+// The native offline Net::Poll used to skip the session, so the walk stalled in
+// tv3_a_screen -> game_screen until the frame cap.
+// Here: a LockStepMgr whose callback does what SyncGameStartPanel's two
+// handlers do (LockStepCompleteMsg as leader: StartGame; SyncStartGameMsg:
+// synced), and is a TheNetSession sink as the panel is. StartLock, then
+// RespondToLock(true) as the panel's state-2 poll does; then Net::Poll up to
+// three frames. It must see LockStepCompleteMsg, kStartingGame, then
+// SyncStartGameMsg and IsInGame. Afterwards EndGame returns the session to the
+// lobby (LeaveInGameState, kInLocalGame arm). Fails (rc 7) when Net::Poll
+// does not poll the session (sabotage: drop the mSession->Poll() line in
+// rb3_app_net_poll_offline).
+#include "meta_band/LockStepMgr.h"
+#include "meta_band/SessionMgr.h"
+#include "net/NetSession.h"
+namespace {
+    struct A23GameStartSink : public Hmx::Object {
+        int completes = 0, starts = 0;
+        bool startingAtComplete = false;
+        virtual DataNode Handle(DataArray *msg, bool warn) override {
+            Symbol sym = msg->Sym(1);
+            if (sym == LockStepCompleteMsg::Type()) {
+                completes++;
+                // SyncGameStartPanel::OnMsg(LockStepCompleteMsg), leader arm
+                TheNetSession->StartGame();
+                startingAtComplete = TheNetSession->IsStartingGame();
+                return 1;
+            }
+            if (sym == SyncStartGameMsg::Type()) {
+                starts++;
+                return 1;
+            }
+            return Hmx::Object::Handle(msg, warn);
+        }
+    };
+}
+void rb3_app_check_offline_game_start() { // ring: native-real
+    char what[640];
+    if (!TheSessionMgr || !TheNetSession) {
+        snprintf(what, sizeof what, "offline game start: TheSessionMgr %p, TheNetSession %p",
+                 (void *)TheSessionMgr, (void *)TheNetSession);
+        printf("  [FAIL] rb3-app %s\n", what);
+        printf("RESULT: GATE FAILED (offline game start)\n");
+        fflush(stdout);
+        _exit(7);
+    }
+    bool lobby0 = !TheNetSession->IsInGame() && !TheNetSession->IsStartingGame();
+    // A walk reaches song select through a mode change, and
+    // BandMatchmaker::OnMsg(ModeChangedMsg) stores SetRanked(IsRanked()), false
+    // for quickplay. Construct-only has had no mode change, and neither the
+    // SessionSettings ctor (retail 0x823F3C78) nor Clear (0x823F3BE8) writes
+    // mRanked@0xC, so the gate stores the quickplay value itself; otherwise
+    // StartGame would read an unset byte and may take the ranked
+    // (arbitration) arm.
+    SessionSettings *settings = TheNetSession->GetSessionSettings();
+    if (settings)
+        settings->SetRanked(false);
+    A23GameStartSink *sink = new A23GameStartSink();
+    TheNetSession->AddSink(sink);
+    int startsAtPoll[3] = { -1, -1, -1 };
+    bool inGame = false;
+    {
+        LockStepMgr lock("a23_game_start", sink);
+        lock.StartLock(); // SyncGameStartPanel state 0, leader local
+        bool inLock = lock.InLock();
+        lock.RespondToLock(true); // state 2 -> 3
+        bool released = !lock.InLock();
+        for (int i = 0; i < 3; i++) {
+            TheNet.Poll();
+            startsAtPoll[i] = sink->starts;
+        }
+        inGame = TheNetSession->IsInGame();
+        snprintf(what, sizeof what,
+                 "offline game start: lobby %d; lock in %d, released %d; LockStepCompleteMsg "
+                 "x%d (want 1), kStartingGame after StartGame %d (want 1); SyncStartGameMsg "
+                 "after Net::Poll 1/2/3: %d/%d/%d (want 1/1/1), in game %d (want 1) (retail "
+                 "Net::Poll 0x823E03A8 polls the session at 0x823E03D0; NetSession::Poll "
+                 "0x823E67A8 -> EnterInGameState 0x823E2810)",
+                 (int)lobby0, (int)inLock, (int)released, sink->completes,
+                 (int)sink->startingAtComplete, startsAtPoll[0], startsAtPoll[1],
+                 startsAtPoll[2], (int)inGame);
+    }
+    bool ok = lobby0 && sink->completes == 1 && sink->startingAtComplete
+        && startsAtPoll[0] == 1 && startsAtPoll[2] == 1 && inGame;
+    if (TheNetSession->IsInGame())
+        TheNetSession->EndGame(0, false, 0.0f);
+    bool lobby1 = !TheNetSession->IsInGame() && !TheNetSession->IsStartingGame();
+    TheNetSession->RemoveSink(sink);
+    delete sink;
+    if (ok && lobby1) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s; back in lobby %d\n", what, (int)lobby1);
+    printf("RESULT: GATE FAILED (offline game start)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A24: a transformable's parent ref, retargeted by a ref walk, moves the child.
+// Retail RndTransformable::Replace (fn_823F94E8) compares the held parent's
+// Hmx::Object subobject with `from` (fn_823F94E8+0x34, `cmplw cr6,r11,r4`), the
+// dying object on X360, and on a match calls SetTransParent(to) (the bl at
+// fn_823F94E8+0x64 -> fn_823F9318), which takes the child out of the old
+// parent's mChildren and puts it in the new one's. The native ring passes the
+// ObjRef member itself as `from` (obj/Object.h RefIs), so the retail compare
+// never matched: ReplaceRefs (BandCharacter::Filter's merges, CharBoneDir,
+// Character::UnhookShadow) left the child in the old parent's list and out of
+// the new one's. Here: C under P1, P1->ReplaceRefs(P2) must leave C under P2
+// and only in P2's list; deleting C must leave both lists empty, and NullifyAllRefs
+// (a cascade's Phase 0) on a parent must take C out of that parent's list. Fails
+// with the retail compare natively (rc 7).
+#include "rndobj/Trans.h"
+void rb3_app_check_trans_parent_replace() { // ring: native-real
+    RndTransformable *p1 = Hmx::Object::New<RndTransformable>();
+    RndTransformable *p2 = Hmx::Object::New<RndTransformable>();
+    RndTransformable *c = Hmx::Object::New<RndTransformable>();
+    c->SetTransParent(p1, false);
+    bool held = c->TransParent() == p1 && p1->Children().size() == 1;
+    p1->ReplaceRefs(p2);
+    bool moved = c->TransParent() == p2;
+    int n1 = (int)p1->Children().size(), n2 = (int)p2->Children().size();
+    bool listed = n2 == 1 && p2->Children().front() == c;
+    // The cascade arm: Phase 0 runs NullifyAllRefs on a dying parent.
+    p2->NullifyAllRefs();
+    bool orphaned = c->TransParent() == nullptr;
+    int n2b = (int)p2->Children().size();
+    c->SetTransParent(p1, false);
+    delete c;
+    int n1c = (int)p1->Children().size();
+    char what[512];
+    snprintf(what, sizeof what,
+             "trans parent replace: C under P1 %d; P1->ReplaceRefs(P2): C under P2 %d, "
+             "P1/P2 children %d/%d (want 0/1, P2's is C %d); P2->NullifyAllRefs: C parent "
+             "NULL %d, P2 children %d (want 0); C back under P1 and deleted: P1 children %d "
+             "(want 0) (retail RndTransformable::Replace fn_823F94E8 -> SetTransParent "
+             "fn_823F9318)",
+             (int)held, (int)moved, n1, n2, (int)listed, (int)orphaned, n2b, n1c);
+    bool ok = held && moved && n1 == 0 && listed && orphaned && n2b == 0 && n1c == 0;
+    if (ok) {
+        delete p1;
+        delete p2;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (trans parent replace)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A24: a Character's sphere base follows a ref walk on the object it names.
+// Retail Character::Replace (fn_8236DBF8) compares `from`, the dying object on
+// X360, with the held sphere base (fn_8236DBF8+0x3C, `cmplw cr6,r30,r11`); on a
+// match it retargets the pointer to `to` (SetOwnerObj, the bl at +0x70) and,
+// when that leaves it null, back to the Character itself (+0x94). The native
+// ring passes the ObjRef member as `from` (obj/Object.h RefIs), so the compare
+// never matched natively. On the walk, BandCharacter::Filter's
+// mInstDir->CopyBoundingSphere(T) aimed the instrument Character's sphere base at
+// a temp merge Character T that FileMerger::FinishLoading then deleted, and
+// BandCharacter::CalcBoundingSphere read it (ASan heap-use-after-free, rb3-app
+// tv3 -> game_screen). Here: A->CopyBoundingSphere(T) aims A's base at T;
+// T->ReplaceRefs(U) must move it to U; U->ReplaceRefs(nullptr) (X360 ~Object
+// 0x8275CBF0's walk) must bring it back to A; deleting T and U must leave it on
+// A. Fails with the retail compare natively (rc 7).
+#include "char/Character.h"
+namespace {
+    struct A24CharPeek : public Character { // reads the protected member through a member pointer
+        static ObjOwnerPtr<RndTransformable> Character::*Base() {
+            return &A24CharPeek::mSphereBase;
+        }
+    };
+}
+void rb3_app_check_sphere_base_replace() { // ring: native-real
+    Character *a = Hmx::Object::New<Character>();
+    Character *t = Hmx::Object::New<Character>();
+    Character *u = Hmx::Object::New<Character>();
+    ObjOwnerPtr<RndTransformable> &base = a->*A24CharPeek::Base();
+    bool self0 = base.Ptr() == a;
+    a->CopyBoundingSphere(t); // t's base is t itself
+    bool onT = base.Ptr() == t;
+    t->ReplaceRefs(u);
+    bool onU = base.Ptr() == u;
+    u->ReplaceRefs(nullptr);
+    bool backA = base.Ptr() == a;
+    a->CopyBoundingSphere(t);
+    bool onT2 = base.Ptr() == t;
+    delete t;
+    delete u;
+    bool afterDelete = base.Ptr() == a;
+    char what[512];
+    snprintf(what, sizeof what,
+             "sphere base replace: A's base is A %d; A->CopyBoundingSphere(T): on T %d; "
+             "T->ReplaceRefs(U): on U %d; U->ReplaceRefs(NULL): back on A %d; on T again %d, "
+             "T and U deleted: on A %d (want all 1) (retail Character::Replace fn_8236DBF8)",
+             (int)self0, (int)onT, (int)onU, (int)backA, (int)onT2, (int)afterDelete);
+    bool ok = self0 && onT && onU && backA && onT2 && afterDelete;
+    if (ok) {
+        delete a;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (sphere base replace)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A26: the rest of A24's same-shape census -- owner-control holders whose
+// retail Replace compares `from`, the dying object on X360, with the held
+// pointer. The native ring passes the ObjRef member itself as `from`
+// (obj/Object.h RefIs), so each compare never matched natively and a
+// ReplaceRefs walk (snapshot, self-loop, Replace) left the member on the dying
+// object. Retail compares (band.exe TU5):
+//   RndCamAnim::Replace         fn_82485C80+0x34 `cmplw cr6,r11,r4`  (to ? to's keys owner : this)
+//   RndParticleSysAnim::Replace fn_8247F168+0x34 `cmplw cr6,r11,r4`  (same shape)
+//   Spotlight::Replace          fn_824D81C0+0x3C `cmplw cr6,r11,r30` (to as Spotlight, then null -> this)
+//   BandCharacter::Replace      fn_8227E168+0x3C `cmplw cr6,r30,r11` (to as BandCharDesc, CopyCharDesc)
+//   CharClipGroup::Replace      fn_8238F270+0x58 `cmplw cr6,r11,r22` (entry := to as CharClip; null entry erased)
+// Each sub-check: X->ReplaceRefs(Y) must move the member to Y's answer, then
+// Y->ReplaceRefs(nullptr) (X360 ~Object 0x8275CBF0's walk) must apply retail's
+// null arm. ReplaceRefs, not a plain delete: A24 found a dir-free delete takes
+// NullifyAllRefs, whose X16 seed restore hides the self-seeded members.
+// Fails with the retail compares natively (rc 7).
+#include "rndobj/CamAnim.h"
+#include "rndobj/PartAnim.h"
+#include "world/Spotlight.h"
+#include "bandobj/BandCharacter.h"
+#include "bandobj/BandCharDesc.h"
+#include "char/CharClipGroup.h"
+#include "char/CharClip.h"
+namespace {
+    struct A26CamPeek : public RndCamAnim {
+        static ObjOwnerPtr<RndCamAnim> RndCamAnim::*Keys() { return &A26CamPeek::mKeysOwner; }
+    };
+    struct A26PartPeek : public RndParticleSysAnim {
+        static ObjOwnerPtr<RndParticleSysAnim> RndParticleSysAnim::*Keys() {
+            return &A26PartPeek::mKeysOwner;
+        }
+    };
+    struct A26SpotPeek : public Spotlight {
+        static ObjOwnerPtr<Spotlight> Spotlight::*Color() { return &A26SpotPeek::mColorOwner; }
+    };
+    struct A26GroupPeek : public CharClipGroup {
+        static ObjVector<ObjOwnerPtr<CharClip> > CharClipGroup::*Clips() {
+            return &A26GroupPeek::mClips;
+        }
+    };
+}
+void rb3_app_check_owner_ptr_replace() { // ring: native-real
+    // RndCamAnim: A's keys owner K; K->ReplaceRefs(K2) -> K2's keys owner (K2);
+    // K2->ReplaceRefs(NULL) -> A itself.
+    RndCamAnim *ca = Hmx::Object::New<RndCamAnim>();
+    RndCamAnim *ck = Hmx::Object::New<RndCamAnim>();
+    RndCamAnim *ck2 = Hmx::Object::New<RndCamAnim>();
+    ObjOwnerPtr<RndCamAnim> &camKeys = ca->*A26CamPeek::Keys();
+    camKeys = ck;
+    bool camOnK = camKeys.Ptr() == ck;
+    ck->ReplaceRefs(ck2);
+    bool camOnK2 = camKeys.Ptr() == ck2;
+    ck2->ReplaceRefs(nullptr);
+    bool camSelf = camKeys.Ptr() == ca;
+    bool cam = camOnK && camOnK2 && camSelf;
+
+    RndParticleSysAnim *pa = Hmx::Object::New<RndParticleSysAnim>();
+    RndParticleSysAnim *pk = Hmx::Object::New<RndParticleSysAnim>();
+    RndParticleSysAnim *pk2 = Hmx::Object::New<RndParticleSysAnim>();
+    ObjOwnerPtr<RndParticleSysAnim> &partKeys = pa->*A26PartPeek::Keys();
+    partKeys = pk;
+    bool partOnK = partKeys.Ptr() == pk;
+    pk->ReplaceRefs(pk2);
+    bool partOnK2 = partKeys.Ptr() == pk2;
+    pk2->ReplaceRefs(nullptr);
+    bool partSelf = partKeys.Ptr() == pa;
+    bool part = partOnK && partOnK2 && partSelf;
+
+    // Spotlight: S's color owner C; C->ReplaceRefs(C2) -> C2; C2->ReplaceRefs(NULL)
+    // -> null, then the `!Ptr()` tail -> S itself.
+    Spotlight *sa = Hmx::Object::New<Spotlight>();
+    Spotlight *sc = Hmx::Object::New<Spotlight>();
+    Spotlight *sc2 = Hmx::Object::New<Spotlight>();
+    ObjOwnerPtr<Spotlight> &color = sa->*A26SpotPeek::Color();
+    color = sc;
+    bool spotOnC = color.Ptr() == sc;
+    sc->ReplaceRefs(sc2);
+    bool spotOnC2 = color.Ptr() == sc2;
+    sc2->ReplaceRefs(nullptr);
+    bool spotSelf = color.Ptr() == sa;
+    bool spot = spotOnC && spotOnC2 && spotSelf;
+
+    // BandCharacter: test prefab D; D->ReplaceRefs(D2) -> D2; D2->ReplaceRefs(NULL)
+    // -> null (mTestPrefab is not self-seeded).
+    BandCharacter *bc = Hmx::Object::New<BandCharacter>();
+    BandCharDesc *bd = Hmx::Object::New<BandCharDesc>();
+    BandCharDesc *bd2 = Hmx::Object::New<BandCharDesc>();
+    bc->mTestPrefab = bd;
+    bool bandOnD = bc->mTestPrefab.Ptr() == bd;
+    bd->ReplaceRefs(bd2);
+    bool bandOnD2 = bc->mTestPrefab.Ptr() == bd2;
+    bd2->ReplaceRefs(nullptr);
+    bool bandNull = bc->mTestPrefab.Ptr() == nullptr;
+    bool band = bandOnD && bandOnD2 && bandNull;
+
+    // CharClipGroup: clips {C1, C2}; C1->ReplaceRefs(C3) -> {C3, C2};
+    // C2->ReplaceRefs(NULL) -> {C3} (retail erases the null entry).
+    CharClipGroup *g = Hmx::Object::New<CharClipGroup>();
+    CharClip *c1 = Hmx::Object::New<CharClip>();
+    CharClip *c2 = Hmx::Object::New<CharClip>();
+    CharClip *c3 = Hmx::Object::New<CharClip>();
+    ObjVector<ObjOwnerPtr<CharClip> > &clips = g->*A26GroupPeek::Clips();
+    g->AddClip(c1);
+    g->AddClip(c2);
+    bool grpTwo = clips.size() == 2 && clips[0].Ptr() == c1 && clips[1].Ptr() == c2;
+    c1->ReplaceRefs(c3);
+    bool grpOnC3 = clips.size() == 2 && clips[0].Ptr() == c3 && clips[1].Ptr() == c2;
+    c2->ReplaceRefs(nullptr);
+    bool grpErased = clips.size() == 1 && clips[0].Ptr() == c3;
+    bool grp = grpTwo && grpOnC3 && grpErased;
+
+    char what[768];
+    snprintf(what, sizeof what,
+             "owner ptr replace: RndCamAnim keys on K %d, on K2 %d, self %d; "
+             "RndParticleSysAnim keys on K %d, on K2 %d, self %d; "
+             "Spotlight color on C %d, on C2 %d, self %d; "
+             "BandCharacter prefab on D %d, on D2 %d, null %d; "
+             "CharClipGroup {C1,C2} %d, {C3,C2} %d, {C3} %d (want all 1)",
+             (int)camOnK, (int)camOnK2, (int)camSelf, (int)partOnK, (int)partOnK2,
+             (int)partSelf, (int)spotOnC, (int)spotOnC2, (int)spotSelf, (int)bandOnD,
+             (int)bandOnD2, (int)bandNull, (int)grpTwo, (int)grpOnC3, (int)grpErased);
+    if (cam && part && spot && band && grp) {
+        delete ck;
+        delete ck2;
+        delete ca;
+        delete pk;
+        delete pk2;
+        delete pa;
+        delete sc;
+        delete sc2;
+        delete sa;
+        delete bd;
+        delete bd2;
+        delete bc;
+        delete c1;
+        delete c2;
+        delete c3;
+        delete g;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (owner ptr replace)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A27: the two unconditional Replace bodies A26's census left. Both compare
+// `from`, the dying object on X360, with a held pointer; natively `from` is the
+// ring ref itself, so neither compare ever matched. Retail (band.exe TU5):
+//   CharBonesMeshes::Replace fn_8237B338: dummy guard +0x38 `cmplw cr6,r4,r11`,
+//     entry compare +0x68 `cmplw cr6,r11,r4`; match: entry := to as
+//     RndTransformable (+0x98, SetOwnerObj +0xA4), null -> dummy (+0xBC).
+//   TypeProps::Replace fn_827663D8 -> ReplaceObject fn_82766338, compare +0x20
+//     `cmplw cr6,r3,r5`; match: Release from +0x2C, value := to, AddRef to +0x6C.
+//     Same for an object-valued prop and each object element of an array prop.
+// CharBonesMeshes: {T1, dummy}; T1->ReplaceRefs(T2) -> {T2, dummy};
+// T2->ReplaceRefs(NULL) -> {dummy, dummy}; dummy->ReplaceRefs(T3) leaves both on
+// the dummy (the guard). TypeProps: X as prop "obj" AND element 0 of array prop
+// "arr" (two nodes, two ring entries), W as element 1; X->ReplaceRefs(Y) moves
+// both values to Y and both nodes onto Y's ring (Y gains 2 refs), W untouched;
+// Y->ReplaceRefs(NULL) nulls both values and takes both nodes off Y's ring; and a
+// plain `delete Z` of prop "z"'s value leaves "z" null, not the freed address.
+// ReplaceRefs for the first two, as A24/A26 (a dir delete hides this class).
+// Fails with the retail compares natively (rc 7).
+#include "char/CharBonesMeshes.h"
+#include "rndobj/Trans.h"
+namespace {
+    struct A27BonesPeek : public CharBonesMeshes {
+        static ObjVector<ObjOwnerPtr<RndTransformable> > CharBonesMeshes::*Meshes() {
+            return &A27BonesPeek::mMeshes;
+        }
+        static RndTransformable *CharBonesMeshes::*Dummy() { return &A27BonesPeek::mDummyMesh; }
+    };
+    Hmx::Object *A27Val(TypeProps *tp, const char *key) {
+        DataNode *n = tp->KeyValue(Symbol(key), false);
+        return n && n->Type() == kDataObject ? n->UncheckedObj() : (Hmx::Object *)-1;
+    }
+    Hmx::Object *A27Elem(TypeProps *tp, const char *key, int i) {
+        DataNode *n = tp->KeyValue(Symbol(key), false);
+        if (!n || n->Type() != kDataArray || n->UncheckedArray()->Size() <= i)
+            return (Hmx::Object *)-1;
+        DataNode &e = n->UncheckedArray()->Node(i);
+        return e.Type() == kDataObject ? e.UncheckedObj() : (Hmx::Object *)-1;
+    }
+}
+void rb3_app_check_bones_typeprops_replace() { // ring: native-real
+    CharBonesMeshes *b = new CharBonesMeshes();
+    ObjVector<ObjOwnerPtr<RndTransformable> > &meshes = b->*A27BonesPeek::Meshes();
+    RndTransformable *dummy = b->*A27BonesPeek::Dummy();
+    RndTransformable *t1 = Hmx::Object::New<RndTransformable>();
+    RndTransformable *t2 = Hmx::Object::New<RndTransformable>();
+    RndTransformable *t3 = Hmx::Object::New<RndTransformable>();
+    meshes.resize(2);
+    meshes[0] = t1;
+    meshes[1] = dummy;
+    bool bonesSet = meshes[0].Ptr() == t1 && meshes[1].Ptr() == dummy;
+    t1->ReplaceRefs(t2);
+    bool bonesOnT2 = meshes[0].Ptr() == t2 && meshes[1].Ptr() == dummy;
+    t2->ReplaceRefs(nullptr);
+    bool bonesDummy = meshes[0].Ptr() == dummy && meshes[1].Ptr() == dummy;
+    dummy->ReplaceRefs(t3);
+    bool bonesGuard = meshes[0].Ptr() == dummy && meshes[1].Ptr() == dummy;
+    bool bones = bonesSet && bonesOnT2 && bonesDummy && bonesGuard;
+
+    RndTransformable *owner = Hmx::Object::New<RndTransformable>();
+    RndTransformable *x = Hmx::Object::New<RndTransformable>();
+    RndTransformable *y = Hmx::Object::New<RndTransformable>();
+    RndTransformable *w = Hmx::Object::New<RndTransformable>();
+    RndTransformable *z = Hmx::Object::New<RndTransformable>();
+    TypeProps *tp = new TypeProps(owner);
+    tp->SetKeyValue(Symbol("a27_obj"), DataNode(x), true);
+    DataArray *arr = new DataArray(0);
+    tp->SetKeyValue(Symbol("a27_arr"), DataNode(arr, kDataArray), false);
+    arr->Release();
+    tp->InsertArrayValue(Symbol("a27_arr"), 0, DataNode(x), nullptr);
+    tp->InsertArrayValue(Symbol("a27_arr"), 1, DataNode(w), nullptr);
+    tp->SetKeyValue(Symbol("a27_z"), DataNode(z), true);
+    bool tpSet = A27Val(tp, "a27_obj") == x && A27Elem(tp, "a27_arr", 0) == x
+        && A27Elem(tp, "a27_arr", 1) == w && A27Val(tp, "a27_z") == z;
+    int yRefs0 = y->RefCount();
+    x->ReplaceRefs(y);
+    int yGain = y->RefCount() - yRefs0;
+    bool tpOnY = A27Val(tp, "a27_obj") == y && A27Elem(tp, "a27_arr", 0) == y
+        && A27Elem(tp, "a27_arr", 1) == w && yGain == 2;
+    y->ReplaceRefs(nullptr);
+    bool tpNull = A27Val(tp, "a27_obj") == nullptr && A27Elem(tp, "a27_arr", 0) == nullptr
+        && A27Elem(tp, "a27_arr", 1) == w && y->RefCount() == yRefs0;
+    delete z; // a plain delete: ~Object's ReplaceRefs(nullptr) walk
+    bool tpDeleted = A27Val(tp, "a27_z") == nullptr;
+    bool typeProps = tpSet && tpOnY && tpNull && tpDeleted;
+
+    char what[512];
+    snprintf(what, sizeof what,
+             "bones typeprops replace: CharBonesMeshes {T1,D} %d, {T2,D} %d, {D,D} %d, "
+             "dummy guard %d; TypeProps set %d, on Y %d (Y gained %d refs), null %d, "
+             "deleted value null %d (want all 1)",
+             (int)bonesSet, (int)bonesOnT2, (int)bonesDummy, (int)bonesGuard, (int)tpSet,
+             (int)tpOnY, yGain, (int)tpNull, (int)tpDeleted);
+    if (bones && typeProps) {
+        delete tp;
+        delete owner;
+        delete x;
+        delete y;
+        delete w;
+        delete b;
+        delete t1;
+        delete t2;
+        delete t3;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (bones typeprops replace)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A25: TrackPanel::UpdateReservedVocalSlot must find the vocal slot. Retail
+// fn_82B912A8 walks mTrackSlots at sizeof(TrackSlot) == 8 on X360 (the literal 8
+// in our source); on LP64 the slot is 16 bytes, so the literal stride read
+// half-slots and named the wrong vocal slot, and game_screen's
+// TrackPanelDir::AssignTrack failed ReservedVocalPlayerSlot (0x10A). Here: put
+// kInstVocals in each slot k in turn and in none; the reserved slot must be k,
+// and 4 when no slot sings (fn_82B912A8+0x58). Fails with the literal stride
+// natively (rc 7).
+#include "bandtrack/TrackPanel.h"
+namespace {
+    struct A25TrackPanelPeek : public TrackPanel { // reads protected members via member pointers
+        static std::vector<TrackPanel::TrackSlot> TrackPanel::*Slots() {
+            return &A25TrackPanelPeek::mTrackSlots;
+        }
+    };
+}
+void rb3_app_check_reserved_vocal_slot() { // ring: native-real
+    TrackPanel *saved = TheTrackPanel;
+    TrackPanel *tp = new TrackPanel();
+    std::vector<TrackPanel::TrackSlot> &slots = tp->*A25TrackPanelPeek::Slots();
+    char found[64];
+    int n = 0;
+    bool ok = slots.size() == 5;
+    for (int want = 0; want <= (int)slots.size(); want++) {
+        for (int i = 0; i < (int)slots.size(); i++) {
+            slots[i].mTrack = nullptr;
+            slots[i].mInstrument = i == want ? kInstVocals : kInstGuitar;
+        }
+        tp->UpdateReservedVocalSlot();
+        int got = -1;
+        for (int i = 0; i < (int)slots.size(); i++)
+            if (tp->SlotReservedForVocals(i))
+                got = i;
+        int expect = want < (int)slots.size() ? want : 4;
+        ok = ok && got == expect;
+        n += snprintf(found + n, sizeof found - n, "%s%d", want ? " " : "", got);
+    }
+    for (int i = 0; i < (int)slots.size(); i++)
+        slots[i].mInstrument = kInstNone;
+    char what[384];
+    snprintf(what, sizeof what,
+             "reserved vocal slot: vocals in slot 0..4 then none -> reserved %s "
+             "(want 0 1 2 3 4 4) (retail TrackPanel::UpdateReservedVocalSlot fn_82B912A8)",
+             found);
+    delete tp;
+    TheTrackPanel = saved;
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (reserved vocal slot)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A25: after boot (WorldInit -> Spotlight::Init -> BuildBoard), the shared
+// spotlight disk must exist. Retail BuildBoard fn_824DC5E8 builds a 4-vert,
+// 2-face RndMesh into sDiskMesh (stw at +0x18); SpotlightDrawer's
+// DrawAccessories<LensExtract> and Spotlight's lens/floor-spot draws use it
+// unchecked. The native host used to skip the build, so the first lit
+// game_screen frame crashed in RndDrawable::Showing. Fails (rc 7) when the
+// skip is restored.
+#include "world/Spotlight.h"
+#include "rndobj/Mesh.h"
+void rb3_app_check_spotlight_disk() { // ring: native-real
+    RndMesh *disk = Spotlight::GetDiskMesh();
+    int verts = disk ? (int)disk->Verts().size() : -1;
+    int faces = disk ? (int)disk->Faces().size() : -1;
+    char what[256];
+    snprintf(what, sizeof what,
+             "spotlight disk: sDiskMesh %s, verts %d faces %d (want 4 2) "
+             "(retail Spotlight::BuildBoard fn_824DC5E8)",
+             disk ? "set" : "NULL", verts, faces);
+    if (disk && verts == 4 && faces == 2) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (spotlight disk)\n");
     fflush(stdout);
     fflush(stderr);
     _exit(7);

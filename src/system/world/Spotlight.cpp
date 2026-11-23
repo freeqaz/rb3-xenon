@@ -205,8 +205,17 @@ Spotlight::~Spotlight() {
 // test against SetObj's return value, which retail does not have.
 void Spotlight::Replace(ObjRef *from, Hmx::Object *to) {
     RndTransformable::Replace(from, to);
+#ifdef HX_NATIVE
+    // Retail fn_824D81C0+0x3C (`cmplw cr6,r11,r30`) compares the held color
+    // owner with `from`, the dying object on X360. The native ring passes the
+    // ObjRef member itself (obj/Object.h RefIs), so that compare never matched
+    // natively, and the `!Ptr() -> this` tail (+0x70..+0x84) could not cover it:
+    // the member still held the dying Spotlight, not null. Lane A26.
+    if (RefIs(from, mColorOwner)) {
+#else
     if (static_cast<Hmx::Object *>(mColorOwner.Ptr())
         == reinterpret_cast<Hmx::Object *>(from)) {
+#endif
         mColorOwner.SetOwnerObj(dynamic_cast<Spotlight *>(to));
     }
     if (!mColorOwner.Ptr()) {
@@ -774,9 +783,13 @@ void Spotlight::Init() {
 }
 
 void Spotlight::BuildBoard() {
-#ifdef HX_NATIVE
-    return; // Skip mesh setup on native — no renderer
-#endif
+    // Retail fn_824DC5E8 builds the shared lens/floor-spot disk on every boot
+    // (sDiskMesh, the stw to lbl_82CC786C at +0x18). The native host used to
+    // return here ("no renderer", from the 2026-05 scaffold), leaving sDiskMesh
+    // NULL for SpotlightDrawer's DrawAccessories<LensExtract> and the asserting
+    // Spotlight draws; game_screen's first lit frame then crashed in
+    // RndDrawable::Showing. The native renderer is real now: build the disk;
+    // only the D3D step below is skipped.
     MILO_ASSERT(!sDiskMesh, 0x42E);
     sDiskMesh = Hmx::Object::New<RndMesh>();
     RndMesh::VertVector &verts = sDiskMesh->Verts();
@@ -803,8 +816,12 @@ void Spotlight::BuildBoard() {
     faces[0].Set(0, 1, 2);
     faces[1].Set(1, 3, 2);
     sDiskMesh->Sync(0x13F);
+#ifndef HX_NATIVE
+    // The one D3D-only step (fn_827378B8, the bl at fn_824DC5E8+0x244): the native
+    // RndMesh is the WebGPU mesh, not a DxMesh, and builds its own buffers in Sync.
     DxMesh *dxDiskMesh = static_cast<DxMesh *>(sDiskMesh);
     dxDiskMesh->GetMultimeshFaces();
+#endif
     sDiskMesh->UpdateSphere();
 }
 

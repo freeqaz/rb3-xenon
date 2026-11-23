@@ -74,9 +74,8 @@ alignas(8) unsigned char gRb3AppTheTour[8] __asm__("TheTour"); // ring: a1-absen
 // static-init object holding only mLastSender; NetSession's send/deliver paths
 // name it and are online-only (their entry points abort, ring online-net).
 alignas(NetMessenger) unsigned char gRb3AppTheNetMessenger[sizeof(NetMessenger)] __asm__("TheNetMessenger"); // ring: online-net
-// TheXboxSynth (Synth360*, synth_xbox/Synth.cpp, not compiled natively): the
-// session's voice-chat paths name it (NetSession_Xbox.cpp). Null; online only.
-alignas(8) unsigned char gRb3AppTheXboxSynth[8] __asm__("TheXboxSynth"); // ring: online-netsession
+// TheXboxSynth: real since lane A23 (rb3_app_native_glue.cpp, a zeroed Synth360
+// with no mics; XboxSession::Poll reads chat from it every frame).
 // TheSyncStore: gone since lane postcal; net/SyncStore.cpp is compiled and defines it.
 alignas(8) unsigned char gRb3AppTheHAQMgr[8] __asm__("TheHAQMgr"); // ring: a1-absent-body
 // TheGestureMgr: gone since lane rbx-net. Its one rb3-app use was a Dance Central

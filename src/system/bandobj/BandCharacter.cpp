@@ -200,8 +200,17 @@ void BandCharacter::RemovingObject(Hmx::Object *o) {
 // the ring boundary -- see Character::Replace, Dir.h:101 and Msg.h.
 void BandCharacter::Replace(ObjRef *from, Hmx::Object *to) {
     Character::Replace(from, to);
+#ifdef HX_NATIVE
+    // Retail fn_8227E168+0x3C (`cmplw cr6,r30,r11`) compares `from`, the dying
+    // object on X360, with the held test prefab. The native ring passes the
+    // ObjRef member itself (obj/Object.h RefIs), so that compare never matched
+    // natively: the retarget (SetOwnerObj, +0x6C) never ran and a ReplaceRefs
+    // walk left mTestPrefab aimed at the dying BandCharDesc. Lane A26.
+    if (RefIs(from, mTestPrefab)) {
+#else
     if (reinterpret_cast<void *>(from)
         == reinterpret_cast<void *>(static_cast<Hmx::Object *>(mTestPrefab.Ptr()))) {
+#endif
         mTestPrefab = dynamic_cast<BandCharDesc *>(to);
         if (mTestPrefab)
             CopyCharDesc(mTestPrefab);

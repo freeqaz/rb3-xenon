@@ -60,13 +60,14 @@ void SyncGameStartPanel::PollIsSynced() {
         }
         break;
     default:
+#ifdef HX_NATIVE // retail 0x826A96A0: cmplwi r11,3; bge (return) -- 3, 4, 5 are waits
+        if (state >= kWaitingForSessionStart && state <= 5) break;
+#endif
         MILO_FAIL("Invalid state in SyncGameStartPanel\n");
         break;
     }
 }
-
 void SyncGameStartPanel::SetExternalBlock(bool b1) { mExternalBlock = b1; }
-
 DataNode SyncGameStartPanel::OnMsg(const SyncStartGameMsg &msg) {
     if (IsLeaderLocal()) {
         MILO_ASSERT(mState == kStartingSession, 0x77);
@@ -75,7 +76,6 @@ DataNode SyncGameStartPanel::OnMsg(const SyncStartGameMsg &msg) {
     mState = 5;
     return 1;
 }
-
 DataNode SyncGameStartPanel::OnMsg(const SessionDisconnectedMsg &msg) {
     // Retail emits two explicit compares here (cmpwi 1 / beq, cmpwi 2 / bne at
     // 0x826A97FC..0x826A9808), not the `mState - 1U <= 1` range idiom, which

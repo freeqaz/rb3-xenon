@@ -136,28 +136,76 @@ void TypeProps::ReplaceObject(DataNode &n, Hmx::Object *from, Hmx::Object *to) {
     Hmx::Object *fromObj = n.UncheckedObj();
     if (fromObj == from) {
 #ifdef HX_NATIVE
-        mObjects.remove(fromObj);
+        // The ring bookkeeping (retail's Release +0x2C / AddRef +0x6C) is done
+        // once per ring step in Replace, on the mObjects node that is the
+        // step's `from`; see there.
 #else
         // retail (0x82766338): the property's ring ref moves with the value
         fromObj->Release(this);
 #endif
         n = to;
         if (to) {
-#ifdef HX_NATIVE
-            mObjects.push_back(to);
-#else
+#ifndef HX_NATIVE
             to->AddRef(this);
 #endif
         }
     }
 }
 
+#ifdef HX_NATIVE
+namespace {
+    // Native half of a TypeProps ring step. Natively a typed prop's object is
+    // held by a node of TypeProps::mObjects (an owner-control ObjPtrList), and
+    // the ring hands TypeProps::Replace that NODE as `from` (ObjPtrList::
+    // ReplaceNode, obj/ObjPtr_p.h). Retail has one ring entry per held value
+    // (AddRef(this) per value) and moves it with the value: Release from +0x2C,
+    // AddRef to +0x6C (fn_82766338). The native image of that is to retarget
+    // this step's node to `to`, keeping one node per held value.
+    //
+    // The node is RETARGETED, never freed, even when `to` is null: this runs
+    // inside the node's own Replace (Node::Replace -> ReplaceNode -> here), and
+    // the walks that drive it -- ReplaceRefs' snapshot, NullifyAllRefs'
+    // `pending` drain, ReplaceList -- must not meet a node freed under them.
+    // Set() unlinks the node from the dying object's ring (that is what makes
+    // the drain and ReplaceList advance) and, for a non-null `to`, links it into
+    // `to`'s ring. A null node holds nothing and sits on no ring; it is freed
+    // with the rest at the next ReleaseObjects (ClearAll, Load, operator=). Only
+    // `from` is touched: another node holding the same object (the same object
+    // in two props) is its own ring entry and gets its own step.
+    void RetargetTypePropsNode(ObjPtrList<Hmx::Object> &objects, ObjRef *from, Hmx::Object *to) {
+        for (ObjPtrList<Hmx::Object>::iterator it = objects.begin(); it != objects.end(); ++it) {
+            if (static_cast<ObjRef *>(it.mNode) == from) {
+                objects.Set(it, to);
+                return;
+            }
+        }
+    }
+}
+#endif
+
 void TypeProps::Replace(ObjRef *from, Hmx::Object *to) {
+#ifdef HX_NATIVE
+    // Retail fn_827663D8 walks every value (kDataObject -> ReplaceObject +0x64;
+    // kDataArray -> each kDataObject element, ReplaceObject +0xA8), and
+    // ReplaceObject (fn_82766338) compares the held object with `from` (+0x20,
+    // `cmplw cr6,r3,r5`) -- on X360 the dying object. Natively `from` is the
+    // mObjects node (see RetargetTypePropsNode), so that compare never matched:
+    // the value kept the dying object's address and the node stayed aimed at
+    // it, for ClearAll's mObjects.clear() to Release on freed memory. Natively
+    // the dying object is the one the node still holds. Lane A27.
+    Hmx::Object *fromObj = from ? from->GetObj() : nullptr;
+    if (!fromObj)
+        return; // a null node: a null value must not "match" it
+    RetargetTypePropsNode(mObjects, from, to);
+    if (!mMap)
+        return;
+#else
     if (!mMap)
         return;
     // X360: `from` IS the dying object (see RefIs in Object.h + Object.cpp:192).
     // ObjRef::GetObj() is an elided stub returning nullptr off HX_NATIVE.
     Hmx::Object *fromObj = reinterpret_cast<Hmx::Object *>(from);
+#endif
     for (int i = mMap->Size() - 1; i > 0; i -= 2) {
         DataNode &node = mMap->Node(i);
         if (node.Type() == kDataObject) {

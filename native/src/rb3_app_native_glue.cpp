@@ -532,6 +532,7 @@ void RecursePatternInternal( // ring: native-real
 #include "net/Server_Xbox.h"
 #include "obj/Dir.h"
 #include "os/PlatformMgr.h"
+#include "synth_xbox/Synth.h"
 // rbx-net: TheServer is a reference to the static XboxServer (Server.cpp,
 // compiled into rb3-app). Retail .data 0x82C6EB50 holds 0x82CBFD14, the object
 // gXboxServer's dynamic initializer 0x82C3EC40 constructs; Net::Init reads it
@@ -579,11 +580,43 @@ extern "C" void rb3_app_net_init_offline(void *self, void **session, void **sear
 }
 // A7: the offline subset of Net::Poll (retail 0x823E03A8): mSearcher->Poll()
 // and, since rbx-net, mServer->Poll() (XboxServer::Poll, retail 0x823ED490),
-// in retail's order. Why the other three are skipped: the gate in
+// in retail's order. Why TheNetMessenger.Poll is skipped: the gate in
 // rb3_app_gates.cpp.
+//
+// A23: and mSession->Poll(), retail's vcall on +0x2C at 0x823E03D0..0x823E03E0
+// (XboxSession::Poll, 0x823F06F0). It is the only thing that starts a game:
+// NetSession::StartGame -> BeginGameStartCountdown sets mGameState to
+// kStartingGame and, for a local session, no start time; NetSession::Poll
+// (0x823E67A8, called first by XboxSession::Poll at 0x823F0704) then sees
+// mGameState@0x4C == 1 with a null mGameStartTime@0x60 and calls
+// EnterInGameState (0x823E2810, the bl at 0x823E6828): offline
+// (mOnlineEnabled@0x6C false) kInLocalGame and Handle(SyncStartGameMsg), which
+// is what moves SyncGameStartPanel to its synced state and lets game_screen
+// load. Skipping it parked every offline song in tv3_a_screen. The Quazal
+// half of that poll is retail's too: mQNet is null offline (no session was
+// ever made), and QuazalSession::Poll (0x823F2B80, QuazalSession.cpp,
+// compiled since A23) frees nothing while no session is terminating.
 extern "C" void rb3_app_net_poll_offline(void *self) { // ring: native-real
     Net *net = static_cast<Net *>(self);
     net->mSyncStore->Poll(); // retail 0x823E03CC: bl SyncStore::Poll (0x823E9918) on +0x3C
+    net->mSession->Poll(); // retail 0x823E03D0..0x823E03E0: vtable slot 0 on +0x2C
     net->mSearcher->Poll();
     net->mServer->Poll();
+}
+
+// A23: XboxSession::Poll (0x823F06F0) reads each local session user's outgoing
+// voice chat from TheXboxSynth (bl Synth360::GetChatData 0x82B5BC00 in its
+// loop) and sends nothing while it returns <= 0. Retail TheXboxSynth is the
+// Synth360 TheSynth, built by Synth360's ctor. Natively TheSynth is
+// Rb3AppNativeSynth (above): there is no Synth360 and no XHV voice engine, so
+// TheXboxSynth is this never-constructed, zeroed Synth360: its mMics@0xA8 is an
+// empty vector, as a retail Synth360 holding no mics.
+alignas(Synth360) static unsigned char gRb3AppXboxSynthStorage[sizeof(Synth360)];
+Synth360 *TheXboxSynth = reinterpret_cast<Synth360 *>(gRb3AppXboxSynthStorage); // ring: native-real
+// Retail 0x82B5BC00: `if (!mMics.empty()) return MicManagerXbox::GetInstance()
+// ->GetChatData(pad, buf, max); return -1;`. TheXboxSynth holds no mics
+// natively (see above), so this is retail's empty-mics arm.
+int Synth360::GetChatData(int, void *, int) { // ring: native-real
+    MILO_ASSERT(mMics.empty(), 0);
+    return -1;
 }
