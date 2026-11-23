@@ -48,6 +48,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <string>
+#include <vector>
 
 // The A14 gate (rb3_app_joypad_gate.cpp): a no-op unless RB3_APP_JOYPAD_GATE=1.
 void RB3AppJoypadGateInstall();
@@ -97,6 +99,170 @@ BYTE TriggerByte(const JoypadNativePadState &s, int i, JoypadButton bit) {
 }
 } // namespace
 
+// RB3_APP_EXTRA_PADS (lane bandwalk, 2026-11-23): opt-in extra natively driven
+// pads, so one headless walk can play a 2-4 player band. Unset, nothing below
+// runs and pads 1-3 read as unplugged, as before.
+//
+//   RB3_APP_EXTRA_PADS=KIND=SCRIPT[,KIND=SCRIPT...]
+//
+// names pads 1, 2, 3 in order. KIND is gamepad, guitar or drums, the same
+// XInput subtypes RB3_APP_JOYPAD_KIND gives pad 0 (a bass player is a guitar pad
+// that picks bass in the overshell). SCRIPT is that pad's own input script in
+// the engine's MILO_INPUT_SCRIPT grammar, subset: `wait_screen NAME`, `+N
+// button` (N polls after this pad's last satisfied wait), `N button` (poll N),
+// `#` comments, and the engine's button names. A press lasts one poll, a wait
+// gives up after 1800 polls and goes on, as the engine's do. The pad's state goes
+// through the same retail path as pad 0: GetXinputSinceLastFrame here, then
+// ReadSingleXinputJoypad and JoypadPollCommon, so the press reaches the game as
+// a ButtonDownMsg from local user N (JoypadResetXboxPC binds user N to pad N).
+// Joining the band is the game's own overshell flow, driven by those presses.
+namespace {
+struct ExtraStep {
+    bool wait; // wait_screen
+    bool relative;
+    int frame;
+    int button;
+    char screen[64];
+};
+struct ExtraPad {
+    bool on;
+    BYTE subtype;
+    std::vector<ExtraStep> steps;
+    size_t cursor;
+    bool waiting;
+    int waitStart;
+    int satisfied; // poll of the last satisfied (or timed-out) wait, -1 before any
+};
+ExtraPad gExtra[kNumJoypads];
+int gNumExtra = 0;
+
+int ExtraButtonBit(const char *n) {
+    // The engine's ParseButtonName (JoypadNativeSource.cpp), name for name.
+    static const struct { const char *name; int bit; } kNames[] = {
+        {"confirm", kPad_X}, {"a", kPad_X}, {"cancel", kPad_Circle}, {"b", kPad_Circle},
+        {"start", kPad_Start}, {"option", kPad_Select}, {"back", kPad_Select},
+        {"select", kPad_Select}, {"up", kPad_DUp}, {"down", kPad_DDown}, {"left", kPad_DLeft},
+        {"right", kPad_DRight}, {"l1", kPad_L1}, {"lb", kPad_L1}, {"r1", kPad_R1},
+        {"rb", kPad_R1}, {"l2", kPad_L2}, {"lt", kPad_L2}, {"r2", kPad_R2}, {"rt", kPad_R2},
+        {"x", kPad_Square}, {"y", kPad_Tri}, {"l3", kPad_L3}, {"ls", kPad_L3},
+        {"r3", kPad_R3}, {"rs", kPad_R3},
+    };
+    for (size_t i = 0; i < sizeof kNames / sizeof kNames[0]; i++)
+        if (!strcmp(n, kNames[i].name)) return kNames[i].bit;
+    return -1;
+}
+
+[[noreturn]] void ExtraFail(const char *what, const char *arg) {
+    fprintf(stderr, "rb3-app joypad: RB3_APP_EXTRA_PADS: %s '%s'\n", what, arg);
+    fflush(stderr);
+    _Exit(2);
+}
+
+BYTE KindSubType(const char *v) {
+    if (!strcmp(v, "gamepad")) return 1;
+    if (!strcmp(v, "guitar")) return 6;
+    if (!strcmp(v, "drums")) return 8;
+    ExtraFail("kind is not gamepad, guitar or drums:", v);
+}
+
+void LoadExtraScript(ExtraPad &x, int pad, const char *path) {
+    FILE *f = fopen(path, "r");
+    if (!f) ExtraFail("cannot open script", path);
+    char line[256];
+    while (fgets(line, sizeof line, f)) {
+        if (char *h = strchr(line, '#')) *h = 0;
+        ExtraStep st = {};
+        char a[64];
+        if (sscanf(line, " wait_screen %63s", st.screen) == 1) {
+            st.wait = true;
+            x.steps.push_back(st);
+            continue;
+        }
+        const char *p = line;
+        while (*p == ' ' || *p == '\t') p++;
+        if (!*p || *p == '\n' || *p == '\r') continue;
+        if (*p == '+') {
+            st.relative = true;
+            p++;
+        }
+        if (sscanf(p, "%d %63s", &st.frame, a) != 2) ExtraFail("cannot parse line", line);
+        st.button = ExtraButtonBit(a);
+        if (st.button < 0) ExtraFail("unknown button", a);
+        x.steps.push_back(st);
+    }
+    fclose(f);
+    printf("rb3-app joypad: extra pad %d (subtype %d): %d directives from '%s'\n", pad,
+           (int)x.subtype, (int)x.steps.size(), path);
+    fflush(stdout);
+}
+
+void ExtraPadsInit() {
+    static bool done = false;
+    if (done) return;
+    done = true;
+    const char *v = getenv("RB3_APP_EXTRA_PADS");
+    if (!v || !v[0]) return;
+    std::string all(v);
+    size_t pos = 0;
+    int pad = 1;
+    while (pos <= all.size()) {
+        size_t comma = all.find(',', pos);
+        std::string item = all.substr(pos, comma == std::string::npos ? std::string::npos : comma - pos);
+        pos = comma == std::string::npos ? all.size() + 1 : comma + 1;
+        if (item.empty()) continue;
+        if (pad >= kNumJoypads) ExtraFail("more than three extra pads:", v);
+        size_t eq = item.find('=');
+        if (eq == std::string::npos) ExtraFail("item is not KIND=SCRIPT:", item.c_str());
+        ExtraPad &x = gExtra[pad];
+        x.on = true;
+        x.subtype = KindSubType(item.substr(0, eq).c_str());
+        x.cursor = 0;
+        x.waiting = false;
+        x.satisfied = -1;
+        LoadExtraScript(x, pad, item.substr(eq + 1).c_str());
+        pad++;
+    }
+    gNumExtra = pad - 1;
+}
+
+// The engine's GetScriptedButtons, for one extra pad.
+unsigned int ExtraButtons(int pad, int poll) {
+    ExtraPad &x = gExtra[pad];
+    unsigned int buttons = 0;
+    while (x.cursor < x.steps.size()) {
+        ExtraStep &st = x.steps[x.cursor];
+        if (st.wait) {
+            if (!x.waiting) {
+                x.waiting = true;
+                x.waitStart = poll;
+            }
+            const char *screen = nullptr;
+            bool tr = false;
+            bool ok = ScriptUi(&screen, &tr) && screen && !tr && !strcmp(screen, st.screen);
+            if (ok || poll - x.waitStart > 1800) {
+                printf("rb3-app joypad: pad %d wait_screen '%s' %s at poll %d\n", pad, st.screen,
+                       ok ? "satisfied" : "TIMEOUT", poll);
+                x.waiting = false;
+                x.satisfied = poll;
+                x.cursor++;
+                continue;
+            }
+            break;
+        }
+        int target = st.relative ? (x.satisfied >= 0 ? x.satisfied + st.frame : st.frame) : st.frame;
+        if (poll < target) break;
+        if (poll == target) buttons |= 1u << st.button;
+        x.cursor++;
+    }
+    return buttons;
+}
+} // namespace
+
+int RB3AppExtraPadCount() {
+    ExtraPadsInit();
+    return gNumExtra;
+}
+
 void JoypadInit() {
     DataArray *cfg = SystemConfig("joypad");
     JoypadInitCommon(cfg);
@@ -106,6 +272,7 @@ void JoypadInit() {
     // on the frame, in JoypadPoll.
     JoypadScriptSetUiQuery(ScriptUi);
     JoypadNativeSourceInit();
+    ExtraPadsInit();
     RB3AppJoypadGateInstall();
 }
 
@@ -113,10 +280,17 @@ void JoypadReset() { JoypadResetXboxPC(4); }
 
 void JoypadPoll() {
     int poll = JoypadNativeSourceAdvance(); // loads MILO_INPUT_SCRIPT at poll 0
-    for (int pad = 0; pad < kNumJoypads; pad++)
+    for (int pad = 0; pad < kNumJoypads; pad++) {
         JoypadNativeSourceRead(pad, &gPad[pad]);
-    if (gPad[0].buttons && InputLogEnabled())
-        printf("rb3-app joypad: poll %d pad 0 scripted buttons 0x%x\n", poll, gPad[0].buttons);
+        if (gExtra[pad].on) { // RB3_APP_EXTRA_PADS: this pad is its own script's
+            gPad[pad] = JoypadNativePadState();
+            gPad[pad].connected = true;
+            gPad[pad].buttons = ExtraButtons(pad, poll);
+        }
+        if (gPad[pad].buttons && InputLogEnabled() && (pad == 0 || gExtra[pad].on))
+            printf("rb3-app joypad: poll %d pad %d scripted buttons 0x%x\n", poll, pad,
+                   gPad[pad].buttons);
+    }
     JoypadPollCommon();
     RB3AppJoypadGatePoll(poll);
 }
@@ -222,11 +396,13 @@ JoypadType SetupHXDrums(int pad, const XINPUT_CAPABILITIES &c) {
 // A natively driven pad reports XINPUT_DEVTYPE_GAMEPAD with PadSubType()'s
 // subtype; everything ReadSingleXinputJoypad derives from it is retail's.
 DWORD XInputGetCapabilities(DWORD pad, DWORD, XINPUT_CAPABILITIES *caps) {
-    if (pad >= kNumJoypads || !JoypadNativeSourceConnected((int)pad))
+    ExtraPadsInit();
+    bool extra = pad < kNumJoypads && gExtra[pad].on;
+    if (pad >= kNumJoypads || (!extra && !JoypadNativeSourceConnected((int)pad)))
         return 1167; // ERROR_DEVICE_NOT_CONNECTED
     memset(caps, 0, sizeof(*caps));
     caps->Type = 1;
-    caps->SubType = PadSubType();
+    caps->SubType = extra ? gExtra[pad].subtype : PadSubType();
     return 0;
 }
 
