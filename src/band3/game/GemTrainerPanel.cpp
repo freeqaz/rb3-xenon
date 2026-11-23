@@ -345,6 +345,16 @@ void GemTrainerPanel::CopyGems(int tick) {
         Difficulty diff = mLocalUser->GetDifficulty();
         TrainerSection &sect = GetSection(GetCurrSection());
         GameGemList **gemListPtr = &mGameGemLists[diff];
+#ifdef HX_NATIVE
+        // Retail 0x826ABBB8 calls GameGemList::SetGems (0x8278E398) and only then
+        // GemManager::ClearAllGems (0x82B99E68). Every live Gem holds a reference into
+        // this list's vector, and SetGems' reserve() frees that storage whenever the new
+        // section needs more gems, so retail's Gem::RemoveAllInstances reads each old
+        // gem's time out of a freed block (glibc reuses its first bytes; ASan reports
+        // heap-use-after-free). Clearing first reads those old times from live memory;
+        // ClearAllGemWidgets below still clears every widget either way.
+        mGemManager->ClearAllGems();
+#endif
         (*gemListPtr)
             ->SetGems(
                 sect.GetStartTick(),
@@ -355,7 +365,9 @@ void GemTrainerPanel::CopyGems(int tick) {
             );
         int i5;
         int i1;
+#ifndef HX_NATIVE
         mGemManager->ClearAllGems();
+#endif
         mGemManager->ClearMissedPhrases();
         mTrack->GetTrackDir()->ClearAllGemWidgets();
         TheSongDB->RecalculateGemTimes(mGemPlayer->GetTrackNum());

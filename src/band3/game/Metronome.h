@@ -5,7 +5,14 @@
 
 class Metronome {
 public:
+    // Retail Metronome::Poll (0x826F0930) tests 1 and 2; GemTrainerPanel::Poll and
+    // PracticePanel::Poll pass 2 while another panel has focus and 1 when the
+    // music speed is not 1.0. With no enumerators the valid range is {0, 1}, so 2
+    // was out of range for the native build (UBSan -fsanitize=enum).
     enum OverrideEnabled {
+        kOverrideNone = 0,
+        kOverrideForceOn = 1,
+        kOverrideForceOff = 2
     };
     Metronome();
     virtual ~Metronome();
