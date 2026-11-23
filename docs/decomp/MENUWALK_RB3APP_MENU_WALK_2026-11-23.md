@@ -80,6 +80,11 @@ native gap, and it is not a regression.
 
 ### 2. credits_screen never ends or exits (open; `src/system/meta/CreditsPanel.cpp` + `ui/UIList`, listed, not edited)
 
+**Refuted 2026-11-23 (lane credits, `docs/decomp/CREDITS_RB3APP_AUTOSCROLL_2026-11-23.md`):** the
+list does scroll (1747 steps x 0.85 s = 1485 s) and credits_screen pops itself at frame 45,674;
+`credlong` stopped at frame 40,000, and `sel=29` is the highlight's display row, which does not
+move while the rows scroll. The text below is the original finding.
+
 credits_screen is reached at frame 1117 with `credits.lst sel=29`. Over 40,000 frames (`credlong`,
 about 1,300 s of virtual UI time) the selection never changes and `credits_done` never fires, so
 the screen never pops. CreditsPanel::Poll fires `credits_done` once

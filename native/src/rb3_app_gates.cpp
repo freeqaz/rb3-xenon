@@ -2640,3 +2640,91 @@ void rb3_app_check_bone_merge_repoint() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// Lane credits: the credits list auto-scrolls to its end and only then stops.
+// CreditsPanel::Poll (fn_827AF3D0) fires credits_done (credits.dta: {ui pop_screen})
+// the first poll after Enter at which credits.lst is not scrolling (+0x174 bl
+// fn_827F7F08 UIList::IsScrolling, +0x17C bne skips). UIList::AutoScroll
+// (fn_827F8868) arms it when NumData > NumDisplay (+0x50 cmpw, +0x68 stb 1 to
+// mAutoScrolling +0x230, +0x6C dir 1), UIList::Poll (fn_827F8078 +0x24..+0x54)
+// fires the first step once UISeconds reaches mAutoScrollTimer, and each completed
+// step chains the next from UIList::CompleteScroll (fn_827F9540, the
+// UIListStateCallback thunk: +0x24 tests mAutoScrolling, +0x4C MaxFirstShowing,
+// +0x58 compares, +0xA0 bl fn_8280ED90 UIListState::Scroll(dir) until the end, where
+// +0x68 negates the direction and +0x80 re-arms the pause timer). So "not
+// scrolling" is true exactly once the list reaches MaxFirstShowing. The first 29
+// steps only move the highlight down the 30 visible rows, each completing inside
+// Scroll and chaining the next, which is why the focus log's `sel=29` (the
+// highlight's display row) never changes while the rows scroll under it.
+// The real credits list (credits.milo: num_display 30, speed 0.85 s per row,
+// auto_scroll_pause 0; 1777 rows from ui/locale/locale_credits_keep.dta) takes
+// 1747 steps x 0.85 s = 1485 s, about 44,550 frames at 30 fps: the det walk enters
+// credits_screen at frame 1117 and pops it at frame 45674 (lane credits,
+// 2026-11-23), so a 40,000-frame walk ends before the credits do. This drives the
+// same code on a 60-row list with credits' settings and a 30 fps synthetic clock:
+// it must scroll every frame from the first step to row 30 (MaxFirstShowing) and
+// then stop with the direction reversed, in 30 x 0.85 x 30 = 765 frames.
+#include "obj/Task.h"
+#include "ui/UIList.h"
+#include "ui/UIListDir.h"
+#include "ui/UIListProvider.h"
+namespace {
+    struct A39CreditsRows : UIListProvider {
+        virtual int NumData() const { return 60; }
+    };
+    struct A39ListPeek : UIList {
+        static A39ListPeek &P(UIList &l) { return static_cast<A39ListPeek &>(l); }
+        static UIListState &State(UIList &l) { return P(l).mListState; }
+        static void Wire(UIList &l, UIListDir *d) {
+            P(l).mListDir = d;
+            P(l).mAutoScrollPause = 0.0f;
+        }
+        static bool Auto(UIList &l) { return P(l).mAutoScrolling; }
+        static int Dir(UIList &l) { return P(l).mAutoScrollDir; }
+    };
+}
+void rb3_app_check_credits_auto_scroll() { // ring: native-real
+    UIList *list = Hmx::Object::New<UIList>();
+    UIListDir *dir = Hmx::Object::New<UIListDir>();
+    A39CreditsRows rows;
+    A39ListPeek::Wire(*list, dir);
+    UIListState &st = A39ListPeek::State(*list);
+    st.SetNumDisplay(30, false);
+    st.SetSpeed(0.85f);
+    st.SetProvider(&rows, nullptr);
+    list->AutoScroll();
+    bool armed = A39ListPeek::Auto(*list);
+    float t0 = TheTaskMgr.UISeconds();
+    list->Poll(); // pause 0: the timer fires now and the first step starts at t0
+    bool started = st.IsScrolling();
+    int maxFirst = st.MaxFirstShowing();
+    int frames = 0, idle = 0;
+    while (frames < 2000 && st.IsScrolling()) {
+        frames++;
+        st.Poll(t0 + frames / 30.0f);
+        if (!st.IsScrolling() && st.FirstShowing() != maxFirst) idle++;
+    }
+    int first = st.FirstShowing(), dirAfter = A39ListPeek::Dir(*list);
+    bool autoAfter = A39ListPeek::Auto(*list), scrolling = st.IsScrolling();
+    list->StopAutoScroll();
+    delete list;
+    delete dir;
+    char what[384];
+    snprintf(what, sizeof what,
+             "credits auto-scroll: armed %d, started %d, %d frame(s) to stop at first %d of max %d "
+             "(%d early stop(s)), still scrolling %d, auto %d, dir %d (want 1 1, 760..770 frames, "
+             "%d, 0, 0 1 -1) (retail fn_827F9540 +0xA0 bl fn_8280ED90, +0x68 neg; "
+             "fn_827AF3D0 +0x174)",
+             (int)armed, (int)started, frames, first, maxFirst, idle, (int)scrolling,
+             (int)autoAfter, dirAfter, maxFirst);
+    if (armed && started && maxFirst == 30 && first == maxFirst && idle == 0 && !scrolling
+        && frames >= 760 && frames <= 770 && autoAfter && dirAfter == -1) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (credits auto-scroll)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
