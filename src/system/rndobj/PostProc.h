@@ -142,6 +142,12 @@ public:
     RndTex *GetNoiseMap() const { return mNoiseMap.Ptr(); }
     const Vector2 &GetNoiseBaseScale() const { return mNoiseBaseScale; }
     float GetNoiseTopScale() const { return mNoiseTopScale; }
+    // The colour modulation retail NgPostProc::ModulateColorXfm scales the
+    // RndColorXfm 3x3 by (mColorModulation +0x12C, set by
+    // UpdateColorModulation in RndPostProc::DoPost; NgPostProc::DoPost
+    // fn_82B89A08). Its presence selects RB3's own X360 post chain in the
+    // engine (milo-native-engine rndshape::kRetailPostChain, lane A55).
+    float GetColorModulation() const { return mColorModulation; }
     const Vector2& GetFlickerModBounds() const { return mFlickerModBounds; }
     const Vector2& GetFlickerTimeBounds() const { return mFlickerTimeBounds; }
     float GetFlickerSeconds() const { return mFlickerSeconds.x; }

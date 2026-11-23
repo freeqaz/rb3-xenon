@@ -2772,6 +2772,258 @@ void rb3_app_check_postproc_noise_map() { // ring: native-real
     _exit(7);
 }
 
+// A55: rb3-app grades through Rock Band 3's own Xbox 360 post chain, not
+// PostProcPass's generic composite. The engine (milo-native-engine
+// rndshape::kRetailPostChain, RndShape_DC3.h) takes RB3's chain only when it
+// sees RndPostProc::GetColorModulation() (PostProc.h HX_NATIVE) in a shape
+// without DC3's chain; without it every frame silently falls back to the
+// generic composite (lane A54: luma 102 vs retail 80, no bloom). Retail
+// band.exe TU5 NgPostProc::DoPost (fn_82B89A08): DoBloom (fn_82B884A0, c6 =
+// bloomColor * BloomIntensity()) then ModulateColorXfm (the 3x3 times
+// mColorModulation +0x12C). Also the depth of field: retail's DOFProc::Init
+// (fn_82466298) New<DOFProc>() resolves to NgDOFProc (registered under the
+// DOFProc name by NgRnd::PreInit), whose Set (fn_82B8BF78) enables it when
+// maxBlur > 0; the engine's DofPass reads that object. The check: the chain is
+// selected and is the default, it fills c6 and the matrix from a post-process,
+// an opaque material writes the bloom mask and an alpha-blended one does not,
+// and DOFProc's factory makes an NgDOFProc that Set enables. The chain must be
+// the one running: MILO_RB3_RETAIL_POST=0 (the generic composite) fails it too.
+#include "gfx/RB3RetailPost.h"
+#include "rndobj/Cam.h"
+#include "rndobj/DOFProc.h"
+#include "rndobj/DOFProc_NG.h"
+#include "rndobj/Mat.h"
+void rb3_app_check_retail_post_chain() { // ring: native-real
+    const bool chain = rndshape::kRetailPostChain;
+    const char *env = getenv("MILO_RB3_RETAIL_POST");
+    const int mode = rndshape::RetailPostMode();
+    RndPostProc *pp = Hmx::Object::New<RndPostProc>();
+    pp->SetProperty("bloom_intensity", DataNode(0.5f));
+    RetailPostParams rp;
+    rndshape::FillRetailPost(pp, 1.0f, rp);
+    const bool c6 = rp.bloom && rp.bloomColor[0] == 0.5f && rp.bloomColor[1] == 0.5f &&
+                    rp.bloomColor[2] == 0.5f && rp.xfm[0][0] == 1.0f && rp.xfm[1][1] == 1.0f &&
+                    rp.xfm[2][2] == 1.0f;
+    RndMat *opaque = Hmx::Object::New<RndMat>();
+    RndMat *blended = Hmx::Object::New<RndMat>();
+    blended->SetBlend(BaseMaterial::kBlendSrcAlpha);
+    const bool maskOpaque = rndshape::AllowsBloomMask(rndshape::Mat(opaque));
+    const bool maskBlended = rndshape::AllowsBloomMask(rndshape::Mat(blended));
+    DOFProc *dof = Hmx::Object::New<DOFProc>();
+    const bool ngDof = dynamic_cast<NgDOFProc *>(dof) != nullptr;
+    RndCam *cam = Hmx::Object::New<RndCam>();
+    dof->Set(cam, 10.0f, 0.5f, 0.75f, 0.0f);
+    const bool dofOn = dof->Enabled();
+    dof->UnSet();
+    const bool dofOff = !dof->Enabled();
+    // The singleton the way the game makes it: CameraManager's ctor calls
+    // DOFProc::Init (retail fn_82466298, `if (!TheDOFProc) TheDOFProc =
+    // New<DOFProc>()`); construct mode exits after the gates, so making it
+    // here early changes nothing later. 0: none, 1: the plain DOFProc (the
+    // depth of field can never run), 2: NgDOFProc.
+    DOFProc::Init();
+    const int theKind = !TheDOFProc ? 0 : dynamic_cast<NgDOFProc *>(TheDOFProc) ? 2 : 1;
+    const bool theNg = theKind == 2;
+    delete cam;
+    delete dof;
+    delete opaque;
+    delete blended;
+    delete pp;
+    const bool ok = chain && mode == 1 && c6 && maskOpaque && !maskBlended && ngDof &&
+                    dofOn && dofOff && theNg;
+    char what[640];
+    snprintf(what, sizeof what,
+             "retail post chain: RB3 X360 chain selected %d, mode %d (MILO_RB3_RETAIL_POST=%s), "
+             "c6 (%.3f %.3f %.3f) bloom %d, bloom mask opaque %d / src-alpha %d, DOFProc factory "
+             "makes NgDOFProc %d, Set enables %d, UnSet disables %d, TheDOFProc kind %d "
+             "(want 1, 1, (0.500 0.500 0.500) 1, 1 / 0, 1, 1, 1, 2: retail NgPostProc::DoPost "
+             "fn_82B89A08 DoBloom fn_82B884A0, NgDOFProc::Set fn_82B8BF78)",
+             (int)chain, mode, env ? env : "unset", rp.bloomColor[0], rp.bloomColor[1],
+             rp.bloomColor[2], (int)rp.bloom, (int)maskOpaque, (int)maskBlended, (int)ngDof,
+             (int)dofOn, (int)dofOff, theKind);
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (retail post chain)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A58: the retail chain keeps the post-process noise. Retail band.exe TU5
+// NgPostProc::CheckNoise (fn_82B89100) noises only when mNoiseIntensity
+// (+0x13C) is non-zero and mNoiseMap (+0x144) is set, and RB3's shipped
+// postprocess.ps (bit 2, sampler 13, c112 / c113) overlays the map between
+// the bloom screen blend and the colour matrix. A55's chain dropped it (the
+// engine's RB3 composite had only the procedural grain A49 refuted), which
+// regressed A49's map noise. The check: the parameters the engine's
+// PostProcPass hands RB3's composite (PostProcPass::FillRB3Chain, the same
+// call Run makes) carry the post-process's map and intensity; the zero-
+// intensity control carries none; and the composite's shipped WGSL samples
+// the map. MILO_RB3_POST_SKIP=32 (the engine's noise inspection skip) or a
+// chain that drops the noise fails it.
+#include "gfx/PostProcPass.h"
+#include "gfx/ShippedWgsl.h"
+void rb3_app_check_retail_post_noise() { // ring: native-real
+    const int mode = rndshape::RetailPostMode();
+    RndPostProc *pp = Hmx::Object::New<RndPostProc>();
+    RndTex *map = Hmx::Object::New<RndTex>();
+    map->SetBitmap(16, 16, 32, RndTex::kRegular, false, "");
+    if (u8 *px = map->Bitmap().Pixels()) {
+        for (int i = 0; i < map->Bitmap().PixelBytes(); i++)
+            px[i] = (u8)(i * 13 + 0x40);
+    }
+    pp->SetProperty("noise_map", DataNode(map));
+    pp->SetProperty("noise_intensity", DataNode(0.375f));
+    PostProcPass pass;  // FillRB3Chain is the CPU half of Run: no Init needed
+    RetailPostParams rp;
+    pass.FillRB3Chain(pp, mode, 1.0f, 720, rp);
+    const bool on = (bool)rp.noiseMap && rp.noiseParams[3] == 0.375f;
+    pp->SetProperty("noise_intensity", DataNode(0.0f));
+    RetailPostParams rp0;
+    pass.FillRB3Chain(pp, mode, 1.0f, 720, rp0);
+    const bool offWithoutIntensity = !rp0.noiseMap;
+    const char *wgsl = RB3RetailPostWgslSource();
+    const bool shaderSamples = wgsl && strstr(wgsl, "textureSample(noiseTex, noiseSamp, baseUv)") &&
+                               strstr(wgsl, "textureSample(noiseTex, noiseSamp, topUv)");
+    delete pp;
+    delete map;
+    const bool ok = mode == 1 && on && offWithoutIntensity && shaderSamples;
+    char what[512];
+    snprintf(what, sizeof what,
+             "retail post chain noise: mode %d, chain takes the map %d (intensity %.3f), none at "
+             "intensity 0 %d, composite samples the map %d (want 1, 1 (0.375), 1, 1: retail "
+             "NgPostProc::CheckNoise fn_82B89100, postprocess.ps bit 2)",
+             mode, (int)on, rp.noiseParams[3], (int)offWithoutIntensity, (int)shaderSamples);
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (retail post chain noise)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A60: rb3-xenon shades in gamma space, as retail RB3 X360 does. Retail
+// band.exe TU5 DxRnd::D3DFormatForBitmap (fn_827333C8, rb3-xenon
+// rnddx9/Rnd.cpp, 100% matched) hands out DXT1/3/5, DXN and A8R8G8B8 format
+// words with every gamma sign field zero, the frame is an A8R8G8B8 EDRAM
+// surface, and no shipped standard.ps decodes or encodes: the image writes
+// texel * colour * lighting as stored. The engine's DC3 shape used to give
+// rb3-xenon the linear model with an sRGB output encode
+// (rndshape::kGammaSpaceShading false), which drew the venue hazy and grey.
+// The check: the material uniforms the engine builds for a world draw and for
+// an overlay (UI) draw both carry gammaShading = 1, a lit world material
+// included, and the shipped standard WGSL skips the output encode for such a
+// draw. A shape that answers false for rb3-xenon, or a shader that encodes a
+// gamma-space draw, fails it.
+#include "gfx/ShippedWgsl.h"
+#include "platform/MaterialSetup.h"
+#include "rndobj/Mat.h"
+void rb3_app_check_gamma_space_shading() { // ring: native-real
+    RndMat *mat = Hmx::Object::New<RndMat>();
+    mat->SetUseEnv(true);
+    mat->SetPreLit(false);
+    const MaterialParams world = BuildMaterialParams(mat, false, UiDrawTermsFor(false));
+    const MaterialParams overlay = BuildMaterialParams(mat, false, UiDrawTermsFor(true));
+    delete mat;
+    const char *wgsl = StandardWgslSource();
+    const bool noEncode = wgsl && strstr(wgsl, "if (!gammaShading && scene.outputLinear < 0.5) {\n"
+                                               "        finalColor = linearToSrgb(finalColor);");
+    const bool ok = rndshape::kGammaSpaceShading && world.uniforms.gammaShading == 1.0f &&
+                    overlay.uniforms.gammaShading == 1.0f && noEncode;
+    char what[512];
+    snprintf(what, sizeof what,
+             "gamma-space shading: shape %d, world material %.1f, overlay material %.1f, shader "
+             "skips the encode %d (want 1, 1.0, 1.0, 1: retail DxRnd::D3DFormatForBitmap "
+             "fn_827333C8 has no gamma fetch, standard.ps no decode/encode)",
+             (int)rndshape::kGammaSpaceShading, world.uniforms.gammaShading,
+             overlay.uniforms.gammaShading, (int)noEncode);
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (gamma-space shading)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A62: rb3-xenon lights through RB3's own Xbox 360 retail light model
+// (milo-native-engine rndshape::kRB3RetailLight, retailLighting 1), not the
+// engine's heuristic arm (approx lights as top-4 directionals, a 0.08 ambient
+// floor, a 0.35 fill, an energy cap of 4.5, soft clip). Retail standard
+// shading is c0 * (c1 + box(N) + <= 2 points) * texel: c1 the environ's
+// ambient unscaled (NgMat::SetupAmbient), the box map written per mesh by
+// NgEnviron::UpdateApproxLighting from DxMesh::DrawShowing's helper (band.exe
+// TU5 fn_82738E38+0x58 -> fn_82418DC0+0xc0, vtable +0x58), and the points by
+// NgEnviron::Select (fn_82B86738). The check builds an environ with ambient
+// (0.2, 0.3, 0.4) and one approx directional of colour (1, 0.5, 0.25)
+// pointing down its -y (BoxMapLighting folds it into the -Y face with weight
+// 1), then asks the engine for the scene and the mesh's light terms:
+//   retailLighting 1, ambient exactly the environ's, no directionals
+//   (numLights 0), the mesh's -Y face = the light colour, one approx light,
+//   and a use_environ-off material unlit (c1 = 1, no lights).
+#include "gfx/UniformStructs.h"
+#include "rndobj/Env.h"
+#include "rndobj/Lit.h"
+#include "rndobj/Mesh.h"
+void rb3_app_check_retail_light_model() { // ring: native-real
+    RndEnviron *prev = RndEnviron::Current();
+    RndEnviron *env = Hmx::Object::New<RndEnviron>();
+    RndLight *light = Hmx::Object::New<RndLight>();
+    light->SetLightType(RndLight::kDirectional);
+    light->SetColor(Hmx::Color(1.0f, 0.5f, 0.25f));
+    light->SetShowing(true);
+    env->SetAmbientColor(Hmx::Color(0.2f, 0.3f, 0.4f));
+    env->LightsApprox().push_back(light);
+    env->Select(nullptr);
+    SceneUniforms scene{};
+    memset(&scene, 0, sizeof(scene));
+    const bool claimed = rndshape::WriteSceneLighting(scene, nullptr);
+    RndMesh *mesh = Hmx::Object::New<RndMesh>();
+    ObjectUniforms obj{};
+    memset(&obj, 0, sizeof(obj));
+    rndshape::FillMeshApproxLighting(mesh, obj.boxLight, obj.retail);
+    RndMat *mat = Hmx::Object::New<RndMat>();
+    mat->SetUseEnv(false);
+    mat->SetPreLit(false);
+    const bool unlit = rndshape::MatUnlit(mat);
+    delete mat;
+    delete mesh;
+    if (prev) prev->Select(nullptr);   // env stays alive if it is still current
+    const float *f = obj.boxLight[3];   // -Y
+    auto near = [](float a, float b) { return a - b < 1e-4f && b - a < 1e-4f; };
+    const bool ok = rndshape::kRB3RetailLight && claimed && scene.retailLighting == 1.0f &&
+                    near(scene.ambientColor[0], 0.2f) && near(scene.ambientColor[1], 0.3f) &&
+                    near(scene.ambientColor[2], 0.4f) && scene.numLights == 0.0f &&
+                    near(f[0], 1.0f) && near(f[1], 0.5f) && near(f[2], 0.25f) &&
+                    obj.retail[1] == 1.0f && unlit;
+    char what[640];
+    snprintf(what, sizeof what,
+             "retail light model: trait %d, claimed %d, retailLighting %.1f, ambient (%.3f, %.3f, "
+             "%.3f), directionals %.0f, -Y face (%.3f, %.3f, %.3f), approx %.0f, unlit %d (want 1, "
+             "1, 1.0, (0.200, 0.300, 0.400), 0, (1.000, 0.500, 0.250), 1, 1: RB3 X360 "
+             "c0 (c1 + box + points) texel, box per mesh fn_82418DC0+0xc0)",
+             (int)rndshape::kRB3RetailLight, (int)claimed, scene.retailLighting,
+             scene.ambientColor[0], scene.ambientColor[1], scene.ambientColor[2], scene.numLights,
+             f[0], f[1], f[2], obj.retail[1], (int)unlit);
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (retail light model)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
 // A49: only RndText's glyph pages take the engine's text path. The engine
 // (milo-native-engine platform/MaterialSetup.cpp MeshShadesAsText /
 // MeshDrawsAsGlyph) draws a glyph page with no depth test, no culling, forced

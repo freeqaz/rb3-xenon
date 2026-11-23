@@ -10,7 +10,12 @@ DOFProc::~DOFProc() {}
 
 void DOFProc::Init() {
 #ifdef HX_NATIVE
-    REGISTER_OBJ_FACTORY(DOFProc);
+    // No factory registration here (lane A55): retail registers DOFProc in
+    // Rnd::PreInit and NgRnd::PreInit then registers NgDOFProc under the same
+    // class name, so this New<DOFProc>() makes retail's NgDOFProc (the depth
+    // of field CameraShot sets per shot). Re-registering DOFProc here made the
+    // native singleton the plain DOFProc, whose Enabled() is always false, so
+    // the engine's depth of field (DofPass) never ran.
     if (!TheDOFProc) {
         TheDOFProc = Hmx::Object::New<DOFProc>();
         static DataNode &n = DataVariable("the_dof_proc");
