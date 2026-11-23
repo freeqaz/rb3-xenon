@@ -2,6 +2,13 @@
 #include "obj/Dir.h"
 #include "os/User.h"
 #include "utl/Symbol.h"
+#ifdef HX_NATIVE
+#include "os/Debug.h"
+#include "utl/Str.h"
+#include "utl/UTF8.h"
+#include <cstdlib>
+#include <cstring>
+#endif
 
 VirtualKeyboard TheVirtualKeyboard;
 
@@ -62,8 +69,57 @@ const char *VirtualKeyboard::GetInputString() {
     return "";
 }
 
-DataNode VirtualKeyboard::ShowKeyboardUI(LocalUser *, int, String, String, String, int) {
-    return DataNode(0);
+// The host has no system keyboard UI (retail's XShowKeyboardUI guide overlay,
+// VirtualKeyboard_Xbox.cpp 0x82532EB8). The old stub returned without ever
+// answering, so the caller's virtual_keyboard_result_msg never came: a setlist,
+// band or character could not be named. Native now always answers, through
+// retail's own paths: an entry from RB3_VK_TEXT (`|`-separated, one per prompt,
+// in order) is the typed text, run through PlatformPoll's success arm
+// (UTF8FilterKeyboardString, RemoveSpaces, ok TRUE); with no entry left it is
+// retail's "Unable to show Keyboard UI" arm (empty text, ok FALSE), which the
+// callers treat as a cancel. The answer goes out on the next Poll, as retail's.
+DataNode VirtualKeyboard::ShowKeyboardUI(
+    LocalUser *, int maxLen, String, String, String defaultTxt, int
+) {
+    MILO_ASSERT(!mCallbackReady, 0x62);
+    static int sNext = 0;
+    const char *all = getenv("RB3_VK_TEXT");
+    String entry;
+    bool have = false;
+    if (all) {
+        const char *p = all;
+        for (int i = 0; i < sNext && p; i++) {
+            p = strchr(p, '|');
+            if (p) p++;
+        }
+        if (p) {
+            const char *end = strchr(p, '|');
+            entry = end ? String(p).substr(0, end - p) : String(p);
+            have = true;
+            sNext++;
+        }
+    }
+    if (have) {
+        // XShowKeyboardUI's result buffer holds maxLen wide chars, NUL included.
+        char typed[512];
+        strncpy(typed, entry.c_str(), sizeof typed - 1);
+        typed[sizeof typed - 1] = 0;
+        if (maxLen > 0 && maxLen < (int)sizeof typed && (int)strlen(typed) >= maxLen)
+            typed[maxLen - 1] = 0;
+        char utf8buf[512];
+        char buf[512];
+        UTF8FilterKeyboardString(utf8buf, 0x200, typed);
+        RemoveSpaces(buf, 0x200, utf8buf);
+        MILO_LOG("VirtualKeyboard: typed \"%s\" (default \"%s\")\n", buf, defaultTxt.c_str());
+        mCallbackMsg = buf;
+        mMsgOk = true;
+    } else {
+        MILO_LOG("VirtualKeyboard: no host keyboard UI and no RB3_VK_TEXT entry: cancelled\n");
+        mCallbackMsg = gNullStr;
+        mMsgOk = false;
+    }
+    mCallbackReady = true;
+    return 0;
 }
 #endif
 
