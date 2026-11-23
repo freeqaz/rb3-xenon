@@ -56,6 +56,7 @@ void rb3_app_check_object_copy(); // rb3_app_gates.cpp
 void rb3_app_check_pre_clear_unregister(); // rb3_app_gates.cpp
 void rb3_app_check_offline_game_start(); // rb3_app_gates.cpp
 void rb3_app_check_trans_parent_replace(); // rb3_app_gates.cpp
+void rb3_app_check_sphere_base_replace(); // rb3_app_gates.cpp
 
 extern "C" void rb3_app_gate(const char *step);
 
@@ -156,6 +157,7 @@ int main(int argc, char **argv) {
         rb3_app_check_pre_clear_unregister(); // A22 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_offline_game_start(); // A23 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_trans_parent_replace(); // A24 (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_sphere_base_replace(); // A24 (rb3_app_gates.cpp): exits rc 7 on a failure
         printf("RESULT: APP CONSTRUCTED\n");
         fflush(stdout);
         fflush(stderr);

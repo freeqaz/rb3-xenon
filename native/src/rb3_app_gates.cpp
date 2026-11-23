@@ -1381,3 +1381,61 @@ void rb3_app_check_trans_parent_replace() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A24: a Character's sphere base follows a ref walk on the object it names.
+// Retail Character::Replace (fn_8236DBF8) compares `from`, the dying object on
+// X360, with the held sphere base (fn_8236DBF8+0x3C, `cmplw cr6,r30,r11`); on a
+// match it retargets the pointer to `to` (SetOwnerObj, the bl at +0x70) and,
+// when that leaves it null, back to the Character itself (+0x94). The native
+// ring passes the ObjRef member as `from` (obj/Object.h RefIs), so the compare
+// never matched natively. On the walk, BandCharacter::Filter's
+// mInstDir->CopyBoundingSphere(T) aimed the instrument Character's sphere base at
+// a temp merge Character T that FileMerger::FinishLoading then deleted, and
+// BandCharacter::CalcBoundingSphere read it (ASan heap-use-after-free, rb3-app
+// tv3 -> game_screen). Here: A->CopyBoundingSphere(T) aims A's base at T;
+// T->ReplaceRefs(U) must move it to U; U->ReplaceRefs(nullptr) (X360 ~Object
+// 0x8275CBF0's walk) must bring it back to A; deleting T and U must leave it on
+// A. Fails with the retail compare natively (rc 7).
+#include "char/Character.h"
+namespace {
+    struct A24CharPeek : public Character { // reads the protected member through a member pointer
+        static ObjOwnerPtr<RndTransformable> Character::*Base() {
+            return &A24CharPeek::mSphereBase;
+        }
+    };
+}
+void rb3_app_check_sphere_base_replace() { // ring: native-real
+    Character *a = Hmx::Object::New<Character>();
+    Character *t = Hmx::Object::New<Character>();
+    Character *u = Hmx::Object::New<Character>();
+    ObjOwnerPtr<RndTransformable> &base = a->*A24CharPeek::Base();
+    bool self0 = base.Ptr() == a;
+    a->CopyBoundingSphere(t); // t's base is t itself
+    bool onT = base.Ptr() == t;
+    t->ReplaceRefs(u);
+    bool onU = base.Ptr() == u;
+    u->ReplaceRefs(nullptr);
+    bool backA = base.Ptr() == a;
+    a->CopyBoundingSphere(t);
+    bool onT2 = base.Ptr() == t;
+    delete t;
+    delete u;
+    bool afterDelete = base.Ptr() == a;
+    char what[512];
+    snprintf(what, sizeof what,
+             "sphere base replace: A's base is A %d; A->CopyBoundingSphere(T): on T %d; "
+             "T->ReplaceRefs(U): on U %d; U->ReplaceRefs(NULL): back on A %d; on T again %d, "
+             "T and U deleted: on A %d (want all 1) (retail Character::Replace fn_8236DBF8)",
+             (int)self0, (int)onT, (int)onU, (int)backA, (int)onT2, (int)afterDelete);
+    bool ok = self0 && onT && onU && backA && onT2 && afterDelete;
+    if (ok) {
+        delete a;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (sphere base replace)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
