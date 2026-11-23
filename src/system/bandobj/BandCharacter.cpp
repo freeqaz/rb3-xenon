@@ -1292,6 +1292,53 @@ void BandCharacter::RebindSharedSkinMatsToOwn() {
                 work.push_back(*k);
     }
 
+    // ⛔ A MESH OWNED BY A SHARED SUBDIR IS NOT THIS MEMBER'S TO REPOINT.
+    // `ObjDirItr<RndMesh>(dd, true)` above RECURSES into dd's subdirs, and every
+    // member's main.milo carries char/main/shared/colorpalettes.milo as a share=true
+    // subdir: ONE instance (same pointer in all four members' mSubDirs, measured),
+    // still attached to the DirLoader that hands it out. Its 40 meshes -- the
+    // {male,female}_tattoo_{torso,legs,head} BandPatchMesh targets plus the
+    // wrinkle/norm blend meshes -- were therefore repointed by EVERY member on
+    // EVERY Poll, last writer wins (595,066 REPOINTs in a 4000-frame band walk, all
+    // of them colorpalettes meshes, zero of them body meshes). That is exactly the
+    // trap the scope note above says this collector avoids.
+    //
+    // It is fatal for the tattoo meshes. Retail binds them in exactly one place,
+    // OutfitConfig::SetSkinTextures' tail (`torsomesh->SetMat(dir1->Find<RndMat>(
+    // "torso_naked.mat"))`), and only after that same call has bound the member's
+    // torso_naked.mat diffuse to `torso_skin_diffuse_output.tex`. This loop
+    // repointed them to a member whose SetSkinTextures had NOT run yet (mats load
+    // with no diffuse), so the next skin.cfg recompose projected a tattoo onto a
+    // render-to mesh with no destination texture: BandPatchMesh::WorkVerts::
+    // SetVertsAndFaces reads dest's width/height with no null check in retail
+    // (fn_8234AE48+0x140 `lwz r10,0x94(r10)`, +0x144 `lwa r9,0x4c(r10)`), so
+    // native died there -- `Error: dest` then SIGSEGV in RndTex::Width(), seed-4
+    // det walk, frame 116.
+    //
+    // The test is the sharing itself: a direct subdir of this member that still
+    // has its DirLoader is the cached instance every member references. The
+    // per-member skeleton_unshared subdir has no loader and is not skipped.
+    int sharedSkip = 0;
+    for (std::vector<RndMesh *>::iterator ti = targets.begin();
+         ti != targets.end();) {
+        ObjectDir *md = (*ti)->Dir();
+        bool shared = false;
+        if (md && md != static_cast<ObjectDir *>(this)
+            && md != static_cast<ObjectDir *>(mOutfitDir) && md->Loader()) {
+            for (int si = 0; si < (int)SubDirs().size(); si++) {
+                if (SubDir(si) == md) {
+                    shared = true;
+                    break;
+                }
+            }
+        }
+        if (shared) {
+            ti = targets.erase(ti);
+            sharedSkip++;
+        } else
+            ++ti;
+    }
+
     int repointed = 0, alreadyMine = 0, noOwnCopy = 0, noMat = 0;
     for (std::vector<RndMesh *>::iterator ti = targets.begin();
          ti != targets.end(); ++ti) {
@@ -1335,9 +1382,9 @@ void BandCharacter::RebindSharedSkinMatsToOwn() {
     if (probe)
         fprintf(stderr,
                 "[SKINMAT_REBIND] member='%s' targets=%d repointed=%d "
-                "alreadyMine=%d noOwnCopy=%d noMat=%d%s\n",
+                "alreadyMine=%d noOwnCopy=%d noMat=%d sharedSkip=%d%s\n",
                 Name() ? Name() : "?", (int)targets.size(), repointed, alreadyMine,
-                noOwnCopy, noMat,
+                noOwnCopy, noMat, sharedSkip,
                 targets.empty() ? "  <- COLLECTOR REACHED NOTHING: VACUOUS" : "");
 }
 #endif

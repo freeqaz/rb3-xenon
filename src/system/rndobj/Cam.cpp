@@ -358,46 +358,16 @@ __declspec(noinline) void RndCam::SetFrustum(float near, float far, float yfov, 
 }
 
 float RndCam::WorldToScreen(const Vector3 &w, Vector2 &s) const {
-#ifdef HX_NATIVE
-    const_cast<RndCam *>(this)->UpdatedWorldXfm();
-
-    Transform viewXfm;
-    Hmx::Matrix4 projMtx;
-    GetViewProjectXfms(viewXfm, projMtx);
-
-    Vector3 viewPos;
-    Multiply(w, viewXfm, viewPos);
-
-    float clip[4];
-    float pos[4] = { viewPos.x, viewPos.y, viewPos.z, 1.0f };
-    const float proj[16] = {
-        projMtx.x.x, projMtx.x.y, projMtx.x.z, projMtx.x.w,
-        projMtx.y.x, projMtx.y.y, projMtx.y.z, projMtx.y.w,
-        projMtx.z.x, projMtx.z.y, projMtx.z.z, projMtx.z.w,
-        projMtx.w.x, projMtx.w.y, projMtx.w.z, projMtx.w.w,
-    };
-
-    for (int j = 0; j < 4; j++) {
-        float sum = 0.0f;
-        for (int k = 0; k < 4; k++) {
-            sum += pos[k] * proj[k * 4 + j];
-        }
-        clip[j] = sum;
-    }
-
-    float ndcX = clip[0];
-    float ndcY = clip[1];
-    if (clip[3] != 0.0f) {
-        float invW = 1.0f / clip[3];
-        ndcX *= invW;
-        ndcY *= invW;
-    }
-
-    s.x = (ndcX + 1.0f) * 0.5f;
-    s.y = (ndcY + 1.0f) * 0.5f;
-    s.Set(s.x * mScreenRect.w + mScreenRect.x, s.y * mScreenRect.h + mScreenRect.y);
-    return viewPos.z;
-#else
+    // One body for both builds (fn_824333A0): project through the camera's
+    // cached mWorldProjectXfm, whose y row is mLocalProjectXfm.m.z.y =
+    // -1/tan(fov/2) (UpdateLocal), so screen y grows DOWN: a point above the
+    // view centre lands at y < 0.5. The native build used to rebuild the
+    // renderer's D3D-style projection (NDC y up) here instead, which mirrored
+    // every caller's y: WorldCrowd::DrawShowing's impostor uv rect (lane A51:
+    // a 140-unit crowd card showed the empty top half of its render target),
+    // CamShotFrame's mScreenOffset follow filter, RndFlare's sprite and the
+    // engine's point test (NativePointTest::screenY is "0..1 down").
+    // dc3-decomp dropped the same native body in d74c2b4b8.
     Vector3 projectedVec;
     Multiply(w, mWorldProjectXfm, projectedVec);
     if (projectedVec.z) {
@@ -412,36 +382,13 @@ float RndCam::WorldToScreen(const Vector3 &w, Vector2 &s) const {
     s.y = (s.y + 1.0f) / 2.0f;
     s.Set(s.x * mScreenRect.w + mScreenRect.x, s.y * mScreenRect.h + mScreenRect.y);
     return projectedVec.z;
-#endif
 }
 
 // Converts screen coordinates to world space at a given depth
 void RndCam::ScreenToWorld(const Vector2 &v2, float f, Vector3 &vout) const {
-#ifdef HX_NATIVE
-    const_cast<RndCam *>(this)->UpdatedWorldXfm();
-
-    Transform viewXfm;
-    Hmx::Matrix4 projMtx;
-    GetViewProjectXfms(viewXfm, projMtx);
-
-    float ndcX = (((v2.x - mScreenRect.x) / mScreenRect.w) * 2.0f) - 1.0f;
-    float ndcY = (((v2.y - mScreenRect.y) / mScreenRect.h) * 2.0f) - 1.0f;
-
-    Vector3 viewPos;
-    if (mYFov == 0.0f) {
-        viewPos.x = (ndcX - projMtx.z.x) / projMtx.x.x;
-        viewPos.y = (ndcY - projMtx.z.y) / projMtx.y.y;
-        viewPos.z = f;
-    } else {
-        viewPos.z = f;
-        viewPos.x = (ndcX - projMtx.z.x) * viewPos.z / projMtx.x.x;
-        viewPos.y = (ndcY - projMtx.z.y) * viewPos.z / projMtx.y.y;
-    }
-
-    Transform invView;
-    Invert(viewXfm, invView);
-    Multiply(viewPos, invView, vout);
-#else
+    // One body for both builds, the inverse of WorldToScreen above (screen y
+    // down, through mInvWorldProjectXfm). The native-only body it replaces
+    // had WorldToScreen's mirrored y (lane A51).
     // Normalize screen coords [0,1] to NDC [-1,1], scale by depth
     float x = (((v2.x - mScreenRect.x) / mScreenRect.w) * 2.0f - 1.0f) * f;
     float y = (((v2.y - mScreenRect.y) / mScreenRect.h) * 2.0f - 1.0f) * f;
@@ -450,7 +397,6 @@ void RndCam::ScreenToWorld(const Vector2 &v2, float f, Vector3 &vout) const {
     vout.y = y;
     vout.x = x;
     Multiply(vout, mInvWorldProjectXfm, vout);
-#endif
 }
 
 void RndCam::GetViewProjectXfms(Transform &viewXfm, Hmx::Matrix4 &projMtx) const {

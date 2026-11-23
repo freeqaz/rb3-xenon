@@ -134,6 +134,14 @@ public:
     float GetNoiseIntensity() const { return mNoiseIntensity; }
     bool GetNoiseMidtone() const { return mNoiseMidtone; }
     bool GetNoiseStationary() const { return mNoiseStationary; }
+    // The noise map and its tiling, for the native post-process's map path
+    // (milo-native-engine rndshape::PostProcNoiseMap). Retail
+    // NgPostProc::CheckNoise (fn_82B89100) noises only with the map, sampled at
+    // (uv + seed) * mNoiseBaseScale and again * mNoiseTopScale. Without these
+    // the engine fell back to a procedural hash grain (lane A49).
+    RndTex *GetNoiseMap() const { return mNoiseMap.Ptr(); }
+    const Vector2 &GetNoiseBaseScale() const { return mNoiseBaseScale; }
+    float GetNoiseTopScale() const { return mNoiseTopScale; }
     const Vector2& GetFlickerModBounds() const { return mFlickerModBounds; }
     const Vector2& GetFlickerTimeBounds() const { return mFlickerTimeBounds; }
     float GetFlickerSeconds() const { return mFlickerSeconds.x; }
