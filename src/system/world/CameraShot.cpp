@@ -395,19 +395,11 @@ void CamShotFrame::BuildTransform(RndCam *cam, Transform &tf, bool b3) const {
     Vector3 targetPos;
     GetCurrentTargetPosition(targetPos);
 
-#ifdef HX_NATIVE
-    // Guard: if targetPos is zero (no valid targets) or camera projection
-    // hasn't been initialized, WorldToScreen + subsequent math produces NaN/inf.
-    // Skip target-dependent filtering and use raw offset.
-    if (targetPos.x == 0.0f && targetPos.y == 0.0f && targetPos.z == 0.0f
-        && mTargets.empty()) {
-        me->mLastTargetPos = targetPos;
-        tf = mWorldOffset;
-        // (X2) no `Multiply(tf, mCamShot->WorldXfm(), tf)` -- retail CamShot has
-        // no WorldXfm(); see the note at the end of BuildTransform.
-        return;
-    }
-#endif
+    // Retail 0x824BF368 goes from GetCurrentTargetPosition (bl 0x824BF278)
+    // straight to WorldToScreen (bl 0x824333A0) with no zero/empty-target
+    // test. Native returned `tf = mWorldOffset` for every target-less shot
+    // until lane narms5, dropping the path, parent, clamp-height and b3 tail;
+    // the NaN case it was written for is covered by the screenPos guard below.
 
     Vector2 screenPos;
     cam->WorldToScreen(targetPos, screenPos);

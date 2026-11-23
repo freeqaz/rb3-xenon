@@ -416,19 +416,16 @@ void CheatsInit() {
         JoypadSubscribe(gCheatsManager);
         KeyboardSubscribe(gCheatsManager);
 
-// Retail RB3-360 EXCLUDES the whole quick-cheats block.  Retail's CheatsInit
-// builds exactly five literal Symbols -- disable_cheats, long_cheats,
-// set_key_cheats_enabled, set_cheat_mode, get_cheat_mode -- so quick_cheats,
-// left, right and keyboard have no Symbol ctor anywhere in the body.  (Quick
-// cheats are joypad-shift/keyboard driven, a dev-console feature that only
-// a DEV build keeps.)
-#if defined(MILO_DEBUG) && defined(HX_NATIVE)
-        DataArray *quickCheats = SystemConfig("quick_cheats");
-        InitQuickJoyCheats(quickCheats->FindArray("left"), CheatsManager::kLeftShift);
-        InitQuickJoyCheats(quickCheats->FindArray("right"), CheatsManager::kRightShift);
-
-        InitKeyCheats(quickCheats->FindArray("keyboard"));
-#endif
+// Retail RB3-360 EXCLUDES the whole quick-cheats block, on every build.
+// Retail's CheatsInit (0x827C3208) builds exactly five literal Symbols --
+// disable_cheats, long_cheats, set_key_cheats_enabled, set_cheat_mode,
+// get_cheat_mode -- and goes from KeyboardSubscribe straight to
+// SystemConfig("long_cheats") / InitLongJoyCheats; "quick_cheats" is absent
+// from band.exe.  The native dev-build copy was removed (lane narms5): with
+// cheats on by default it either armed the L1+L2 / R1+R2 shift cheats from a
+// config quick_cheats body (fake_win, free camera, ...) or, with _SHIP defined
+// and that body compiled out, FAILed on the missing `left` array and passed
+// null to InitQuickJoyCheats.  Retail does neither.
 
         InitLongJoyCheats(SystemConfig("long_cheats"));
 

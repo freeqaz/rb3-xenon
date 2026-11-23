@@ -160,12 +160,9 @@ void TrackPanelDirBase::SetConfiguration(Hmx::Object *o, bool b) {
         mConfiguration = o;
         o->Handle(apply, true);
     }
-#ifdef HX_NATIVE
-    // Retail TU5 returns after Handle: no mPerformanceMode test, no HUD re-show
-    // (same as ReapplyConfiguration).
-    if (!mPerformanceMode)
-        SetShowing(gShowHUD);
-#endif
+    // Retail TU5 (0x823574B0) returns after Handle: no mPerformanceMode test, no
+    // HUD re-show (same as ReapplyConfiguration). Native ran the oracle's
+    // SetShowing(gShowHUD) here until lane narms5.
 }
 
 void TrackPanelDirBase::ReapplyConfiguration(bool b) {
@@ -173,12 +170,9 @@ void TrackPanelDirBase::ReapplyConfiguration(bool b) {
         static Message apply("apply", b);
         apply[0] = b;
         mConfiguration->Handle(apply, true);
-#ifdef HX_NATIVE
         // No HUD re-show here: retail TU5 (0x82357640) returns right
-        // after Handle -- no mPerformanceMode test, no SetShowing.
-        if (!mPerformanceMode)
-            SetShowing(gShowHUD);
-#endif
+        // after Handle -- no mPerformanceMode test, no SetShowing (native
+        // re-showed the HUD until lane narms5).
     }
 }
 

@@ -394,7 +394,6 @@ Loader *LoadMgr::AddLoader(const FilePath &file, LoaderPos pos) {
 void LoadMgr::PollUntilLoaded(Loader *ldr1, Loader *ldr2) {
 #ifdef HX_NATIVE
     AutoGlitchReport hang(50.0f, __FUNCTION__);
-    float saved_period = mCurrentPeriod;
 #else
 // Retail RB3-360 does NOT wrap this call in AutoGlitchReport -- dc3 is a
 // NEWER build and added the hang-report wrapper (+ctor/dtor pair, +f30 saved
@@ -451,9 +450,10 @@ void LoadMgr::PollUntilLoaded(Loader *ldr1, Loader *ldr2) {
             mLoading.pop_front();
         }
     }
-#ifdef HX_NATIVE
-    mCurrentPeriod = saved_period;
-#endif
+    // No mCurrentPeriod restore (lane narms5): retail fn_827BF608's only store
+    // to this+0x14 is the in-loop 1e30, so a PollUntilLoaded nested inside
+    // LoadMgr::Poll leaves the rest of that Poll unbudgeted until the next
+    // Poll resets it to mPeriod. DC3's save/restore re-budgeted it natively.
 }
 
 // Retail 0x827BFB38 (0x58 B). Works on TheLoadMgr directly (r3 is never read):
