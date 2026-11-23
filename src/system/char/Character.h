@@ -158,6 +158,10 @@ public:
     void SetInterestObjects(const ObjPtrList<CharInterest> &, ObjectDir *);
     void SetSelfShadow(bool selfshadow) { mSelfShadow = selfshadow; }
     bool SelfShadow() const { return mSelfShadow; }
+    void SetSpotCutout(bool cutout) { mSpotCutout = cutout; }
+    bool SpotCutout() const { return mSpotCutout; }
+    void SetFloorShadow(bool shadow) { mFloorShadow = shadow; }
+    bool FloorShadow() const { return mFloorShadow; }
     void SetLodType(LODType lod) { mForceLod = lod; }
     void SetDebugDrawInterestObjects(bool);
     void ForceBlink();

@@ -408,14 +408,7 @@ BEGIN_LOADS(WorldCrowd)
     if (gCrowdRev > 0xC) {
         bool force = false;
         bs >> force;
-#ifdef HX_NATIVE
-        // On native we only have billboard rendering (no 3D character RTT pipeline).
-        // Force3DCrowd(true) moves all instances from MultiMesh to m3DChars,
-        // emptying the billboard instance list. Always use billboard path instead.
-        Force3DCrowd(false);
-#else
         Force3DCrowd(force);
-#endif
     }
     if (gCrowdRev > 5) {
         bs >> mShow3DOnly;
@@ -690,69 +683,7 @@ RndMesh *WorldCrowd::BuildBillboard(Character *c, float height) {
 
 void SetMatColorFlags(ObjPtrList<RndMat, ObjectDir> &, RndMat::ColorModFlags, std::vector<Hmx::Color> *);
 
-#ifdef HX_NATIVE
-void WorldCrowd::Draw3DChars() {
-    if (!Crowd3DExists()) return;
-    // Use mEnviron3D if it has a pointer, else mEnviron
-    RndEnviron *env;
-    env = mEnviron3D ? mEnviron3D : mEnviron;
-    // Save and clear the environ's use-approx-global flag
-    bool savedApprox = true;
-    if (env) {
-        savedApprox = env->UsesApproxGlobal();
-        env->SetUseApproxGlobal(false);
-    }
-    RndEnvironTracker tracker(env, nullptr);
-    ObjList<CharData>::iterator charIt = mCharacters.begin();
-    auto charsEnd = mCharacters.end();
-    for (; charIt != charsEnd; ++charIt) {
-        Character *curChar = charIt->mDef.mChar;
-        if (!curChar || !charIt->mMMesh) continue;
-        int numChars = (int)charIt->m3DChars.size();
-        for (int i = 0; (unsigned int)i < numChars; i++) {
-            Apply3DCharXfm(charIt, i, RndCam::Current());
-#ifdef HX_NATIVE
-            // 3D crowd characters not used in normal rendering —
-            // Force3DCrowd is always false on native, so m3DChars is empty.
-            // The impostor billboard path in DrawShowing handles all crowd rendering.
-            (void)i;
-            break;
-#else
-            if (charIt->mDef.mUseRandomColor) {
-                SetMatColorFlags(charIt->mDef.mMats, RndMat::kColorModModulate, &charIt->m3DChars[i].mColors);
-            }
-            bool savedSelfShadow = curChar->SelfShadow();
-            bool savedUnk252 = *(bool *)((char *)curChar + 0x252);
-            bool savedUnk251 = *(bool *)((char *)curChar + 0x251);
-            bool isInGame = *(bool *)((char *)&TheRnd + 0x143);
-            if (isInGame) {
-                curChar->SetSelfShadow(false);
-                *(bool *)((char *)curChar + 0x252) = false;
-                *(bool *)((char *)curChar + 0x251) = false;
-            }
-#ifdef RB3_WORLDCROWD_DC3_REV
-            if (mCharForceLod != kLODPerFrame) {
-                curChar->SetLodType(mCharForceLod);
-            }
-#endif
-            curChar->DrawShowing();
-#ifdef RB3_WORLDCROWD_DC3_REV
-            if (mCharForceLod != kLODPerFrame) {
-                curChar->SetLodType(kLODPerFrame);
-            }
-#endif
-            curChar->SetSelfShadow(savedSelfShadow);
-            *(bool *)((char *)curChar + 0x252) = savedUnk252;
-            *(bool *)((char *)curChar + 0x251) = savedUnk251;
-#endif
-        }
-    }
-    if (env) {
-        env->SetUseApproxGlobal(savedApprox);
-    }
-}
-#else
-// RB3 retail (0x824E2CD8): the per-char transform is computed inline (there is
+// RB3 retail (band.exe TU5 fn_824E2CD8): the per-char transform is computed inline (there is
 // no out-of-line Apply3DCharXfm call), the camera is always RndCam::sCurrent,
 // and the three Character draw flags at +0x210/+0x212/+0x211 are cleared
 // in-game around a non-virtual RndDrawable::Draw().
@@ -799,22 +730,22 @@ void WorldCrowd::Draw3DChars() {
                         &charIt->m3DChars[i].mColors
                     );
                 }
-                // Character's mSelfShadow / mFloorShadow / mSpotCutout
-                // (protected; char/ is another lane's)
-                bool *flags = (bool *)curChar;
-                bool savedSelfShadow = flags[0x210];
-                bool savedFloorShadow = flags[0x212];
-                bool savedSpotCutout = flags[0x211];
+                // Character mSelfShadow +0x210, mFloorShadow +0x212, mSpotCutout
+                // +0x211, read and cleared in that order (fn_824E2CD8). Named
+                // accessors, not raw offsets: the offsets are X360 layout only.
+                bool savedSelfShadow = curChar->SelfShadow();
+                bool savedFloorShadow = curChar->FloorShadow();
+                bool savedSpotCutout = curChar->SpotCutout();
                 if (TheRnd.InGame()) {
-                    flags[0x210] = false;
-                    flags[0x212] = false;
-                    flags[0x211] = false;
+                    curChar->SetSelfShadow(false);
+                    curChar->SetFloorShadow(false);
+                    curChar->SetSpotCutout(false);
                 }
                 curChar->SetWorldXfm(xfm);
                 curChar->Draw();
-                flags[0x210] = savedSelfShadow;
-                flags[0x212] = savedFloorShadow;
-                flags[0x211] = savedSpotCutout;
+                curChar->SetSelfShadow(savedSelfShadow);
+                curChar->SetFloorShadow(savedFloorShadow);
+                curChar->SetSpotCutout(savedSpotCutout);
             }
         }
     }
@@ -822,7 +753,6 @@ void WorldCrowd::Draw3DChars() {
         env->SetUseApproxGlobal(savedApprox);
     }
 }
-#endif
 
 void WorldCrowd::AssignRandomColors() {
     FOREACH (it, mCharacters) {
