@@ -211,13 +211,17 @@ bool TambourineManager::IsTambourineButton(JoypadButton btn) const { return btn 
 void TambourineManager::HandleButtonDown() {
     if (mTambourineActive && mTambourineIdx < TambourineGems().size() && unk60 > 0) {
         int pad = -1;
-#ifndef HX_NATIVE
+        // Retail 0x826FB650: the local user's pad, then ProfileMgr::GetSyncOffset
+        // (bl 0x825464F0) added to the swing time. rb3-app (RB3_NATIVE_APP) links
+        // ProfileMgr and has the BandUser, so it takes this arm too, as
+        // VocalPlayer::GetCompensatedTime does; it used to swing uncompensated.
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_APP)
         if (mIsLocal) {
             pad = mPlayerRef.GetUser()->GetLocalBandUser()->GetPadNum();
         }
         float offset = TheProfileMgr.GetSyncOffset(pad);
 #else
-        // headless: no BandUser pad / TheProfileMgr sync-offset (button-driven path)
+        // Headless vocal harnesses: no BandUser pad / TheProfileMgr sync offset.
         float offset = 0.0f;
 #endif
         TambourineSwing(MsToTick(1000.0f * TheTaskMgr.Seconds(TaskMgr::kRealTime) + offset));
