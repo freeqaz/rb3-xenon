@@ -1785,3 +1785,57 @@ void rb3_app_check_spotlight_disk() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A28: song_select's panel `exit` handler runs `{music_library on_exit}`, and
+// that DTA message must reach MusicLibrary::OnExit. Retail Handle fn_82542D20
+// compares "on_exit" (0x820915B4) and calls OnExit fn_82542A00 (bl at +0xCC),
+// whose MusicLibraryStore::ClearPreview (fn_825BC908) deletes the store preview
+// manager (+0x4C). Natively the handler's Symbol was the stringified text
+// `Symbol("on_exit")` (RB3_HANDLE_LOCAL_STATIC), so the message went unhandled,
+// the manager outlived the screen, and the second song_select load FAILed
+// "store_preview_mgr already exists". Unlike A21's music_library_exit gate this
+// one dispatches through Handle, as the DTA does. Fails (rc 7) when the
+// stringified handler comes back.
+#include "obj/Msg.h"
+void rb3_app_check_music_library_on_exit() { // ring: native-real
+    if (!TheMusicLibrary) {
+        SongPreview *prev = new SongPreview(TheSongMgr);
+        MusicLibrary::Init(*prev);
+    }
+    MusicLibrary *lib = TheMusicLibrary;
+    MusicLibraryStore *prevStore = lib->unk19c;
+    lib->OnLoad();
+    MusicLibraryStore *store = lib->unk19c;
+    bool named0 = ObjectDir::Main()->Find<Hmx::Object>("store_preview_mgr", false) != nullptr;
+    lib->unk40 = true;
+    static Message msg("on_exit");
+    DataNode r = lib->Handle(msg, false);
+    bool handled = r.Type() != kDataUnhandled;
+    bool previewMgr1 = store && store->mPreviewMgr;
+    bool named1 = ObjectDir::Main()->Find<Hmx::Object>("store_preview_mgr", false) != nullptr;
+    if (store && store->mPreviewMgr) { // the unhandled path: undo by hand
+        delete store->mPreviewMgr;
+        store->mPreviewMgr = nullptr;
+    }
+    lib->unk40 = false;
+    delete store;
+    lib->unk19c = prevStore;
+    TheNetCacheMgr->Unload();
+    for (int i = 0; i < 10 && !TheNetCacheMgr->IsUnloaded(); i++)
+        TheNetCacheMgr->Poll();
+    char what[384];
+    snprintf(what, sizeof what,
+             "music library on_exit: OnLoad -> store_preview_mgr named %d; Handle(on_exit) "
+             "%s; preview mgr %d, named %d (want 1, handled, 0 0) (retail Handle fn_82542D20 "
+             "-> OnExit fn_82542A00 -> ClearPreview fn_825BC908)",
+             (int)named0, handled ? "handled" : "UNHANDLED", (int)previewMgr1, (int)named1);
+    if (store && named0 && handled && !previewMgr1 && !named1) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (music library on_exit)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
