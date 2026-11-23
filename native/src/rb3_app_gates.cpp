@@ -2810,3 +2810,55 @@ void rb3_app_check_unnamed_mesh_not_text() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A51: RndCam::WorldToScreen / ScreenToWorld use retail's screen convention,
+// y growing DOWN (fn_824333A0 projects through mWorldProjectXfm, whose y row
+// UpdateLocal writes as -1/tan(fov/2)). The native build compiled its own
+// bodies on the renderer's D3D-style projection (NDC y up), mirroring every
+// caller: WorldCrowd::DrawShowing's impostor uv rect then cropped each crowd
+// card to the empty top of its render target. The check: on a camera at the
+// origin looking down +y (z up), a point above the view centre maps to
+// y < 0.5 and one below to y > 0.5, the WorldCrowd card case (a 70-unit
+// character under a 140-unit frame) puts the feet at the bottom, and
+// ScreenToWorld inverts WorldToScreen.
+#include "rndobj/Cam.h"
+void rb3_app_check_cam_screen_y_down() { // ring: native-real
+    RndCam *cam = Hmx::Object::New<RndCam>();
+    cam->SetFrustum(1.0f, 10000.0f, PI / 2.0f, 1.0f); // tan(fov/2) = 1
+    Vector2 above, below;
+    cam->WorldToScreen(Vector3(0.0f, 10.0f, 5.0f), above);
+    cam->WorldToScreen(Vector3(0.0f, 10.0f, -5.0f), below);
+    // The crowd card: impostor camera at z = halfHeight 70, dist 600 back,
+    // yfov 2 atan(70 / 600); a character's head (z 66) and feet (z 2).
+    RndCam *imp = Hmx::Object::New<RndCam>();
+    Transform x;
+    x.Reset();
+    x.v.Set(0.0f, -600.0f, 70.0f);
+    imp->SetLocalXfm(x);
+    imp->SetFrustum(1.0f, 10000.0f, (float)std::atan(70.0 / 600.0) * 2.0f, 1.0f);
+    Vector2 head, feet;
+    imp->WorldToScreen(Vector3(0.0f, 0.0f, 66.0f), head);
+    imp->WorldToScreen(Vector3(0.0f, 0.0f, 2.0f), feet);
+    Vector3 back;
+    cam->ScreenToWorld(above, 10.0f, back);
+    delete cam;
+    delete imp;
+    bool ok = fabsf(above.y - 0.25f) < 1e-3f && fabsf(below.y - 0.75f) < 1e-3f
+        && head.y > 0.5f && head.y < 0.6f && feet.y > 0.95f && fabsf(back.x) < 1e-3f
+        && fabsf(back.y - 10.0f) < 1e-3f && fabsf(back.z - 5.0f) < 1e-3f;
+    char what[384];
+    snprintf(what, sizeof what,
+             "camera screen y: above %.3f below %.3f, crowd card head %.3f feet %.3f, "
+             "ScreenToWorld (%.2f %.2f %.2f) (want 0.25 0.75, head 0.5..0.6, feet "
+             "> 0.95, (0 10 5); retail fn_824333A0 screen y grows down)",
+             above.y, below.y, head.y, feet.y, back.x, back.y, back.z);
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (camera screen y)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}

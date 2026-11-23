@@ -87,6 +87,7 @@ void rb3_app_check_bone_merge_repoint(); // rb3_app_gates.cpp
 void rb3_app_check_credits_auto_scroll(); // rb3_app_gates.cpp
 void rb3_app_check_postproc_noise_map(); // rb3_app_gates.cpp
 void rb3_app_check_unnamed_mesh_not_text(); // rb3_app_gates.cpp
+void rb3_app_check_cam_screen_y_down(); // rb3_app_gates.cpp
 void SetGameMarksTextGlyphMeshes(bool marks); // milo-native-engine platform/MeshGpuCache.h
 
 extern "C" void rb3_app_gate(const char *step);
@@ -312,6 +313,7 @@ int main(int argc, char **argv) {
         rb3_app_check_credits_auto_scroll(); // credits lane (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_postproc_noise_map(); // A49 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_unnamed_mesh_not_text(); // A49 (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_cam_screen_y_down(); // A51 (rb3_app_gates.cpp): exits rc 7 on a failure
         printf("RESULT: APP CONSTRUCTED\n");
         fflush(stdout);
         fflush(stderr);
