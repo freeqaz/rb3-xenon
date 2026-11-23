@@ -1328,3 +1328,56 @@ void rb3_app_check_offline_game_start() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A24: a transformable's parent ref, retargeted by a ref walk, moves the child.
+// Retail RndTransformable::Replace (fn_823F94E8) compares the held parent's
+// Hmx::Object subobject with `from` (fn_823F94E8+0x34, `cmplw cr6,r11,r4`), the
+// dying object on X360, and on a match calls SetTransParent(to) (the bl at
+// fn_823F94E8+0x64 -> fn_823F9318), which takes the child out of the old
+// parent's mChildren and puts it in the new one's. The native ring passes the
+// ObjRef member itself as `from` (obj/Object.h RefIs), so the retail compare
+// never matched: ReplaceRefs (BandCharacter::Filter's merges, CharBoneDir,
+// Character::UnhookShadow) left the child in the old parent's list and out of
+// the new one's. Here: C under P1, P1->ReplaceRefs(P2) must leave C under P2
+// and only in P2's list; deleting C must leave both lists empty, and NullifyAllRefs
+// (a cascade's Phase 0) on a parent must take C out of that parent's list. Fails
+// with the retail compare natively (rc 7).
+#include "rndobj/Trans.h"
+void rb3_app_check_trans_parent_replace() { // ring: native-real
+    RndTransformable *p1 = Hmx::Object::New<RndTransformable>();
+    RndTransformable *p2 = Hmx::Object::New<RndTransformable>();
+    RndTransformable *c = Hmx::Object::New<RndTransformable>();
+    c->SetTransParent(p1, false);
+    bool held = c->TransParent() == p1 && p1->Children().size() == 1;
+    p1->ReplaceRefs(p2);
+    bool moved = c->TransParent() == p2;
+    int n1 = (int)p1->Children().size(), n2 = (int)p2->Children().size();
+    bool listed = n2 == 1 && p2->Children().front() == c;
+    // The cascade arm: Phase 0 runs NullifyAllRefs on a dying parent.
+    p2->NullifyAllRefs();
+    bool orphaned = c->TransParent() == nullptr;
+    int n2b = (int)p2->Children().size();
+    c->SetTransParent(p1, false);
+    delete c;
+    int n1c = (int)p1->Children().size();
+    char what[512];
+    snprintf(what, sizeof what,
+             "trans parent replace: C under P1 %d; P1->ReplaceRefs(P2): C under P2 %d, "
+             "P1/P2 children %d/%d (want 0/1, P2's is C %d); P2->NullifyAllRefs: C parent "
+             "NULL %d, P2 children %d (want 0); C back under P1 and deleted: P1 children %d "
+             "(want 0) (retail RndTransformable::Replace fn_823F94E8 -> SetTransParent "
+             "fn_823F9318)",
+             (int)held, (int)moved, n1, n2, (int)listed, (int)orphaned, n2b, n1c);
+    bool ok = held && moved && n1 == 0 && listed && orphaned && n2b == 0 && n1c == 0;
+    if (ok) {
+        delete p1;
+        delete p2;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (trans parent replace)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
