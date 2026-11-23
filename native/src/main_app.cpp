@@ -69,6 +69,8 @@ void rb3_app_check_replace_refs_shifted_entry(); // rb3_app_gates.cpp
 void rb3_app_check_bones_ref_dying_compare(); // rb3_app_gates.cpp
 
 extern "C" void rb3_app_gate(const char *step);
+void rb3_app_determinism_init(); // rb3_app_determinism.cpp (RB3_APP_DETERMINISTIC)
+void rb3_app_determinism_frame(int frame); // rb3_app_determinism.cpp
 
 namespace {
 int gFramesStarted = 0; // SystemPoll calls since App::Run (frame N starts at call N)
@@ -123,6 +125,7 @@ extern "C" void __wrap__Z10SystemPollb(bool b) { // ring: native-real
         if (framesDone >= gFrameCap) Finish(framesDone, "", 0);
         if (SecondsSinceRun() >= gSecondsCap) Finish(framesDone, " (wall-clock cap)", 4);
         ++gFramesStarted;
+        rb3_app_determinism_frame(gFramesStarted);
         UIScreen *cur = TheUI ? TheUI->CurrentScreen() : nullptr;
         bool tr = TheUI && TheUI->InTransition();
         if (cur != gLastScreen || tr != gLastTransition || framesDone == 0) {
@@ -138,6 +141,7 @@ extern "C" void __wrap__Z10SystemPollb(bool b) { // ring: native-real
 }
 
 int main(int argc, char **argv) {
+    rb3_app_determinism_init();
     const char *data = argc > 1 ? argv[1] : getenv("RB3_ASSETS");
     if (!data || chdir(data) != 0) {
         fprintf(stderr, "rb3-app: no data dir (argv[1] or $RB3_ASSETS): %s\n",

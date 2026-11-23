@@ -2835,7 +2835,8 @@ if(RB3X_BUILD_ENGINE)
     # src/Main.cpp is retail's main (App::Run, the frame loop: A2).
     list(REMOVE_ITEM _rb3_app_all ${REPO_ROOT}/src/Main.cpp)
     list(APPEND _rb3_app_all ${CMAKE_SOURCE_DIR}/src/main_app.cpp
-        ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.cpp)
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.cpp
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_determinism.cpp)
     rb3_add_executable(rb3-app ${_rb3_app_all})
     list(APPEND MILO_TARGETS rb3-app)
     # RB3_NATIVE_PRESENCEMGR: the real PresenceMgr.cpp is linked (App::App calls
@@ -2864,6 +2865,14 @@ if(RB3X_BUILD_ENGINE)
     # call, SystemPoll(false): the wrapper counts frames (RB3_APP_FRAMES,
     # RB3_APP_SECONDS) and exits at a frame boundary.
     target_link_options(rb3-app PRIVATE -Wl,--wrap=_Z10SystemPollb)
+    # detwalk: RB3_APP_DETERMINISTIC=1 (rb3_app_determinism.cpp) fixes the RNG
+    # seed SystemInit draws from the clock and gives the main thread a virtual
+    # steady_clock and runs ThreadCall jobs on the main thread; unset, every
+    # wrapper passes through.
+    target_link_options(rb3-app PRIVATE -Wl,--wrap=_Z8SeedRandi
+        -Wl,--wrap=_ZNSt6chrono3_V212steady_clock3nowEv
+        -Wl,--wrap=_Z10ThreadCallPFivEPFviE -Wl,--wrap=_Z10ThreadCallP14ThreadCallback
+        -Wl,--wrap=_Z14ThreadCallPollv)
     # A1 boot gates: each App::App init step is --wrap'ed by rb3_app_gates.cpp,
     # which prints `  [PASS] rb3-app <step>` when it returns.
     file(STRINGS ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.txt _rb3_app_gate_syms)
