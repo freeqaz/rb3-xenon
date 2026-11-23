@@ -129,11 +129,11 @@ At a rate N > 0:
     frames 1-30. Uncalled (legacy, other native programs), the flag is read from
     `MILO_HEADLESS` once at the first poll, as before. (The first version re-read the variable
     every poll; replaced.)
-  - UIManager: UI.cpp has no such setter and is outside this lane, so main_app still clears
-    `MILO_HEADLESS` after `App::App` at a real rate. UI.cpp caches the variable at its first
-    poll, App::Run's first frame (the det `ui` column steps 1/hz from frame 1, not 1/30); the
-    engine reads it only inside the constructor (window, audio). A UIManager setter like
-    TaskMgr's would make this a startup choice too.
+  - UIManager: `src/system/ui/UI.cpp` (HX_NATIVE arm only) has the same shape,
+    `UIManagerSetHeadlessFixedStep(bool)`, called from the same place (UI.cpp edit approved
+    by the peer session through the coordinator). Its first poll is App::Run's first frame,
+    so the previous version cleared `MILO_HEADLESS` after the constructor instead; that clear
+    is gone, and `MILO_HEADLESS` stays set for the engine (window, audio).
 - **Legacy** (a harness run's default, or `RB3_APP_HZ=legacy`): virtual 1/30 s frame on the old
   absolute grid, unpaced, fixed-step clocks left on, the base binary frame for frame (checks
   below).
@@ -213,6 +213,23 @@ pass. Every run ended rc 0.
   Δhonest +0, Δcode% +0.000000 pp, Δfuzzy +0 (legA = legB = 55,268 matched, 25,360
   masked_equal, 59.665310 %; `none` control +0 B), label `framerate-task-step-revert`.
 
+## 7. UIManager setter checks (bin-f4 `c90a995c1c7c`, `checks.sh c2`)
+
+All rc 0. `main_app.cpp` no longer touches `MILO_HEADLESS` after setting it.
+
+- **Legacy det walk** (c2D, walk.txt, 6000 frames, no `RB3_APP_HZ`): IDENTICAL over 6000
+  frames to the base binary's d0.
+- **`RB3_APP_HZ=60` det pair** (c2S1, c2S2): IDENTICAL to each other over 6000 frames, and
+  IDENTICAL to bin-f3's c1S1 (the build that cleared the variable instead), so the setter is
+  the same clock choice.
+- **Normal launch, `RB3_APP_MOVIES=0`, 300 frames** (c2N0): 60 Hz boot line; `splash_screen`
+  at frame 12 (3.18 s), `APP RAN 300 FRAMES screen=splash_screen` (13.6 s). With movies on
+  (c2N) it ends on intro_movie_screen at frame 300, as before.
+- **`RB3_APP_JOYPAD_GATE=1`** (c2J): legacy 30 Hz, `RESULT: JOYPAD GATE PASSED`.
+- **X360**: `tools/ab_measure.py --patch` (Task.cpp and UI.cpp back to main's): Δmatched +0,
+  Δhonest +0, Δcode% +0.000000 pp, Δfuzzy +0 (legA = legB = 55,268 matched, 25,360 masked_equal,
+  59.665310 %; `none` control +0 B; leg B recompiled 2 objs), label `framerate-task-ui-step-revert`.
+
 ## Not done
 
 - **Walk scripts are written in frames** (`MILO_INPUT_SCRIPT` `+N` offsets and `wait_screen`'s
@@ -235,11 +252,12 @@ pass. Every run ended rc 0.
   raising for long normal walks.
 - **Engine**: nothing to change for correctness. Its `NativeCompatFlags` text for
   `MILO_HEADLESS` says "UI.cpp fakes a fixed 1/30s UI clock", which is no longer true for
-  rb3-app at a real frame rate (rb3-app clears the variable after the constructor); worth a
+  rb3-app at a real frame rate (rb3-app sets `UIManagerSetHeadlessFixedStep(false)`); worth a
   word there, not edited (engine is outside this lane).
 - UI.cpp's native frame counters (`sStuckFrames`, fast-boot delays, `sEnterWaitFrames > 90`) and
   BandCharacter.cpp's quiet-poll latches now count 60 Hz frames, so their wall-time thresholds
-  halve. They are native scaffolding, not retail; not touched (outside the brief).
+  halve, in a normal launch and at `RB3_APP_HZ=60`. They are native scaffolding, not retail;
+  not touched (the UI.cpp approval covered the clock setter only).
 - No console measurement of retail's achieved frame rate in a full band song (the code caps it
   at 60; a 360 that drops frames would count fewer polls, as rb3-app does on a loaded box).
 - Per-item before/after walks only for the tilt filter. The other frame counts (vibrato,
