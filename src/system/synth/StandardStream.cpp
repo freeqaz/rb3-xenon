@@ -492,8 +492,12 @@ void StandardStream::UpdateTime() {
             if (audioElapsed < wallElapsed * 0.1f) {
                 // Audio output is < 10% real-time — switch to wall-clock timing
                 mUseTimerFallback = true;
-                // Sync mTimer to match current wall-clock elapsed time from song start
-                mTimer.Reset(mStartMs + wallElapsed);
+                // Sync mTimer to the stream time the wall-clock elapsed time is
+                // worth: mTimer is a VarTimer running at mSpeed (SetSpeed), so
+                // the stream has advanced wallElapsed * mSpeed since mStartMs.
+                // Unscaled, a practice or trainer start below 100% leapt
+                // ahead by (1 - speed) * ~512 ms (lane practicewalk).
+                mTimer.Reset(mStartMs + wallElapsed * mSpeed);
             }
         }
     }
