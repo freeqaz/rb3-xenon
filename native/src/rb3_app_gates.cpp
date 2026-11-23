@@ -2907,3 +2907,131 @@ void rb3_app_check_crowd_force_3d() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A56: RndText glyph pages sample their atlas RGB. Retail draws a page with the
+// font's own material (RndText SetMat(font->GetMat()), the plain field load at
+// every SetMat site of rndobj/Text.cpp) and its standard shader samples the
+// texel's RGBA like any texture's; nothing routes alpha into colour. The
+// engine's text path does (useAlphaAsRGB) unless the game says its atlases keep
+// colour in RGB, so the coloured button glyphs (the help bar's Y/A, the RB and
+// star icons, the vocal HUD's mic) drew as plain white discs (lane A54 gap 6).
+// The check: a marked glyph page shades as text AND keeps its atlas RGB.
+void rb3_app_check_glyph_atlas_rgb() { // ring: native-real
+    RndMesh *page = Hmx::Object::New<RndMesh>();
+    MarkTextGlyphMesh(page);
+    bool pageText = MeshShadesAsText(page);
+    bool keepsRGB = TextMeshKeepsAtlasRGB(page, nullptr, false);
+    delete page;
+    char what[384];
+    snprintf(what, sizeof what,
+             "glyph page atlas colour: page shades as text %d, keeps atlas RGB %d "
+             "(want 1 1; retail samples the font page's RGB, so a coloured button "
+             "glyph is not a white disc)",
+             (int)pageText, (int)keepsRGB);
+    if (pageText && keepsRGB) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (glyph atlas RGB)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A56: a disc song's album art path is the song's own "<song>_keep.png", as
+// retail BandSongMgr::GetAlbumArtPath fn_82575A78 returns it (HasSong, then
+// SongFilePath(song, "_keep.png"); no existence test, no blank fallback --
+// the only blank_album_art_keep.png users are the sort nodes' no-art arms in
+// meta_band/SongSortNode.cpp). The native build added a ::stat() of that
+// path, which is relative to a data dir holding only the .ark files, so it
+// failed for every song and every screen drew the blank tile (lane A54 gap 5).
+// The check: China Grove (album_art TRUE on the disc) gets its own path. The
+// song list fills on the content refresh the boot has not run yet in
+// construct-only mode, so the check runs ContentMgr::RefreshSynchronously
+// first; it is the last gate before the construct-only exit.
+#include "meta_band/BandSongMgr.h"
+#include "os/ContentMgr.h"
+void rb3_app_check_album_art_path() { // ring: native-real
+    Symbol song("chinagrove");
+    if (!TheSongMgr.HasSong(song, false)) TheContentMgr.RefreshSynchronously();
+    bool has = TheSongMgr.HasSong(song, false);
+    const char *path = has ? TheSongMgr.GetAlbumArtPath(song) : "(no song)";
+    bool ok = has && path && strstr(path, "chinagrove_keep.png") != nullptr
+        && strstr(path, "blank_album_art") == nullptr;
+    char what[384];
+    snprintf(what, sizeof what,
+             "album art path: chinagrove HasSong %d, GetAlbumArtPath \"%s\" (want the "
+             "song's chinagrove_keep.png; retail fn_82575A78 has no blank fallback)",
+             (int)has, path ? path : "(null)");
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (album art path)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A57: a vocal lyric keeps the colour LyricPlate gives it. Retail RndText::
+// UpdateText (fn_82459660) rebuilds its meshes on the spot; the native build
+// deferred the rebuild to DrawShowing, where it landed AFTER LyricPlate's own
+// per-syllable writes (SetText(""), AddLineUTF8, then UpdateLineColor,
+// fn_82457BA0, all before the draw) and re-coloured every quad with the line
+// style's colour. Lyric::UpdateColor never re-sends an unchanged colour, so
+// every "coming" word drew in the template style's 0.35-alpha yellow until the
+// now bar reached it (lane A54 gap 4). The check runs that sequence on a text
+// with a one-glyph font: the recoloured quads hold the new colour and no
+// deferred rebuild is pending to overwrite them.
+#include "rndobj/Font.h"
+#include "rndobj/Text.h"
+namespace {
+struct GateLyricFont : public RndFont {
+    void DefineGlyph(unsigned short c) {
+        CharInfo info = { 0.0f, 0.0f, 0.5f, 0.5f };
+        mCharInfoMap[c] = info;
+    }
+};
+}
+void rb3_app_check_lyric_line_color_kept() { // ring: native-real
+    GateLyricFont *font = new GateLyricFont();
+    font->DefineGlyph('a');
+    RndText *text = Hmx::Object::New<RndText>();
+    text->SetFont(font);
+    text->SetFixedLength(16);
+    text->SetText("");
+    Transform xfm;
+    xfm.Reset();
+    RndText::Style style(font, 1.0f, 0.0f, Hmx::Color(0.996f, 0.812f, 0.067f, 0.35f), 0.0f);
+    int line = text->AddLineUTF8(String("aa"), xfm, style, nullptr, nullptr, -1);
+    Hmx::Color coming(1.0f, 1.0f, 1.0f, 1.0f);
+    bool needSync = false;
+    if (line >= 0) text->UpdateLineColor(line, coming, &needSync);
+    text->SyncMeshes();
+    // What the next native DrawShowing does when a rebuild is pending.
+    bool pending = text->mMeshDirty;
+    if (pending) text->UpdateMesh(font);
+    RndMesh *mesh = text->mMeshMap[(RndText::FontKey)font].mesh;
+    float alpha = -1.0f;
+    if (mesh && mesh->Verts().size() >= 4) alpha = mesh->Verts().begin()[0].color.alpha;
+    delete text;
+    delete font;
+    bool ok = line >= 0 && alpha > 0.99f && !pending;
+    char what[384];
+    snprintf(what, sizeof what,
+             "lyric line colour: line %d, deferred mesh rebuild pending %d, quad alpha %.3f "
+             "after UpdateLineColor and the draw's rebuild (want >= 0, 0, 1.000; retail fn_82459660 rebuilds in "
+             "UpdateText, so nothing re-colours the syllable to its 0.35 style)",
+             line, (int)pending, alpha);
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (lyric line colour)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}

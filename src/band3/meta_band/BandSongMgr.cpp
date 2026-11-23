@@ -31,10 +31,6 @@
 #include "utl/Messages2.h"
 #include "utl/Symbols4.h"
 
-#ifdef HX_NATIVE
-#include <sys/stat.h>
-#endif
-
 BandSongMgr gSongMgr;
 BandSongMgr *TheSongMgrPtr = &gSongMgr;
 SongMgr *TheBaseSongManger;
@@ -412,23 +408,6 @@ DECOMP_FORCEACTIVE(BandSongMgr, "")
 const char *BandSongMgr::GetAlbumArtPath(Symbol s) const {
     if (HasSong(s, true)) {
         const char *path = SongFilePath(s, "_keep.png");
-#ifdef HX_NATIVE
-        // The extracted native asset set ships the song .mogg/.milo but NOT the
-        // per-song "<name>_keep.png" album-art textures, so this path resolves to
-        // a file that does not exist. The song-select UI then does
-        // `album_art.pic set tex_file <path>`, which fails the texture load and
-        // leaves a flat grey placeholder box obscuring the difficulty grid.
-        // Mirror the no-art branch (OwnedSongSortNode::GetAlbumArtPath) and fall
-        // back to the shipped blank-art texture when the file is absent, so the
-        // box shows the proper "no art" placeholder instead of grey. Cheap local
-        // stat() — the path is relative to the data dir the native boot chdir'd
-        // into. Real art (if ever shipped) still resolves to the song path.
-        if (path && *path) {
-            struct stat st;
-            if (::stat(path, &st) != 0)
-                return "ui/image/blank_album_art_keep.png";
-        }
-#endif
         return path;
     } else
         return gNullStr;
