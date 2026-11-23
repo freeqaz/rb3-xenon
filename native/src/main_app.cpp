@@ -100,6 +100,7 @@ void rb3_app_check_postproc_noise_map(); // rb3_app_gates.cpp
 void rb3_app_check_retail_post_chain(); // rb3_app_gates.cpp
 void rb3_app_check_retail_post_noise(); // rb3_app_gates.cpp
 void rb3_app_check_gamma_space_shading(); // rb3_app_gates.cpp
+void rb3_app_check_retail_light_model(); // rb3_app_gates.cpp
 void rb3_app_check_unnamed_mesh_not_text(); // rb3_app_gates.cpp
 void rb3_app_check_cam_screen_y_down(); // rb3_app_gates.cpp
 void rb3_app_check_crowd_force_3d(); // rb3_app_gates.cpp
@@ -387,6 +388,7 @@ int main(int argc, char **argv) {
         rb3_app_check_retail_post_chain(); // A55 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_retail_post_noise(); // A58 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_gamma_space_shading(); // A60 (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_retail_light_model(); // A62 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_unnamed_mesh_not_text(); // A49 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_cam_screen_y_down(); // A51 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_crowd_force_3d(); // A53 (rb3_app_gates.cpp): exits rc 7 on a failure

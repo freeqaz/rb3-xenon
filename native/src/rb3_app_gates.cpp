@@ -2954,6 +2954,76 @@ void rb3_app_check_gamma_space_shading() { // ring: native-real
     _exit(7);
 }
 
+// A62: rb3-xenon lights through RB3's own Xbox 360 retail light model
+// (milo-native-engine rndshape::kRB3RetailLight, retailLighting 1), not the
+// engine's heuristic arm (approx lights as top-4 directionals, a 0.08 ambient
+// floor, a 0.35 fill, an energy cap of 4.5, soft clip). Retail standard
+// shading is c0 * (c1 + box(N) + <= 2 points) * texel: c1 the environ's
+// ambient unscaled (NgMat::SetupAmbient), the box map written per mesh by
+// NgEnviron::UpdateApproxLighting from DxMesh::DrawShowing's helper (band.exe
+// TU5 fn_82738E38+0x58 -> fn_82418DC0+0xc0, vtable +0x58), and the points by
+// NgEnviron::Select (fn_82B86738). The check builds an environ with ambient
+// (0.2, 0.3, 0.4) and one approx directional of colour (1, 0.5, 0.25)
+// pointing down its -y (BoxMapLighting folds it into the -Y face with weight
+// 1), then asks the engine for the scene and the mesh's light terms:
+//   retailLighting 1, ambient exactly the environ's, no directionals
+//   (numLights 0), the mesh's -Y face = the light colour, one approx light,
+//   and a use_environ-off material unlit (c1 = 1, no lights).
+#include "gfx/UniformStructs.h"
+#include "rndobj/Env.h"
+#include "rndobj/Lit.h"
+#include "rndobj/Mesh.h"
+void rb3_app_check_retail_light_model() { // ring: native-real
+    RndEnviron *prev = RndEnviron::Current();
+    RndEnviron *env = Hmx::Object::New<RndEnviron>();
+    RndLight *light = Hmx::Object::New<RndLight>();
+    light->SetLightType(RndLight::kDirectional);
+    light->SetColor(Hmx::Color(1.0f, 0.5f, 0.25f));
+    light->SetShowing(true);
+    env->SetAmbientColor(Hmx::Color(0.2f, 0.3f, 0.4f));
+    env->LightsApprox().push_back(light);
+    env->Select(nullptr);
+    SceneUniforms scene{};
+    memset(&scene, 0, sizeof(scene));
+    const bool claimed = rndshape::WriteSceneLighting(scene, nullptr);
+    RndMesh *mesh = Hmx::Object::New<RndMesh>();
+    ObjectUniforms obj{};
+    memset(&obj, 0, sizeof(obj));
+    rndshape::FillMeshApproxLighting(mesh, obj.boxLight, obj.retail);
+    RndMat *mat = Hmx::Object::New<RndMat>();
+    mat->SetUseEnv(false);
+    mat->SetPreLit(false);
+    const bool unlit = rndshape::MatUnlit(mat);
+    delete mat;
+    delete mesh;
+    if (prev) prev->Select(nullptr);   // env stays alive if it is still current
+    const float *f = obj.boxLight[3];   // -Y
+    auto near = [](float a, float b) { return a - b < 1e-4f && b - a < 1e-4f; };
+    const bool ok = rndshape::kRB3RetailLight && claimed && scene.retailLighting == 1.0f &&
+                    near(scene.ambientColor[0], 0.2f) && near(scene.ambientColor[1], 0.3f) &&
+                    near(scene.ambientColor[2], 0.4f) && scene.numLights == 0.0f &&
+                    near(f[0], 1.0f) && near(f[1], 0.5f) && near(f[2], 0.25f) &&
+                    obj.retail[1] == 1.0f && unlit;
+    char what[640];
+    snprintf(what, sizeof what,
+             "retail light model: trait %d, claimed %d, retailLighting %.1f, ambient (%.3f, %.3f, "
+             "%.3f), directionals %.0f, -Y face (%.3f, %.3f, %.3f), approx %.0f, unlit %d (want 1, "
+             "1, 1.0, (0.200, 0.300, 0.400), 0, (1.000, 0.500, 0.250), 1, 1: RB3 X360 "
+             "c0 (c1 + box + points) texel, box per mesh fn_82418DC0+0xc0)",
+             (int)rndshape::kRB3RetailLight, (int)claimed, scene.retailLighting,
+             scene.ambientColor[0], scene.ambientColor[1], scene.ambientColor[2], scene.numLights,
+             f[0], f[1], f[2], obj.retail[1], (int)unlit);
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (retail light model)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
 // A49: only RndText's glyph pages take the engine's text path. The engine
 // (milo-native-engine platform/MaterialSetup.cpp MeshShadesAsText /
 // MeshDrawsAsGlyph) draws a glyph page with no depth test, no culling, forced
