@@ -186,3 +186,12 @@ The scorewalk and vocalod fixes of the same shape measured Δ0.
   not edited (a peer lane owns that file).
 - GamePanel.cpp's V25 HUD force-show: a render workaround to re-check now that rb3-app runs
   `play_intro` with real objects.
+
+## Coordinator repeat (2026-11-23, after the rebase onto main `875c9a8d2`)
+
+The rb3-app binary was rebuilt from the rebased branch against the live engine (`2dcbb17`). Det+autoplay walks
+(a25 walk, 90000-frame cap, `SECS=540`, all rc 4 at the wall cap, 0 FAIL, 0 RING CORRUPTION, coop_endgame reached):
+- repeat: B1 vs B2 IDENTICAL over 51,530 frames;
+- `GLIBC_TUNABLES=glibc.malloc.perturb=190`: IDENTICAL to B1 over 51,530 frames;
+- against land-1123l's main binary: 42,949 of 44,555 common frames differ, starting near the
+  lane's frame 1607 (the sync offset), as predicted.
