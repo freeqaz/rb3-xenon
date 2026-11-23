@@ -103,6 +103,13 @@ public:
     bool UseColorAdjust() const { return mUseColorAdjust; }
     float FadeStart() const { return mFadeStart; }
     float FadeEnd() const { return mFadeEnd; }
+#ifdef HX_NATIVE
+    // Native only (the engine's rndshape::EnvLRFadePlanes detects LRFade()):
+    // left_out, left_opaque, right_opaque, right_out, from which
+    // NgEnviron::Select builds its two fade planes along LRFadeRef()'s x axis.
+    float FadeMax() const { return mFadeMax; }
+    const Vector4 &LRFade() const { return mLRFade; }
+#endif
     const Hmx::Color& FogColor() const { return mAmbientFogOwner->mFogColor; }
     void SetFogColor(const Hmx::Color &col) { mAmbientFogOwner->mFogColor = col; }
     void SetFogEnable(bool b) { mAmbientFogOwner->mFogEnable = b; }

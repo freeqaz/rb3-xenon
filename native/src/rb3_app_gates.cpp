@@ -3160,6 +3160,69 @@ void rb3_app_check_crowd_force_3d() { // ring: native-real
     _exit(7);
 }
 
+// A59: an environ's left/right fade reaches a fade_out material. Retail
+// NgEnviron::Select (rb3-xenon rndobj/Env_NG.cpp) builds two planes from the
+// environ's left_out/left_opaque/right_opaque/right_out along its fade_ref's x
+// axis when the environ fades out, and uploads them as VConstant/PConstant
+// 0x35/0x36 for the fade_out shader option; the vocal HUD's track.env
+// (fade_out, lr -12 -10 10 12) is how retail fades lyric words in the last two
+// units of the lane, and the lyric font material (Pentatonic_..._fadeout.mat)
+// declares fade_out (lane A54/A57: native drew them full strength). The
+// engine fills SceneUniforms lrFadeLeft/lrFadeRight (rndshape::EnvLRFadePlanes)
+// and sets colorMod.w bit 11 (rndshape::MatFadesOut); the shader multiplies the
+// output alpha by saturate(dot(left, p)) * saturate(dot(right, p)).
+// The check: the planes evaluate to retail's fade at x = 0, 10, 11, 12, -11,
+// -12, and the material's fade_out is seen.
+#include "rndobj/Env.h"
+#include "rndobj/Mat.h"
+void rb3_app_check_environ_lr_fade() { // ring: native-real
+    RndEnviron *env = Hmx::Object::New<RndEnviron>();
+    RndMat *mat = Hmx::Object::New<RndMat>();
+    env->SetProperty("fade_out", 1);
+    env->SetProperty("fade_start", 0.0f);
+    env->SetProperty("fade_end", 1000.0f);
+    env->SetProperty("left_out", -12.0f);
+    env->SetProperty("left_opaque", -10.0f);
+    env->SetProperty("right_opaque", 10.0f);
+    env->SetProperty("right_out", 12.0f);
+    mat->SetProperty("fade_out", 1);
+    float l[4] = {0, 0, 0, 0}, r[4] = {0, 0, 0, 0};
+    bool planes = rndshape::EnvLRFadePlanes(env, l, r);
+    bool matFades = rndshape::MatFadesOut(mat);
+    auto fade = [&](float x) {
+        float a = l[0] * x + l[3], b = r[0] * x + r[3];
+        a = a < 0 ? 0 : (a > 1 ? 1 : a);
+        b = b < 0 ? 0 : (b > 1 ? 1 : b);
+        return a * b;
+    };
+    auto near = [](float a, float b) { return a - b < 1e-4f && b - a < 1e-4f; };
+    float f0 = fade(0), f10 = fade(10), f11 = fade(11), f12 = fade(12), fm11 = fade(-11), fm12 = fade(-12);
+    bool ok = planes && matFades && near(f0, 1) && near(f10, 1) && near(f11, 0.5f) && near(f12, 0)
+        && near(fm11, 0.5f) && near(fm12, 0);
+    // An environ that does not fade out gives no planes (the shader then leaves alpha alone).
+    env->SetProperty("fade_out", 0);
+    float l2[4] = {0, 0, 0, 0}, r2[4] = {0, 0, 0, 0};
+    bool planesOff = rndshape::EnvLRFadePlanes(env, l2, r2);
+    ok = ok && !planesOff;
+    delete mat;
+    delete env;
+    char what[384];
+    snprintf(what, sizeof what,
+             "environ lr fade: planes %d, material fade_out %d, fade at x 0/10/11/12/-11/-12 = "
+             "%.3f %.3f %.3f %.3f %.3f %.3f, planes with fade_out off %d (want 1 1, 1 1 0.5 0 "
+             "0.5 0, 0; retail NgEnviron::Select c53/c54)",
+             (int)planes, (int)matFades, f0, f10, f11, f12, fm11, fm12, (int)planesOff);
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (environ lr fade)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
 // A56: RndText glyph pages sample their atlas RGB. Retail draws a page with the
 // font's own material (RndText SetMat(font->GetMat()), the plain field load at
 // every SetMat site of rndobj/Text.cpp) and its standard shader samples the
