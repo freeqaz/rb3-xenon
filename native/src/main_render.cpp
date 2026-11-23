@@ -187,6 +187,18 @@ extern std::vector<int> gHeadFemaleMapping;
 #include "rndobj/CubeTex.h"
 // A43 probe: a material's lighting inputs (protected fields).
 struct A43MatPeek : RndMat {
+    static void NoSpec(RndMat *m) {
+        static_cast<A43MatPeek *>(m)->mSpecularRGB.Set(0, 0, 0, 0);
+        static_cast<A43MatPeek *>(m)->mDirty |= 2;
+    }
+    static void NoSpecMap(RndMat *m) {
+        static_cast<A43MatPeek *>(m)->mSpecularMap = nullptr;
+        static_cast<A43MatPeek *>(m)->mDirty |= 2;
+    }
+    static void NoRim(RndMat *m) {
+        static_cast<A43MatPeek *>(m)->mRimRGB.Set(0, 0, 0, 0);
+        static_cast<A43MatPeek *>(m)->mDirty |= 2;
+    }
     static void Print(const char *mesh, RndMat *m) {
         if (!m) {
             printf("  [A43] mat %s: (null)\n", mesh);
@@ -4700,6 +4712,13 @@ namespace {
                             !strstr(mn, "hands") && !strstr(mn, "torso"))
                             continue;
                         A43MatPeek::Print(mn, m->Mat());
+                        // A/B knobs for the skin look (diagnostic only).
+                        RndMat *mt = m->Mat();
+                        if (mt && mt->GetShaderVariation() == kShaderVariationSkin) {
+                            if (getenv("RB3_A43_SKIN_NOSPEC")) A43MatPeek::NoSpec(mt);
+                            if (getenv("RB3_A43_SKIN_NOSPECMAP")) A43MatPeek::NoSpecMap(mt);
+                            if (getenv("RB3_A43_SKIN_NORIM")) A43MatPeek::NoRim(mt);
+                        }
                     }
                 }
                 if (getenv("RB3_A43_EYEBASE")) {
