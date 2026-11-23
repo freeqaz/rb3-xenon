@@ -727,11 +727,17 @@ void SystemInit(const char *config) {
     // FileCache::Init and TheContentMgr.Init (the #else arm). NetCacheMgr and
     // PlatformMgr name the "net_cache_mgr" and "platform_mgr" objects the UI
     // scripts address; TheCacheMgr is what SaveLoadManager's song-cache states
-    // search and mount after the splash screen's Start press. TheMC.Init and
-    // TheVirtualKeyboard.Init stay skipped here.
+    // search and mount after the splash screen's Start press. TheMC.Init stays
+    // skipped here. TheVirtualKeyboard.Init is retail's (bl 0x82527CD8 at
+    // 0x825113C4, after ThePlatformMgr.Init): it names the "virtual_keyboard"
+    // object five UI scripts address (manage_band's edit_band_name.btn, the
+    // character creator, setlist naming, token redemption, the overshell);
+    // without it each such press logged "virtual_keyboard not function or
+    // object" instead of reaching VirtualKeyboard::OnShowKeyboardUI.
     CacheMgrInit();
     NetCacheMgrInit();
     ThePlatformMgr.Init();
+    TheVirtualKeyboard.Init();
 #endif
     TheContentMgr.Init();
     StageKitInit(); // registers the stagekit_* script functions, as below

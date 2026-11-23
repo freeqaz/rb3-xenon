@@ -45,6 +45,13 @@
 #include "App.h"
 #include "ui/UI.h"
 #include "ui/UIScreen.h"
+#include "ui/UIPanel.h"
+#include "ui/UIComponent.h"
+#include "ui/PanelDir.h"
+#include "ui/UIList.h"
+#include "meta_band/OvershellPanel.h"
+#include "meta_band/OvershellSlot.h"
+#include "meta_band/OvershellSlotState.h"
 
 void rb3_app_check_ui_sink(); // rb3_app_gates.cpp
 void rb3_app_check_tex_movie(); // rb3_app_gates.cpp
@@ -120,6 +127,68 @@ void OnStall(int) {
     _exit(5);
 }
 
+// The selected entry of a focused UIList, for the focus log ("" for any other component).
+const char *ListSel(UIComponent *c, char *buf, size_t n) {
+    UIList *l = dynamic_cast<UIList *>(c);
+    buf[0] = 0;
+    if (l && l->NumProviderData() > 0)
+        snprintf(buf, n, " sel=%d:%s", l->SelectedPos(), l->SelectedSym(false).Str());
+    return buf;
+}
+
+// RB3_APP_FOCUS_LOG=1: one `rb3-app: frame N focus=<panel>/<component>` line whenever the
+// current screen's focused panel or that panel's focused component changes, so a menu walk can
+// see where its d-pad presses land (the det hash does not cover focus). Read-only: FocusPanel
+// and UIPanel::FocusComponent only read members.
+void LogFocus(UIScreen *cur) {
+    static const bool on = [] {
+        const char *v = getenv("RB3_APP_FOCUS_LOG");
+        return v && v[0] && strcmp(v, "0") != 0;
+    }();
+    if (!on) return;
+    static const void *lastPanel = nullptr, *lastComp = nullptr;
+    UIPanel *panel = cur ? cur->FocusPanel() : nullptr;
+    UIComponent *comp = panel ? panel->FocusComponent() : nullptr;
+    char sel[96];
+    ListSel(comp, sel, sizeof sel);
+    static char lastSel[96];
+    if (panel != lastPanel || comp != lastComp || strcmp(sel, lastSel)) {
+        lastPanel = panel;
+        lastComp = comp;
+        strcpy(lastSel, sel);
+        printf("rb3-app: frame %d focus=%s/%s%s\n", gFramesStarted,
+               panel && panel->Name() ? panel->Name() : "(none)",
+               comp && comp->Name() ? comp->Name() : "(none)", sel);
+        fflush(stdout);
+    }
+    // The overshell's slots (an overlay, not a screen): state id, view and focused component.
+    OvershellPanel *os = ObjectDir::Main()
+        ? ObjectDir::Main()->Find<OvershellPanel>("overshell", false) : nullptr;
+    for (int i = 0; i < 4; i++) {
+        static int lastId[4] = {-2, -2, -2, -2};
+        static const void *lastOsComp[4];
+        static const char *lastView[4];
+        static char lastOsSel[4][96];
+        char osel[96];
+        OvershellSlot *slot = os ? os->GetSlot(i) : nullptr;
+        int id = slot && slot->mState ? (int)slot->mState->GetStateID() : -1;
+        const char *view = slot ? slot->GetCurrentView().Str() : nullptr;
+        PanelDir *pd = slot ? dynamic_cast<PanelDir *>(slot->DataDir()) : nullptr;
+        UIComponent *oc = pd ? pd->FocusComponent() : nullptr;
+        ListSel(oc, osel, sizeof osel);
+        if (id == lastId[i] && oc == lastOsComp[i] && view == lastView[i]
+            && !strcmp(osel, lastOsSel[i]))
+            continue;
+        strcpy(lastOsSel[i], osel);
+        lastId[i] = id;
+        lastOsComp[i] = oc;
+        lastView[i] = view;
+        printf("rb3-app: frame %d overshell%d state=%d view=%s focus=%s%s\n", gFramesStarted, i,
+               id, view && *view ? view : "(none)", oc && oc->Name() ? oc->Name() : "(none)", osel);
+        fflush(stdout);
+    }
+}
+
 int EnvInt(const char *name, int dflt) {
     const char *v = getenv(name);
     return v && *v ? atoi(v) : dflt;
@@ -144,6 +213,7 @@ extern "C" void __wrap__Z10SystemPollb(bool b) { // ring: native-real
             gLastScreen = cur;
             gLastTransition = tr;
         }
+        LogFocus(cur);
     }
     __real__Z10SystemPollb(b);
 }
