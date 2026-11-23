@@ -108,14 +108,11 @@ END_PROPSYNCS
 // (same pattern as ui/UIFontImporter.cpp's gSaveRev): target emits lis/lwz
 // from a data address instead of the constant-folded `li r11, 8` that
 // SAVE_REVS(8, 0)'s inline packRevs() produces.
-// Retail .data 0x82C77238 holds 5: RB3 saves TexMovie at rev 5, alt 0. Native
-// keeps DC3's rev 8 because its Save also writes mIsLocalized, which its Load
-// reads only when rev > 5.
-#ifdef HX_NATIVE
-static int gSaveRev = (0 << 16) | 8; // packRevs(alt=0, rev=8)
-#else
+// Retail .data 0x82C77238 holds 5: RB3 saves TexMovie at rev 5, alt 0, and
+// Save (0x82746B88) writes Object, Drawable, Pollable, mTex, mLoop, the file
+// path and the movie -- no mIsLocalized. Native saves the same format, so a
+// native-saved TexMovie stays readable by the game.
 static int gSaveRev = 5;
-#endif
 
 BEGIN_SAVES(TexMovie)
     bs << gSaveRev;
@@ -123,11 +120,6 @@ BEGIN_SAVES(TexMovie)
     SAVE_SUPERCLASS(RndDrawable)
     SAVE_SUPERCLASS(RndPollable)
     bs << mTex << mLoop << sRoot;
-#ifdef HX_NATIVE
-    // DC3-era addition (see the is_localized/is_empty gate above);
-    // RB3-360 retail's Save doesn't write this field.
-    bs << mIsLocalized;
-#endif
     mMovie.Save(&bs);
 END_SAVES
 
@@ -167,8 +159,8 @@ BEGIN_LOADS(TexMovie)
     }
     bs >> sRoot;
 #ifdef HX_NATIVE
-    // DC3-era additions, consistent with the is_localized/is_empty and Save
-    // gates above: RB3-360 retail's Load reads neither.  Both blocks are
+    // DC3-era additions for DC3 rev 6..8 files: RB3-360 retail's Load reads
+    // neither, and RB3 data and native saves are rev 5, so neither fires.  Both blocks are
     // base-only in the aligned diff (13 consecutive base-only instructions
     // between `bs >> sRoot` and the change_file static).
     if (rev > 5) {
