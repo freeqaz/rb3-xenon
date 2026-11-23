@@ -2886,6 +2886,162 @@ BandCharacter::Filter(Hmx::Object *o1, Hmx::Object *o2, ObjectDir *dir) {
     return action;
 }
 
+#ifdef HX_NATIVE
+// ============================================================================
+// A39 -- retail's char_shared UN-SHARE, for a subdir the native shim keeps.
+//
+// Retail's FilterSubdir (band.exe TU5 fn_82285848) is a bare tail call into
+// MergeFilter::DefaultSubdirAction (`b fn_82757BD0`), so under kAllSubdirs every
+// outfit piece's subdirs -- the piece's `*_resource.milo` and, below it or
+// directly, `char/main/shared/char_shared.milo` -- come back kMergeMerge and the
+// merge WALKS their objects through Filter. Filter's char_shared arm (fn_82285868
+// +0x1E0..+0x214: `lwz r11,0x1c(r27)` o1->Dir(), compared with sCharSharedDir;
+// `li r5,1` + `bl fn_82270438` Find(o1->Name()); `bl fn_82281F00` ::ReplaceRefs;
+// `li r3,0x3` kIgnore) then repoints every reference this member's merged objects
+// hold on a char_shared object onto the member's OWN same-named copy -- the
+// `torso_naked.mat` / `legs_skin.mat` / `feet_socks_skin.mat` / `head_naked.mat`
+// that OutfitConfig::SetSkinTextures binds to the `*_skin_diffuse_output.tex`
+// render targets. It moves nothing out of char_shared (every one of its objects
+// is kIgnore), so it cannot drain it.
+//
+// The native shim below converts kMergeMerge -> kMergeReplace for every on-disk
+// subdir, which keeps char_shared (and the resource dir it hangs under) as a
+// shared reference and never walks it. That dropped the un-share with the drain:
+// head.mesh, hands_naked.mesh and every *_skin.N.mesh kept drawing char_shared's
+// material (head_naked.mat has NO diffuse -> the bare gold/silver specular head),
+// and -- the half no mesh-side repair can reach -- skin.cfg's MatSwaps kept
+// char_shared's materials as mMat, whose diffuse is a dummy/NULL, not the RT, so
+// MatSwap::Compose took the `rttDiff=0 && mTwoColor -> return` branch and the
+// skin composite was never painted at all.
+//
+// This runs exactly that arm, with the same ::ReplaceRefs (so the same
+// sOutfitDir/sResourceDir/sToDir owner scope: only this merge's objects are
+// repointed), over char_shared's own objects, when the shim keeps char_shared or
+// a dir above it. Retail's MILO_ASSERT(mine->Dir() == this) becomes a skip.
+// It does NOT reproduce the rest of the walk: char_shared's own subdirs
+// (skeleton.milo, colorpalettes.milo) stay kept, as before.
+static void UnshareKeptCharShared(ObjectDir *self, ObjectDir *dir, int depth) {
+    if (!dir || !sCharSharedDir || depth > 4)
+        return;
+    if (dir == sCharSharedDir) {
+        static const bool off = getenv("RB3_NO_CHARSHARED_UNSHARE") != nullptr;
+        if (off)
+            return;
+        int repointed = 0, noOwn = 0;
+        for (ObjDirItr<Hmx::Object> it(dir, false); it != 0; ++it) {
+            Hmx::Object *theirs = it;
+            if (!theirs || theirs->Dir() != sCharSharedDir || !theirs->Name())
+                continue;
+            Hmx::Object *mine = self->Find<Hmx::Object>(theirs->Name(), false);
+            if (!mine || mine == theirs || mine->Dir() != self) {
+                noOwn++;
+                continue;
+            }
+            ::ReplaceRefs(theirs, mine);
+            repointed++;
+        }
+        if (getenv("RB3_X21_TRACE"))
+            fprintf(stderr,
+                    "[A39] char_shared un-share: member='%s' toDir='%s' resource='%s' "
+                    "objects with own copy=%d, without=%d\n",
+                    self->Name() ? self->Name() : "?",
+                    sToDir ? PathName(sToDir) : "(null)",
+                    sResourceDir ? PathName(sResourceDir) : "(null)", repointed, noOwn);
+        return;
+    }
+    for (int i = 0; i < (int)dir->SubDirs().size(); i++)
+        UnshareKeptCharShared(self, dir->SubDirs()[i], depth + 1);
+}
+
+// ============================================================================
+// A41 -- retail's SKELETON (sBoneMergeDir) repoint, for a subdir the shim keeps.
+//
+// The same shape of loss as A39's, on the other Filter arm. OnInstallFilter sets
+// sBoneMergeDir to the Dir of the outfit's `bone_pelvis.mesh` -- the piece's
+// char/main/skeleton_unshared.milo. Under retail's kMergeMerge that dir is walked
+// through Filter, and Filter's not-a-resource-dir arm (fn_82285868: +0x238..+0x268
+// rule out the three resource dirs; +0x26C..+0x274 compare o1->Dir() with
+// sBoneMergeDir; +0x290 `bl fn_8282A0C8` is the RndTransformable dynamic_cast;
+// +0x29C `li r5,0` + +0x2A8 `bl fn_82270438` is Find(o1->Name(), false); +0x2B4
+// `b` to +0x20C joins A39's tail, +0x210 `bl fn_82281F00` ::ReplaceRefs and
+// +0x214 -> +0x138 `li r3,0x3` kIgnore) repoints every reference this merge's
+// objects hold on a shared skeleton bone onto the member's OWN same-named bone.
+//
+// The native shim keeps skeleton_unshared.milo as a shared subdir and never walks
+// it, so those references stay on the one shared skeleton instance, which sits at
+// the venue origin. RebindOutfitBonesToOwnSkeleton (native) later repoints MESH
+// bone slots by name, but it cannot reach a TransParent link, and it skips a mesh
+// any of whose bones do not resolve under the member. The hair meshes are exactly
+// that: their `bone_hair_*` / `bone_hair-*` bones were merged into the outfit dir
+// (Filter's bone_ arm, kMerge, +0x344..+0x3E4) with their parent `bone_hair.mesh`
+// still the SHARED skeleton's. MEASURED (a temporary A41 probe, small_club_01, placed
+// band): every member's hair bones sat at world (~0, ~0, ~70) -- the venue origin
+// -- while the member's own head was at e.g. (-70, 80, 79); so the four hairs drew
+// stacked in one spot and no member had hair. buttflappants' bone_legs_* chain
+// (parents exo_*-thigh / exo_pelvis) was in the same state.
+//
+// This runs that arm with the same ::ReplaceRefs and owner scope. Nothing moves
+// out of the skeleton dir (retail returns kIgnore for every one of its objects).
+// Opt-out: RB3_NO_BONEMERGE_UNSHARE=1. Trace: `[A41] bone-merge repoint` under
+// RB3_X21_TRACE.
+static int sBoneMergeRepoints = 0; // gate/trace counter: refs repointed, lifetime
+static void RepointKeptBoneMergeDir(ObjectDir *self, ObjectDir *dir, int depth) {
+    if (!dir || !sBoneMergeDir || depth > 4)
+        return;
+    if (dir == sBoneMergeDir) {
+        static const bool off = getenv("RB3_NO_BONEMERGE_UNSHARE") != nullptr;
+        if (off)
+            return;
+        int repointed = 0, noOwn = 0;
+        for (ObjDirItr<RndTransformable> it(dir, false); it != 0; ++it) {
+            RndTransformable *theirs = it;
+            if (!theirs || theirs->Dir() != sBoneMergeDir || !theirs->Name())
+                continue;
+            Hmx::Object *mine = self->Find<Hmx::Object>(theirs->Name(), false);
+            if (!mine || mine == theirs) {
+                noOwn++;
+                continue;
+            }
+            ::ReplaceRefs(theirs, mine);
+            repointed++;
+        }
+        sBoneMergeRepoints += repointed;
+        if (getenv("RB3_X21_TRACE"))
+            fprintf(stderr,
+                    "[A41] bone-merge repoint: member='%s' toDir='%s' skeleton='%s' "
+                    "bones with own copy=%d, without=%d\n",
+                    self->Name() ? self->Name() : "?",
+                    sToDir ? PathName(sToDir) : "(null)", PathName(dir), repointed,
+                    noOwn);
+        return;
+    }
+    for (int i = 0; i < (int)dir->SubDirs().size(); i++)
+        RepointKeptBoneMergeDir(self, dir->SubDirs()[i], depth + 1);
+}
+
+// rb3-app gate hook (native/src/rb3_app_gates.cpp): run the A41 repoint for a kept
+// dir with the merge statics set as OnInstallFilter would, and restore them.
+// Returns the number of skeleton bones repointed.
+int BandCharacterGateBoneMergeRepoint(
+    ObjectDir *self, ObjectDir *kept, ObjectDir *skeleton, ObjectDir *toDir
+) {
+    ObjectDir *saveBone = sBoneMergeDir, *saveTo = sToDir, *saveOutfit = sOutfitDir,
+              *saveRes = sResourceDir;
+    sBoneMergeDir = skeleton;
+    sToDir = toDir;
+    sOutfitDir = toDir;
+    sResourceDir = 0;
+    int before = sBoneMergeRepoints;
+    RepointKeptBoneMergeDir(self, kept, 0);
+    int n = sBoneMergeRepoints - before;
+    sBoneMergeDir = saveBone;
+    sToDir = saveTo;
+    sOutfitDir = saveOutfit;
+    sResourceDir = saveRes;
+    return n;
+}
+#endif
+
 MergeFilter::SubdirAction BandCharacter::FilterSubdir(ObjectDir *o1, ObjectDir *toDir) {
 #ifdef HX_NATIVE
     // Native load-order fix (char textures rendering white). A shared external
@@ -2947,6 +3103,12 @@ MergeFilter::SubdirAction BandCharacter::FilterSubdir(ObjectDir *o1, ObjectDir *
         DefaultSubdirAction(o1, (Subdirs)mFileMerger->mFilesPending.front()->mSubdirs);
     if (act == MergeFilter::kMergeMerge && o1 && !o1->StoredFile().empty()) {
         act = MergeFilter::kMergeReplace;
+        // A39: the shim keeps this subdir as a shared reference, so retail's
+        // object walk -- and with it Filter's char_shared un-share arm -- never
+        // runs for it. Run that one arm here (see UnshareKeptCharShared).
+        UnshareKeptCharShared(this, o1, 0);
+        // A41: and Filter's skeleton (sBoneMergeDir) arm, for the same reason.
+        RepointKeptBoneMergeDir(this, o1, 0);
     }
     return act;
 #else

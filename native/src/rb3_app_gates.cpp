@@ -2586,3 +2586,57 @@ void rb3_app_check_nonull_list_replace_drain() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A41: the placed band had no hair. Each hair piece's bone_hair_* bones are merged
+// into the outfit dir, parented to `bone_hair.mesh` of the piece's
+// skeleton_unshared.milo, which the native FilterSubdir shim keeps as a shared
+// subdir instead of walking. Retail walks it through Filter's sBoneMergeDir arm
+// (band.exe TU5 fn_82285868 +0x26C..+0x2B4, then ::ReplaceRefs fn_82281F00 at
+// +0x210), which repoints the merge's references onto the member's OWN bone, so
+// the hair follows the member's head. Without it every member's hair sits on the
+// one shared skeleton at the venue origin. The check builds that shape: a kept dir
+// holding the skeleton as a subdir, a merged hair bone in the outfit dir parented
+// to the skeleton's bone_hair, a bystander bone outside the merge's dirs parented
+// to the same shared bone, and the member's own bone_hair. Only addresses are
+// compared.
+#include "rndobj/Trans.h"
+int BandCharacterGateBoneMergeRepoint(ObjectDir *self, ObjectDir *kept, ObjectDir *skeleton,
+                                      ObjectDir *toDir); // BandCharacter.cpp (HX_NATIVE)
+void rb3_app_check_bone_merge_repoint() { // ring: native-real
+    ObjectDir *self = Hmx::Object::New<ObjectDir>();
+    ObjectDir *kept = Hmx::Object::New<ObjectDir>();
+    ObjectDir *skeleton = Hmx::Object::New<ObjectDir>();
+    ObjectDir *outfit = Hmx::Object::New<ObjectDir>();
+    ObjectDir *other = Hmx::Object::New<ObjectDir>();
+    RndTransformable *own = Hmx::Object::New<RndTransformable>();
+    RndTransformable *shared = Hmx::Object::New<RndTransformable>();
+    RndTransformable *pelvis = Hmx::Object::New<RndTransformable>();
+    RndTransformable *hair = Hmx::Object::New<RndTransformable>();
+    RndTransformable *bystander = Hmx::Object::New<RndTransformable>();
+    own->SetName("bone_hair.mesh", self);
+    shared->SetName("bone_hair.mesh", skeleton);
+    pelvis->SetName("bone_pelvis.mesh", skeleton); // no own copy: left alone
+    hair->SetName("bone_hair_a41.mesh", outfit);
+    bystander->SetName("bone_hair_a41.mesh", other);
+    hair->SetTransParent(shared, false);
+    bystander->SetTransParent(shared, false);
+    kept->AppendSubDir(ObjDirPtr<ObjectDir>(skeleton));
+    int n = BandCharacterGateBoneMergeRepoint(self, kept, skeleton, outfit);
+    bool hairOwn = hair->TransParent() == own;
+    bool bystanderShared = bystander->TransParent() == shared;
+    char what[320];
+    snprintf(what, sizeof what,
+             "bone merge repoint: %d skeleton bone(s) repointed, merged hair bone parent is the "
+             "member's own %d, bystander keeps the shared one %d (want 1 1 1) (retail "
+             "fn_82285868 +0x26C..+0x2B4 -> fn_82281F00)",
+             n, (int)hairOwn, (int)bystanderShared);
+    if (n == 1 && hairOwn && bystanderShared) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (bone merge repoint)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
