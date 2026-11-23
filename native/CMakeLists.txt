@@ -2863,7 +2863,8 @@ if(RB3X_BUILD_ENGINE)
     list(REMOVE_ITEM _rb3_app_all ${REPO_ROOT}/src/Main.cpp)
     list(APPEND _rb3_app_all ${CMAKE_SOURCE_DIR}/src/main_app.cpp
         ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.cpp
-        ${CMAKE_SOURCE_DIR}/src/rb3_app_determinism.cpp)
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_determinism.cpp
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_mic_native.cpp)
     rb3_add_executable(rb3-app ${_rb3_app_all})
     list(APPEND MILO_TARGETS rb3-app)
     # RB3_NATIVE_PRESENCEMGR: the real PresenceMgr.cpp is linked (App::App calls
