@@ -59,6 +59,7 @@ bool RB3AppChartPlayOn();
 unsigned int RB3AppChartPlayButtons(int pad, int poll);
 bool RB3AppChartPlayLog();
 void RB3AppChartPlayAfterPoll(int poll);
+const unsigned char *RB3AppChartPlayRaw(int pad); // lane chartplay2: keys / pro guitar report
 
 namespace {
 JoypadNativePadState gPad[kNumJoypads]; // this poll's native source state, per pad
@@ -373,6 +374,11 @@ int ReadSingleJoypad(int pad, unsigned int *buttons, char *lx, char *ly, char *r
                      unsigned char *pro_guitar) {
     if (pad >= kNumJoypads) return kJoypadNone;
     for (int i = 0; i < 16; i++) pro_guitar[i] = 0; // no raw HID report natively
+    // RB3_APP_CHARTPLAY on a keytar or pro guitar (lane chartplay2): the chart
+    // player's report bytes (keys, string frets and velocities) stand in for the
+    // HID report; UsbMidiKeyboard / UsbMidiGuitar::Poll read them as retail's.
+    if (const unsigned char *raw = RB3AppChartPlayRaw(pad))
+        for (int i = 0; i < 16; i++) pro_guitar[i] = raw[i];
     return ReadSingleXinputJoypad(pad, pad, buttons, lx, ly, rx, ry, lt, rt, sensors,
                                   pressures, pro_guitar);
 }
