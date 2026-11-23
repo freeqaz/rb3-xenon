@@ -2224,3 +2224,70 @@ void rb3_app_check_typeprops_remove_one() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A34: a fresh CharPollableSorter::Dep's searchID. Retail's mDeps operator[]
+// (fn_82373BB0) never writes the default value's searchID, and the Dep copy
+// (fn_823710E8 +0x3C) carries that stack slot into the node, so
+// ChangedByRecurse (fn_8236E980 +0x30..+0x38) compares garbage with sSearchID
+// and, on a match, skips the fresh dep's changed-by chain. Natively Dep() now
+// zeroes it (char/CharPollable.h, HX_NATIVE), and sSearchID is >= 1 inside
+// every search (Sort and ChangedBy increment it first). The check makes the
+// garbage deterministic: two Deps are placement-built over bytes holding the
+// next search's ID, chained a -> f -> target, and ChangedBy(a, target) must
+// find the target. A Dep() that leaves searchID alone early-outs at a (rc 7).
+// Then a real mDeps[] node must start at 0. Keys are compared, never
+// dereferenced.
+#include "char/CharPollable.h"
+namespace {
+    struct A34Sorter : CharPollableSorter {
+        static int NextSearchID() { return sSearchID + 1; }
+        static int SearchID() { return sSearchID; }
+        bool Changed(Dep *a, Dep *b) { return ChangedBy(a, b); }
+        Dep &Node(Hmx::Object *key) { return mDeps[key]; }
+    };
+    using A34Dep = CharPollableSorter::Dep;
+    // A Dep built over storage whose every int already holds `fill`.
+    A34Dep *A34DepOver(void *storage, int fill) {
+        int *words = static_cast<int *>(storage);
+        for (size_t i = 0; i < sizeof(A34Dep) / sizeof(int); i++)
+            words[i] = fill;
+        return new (storage) A34Dep();
+    }
+}
+void rb3_app_check_poll_sorter_search_id() {
+    A34Sorter sorter;
+    int next = A34Sorter::NextSearchID();
+    alignas(A34Dep) unsigned char bufA[sizeof(A34Dep)];
+    alignas(A34Dep) unsigned char bufF[sizeof(A34Dep)];
+    A34Dep *a = A34DepOver(bufA, next);
+    A34Dep *f = A34DepOver(bufF, next);
+    A34Dep target;
+    a->changedBy.push_back(f);
+    f->changedBy.push_back(&target);
+    int freshA = a->searchID, freshF = f->searchID;
+    bool found = sorter.Changed(a, &target);
+    bool searched = A34Sorter::SearchID() == next; // the search we pre-filled for
+    bool stamped = a->searchID == next && f->searchID == next;
+    // A second search over the same chain: the stamps are the old ID now.
+    bool again = sorter.Changed(a, &target);
+    // A real map node, keyed by an address that is never dereferenced.
+    A34Dep &node = sorter.Node(reinterpret_cast<Hmx::Object *>(&target));
+    int nodeID = node.searchID;
+    a->~A34Dep();
+    f->~A34Dep();
+    char what[384];
+    snprintf(what, sizeof what,
+             "poll sorter search id: fresh deps over bytes = next id %d read %d %d (want 0 0); "
+             "ChangedBy(a, target) through a -> f -> target found %d, search id %d, both stamped "
+             "%d; second search found %d; fresh mDeps node %d (want 1 1 1 1 0)",
+             next, freshA, freshF, (int)found, (int)searched, (int)stamped, (int)again, nodeID);
+    if (freshA == 0 && freshF == 0 && found && searched && stamped && again && nodeID == 0) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (poll sorter search id)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}

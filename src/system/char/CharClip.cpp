@@ -184,7 +184,21 @@ CharClip::NodeVector *CharClip::Transitions::Resize(int size, const NodeVector *
     }
     // size is in bytes, not element count — use byte arithmetic
     mNodeEnd = (NodeVector *)((char *)mNodeStart + size);
+#ifdef HX_NATIVE
+    // Retail (fn_8237CB30) returns `start + (old - old start)` whatever `old`
+    // is: `subf r28,r3,r27` at +0x5C, `add r29,r11,r28` at +0xB0. With old
+    // null that is only meaningful when the old storage was empty too (n == 0):
+    // AddNode's new-clip arm passes mNodeEnd (fn_8237D258 +0xB8), which is null
+    // on an empty table, and reads the result as the new vector. Every other
+    // null-`old` caller (RemoveNodes fn_8237D3C8 +0x84 `li r5,0`, Load, Clear)
+    // drops the result, and there `n = -old start`; after a size-0 free that
+    // offset lands on a null mNodeStart, which is UB (UBSan, asanwalk2 M6).
+    // So a null `old` returns the storage start: retail's value when n == 0,
+    // and an unread value otherwise. A non-null `old` is unchanged.
+    return old ? (NodeVector *)((char *)mNodeStart + n) : mNodeStart;
+#else
     return (NodeVector *)((char *)mNodeStart + n);
+#endif
 }
 
 CharClip::NodeVector *CharClip::Transitions::GetNodes(int idx) const {
