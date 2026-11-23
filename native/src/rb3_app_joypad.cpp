@@ -474,3 +474,39 @@ bool requestBreedWrite(int, unsigned char *) { return false; }
 
 // Empty in retail too (the call lands on a shared `blr`, Joypad_Xbox.cpp).
 void JoypadSetActuatorsImp(int, int, int) {}
+
+// stubring: JoypadSetRumble (retail 0x82529AE8) is a lone `b` into
+// JoypadSetXinputActuators (0x82532378, Joypad_Xinput.cpp, compiled here),
+// which fills an XINPUT_VIBRATION and calls XInputSetState. Retail's callers
+// are JoypadStageKitSetRaw and the Calbert-mode rumble fallback
+// (JoypadSetXinputCalbertMode, Joypad_Xinput.cpp).
+void JoypadSetRumble(int pad, int left, int right) { JoypadSetXinputActuators(pad, left, right); }
+
+// stubring: retail 0x82529C98. Calbert-capable pads (JoypadData::mType
+// 0x1e..0x2e) take the mode as a downstream 0x83 report through SendRawData
+// (0x82529BC0, XInput2); every other pad approximates it with the right
+// rumble motor. No native pad has an XInput2 report channel (see
+// requestBreedWrite above), so the report arm sends nothing.
+void JoypadSetCalbertMode(int pad, int mode) {
+    int type = JoypadGetPadData(pad)->mType;
+    if (type >= 0x1e && type <= 0x2e) {
+        return; // retail: SendRawData(pad, 0x83, mode, 0, 0, 0, 0, 0)
+    }
+    JoypadSetXinputCalbertMode(pad, mode);
+}
+
+// stubring: the vibration sink. A native pad has no motors; the call reports
+// a changed motor pair once (MILO_INPUT_LOG lines are what a walk greps) and
+// succeeds, as XInputSetState does for a connected pad.
+DWORD XInputSetState(DWORD pad, XINPUT_VIBRATION *vib) {
+    static int sLast[kNumJoypads][2] = { { -1, -1 }, { -1, -1 }, { -1, -1 }, { -1, -1 } };
+    if (pad >= kNumJoypads)
+        return 1167; // ERROR_DEVICE_NOT_CONNECTED
+    int l = vib ? vib->wLeftMotorSpeed : 0, r = vib ? vib->wRightMotorSpeed : 0;
+    if (sLast[pad][0] != l || sLast[pad][1] != r) {
+        fprintf(stderr, "rb3-app: XInputSetState pad %u left 0x%04x right 0x%04x\n", pad, l, r);
+        sLast[pad][0] = l;
+        sLast[pad][1] = r;
+    }
+    return 0;
+}

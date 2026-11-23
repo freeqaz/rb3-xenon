@@ -2809,6 +2809,20 @@ if(RB3X_BUILD_ENGINE)
     list(REMOVE_ITEM _rb3_app_all ${CMAKE_SOURCE_DIR}/src/platform/Joypad_Stub.cpp)
     list(APPEND _rb3_app_all ${CMAKE_SOURCE_DIR}/src/rb3_app_joypad.cpp
         ${CMAKE_SOURCE_DIR}/src/rb3_app_joypad_gate.cpp)
+    # stubring (2026-11-23): bodies for in-scope link stubs, record
+    # docs/decomp/STUBRING_RB3APP_INSCOPE_STUBS_2026-11-23.md.
+    #  * rb3_app_stubring_native.cpp: the three VMX intrinsics SndAnalysis's
+    #    ShiftedDotProduct uses, PlatformMgr::SwapUserPads / IsGuestOnlineID
+    #    (PlatformMgr_Xbox.cpp's bodies), XRemapUserDevices and
+    #    DmCaptureStackBackTrace.
+    #  * bandobj/Label3d.cpp: BandInit (Band.cpp) registers Label3d as retail
+    #    does (Label3d::Init); X360 extra_cflags /DRB3_SYNCPROP_LOCAL_STATIC.
+    #  * midi/DisplayEvents.cpp: MidiParser's debug_draw handler.
+    list(APPEND _rb3_app_all ${CMAKE_SOURCE_DIR}/src/rb3_app_stubring_native.cpp
+        ${REPO_ROOT}/src/system/bandobj/Label3d.cpp
+        ${REPO_ROOT}/src/system/midi/DisplayEvents.cpp)
+    set_source_files_properties(${REPO_ROOT}/src/system/bandobj/Label3d.cpp
+        PROPERTIES COMPILE_DEFINITIONS "RB3_SYNCPROP_LOCAL_STATIC")
     # A4: TU5 is mounted by default when <checkout>/orig/45410914/tu5-package
     # holds it (orig/ is gitignored, so a worktree may not have its own copy).
     # The MAIN checkout comes from `git rev-parse --git-common-dir`, the same

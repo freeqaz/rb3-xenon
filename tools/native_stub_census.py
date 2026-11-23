@@ -99,7 +99,11 @@ NON_STUB_RE = re.compile(
     r"rb3_app_joypad\.cpp|rb3_app_joypad_gate\.cpp|"
     # detwalk: rb3-app's opt-in deterministic-walk hooks (RB3_APP_DETERMINISTIC;
     # seed, clock and ThreadCall wrappers that pass through when unset).
-    r"rb3_app_determinism\.cpp)\.o$"
+    r"rb3_app_determinism\.cpp|"
+    # stubring: rb3-app's ported bodies for in-scope link stubs (VMX intrinsics,
+    # PlatformMgr::SwapUserPads/IsGuestOnlineID, XRemapUserDevices,
+    # DmCaptureStackBackTrace); real bodies, nothing aborts.
+    r"rb3_app_stubring_native\.cpp)\.o$"
 )
 NATIVE_SRC_RE = re.compile(r"CMakeFiles/[^/]+\.dir/src/[^/]+\.o$")
 
