@@ -1439,3 +1439,151 @@ void rb3_app_check_sphere_base_replace() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A26: the rest of A24's same-shape census -- owner-control holders whose
+// retail Replace compares `from`, the dying object on X360, with the held
+// pointer. The native ring passes the ObjRef member itself as `from`
+// (obj/Object.h RefIs), so each compare never matched natively and a
+// ReplaceRefs walk (snapshot, self-loop, Replace) left the member on the dying
+// object. Retail compares (band.exe TU5):
+//   RndCamAnim::Replace         fn_82485C80+0x34 `cmplw cr6,r11,r4`  (to ? to's keys owner : this)
+//   RndParticleSysAnim::Replace fn_8247F168+0x34 `cmplw cr6,r11,r4`  (same shape)
+//   Spotlight::Replace          fn_824D81C0+0x3C `cmplw cr6,r11,r30` (to as Spotlight, then null -> this)
+//   BandCharacter::Replace      fn_8227E168+0x3C `cmplw cr6,r30,r11` (to as BandCharDesc, CopyCharDesc)
+//   CharClipGroup::Replace      fn_8238F270+0x58 `cmplw cr6,r11,r22` (entry := to as CharClip; null entry erased)
+// Each sub-check: X->ReplaceRefs(Y) must move the member to Y's answer, then
+// Y->ReplaceRefs(nullptr) (X360 ~Object 0x8275CBF0's walk) must apply retail's
+// null arm. ReplaceRefs, not a plain delete: A24 found a dir-free delete takes
+// NullifyAllRefs, whose X16 seed restore hides the self-seeded members.
+// Fails with the retail compares natively (rc 7).
+#include "rndobj/CamAnim.h"
+#include "rndobj/PartAnim.h"
+#include "world/Spotlight.h"
+#include "bandobj/BandCharacter.h"
+#include "bandobj/BandCharDesc.h"
+#include "char/CharClipGroup.h"
+#include "char/CharClip.h"
+namespace {
+    struct A26CamPeek : public RndCamAnim {
+        static ObjOwnerPtr<RndCamAnim> RndCamAnim::*Keys() { return &A26CamPeek::mKeysOwner; }
+    };
+    struct A26PartPeek : public RndParticleSysAnim {
+        static ObjOwnerPtr<RndParticleSysAnim> RndParticleSysAnim::*Keys() {
+            return &A26PartPeek::mKeysOwner;
+        }
+    };
+    struct A26SpotPeek : public Spotlight {
+        static ObjOwnerPtr<Spotlight> Spotlight::*Color() { return &A26SpotPeek::mColorOwner; }
+    };
+    struct A26GroupPeek : public CharClipGroup {
+        static ObjVector<ObjOwnerPtr<CharClip> > CharClipGroup::*Clips() {
+            return &A26GroupPeek::mClips;
+        }
+    };
+}
+void rb3_app_check_owner_ptr_replace() { // ring: native-real
+    // RndCamAnim: A's keys owner K; K->ReplaceRefs(K2) -> K2's keys owner (K2);
+    // K2->ReplaceRefs(NULL) -> A itself.
+    RndCamAnim *ca = Hmx::Object::New<RndCamAnim>();
+    RndCamAnim *ck = Hmx::Object::New<RndCamAnim>();
+    RndCamAnim *ck2 = Hmx::Object::New<RndCamAnim>();
+    ObjOwnerPtr<RndCamAnim> &camKeys = ca->*A26CamPeek::Keys();
+    camKeys = ck;
+    bool camOnK = camKeys.Ptr() == ck;
+    ck->ReplaceRefs(ck2);
+    bool camOnK2 = camKeys.Ptr() == ck2;
+    ck2->ReplaceRefs(nullptr);
+    bool camSelf = camKeys.Ptr() == ca;
+    bool cam = camOnK && camOnK2 && camSelf;
+
+    RndParticleSysAnim *pa = Hmx::Object::New<RndParticleSysAnim>();
+    RndParticleSysAnim *pk = Hmx::Object::New<RndParticleSysAnim>();
+    RndParticleSysAnim *pk2 = Hmx::Object::New<RndParticleSysAnim>();
+    ObjOwnerPtr<RndParticleSysAnim> &partKeys = pa->*A26PartPeek::Keys();
+    partKeys = pk;
+    bool partOnK = partKeys.Ptr() == pk;
+    pk->ReplaceRefs(pk2);
+    bool partOnK2 = partKeys.Ptr() == pk2;
+    pk2->ReplaceRefs(nullptr);
+    bool partSelf = partKeys.Ptr() == pa;
+    bool part = partOnK && partOnK2 && partSelf;
+
+    // Spotlight: S's color owner C; C->ReplaceRefs(C2) -> C2; C2->ReplaceRefs(NULL)
+    // -> null, then the `!Ptr()` tail -> S itself.
+    Spotlight *sa = Hmx::Object::New<Spotlight>();
+    Spotlight *sc = Hmx::Object::New<Spotlight>();
+    Spotlight *sc2 = Hmx::Object::New<Spotlight>();
+    ObjOwnerPtr<Spotlight> &color = sa->*A26SpotPeek::Color();
+    color = sc;
+    bool spotOnC = color.Ptr() == sc;
+    sc->ReplaceRefs(sc2);
+    bool spotOnC2 = color.Ptr() == sc2;
+    sc2->ReplaceRefs(nullptr);
+    bool spotSelf = color.Ptr() == sa;
+    bool spot = spotOnC && spotOnC2 && spotSelf;
+
+    // BandCharacter: test prefab D; D->ReplaceRefs(D2) -> D2; D2->ReplaceRefs(NULL)
+    // -> null (mTestPrefab is not self-seeded).
+    BandCharacter *bc = Hmx::Object::New<BandCharacter>();
+    BandCharDesc *bd = Hmx::Object::New<BandCharDesc>();
+    BandCharDesc *bd2 = Hmx::Object::New<BandCharDesc>();
+    bc->mTestPrefab = bd;
+    bool bandOnD = bc->mTestPrefab.Ptr() == bd;
+    bd->ReplaceRefs(bd2);
+    bool bandOnD2 = bc->mTestPrefab.Ptr() == bd2;
+    bd2->ReplaceRefs(nullptr);
+    bool bandNull = bc->mTestPrefab.Ptr() == nullptr;
+    bool band = bandOnD && bandOnD2 && bandNull;
+
+    // CharClipGroup: clips {C1, C2}; C1->ReplaceRefs(C3) -> {C3, C2};
+    // C2->ReplaceRefs(NULL) -> {C3} (retail erases the null entry).
+    CharClipGroup *g = Hmx::Object::New<CharClipGroup>();
+    CharClip *c1 = Hmx::Object::New<CharClip>();
+    CharClip *c2 = Hmx::Object::New<CharClip>();
+    CharClip *c3 = Hmx::Object::New<CharClip>();
+    ObjVector<ObjOwnerPtr<CharClip> > &clips = g->*A26GroupPeek::Clips();
+    g->AddClip(c1);
+    g->AddClip(c2);
+    bool grpTwo = clips.size() == 2 && clips[0].Ptr() == c1 && clips[1].Ptr() == c2;
+    c1->ReplaceRefs(c3);
+    bool grpOnC3 = clips.size() == 2 && clips[0].Ptr() == c3 && clips[1].Ptr() == c2;
+    c2->ReplaceRefs(nullptr);
+    bool grpErased = clips.size() == 1 && clips[0].Ptr() == c3;
+    bool grp = grpTwo && grpOnC3 && grpErased;
+
+    char what[768];
+    snprintf(what, sizeof what,
+             "owner ptr replace: RndCamAnim keys on K %d, on K2 %d, self %d; "
+             "RndParticleSysAnim keys on K %d, on K2 %d, self %d; "
+             "Spotlight color on C %d, on C2 %d, self %d; "
+             "BandCharacter prefab on D %d, on D2 %d, null %d; "
+             "CharClipGroup {C1,C2} %d, {C3,C2} %d, {C3} %d (want all 1)",
+             (int)camOnK, (int)camOnK2, (int)camSelf, (int)partOnK, (int)partOnK2,
+             (int)partSelf, (int)spotOnC, (int)spotOnC2, (int)spotSelf, (int)bandOnD,
+             (int)bandOnD2, (int)bandNull, (int)grpTwo, (int)grpOnC3, (int)grpErased);
+    if (cam && part && spot && band && grp) {
+        delete ck;
+        delete ck2;
+        delete ca;
+        delete pk;
+        delete pk2;
+        delete pa;
+        delete sc;
+        delete sc2;
+        delete sa;
+        delete bd;
+        delete bd2;
+        delete bc;
+        delete c1;
+        delete c2;
+        delete c3;
+        delete g;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (owner ptr replace)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
