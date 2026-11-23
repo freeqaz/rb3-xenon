@@ -33,7 +33,7 @@
 // call would fault there and only there. Keeping the guard cost us real bytes
 // (TambourineSucceed emitted a `cmplwi cr6, r3, 0x0` / `beq` pair the target
 // does not have), so it is now scoped to the build that needs it.
-#ifdef HX_NATIVE
+#if defined(HX_NATIVE) && !defined(RB3_NATIVE_APP)
 #define TAMBOURINE_FADE(a, b)                                                            \
     do {                                                                                 \
         if (mTambourineFader)                                                            \
@@ -45,9 +45,14 @@
 
 TambourineManager::TambourineManager(VocalPlayer &p)
     : mPlayerRef(p), mIsLocal(p.IsLocal()), mTambourineSequence(0),
-#ifdef HX_NATIVE
+#if defined(HX_NATIVE) && !defined(RB3_NATIVE_APP)
       // Headless: no synth Fader audio-duck object (scoring-irrelevant); the
       // per-frame DoFade calls below are guarded on mTambourineFader.
+      // rb3-app (RB3_NATIVE_APP) has the real synth and plays the tambourine
+      // cue in OnPlayTambourine, which hands this fader to the sequence's
+      // FaderGroup (fn_826F9BC8+0x13C/+0x144) with no null test, as retail
+      // does; so the app builds it like retail (Hmx::Object::New<Fader>, the
+      // bl at fn_826FAE18+0x78, stored at +0x80).
       mTambourineFader(0),
 #else
       mTambourineFader(Hmx::Object::New<Fader>()),
