@@ -2470,3 +2470,59 @@ void rb3_app_check_compress_queue_drain() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A38: no screen is skipped by its name. Retail UIManager::GotoScreenImpl
+// (fn_828036E8) has no name test: its first test is the force flag, `clrlwi.
+// r11,r5,24` at +0x01C, then mTransitionState (+0x10) and mCurrentScreen
+// (+0x2c), then CancelTransition (`bl fn_82802FA8` at +0x060). A
+// DC3-inherited native early return for any name containing "campaign"
+// dropped campaign_rewardvignette_firstgig_screen, which meta_loading pushes
+// after a band's first song; PushScreen (fn_828047E8) had already cleared
+// mCurrentScreen, so the UI was left with no screen and no transition for the
+// rest of the run. The probe uses A16's private UIManager: goto a bare screen,
+// push a bare screen named "a38_campaign_probe_screen", pop it. Want: the
+// pushed screen becomes current, and the pop returns to the first. Fails (rc 7)
+// when the name skip comes back.
+void rb3_app_check_campaign_screen_push() { // ring: native-real
+    alignas(UIManager) static unsigned char storage[sizeof(UIManager)];
+    memset(storage, 0, sizeof storage);
+    UIManager *ui = new (storage) UIManager();
+    UIManager *saved = TheUI;
+    TheUI = ui;
+    Rb3AppCountingScreen *a = new Rb3AppCountingScreen();
+    Rb3AppCountingScreen *c = new Rb3AppCountingScreen();
+    c->SetName("a38_campaign_probe_screen", ObjectDir::Main());
+    ui->GotoScreen(a, false, false);
+    bool first = Rb3AppSettle(ui, a);
+    bool pushed = false, popped = false;
+    UIScreen *afterPush = nullptr;
+    if (first) {
+        ui->PushScreen(c);
+        pushed = Rb3AppSettle(ui, c);
+        afterPush = ui->CurrentScreen();
+        if (pushed) {
+            ui->PopScreen(nullptr);
+            popped = Rb3AppSettle(ui, a);
+        }
+    }
+    TheUI = saved;
+    const char *afterName =
+        afterPush ? (afterPush == c ? "the campaign probe" : "another screen") : "(none)";
+    c->SetName(nullptr, nullptr);
+    char what[512];
+    snprintf(what, sizeof what,
+             "campaign screen push: goto A settled %d; push 'a38_campaign_probe_screen' "
+             "settled %d, current %s; pop back to A %d (want 1, 1 the campaign probe, 1) "
+             "(retail GotoScreenImpl fn_828036E8 has no name test: first test +0x01C, "
+             "CancelTransition +0x060)",
+             (int)first, (int)pushed, afterName, (int)popped);
+    if (first && pushed && popped) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (campaign screen push)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
