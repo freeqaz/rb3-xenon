@@ -1981,3 +1981,51 @@ void rb3_app_check_drum_venue_lookup() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A31: Hmx::Object::ReplaceRefs steps every ref of a dying object, including a
+// ref that an owner's Replace moves back onto it. A merge retarget (E -> D)
+// leaves CharClipGroup holding D twice; deleting D steps the first entry,
+// whose erase (retail CharClipGroup::Replace fn_8238F270, erase at +0xD8)
+// shifts D's second entry down a slot (AddRef'd back onto D) and X into the
+// second slot. The native vector snapshot then stepped the second slot's
+// address, now X's entry, so the group dropped X and kept D after D was freed:
+// the ASan heap-use-after-free in ObjRef::AddRef under ~CharClip <-
+// FileMerger::Merger::Clear (A31 asan1) and A28's endgame SIGSEGV. The check
+// reads only addresses until the group is known to be clean, so a regression
+// fails (rc 7) before anything touches the freed clip.
+void rb3_app_check_replace_refs_shifted_entry() { // ring: native-real
+    CharClipGroup *group = Hmx::Object::New<CharClipGroup>();
+    CharClip *d = Hmx::Object::New<CharClip>();
+    CharClip *e = Hmx::Object::New<CharClip>();
+    CharClip *x = Hmx::Object::New<CharClip>();
+    d->SetName("a31_clip_d", ObjectDir::Main());
+    e->SetName("a31_clip_e", ObjectDir::Main());
+    x->SetName("a31_clip_x", ObjectDir::Main());
+    group->AddClip(d);
+    group->AddClip(e);
+    group->AddClip(x);
+    e->ReplaceRefs(d); // the merge retarget: the group now holds D, D, X
+    bool twice = d->RefCount() == 2 && !group->HasClip(e) && x->RefCount() == 1;
+    CharClip *dAddr = d;
+    delete d;
+    bool keptD = group->HasClip(dAddr); // compares addresses only
+    bool keptX = group->HasClip(x);
+    int xRefs = (!keptD && keptX) ? x->RefCount() : -1;
+    char what[320];
+    snprintf(what, sizeof what,
+             "replace refs shifted entry: group holds D twice %d; D deleted -> group holds D %d, "
+             "X %d, X refs %d (want 1 0 1 1) (retail CharClipGroup::Replace fn_8238F270)",
+             (int)twice, (int)keptD, (int)keptX, xRefs);
+    if (twice && !keptD && keptX && xRefs == 1) {
+        delete group;
+        delete e;
+        delete x;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (replace refs shifted entry)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
