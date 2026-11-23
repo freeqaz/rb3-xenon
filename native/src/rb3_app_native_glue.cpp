@@ -394,6 +394,19 @@ bool Rb3AppMovieLog() { // ring: native-real
     }
     return sLog;
 }
+// RB3_APP_MOVIES=0: no movie opens (BinkOpen modelled as failing, the
+// behaviour before lane movie), so every movie ends on its first poll. For
+// walks written before movies played: the boot intro is 2055 frames, longer
+// than wait_screen's 1800-frame timeout. Retail-faithful walks instead press
+// start or confirm during it (intro_movie_panel's BUTTON_DOWN_MSG skips).
+bool Rb3AppMoviesOff() { // ring: native-real
+    static int sOff = -1;
+    if (sOff < 0) {
+        const char *e = getenv("RB3_APP_MOVIES");
+        sOff = e && *e == '0';
+    }
+    return sOff;
+}
 bool Rb3AppMovieDeterministic() { // ring: native-real
     static int sDet = -1;
     if (sDet < 0) {
@@ -586,6 +599,8 @@ private:
     bool OpenNow() const { return const_cast<Rb3AppMovieImpl *>(this)->IsOpen(); }
     // MovieOpen + FinishOpen + SharedFinishOpen for one movie.
     void MovieOpen(bool unpause) {
+        if (Rb3AppMoviesOff())
+            return;
         // FFmpegMovieImpl applies MovieOpen's track rule: a non-zero track
         // selects Bink track (set_bink_track's override, else mTrack) - 1.
         if (!FFmpegMovieImpl::BeginFromFile(

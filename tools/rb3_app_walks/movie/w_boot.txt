@@ -1,0 +1,1 @@
+wait_screen splash_screen
