@@ -51,8 +51,8 @@
 // chart and the real scoring path (score, streak, multiplier, overdrive
 // phrases, stars, crowd) runs. Nothing else is forced. With the walk flag
 // also set, every frame inside a Game appends to its rb3-app-det line
-//   band S/A stars T mult M od D p<i> <track> auto <0|1> score S hit H miss M
-//   streak K long L energy E deploy D stars F crowd C ...
+//   band acc A stars T mult M score .. p<i> track T en E auto <0|1> energy E deploy D
+//   long L score S hit H miss M streak K stars F crowd C ...
 // and folds the same values into `state`; outside a Game the line is as before.
 // Record: docs/decomp/SCOREWALK_DETERMINISTIC_SCORING_WALK_2026-11-23.md.
 #include <cstdint>
@@ -69,6 +69,7 @@
 #include "game/Game.h"
 #include "game/Player.h"
 #include "game/Scoring.h"
+#include "game/VocalPlayer.h"
 #include "ui/UI.h"
 #include <string>
 #include "ui/UIScreen.h"
@@ -115,7 +116,10 @@ void AddPerf(uint64_t &h, std::string &out, const Performer *p, bool withStars) 
     int hit = st.GetHitCount(), miss = st.GetMissCount();
     int streak = st.GetCurrentStreak();
     float crowd = p->Crowd() ? p->Crowd()->GetValue() : -1.0f;
-    float stars = withStars && TheScoring ? p->GetNumStarsFloat() : -1.0f;
+    // Scoring::GetNumStarsFloat asserts its thresholds are non-empty before it
+    // returns 0 for a zero score, and during the song load they are still empty:
+    // ask only once there is a score, so the record never trips the assert.
+    float stars = !withStars || !TheScoring ? -1.0f : score ? p->GetNumStarsFloat() : 0.0f;
     h = Fnv(h, &score, sizeof score);
     h = Fnv(h, &hit, sizeof hit);
     h = Fnv(h, &miss, sizeof miss);
@@ -157,15 +161,29 @@ std::string ScoreState(uint64_t &h) {
         float energy = p->GetBandEnergy();
         bool deploy = p->IsDeployingBandEnergy();
         int longest = p->GetStats().GetLongestStreak();
+        int enabled = (int)p->GetEnabledState();
+        h = Fnv(h, &enabled, sizeof enabled);
         h = Fnv(h, &track, sizeof track);
         h = Fnv(h, &autoOn, sizeof autoOn);
         h = Fnv(h, &energy, sizeof energy);
         h = Fnv(h, &deploy, sizeof deploy);
         h = Fnv(h, &longest, sizeof longest);
         char buf[128];
-        snprintf(buf, sizeof buf, " p%d track %d auto %d energy %.4f deploy %d long %d", (int)i,
-                 track, autoOn, energy, deploy, longest);
+        snprintf(buf, sizeof buf, " p%d track %d en %d auto %d energy %.4f deploy %d long %d",
+                 (int)i, track, enabled, autoOn, energy, deploy, longest);
         out += buf;
+        if (VocalPlayer *vp = dynamic_cast<VocalPlayer *>(p)) {
+            // Vocal-only: whether Poll has a track to run (VocalPlayer::Poll returns
+            // early without one), and the singer / part counts it scores over.
+            int vt = vp->mTrack != nullptr, ns = (int)vp->mSingers.size(),
+                np = (int)vp->mVocalParts.size(), se = vp->mScoringEnabled;
+            h = Fnv(h, &vt, sizeof vt);
+            h = Fnv(h, &ns, sizeof ns);
+            h = Fnv(h, &np, sizeof np);
+            h = Fnv(h, &se, sizeof se);
+            snprintf(buf, sizeof buf, " vtrack %d singers %d parts %d scoring %d", vt, ns, np, se);
+            out += buf;
+        }
         AddPerf(h, out, p, true);
     }
     return out;
