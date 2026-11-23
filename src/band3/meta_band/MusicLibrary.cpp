@@ -2464,8 +2464,15 @@ void MusicLibrary::FakeWinNode(
 // which returns unk19c's +0x48 RndTex as a kDataObject.
 BEGIN_HANDLERS(MusicLibrary)
     HANDLE_ACTION(on_enter, OnEnter())
-#ifdef HX_NATIVE
+#if defined(HX_NATIVE) && !defined(RB3_HANDLE_LOCAL_STATIC)
     // `on_exit` Symbol global collides with POSIX on_exit(); intern inline.
+    // Only without RB3_HANDLE_LOCAL_STATIC: that macro form stringifies its
+    // argument, which made this handler's Symbol the literal text
+    // `Symbol("on_exit")`, so song_select's `{music_library on_exit}` was never
+    // handled natively and the store preview manager outlived the screen. The
+    // stringified form references no global, so the retail line below is safe.
+    // Retail Handle fn_82542D20 compares "on_exit" (0x820915B4, Symbol ctor at
+    // +0xB0) and calls OnExit fn_82542A00 (bl at +0xCC).
     HANDLE_ACTION(Symbol("on_exit"), OnExit())
 #else
     HANDLE_ACTION(on_exit, OnExit())
