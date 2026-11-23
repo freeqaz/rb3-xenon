@@ -9,11 +9,11 @@ That lane fixed the heap origins it found but left two things undone:
 - memcheck was never run on rb3-ark, rb3-dta, rb3-frame or rb3-render.
 
 **Result.** Apart from perturb's heap origins, every uninitialised-value error across the 18
-`native_health` runtime targets comes from **three origins**:
+`native_health` runtime targets comes from **three origins** (rb3-render covered only up to its 1,500 s cap):
 - **Stack, `VocalPlayer::FindBestPart`'s `fTargetPitch`.** This is rb3-harmony's 70-context, ~5,227-error
   block. Retail has the same unset read, but natively it reached output, so it is **fixed natively**
   (`HX_NATIVE`, X360 Δ0, commit `4cbc6045c`).
-- **Stack, `SongParser::mTrackType`** (the parser lives on `main`'s stack). Seen in 10 targets.
+- **Stack, `SongParser::mTrackType`** (the parser lives on `main`'s stack). Seen in 9 targets.
   **Retail-faithful and harmless**, not changed.
 - **Heap, `CharPollableSorter::Dep::searchID`** in rb3-render. This is **char**, so it is listed and not fixed.
   It is retail-faithful by the existing header note and harmless.
