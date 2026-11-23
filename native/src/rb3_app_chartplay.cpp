@@ -37,6 +37,19 @@
 // RGPoll. The native ReadSingleJoypad copies it (RB3AppChartPlayRaw); from
 // UsbMidiKeyboard::Poll / UsbMidiGuitar::Poll on it is the retail path.
 //
+// Lane chartplay3 (record docs/decomp/CHARTPLAY3_PRO_STRINGS_PEDAL_2026-11-23.md):
+//   RB3_APP_CHARTPLAY_MUTE=open|keep|openall  pro guitar/bass: a kRGMuted string
+//                                   goes down open / keeps its last fret; `openall`
+//                                   opens every string of a gem that has one
+//   RB3_APP_CHARTPLAY_SLIDE=on|all  move a LeftHandSlide gem's fretted strings 2
+//                                   frets (down for ReverseSlide) half way through
+//                                   its sustain; `all` (a control) every sustain
+//   RB3_APP_CHARTPLAY_BEND=1        pitch-bend byte 100 through a kRGBend gem
+//   RB3_APP_CHARTPLAY_DEPLOY=pedal|stomp|button  pro keys: deploy overdrive with
+//                                   the sustain pedal, the stomp pedal or the
+//                                   controller's OD button (mForceMercuryBut)
+//   RB3_APP_CHARTPLAY_HANDS=1       pro keys: low/high hand-placement bytes from
+//                                   the held keys
 //   RB3_APP_CHARTPLAY_LOG=1         one line per gem (`rb3-app-chartplay: gem ...`) and
 //                                   per pressing poll (what JoypadData made of it);
 //                                   2 also turns on TheBeatMatchOutput (see K())
@@ -57,6 +70,9 @@
 #include "os/User.h"
 #include "beatmatch/Output.h"
 #include "os/Joypad.h"
+#include "os/UsbMidiKeyboard.h"
+#include "beatmatch/GemInfo.h"
+#include "beatmatch/SongData.h"
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
@@ -73,7 +89,23 @@ struct Knobs {
     bool tapHopo = false;
     float sustain = 1;
     int log = 0;
+    // lane chartplay3 (record docs/decomp/CHARTPLAY3_PRO_STRINGS_PEDAL_2026-11-23.md)
+    int mute = 0;   // pro guitar/bass muted strings: 0 chart fret, 1 open, 2 keep, 3 openall
+    int slide = 0;  // 1 slide a left-hand-slide gem's frets mid-sustain, 2 every sustain
+    bool bend = false; // pitch-bend byte up through a gem with a bend string
+    int deploy = 0; // pro keys overdrive: 1 sustain pedal, 2 stomp pedal, 3 OD button
+    bool hands = false; // pro keys low/high hand-placement bytes from the held keys
 };
+
+int PickKnob(const char *n, const char *const *names, int count) {
+    const char *v = getenv(n);
+    if (!v || !*v) return 0;
+    for (int i = 0; i < count; i++)
+        if (!strcmp(v, names[i])) return i;
+    fprintf(stderr, "rb3-app-chartplay: %s=%s is not a known value\n", n, v);
+    fflush(stderr);
+    _Exit(2);
+}
 
 bool EnvOn(const char *n) {
     const char *v = getenv(n);
@@ -91,6 +123,14 @@ const Knobs &K() {
         if (const char *v = getenv("RB3_APP_CHARTPLAY_HOPO")) k.tapHopo = !strcmp(v, "tap");
         if (const char *v = getenv("RB3_APP_CHARTPLAY_SUSTAIN")) k.sustain = (float)atof(v);
         if (const char *v = getenv("RB3_APP_CHARTPLAY_LOG")) k.log = atoi(v);
+        static const char *const kMute[] = {"chart", "open", "keep", "openall"};
+        static const char *const kSlide[] = {"off", "on", "all"};
+        static const char *const kDeploy[] = {"off", "pedal", "stomp", "button"};
+        k.mute = PickKnob("RB3_APP_CHARTPLAY_MUTE", kMute, 4);
+        k.slide = PickKnob("RB3_APP_CHARTPLAY_SLIDE", kSlide, 3);
+        k.deploy = PickKnob("RB3_APP_CHARTPLAY_DEPLOY", kDeploy, 4);
+        k.bend = EnvOn("RB3_APP_CHARTPLAY_BEND");
+        k.hands = EnvOn("RB3_APP_CHARTPLAY_HANDS");
         // _LOG=2 also switches on the game's own beatmatch trace (TheBeatMatchOutput,
         // the SWING / NOSWING / HIT / MISS lines BeatMatcher and the watchers print),
         // which LogFile writes to its file pattern in the run directory.
@@ -99,6 +139,8 @@ const Knobs &K() {
             printf("rb3-app-chartplay: on (pad 0) offset %.1f ms miss %d%% from gem %d seed %u "
                    "hopo %s sustain %.2f\n",
                    k.offset, k.missPct, k.missFrom, k.seed, k.tapHopo ? "tap" : "strum", k.sustain);
+            printf("rb3-app-chartplay: mute %s slide %s bend %d deploy %s hands %d\n",
+                   kMute[k.mute], kSlide[k.slide], (int)k.bend, kDeploy[k.deploy], (int)k.hands);
             fflush(stdout);
         }
         return k;
@@ -124,6 +166,16 @@ struct Song {
     // pro guitar (lane chartplay2): report string j's fret and velocity
     int rgFret[6] = {0, 0, 0, 0, 0, 0};
     int rgVel[6] = {0, 0, 0, 0, 0, 0};
+    // lane chartplay3: pro guitar slide (song ms it happens, -1 none; the gem), pitch
+    // bend byte; pro keys deploy press state and hand-placement bytes
+    float slideAt = -1;
+    int slideGem = -1;
+    int rgBend = 0;
+    int deployHeld = 0; // polls the deploy press has left (1: release next poll)
+    int deployLast = -1000; // poll of the last deploy press
+    int deploys = 0;
+    int lowHand = 0, highHand = 0;
+    int slides = 0, mutedPlayed = 0, bends = 0;
     Song() {
         for (int i = 0; i < 25; i++) keyUpAt[i] = -1;
     }
@@ -150,13 +202,16 @@ bool Skip(int gem) {
 void Summary(const char *why) {
     if (!gSong.list) return;
     printf("rb3-app-chartplay: song %s: gems %d acted %d skipped %d late %d (max %.1f ms) "
-           "same-pad collisions %d\n",
+           "same-pad collisions %d muted %d slides %d bends %d deploys %d\n",
            why, gSong.list->NumGems(), gSong.acted, gSong.skipped, gSong.late, gSong.maxLate,
-           gSong.collide);
+           gSong.collide, gSong.mutedPlayed, gSong.slides, gSong.bends, gSong.deploys);
     fflush(stdout);
 }
 
+GemPlayer *gPadPlayer = nullptr; // lane chartplay3: the player PadMatcher last found
+
 BeatMatcher *PadMatcher(int pad) {
+    gPadPlayer = nullptr;
     if (!TheGame) return nullptr;
     std::vector<Player *> &players = TheGame->GetActivePlayers();
     for (size_t i = 0; i < players.size(); i++) {
@@ -164,6 +219,7 @@ BeatMatcher *PadMatcher(int pad) {
         if (!gp || !gp->IsLocal()) continue;
         BandUser *u = gp->GetUser();
         if (!u || !u->GetLocalUser() || u->GetLocalUser()->GetPadNum() != pad) continue;
+        gPadPlayer = gp;
         return gp->mMatcher;
     }
     return nullptr;
@@ -214,6 +270,24 @@ void KeysToRaw(unsigned keys) {
     for (int i = 0; i < 25; i++)
         if (keys & (1u << i)) gRaw[i / 8] |= (unsigned char)(0x80 >> (i % 8));
     for (int b = 3; b < 8; b++) gRaw[b] = (unsigned char)((gRaw[b] & 0x80) | 100);
+}
+
+// Lane chartplay3: the pro keys pedals and hand-placement fields, written through
+// ProKeysData (the reader's own bitfields). Retail UsbMidiKeyboard::Poll 0x8251AC10
+// reads the sustain pedal from byte 8 bit 7 and the stomp pedal from byte 9 bit 7
+// (KeyboardSustainMsg / KeyboardStompBoxMsg on each change, which KeyboardController
+// turns into ForceMercurySwitch(true) then (false)), the low hand placement from the
+// low 5 bits of byte 0xe and the high one from bit 7 of bytes 0xb, 0xc, 0xd and bits
+// 5-6 of byte 0xe (Keyboard{Low,High}HandPlacementMsg; no handler in the game).
+void KeysExtraToRaw(int pedal, int low, int high) {
+    ProKeysData *d = (ProKeysData *)gRaw;
+    d->mSustain = pedal == 1;
+    d->mStompPedal = pedal == 2;
+    d->mLowHandPlacement = low & 0x1f;
+    d->unkbbool = high & 1;
+    d->unkcbool = (high >> 1) & 1;
+    d->unkdbool = (high >> 2) & 1;
+    d->unkemiddle = (high >> 3) & 3;
 }
 
 // UsbMidiGuitar::Poll reads report string j's fret and velocity through these
@@ -307,13 +381,45 @@ unsigned KeysPoll(const BeatMatchController *c, bool pro, float now, float dt, i
     }
     keys |= pressed;
     KeysToRaw(keys);
+    // Lane chartplay3: _DEPLOY presses the sustain pedal, the stomp pedal or the
+    // controller's own overdrive button (BeatMatchController::mForceMercuryBut) for
+    // one poll whenever the player has half a bar of energy and is not deploying,
+    // at most once a second; _HANDS puts the held keys' lowest index in the low
+    // hand placement and their highest (capped at 15) in the high one.
+    unsigned buttons = 0;
+    int pedal = 0;
+    if (gSong.deployHeld > 0) {
+        gSong.deployHeld--;
+    } else if (k.deploy && gPadPlayer && gPadPlayer->GetBandEnergy() >= 0.5f &&
+               !gPadPlayer->IsDeployingBandEnergy() && poll - gSong.deployLast >= 30) {
+        gSong.deployHeld = 1;
+        gSong.deployLast = poll;
+        gSong.deploys++;
+        if (k.log)
+            printf("rb3-app-chartplay: poll %d deploy %d (energy %.4f) now %.1f\n", poll,
+                   k.deploy, gPadPlayer->GetBandEnergy(), now);
+    }
+    if (gSong.deployHeld > 0) {
+        if (k.deploy == 3) {
+            int b = c->mForceMercuryBut;
+            if (b >= 0 && b < 32) buttons |= 1u << b;
+        } else {
+            pedal = k.deploy;
+        }
+    }
+    if (k.hands && keys) {
+        int lo = __builtin_ctz(keys), hi = 31 - __builtin_clz(keys);
+        gSong.lowHand = lo;
+        gSong.highHand = hi > 15 ? 15 : hi;
+    }
+    KeysExtraToRaw(pedal, gSong.lowHand, gSong.highHand);
     gRawOn = true;
     if (!gSong.done && gSong.next >= n && !keys) {
         gSong.done = true;
         Summary("done");
     }
     gSong.prevButtons = keys;
-    return 0;
+    return buttons;
 }
 
 // Pro guitar (lane chartplay2), through the raw report UsbMidiGuitar::Poll reads.
@@ -339,11 +445,22 @@ unsigned RGPoll(const RealGuitarController *rc, float now, float dt, int poll) {
         bool tap = k.tapHopo && gem.GetForceStrum();
         bool due = now >= t - dt / 2;
         bool skip = Skip(g);
-        if (!skip && (due || (!tap && now >= t - dt * 1.5f)))
+        if (!skip && (due || (!tap && now >= t - dt * 1.5f))) {
+            // A new gem's frets: any pending slide of the last one is over.
+            gSong.slideAt = -1;
+            bool muted = gem.IsMuted();
             for (int s = 0; s < 6; s++) {
                 int f = gem.GetFret(s);
-                gSong.rgFret[lefty ? s : 5 - s] = f >= 0 ? f : 0;
+                int &rf = gSong.rgFret[lefty ? s : 5 - s];
+                // Lane chartplay3 _MUTE: a kRGMuted string (FretMatchImpl counts it
+                // matched at any fret) goes down open, or keeps its last fret;
+                // `openall`, the control, opens every string of a muted gem.
+                bool m = f >= 0 && gem.GetRGNoteType(s) == kRGMuted;
+                if ((k.mute == 1 && m) || (k.mute == 3 && muted && f >= 0)) f = 0;
+                else if (k.mute == 2 && m) continue;
+                rf = f >= 0 ? f : 0;
             }
+        }
         if (due) {
             const char *what = "skip";
             unsigned strummed = 0;
@@ -351,6 +468,28 @@ unsigned RGPoll(const RealGuitarController *rc, float now, float dt, int poll) {
                 gSong.skipped++;
             } else {
                 gSong.acted++;
+                if (gem.IsMuted()) gSong.mutedPlayed++;
+                // Lane chartplay3 _SLIDE: half way through the sustain of a
+                // left-hand-slide gem (`all`, the control: of every sustained gem)
+                // each fretted string moves 2 frets, up, or down for ReverseSlide --
+                // a fret change alone, as a slide is. TrackWatcherImpl::KillSustain
+                // spares a LeftHandSlide gem when RealGuitarTrackWatcherImpl::PollHook
+                // sees the frets no longer match.
+                float dur = gem.mIgnoreDuration ? 0 : (float)gem.mDurationMs;
+                if (dur > 0 && ((k.slide == 1 && gem.LeftHandSlide()) || k.slide == 2)) {
+                    gSong.slideAt = t + dur * 0.5f;
+                    gSong.slideGem = g;
+                }
+                // _BEND: the pitch-bend byte goes to 100 on a gem with a kRGBend
+                // string, back to 0 on the next gem (RGPitchBendMsg and, from the
+                // same byte, RGConnectedAccessoriesMsg; no handler in the game).
+                if (k.bend) {
+                    int b = 0;
+                    for (int s = 0; s < 6; s++)
+                        if (gem.GetFret(s) >= 0 && gem.GetRGNoteType(s) == kRGBend) b = 100;
+                    if (b) gSong.bends++;
+                    gSong.rgBend = b;
+                }
                 what = "tap";
                 if (!tap) {
                     what = "strum";
@@ -373,7 +512,26 @@ unsigned RGPoll(const RealGuitarController *rc, float now, float dt, int poll) {
             gSong.next++;
         }
     }
+    if (gSong.slideAt >= 0 && now >= gSong.slideAt) {
+        const GameGem &sg = gl->GetGem(gSong.slideGem);
+        int step = sg.ReverseSlide() ? -2 : 2;
+        for (int s = 0; s < 6; s++) {
+            int f = sg.GetFret(s);
+            if (f <= 0) continue;
+            int nf = f + step;
+            if (nf < 1) nf = f + 2;
+            if (nf > 22) nf = f - 2;
+            gSong.rgFret[lefty ? s : 5 - s] = nf;
+        }
+        gSong.slides++;
+        if (k.log)
+            printf("rb3-app-chartplay: poll %d slide gem %d lhs %d rev %d now %.1f (+%.1f)\n",
+                   poll, gSong.slideGem, (int)sg.LeftHandSlide(), (int)sg.ReverseSlide(), now,
+                   now - sg.mMs);
+        gSong.slideAt = -1;
+    }
     RGToRaw();
+    ((ProGuitarData *)gRaw)->mPitchBend = gSong.rgBend;
     gRawOn = true;
     if (!gSong.done && gSong.next >= n) {
         gSong.done = true;
@@ -400,8 +558,31 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
         if (!gl) return 0;
         while (gSong.next < gl->NumGems() && gl->GetGem(gSong.next).mMs + k.offset < now)
             gSong.next++;
-        printf("rb3-app-chartplay: poll %d gem list %p gems %d track %d now %.1f starting at gem %d\n",
-               poll, (const void *)gl, gl->NumGems(), m->mWatcher->mImpl->mTrack, now, gSong.next);
+        // Lane chartplay3: the song track's type (6/7 pro guitar 17/22-fret, 8/9 pro
+        // bass) and how many of its gems are muted, left-hand slides, reverse
+        // slides and bends (pro strings), (other parts: 0).
+        TrackWatcherImpl *wi = m->mWatcher->mImpl;
+        int nMuted = 0, nSlide = 0, nRev = 0, nBend = 0, nSustSlide = 0;
+        for (int i = 0; i < gl->NumGems(); i++) {
+            const GameGem &g = gl->GetGem(i);
+            if (!g.IsRealGuitar()) continue;
+            if (g.IsMuted()) nMuted++;
+            if (g.LeftHandSlide()) {
+                nSlide++;
+                if (!g.mIgnoreDuration && g.mDurationMs) nSustSlide++;
+            }
+            if (g.ReverseSlide()) nRev++;
+            for (int s = 0; s < 6; s++)
+                if (g.GetFret(s) >= 0 && g.GetRGNoteType(s) == kRGBend) {
+                    nBend++;
+                    break;
+                }
+        }
+        printf("rb3-app-chartplay: poll %d gem list %p gems %d track %d type %d now %.1f starting "
+               "at gem %d; muted %d slides %d (sustained %d, reverse %d) bends %d\n",
+               poll, (const void *)gl, gl->NumGems(), wi->mTrack,
+               wi->mSongData ? (int)wi->mSongData->TrackTypeAt(wi->mTrack) : -1, now, gSong.next,
+               nMuted, nSlide, nSustSlide, nRev, nBend);
         fflush(stdout);
     }
     if (!gl) return 0;
