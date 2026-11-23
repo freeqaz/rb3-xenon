@@ -28,7 +28,7 @@ void Metronome::Poll(int i1, Metronome::OverrideEnabled oe) {
     MBT mbt = TheSongDB->GetMBT(tick);
     if (mBeat != mbt.beat) {
         mBeat = mbt.beat;
-        if (mbt.tick <= 0x64 && (mEnabled || oe == 1) && oe != 2) {
+        if (mbt.tick <= 0x64 && (mEnabled || oe == kOverrideForceOn) && oe != kOverrideForceOff) {
             PlayBeat(mBeat);
         }
     }
