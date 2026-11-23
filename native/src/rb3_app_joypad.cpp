@@ -303,6 +303,20 @@ void JoypadPoll() {
                    gPad[pad].buttons);
     }
     JoypadPollCommon();
+    if (InputLogEnabled()) {
+        // Lane keyswalk: what the retail path made of each press -- the pad's
+        // JoypadType, its joypad.dta controller and the button's action there.
+        for (int pad = 0; pad < kNumJoypads; pad++) {
+            if (!gPad[pad].buttons || !(pad == 0 || gExtra[pad].on)) continue;
+            Symbol ct = JoypadControllerTypePadNum(pad);
+            for (int b = 0; b < 32; b++)
+                if (gPad[pad].buttons & (1u << b))
+                    printf("rb3-app joypad: poll %d pad %d type %d controller %s button %d "
+                           "action %d\n",
+                           poll, pad, (int)JoypadGetPadData(pad)->mType, ct.Str(), b,
+                           (int)ButtonToAction((JoypadButton)b, ct));
+        }
+    }
     RB3AppJoypadGatePoll(poll);
 }
 
@@ -353,10 +367,14 @@ namespace {
 // `drums`: XINPUT_DEVSUBTYPE_DRUM_KIT (8), Flags 0, which SetupHXDrums reads as
 // kJoypadXboxDrums, `hx_drums_xbox`. Lane keyswalk (2026-11-23): `keys`:
 // subtype 15 with sThumbLY 0, which SetupHXKeytar reads as kJoypadXboxKeytar
-// (not the MIDI Pro Adapter's keyboard, 0x1730); `proguitar`: subtype 25,
-// sThumbLY 0, which SetupHXRealGuitar reads as kJoypadXboxButtonGuitar (the
-// button-fretted pro guitar; 0x1530 is the 22-fret one). Any other value fails
-// at the first query.
+// (not the MIDI Pro Adapter's keyboard, 0x1730); `proguitar`: subtype 25 with
+// caps sThumbLY 0x1530, which SetupHXRealGuitar reads as
+// kJoypadXboxRealGuitar22Fret (the 22-fret guitar). Not the button guitar
+// (any other sThumbLY, kJoypadXboxButtonGuitar): JoypadIsCalbertGuitar is true
+// for it, so cal_welcome starts automatic calibration, which reads the sensor
+// from the raw pro-guitar report that is all zeros natively, fails and
+// re-offers itself (measured, keyswalk dg walk). Any other value fails at the
+// first query.
 BYTE PadSubType() {
     static const BYTE sub = [] {
         const char *v = getenv("RB3_APP_JOYPAD_KIND");
@@ -441,6 +459,7 @@ DWORD XInputGetCapabilities(DWORD pad, DWORD, XINPUT_CAPABILITIES *caps) {
     memset(caps, 0, sizeof(*caps));
     caps->Type = 1;
     caps->SubType = extra ? gExtra[pad].subtype : PadSubType();
+    if (caps->SubType == 25) caps->Gamepad.sThumbLY = 0x1530; // the 22-fret pro guitar
     return 0;
 }
 
