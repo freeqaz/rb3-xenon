@@ -24,6 +24,31 @@ CharBonesMeshes::~CharBonesMeshes() {
 }
 
 void CharBonesMeshes::Replace(ObjRef *ref, Hmx::Object *obj) {
+#ifdef HX_NATIVE
+    // Retail fn_8237B338 skips everything when `from` is the dummy mesh
+    // (+0x38, `cmplw cr6,r4,r11`), else compares each entry's held transform
+    // with `from` (+0x68, `cmplw cr6,r11,r4`) and on a match sets the entry to
+    // `to` as a RndTransformable (dynamic_cast +0x98, SetOwnerObj +0xA4), and to
+    // the dummy if that left it null (+0xBC). On X360 `from` is the dying
+    // object. Natively each mMeshes entry is an ObjOwnerPtr owned by this, so
+    // its ring Replace passes the ENTRY as `from` (obj/Object.h RefIs) and the
+    // retail compare never matched: a ReplaceRefs walk left the entry on the
+    // dying transform. Natively the entry is found by RefIs, and the dummy
+    // guard becomes "the entry holds the dummy" (else a dying dummy would be
+    // re-seeded into its own entry). Lane A27.
+    for (ObjVector<ObjOwnerPtr<RndTransformable> >::iterator it = mMeshes.begin();
+         it != mMeshes.end();
+         ++it) {
+        if (RefIs(ref, *it)) {
+            if (it->Ptr() != mDummyMesh) {
+                *it = dynamic_cast<RndTransformable *>(obj);
+                if (!*it)
+                    *it = mDummyMesh;
+            }
+            return;
+        }
+    }
+#else
     // X360: the ring dispatches Replace() with the DYING Hmx::Object* reinterpret_cast
     // to ObjRef* (Object.cpp:192/502/569), so `ref` IS the object. ObjRef::GetObj() is
     // a non-virtual stub off HX_NATIVE returning nullptr, which kills the whole search.
@@ -40,6 +65,7 @@ void CharBonesMeshes::Replace(ObjRef *ref, Hmx::Object *obj) {
             }
         }
     }
+#endif
     // Retail 0x8237b338 (212 B) has NO Hmx::Object::Replace fallback: the only
     // calls are __RTDynamicCast and SetOwnerObj, then blr.
     // NOT fixed here (the row is unpairable -- retail placed this COMDAT inside
