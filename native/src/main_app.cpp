@@ -54,6 +54,9 @@
 #include "meta_band/OvershellSlotState.h"
 #include "tour/Tour.h"
 #include "tour/TourProgress.h"
+#include "tour/TourPerformer.h"
+#include "tour/TourDesc.h"
+#include "meta_band/AccomplishmentProgress.h"
 #include "meta_band/ModifierMgr.h"
 #include "meta_band/MetaPerformer.h"
 #include "game/Game.h"
@@ -241,18 +244,57 @@ void LogTour() {
     }();
     if (!on || !TheTour) return;
     TourProgress *p = TheTour->GetTourProgress();
-    char buf[256];
+    char buf[512];
     if (!p)
         snprintf(buf, sizeof buf, "tour=(no progress)");
     else {
         Symbol desc = p->GetTourDesc();
         bool hasDesc = desc != "" && TheTour->GetTourDesc(desc);
-        snprintf(buf, sizeof buf, "tour=%s on=%d gigs=%d/%d cur=%d stars=%d won=%d",
-                 desc.Str(), p->IsOnTour(), p->GetNumCompletedGigs(),
-                 hasDesc ? p->GetNumTotalGigs() : -1, p->GetCurrentGigNum(), p->GetNumStars(),
-                 (int)p->GetWonQuest());
+        int k = snprintf(buf, sizeof buf, "tour=%s on=%d gigs=%d/%d cur=%d stars=%d won=%d",
+                         desc.Str(), p->IsOnTour(), p->GetNumCompletedGigs(),
+                         hasDesc ? p->GetNumTotalGigs() : -1, p->GetCurrentGigNum(),
+                         p->GetNumStars(), (int)p->GetWonQuest());
+        // Lane tourwalk2: the performer's quest, its filter and setlist kind, the
+        // stars the quest has paid so far, the tour's best-ever stars and medal state
+        // (Tour::Has*Medal reads TourProgress::GetTourMostStars against the desc's goals),
+        // and whether the primary profile holds the three tour-star accomplishments.
+        TourPerformerImpl *perf = TheTour->HasPerformer() ? TheTour->m_pTourPerformer : nullptr;
+        if (perf && k > 0 && k < (int)sizeof buf)
+        {
+            k += snprintf(buf + k, sizeof buf - k, " quest=%s filter=%s custom=%d random=%d",
+                          perf->GetCurrentQuest().Str(), perf->GetCurrentQuestFilter().Str(),
+                          (int)perf->GetCurrentQuestFilterIsCustom(), (int)perf->IsRandomSetList());
+            // the setlist the meta performer holds (random/fixed/custom picks)
+            if (MetaPerformer *mp = MetaPerformer::Current()) {
+                k += snprintf(buf + k, sizeof buf - k, "%s set=", "");
+                for (size_t i = 0; i < mp->mSongs.size() && k < (int)sizeof buf - 64; i++)
+                    k += snprintf(buf + k, sizeof buf - k, "%s%s", i ? "," : "",
+                                  mp->mSongs[i].Str());
+                k += snprintf(buf + k, sizeof buf - k, " gig=");
+            }
+            // per song of the gig so far: song:base+quest=total (GigData +4/+8/+c)
+            for (size_t i = 0; i < perf->mGigData.size() && k < (int)sizeof buf - 64; i++) {
+                const GigData &g = perf->mGigData[i];
+                k += snprintf(buf + k, sizeof buf - k, "%s%s:%d+%d=%d", i ? "," : "",
+                              g.unk0.Str(), g.unk4, g.unk8, g.unkc);
+            }
+        }
+        if (hasDesc && k > 0 && k < (int)sizeof buf) {
+            TourDesc *td = TheTour->GetTourDesc(desc);
+            BandProfile *prof = TheProfileMgr.GetPrimaryProfile();
+            int accs = 0;
+            if (prof) {
+                const AccomplishmentProgress &ap = prof->GetAccomplishmentProgress();
+                accs = ap.IsAccomplished(td->GetTourBronzeGoal())
+                    | ap.IsAccomplished(td->GetTourSilverGoal()) << 1
+                    | ap.IsAccomplished(td->GetTourGoldGoal()) << 2;
+            }
+            snprintf(buf + k, sizeof buf - k, " most=%d medals=%d%d%d accs=%d",
+                     p->GetTourMostStars(desc), (int)TheTour->HasBronzeMedal(desc),
+                     (int)TheTour->HasSilverMedal(desc), (int)TheTour->HasGoldMedal(desc), accs);
+        }
     }
-    static char last[256];
+    static char last[512];
     if (strcmp(buf, last)) {
         strcpy(last, buf);
         printf("rb3-app: frame %d %s\n", gFramesStarted, buf);
