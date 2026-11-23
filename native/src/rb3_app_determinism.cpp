@@ -86,6 +86,9 @@
 #include "ui/UIScreen.h"
 #include "game/CommonPhraseCapturer.h"
 #include "game/Stats.h"
+#include "game/VocalPart.h"
+#include "game/Singer.h"
+#include "meta_band/MetaPerformer.h"
 #include "meta_band/BandUI.h"
 #include "meta_band/OvershellPanel.h"
 #include "meta_band/OvershellSlot.h"
@@ -106,6 +109,13 @@ bool gBandWalk = false; // RB3_APP_EXTRA_PADS names at least one extra pad
 // multipliers, saves -- in the det line, with or without extra pads. Off, the line
 // is byte-for-byte the earlier walks'.
 bool gOdWalk = false;
+// RB3_APP_DET_HARM=1 (lane harmwalk): the vocal player's harmony state in the det
+// line -- whether harmonies are on (MetaPerformer::IsNowUsingVocalHarmony, the
+// user's preferred score type), each VocalPart's phrase index / phrase score / cap
+// / rank / spotlight phrase id / scoring flag, each Singer's autoplay part and
+// assigned part, and the Stats harmony counters (mHarmony, double / triple
+// harmony hit / count, the per-part percentages). Off, the line is unchanged.
+bool gHarmWalk = false;
 // RB3_APP_AUTODEPLOY=1 (lane deploywalk): stand-in for the guitarist's tilt /
 // Select. Retail ignores the mercury switch while the beatmatcher autoplays
 // (BeatMatcher::ForceMercurySwitch 0x82791490 and MercurySwitch 0x827913D8 both
@@ -331,6 +341,74 @@ std::string ScoreState(uint64_t &h) {
             h = Fnv(h, &se, sizeof se);
             snprintf(buf, sizeof buf, " vtrack %d singers %d parts %d scoring %d", vt, ns, np, se);
             out += buf;
+            if (gHarmWalk) {
+                MetaPerformer *mp = MetaPerformer::Current();
+                int hv[2] = {mp ? (int)mp->IsNowUsingVocalHarmony() : -1,
+                             vp->GetUser() ? (int)vp->GetUser()->GetPreferredScoreType() : -1};
+                h = Fnv(h, hv, sizeof hv);
+                snprintf(buf, sizeof buf, " harm %d pst %d", hv[0], hv[1]);
+                out += buf;
+                static const void *sListed = nullptr;
+                static size_t sListedW = 0;
+                size_t wsz = 0;
+                for (int k = 0; k < np; k++)
+                    if (vp->mVocalParts[k]) wsz += vp->mVocalParts[k]->mNoteWeights.size() + 1;
+                if (sListed != vp || sListedW != wsz) {
+                    // When a VocalPlayer's parts (re)load: each part's note list (notes,
+                    // phrases, phrases holding notes, summed note weight), outside the hash.
+                    sListed = vp;
+                    sListedW = wsz;
+                    for (int k = 0; k < np; k++) {
+                        VocalPart *pt = vp->mVocalParts[k];
+                        if (!pt || !pt->mVocalNoteList) continue;
+                        VocalNoteList *nl = pt->mVocalNoteList;
+                        int full = 0;
+                        for (size_t q = 0; q < nl->mPhrases.size(); q++)
+                            full += nl->mPhrases[q].unk10 != nl->mPhrases[q].unk14;
+                        float w = 0;
+                        for (size_t q = 0; q < pt->mNoteWeights.size(); q++) w += pt->mNoteWeights[q];
+                        printf("rb3-app-det: vocal part %d notes %d phrases %d with-notes %d weights %d "
+                               "sum %.2f\n",
+                               k, (int)nl->mNotes.size(), (int)nl->mPhrases.size(), full,
+                               (int)pt->mNoteWeights.size(), w);
+                    }
+                }
+                for (int k = 0; k < np; k++) {
+                    VocalPart *pt = vp->mVocalParts[k];
+                    if (!pt) continue;
+                    int pi[4] = {pt->mVocalNoteList && pt->mThisPhrase ? pt->CurrentPhraseIndex() : -1,
+                                 pt->mPhraseRank, pt->mSpotlightPhraseID,
+                                 (int)pt->mScoringEnabled};
+                    float pf[2] = {pt->mPhraseScore, pt->mPhraseScoreMax};
+                    h = Fnv(h, pi, sizeof pi);
+                    h = Fnv(h, pf, sizeof pf);
+                    snprintf(buf, sizeof buf, " vp%d ph %d sc %.1f/%.1f rk %d sp %d en %d", k, pi[0],
+                             pf[0], pf[1], pi[1], pi[2], pi[3]);
+                    out += buf;
+                }
+                for (int k = 0; k < ns; k++) {
+                    Singer *sg = vp->mSingers[k];
+                    if (!sg) continue;
+                    int si[2] = {sg->GetAutoplayToPart(), sg->mFrameAssignedPart};
+                    h = Fnv(h, si, sizeof si);
+                    snprintf(buf, sizeof buf, " s%d ap %d as %d", k, si[0], si[1]);
+                    out += buf;
+                }
+                const Stats &st = vp->GetStats();
+                int hs[6] = {st.GetHarmony(), st.GetDoubleHarmonyHit(), st.GetDoubleHarmonyPhraseCount(),
+                             st.GetTripleHarmonyHit(), st.GetTripleHarmonyPhraseCount(),
+                             st.GetNumberOfVocalParts()};
+                h = Fnv(h, hs, sizeof hs);
+                snprintf(buf, sizeof buf, " hstat %d dbl %d/%d tri %d/%d vpc", hs[0], hs[1], hs[2],
+                         hs[3], hs[4]);
+                out += buf;
+                for (int k = 0; k < hs[5]; k++) {
+                    float f = st.GetVocalPartPercentage(k);
+                    h = Fnv(h, &f, sizeof f);
+                    snprintf(buf, sizeof buf, "%s%.4f", k ? "/" : " ", f);
+                    out += buf;
+                }
+            }
         }
         if (gBandWalk || gOdWalk) {
             const Stats &st = p->GetStats();
@@ -415,6 +493,9 @@ void rb3_app_determinism_init() { // ring: native-real
     const char *od = getenv("RB3_APP_DET_OD");
     gOdWalk = od && *od && strcmp(od, "0") != 0;
     if (gOdWalk) printf("rb3-app-det: overdrive fields on (RB3_APP_DET_OD)\n");
+    const char *hm = getenv("RB3_APP_DET_HARM");
+    gHarmWalk = hm && *hm && strcmp(hm, "0") != 0;
+    if (gHarmWalk) printf("rb3-app-det: harmony fields on (RB3_APP_DET_HARM)\n");
     gMainThread = pthread_self();
     printf("rb3-app-det: deterministic walk on (seed %d, frame %lld ns, tick %lld ns)\n",
            atoi(getenv("RB3_APP_SEED") ? getenv("RB3_APP_SEED") : "0"), (long long)kFrameNs,
