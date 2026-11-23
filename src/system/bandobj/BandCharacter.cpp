@@ -2952,6 +2952,94 @@ static void UnshareKeptCharShared(ObjectDir *self, ObjectDir *dir, int depth) {
     for (int i = 0; i < (int)dir->SubDirs().size(); i++)
         UnshareKeptCharShared(self, dir->SubDirs()[i], depth + 1);
 }
+
+// ============================================================================
+// A41 -- retail's SKELETON (sBoneMergeDir) repoint, for a subdir the shim keeps.
+//
+// The same shape of loss as A39's, on the other Filter arm. OnInstallFilter sets
+// sBoneMergeDir to the Dir of the outfit's `bone_pelvis.mesh` -- the piece's
+// char/main/skeleton_unshared.milo. Under retail's kMergeMerge that dir is walked
+// through Filter, and Filter's not-a-resource-dir arm (fn_82285868: +0x238..+0x268
+// rule out the three resource dirs; +0x26C..+0x274 compare o1->Dir() with
+// sBoneMergeDir; +0x290 `bl fn_8282A0C8` is the RndTransformable dynamic_cast;
+// +0x29C `li r5,0` + +0x2A8 `bl fn_82270438` is Find(o1->Name(), false); +0x2B4
+// `b .L_822851DC` joins A39's tail, +0x210 `bl fn_82281F00` ::ReplaceRefs and
+// +0x214 -> +0x138 `li r3,0x3` kIgnore) repoints every reference this merge's
+// objects hold on a shared skeleton bone onto the member's OWN same-named bone.
+//
+// The native shim keeps skeleton_unshared.milo as a shared subdir and never walks
+// it, so those references stay on the one shared skeleton instance, which sits at
+// the venue origin. RebindOutfitBonesToOwnSkeleton (native) later repoints MESH
+// bone slots by name, but it cannot reach a TransParent link, and it skips a mesh
+// any of whose bones do not resolve under the member. The hair meshes are exactly
+// that: their `bone_hair_*` / `bone_hair-*` bones were merged into the outfit dir
+// (Filter's bone_ arm, kMerge, +0x344..+0x3E4) with their parent `bone_hair.mesh`
+// still the SHARED skeleton's. MEASURED (a temporary A41 probe, small_club_01, placed
+// band): every member's hair bones sat at world (~0, ~0, ~70) -- the venue origin
+// -- while the member's own head was at e.g. (-70, 80, 79); so the four hairs drew
+// stacked in one spot and no member had hair. buttflappants' bone_legs_* chain
+// (parents exo_*-thigh / exo_pelvis) was in the same state.
+//
+// This runs that arm with the same ::ReplaceRefs and owner scope. Nothing moves
+// out of the skeleton dir (retail returns kIgnore for every one of its objects).
+// Opt-out: RB3_NO_BONEMERGE_UNSHARE=1. Trace: `[A41] bone-merge repoint` under
+// RB3_X21_TRACE.
+static int sBoneMergeRepoints = 0; // gate/trace counter: refs repointed, lifetime
+static void RepointKeptBoneMergeDir(ObjectDir *self, ObjectDir *dir, int depth) {
+    if (!dir || !sBoneMergeDir || depth > 4)
+        return;
+    if (dir == sBoneMergeDir) {
+        static const bool off = getenv("RB3_NO_BONEMERGE_UNSHARE") != nullptr;
+        if (off)
+            return;
+        int repointed = 0, noOwn = 0;
+        for (ObjDirItr<RndTransformable> it(dir, false); it != 0; ++it) {
+            RndTransformable *theirs = it;
+            if (!theirs || theirs->Dir() != sBoneMergeDir || !theirs->Name())
+                continue;
+            Hmx::Object *mine = self->Find<Hmx::Object>(theirs->Name(), false);
+            if (!mine || mine == theirs) {
+                noOwn++;
+                continue;
+            }
+            ::ReplaceRefs(theirs, mine);
+            repointed++;
+        }
+        sBoneMergeRepoints += repointed;
+        if (getenv("RB3_X21_TRACE"))
+            fprintf(stderr,
+                    "[A41] bone-merge repoint: member='%s' toDir='%s' skeleton='%s' "
+                    "bones with own copy=%d, without=%d\n",
+                    self->Name() ? self->Name() : "?",
+                    sToDir ? PathName(sToDir) : "(null)", PathName(dir), repointed,
+                    noOwn);
+        return;
+    }
+    for (int i = 0; i < (int)dir->SubDirs().size(); i++)
+        RepointKeptBoneMergeDir(self, dir->SubDirs()[i], depth + 1);
+}
+
+// rb3-app gate hook (native/src/rb3_app_gates.cpp): run the A41 repoint for a kept
+// dir with the merge statics set as OnInstallFilter would, and restore them.
+// Returns the number of skeleton bones repointed.
+int BandCharacterGateBoneMergeRepoint(
+    ObjectDir *self, ObjectDir *kept, ObjectDir *skeleton, ObjectDir *toDir
+) {
+    ObjectDir *saveBone = sBoneMergeDir, *saveTo = sToDir, *saveOutfit = sOutfitDir,
+              *saveRes = sResourceDir;
+    sBoneMergeDir = skeleton;
+    sToDir = toDir;
+    sOutfitDir = toDir;
+    sResourceDir = 0;
+    int before = sBoneMergeRepoints;
+    RepointKeptBoneMergeDir(self, kept, 0);
+    int n = sBoneMergeRepoints - before;
+    sBoneMergeDir = saveBone;
+    sToDir = saveTo;
+    sOutfitDir = saveOutfit;
+    sResourceDir = saveRes;
+    return n;
+}
 #endif
 
 MergeFilter::SubdirAction BandCharacter::FilterSubdir(ObjectDir *o1, ObjectDir *toDir) {
@@ -3019,6 +3107,8 @@ MergeFilter::SubdirAction BandCharacter::FilterSubdir(ObjectDir *o1, ObjectDir *
         // object walk -- and with it Filter's char_shared un-share arm -- never
         // runs for it. Run that one arm here (see UnshareKeptCharShared).
         UnshareKeptCharShared(this, o1, 0);
+        // A41: and Filter's skeleton (sBoneMergeDir) arm, for the same reason.
+        RepointKeptBoneMergeDir(this, o1, 0);
     }
     return act;
 #else
