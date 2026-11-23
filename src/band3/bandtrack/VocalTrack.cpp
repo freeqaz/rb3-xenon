@@ -380,6 +380,16 @@ VocalTrack::VocalTrack(BandUser *u)
         mAlternateNoteList[i] = 0;
     }
     InitPlatePool();
+#ifdef HX_NATIVE
+    // Retail's ctor (0x82BA9A28, which this one matches) stores mCharOptMicID@0x224
+    // = -1 but nothing to mCharOptParam@0x220; only PushGameplayOptions does. A
+    // volume-button release before any push (VocalPlayer::HandleDeactivateVolume ->
+    // VocalTrackDir::DeactivateVolume) compares it in IsCurrentVocalParam, so
+    // natively the heap decides whether the vocalist-volume widget is hidden
+    // (UBSan's invalid-enum site, menuwalk S_prac; lane ubsantri). Start it as
+    // kVocalParamAny: no button maps to it, so no param is current until a push.
+    mCharOptParam = kVocalParamAny;
+#endif
 }
 
 VocalTrack::~VocalTrack() {
