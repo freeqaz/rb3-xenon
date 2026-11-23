@@ -177,6 +177,62 @@ extern DataArray *gSystemConfig;
 // native/src/preclear_select_phase.cpp (A18)
 int RunPreClearSelectPhase(void (*gate)(const char *, bool, const char *));
 
+// A42 probe (MILO_DUMP_RT): engine Tex_Wgpu.cpp writes every live render target to a PNG.
+void DumpGpuRenderTargets(const char *dir, int frame);
+#include "char/CharBoneOffset.h"
+#include "char/CharFaceServo.h" // A43 probe
+#include "bandobj/BandHeadShaper.h"
+extern std::vector<int> gHeadMaleMapping;   // bandobj/BandHeadShaper.cpp
+extern std::vector<int> gHeadFemaleMapping;
+#include "rndobj/CubeTex.h"
+// A43 probe: a material's lighting inputs (protected fields).
+struct A43MatPeek : RndMat {
+    static void NoSpec(RndMat *m) {
+        static_cast<A43MatPeek *>(m)->mSpecularRGB.Set(0, 0, 0, 0);
+        static_cast<A43MatPeek *>(m)->mDirty |= 2;
+    }
+    static void NoSpecMap(RndMat *m) {
+        static_cast<A43MatPeek *>(m)->mSpecularMap = nullptr;
+        static_cast<A43MatPeek *>(m)->mDirty |= 2;
+    }
+    static void NoRim(RndMat *m) {
+        static_cast<A43MatPeek *>(m)->mRimRGB.Set(0, 0, 0, 0);
+        static_cast<A43MatPeek *>(m)->mDirty |= 2;
+    }
+    static void Print(const char *mesh, RndMat *m) {
+        if (!m) {
+            printf("  [A43] mat %s: (null)\n", mesh);
+            return;
+        }
+        A43MatPeek *p = static_cast<A43MatPeek *>(m);
+        auto tn = [](RndTex *t) { return t && t->Name() ? t->Name() : "-"; };
+        printf("  [A43] mat %s '%s' (%s) diff=%s norm=%s spec=%s env=%s useEnv=%d ppl=%d "
+               "var=%d specRGB=(%.3f %.3f %.3f a=%.3f) spec2=(%.3f %.3f %.3f a=%.3f) "
+               "denorm=%.3f aniso=%.3f envFall=%d envMask=%d rim=(%.2f %.2f %.2f a=%.2f) "
+               "color=(%.2f %.2f %.2f a=%.2f) blend=%d nextPass=%s\n",
+               mesh, m->Name(), m->Dir() ? PathName(m->Dir()) : "-", tn(p->mDiffuseTex),
+               tn(p->mNormalMap), tn(p->mSpecularMap),
+               p->mEnvironMap && p->mEnvironMap->Name() ? p->mEnvironMap->Name() : "-",
+               (int)p->mUseEnviron, (int)p->mPerPixelLit, (int)p->mShaderVariation,
+               p->mSpecularRGB.red, p->mSpecularRGB.green, p->mSpecularRGB.blue,
+               p->mSpecularRGB.alpha, p->mSpecular2RGB.red, p->mSpecular2RGB.green,
+               p->mSpecular2RGB.blue, p->mSpecular2RGB.alpha, p->mDeNormal, p->mAnisotropy,
+               (int)p->mEnvironMapFalloff, (int)p->mEnvironMapSpecMask, p->mRimRGB.red,
+               p->mRimRGB.green, p->mRimRGB.blue, p->mRimRGB.alpha, p->mColor.red,
+               p->mColor.green, p->mColor.blue, p->mColor.alpha, (int)p->mBlend,
+               p->mNextPass && p->mNextPass->Name() ? p->mNextPass->Name() : "-");
+    }
+};
+// A42 probe: read a CharBoneOffset's protected dest/offset.
+struct A42BoneOffsetPeek : CharBoneOffset {
+    static RndTransformable *Dest(CharBoneOffset *c) {
+        return static_cast<A42BoneOffsetPeek *>(c)->mDest;
+    }
+    static const Vector3 &Offset(CharBoneOffset *c) {
+        return static_cast<A42BoneOffsetPeek *>(c)->mOffset;
+    }
+};
+
 namespace {
 
     int gFailures = 0;
@@ -4600,6 +4656,144 @@ namespace {
             }
             d->Draw();
         };
+        // A42 probe: every Character under the venue, with its class, dir and world origin.
+        if (getenv("RB3_A42_CHARS")) {
+            std::vector<Character *> chars = CollectDeep<Character>(dir);
+            for (size_t ci = 0; ci < chars.size(); ci++) {
+                Character *c = chars[ci];
+                const Vector3 &p = c->WorldXfm().v;
+                printf("  [A42] char '%s' class=%s showing=%d dir='%s' at (%.1f %.1f %.1f)\n",
+                       c->Name() ? c->Name() : "?", c->ClassName().Str(), (int)c->Showing(),
+                       c->Dir() ? PathName(c->Dir()) : "-", p.x, p.y, p.z);
+                if (!dynamic_cast<BandCharacter *>(c)) continue;
+                std::vector<CharBoneOffset *> bos = CollectDeep<CharBoneOffset>(c);
+                for (size_t bi = 0; bi < bos.size(); bi++) {
+                    RndTransformable *d = A42BoneOffsetPeek::Dest(bos[bi]);
+                    const Vector3 &o = A42BoneOffsetPeek::Offset(bos[bi]);
+                    printf("  [A42]   boneoffset '%s' (%s) dest '%s' %p (%s) offset (%.3f %.3f "
+                           "%.3f) destLocal (%.3f %.3f %.3f)\n",
+                           bos[bi]->Name() ? bos[bi]->Name() : "?",
+                           bos[bi]->Dir() ? PathName(bos[bi]->Dir()) : "-",
+                           d && d->Name() ? d->Name() : "-", (void *)d,
+                           d && d->Dir() ? PathName(d->Dir()) : "-", o.x, o.y, o.z,
+                           d ? d->LocalXfm().v.x : 0.f, d ? d->LocalXfm().v.y : 0.f,
+                           d ? d->LocalXfm().v.z : 0.f);
+                }
+                // Skinned-mesh model frame per bone: W(bone) * offset. For a mesh
+                // bound consistently every bone gives the same frame.
+                std::vector<RndMesh *> ms = CollectDeep<RndMesh>(c);
+                for (size_t mi = 0; mi < ms.size(); mi++) {
+                    RndMesh *m = ms[mi];
+                    const char *mn = m->Name() ? m->Name() : "";
+                    if (strcmp(mn, "eyes.mesh") && strcmp(mn, "head.mesh")) continue;
+                    for (int bi = 0; bi < m->NumBones() && bi < 6; bi++) {
+                        RndTransformable *b = m->BoneTransAt(bi);
+                        if (!b) continue;
+                        Transform model;
+                        Multiply(m->BoneOffsetAt(bi), b->WorldXfm(), model);
+                        printf("  [A42]   %s bone[%d] '%s' (%s) parent '%s' world (%.2f %.2f "
+                               "%.2f) model (%.2f %.2f %.2f) local (%.2f %.2f %.2f)\n",
+                               mn, bi, b->Name() ? b->Name() : "?",
+                               b->Dir() ? PathName(b->Dir()) : "-",
+                               b->TransParent() && b->TransParent()->Name()
+                                   ? b->TransParent()->Name() : "-",
+                               b->WorldXfm().v.x, b->WorldXfm().v.y, b->WorldXfm().v.z,
+                               model.v.x, model.v.y, model.v.z, b->LocalXfm().v.x,
+                               b->LocalXfm().v.y, b->LocalXfm().v.z);
+                    }
+                }
+                // A43 probe: the eye-base chain, and the eye-base local the head
+                // mesh's frame implies (inv(offset_eye) * M_head * inv(W(parent))).
+                if (getenv("RB3_A43_MATS")) {
+                    for (size_t mi = 0; mi < ms.size(); mi++) {
+                        RndMesh *m = ms[mi];
+                        const char *mn = m->Name() ? m->Name() : "";
+                        if (strcmp(mn, "eyes.mesh") && strcmp(mn, "head.mesh") &&
+                            !strstr(mn, "hands") && !strstr(mn, "torso"))
+                            continue;
+                        A43MatPeek::Print(mn, m->Mat());
+                        // A/B knobs for the skin look (diagnostic only).
+                        RndMat *mt = m->Mat();
+                        if (mt && mt->GetShaderVariation() == kShaderVariationSkin) {
+                            if (getenv("RB3_A43_SKIN_NOSPEC")) A43MatPeek::NoSpec(mt);
+                            if (getenv("RB3_A43_SKIN_NOSPECMAP")) A43MatPeek::NoSpecMap(mt);
+                            if (getenv("RB3_A43_SKIN_NORIM")) A43MatPeek::NoRim(mt);
+                        }
+                    }
+                }
+                if (getenv("RB3_A43_EYEBASE")) {
+                    std::vector<CharFaceServo *> fs = CollectDeep<CharFaceServo>(c);
+                    for (size_t fi = 0; fi < fs.size(); fi++) {
+                        CharFaceServo *f = fs[fi];
+                        CharClip *bc = f->BaseClip();
+                        std::vector<CharBones::Bone> bones = f->GetBones();
+                        int eyeBones = 0;
+                        for (size_t k = 0; k < bones.size(); k++)
+                            if (strstr(bones[k].name.Str(), "eye") || strstr(bones[k].name.Str(), "lid")) {
+                                eyeBones++;
+                                printf("  [A43]   faceservo bone '%s' w=%.2f\n",
+                                       bones[k].name.Str(), bones[k].weight);
+                            }
+                        printf("  [A43] faceservo '%s' (%s) base '%s' bones=%d eye/lid=%d\n",
+                               f->Name(), f->Dir() ? PathName(f->Dir()) : "-",
+                               bc ? PathName(bc) : "(null)", (int)bones.size(), eyeBones);
+                        if (getenv("RB3_A43_FACEPOLL")) {
+                            f->Enter();
+                            f->Poll();
+                            printf("  [A43] faceservo '%s' polled\n", f->Name());
+                        }
+                    }
+                    Transform mHead;
+                    bool haveHead = false;
+                    for (size_t mi = 0; mi < ms.size() && !haveHead; mi++) {
+                        RndMesh *m = ms[mi];
+                        if (strcmp(m->Name() ? m->Name() : "", "head.mesh")) continue;
+                        for (int bi = 0; bi < m->NumBones(); bi++) {
+                            RndTransformable *b = m->BoneTransAt(bi);
+                            if (!b || strcmp(b->Name(), "bone_head.mesh")) continue;
+                            Multiply(m->BoneOffsetAt(bi), b->WorldXfm(), mHead);
+                            haveHead = true;
+                            break;
+                        }
+                    }
+                    for (size_t mi = 0; mi < ms.size(); mi++) {
+                        RndMesh *m = ms[mi];
+                        if (strcmp(m->Name() ? m->Name() : "", "eyes.mesh")) continue;
+                        for (int bi = 0; bi < m->NumBones(); bi++) {
+                            RndTransformable *b = m->BoneTransAt(bi);
+                            if (!b) continue;
+                            const Transform &bo = m->BoneOffsetAt(bi);
+                            printf("  [A43] %s offset v (%.3f %.3f %.3f) x(%.3f %.3f %.3f) "
+                                   "y(%.3f %.3f %.3f) z(%.3f %.3f %.3f)\n",
+                                   b->Name(), bo.v.x, bo.v.y, bo.v.z, bo.m.x.x, bo.m.x.y,
+                                   bo.m.x.z, bo.m.y.x, bo.m.y.y, bo.m.y.z, bo.m.z.x, bo.m.z.y,
+                                   bo.m.z.z);
+                            for (RndTransformable *t = b; t; t = t->TransParent()) {
+                                const Transform &l = t->LocalXfm();
+                                printf("  [A43]   chain '%s' local v (%.3f %.3f %.3f) x(%.3f %.3f "
+                                       "%.3f) y(%.3f %.3f %.3f) z(%.3f %.3f %.3f)\n",
+                                       t->Name(), l.v.x, l.v.y, l.v.z, l.m.x.x, l.m.x.y, l.m.x.z,
+                                       l.m.y.x, l.m.y.y, l.m.y.z, l.m.z.x, l.m.z.y, l.m.z.z);
+                                if (!strcmp(t->Name(), "bone_head.mesh")) break;
+                            }
+                            RndTransformable *eb = b->TransParent();
+                            if (haveHead && eb && eb->TransParent()) {
+                                Transform inv, wEye, invPar, want;
+                                Invert(bo, inv);
+                                Multiply(inv, mHead, wEye);
+                                Invert(eb->TransParent()->WorldXfm(), invPar);
+                                Multiply(wEye, invPar, want);
+                                printf("  [A43]   '%s' wanted local v (%.3f %.3f %.3f) have "
+                                       "(%.3f %.3f %.3f)\n",
+                                       eb->Name(), want.v.x, want.v.y, want.v.z,
+                                       eb->LocalXfm().v.x, eb->LocalXfm().v.y,
+                                       eb->LocalXfm().v.z);
+                            }
+                        }
+                    }
+                }
+            }
+        }
         if (deep && (reflectionOnly || getenv("RB3_DRAW_REFLECTIONS") != nullptr))
             reflections = CollectDeep<WorldReflection>(dir);
         if (!reflections.empty()) {
@@ -4617,7 +4811,12 @@ namespace {
 
         std::vector<WorldCrowd *> crowds;
         bool drawCrowd = getenv("RB3_NO_CROWD_DRAW") == nullptr;
-        if (drawCrowd && deep) {
+        // A42: the crowd walk runs whether or not the placed crowd is drawn.
+        // RB3_NO_CROWD_DRAW only drops the placed draws (below, `crowds` is
+        // cleared): the archetype exclusion must still run, or the eight
+        // chars.milo archetypes draw at their own default transform, coincident
+        // on the venue origin -- the "black/white blotch" figure on the stage.
+        if (deep) {
             crowds = CollectDeep<WorldCrowd>(dir);
             // ⛔ RETRACTED HYPOTHESIS, kept because the refutation is the
             // useful part. I first wrote this flag as a pure diagnostic on the
@@ -4641,7 +4840,7 @@ namespace {
             // (the `_ps3` names imply a platform/quality selector), but that
             // selector is not ported, so choosing which to show would be MY
             // judgement rather than the asset's. Both frames are in evidence.
-            if (gCrowdShowAll) {
+            if (gCrowdShowAll && drawCrowd) {
                 for (size_t ci = 0; ci < crowds.size(); ci++)
                     crowds[ci]->SetShowing(true);
             }
@@ -4687,6 +4886,12 @@ namespace {
             printf("  crowd archetypes: %d character(s), %d mesh(es) moved out of "
                    "the flat loop\n",
                    (int)gArchetypeMeshes.size(), (int)gArchetypeMeshSet.size());
+            if (!drawCrowd) {
+                printf("  crowd: RB3_NO_CROWD_DRAW -- %d WorldCrowd(s) not drawn; "
+                       "archetypes still excluded from the flat loop\n",
+                       (int)crowds.size());
+                crowds.clear();
+            }
         }
         for (size_t mi = 0; mi < meshes.size(); mi++) {
             RndMesh *m = meshes[mi];
@@ -5322,6 +5527,10 @@ namespace {
             return r;
         }
         Gate("png", true, r.png.c_str());
+        // A42 probe: MILO_DUMP_RT writes every live render target beside the frame.
+        if (getenv("MILO_DUMP_RT")) {
+            ::DumpGpuRenderTargets(outDir, 0);
+        }
 
         r.stats = Analyse(px.data(), w, h);
         {
@@ -5705,6 +5914,29 @@ int main(int argc, char **argv) {
     // dereferences a null sCharClipTypes. It also loads the shipped bone
     // resource milos, which the character rig genuinely needs.
     CharBoneDir::Init();
+
+    // A43: retail's BandInit (bandobj/Band.cpp) runs BandHeadShaper::Init, which
+    // loads the male/female head dirs and builds the head vert mapping. This
+    // harness never called BandInit, so every BandHeadShaper::Start returned
+    // false on an empty mapping: the head's "base" clip and the face-shape clips
+    // never posed the face bones (bone_*-eye-base sat at the skeleton default,
+    // 0.5 behind the eyes' bind) and head.mesh was never re-skinned.
+    // RB3_NO_HEAD_SHAPER=1 (read inside Init) opts out, as on every target.
+    BandHeadShaper::Init();
+    if (getenv("RB3_NO_HEAD_SHAPER")) {
+        printf("  [SKIP] head-shaper-init — RB3_NO_HEAD_SHAPER=1, the band's faces "
+               "keep the skeleton's rest pose (eyes 0.5 behind their bind)\n");
+    } else {
+        // BandHeadShaper::Start returns false on an empty vert mapping, so the
+        // two mappings Init builds (bandobj/BandHeadShaper.cpp) are the signal.
+        // (GetCount is not: this data's eye.fdm/shape.fdm counts read 0 / -1.)
+        size_t male = gHeadMaleMapping.size(), female = gHeadFemaleMapping.size();
+        bool okShaper = male > 0 && female > 0;
+        char d[160];
+        snprintf(d, sizeof d, "head vert mapping male %zu, female %zu (0 = every "
+                 "BandHeadShaper::Start is a no-op)", male, female);
+        Gate("head-shaper-init", okShaper, d);
+    }
 
     int passed = 0;
     std::vector<CellResult> results;
