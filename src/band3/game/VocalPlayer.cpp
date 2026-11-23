@@ -840,11 +840,14 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
 
         if (0.0f != pSinger->GetFrameMicPitch()) {
             float fAdjusted = (kSemitone * (float)iOctaveOffset) + pSinger->GetFrameMicPitch();
-#ifdef HX_NATIVE
-            // Headless: mTrack is a non-null sentinel (no VocalTrackDir render
-            // object). Retail clamps the octave to the on-screen display range;
-            // with no display track fBottom/fTop are 0, so the wrap is inactive
-            // and the REAL SuddenOctaveShift path handles octave folding.
+#if defined(HX_NATIVE) && !defined(RB3_NATIVE_APP)
+            // Headless vocal harnesses: mTrack is a non-null sentinel (no
+            // VocalTrackDir render object). Retail clamps the octave to the
+            // on-screen display range; with no display track fBottom/fTop are 0,
+            // so the wrap is inactive and the REAL SuddenOctaveShift path handles
+            // octave folding. rb3-app (RB3_NATIVE_APP) hooks the real VocalTrack
+            // (HookupTrack) and takes retail's arm (Poll 0x826EB9E4
+            // GetBottomDisplayPitch, 0x826EB9F4 GetTopDisplayPitch).
             float fBottom = 0.0f;
             float fTop = 0.0f;
 #else
@@ -1088,9 +1091,12 @@ void VocalPlayer::LocalEndgameEnergy(int x) {
 }
 
 void VocalPlayer::SendCanChat(bool b1) {
-#ifdef HX_NATIVE
-    // Off-path: no VocalTrackDir render object. The Poll chat gate never fires
-    // headless (TheNetSession->IsLocal() is true), so this is never called.
+#if defined(HX_NATIVE) && !defined(RB3_NATIVE_APP)
+    // Headless vocal harnesses: no VocalTrackDir render object (mTrack is a
+    // sentinel). rb3-app (RB3_NATIVE_APP) has the real VocalTrack and reaches
+    // this from HookupTrack and Restart; retail inlines this body at both
+    // (HookupTrack 0x826E6464, Poll 0x826EBBBC: bl VocalTrackDir::CanChat
+    // 0x822F6328).
     (void)b1;
 #else
     if (mTrack) {
@@ -1492,10 +1498,12 @@ float VocalPlayer::GetSingerAutoplayVariationMagnitude(int x) {
 }
 
 float VocalPlayer::GetCompensatedTime(float ms) {
-#ifdef HX_NATIVE
-    // Headless: no BandUser and no TheProfileMgr controller-sync-offset table.
-    // Retail adds a per-pad audio/display sync offset; native runs uncompensated.
-    // (Whole branch #else'd so the native link never references TheProfileMgr.)
+#if defined(HX_NATIVE) && !defined(RB3_NATIVE_APP)
+    // Headless vocal harnesses: no BandUser and no TheProfileMgr controller-sync-
+    // offset table, so they run uncompensated (and their link never references
+    // TheProfileMgr). rb3-app (RB3_NATIVE_APP) links ProfileMgr and has the
+    // BandUser, and takes retail's arm (0x826E3B00: pad -1, or the local user's
+    // pad, then ProfileMgr::GetSyncOffset 0x825464F0 added to ms).
     return ms;
 #else
     int padNum = -1;
@@ -1533,8 +1541,11 @@ int VocalPlayer::OnMsg(const GameMicsChangedMsg &) {
 }
 
 void VocalPlayer::UpdateMicDisplay() {
-#ifdef HX_NATIVE
-    // Off-path: no VocalTrackDir mic-display render object. Never called headless.
+#if defined(HX_NATIVE) && !defined(RB3_NATIVE_APP)
+    // Headless vocal harnesses: no VocalTrackDir mic-display render object.
+    // rb3-app (RB3_NATIVE_APP) has the real VocalTrack and reaches this from
+    // HookupTrack (retail bl 0x826E5B80 at 0x826E646C) and GameMicsChangedMsg,
+    // and runs retail's body.
     return;
 #else
     if (mTrack) {
@@ -2286,8 +2297,11 @@ bool Singer::HasAssignedPart() const {
 }
 
 bool VocalPlayer::ShowPitchCorrectionNotice() const {
-#ifdef HX_NATIVE
-    // Off-path (UI notice); headless has no TheProfileMgr object.
+#if defined(HX_NATIVE) && !defined(RB3_NATIVE_APP)
+    // Headless vocal harnesses: no TheProfileMgr object. rb3-app
+    // (RB3_NATIVE_APP) links ProfileMgr and reaches this from VocalTrackDir's
+    // reset (via VocalTrack::ShowPitchCorrectionNotice); retail 0x826E5A08 is
+    // AllowPitchCorrection (0x826E5060) && TheProfileMgr byte +0x69.
     return false;
 #else
     return AllowPitchCorrection() && TheProfileMgr.mSynapseEnabled;
