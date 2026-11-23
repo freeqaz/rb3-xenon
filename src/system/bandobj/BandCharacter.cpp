@@ -2886,6 +2886,74 @@ BandCharacter::Filter(Hmx::Object *o1, Hmx::Object *o2, ObjectDir *dir) {
     return action;
 }
 
+#ifdef HX_NATIVE
+// ============================================================================
+// A39 -- retail's char_shared UN-SHARE, for a subdir the native shim keeps.
+//
+// Retail's FilterSubdir (band.exe TU5 fn_82285848) is a bare tail call into
+// MergeFilter::DefaultSubdirAction (`b fn_82757BD0`), so under kAllSubdirs every
+// outfit piece's subdirs -- the piece's `*_resource.milo` and, below it or
+// directly, `char/main/shared/char_shared.milo` -- come back kMergeMerge and the
+// merge WALKS their objects through Filter. Filter's char_shared arm (fn_82285868
+// +0x1E0..+0x214: `lwz r11,0x1c(r27)` o1->Dir(), compared with sCharSharedDir;
+// `li r5,1` + `bl fn_82270438` Find(o1->Name()); `bl fn_82281F00` ::ReplaceRefs;
+// `li r3,0x3` kIgnore) then repoints every reference this member's merged objects
+// hold on a char_shared object onto the member's OWN same-named copy -- the
+// `torso_naked.mat` / `legs_skin.mat` / `feet_socks_skin.mat` / `head_naked.mat`
+// that OutfitConfig::SetSkinTextures binds to the `*_skin_diffuse_output.tex`
+// render targets. It moves nothing out of char_shared (every one of its objects
+// is kIgnore), so it cannot drain it.
+//
+// The native shim below converts kMergeMerge -> kMergeReplace for every on-disk
+// subdir, which keeps char_shared (and the resource dir it hangs under) as a
+// shared reference and never walks it. That dropped the un-share with the drain:
+// head.mesh, hands_naked.mesh and every *_skin.N.mesh kept drawing char_shared's
+// material (head_naked.mat has NO diffuse -> the bare gold/silver specular head),
+// and -- the half no mesh-side repair can reach -- skin.cfg's MatSwaps kept
+// char_shared's materials as mMat, whose diffuse is a dummy/NULL, not the RT, so
+// MatSwap::Compose took the `rttDiff=0 && mTwoColor -> return` branch and the
+// skin composite was never painted at all.
+//
+// This runs exactly that arm, with the same ::ReplaceRefs (so the same
+// sOutfitDir/sResourceDir/sToDir owner scope: only this merge's objects are
+// repointed), over char_shared's own objects, when the shim keeps char_shared or
+// a dir above it. Retail's MILO_ASSERT(mine->Dir() == this) becomes a skip.
+// It does NOT reproduce the rest of the walk: char_shared's own subdirs
+// (skeleton.milo, colorpalettes.milo) stay kept, as before.
+static void UnshareKeptCharShared(ObjectDir *self, ObjectDir *dir, int depth) {
+    if (!dir || !sCharSharedDir || depth > 4)
+        return;
+    if (dir == sCharSharedDir) {
+        static const bool off = getenv("RB3_NO_CHARSHARED_UNSHARE") != nullptr;
+        if (off)
+            return;
+        int repointed = 0, noOwn = 0;
+        for (ObjDirItr<Hmx::Object> it(dir, false); it != 0; ++it) {
+            Hmx::Object *theirs = it;
+            if (!theirs || theirs->Dir() != sCharSharedDir || !theirs->Name())
+                continue;
+            Hmx::Object *mine = self->Find<Hmx::Object>(theirs->Name(), false);
+            if (!mine || mine == theirs || mine->Dir() != self) {
+                noOwn++;
+                continue;
+            }
+            ::ReplaceRefs(theirs, mine);
+            repointed++;
+        }
+        if (getenv("RB3_X21_TRACE"))
+            fprintf(stderr,
+                    "[A39] char_shared un-share: member='%s' toDir='%s' resource='%s' "
+                    "objects with own copy=%d, without=%d\n",
+                    self->Name() ? self->Name() : "?",
+                    sToDir ? PathName(sToDir) : "(null)",
+                    sResourceDir ? PathName(sResourceDir) : "(null)", repointed, noOwn);
+        return;
+    }
+    for (int i = 0; i < (int)dir->SubDirs().size(); i++)
+        UnshareKeptCharShared(self, dir->SubDirs()[i], depth + 1);
+}
+#endif
+
 MergeFilter::SubdirAction BandCharacter::FilterSubdir(ObjectDir *o1, ObjectDir *toDir) {
 #ifdef HX_NATIVE
     // Native load-order fix (char textures rendering white). A shared external
@@ -2947,6 +3015,10 @@ MergeFilter::SubdirAction BandCharacter::FilterSubdir(ObjectDir *o1, ObjectDir *
         DefaultSubdirAction(o1, (Subdirs)mFileMerger->mFilesPending.front()->mSubdirs);
     if (act == MergeFilter::kMergeMerge && o1 && !o1->StoredFile().empty()) {
         act = MergeFilter::kMergeReplace;
+        // A39: the shim keeps this subdir as a shared reference, so retail's
+        // object walk -- and with it Filter's char_shared un-share arm -- never
+        // runs for it. Run that one arm here (see UnshareKeptCharShared).
+        UnshareKeptCharShared(this, o1, 0);
     }
     return act;
 #else
