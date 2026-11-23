@@ -2908,6 +2908,52 @@ void rb3_app_check_retail_post_noise() { // ring: native-real
     _exit(7);
 }
 
+// A60: rb3-xenon shades in gamma space, as retail RB3 X360 does. Retail
+// band.exe TU5 DxRnd::D3DFormatForBitmap (fn_827333C8, rb3-xenon
+// rnddx9/Rnd.cpp, 100% matched) hands out DXT1/3/5, DXN and A8R8G8B8 format
+// words with every gamma sign field zero, the frame is an A8R8G8B8 EDRAM
+// surface, and no shipped standard.ps decodes or encodes: the image writes
+// texel * colour * lighting as stored. The engine's DC3 shape used to give
+// rb3-xenon the linear model with an sRGB output encode
+// (rndshape::kGammaSpaceShading false), which drew the venue hazy and grey.
+// The check: the material uniforms the engine builds for a world draw and for
+// an overlay (UI) draw both carry gammaShading = 1, a lit world material
+// included, and the shipped standard WGSL skips the output encode for such a
+// draw. A shape that answers false for rb3-xenon, or a shader that encodes a
+// gamma-space draw, fails it.
+#include "gfx/ShippedWgsl.h"
+#include "platform/MaterialSetup.h"
+#include "rndobj/Mat.h"
+void rb3_app_check_gamma_space_shading() { // ring: native-real
+    RndMat *mat = Hmx::Object::New<RndMat>();
+    mat->SetUseEnv(true);
+    mat->SetPreLit(false);
+    const MaterialParams world = BuildMaterialParams(mat, false, UiDrawTermsFor(false));
+    const MaterialParams overlay = BuildMaterialParams(mat, false, UiDrawTermsFor(true));
+    delete mat;
+    const char *wgsl = StandardWgslSource();
+    const bool noEncode = wgsl && strstr(wgsl, "if (!gammaShading && scene.outputLinear < 0.5) {\n"
+                                               "        finalColor = linearToSrgb(finalColor);");
+    const bool ok = rndshape::kGammaSpaceShading && world.uniforms.gammaShading == 1.0f &&
+                    overlay.uniforms.gammaShading == 1.0f && noEncode;
+    char what[512];
+    snprintf(what, sizeof what,
+             "gamma-space shading: shape %d, world material %.1f, overlay material %.1f, shader "
+             "skips the encode %d (want 1, 1.0, 1.0, 1: retail DxRnd::D3DFormatForBitmap "
+             "fn_827333C8 has no gamma fetch, standard.ps no decode/encode)",
+             (int)rndshape::kGammaSpaceShading, world.uniforms.gammaShading,
+             overlay.uniforms.gammaShading, (int)noEncode);
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (gamma-space shading)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
 // A49: only RndText's glyph pages take the engine's text path. The engine
 // (milo-native-engine platform/MaterialSetup.cpp MeshShadesAsText /
 // MeshDrawsAsGlyph) draws a glyph page with no depth test, no culling, forced
