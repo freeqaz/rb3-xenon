@@ -38,7 +38,8 @@ ObjRefConcrete<T1, T2>::~ObjRefConcrete() {
             mObject = nullptr;
             return;
         }
-        mObject->Release(this);
+        // Not mObject->Release(this): see SetObjConcrete below.
+        this->ObjRef::Release(nullptr);
     }
 }
 
@@ -49,7 +50,13 @@ void ObjRefConcrete<T1, T2>::SetObjConcrete(T1 *obj) {
             SafeReleaseFromRing(this);
             goto skip_ring_ops;
         }
-        mObject->Release(this);
+        // Native Hmx::Object::Release(ObjRef *ref) is `if (!ref) return;
+        // ref->Release(nullptr);` and never reads its own `this`, so this is
+        // the same unlink for every live referent. Calling it through mObject
+        // would convert mObject to Hmx::Object*, which reads the virtual-base
+        // offset from mObject's vtable, the slot SetObj below no longer reads
+        // on a referent that is mid-destruction.
+        this->ObjRef::Release(nullptr);
     }
     mObject = obj;
     if (mObject) {
@@ -141,9 +148,29 @@ Hmx::Object *ObjRefConcrete<T1, T2>::SetObj(Hmx::Object *root_obj) {
     // `cmplw r11,r4` / `bne`, then an unconditional __RTDynamicCast. The
     // apparent SetObjConcrete<T> vs SetObjConcrete<Hmx::Object> call
     // difference is ICF folding of identical bodies, not a real divergence.
+#ifdef HX_NATIVE
+    // Native: compare in T1*, after the cast, never by converting mObject to
+    // Hmx::Object*. When Hmx::Object is a virtual base of T1 that conversion
+    // reads the virtual-base offset from mObject's vtable (Itanium ABI), and
+    // it runs on a referent that is mid-destruction: ~Object's ReplaceRefs
+    // steps every ref after the derived destructors have run. For a
+    // CharBonesBlender, ~CharBones has already reset the shared vptr to
+    // CharBones' own vtable, which has no virtual-base slot, so the offset was
+    // read from the global in front of it (lane A31's ASan global-buffer-
+    // overflow in this function, under ~CharBonesBlender <-
+    // FileMerger::Merger::Clear on the BandCharacter reload). The ring was
+    // sound; the compare was undefined. Same result for every live referent:
+    // a root_obj that is not a T1 casts to null and clears the ref, as the
+    // retail compare-then-cast does.
+    T1 *obj = dynamic_cast<T1 *>(root_obj);
+    if (mObject != obj) {
+        SetObjConcrete(obj);
+    }
+#else
     if (mObject != root_obj) {
         SetObjConcrete(dynamic_cast<T1 *>(root_obj));
     }
+#endif
     return mObject;
 }
 
