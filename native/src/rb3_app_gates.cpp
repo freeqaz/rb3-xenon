@@ -1880,3 +1880,54 @@ void rb3_app_check_clip_group_replace() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A29: a clip's transition table drops the vector whose ring node is dying, not
+// the first vector on the same clip. Retail Transitions::Replace fn_8237D470
+// matches by clip (cmplw at +0x24) and drops with RemoveNodes(it->clip)
+// fn_8237D3C8 (bl at +0x74), whose FindNodes finds that same `it`. Natively the
+// match is by ring node and a retarget (the D2 -> D replace below) leaves two
+// vectors on D, so re-finding by clip freed the other vector's node while the
+// dying clip's ReplaceRefs snapshot still held it (lane A28 core h2: ~CharClip
+// <- Merger::Clear, "calling get obj on abstract ObjRef", SIGSEGV). The check
+// calls Replace for the second vector's node directly, so a regression fails
+// (rc 7) on node identity before anything is freed under a ring walk.
+void rb3_app_check_clip_transition_drop() { // ring: native-real
+    CharClip *x = Hmx::Object::New<CharClip>();
+    CharClip *d = Hmx::Object::New<CharClip>();
+    CharClip *d2 = Hmx::Object::New<CharClip>();
+    CharGraphNode node;
+    node.curBeat = 0;
+    node.nextBeat = 0;
+    CharClip::Transitions &t = x->GetTransitions();
+    t.AddNode(d2, node);
+    t.AddNode(d, node);
+    d2->ReplaceRefs(d); // vector 0 retargets onto d: two vectors on d
+    bool two = t.Size() == 2 && t.GetNodes(0)->clip == d && t.GetNodes(1)->clip == d;
+    ObjRef *first = t.GetNodes(0)->ref;
+    ObjRef *second = two ? t.GetNodes(1)->ref : nullptr;
+    if (two)
+        x->Replace(second, nullptr); // the ring step for the second vector's node
+    bool keptFirst = two && t.Size() == 1 && t.GetNodes(0)->ref == first;
+    bool cleared = false;
+    if (keptFirst) {
+        delete d; // the remaining node's own ring step drops the last vector
+        cleared = t.Size() == 0;
+    }
+    char what[320];
+    snprintf(what, sizeof what,
+             "clip transition drop: D2 retargeted onto D -> two vectors %d; D's second "
+             "node steps -> first vector kept %d; D deleted -> table empty %d (want 1 1 1) "
+             "(retail Transitions::Replace fn_8237D470 -> RemoveNodes fn_8237D3C8)",
+             (int)two, (int)keptFirst, (int)cleared);
+    if (two && keptFirst && cleared) {
+        delete x;
+        delete d2;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (clip transition drop)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
