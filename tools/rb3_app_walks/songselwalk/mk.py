@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# walk60 (2026-11-23): this generator emits LEGACY 30 Hz frames from legacy inputs (the walk .txt files here are
+# now 60 Hz, converted by ../hz60.py). Regenerate from main 82ff40429's inputs, then run ../hz60.py on the output.
 # mk.py: writes the songselwalk walks (relative to wait_screen song_select_screen).
 # Run from ~/tmp/songselwalk (needs walks/hdr.txt there); writes walks/w_*.txt.
 import os

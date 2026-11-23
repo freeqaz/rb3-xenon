@@ -1,3 +1,4 @@
+# hz60: 60 Hz frames (RB3_APP_HZ=60); converted from the legacy 30 Hz script by tools/rb3_app_walks/hz60.py
 # bandwalk pad 2 (drums). Joins on the hub 25 polls after it settles (before
 # pad 0's first hub press at +60); on part_difficulty_screen, A leaves the
 # overshell's choose_profile (first row: continue without a profile),
@@ -5,36 +6,63 @@
 # Song 2: after the endgame (a song outlasts wait_screen's 1800-poll timeout, so
 # the wait is chained as in walk1.txt), part and difficulty again.
 wait_screen main_hub_screen
-+25 a
+wait_screen main_hub_screen
++50 a
 wait_screen part_difficulty_screen
-+40 a
+wait_screen part_difficulty_screen
 +80 a
-+120 a
++160 a
++240 a
 # deploywalk: Select (kPad_Select) every 300 polls from +2000 to +8300 after game_screen;
 # a press with energy < 0.5 is a failed deploy (Player::DeployBandEnergyIfPossible).
 wait_screen game_screen
-+2000 select
-+2300 select
-+2600 select
-+2900 select
-+3200 select
-+3500 select
-+3800 select
-+4100 select
-+4400 select
-+4700 select
-+5000 select
-+5300 select
-+5600 select
-+5900 select
-+6200 select
-+6500 select
-+6800 select
-+7100 select
-+7400 select
-+7700 select
-+8000 select
-+8300 select
+wait_screen game_screen
++4000 select
++4600 select
++5200 select
++5800 select
++6400 select
++7000 select
++7600 select
++8200 select
++8800 select
++9400 select
++10000 select
++10600 select
++11200 select
++11800 select
++12400 select
++13000 select
++13600 select
++14200 select
++14800 select
++15400 select
++16000 select
++16600 select
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
 wait_screen coop_endgame_screen
 wait_screen coop_endgame_screen
 wait_screen coop_endgame_screen
@@ -60,6 +88,7 @@ wait_screen coop_endgame_screen
 wait_screen coop_endgame_screen
 wait_screen coop_endgame_screen
 wait_screen part_difficulty_screen
-+40 a
+wait_screen part_difficulty_screen
 +80 a
-+120 a
++160 a
++240 a

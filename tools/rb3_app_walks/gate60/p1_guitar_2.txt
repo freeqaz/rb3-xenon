@@ -1,3 +1,4 @@
+# hz60: 60 Hz frames (RB3_APP_HZ=60); converted from the legacy 30 Hz script by tools/rb3_app_walks/hz60.py
 # bandwalk pad 1 (guitar). Joins on the hub 20 polls after it settles (before
 # pad 0's first hub press at +60); on part_difficulty_screen, A leaves the
 # overshell's choose_profile (first row: continue without a profile),
@@ -5,12 +6,39 @@
 # Song 2: after the endgame (a song outlasts wait_screen's 1800-poll timeout, so
 # the wait is chained as in walk1.txt), part and difficulty again.
 wait_screen main_hub_screen
-+20 a
-wait_screen part_difficulty_screen
+wait_screen main_hub_screen
 +40 a
+wait_screen part_difficulty_screen
+wait_screen part_difficulty_screen
 +80 a
-+120 a
++160 a
++240 a
 wait_screen game_screen
+wait_screen game_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
 wait_screen coop_endgame_screen
 wait_screen coop_endgame_screen
 wait_screen coop_endgame_screen
@@ -41,5 +69,8 @@ wait_screen coop_endgame_screen
 wait_screen part_difficulty_screen
 wait_screen part_difficulty_screen
 wait_screen part_difficulty_screen
-+40 a
+wait_screen part_difficulty_screen
+wait_screen part_difficulty_screen
+wait_screen part_difficulty_screen
 +80 a
++160 a

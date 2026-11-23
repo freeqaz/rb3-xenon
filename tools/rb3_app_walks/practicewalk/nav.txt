@@ -1,10 +1,13 @@
+# hz60: 60 Hz frames (RB3_APP_HZ=60); converted from the legacy 30 Hz script by tools/rb3_app_walks/hz60.py
 # practice: main hub -> mb_trainers (2 down) -> training_band_practice -> song select -> part (a) -> difficulty (a)
-+60 down
-+90 down
-+150 a
-+240 a
++120 down
++180 down
++300 a
++480 a
 wait_screen song_select_screen
-+120 a
+wait_screen song_select_screen
 +240 a
-+330 a
++480 a
++660 a
+wait_screen practice_sel_section_screen
 wait_screen practice_sel_section_screen

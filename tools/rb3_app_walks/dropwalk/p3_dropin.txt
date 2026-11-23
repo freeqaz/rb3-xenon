@@ -1,9 +1,11 @@
+# hz60: 60 Hz frames (RB3_APP_HZ=60); converted from the legacy 30 Hz script by tools/rb3_app_walks/hz60.py
 # dropwalk pad 3 drop-in: never joins on the hub; presses start mid-song (kState_Join on_start -> attempt_to_add_user), then A through part/diff
 wait_screen game_screen
-+1500 start
-+1560 a
-+1620 a
-+1680 a
-+1740 a
-+1800 a
-+1860 a
+wait_screen game_screen
++3000 start
++3120 a
++3240 a
++3360 a
++3480 a
++3600 a
++3720 a

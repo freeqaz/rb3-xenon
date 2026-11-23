@@ -1,16 +1,22 @@
+# hz60: 60 Hz frames (RB3_APP_HZ=60); converted from the legacy 30 Hz script by tools/rb3_app_walks/hz60.py
 # tourwalk reload: boot on the store a tour walk saved, then Play Now -> Tour -> New tour ->
 # the same tour; an underway tour must offer tour_newcontinue_screen, and continue must reach
 # the gig guide on the next gig.
 wait_screen splash_screen
-+30 start
+wait_screen splash_screen
++60 start
 wait_screen main_hub_screen
-+60 a
-+150 down
-+240 a
-+330 a
+wait_screen main_hub_screen
++120 a
++300 down
++480 a
++660 a
 wait_screen tour_customize_post_screen
-+120 a
+wait_screen tour_customize_post_screen
++240 a
 wait_screen tour_newcontinue_screen
-+120 a
+wait_screen tour_newcontinue_screen
++240 a
 wait_screen tour_gigguide_screen
-+300 b
+wait_screen tour_gigguide_screen
++600 b
