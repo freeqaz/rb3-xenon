@@ -54,10 +54,14 @@
 // The A14 gate (rb3_app_joypad_gate.cpp): a no-op unless RB3_APP_JOYPAD_GATE=1.
 void RB3AppJoypadGateInstall();
 void RB3AppJoypadGatePoll(int poll);
+// rb3_app_chartplay.cpp (lane chartplay): RB3_APP_CHARTPLAY=1 plays pad 0's chart.
+bool RB3AppChartPlayOn();
+unsigned int RB3AppChartPlayButtons(int pad, int poll);
 
 namespace {
 JoypadNativePadState gPad[kNumJoypads]; // this poll's native source state, per pad
 DWORD gPacket = 0;
+unsigned int gChart[kNumJoypads]; // this poll's RB3_APP_CHARTPLAY levels, per pad
 
 bool InputLogEnabled() {
     static const bool on = [] {
@@ -298,19 +302,27 @@ void JoypadPoll() {
             gPad[pad].connected = true;
             gPad[pad].buttons = ExtraButtons(pad, poll);
         }
+        // RB3_APP_CHARTPLAY: the chart player's fret / strum / drum levels join
+        // the pad's scripted presses; from here on it is the retail path.
+        // MILO_INPUT_LOG logs the scripted presses only (gChart is not logged).
+        gChart[pad] = 0;
+        if (pad == 0 && gPad[0].connected && RB3AppChartPlayOn())
+            gChart[0] = RB3AppChartPlayButtons(0, poll) & ~gPad[0].buttons;
         if (gPad[pad].buttons && InputLogEnabled() && (pad == 0 || gExtra[pad].on))
             printf("rb3-app joypad: poll %d pad %d scripted buttons 0x%x\n", poll, pad,
                    gPad[pad].buttons);
+        gPad[pad].buttons |= gChart[pad];
     }
     JoypadPollCommon();
     if (InputLogEnabled()) {
         // Lane keyswalk: what the retail path made of each press -- the pad's
         // JoypadType, its joypad.dta controller and the button's action there.
         for (int pad = 0; pad < kNumJoypads; pad++) {
-            if (!gPad[pad].buttons || !(pad == 0 || gExtra[pad].on)) continue;
+            unsigned scripted = gPad[pad].buttons & ~gChart[pad];
+            if (!scripted || !(pad == 0 || gExtra[pad].on)) continue;
             Symbol ct = JoypadControllerTypePadNum(pad);
             for (int b = 0; b < 32; b++)
-                if (gPad[pad].buttons & (1u << b))
+                if (scripted & (1u << b))
                     printf("rb3-app joypad: poll %d pad %d type %d controller %s button %d "
                            "action %d\n",
                            poll, pad, (int)JoypadGetPadData(pad)->mType, ct.Str(), b,
