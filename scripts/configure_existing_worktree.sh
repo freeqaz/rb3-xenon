@@ -86,8 +86,22 @@ MAIN_BUILD="$MAIN_REPO/build/45410914"
 mkdir -p "$WT_BUILD" "$WT_BUILD/pch"
 touch "$WT_BUILD/pch/system.pch"
 
-# Target objects (original binary, never changes)
-link_dir "$MAIN_BUILD/obj" "$WT_BUILD/obj"
+# Target objects: a REAL reflinked copy, never a link. The split rewrites obj/
+# (dtk regenerates every target obj, then the renamer patches them in place),
+# so a linked obj/ made every build here rewrite the MAIN checkout's target
+# objs, raw and un-renamed, under every other reader (2026-11-23: three
+# ab_measure refusals). scripts/verify_target_image.py now refuses to build
+# with an obj/ linked out of the tree; this converts one made by an older copy
+# of this script.
+if [ -L "$WT_BUILD/obj" ]; then
+    echo "    replacing the obj/ symlink with a reflinked copy"
+    rm "$WT_BUILD/obj"
+fi
+if [ -d "$WT_BUILD/obj" ]; then
+    echo "    keeping the real directory $WT_BUILD/obj"
+elif [ -d "$MAIN_BUILD/obj" ]; then
+    cp -a --reflink=auto "$MAIN_BUILD/obj" "$WT_BUILD/obj"
+fi
 
 # Pre-split config (COPY, not symlink — see setup_worktree.sh for rationale)
 if [ -f "$MAIN_BUILD/config.json" ]; then
