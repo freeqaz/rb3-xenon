@@ -2963,7 +2963,7 @@ static void UnshareKeptCharShared(ObjectDir *self, ObjectDir *dir, int depth) {
 // rule out the three resource dirs; +0x26C..+0x274 compare o1->Dir() with
 // sBoneMergeDir; +0x290 `bl fn_8282A0C8` is the RndTransformable dynamic_cast;
 // +0x29C `li r5,0` + +0x2A8 `bl fn_82270438` is Find(o1->Name(), false); +0x2B4
-// `b .L_822851DC` joins A39's tail, +0x210 `bl fn_82281F00` ::ReplaceRefs and
+// `b` to +0x20C joins A39's tail, +0x210 `bl fn_82281F00` ::ReplaceRefs and
 // +0x214 -> +0x138 `li r3,0x3` kIgnore) repoints every reference this merge's
 // objects hold on a shared skeleton bone onto the member's OWN same-named bone.
 //
