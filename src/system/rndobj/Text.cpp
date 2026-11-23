@@ -406,7 +406,27 @@ void RndText::UpdateText(bool updateMeshes) {
         mStyle.mFont = mFont;
         WrapText(mText.c_str(), mStyle, mLines);
 #ifdef HX_NATIVE
-        mMeshDirty = true;
+        // Rebuild now, as retail does (fn_82459660; every caller passes true).
+        // Deferring the rebuild to DrawShowing let it land AFTER the caller's
+        // own writes to the meshes and erase them: LyricPlate (Lyric.cpp)
+        // SetText("")s a plate, adds its syllables and colours each one with
+        // UpdateLineColor (fn_82457BA0) in the same frame, and the deferred
+        // UpdateMesh/CreateLines then re-coloured every quad with the line
+        // style's colour (the template's 0.35-alpha yellow). Lyric::UpdateColor
+        // never re-sends an unchanged colour, so the "coming" words stayed faint
+        // until the now bar reached them (lane A57). The native set of drawn
+        // texts is kept, so CollectGarbage still frees an undrawn text's meshes.
+        if (updateMeshes) {
+            FOREACH (it, mMeshMap) {
+                if (it->second.mesh) {
+                    UpdateMesh((RndFont *)it->first);
+                }
+            }
+            mTextMeshSet.insert(this);
+            mMeshDirty = false;
+        } else {
+            mMeshDirty = true;
+        }
 #else
         // Retail (0x82459660) rebuilds the meshes here rather than marking
         // them dirty for DrawShowing.
