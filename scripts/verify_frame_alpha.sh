@@ -8,6 +8,15 @@
 # Threshold: min alpha must be exactly 1 (255/255). No tolerance: the only
 # writers are the composite (1.0) and later draws under SetAlphaBlendMax (max),
 # so an opaque frame has no legitimate pixel below 255.
+# Scope: that holds for BLENDED draws (kAlphaBlendMax: PipelineManager sets the
+# alpha op of every blended mode to Max(1,1), so they cannot lower alpha). An
+# OPAQUE (kBlendSrc) draw writes its own output alpha, and since A73 a
+# use_environ material's output alpha carries the environ's ambient alpha
+# (retail c1.w, NgMat::SetupAmbient fn_824A9090), so an opaque draw under a
+# faded environ can legitimately leave alpha < 1 -- as retail's EDRAM would.
+# No gated frame does this today (China Grove walk, movie pause walk, placed
+# band: all min 1.0). If one starts to, look at what drew there before calling
+# it a regression.
 # Prints: ALPHA_GATE verdict=PASS|FAIL min=<min over all pixels> mean=<mean over all pixels> n=<pngs>
 # Exit 0 PASS, 1 FAIL, 2 no PNGs (vacuous: not a pass), 3 unreadable PNG.
 d=$1; glob=${2:-*.png}
