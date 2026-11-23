@@ -524,6 +524,16 @@ const char *TaskMgr::GetMBT() {
     );
 }
 
+#ifdef HX_NATIVE
+// Native only: whether a headless TaskMgr::Poll advances seconds by a fixed
+// 1/30 s per poll (-1: not chosen yet, read MILO_HEADLESS at the first poll).
+// rb3-app (native/src/main_app.cpp) chooses before App::App when it runs at
+// a real frame rate, so the polls inside the constructor (Splash::Draw) read
+// the Timer too, as retail's do.
+static int sHeadlessFixedStep = -1;
+void TaskMgrSetHeadlessFixedStep(bool on) { sHeadlessFixedStep = on; }
+#endif
+
 void TaskMgr::Poll() {
     START_AUTO_TIMER("anim");
 #ifdef HX_NATIVE
@@ -532,12 +542,13 @@ void TaskMgr::Poll() {
     // timeouts and expect real-time pacing. Without this, headless mode runs
     // at thousands of fps and DTA timeouts (e.g. autosave_warning 4s) never
     // trigger within the frame budget.
-    // Read every poll, not cached: rb3-app (native/src/main_app.cpp) clears
-    // MILO_HEADLESS after App::App when it runs at a real frame rate, and
-    // this poll already ran during the constructor (Splash::Draw).
-    bool sHeadless = getenv("MILO_HEADLESS") != nullptr;
+    // The choice is made once: TaskMgrSetHeadlessFixedStep (below) if a
+    // program called it before the first poll, else MILO_HEADLESS at the
+    // first poll.
+    if (sHeadlessFixedStep < 0)
+        sHeadlessFixedStep = getenv("MILO_HEADLESS") != nullptr;
     static float sFakeSeconds = 0.0f;
-    if (sHeadless && mAutoSecondsBeats) {
+    if (sHeadlessFixedStep && mAutoSecondsBeats) {
         sFakeSeconds += 1.0f / 30.0f;
         mTimelines[kTaskSeconds].SetTime(sFakeSeconds, false);
         mTimelines[kTaskBeats].SetTime(sFakeSeconds * 2.0f, false);

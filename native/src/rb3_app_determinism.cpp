@@ -106,18 +106,42 @@ int RB3AppExtraPadCount(); // rb3_app_joypad.cpp (RB3_APP_EXTRA_PADS)
 // each swap: one frame per 60 Hz refresh at most. JoypadPoll runs once per frame
 // (SystemPoll 0x82510270), so every per-poll count in the game (the tilt filter's
 // `num_frames 12`, UIComponent's `select_frames 15`) is a count of 60 Hz frames.
-// RB3_APP_HZ=N runs rb3-app at N frames a second: a deterministic walk's virtual frame is
-// 1/N s, and a normal launch sleeps to N frames a second (main_app.cpp). Unset: 60.
-// RB3_APP_HZ=legacy (or 0): the loop as it was before this lane -- virtual frame 1/30 s,
-// a normal launch unpaced, and the MILO_HEADLESS fixed-step UI and task clocks
-// (UIManager::Poll, TaskMgr::Poll) left on. Returns 0 for legacy.
+// Decided once, at the first call (main's first line), and printed:
+//   RB3_APP_HZ=N        N frames a second (N > 0): a deterministic walk's virtual frame
+//                       is 1/N s, a normal launch sleeps to N frames a second
+//                       (main_app.cpp), and the UI / task clocks read their Timers.
+//   RB3_APP_HZ=legacy   (or 0) the loop as it was before this lane: virtual frame 1/30 s,
+//                       unpaced, MILO_HEADLESS fixed-step UI and task clocks. Returns 0.
+//   unset, a harness run (MILO_INPUT_SCRIPT, RB3_APP_DETERMINISTIC or
+//                       RB3_APP_JOYPAD_GATE set): legacy, so walks written in 30 Hz
+//                       frames keep their frame indices and det baselines.
+//   unset, otherwise (a normal launch): 60, retail's rate.
+// The intended end state is 60 for harness runs too, once the walk suites have migrated.
 int RB3AppHz() { // ring: native-real
     static int hz = -1;
     if (hz < 0) {
         const char *e = getenv("RB3_APP_HZ");
-        if (!e || !*e) hz = 60;
-        else if (!strcmp(e, "legacy")) hz = 0;
-        else hz = atoi(e) < 0 ? 0 : atoi(e);
+        const char *why;
+        if (e && *e) {
+            hz = !strcmp(e, "legacy") || atoi(e) < 0 ? 0 : atoi(e);
+            why = "RB3_APP_HZ";
+        } else {
+            auto set = [](const char *n) {
+                const char *v = getenv(n);
+                return v && *v && strcmp(v, "0") != 0;
+            };
+            const char *s = getenv("MILO_INPUT_SCRIPT");
+            bool harness = (s && *s) || set("RB3_APP_DETERMINISTIC") || set("RB3_APP_JOYPAD_GATE");
+            hz = harness ? 0 : 60;
+            why = harness ? "harness default (MILO_INPUT_SCRIPT, RB3_APP_DETERMINISTIC or "
+                            "RB3_APP_JOYPAD_GATE set; RB3_APP_HZ=60 runs retail's rate)"
+                          : "default: retail's rnd sync 1, one frame per 60 Hz vsync";
+        }
+        if (hz > 0)
+            printf("rb3-app: frame rate %d Hz, UI/task clocks from Timer (%s)\n", hz, why);
+        else
+            printf("rb3-app: frame rate legacy 30 Hz, fixed-step UI/task clocks (%s)\n", why);
+        fflush(stdout);
     }
     return hz;
 }

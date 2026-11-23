@@ -137,6 +137,7 @@ void rb3_app_determinism_init(); // rb3_app_determinism.cpp (RB3_APP_DETERMINIST
 void rb3_app_determinism_frame(int frame); // rb3_app_determinism.cpp
 int RB3AppHz(); // rb3_app_determinism.cpp (RB3_APP_HZ; 0 = legacy)
 bool RB3AppDeterministic(); // rb3_app_determinism.cpp
+void TaskMgrSetHeadlessFixedStep(bool on); // obj/Task.cpp (HX_NATIVE)
 
 namespace {
 int gFramesStarted = 0; // SystemPoll calls since App::Run (frame N starts at call N)
@@ -588,6 +589,13 @@ int main(int argc, char **argv) {
         return 2;
     }
     setenv("MILO_HEADLESS", "1", 0);
+    // Lane framerate: the clock source, chosen once. At a real frame rate (RB3AppHz() > 0)
+    // TaskMgr::Poll reads its Timer as retail does (natively steady_clock, which a
+    // deterministic walk makes the 1/hz-per-frame virtual clock) instead of MILO_HEADLESS's
+    // fixed +1/30 s per poll, which equals time only at 30 frames a second. Chosen before
+    // App::App because TaskMgr::Poll first runs inside it (Splash::Draw). Legacy: not
+    // called, so Task.cpp reads MILO_HEADLESS as before.
+    if (RB3AppHz() > 0) TaskMgrSetHeadlessFixedStep(false);
     printf("rb3-app: data %s\n", data);
     rb3_app_gate("main.chdir");
     // argv for App: the program name plus everything after the data dir.
@@ -664,23 +672,13 @@ int main(int argc, char **argv) {
     gSecondsCap = EnvInt("RB3_APP_SECONDS", 120);
     printf("rb3-app: App::App constructed; App::Run (cap %d frames, %.0f s)\n", gFrameCap,
            gSecondsCap);
-    // Lane framerate: with a real frame rate (RB3AppHz() > 0) the UI and task clocks must
-    // be clocks. MILO_HEADLESS makes UIManager::Poll (ui/UI.cpp) and TaskMgr::Poll
-    // (obj/Task.cpp) add a fixed 1/30 s per poll instead of reading their Timers, which
-    // only equals time at 30 frames a second. Retail reads the Timers (__mftb; natively
-    // steady_clock, which a deterministic walk makes the 1/hz-per-frame virtual clock).
-    // Both cache getenv("MILO_HEADLESS") in a function-local static at their first poll;
-    // the engine read it already (window, audio) inside App::App. So clearing it here,
-    // before App::Run's first UIManager::Poll, gives both the retail clock as long as
-    // neither polled during the constructor (the det line's `seconds`/`ui` show it).
-    if (RB3AppHz() > 0) {
-        unsetenv("MILO_HEADLESS");
-        printf("rb3-app: frame rate %d Hz (%s; RB3_APP_HZ), UI/task clocks from Timer\n",
-               RB3AppHz(), RB3AppDeterministic() ? "virtual clock" : "paced");
-    } else {
-        printf("rb3-app: frame rate legacy (RB3_APP_HZ=legacy: 1/30 s virtual frame, unpaced, "
-               "fixed-step UI/task clocks)\n");
-    }
+    // Lane framerate: UIManager::Poll (ui/UI.cpp) has no setter like TaskMgr's; it caches
+    // getenv("MILO_HEADLESS") at its first poll, which is App::Run's first frame (the
+    // det line's `ui` column steps 1/hz from frame 1, not 1/30). The engine read the
+    // variable inside App::App (window, audio) and nothing reads it after. So at a real
+    // frame rate it is cleared here, between the two. A UIManager setter would make this
+    // a startup choice like the TaskMgr one (UI.cpp is outside lane framerate).
+    if (RB3AppHz() > 0) unsetenv("MILO_HEADLESS");
     fflush(stdout);
     signal(SIGALRM, OnStall);
     alarm((unsigned)gSecondsCap + 15);
