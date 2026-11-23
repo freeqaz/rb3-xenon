@@ -169,3 +169,11 @@ Less machine load than for s0-s2, so more frames in 540 s.
 - Not run: native_health --selftest (per brief), native_build_gate, rb3-render.
 - No edit to Rnd/Draw/Text/Spotlight, ui, char, the engine, or net sync/game-start.
 - Leaks not looked at (`detect_leaks=0`).
+
+## 7. Correction (2026-11-23, after landing)
+
+The fix proposed in §3.4 for M6 (`old ? … : nullptr`) is wrong and would have crashed. The owner session
+found this while fixing it (lane A34). AddNode's new-clip arm (fn_8237D258 +0xB8) passes `mNodeEnd`,
+which is null on an empty table, and then writes through the result. So `Resize` must return
+`mNodeStart` for a null old pointer. That is retail's value when the old storage was empty, and no other
+caller reads it. A34 lands that version.
