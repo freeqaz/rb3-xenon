@@ -1024,3 +1024,123 @@ void rb3_app_check_clip_driver_prune() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A21: the music library's exit runs retail's body to its end.
+// Retail TU5 MusicLibrary::OnEnter (fn_82542238) and OnExit (fn_82542A00) make
+// no PlatformMgr::SetHomeMenuEnabled call; band.exe has no such function (the
+// HOME menu is Wii-only). OnExit ends `stb r11,0x50(r30)` (unk40 = false) at
+// 0x82542CE0, then `b 0x828292A4` (the epilogue). The native arms used to keep
+// the Wii call, which reached an UNREACHED link stub [ring a1-platformmgr] as
+// song_select_screen loaded. Here: OnLoad (0x8253ABB8: a MusicLibraryStore),
+// then OnExit on an entered library. It must return with unk40 cleared and the
+// store's preview manager gone and the background-download mode back to AUTO
+// (ClearPreview, fn_825BC908: `li r3,2`, `bl 0x828406B8` at 0x825BC9C8). Fails
+// (rc 134, an UNREACHED stub's abort) when OnExit calls SetHomeMenuEnabled or
+// XBackgroundDownloadSetMode has no extern "C" body.
+#include "meta/SongPreview.h"
+#include "meta_band/BandSongMgr.h"
+#include "meta_band/MusicLibrary.h"
+#include "meta_band/MusicLibraryStore.h"
+#include "utl/NetCacheMgr.h"
+#include "xdk/xapilibi/xbox.h"
+extern "C" int rb3_app_xdk_background_download_mode(); // xdk_shims.cpp
+void rb3_app_check_music_library_exit() { // ring: native-real
+    bool made = false;
+    if (!TheMusicLibrary) {
+        // MetaPanel's ctor does this on a real boot (MetaPanel.cpp).
+        SongPreview *prev = new SongPreview(TheSongMgr);
+        MusicLibrary::Init(*prev);
+        made = true;
+    }
+    MusicLibrary *lib = TheMusicLibrary;
+    MusicLibraryStore *prevStore = lib->unk19c;
+    lib->OnLoad();
+    MusicLibraryStore *store = lib->unk19c;
+    bool previewMgr0 = store && store->mPreviewMgr;
+    lib->unk40 = true; // OnEnter's first body store (0x82542250)
+    XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE_ALWAYS_ALLOW);
+    int mode0 = rb3_app_xdk_background_download_mode();
+    lib->OnExit();
+    bool entered1 = lib->unk40;
+    bool previewMgr1 = store && store->mPreviewMgr;
+    int mode1 = rb3_app_xdk_background_download_mode();
+    delete store;
+    lib->unk19c = prevStore;
+    TheNetCacheMgr->Unload();
+    for (int i = 0; i < 10 && !TheNetCacheMgr->IsUnloaded(); i++)
+        TheNetCacheMgr->Poll();
+    char what[512];
+    snprintf(what, sizeof what,
+             "music library exit: library %s; OnLoad -> store %d, preview mgr %d; OnExit "
+             "returned, unk40 %d (want 0), preview mgr %d (want 0), download mode %d -> %d "
+             "(want 1 -> 2) (retail OnExit "
+             "fn_82542A00 ends stb 0x50 at 0x82542CE0; no SetHomeMenuEnabled in TU5)",
+             made ? "made here" : "from MetaPanel", store != nullptr, (int)previewMgr0,
+             (int)entered1, (int)previewMgr1, mode0, mode1);
+    if (store && previewMgr0 && !entered1 && !previewMgr1 && mode0 == 1 && mode1 == 2) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (music library exit)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A21: Hmx::Object's copy constructor (retail 0x822774F8, the memberwise copy
+// SongRecord's copy constructor 0x82598190 calls). Song select's
+// SongSortMgr::BuildFilteredSongList copies SongRecords into a std::pair, and
+// natively the declaration had no body (UNREACHED stub [ring a1-absent-body],
+// rb3-app aborted entering song_select_screen). Here: A carries a type prop and
+// one ref; copy B from it through a derived class's implicit copy constructor
+// (the base-object form SongRecord's uses). B must hold A's name and dir, an equal but separate
+// prop (an edit to B leaves A), no refs; A keeps its one ref, through B's death.
+#include "obj/ObjPtr_p.h"
+namespace {
+    struct A21Copyable : public Hmx::Object {}; // implicit copy -> Hmx::Object base copy
+}
+void rb3_app_check_object_copy() { // ring: native-real
+    static Symbol a21_prop("a21_prop");
+    A21Copyable *a = new A21Copyable();
+    a->SetProperty(a21_prop, DataNode(7));
+    ObjPtr<Hmx::Object> ref(nullptr, a);
+    int aRefs0 = a->RefCount();
+    int bRefs = -1, bProp = -1, aPropAfterEdit = -1;
+    bool sameName = false, sameDir = false;
+    {
+        A21Copyable b(*a);
+        bRefs = b.RefCount();
+        sameName = b.Name() == a->Name();
+        sameDir = b.Dir() == a->Dir();
+        const DataNode *p = b.Property(a21_prop, false);
+        bProp = p ? p->Int() : -1;
+        b.SetProperty(a21_prop, DataNode(9));
+        const DataNode *pa = a->Property(a21_prop, false);
+        aPropAfterEdit = pa ? pa->Int() : -1;
+    }
+    int aRefs1 = a->RefCount();
+    bool refHeld = ref.Ptr() == a;
+    const DataNode *pa = a->Property(a21_prop, false);
+    int aProp = pa ? pa->Int() : -1;
+    char what[512];
+    snprintf(what, sizeof what,
+             "object copy: A refs %d; B: refs %d (want 0), name %d dir %d, prop %d (want 7); "
+             "B's edit -> A prop %d (want 7); B dies -> A refs %d (want %d), ref held %d, "
+             "prop %d (want 7) (retail Object copy 0x822774F8 <- SongRecord copy 0x82598190)",
+             aRefs0, bRefs, (int)sameName, (int)sameDir, bProp, aPropAfterEdit, aRefs1, aRefs0,
+             (int)refHeld, aProp);
+    bool ok = aRefs0 == 1 && bRefs == 0 && sameName && sameDir && bProp == 7
+        && aPropAfterEdit == 7 && aRefs1 == aRefs0 && refHeld && aProp == 7;
+    ref = nullptr;
+    delete a;
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (object copy)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}

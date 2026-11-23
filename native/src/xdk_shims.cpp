@@ -967,7 +967,23 @@ DWORD GetTickCount() {
 // Xbox-specific functions (xbox.h)
 // ============================================================================
 
-DWORD XBackgroundDownloadSetMode(unsigned int) { return 0; }
+// XBackgroundDownloadSetMode (xbox.h, extern "C"; import thunk 0x828406B8).
+// The system's background-download policy: ALWAYS_ALLOW while a title screen
+// wants its downloads to run at full speed, AUTO (the system default, throttled
+// while a game runs) otherwise. Retail callers set it and never read it back:
+// MusicLibraryStore::ClearPreview (fn_825BC908: `li r3,2` at 0x825BC9C0, `bl
+// 0x828406B8` at 0x825BC9C8, as song select exits), and the store, customize
+// and UGC purchase panels' Enter/Exit pairs. The native host has no download
+// queue, so the mode is held for the gates and the call succeeds. (The old
+// C++-linkage definition here satisfied no caller, so rb3-app linked its
+// UNREACHED stub.)
+static XBACKGROUND_DOWNLOAD_MODE gBackgroundDownloadMode = XBACKGROUND_DOWNLOAD_MODE_AUTO;
+DWORD XBackgroundDownloadSetMode(XBACKGROUND_DOWNLOAD_MODE Mode) {
+    gBackgroundDownloadMode = Mode;
+    return ERROR_SUCCESS;
+}
+// Gate support (rb3_app_gates.cpp): the mode last set.
+extern "C" int rb3_app_xdk_background_download_mode() { return (int)gBackgroundDownloadMode; }
 // The two shape-only XDK calls meta_band/Utl.cpp's MaxAllowedHmxMaturityLevel
 // declares (retail 0x82B54328 / 0x82B543A8; names are descriptive). Natively
 // there is no parental-control restriction, so every content level is allowed.
