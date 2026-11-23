@@ -23,6 +23,14 @@ the band walk for identity under plain, malloc-perturb and ASan+UBSan builds.
 | `b3a1b0593` | **fix, half**: rb3-app runs VocalPlayer::HandlePhraseEnd's overdrive arbiter (retail 0x826EA014..0x826EA06C); inert alone |
 | `a5a58b4bb` | **fix, other half**: rb3-app takes VocalPart::HandlePhraseEnd's retail spotlight-phrase arm (0x826F3370..0x826F3398) |
 
+**Landing note (2026-11-23, rebase onto main `24024b599`).** Lane vocalod landed the same two-half fix
+first (`VocalPart` 0x826F3370, `VocalPlayer` 0x826EA06C), by moving both functions' whole retail arm
+to rb3-app (`HX_NATIVE && !RB3_NATIVE_APP`). On the rebase `a5a58b4bb` resolved to empty and was dropped,
+and `b3a1b0593`'s `#ifdef RB3_NATIVE_APP` call to `HandleVocalPhrase` landed inside the
+`!RB3_NATIVE_APP` arm, where it is dead code; the next commit removes it. The branch now changes no
+`src/band3` file; rb3-app runs retail's arbiter through vocalod's arm. The 0/9 -> 9/9 measurement below
+was taken with this branch's own pair.
+
 - **`RB3_APP_EXTRA_PADS=KIND=SCRIPT[,KIND=SCRIPT...]`** (`native/src/rb3_app_joypad.cpp`) names
   pads 1, 2, 3 in order. KIND is `gamepad`, `guitar` or `drums`, the XInput subtypes
   `RB3_APP_JOYPAD_KIND` already gives pad 0 (bass is a guitar pad that picks bass in the
