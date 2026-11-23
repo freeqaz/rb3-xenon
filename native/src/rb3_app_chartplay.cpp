@@ -210,11 +210,14 @@ bool Skip(int gem) {
     return (int)(h % 100) < k.missPct;
 }
 
+// Prints the gem count cached at bind time: on "ended" the Game (SongDB -> GameGemDB)
+// has already freed the list, so gSong.list must not be dereferenced here (ASan
+// heap-use-after-free on quitting a song, lane practicewalk).
 void Summary(const char *why) {
     if (!gSong.list) return;
     printf("rb3-app-chartplay: song %s: gems %d acted %d skipped %d late %d (max %.1f ms) "
            "same-pad collisions %d muted %d slides %d bends %d deploys %d\n",
-           why, gSong.list->NumGems(), gSong.acted, gSong.skipped, gSong.late, gSong.maxLate,
+           why, gSong.numGems, gSong.acted, gSong.skipped, gSong.late, gSong.maxLate,
            gSong.collide, gSong.mutedPlayed, gSong.slides, gSong.bends, gSong.deploys);
     fflush(stdout);
 }
