@@ -20,7 +20,19 @@ StreakMeter::StreakMeter()
       mFlashTrig(this, 0), mFlashSparksTrig(this, 0), unk260(0), mPartBarsGroup(this, 0),
       mPartColorAnims(this), mPartFadeAnims(this), mPartWipeAnims(this),
       mPartWipeResidualAnims(this), mResidueFadeTrig(this, 0), mNumPartsAnim(this, 0),
-      mPartSparksLaunchers(this), unk2c8(1), unk2d0(-1) {}
+      mPartSparksLaunchers(this), unk2c8(1), unk2d0(-1) {
+#ifdef HX_NATIVE
+    // Retail's ctor (0x822D90C8, which this one matches) leaves the part-active and
+    // part-pct flags unset until SetPartActive / SetPartPct write them, so on the
+    // first NumActiveParts (VocalTrackDir::ShowPhraseFeedback in practice) it reads
+    // heap garbage. Natively that read was UBSan's invalid-bool site (menuwalk);
+    // start them clear.
+    for (int i = 0; i < 3; i++) {
+        unk270[i] = false;
+        unk2cc[i] = false;
+    }
+#endif
+}
 
 void StreakMeter::SyncObjects() {
     bool audible = true;
