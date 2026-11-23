@@ -1,0 +1,9 @@
+# dropwalk pad 3 drop-in: never joins on the hub; presses start mid-song (kState_Join on_start -> attempt_to_add_user), then A through part/diff
+wait_screen game_screen
++1500 start
++1560 a
++1620 a
++1680 a
++1740 a
++1800 a
++1860 a

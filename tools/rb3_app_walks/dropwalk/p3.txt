@@ -1,0 +1,45 @@
+# Player::CheckCrowdFailure); run with RB3_APP_AUTOPLAY_SKIP=3 so this pad misses, fails, and
+# a bandmate's deploy saves it (Band::DeployBandEnergy).
+# bandwalk pad 3 (a guitar pad playing bass). Joins on the hub 30 polls after it settles (before
+# pad 0's first hub press at +60); on part_difficulty_screen, A leaves the
+# overshell's choose_profile (first row: continue without a profile),
+# DOWN moves the part list from guitar to bass, A picks the part, A the difficulty.
+# Song 2: after the endgame (a song outlasts wait_screen's 1800-poll timeout, so
+# the wait is chained as in walk1.txt), part and difficulty again.
+wait_screen main_hub_screen
++30 a
+wait_screen part_difficulty_screen
++40 a
++70 down
++80 a
++100 down
++120 a
+wait_screen game_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen part_difficulty_screen
++40 a
++80 a
++120 a
