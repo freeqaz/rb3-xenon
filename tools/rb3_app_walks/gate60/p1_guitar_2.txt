@@ -1,0 +1,45 @@
+# bandwalk pad 1 (guitar). Joins on the hub 20 polls after it settles (before
+# pad 0's first hub press at +60); on part_difficulty_screen, A leaves the
+# overshell's choose_profile (first row: continue without a profile),
+# A picks the part, A the difficulty.
+# Song 2: after the endgame (a song outlasts wait_screen's 1800-poll timeout, so
+# the wait is chained as in walk1.txt), part and difficulty again.
+wait_screen main_hub_screen
++20 a
+wait_screen part_difficulty_screen
++40 a
++80 a
++120 a
+wait_screen game_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+# A38: song 2's part_difficulty_screen comes ~1900 polls after the endgame (vignette,
+# award, song select), past one wait's 1800-poll timeout, so the wait is chained; no
+# choose_profile this time, so two presses: part, difficulty.
+wait_screen part_difficulty_screen
+wait_screen part_difficulty_screen
+wait_screen part_difficulty_screen
++40 a
++80 a

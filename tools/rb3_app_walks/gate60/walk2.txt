@@ -1,0 +1,82 @@
+# A16: returning boot, postcal's press list, then four A on main_hub
+wait_screen splash_screen
++30 start
+wait_screen first_time_calibration
++30 a
+wait_screen cal_welcome_screen
++30 right
++45 a
+wait_screen cal_manual_audio_screen
++30 right
++45 a
+wait_screen cal_manual_video_screen
++30 a
+wait_screen cal_manual_complete_screen
++30 a
+wait_screen hint_goalcomplete_screen
++30 a
+wait_screen hint_rb3_welcome_screen
++30 down
++45 a
+wait_screen main_hub_screen
++60 a
++90 a
++120 a
++150 a
+wait_screen song_select_screen
++120 a
++240 a
++330 a
++420 a
++510 a
+# A25: after the song, press through the endgame screens. wait_screen times out after
+# 1800 frames and a song runs longer, so the wait is chained.
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
++120 a
++240 a
++360 a
++480 a
++600 a
+# A38: band song 2. After song 1 the band flow is meta_loading_continue ->
+# campaign_rewardvignette_firstgig_screen -> accomplishments_newaward_screen ->
+# song_select_screen; the presses above land on the vignette. Continue past the
+# award, pick the song, then part and difficulty.
+wait_screen accomplishments_newaward_screen
++200 a
+wait_screen song_select_screen
++120 a
++240 a
++330 a
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
++120 a
++240 a
