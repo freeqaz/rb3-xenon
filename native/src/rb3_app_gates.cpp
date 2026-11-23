@@ -1144,3 +1144,75 @@ void rb3_app_check_object_copy() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A22: a drawable that dies leaves Rnd's pre-clear draw lists. The walk loads a
+// song, a band character's OutfitConfig registers (Rnd::PreClearDrawAddOrRemove,
+// retail fn_82415C10 -> PreClearCompilerHelper 0x824156B8: push_back, then
+// sort 0x8240F188), and the character's dir unloads. Retail's ~Hmx::Object
+// (0x8275CBF0) walks its ring; the list is the ring-ref, and the list's
+// Replace (ObjPtrList<RndDrawable>::Replace 0x8236F338) finds the node holding
+// the dying object (cmplw at 0x8236F3AC) and erases it (Unlink 0x8227D0E8,
+// PoolFree 0x827BADB0). Retail's sort swaps the held words (0x8240F1EC/F0),
+// which is sound there because the ring entry is the list, not the node. On
+// native each node is its own ring-ref, so the sort must move the ring
+// membership with the object. Here: register X (order 1) then Y (order 0) in
+// mDraws, so the sort swaps them; delete X; X must be gone and Y kept.
+#include "rndobj/Group.h"
+#include "rndobj/Rnd.h"
+namespace {
+    struct A22RndPeek : public Rnd { // reads the protected list through a member pointer
+        static ObjPtrList<RndDrawable> Rnd::*Draws() { return &A22RndPeek::mDraws; }
+    };
+    // Pointer compare only: a dead entry must not be upcast (its vptr is gone).
+    int A22Count(ObjPtrList<RndDrawable> &list, RndDrawable *d) {
+        int n = 0;
+        for (ObjPtrList<RndDrawable>::iterator it = list.begin(); it != list.end(); ++it)
+            n += *it == d;
+        return n;
+    }
+}
+void rb3_app_check_pre_clear_unregister() { // ring: native-real
+    ObjPtrList<RndDrawable> &draws = TheRnd.*A22RndPeek::Draws();
+    int size0 = draws.size();
+    RndGroup *x = Hmx::Object::New<RndGroup>();
+    RndGroup *y = Hmx::Object::New<RndGroup>();
+    x->SetOrder(1.0f);
+    y->SetOrder(0.0f);
+    TheRnd.PreClearDrawAddOrRemove(x, true, false);
+    TheRnd.PreClearDrawAddOrRemove(y, true, false);
+    int size1 = draws.size();
+    RndDrawable *xd = x, *yd = y;
+    bool yFirst = false;
+    for (ObjPtrList<RndDrawable>::iterator k = draws.begin(); k != draws.end(); ++k) {
+        if (*k == yd) { yFirst = true; break; }
+        if (*k == xd) break;
+    }
+    int xRefs = x->RefCount(), yRefs = y->RefCount();
+    delete x; // ~Hmx::Object's ring walk is the unregister
+    int size2 = draws.size();
+    bool xGone = A22Count(draws, xd) == 0;
+    bool yKept = A22Count(draws, yd) == 1;
+    char what[512];
+    snprintf(what, sizeof what,
+             "pre-clear unregister: mDraws %d -> %d after X,Y (want +2), Y sorted first %d; "
+             "refs X %d Y %d (want 1 1); X dies -> mDraws %d (want %d), X gone %d, Y kept %d "
+             "(retail ~Object 0x8275CBF0 -> ObjPtrList<RndDrawable>::Replace 0x8236F338 erase; "
+             "sort 0x8240F188)",
+             size0, size1, (int)yFirst, xRefs, yRefs, size2, size0 + 1, (int)xGone, (int)yKept);
+    bool ok = size1 == size0 + 2 && yFirst && xRefs == 1 && yRefs == 1 && size2 == size0 + 1
+        && xGone && yKept;
+    if (xGone)
+        TheRnd.PreClearDrawAddOrRemove(y, false, false);
+    bool yGone = A22Count(draws, yd) == 0;
+    if (xGone && yGone)
+        delete y;
+    if (ok && yGone) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s; Y removed %d\n", what, (int)yGone);
+    printf("RESULT: GATE FAILED (pre-clear unregister)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
