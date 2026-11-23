@@ -230,6 +230,11 @@ requires TU5 data. Put the package in `orig/45410914/tu5-package` or set
 PS3 mode (USB `12BA:0100`). Click stick 2 for Start, and use Select or tilt
 for overdrive. Each connected guitar gets its own local pad.
 
+For a keyboard guitar, set `RB3_APP_JOYPAD_KIND=guitar` (the Mac play launcher
+sets this by default). Press Space for Start, Enter to confirm, and use the
+arrow keys in menus. In a song, hold 1–5 for green through orange, strum with
+J or K, and use Tab for overdrive.
+
 The next milestone is tying these subsystems together into a playable game
 loop. To keep the native build healthy alongside the matching work, every
 change to shared `src/` must pass `tools/native_build_gate.sh` (18/18 targets,

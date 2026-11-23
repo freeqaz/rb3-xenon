@@ -45,7 +45,7 @@
 #include "platform/JoypadNativeSource.h"
 #include "platform/JoypadScriptHook.h"
 #ifdef __APPLE__
-#include "platform/CrkdGuitar.h"
+#include "CrkdGuitar.h"
 #endif
 #include "xdk/xapilibi/xinput.h"
 #include <cstdio>
@@ -72,8 +72,29 @@ extern GLFWwindow *gNativeWindow;
 namespace {
 JoypadNativePadState gPad[kNumJoypads];
 #ifdef __APPLE__
+BYTE PadSubType();
 milo::CrkdGuitars<kNumJoypads> gCrkdGuitars;
 bool gCrkdActive[kNumJoypads];
+
+// Extra guitar bindings for the Mac launcher's keyboard fallback. Keep the
+// engine's normal menu keys and leave physical controllers on their own path.
+void ReadKeyboardGuitar(JoypadNativePadState &state) {
+    if (PadSubType() != 6 || glfwJoystickIsGamepad(0) || !TheUI || !TheUI->CurrentScreen()) return;
+    const char *screen = TheUI->CurrentScreen()->Name();
+    if (strcmp(screen, "game_screen") && strcmp(screen, "practice_game_screen")) return;
+    static const struct { int key; JoypadButton button; } bindings[] = {
+        {GLFW_KEY_1, kPad_Xbox_A}, {GLFW_KEY_2, kPad_Xbox_B},
+        {GLFW_KEY_3, kPad_Xbox_Y}, {GLFW_KEY_4, kPad_Xbox_X},
+        {GLFW_KEY_5, kPad_Xbox_LB}, {GLFW_KEY_J, kPad_DUp}, {GLFW_KEY_K, kPad_DDown}
+    };
+    if (glfwGetKey(gNativeWindow, GLFW_KEY_LEFT_SUPER) || glfwGetKey(gNativeWindow, GLFW_KEY_RIGHT_SUPER) ||
+        glfwGetKey(gNativeWindow, GLFW_KEY_LEFT_CONTROL) || glfwGetKey(gNativeWindow, GLFW_KEY_RIGHT_CONTROL) ||
+        glfwGetKey(gNativeWindow, GLFW_KEY_LEFT_ALT) || glfwGetKey(gNativeWindow, GLFW_KEY_RIGHT_ALT)) return;
+    for (const auto &binding : bindings) {
+        if (glfwGetKey(gNativeWindow, binding.key) == GLFW_PRESS)
+            state.buttons |= 1u << binding.button;
+    }
+}
 
 void ReadCrkdGuitar(int pad, const milo::CrkdGuitarState &guitar, bool assign) {
     const bool active = assign && guitar.connected;
@@ -90,6 +111,8 @@ void ReadCrkdGuitar(int pad, const milo::CrkdGuitarState &guitar, bool assign) {
     state.connected = true;
     state.hasSticks = true;
     state.sticks[0][1] = -guitar.whammy;
+    // TU5's Xbox guitar uses traditional_whammy_val = -(RX + 1) / 2.
+    state.sticks[1][0] = 2.0f * guitar.whammy - 1.0f;
     state.buttons = (b & Guitar::Green ? 1u << kPad_Xbox_A : 0) |
                     (b & Guitar::Red ? 1u << kPad_Xbox_B : 0) |
                     (b & Guitar::Yellow ? 1u << kPad_Xbox_Y : 0) |
@@ -126,7 +149,8 @@ bool ScriptUi(const char **screen, bool *inTransition) {
 
 short StickToThumb(float v, bool flip) {
     // GLFW: -1..1, y positive down. XInput: -32768..32767, y positive up.
-    float f = (flip ? -v : v) * 32767.0f;
+    const float axis = flip ? -v : v;
+    float f = axis * (axis < 0.0f ? 32768.0f : 32767.0f);
     if (f > 32767.0f) f = 32767.0f;
     if (f < -32768.0f) f = -32768.0f;
     return (short)f;
@@ -346,6 +370,7 @@ void JoypadPoll() {
         JoypadNativeSourceRead(pad, &gPad[pad]);
 #ifdef __APPLE__
         ReadCrkdGuitar(pad, gCrkdGuitars[pad], gNativeWindow && !gExtra[pad].on);
+        if (pad == 0 && gNativeWindow && !gCrkdActive[0]) ReadKeyboardGuitar(gPad[0]);
 #endif
         if (gExtra[pad].on) { // RB3_APP_EXTRA_PADS: this pad is its own script's
             gPad[pad] = JoypadNativePadState();
