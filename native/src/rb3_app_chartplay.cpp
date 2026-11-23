@@ -116,6 +116,12 @@ struct Song {
     unsigned prevButtons = 0; // last poll's levels
     int strumAlt = 0;
     float prevNow = 0;
+    // the list's size and first gem time when this Song started (lane trainwalk2): a
+    // trainer reloads the same GameGemList in place for every loop and section
+    // (GemTrainerPanel::CopyGems -> GameGemList::SetGems), with later times and the
+    // index restarting at 0, so a change in either is a new chart on the same list
+    int numGems = 0;
+    float firstMs = 0;
     int acted = 0, skipped = 0, late = 0, collide = 0;
     float maxLate = 0;
     // keys / pro keys (lane chartplay2): key index 0..24 (MIDI note 0x30 + i) -> song
@@ -393,11 +399,16 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
     if (m && m->mWatcher && m->mWatcher->mImpl && m->mController)
         gl = m->mWatcher->mImpl->mGemList;
     float now = gl ? m->GetNow() : 0;
-    if (gl != gSong.list || (gl && now + 1000 < gSong.prevNow)) {
+    bool reloaded = gl && gl == gSong.list
+        && (gl->NumGems() != gSong.numGems
+            || (gSong.numGems > 0 && gl->GetGem(0).mMs != gSong.firstMs));
+    if (gl != gSong.list || reloaded || (gl && now + 1000 < gSong.prevNow)) {
         if (!gSong.done) Summary(gl ? "replaced" : "ended");
         gSong = Song();
         gSong.list = gl;
         if (!gl) return 0;
+        gSong.numGems = gl->NumGems();
+        gSong.firstMs = gSong.numGems > 0 ? gl->GetGem(0).mMs : 0;
         while (gSong.next < gl->NumGems() && gl->GetGem(gSong.next).mMs + k.offset < now)
             gSong.next++;
         printf("rb3-app-chartplay: poll %d gem list %p gems %d track %d now %.1f starting at gem %d\n",
