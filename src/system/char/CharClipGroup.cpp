@@ -192,7 +192,17 @@ void CharClipGroup::RandomizeIndex() {
 // Replace is empty in retail and is not called.
 void CharClipGroup::Replace(ObjRef *from, Hmx::Object *to) {
     for (int idx = 0; idx < mClips.size(); idx++) {
+#ifdef HX_NATIVE
+        // Retail fn_8238F270+0x58 (`cmplw cr6,r11,r22`) compares each entry's
+        // held clip with `from`, the dying object on X360. Natively each entry
+        // is an ObjOwnerPtr whose ring Replace passes the entry itself as
+        // `from` (obj/Object.h RefIs), so the compare never matched: the
+        // retarget (SetOwnerObj, bl at +0x80) and the erase (+0xD8) never ran,
+        // and a ReplaceRefs walk left the entry on the dying clip. Lane A26.
+        if (RefIs(from, mClips[idx])) {
+#else
         if (mClips[idx] == reinterpret_cast<Hmx::Object *>(from)) {
+#endif
             mClips[idx] = dynamic_cast<CharClip *>(to);
         }
         if (!mClips[idx]) {
