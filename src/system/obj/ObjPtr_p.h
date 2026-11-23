@@ -38,7 +38,8 @@ ObjRefConcrete<T1, T2>::~ObjRefConcrete() {
             mObject = nullptr;
             return;
         }
-        mObject->Release(this);
+        // Not mObject->Release(this): see SetObjConcrete below.
+        this->ObjRef::Release(nullptr);
     }
 }
 
@@ -49,7 +50,13 @@ void ObjRefConcrete<T1, T2>::SetObjConcrete(T1 *obj) {
             SafeReleaseFromRing(this);
             goto skip_ring_ops;
         }
-        mObject->Release(this);
+        // Native Hmx::Object::Release(ObjRef *ref) is `if (!ref) return;
+        // ref->Release(nullptr);` and never reads its own `this`, so this is
+        // the same unlink for every live referent. Calling it through mObject
+        // would convert mObject to Hmx::Object*, which reads the virtual-base
+        // offset from mObject's vtable, the slot SetObj below no longer reads
+        // on a referent that is mid-destruction.
+        this->ObjRef::Release(nullptr);
     }
     mObject = obj;
     if (mObject) {
