@@ -57,8 +57,9 @@
 //                                   joypad.dta whammy entry GetWhammyBar reads) full
 //                                   travel every other poll while a sustain is held:
 //                                   of a gem in an overdrive phrase (od) or any (all)
-//   RB3_APP_CHARTPLAY_TILT=1        deploy overdrive by tilt (sThumbRY full negative,
-//                                   the xbox_mercury_switch axis) for 6 polls whenever
+//   RB3_APP_CHARTPLAY_TILT=1        deploy overdrive by tilt (sThumbRY full positive,
+//                                   the xbox_mercury_switch axis) for 15 polls (TU5
+//                                   beatmatch.dta any_sign_filter: 12 frames >= 0.93) whenever
 //                                   the player has half a bar and is not deploying
 //   RB3_APP_CHARTPLAY_CODA=mash|blow  big rock ending: `mash` skips the chart's gems
 //                                   inside the coda freestyle (GetCodaFreestyleExtents)
@@ -790,20 +791,22 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
                 if ((poll >> 1) & 1) gAxisRX = 32767;
             }
         }
-        // _TILT: tilt for 6 polls with half a bar of energy, not deploying, at
+        // _TILT: tilt for 15 polls with half a bar of energy, not deploying, at
         // most once a second.
         if (gSong.tiltHeld > 0) {
             gSong.tiltHeld--;
         } else if (k.tilt && gPadPlayer && gPadPlayer->GetBandEnergy() >= 0.5f
                    && !gPadPlayer->IsDeployingBandEnergy() && poll - gSong.tiltLast >= 30) {
-            gSong.tiltHeld = 6;
+            gSong.tiltHeld = 15;
             gSong.tiltLast = poll;
             gSong.tilts++;
             if (k.log)
                 printf("rb3-app-chartplay: poll %d tilt (energy %.4f) now %.1f\n", poll,
                        gPadPlayer->GetBandEnergy(), now);
         }
-        if (gSong.tiltHeld > 0) gAxisRY = -32768;
+        // Full positive: ReadSingleXinputJoypad negates RY (TranslateStick), and
+        // GuitarController::Poll's xbox_mercury_switch passes -GetRY() on.
+        if (gSong.tiltHeld > 0) gAxisRY = 32767;
     } else {
         // Drums: every gem due this poll (a pad held last poll waits one poll).
         while (gSong.next < n) {
