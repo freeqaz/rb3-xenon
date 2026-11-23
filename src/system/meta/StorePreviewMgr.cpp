@@ -118,10 +118,10 @@ HANDLE_ACTION(set_current_preview_file, SetCurrentPreviewFile(_msg->Str(2)))
 HANDLE_ACTION(download_preview_file, DownloadPreviewFile(_msg->Str(2)))
 HANDLE_EXPR(is_downloading_file, IsDownloadingFile(_msg->Str(2)))
 HANDLE_EXPR(allow_preview_download, AllowPreviewDownload(_msg->Str(2)))
-#ifdef HX_NATIVE
-// Retail Handle (0x827B2360) does not forward to MsgSource::Handle.
-HANDLE_SUPERCLASS(MsgSource)
-#endif
+// Retail Handle (0x827B2360) forwards to no superclass: no bl to MsgSource::Handle
+// (0x82768318) or Hmx::Object::Handle, so an unhandled message is neither
+// add_sink/remove_sink-dispatched nor exported to sinks. Native forwarded to
+// MsgSource::Handle until lane narms5.
 END_HANDLERS
 
 // Retail @0x827B1D60 (pinned, was fn_827B1D60).

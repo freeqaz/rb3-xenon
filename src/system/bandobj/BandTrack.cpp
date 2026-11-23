@@ -189,10 +189,9 @@ void BandTrack::Reset() {
         static Symbol disable("disable");
         static Message disable_msg(disable);
         SendTrackerDisplayMessage(disable_msg);
-#ifdef HX_NATIVE
-        if (UILabel *pctLabel = mPlayerFeedback->Find<UILabel>("solo_percent.lbl", false))
-            pctLabel->SetTokenFmt(me_percent_format, 0);
-#endif
+        // Retail (0x82352828) goes from SendTrackerDisplayMessage straight to the
+        // mFailedFeedback reset: no solo_percent.lbl write (native zeroed the
+        // label here until lane narms5; SoloHit is its only writer).
     }
     if (mFailedFeedback) {
         mFailedFeedback->HandleType(reset);
@@ -506,14 +505,9 @@ void BandTrack::SoloStart() {
             static Message start_solo_msg(start_solo);
             mPlayerFeedback->HandleType(start_solo_msg);
         }
-#ifdef HX_NATIVE
-        if (mPlayerFeedback) {
-            UILabel *pctLabel =
-                mPlayerFeedback->Find<UILabel>("solo_percent.lbl", true);
-            if (pctLabel)
-                pctLabel->SetTokenFmt(me_percent_format, 0);
-        }
-#endif
+        // Retail (0x82351808) goes from the start_solo HandleType to the
+        // guitar_solo_start.trig Find: no Find<UILabel>/SetTokenFmt (native
+        // zeroed solo_percent.lbl here until lane narms5).
         EventTrigger *trig =
             ThisDir()->Find<EventTrigger>("guitar_solo_start.trig", false);
         if (trig)

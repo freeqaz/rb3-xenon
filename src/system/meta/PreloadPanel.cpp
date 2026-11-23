@@ -28,9 +28,8 @@ PreloadPanel::PreloadPanel()
     if (!sCache) {
         // NOTE(NCCC-0731-ab7e/f268): two RB3-vs-DC3 divergences here.
         // (1) size is the literal 0x500000, not a load of the mutable
-        //     gMaxCacheSize global (retail emits `lis r4, 0x50`); any
-        //     SetTypeDef override is reapplied later by StartCache()'s
-        //     sCache->SetSize(gMaxCacheSize).
+        //     gMaxCacheSize global (retail emits `lis r4, 0x50`); nothing
+        //     resizes it later in either build.
         // (2) THREE args, not four -- DC3 added a trailing bool to the
         //     FileCache ctor. Retail materializes only r4/r5/r6 for this call.
         // The RB3-era form is `new FileCache(0x500000, kLoadBack, true)`,
@@ -50,8 +49,9 @@ END_HANDLERS
 // Retail's SetTypeDef is a bare forward: the vtordisp thunk (0x827B4258)
 // branches to 0x827B36E0, `this -= 0x3C; b UIPanel::SetTypeDef`, a body ICF
 // shares with every panel whose override only forwards. The CheckTypeDef calls
-// are dev-build warnings, and the max_cache_size read is DC3's (StartCache's
-// SetSize(gMaxCacheSize) is native-only for the same reason).
+// are dev-build warnings, and the max_cache_size read is DC3's. No RB3 data
+// names max_cache_size, and since lane narms5 nothing reads gMaxCacheSize back,
+// so the native read is inert.
 void PreloadPanel::SetTypeDef(DataArray *d) {
     UIPanel::SetTypeDef(d);
 #ifdef HX_NATIVE
@@ -68,10 +68,9 @@ void PreloadPanel::SetTypeDef(DataArray *d) {
 
 void PreloadPanel::Load() {
     UIPanel::Load();
-#ifdef HX_NATIVE
-    // DC3 addition; RB3 retail (0x827B4880) goes straight to mPreloadResult.
-    TheLoadMgr.SetLoaderPeriod(14.0f);
-#endif
+    // Retail (0x827B4880) goes straight from UIPanel::Load to mPreloadResult: no
+    // SetLoaderPeriod. DC3's SetLoaderPeriod(14.0f), never restored, was kept
+    // natively until lane narms5.
     mPreloadResult = kPreloadInProgress;
     TheContentMgr.RegisterCallback(this, false);
     mAppReadFailureHandler = TheContentMgr.SetReadFailureHandler(this);
@@ -133,9 +132,9 @@ void PreloadPanel::PollForLoading() {
             if (mSongDoesNotExist) {
                 mPreloadResult = kPreloadFailure;
             } else {
-#ifdef HX_NATIVE
-                FileCache::PollAll(); // DC3 addition; absent in RB3 retail
-#endif
+                // Retail (0x827B49E8) goes from DoneCaching to the FileCached
+                // loop with no FileCache::PollAll (DC3's; native-only until lane
+                // narms5). SystemPoll still polls every cache once a frame.
                 FOREACH (it, mPreloadedFiles) {
                     if (!CheckFileCached(it->c_str())) {
                         mPreloadResult = kPreloadFailure;
@@ -250,9 +249,9 @@ void PreloadPanel::StartCache() {
     mMounted = true;
     MILO_ASSERT(sCache, 0xFB);
     sCache->Clear();
-#ifdef HX_NATIVE
-    sCache->SetSize(gMaxCacheSize); // DC3 addition; absent in RB3 retail
-#endif
+    // Retail (0x827B4668) calls Clear then StartSet: no SetSize, whose EndSet
+    // sorted and polled the cache between the two (DC3's; native-only until
+    // lane narms5). The size stays the ctor's 0x500000.
     sCache->StartSet(0);
     if (!mSongDoesNotExist) {
         static Symbol preload_files("preload_files");
