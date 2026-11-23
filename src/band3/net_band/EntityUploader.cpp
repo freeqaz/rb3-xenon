@@ -499,7 +499,7 @@ void EntityUploader::RecordSubmissionTime() { GetDateAndTime(mSubmittedTime); }
 bool EntityUploader::HasServerTimedOut() {
     DateTime dt;
     // An Abort() does not count as a timeout here: retail TU5 (0x8250D4C8) has
-    // no unk34 test (the rb3-Wii dev build's early return is gone natively too).
+    // no unk34 test, so native has no early return either.
     GetDateAndTime(dt);
     return dt.ToCode() - mSubmittedTime.ToCode() >= 15;
 }

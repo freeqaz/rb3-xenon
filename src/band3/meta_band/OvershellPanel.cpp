@@ -100,11 +100,9 @@ OvershellPanel::OvershellPanel(SessionMgr *smgr, BandUserMgr *umgr)
     ThePlatformMgr.AddSink(this);
     TheRockCentral.AddSink(this);
     // Retail fn_825B4AA8 stops here (six AddSink calls: GameMicsChangedMsg plus
-    // the five untyped ones above). The rb3-Wii dev build also added typed
-    // ThePlatformMgr invite/utility sinks; on top of the untyped
-    // ThePlatformMgr.AddSink(this) they delivered NetStartUtilityFinishedMsg
-    // twice, and the dtor removed two of them from TheWiiFriendMgr instead,
-    // leaving them dangling. Neither build has them now.
+    // the five untyped ones above). No typed ThePlatformMgr invite/utility
+    // sinks: on top of the untyped ThePlatformMgr.AddSink(this) they would
+    // deliver NetStartUtilityFinishedMsg twice.
 }
 
 OvershellPanel::~OvershellPanel() {
