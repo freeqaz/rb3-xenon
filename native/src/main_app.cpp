@@ -62,6 +62,12 @@
 #include "bandobj/TrackPanelDirBase.h"
 #include "bandobj/GemTrackDir.h"
 #include "beatmatch/BeatMatcher.h"
+#include "meta_band/MusicLibrary.h"
+#include "meta_band/SongSortMgr.h"
+#include "meta_band/BandSongMgr.h"
+#include "meta_band/ProfileMgr.h"
+#include "meta_band/BandProfile.h"
+#include "meta_band/SavedSetlist.h"
 
 void rb3_app_check_ui_sink(); // rb3_app_gates.cpp
 void rb3_app_check_tex_movie(); // rb3_app_gates.cpp
@@ -242,6 +248,68 @@ void LogTour() {
     }
 }
 
+// RB3_APP_SONGSEL_LOG=1 (lane songselwalk): one `rb3-app: frame N songsel sort=<short name>
+// n=<rows> hl=<ix>:<node type>:<token> making=<0|1> setlist=<song,...> filter=<task filter>`
+// line whenever any of those change while the music library is on screen, and one `songsel list
+// <sort> <n>: T:token ...` dump of the current sort's whole row list whenever the sort, its row
+// count or the filter changes, so a walk can check sort order, filters and setlist contents
+// (the focus log's list rows carry no DataSymbol here). Read-only: every call only reads.
+void LogSongSel() {
+    static const bool on = [] {
+        const char *v = getenv("RB3_APP_SONGSEL_LOG");
+        return v && v[0] && strcmp(v, "0") != 0;
+    }();
+    if (!on || !TheMusicLibrary || !TheSongSortMgr || !TheMusicLibrary->unk40) return;
+    NodeSort *sort = TheMusicLibrary->GetCurrentSort();
+    if (!sort) return;
+    static const char kType[] = "-CHUSFLT";
+    String filter;
+    TheMusicLibrary->mTask.GetSongFilterAsString(filter);
+    int n = (int)sort->mList.size();
+    int hl = TheMusicLibrary->mCurrentHighlightIndex;
+    SortNode *node = hl >= 0 && hl < n ? sort->mList[hl] : nullptr;
+    char set[512];
+    int k = 0;
+    set[0] = 0;
+    const std::vector<int> &sl = TheMusicLibrary->mSetlist;
+    for (size_t i = 0; i < sl.size() && k < (int)sizeof set - 64; i++)
+        k += snprintf(set + k, sizeof set - k, "%s%s", i ? "," : "",
+                      TheSongMgr.GetShortNameFromSongID(sl[i], false).Str());
+    // The primary profile's saved setlists: title (song count).
+    char saved[512];
+    int m = snprintf(saved, sizeof saved, "-");
+    if (BandProfile *prof = TheProfileMgr.GetPrimaryProfile()) {
+        const std::vector<LocalSavedSetlist *> &ss = prof->GetSavedSetlists();
+        m = snprintf(saved, sizeof saved, "%d", (int)ss.size());
+        for (size_t i = 0; i < ss.size() && m < (int)sizeof saved - 96; i++)
+            m += snprintf(saved + m, sizeof saved - m, "%s\"%s\"(%d)", i ? "," : ":",
+                          ss[i]->GetTitle(), (int)ss[i]->mSongs.size());
+    }
+    char buf[1536];
+    snprintf(buf, sizeof buf,
+             "songsel sort=%s n=%d hl=%d:%c:%s making=%d setlist=%s filter=%s saved=%s",
+             sort->GetName().Str(), n, hl, node ? kType[node->GetType() & 7] : '-',
+             node ? node->GetToken().Str() : "-", TheMusicLibrary->GetMakingSetlist(false), set,
+             filter.c_str(), saved);
+    static char last[1536];
+    static std::string lastList;
+    if (strcmp(buf, last)) {
+        strcpy(last, buf);
+        printf("rb3-app: frame %d %s\n", gFramesStarted, buf);
+        char key[256];
+        snprintf(key, sizeof key, "%s|%d|%s", sort->GetName().Str(), n, filter.c_str());
+        if (lastList != key) {
+            lastList = key;
+            printf("rb3-app: frame %d songsel list %s %d:", gFramesStarted, sort->GetName().Str(), n);
+            for (int i = 0; i < n; i++)
+                printf(" %c:%s", kType[sort->mList[i]->GetType() & 7],
+                       sort->mList[i]->GetToken().Str());
+            printf("\n");
+        }
+        fflush(stdout);
+    }
+}
+
 // RB3_APP_MOD_LOG=1: one `rb3-app: frame N mods ...` line whenever the modifier state or any
 // value a modifier sets changes, so a walk can check each modifier's effect (lane modwalk):
 // active= the modifiers ModifierMgr::IsModifierActive reports; nofail= MetaPerformer::
@@ -318,6 +386,7 @@ extern "C" void __wrap__Z10SystemPollb(bool b) { // ring: native-real
         LogFocus(cur);
         LogTour();
         LogModifiers();
+        LogSongSel();
     }
     __real__Z10SystemPollb(b);
 }
