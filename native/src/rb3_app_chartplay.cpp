@@ -25,6 +25,8 @@
 //                                   a hash of the gem index and _SEED; the game's
 //                                   RNG is not touched
 //   RB3_APP_CHARTPLAY_MISS_FROM=n   only gems with index >= n may be skipped
+//   RB3_APP_CHARTPLAY_MISS_TO=n     (lane dropwalk) and only gems with index < n,
+//                                   so _MISS=100 sits out the window [from, to)
 //   RB3_APP_CHARTPLAY_SEED=n        the skip hash's seed (default 0)
 //   RB3_APP_CHARTPLAY_HOPO=tap      a HOPO gem (GameGem no-strum bit, which
 //                                   CanHopo reads) is played by the fret change
@@ -85,6 +87,7 @@ struct Knobs {
     float offset = 0;
     int missPct = 0;
     int missFrom = 0;
+    int missTo = 0; // lane dropwalk: 0 = no upper bound
     unsigned seed = 0;
     bool tapHopo = false;
     float sustain = 1;
@@ -119,6 +122,7 @@ const Knobs &K() {
         if (const char *v = getenv("RB3_APP_CHARTPLAY_OFFSET_MS")) k.offset = (float)atof(v);
         if (const char *v = getenv("RB3_APP_CHARTPLAY_MISS")) k.missPct = atoi(v);
         if (const char *v = getenv("RB3_APP_CHARTPLAY_MISS_FROM")) k.missFrom = atoi(v);
+        if (const char *v = getenv("RB3_APP_CHARTPLAY_MISS_TO")) k.missTo = atoi(v);
         if (const char *v = getenv("RB3_APP_CHARTPLAY_SEED")) k.seed = (unsigned)atoi(v);
         if (const char *v = getenv("RB3_APP_CHARTPLAY_HOPO")) k.tapHopo = !strcmp(v, "tap");
         if (const char *v = getenv("RB3_APP_CHARTPLAY_SUSTAIN")) k.sustain = (float)atof(v);
@@ -136,9 +140,9 @@ const Knobs &K() {
         // which LogFile writes to its file pattern in the run directory.
         if (k.on && k.log >= 2) TheBeatMatchOutput.SetActive(true);
         if (k.on) {
-            printf("rb3-app-chartplay: on (pad 0) offset %.1f ms miss %d%% from gem %d seed %u "
+            printf("rb3-app-chartplay: on (pad 0) offset %.1f ms miss %d%% from gem %d to %d seed %u "
                    "hopo %s sustain %.2f\n",
-                   k.offset, k.missPct, k.missFrom, k.seed, k.tapHopo ? "tap" : "strum", k.sustain);
+                   k.offset, k.missPct, k.missFrom, k.missTo, k.seed, k.tapHopo ? "tap" : "strum", k.sustain);
             printf("rb3-app-chartplay: mute %s slide %s bend %d deploy %s hands %d\n",
                    kMute[k.mute], kSlide[k.slide], (int)k.bend, kDeploy[k.deploy], (int)k.hands);
             fflush(stdout);
@@ -197,6 +201,7 @@ bool gRawOn = false;
 bool Skip(int gem) {
     const Knobs &k = K();
     if (k.missPct <= 0 || gem < k.missFrom) return false;
+    if (k.missTo > 0 && gem >= k.missTo) return false;
     uint32_t h = 2166136261u ^ k.seed;
     for (int i = 0; i < 4; i++) {
         h ^= (uint32_t)(gem >> (8 * i)) & 0xff;
