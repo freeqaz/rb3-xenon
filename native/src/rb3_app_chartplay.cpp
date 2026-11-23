@@ -101,7 +101,18 @@
 #include <cstdlib>
 #include <cstring>
 
+int RB3AppHz(); // rb3_app_determinism.cpp (RB3_APP_HZ; 0 = legacy 30 Hz)
+
 namespace {
+// Lane walk60: the driver's own poll counts (one deploy or tilt a second, a tilt held half a
+// second, the first poll's dt) were written for 30 polls a second; at RB3_APP_HZ=60 they halved
+// in time (two deploys a second). Count them in polls of the run's rate instead; legacy is 30,
+// so a legacy run is unchanged.
+int PollsPerSecond() {
+    static const int pps = RB3AppHz() > 0 ? RB3AppHz() : 30;
+    return pps;
+}
+
 struct Knobs {
     bool on = false;
     float offset = 0;
@@ -467,7 +478,7 @@ unsigned KeysPoll(const BeatMatchController *c, bool pro, float now, float dt, i
     if (gSong.deployHeld > 0) {
         gSong.deployHeld--;
     } else if (k.deploy && gPadPlayer && gPadPlayer->GetBandEnergy() >= 0.5f &&
-               !gPadPlayer->IsDeployingBandEnergy() && poll - gSong.deployLast >= 30) {
+               !gPadPlayer->IsDeployingBandEnergy() && poll - gSong.deployLast >= PollsPerSecond()) {
         gSong.deployHeld = 1;
         gSong.deployLast = poll;
         gSong.deploys++;
@@ -668,7 +679,7 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
     }
     if (!gl) return 0;
     float dt = now - gSong.prevNow;
-    if (dt <= 0 || dt > 100) dt = 1000.0f / 30;
+    if (dt <= 0 || dt > 100) dt = 1000.0f / PollsPerSecond();
     gSong.prevNow = now;
     BeatMatchController *c = m->mController;
     GuitarController *gc = dynamic_cast<GuitarController *>(c);
@@ -815,8 +826,8 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
         } else if (gSong.tiltHeld > 0) {
             gSong.tiltHeld--;
         } else if (k.tilt && gPadPlayer && gPadPlayer->GetBandEnergy() >= 0.5f
-                   && !gPadPlayer->IsDeployingBandEnergy() && poll - gSong.tiltLast >= 30) {
-            gSong.tiltHeld = 15;
+                   && !gPadPlayer->IsDeployingBandEnergy() && poll - gSong.tiltLast >= PollsPerSecond()) {
+            gSong.tiltHeld = PollsPerSecond() / 2;
             gSong.tiltLast = poll;
             gSong.tilts++;
             if (k.log)
