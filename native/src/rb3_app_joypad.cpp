@@ -60,6 +60,7 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll);
 bool RB3AppChartPlayLog();
 void RB3AppChartPlayAfterPoll(int poll);
 const unsigned char *RB3AppChartPlayRaw(int pad); // lane chartplay2: keys / pro guitar report
+bool RB3AppChartPlayAxes(int pad, short *rx, short *ry); // lane codawalk: whammy / tilt
 
 namespace {
 JoypadNativePadState gPad[kNumJoypads]; // this poll's native source state, per pad
@@ -348,6 +349,10 @@ void JoypadTerminate() { JoypadTerminateCommon(); }
 // Retail 0x825298E0 reads the XInput thread's latest XINPUT_STATE and ORs in the
 // buttons that went down since the last frame. Natively the state is this poll's
 // JoypadNativeSourceRead of the pad.
+namespace {
+BYTE PadSubType(); // below: the XInput subtype RB3_APP_JOYPAD_KIND gives pad 0
+} // namespace
+
 void GetXinputSinceLastFrame(int pad, XINPUT_STATE *state, unsigned int *buttons) {
     memset(state, 0, sizeof(*state));
     *buttons = 0;
@@ -365,6 +370,16 @@ void GetXinputSinceLastFrame(int pad, XINPUT_STATE *state, unsigned int *buttons
         state->Gamepad.sThumbRX = StickToThumb(s.sticks[1][0], false);
         state->Gamepad.sThumbRY = StickToThumb(s.sticks[1][1], true);
     }
+    // A guitar's whammy rests at full negative sThumbRX (lane codawalk): joypad.dta's
+    // Xbox guitar entry reads it as traditional_whammy_val, -(RX + 1) / 2
+    // (GuitarController::GetWhammyBar), so a stickless native guitar pad that left
+    // RX at 0 held the whammy half down for the whole song (GetWhammyBar -0.5,
+    // the sustain pitch bend at half travel, send_whammy -0.5).
+    if (!s.hasSticks && (gExtra[pad].on ? gExtra[pad].subtype : PadSubType()) == 6)
+        state->Gamepad.sThumbRX = -32768;
+    // RB3_APP_CHARTPLAY_WHAMMY / _TILT (lane codawalk): the chart player's whammy
+    // (sThumbRX) and tilt (sThumbRY) axes on pad 0.
+    RB3AppChartPlayAxes(pad, &state->Gamepad.sThumbRX, &state->Gamepad.sThumbRY);
     *buttons = s.buttons;
 }
 
