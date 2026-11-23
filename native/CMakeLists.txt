@@ -35,15 +35,24 @@ set(REPO_ROOT ${CMAKE_SOURCE_DIR}/..)
 #                           that bug reports at -O0 and is silent at -O1).
 # At runtime the shadow mapping needs `ulimit -d unlimited` on this box (32 GB data
 # limit); native_asan.sh sets it.
-set(RB3X_SANITIZE "" CACHE STRING "Sanitizer build: empty (off) or 'address'")
-if(RB3X_SANITIZE STREQUAL "address")
-    message(STATUS "RB3X_SANITIZE=address: building every target under AddressSanitizer")
+# RB3X_SANITIZE=address,undefined (lane sanitize, 2026-11-22) adds UBSan on top:
+#   -fsanitize=undefined        the default group, vptr and function included (RTTI is on)
+#   -fsanitize-recover=undefined  each check prints and continues, so one run
+#                           reports every site (UBSan prints each source location once)
+set(RB3X_SANITIZE "" CACHE STRING "Sanitizer build: empty (off), 'address' or 'address,undefined'")
+if(RB3X_SANITIZE STREQUAL "address" OR RB3X_SANITIZE STREQUAL "address,undefined")
+    message(STATUS "RB3X_SANITIZE=${RB3X_SANITIZE}: building every target under AddressSanitizer")
     add_compile_options(-fsanitize=address -fsanitize-recover=address
                         -fno-omit-frame-pointer -fsanitize-address-use-after-scope
                         "SHELL:-mllvm -asan-globals=0" -g)
     add_link_options(-fsanitize=address -fsanitize-recover=address)
+    if(RB3X_SANITIZE STREQUAL "address,undefined")
+        message(STATUS "RB3X_SANITIZE: and UndefinedBehaviorSanitizer")
+        add_compile_options(-fsanitize=undefined -fsanitize-recover=undefined)
+        add_link_options(-fsanitize=undefined)
+    endif()
 elseif(NOT RB3X_SANITIZE STREQUAL "")
-    message(FATAL_ERROR "RB3X_SANITIZE='${RB3X_SANITIZE}': only 'address' is supported")
+    message(FATAL_ERROR "RB3X_SANITIZE='${RB3X_SANITIZE}': only 'address' or 'address,undefined' is supported")
 endif()
 
 # --- MSVC-compat + decomp flags (mirrors dc3-decomp native build) ---

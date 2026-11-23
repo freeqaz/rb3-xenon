@@ -6,7 +6,17 @@
 
 class XLSPConnection : public ThreadCallback {
 public:
+    // Named from the state machine in XLSPConnection.cpp (no retail symbol
+    // names them). The enum was empty, so every state above 0 and the -1
+    // sentinel was outside its range (UBSan invalid-enum loads, lane sanitize).
     enum State {
+        kXLSPDestroyed = -1, // ctor's initial value and the dtor's SetState
+        kXLSPIdle = 0, // Connect from here starts enumeration
+        kXLSPEnumerating = 1, // StartEnumeration: XTitleServerCreateEnumerator
+        kXLSPGatewayConnecting = 2, // StartGatewayConnection succeeded
+        kXLSPConnected = 3, // XNetGetConnectStatus says connected
+        kXLSPFailed = 4, // enumeration or gateway failed
+        kXLSPDisconnecting = 5 // ThreadCall closes the enumeration, then idle
     };
     XLSPConnection();
     virtual ~XLSPConnection();

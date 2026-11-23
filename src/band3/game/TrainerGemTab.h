@@ -65,8 +65,10 @@ public:
     std::vector<GameGem> unk4c;
     const TrainerSection *unk54;
     RndMesh *mGems[9]; // 0x6c
-    RndMesh *mTails[5]; // 0x90
-    int unk90;
+    // Six tails, one per real-guitar string: retail's ctor (0x826EFC38) zeroes
+    // six words from 0x90 (`li r10, 6` / stwu loop) up to mTrackGroup, and Init
+    // stores mTails[5] (gem_sustain_purple.mesh). Was mTails[5] + `int unk90`.
+    RndMesh *mTails[6]; // 0x90
     RndGroup *mTrackGroup; // 0xa8
     RndTransformable *mInstLanes[25]; // 0xac - 0xf8, inclusive
     union {

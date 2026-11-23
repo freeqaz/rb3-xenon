@@ -997,10 +997,12 @@ void ByteGrinder::GrindArray(
 }
 
 int magicNumberGeneratorNative(int idx, int mode) {
-    int magic = (mode == 2) ? 0x36363636 : 0x5c5c5c5c;
-    int v = (idx ^ magic) * 0x19660d + 0x3c6ef35f;
-    if (mode == 1) v = v * 0x19660d + 0x3c6ef35f;
-    return v;
+    // Unsigned: the LCG step relies on 32-bit wrap, and a signed int
+    // overflowing is undefined (UBSan in rb3-app's frame loop, lane sanitize).
+    unsigned int magic = (mode == 2) ? 0x36363636u : 0x5c5c5c5cu;
+    unsigned int v = ((unsigned int)idx ^ magic) * 0x19660du + 0x3c6ef35fu;
+    if (mode == 1) v = v * 0x19660du + 0x3c6ef35fu;
+    return (int)v;
 }
 
 #else // !HX_NATIVE

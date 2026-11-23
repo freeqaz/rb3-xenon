@@ -11,7 +11,9 @@ Rand::Rand(int i)
 }
 
 void Rand::Seed(int seed) {
-    int s = seed;
+    // Unsigned: retail's mullw wraps, and a signed int overflowing is undefined
+    // in C++ (UBSan on every native target's static init, lane sanitize).
+    unsigned int s = seed;
     for (int i = 0; i < 0x100; i++) {
         s = s * 0x41C64E6D + 0x3039;
         unsigned int lo = (unsigned int)s >> 16;

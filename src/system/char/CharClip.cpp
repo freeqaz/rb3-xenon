@@ -355,7 +355,12 @@ void CharClip::Transitions::Load(BinStream &bs) {
             }
         }
         Resize((intptr_t)it - (intptr_t)start, nullptr);
-        memcpy(mNodeStart, start, BytesInMemory());
+#ifdef HX_NATIVE
+        // A clip with no transitions leaves mNodeStart null, and memcpy's
+        // pointers must be non-null even for 0 bytes (UBSan, lane sanitize).
+        if (mNodeStart)
+#endif
+            memcpy(mNodeStart, start, BytesInMemory());
         MemFree(start);
     }
 }

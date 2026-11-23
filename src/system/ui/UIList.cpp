@@ -50,15 +50,18 @@ UIList::UIList()
       mDrawManuallyControlledWidgets(0), mAllowHighlight(0)
 #ifdef HX_NATIVE
       ,
-      mUncappedNumDisplay(1), mScrolling(0)
+      mLimitCircularDisplayNumToDataNum(0), mUncappedNumDisplay(1), mScrolling(0)
 #endif
 {
     // Three RB3-vs-DC3 ctor divergences, each read off the retail target obj
     // (offsets are compiler-verified via class_layout_report.py UIList):
     //
     //  1. mScrolling (0x23b) / mUncappedNumDisplay: DC3-newer members absent
-    //     in RB3. Retail emits no store past 0x239, so they
-    //     are init'd for HX_NATIVE only.
+    //     in RB3. Retail emits no store past 0x239 (last: `stb r29, 0x239` at
+    //     0x827FBA70), so they are init'd for HX_NATIVE only. So is
+    //     mLimitCircularDisplayNumToDataNum (0x23a): retail never reads it
+    //     unset, but the native-only LimitCircularDisplay calls in
+    //     SetProvider and Refresh do (UBSan, lane sanitize).
     //  2. mUIListRev (0x1d0): retail's ctor does NOT zero it — its first tail
     //     store is 0x1d4 (mDataProvider). The member is still declared and is
     //     assigned in PreLoadWithRev, so dropping the initializer is

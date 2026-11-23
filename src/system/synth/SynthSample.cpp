@@ -203,9 +203,20 @@ void SynthSample::UnregisterChild(SampleInst *inst) {
 #endif
 }
 
+#ifdef HX_NATIVE
+// Native MemFree is MemFree(mem, file, line, name); SampleData calls its free
+// as void(*)(void*), so the cast called it with three garbage arguments (UBSan
+// -fsanitize=function, lane sanitize). Retail's MemFree takes only the pointer.
+static void SampleFreeNative(void *mem) { MemFree(mem); }
+#endif
+
 void SynthSample::Init() {
     REGISTER_OBJ_FACTORY(SynthSample);
+#ifdef HX_NATIVE
+    SampleData::SetAllocator(SampleAlloc, SampleFreeNative);
+#else
     SampleData::SetAllocator(SampleAlloc, (SampleDataFreeFunc)MemFree);
+#endif
 }
 
 #pragma endregion
