@@ -64,8 +64,19 @@ void RndTransformable::Replace(ObjRef *from, Hmx::Object *to) {
     // is 0xb8 bytes off for this class -- the "MI/vbase cases can
     // false-negative here" case its own comment admits. That is a behavioural
     // bug, not only a matching one, so the upcast is spelled out here.
+#ifdef HX_NATIVE
+    // The native ring passes the ObjRef member itself as `from` (obj/Object.h
+    // RefIs), never the dying object, so the retail compare (fn_823F94E8+0x34,
+    // `cmplw cr6,r11,r4`) never matched natively: SetTransParent (the bl at
+    // +0x64) never ran, the ref was dropped with mParent still aimed at the
+    // old parent, and that parent kept the child in mChildren. A child freed
+    // later was then a dangling entry in a live parent's list (SetDirty_Force
+    // <- BandCharacter::Poll, rb3-app tv3 -> game_screen; lane A24).
+    if (RefIs(from, mParent)) {
+#else
     if (reinterpret_cast<void *>(static_cast<Hmx::Object *>(mParent.Ptr()))
         == reinterpret_cast<void *>(from)) {
+#endif
         SetTransParent(dynamic_cast<RndTransformable *>(to), false);
         return;
     }
