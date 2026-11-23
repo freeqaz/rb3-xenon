@@ -51,6 +51,8 @@
 #include "game/Player.h"
 #include "game/VocalPart.h"
 #include "game/VocalPlayer.h"
+#include "game/Singer.h"
+#include "synth/VoiceBeat.h"
 #include "game/TambourineManager.h"
 #include "obj/Data.h"
 #include "os/System.h"
@@ -227,9 +229,16 @@ private:
         if (!gLog || !TheGameMicManager) return;
         GameMic *gm = TheGameMicManager->GetMic(MicClientID(mPart, -1));
         if (gm && (mLastSung != 0.0f || gm->mPitch > 0.0f)) {
+            // The talky (unpitched-note) detector's flags as VocalPart reads them:
+            // a hit needs voiced (unk1) && !spam (unk0) && level (unk4) > threshold.
+            const VoiceBeat *vb = nullptr;
+            VocalPlayer *vp = FindVocalPlayer();
+            if (vp && mPart < (int)vp->mSingers.size() && vp->mSingers[mPart]->mTalkyMatcher)
+                vb = &vp->mSingers[mPart]->mTalkyMatcher->mVoiceBeat;
             if (mPart == 0)
-                printf("rb3-app-mic: ms %.1f sung %.3f det %.3f energy %.4f\n", nowMs, mLastSung,
-                       gm->mPitch, gm->mEnergy);
+                printf("rb3-app-mic: ms %.1f sung %.3f det %.3f energy %.4f vb %d%d %.4f\n", nowMs,
+                       mLastSung, gm->mPitch, gm->mEnergy, vb ? vb->unk1 : -1, vb ? vb->unk0 : -1,
+                       vb ? vb->unk4 : 0.0f);
             else
                 printf("rb3-app-mic%d: ms %.1f sung %.3f det %.3f energy %.4f\n", mPart, nowMs,
                        mLastSung, gm->mPitch, gm->mEnergy);
