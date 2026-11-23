@@ -42,6 +42,19 @@
 // identical iff their rb3-app-det lines are (wall-clock lines such as
 // `world_poll took` and the `(%.2f s)` suffixes are not part of the record).
 // Record: docs/decomp/DETWALK_DETERMINISTIC_RB3APP_WALK_2026-11-23.md.
+//
+// Scoring walk (lane scorewalk, 2026-11-23). RB3_APP_AUTOPLAY=1 turns on the
+// game's own autoplay for every local band user: each frame, before the poll,
+// it sets BandUser::mAutoplay (the `autoplay` sync property). Retail
+// GemPlayer::Start (0x826BC460) reads that byte (`lbz r4,0x7c(mUser)`) and
+// passes it to SetAutoplay for a local player, so the beatmatcher hits the
+// chart and the real scoring path (score, streak, multiplier, overdrive
+// phrases, stars, crowd) runs. Nothing else is forced. With the walk flag
+// also set, every frame inside a Game appends to its rb3-app-det line
+//   band acc A stars T mult M score .. p<i> track T en E auto <0|1> energy E deploy D
+//   long L score S hit H miss M streak K stars F crowd C ...
+// and folds the same values into `state`; outside a Game the line is as before.
+// Record: docs/decomp/SCOREWALK_DETERMINISTIC_SCORING_WALK_2026-11-23.md.
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -50,7 +63,15 @@
 #include "math/Rand.h"
 #include "os/ThreadCall.h"
 #include "obj/Task.h"
+#include "game/Band.h"
+#include "game/BandUser.h"
+#include "game/BandUserMgr.h"
+#include "game/Game.h"
+#include "game/Player.h"
+#include "game/Scoring.h"
+#include "game/VocalPlayer.h"
 #include "ui/UI.h"
+#include <string>
 #include "ui/UIScreen.h"
 
 namespace {
@@ -59,6 +80,7 @@ const int64_t kFrameNs = 33333333; // 1/30 s
 const int64_t kTickNs = 1000; // 1 us per main-thread clock read
 
 bool gDet = false;
+bool gAutoplay = false;
 pthread_t gMainThread;
 int64_t gVirtNs = kBaseNs; // main thread only
 uint64_t gChain = 0xcbf29ce484222325ULL;
@@ -77,12 +99,107 @@ const char *Name(const UIScreen *s) {
     const char *n = s->Name();
     return n && *n ? n : "(unnamed)";
 }
+
+// RB3_APP_AUTOPLAY: set the retail autoplay byte on every local band user.
+void ArmAutoplay() {
+    if (!gAutoplay || !TheBandUserMgr) return;
+    std::vector<BandUser *> &users = TheBandUserMgr->GetBandUsers();
+    for (size_t i = 0; i < users.size(); i++) {
+        BandUser *u = users[i];
+        if (u && u->IsLocal() && !u->mAutoplay) u->SetAutoplay(true);
+    }
+}
+
+void AddPerf(uint64_t &h, std::string &out, const Performer *p, bool withStars) {
+    const Stats &st = p->GetStats();
+    int score = (int)p->mScore;
+    int hit = st.GetHitCount(), miss = st.GetMissCount();
+    int streak = st.GetCurrentStreak();
+    float crowd = p->Crowd() ? p->Crowd()->GetValue() : -1.0f;
+    // Scoring::GetNumStarsFloat asserts its thresholds are non-empty before it
+    // returns 0 for a zero score, and during the song load they are still empty:
+    // ask only once there is a score, so the record never trips the assert.
+    float stars = !withStars || !TheScoring ? -1.0f : score ? p->GetNumStarsFloat() : 0.0f;
+    h = Fnv(h, &score, sizeof score);
+    h = Fnv(h, &hit, sizeof hit);
+    h = Fnv(h, &miss, sizeof miss);
+    h = Fnv(h, &streak, sizeof streak);
+    h = Fnv(h, &crowd, sizeof crowd);
+    h = Fnv(h, &stars, sizeof stars);
+    char buf[160];
+    snprintf(buf, sizeof buf, " score %d hit %d miss %d streak %d stars %.4f crowd %.4f", score, hit,
+             miss, streak, stars, crowd);
+    out += buf;
+}
+
+// Band and per-player scoring state while a Game exists ("" otherwise).
+std::string ScoreState(uint64_t &h) {
+    std::string out;
+    if (!TheGame) return out;
+    Band *band = TheGame->GetBand();
+    if (band) {
+        int acc = band->AccumulatedScore();
+        float total = band->GetTotalStars();
+        int mult = band->EnergyMultiplier();
+        bool multOn = band->IsMultiplierActive();
+        h = Fnv(h, &acc, sizeof acc);
+        h = Fnv(h, &total, sizeof total);
+        h = Fnv(h, &mult, sizeof mult);
+        h = Fnv(h, &multOn, sizeof multOn);
+        char buf[96];
+        snprintf(buf, sizeof buf, " band acc %d stars %.4f mult %d%s", acc, total, mult,
+                 multOn ? "" : "(off)");
+        out += buf;
+        if (Performer *bp = band->GetBand()) AddPerf(h, out, bp, true);
+    }
+    std::vector<Player *> &players = TheGame->GetActivePlayers();
+    for (size_t i = 0; i < players.size(); i++) {
+        Player *p = players[i];
+        if (!p) continue;
+        int track = (int)p->GetTrackType();
+        bool autoOn = p->IsAutoplay();
+        float energy = p->GetBandEnergy();
+        bool deploy = p->IsDeployingBandEnergy();
+        int longest = p->GetStats().GetLongestStreak();
+        int enabled = (int)p->GetEnabledState();
+        h = Fnv(h, &enabled, sizeof enabled);
+        h = Fnv(h, &track, sizeof track);
+        h = Fnv(h, &autoOn, sizeof autoOn);
+        h = Fnv(h, &energy, sizeof energy);
+        h = Fnv(h, &deploy, sizeof deploy);
+        h = Fnv(h, &longest, sizeof longest);
+        char buf[128];
+        snprintf(buf, sizeof buf, " p%d track %d en %d auto %d energy %.4f deploy %d long %d",
+                 (int)i, track, enabled, autoOn, energy, deploy, longest);
+        out += buf;
+        if (VocalPlayer *vp = dynamic_cast<VocalPlayer *>(p)) {
+            // Vocal-only: whether Poll has a track to run (VocalPlayer::Poll returns
+            // early without one), and the singer / part counts it scores over.
+            int vt = vp->mTrack != nullptr, ns = (int)vp->mSingers.size(),
+                np = (int)vp->mVocalParts.size(), se = vp->mScoringEnabled;
+            h = Fnv(h, &vt, sizeof vt);
+            h = Fnv(h, &ns, sizeof ns);
+            h = Fnv(h, &np, sizeof np);
+            h = Fnv(h, &se, sizeof se);
+            snprintf(buf, sizeof buf, " vtrack %d singers %d parts %d scoring %d", vt, ns, np, se);
+            out += buf;
+        }
+        AddPerf(h, out, p, true);
+    }
+    return out;
+}
 } // namespace
 
 // Called first thing in main(), before App::App (SystemInit seeds the RNG).
 void rb3_app_determinism_init() { // ring: native-real
     const char *v = getenv("RB3_APP_DETERMINISTIC");
     gDet = v && *v && strcmp(v, "0") != 0;
+    const char *a = getenv("RB3_APP_AUTOPLAY");
+    gAutoplay = a && *a && strcmp(a, "0") != 0;
+    if (gAutoplay) {
+        printf("rb3-app-det: autoplay on (BandUser::mAutoplay for every local user)\n");
+        fflush(stdout);
+    }
     if (!gDet) return;
     gMainThread = pthread_self();
     printf("rb3-app-det: deterministic walk on (seed %d, frame %lld ns, tick %lld ns)\n",
@@ -93,6 +210,7 @@ void rb3_app_determinism_init() { // ring: native-real
 
 // Called by the SystemPoll wrapper at the start of frame `frame` (1-based).
 void rb3_app_determinism_frame(int frame) { // ring: native-real
+    ArmAutoplay();
     if (!gDet) return;
     int64_t start = kBaseNs + (int64_t)frame * kFrameNs;
     if (gVirtNs < start) gVirtNs = start;
@@ -111,13 +229,14 @@ void rb3_app_determinism_frame(int frame) { // ring: native-real
     h = Fnv(h, &ui, sizeof ui);
     h = Fnv(h, curName, strlen(curName));
     h = Fnv(h, trName, strlen(trName));
+    std::string game = ScoreState(h);
     gChain = Fnv(gChain, &h, sizeof h);
     unsigned int idx[2];
     memcpy(idx, &Rand::sRand, sizeof idx); // mRandIndex1, mRandIndex2 (Rand.h)
     printf("rb3-app-det: frame %d state %08x chain %016llx rand %u/%u seconds %.4f beat %.4f "
-           "ui %.4f screen %s transition %s\n",
+           "ui %.4f screen %s transition %s%s\n",
            frame, (unsigned)(h ^ (h >> 32)), (unsigned long long)gChain, idx[0], idx[1], secs,
-           beat, ui, curName, trName);
+           beat, ui, curName, trName, game.c_str());
     fflush(stdout);
 }
 

@@ -1408,9 +1408,12 @@ void VocalPlayer::RemoteScorePhrase(int i1, int i2, bool b3) {
 }
 
 void VocalPlayer::HookupTrack() {
-#ifdef HX_NATIVE
-    // Off-path: the driver installs a sentinel mTrack directly (no BandUser track,
-    // no VocalTrack render object, no dynamic_cast RTTI). Never called headless.
+#if defined(HX_NATIVE) && !defined(RB3_NATIVE_APP)
+    // Headless vocal harnesses: the driver installs a sentinel mTrack directly (no
+    // BandUser track, no VocalTrack render object). rb3-app (RB3_NATIVE_APP) has
+    // both and takes retail's arm (0x826E63D8: mTrack = dynamic_cast of
+    // mUser->mTrack, `stw r3,0x30c(r31)`, then mTrack->Restart); without it
+    // mTrack stayed null and Poll returned before any vocal scoring.
     return;
 #else
     mTrack = dynamic_cast<VocalTrack *>(GetUser()->GetTrack());

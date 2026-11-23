@@ -1,15 +1,25 @@
 #!/usr/bin/env python3
-"""rb3_app_det_cmp.py <logA> <logB>: compare the rb3-app-det lines of two rb3-app runs
-(RB3_APP_DETERMINISTIC=1, native/src/rb3_app_determinism.cpp) over their common frames.
-Exit 0 identical, 1 at the first differing frame (printed with two frames of context).
-Record: docs/decomp/DETWALK_DETERMINISTIC_RB3APP_WALK_2026-11-23.md."""
+"""rb3_app_det_cmp.py [--base-fields] <logA> <logB>: compare the rb3-app-det lines of two
+rb3-app runs (RB3_APP_DETERMINISTIC=1, native/src/rb3_app_determinism.cpp) over their common
+frames. Exit 0 identical, 1 at the first differing frame (printed with two frames of context).
+--base-fields compares only the detwalk fields (rand, clocks, screens): it drops the state and
+chain hashes and the scorewalk game-state suffix (" band ..."), so it shows what the per-frame
+record could see before the scoring fields were added.
+Records: docs/decomp/DETWALK_DETERMINISTIC_RB3APP_WALK_2026-11-23.md,
+docs/decomp/SCOREWALK_DETERMINISTIC_SCORING_WALK_2026-11-23.md."""
 import sys
+base = '--base-fields' in sys.argv
+if base: sys.argv.remove('--base-fields')
+def strip(line):
+    if not base: return line
+    f = line.split(' band ')[0].split()
+    return ' '.join(f[:3] + f[7:])  # drop "state H chain C"
 def load(p):
     seed, frames, result = [], {}, None
     for line in open(p, 'rb'):
         line = line.decode('latin-1').rstrip('\n')
         if line.startswith('rb3-app-det: frame '):
-            frames[int(line.split()[2])] = line
+            frames[int(line.split()[2])] = strip(line)
         elif line.startswith('rb3-app-det:'):
             seed.append(line)
         elif line.startswith('RESULT:') or line.startswith('rc='):
