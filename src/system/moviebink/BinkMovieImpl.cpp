@@ -124,7 +124,7 @@ void BinkMovieImpl::End() {}
 bool BinkMovieImpl::IsOpen() const { return false; }
 bool BinkMovieImpl::IsLoading() const { return false; }
 bool BinkMovieImpl::CheckOpen(bool) { return false; }
-bool BinkMovieImpl::SetPaused(bool) { return false; }
+void BinkMovieImpl::SetPaused(bool) {}
 void BinkMovieImpl::UnlockThread() {}
 void BinkMovieImpl::LockThread() {}
 int BinkMovieImpl::GetFrame() const { return 0; }

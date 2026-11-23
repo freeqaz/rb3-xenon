@@ -17,6 +17,24 @@
 #include "ui/UIListState.h"
 #include "utl/BinStream.h"
 #include "utl/Symbol.h"
+#include "moviebink/BinkMovieSys.h"
+#include "obj/DataFunc.h"
+#include "obj/Task.h"
+
+// As in RB3's own player (the !HX_NATIVE arm below): `set_bink_track` forces
+// the localized Bink track a movie opens with (0: none), and a timed movie
+// follows the task manager's clock. Movie::Impl::Init registers the script
+// function; natively Movie::Init does.
+int gForceTrack;
+
+static DataNode OnMovieSetTrack(DataArray *arr) {
+    gForceTrack = arr->Int(1);
+    return DataNode();
+}
+
+int BinkMovieSys::Track() { return gForceTrack; }
+
+float TaskMgrDeltaSeconds() { return TheTaskMgr.DeltaSeconds(); }
 
 Movie::Movie() : mImpl(nullptr) {
     mImpl = TheMovieSys.CreateMovieImpl();
@@ -25,7 +43,10 @@ Movie::Movie() : mImpl(nullptr) {
 
 Movie::~Movie() { RELEASE(mImpl); }
 
-void Movie::Init() { TheMovieSys.Init(); }
+void Movie::Init() {
+    TheMovieSys.Init();
+    DataRegisterFunc("set_bink_track", OnMovieSetTrack);
+}
 
 void Movie::Terminate() { TheMovieSys.Terminate(); }
 

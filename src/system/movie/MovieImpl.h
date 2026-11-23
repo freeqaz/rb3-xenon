@@ -21,7 +21,9 @@ public:
     virtual bool IsOpen() { return 0; } // 0x24
     virtual bool IsLoading() { return 0; } // 0x28
     virtual bool CheckOpen(bool) { return 0; } // 0x2c
-    virtual bool SetPaused(bool) { return 0; } // 0x30
+    // void, as retail RB3's own player declares it: ?SetPaused@Impl@Movie@@QAAX_N@Z
+    // (0x82744348; X = void), and as DC3's MovieImpl does. No caller reads a result.
+    virtual void SetPaused(bool) {} // 0x30
     virtual bool Paused() const { return 0; } // 0x34 ?
     virtual void UnlockThread() {} // 0x38
     virtual void LockThread() {} // 0x3c

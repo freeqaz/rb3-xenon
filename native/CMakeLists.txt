@@ -1185,11 +1185,11 @@ if(RB3X_BUILD_ENGINE)
     #  Synth_Stub.cpp         xenon synth/VorbisReader.h ctor takes 5 args (engine
     #                         passes 4), StandardStream.h takes 6 (engine passes
     #                         7); NewStreamDecoder doesn't override.
-    #  FFmpegMovieImpl.cpp    engine's FFmpegMovieImpl.h:37 `void SetPaused(bool)`
-    #                         vs xenon movie/MovieImpl.h:24 `virtual bool
-    #                         SetPaused(bool)`. A NEAR-twin, not a shape gap —
-    #                         xenon HAS movie/MovieImpl.h.
-    #                         See the X1 doc for why this was NOT reconciled.
+    #  (FFmpegMovieImpl.cpp was excluded here for a `bool` vs `void`
+    #  SetPaused. Lane movie (2026-11-23) made movie/MovieImpl.h's SetPaused
+    #  void, as retail's ?SetPaused@Impl@Movie@@QAAX_N@Z is, so the engine's
+    #  copy now compiles against this tree and rb3-app plays movies through
+    #  it: rb3_app_native_glue.cpp's Rb3AppMovieImpl derives from it.)
     #
     # NOT excluded, and each is a tell that xenon is DC3-lineage (every one is
     # on the engine's `rb3`-backend exclusion list): CDReader_Native, Keygen_Stub,
@@ -1223,7 +1223,6 @@ if(RB3X_BUILD_ENGINE)
         FxSendNative.cpp
         Joypad_Native.cpp
         Synth_Stub.cpp
-        FFmpegMovieImpl.cpp
         # --- X3: xenon's native/src/platform/ owns these ---
         AsyncFile_Native.cpp
         Cache_Stub.cpp
@@ -2419,13 +2418,11 @@ set(RB3_APP_SOURCES
     ${REPO_ROOT}/src/band3/game/Metronome.cpp
     # A17: TexMovie (its ctor stub was the a6-failing-tu stop: a background
     # DirLoader of ui/startup/gen/startup_movie_keep.milo_xbox, whose
-    # splash.tmov embeds startup.bik). The TU failed natively only because its
-    # native arm included the engine's FFmpegMovieImpl.h, whose `void
-    # SetPaused(bool) override` cannot override movie/MovieImpl.h's `virtual
-    # bool SetPaused(bool)`; that arm now needs HX_FFMPEG (the backend, which
-    # this tree excludes, see MILO_ENGINE_DECOMP_PLATFORM_EXCLUDE), so rb3-app
-    # compiles the retail DrawToTexture. Its Movie is rb3_app_native_glue.cpp's
-    # Rb3AppMovieImpl (retail Movie::Impl with no Bink decoder).
+    # splash.tmov embeds startup.bik). Its HX_FFMPEG arm (an RGBA upload in
+    # DrawToTexture) stays off here: rb3-app compiles the retail
+    # DrawToTexture, which draws the movie through Movie::Draw into the
+    # texture. Its Movie is rb3_app_native_glue.cpp's Rb3AppMovieImpl
+    # (retail Movie::Impl over the engine's FFmpegMovieImpl, lane movie).
     ${REPO_ROOT}/src/system/movie/TexMovie.cpp
     # rbx-audmgr: App::App calls TheAuditionMgr->Init() after TheUI->Init (the
     # AuditionMgr::Init stub was the a1-absent-body stop). AuditionMgr.cpp is
