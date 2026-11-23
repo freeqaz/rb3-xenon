@@ -85,6 +85,7 @@ void rb3_app_check_campaign_screen_push(); // rb3_app_gates.cpp
 void rb3_app_check_nonull_list_replace_drain(); // rb3_app_gates.cpp
 void rb3_app_check_bone_merge_repoint(); // rb3_app_gates.cpp
 void rb3_app_check_credits_auto_scroll(); // rb3_app_gates.cpp
+void rb3_app_check_postproc_noise_map(); // rb3_app_gates.cpp
 
 extern "C" void rb3_app_gate(const char *step);
 void rb3_app_determinism_init(); // rb3_app_determinism.cpp (RB3_APP_DETERMINISTIC)
@@ -302,6 +303,7 @@ int main(int argc, char **argv) {
         rb3_app_check_nonull_list_replace_drain(); // A37 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_bone_merge_repoint(); // A41 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_credits_auto_scroll(); // credits lane (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_postproc_noise_map(); // A49 (rb3_app_gates.cpp): exits rc 7 on a failure
         printf("RESULT: APP CONSTRUCTED\n");
         fflush(stdout);
         fflush(stderr);

@@ -2728,3 +2728,46 @@ void rb3_app_check_credits_auto_scroll() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A49: the post-process noise is retail's noise MAP, never the engine's
+// procedural grain. Retail NgPostProc::CheckNoise (fn_82B89100) turns the
+// noise on only when mNoiseIntensity (+0x13C) is non-zero AND mNoiseMap
+// (+0x144) is set, and then hands postprocess.ps the map plus
+// kPS_NoiseSeeds/kPS_NoiseParams (baseScale.xy, topScale, intensity). The
+// engine's PostProcPass (milo-native-engine gfx/PostProcPass.cpp) takes that
+// map path only when rndshape::PostProcNoiseMap can see the map, i.e. when
+// RndPostProc exposes GetNoiseMap/GetNoiseBaseScale/GetNoiseTopScale.
+// Without them it falls back to an additive per-pixel hash grain of
+// amplitude mNoiseIntensity: with RB3's authored intensities that is the
+// scene-wide salt-and-pepper speckle on every in-game frame (lane A49).
+// The check: a post-process with a map and an intensity must reach the
+// engine as that map and that intensity.
+#include "rndobj/PostProc.h"
+#include "platform/rndshape/RndShape.h"
+void rb3_app_check_postproc_noise_map() { // ring: native-real
+    RndPostProc *pp = Hmx::Object::New<RndPostProc>();
+    RndTex *map = Hmx::Object::New<RndTex>();
+    pp->SetProperty("noise_map", DataNode(map));
+    pp->SetProperty("noise_intensity", DataNode(0.375f));
+    rndshape::PostProcNoise noise;
+    bool seen = rndshape::PostProcNoiseMap(pp, noise);
+    bool ok = seen && noise.map == map && noise.intensity == 0.375f;
+    char what[384];
+    snprintf(what, sizeof what,
+             "post-process noise map: engine sees the map %d, map %s, intensity %.3f (want 1, "
+             "the post-process's map, 0.375) (retail NgPostProc::CheckNoise fn_82B89100: noise "
+             "only with mNoiseMap +0x144 and mNoiseIntensity +0x13C, sampled from the map)",
+             (int)seen, noise.map == map ? "same" : (noise.map ? "other" : "none"),
+             noise.intensity);
+    delete pp;
+    delete map;
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (post-process noise map)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
