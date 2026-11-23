@@ -100,6 +100,8 @@ NON_STUB_RE = re.compile(
     # detwalk: rb3-app's opt-in deterministic-walk hooks (RB3_APP_DETERMINISTIC;
     # seed, clock and ThreadCall wrappers that pass through when unset).
     r"rb3_app_determinism\.cpp|"
+    # micwalk: rb3-app's opt-in synthetic sung mic (RB3_APP_SUNG_MIC); off when unset.
+    r"rb3_app_mic_native\.cpp|"
     # stubring: rb3-app's ported bodies for in-scope link stubs (VMX intrinsics,
     # PlatformMgr::SwapUserPads/IsGuestOnlineID, XRemapUserDevices,
     # DmCaptureStackBackTrace); real bodies, nothing aborts.
