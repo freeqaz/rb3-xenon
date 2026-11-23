@@ -192,9 +192,10 @@ void Player::Poll(float f, const SongPos &pos) {
     if (unk1e2 && mDeployingBandEnergy) {
         StopDeployingBandEnergy(false);
     }
-#ifndef HX_NATIVE
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_APP)
     // Periodic net energy-broadcast leaf (same handler as SetEnergy's); skipped
-    // headless (no net session / BandUser). X360 keeps the real broadcast.
+    // headless (no net session / BandUser). X360 keeps the real broadcast, and so
+    // does rb3-app (RB3_NATIVE_APP), whose players have a BandUser and a track.
     if (IsLocal() && f >= unk2a4 + 2000.0f && !unk1e2) {
         static Message send_update_energy_msg("send_update_energy");
         Handle(send_update_energy_msg, true);
@@ -780,11 +781,13 @@ void Player::SetEnergy(float f) {
         float poll = PollMs();
         float pollDelta = poll - unk2a4;
         if (energyIncreased || pollDelta >= 100.0f || mBandEnergy == 0) {
-#ifndef HX_NATIVE
+#if !defined(HX_NATIVE) || defined(RB3_NATIVE_APP)
             // Net energy-broadcast leaf: its handler reads the BandUser's track,
             // which no native headless player has. The real energy bookkeeping
             // (SetEnergyAutomatically above + unk2a4 below) still runs; only the
-            // net export is skipped. X360 keeps the real broadcast.
+            // net export is skipped. X360 keeps the real broadcast (retail
+            // 0x826A50F0..0x826A5138), and so does rb3-app (RB3_NATIVE_APP),
+            // whose players have a BandUser and a track.
             static Message send_update_energy(Symbol("send_update_energy"));
             Handle(send_update_energy, true);
 #endif
