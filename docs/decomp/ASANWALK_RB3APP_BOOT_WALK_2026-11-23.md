@@ -191,3 +191,21 @@ objects and settled in 2 iterations.
   64.709015. Units at 100%: 635 (mpn) and 548 (all-rows-fuzzy).
 - **Δmatched +0, Δhonest +0, Δcode_bytes +0, Δfuzzy +0.000000pp.** The `none` control is +0 B.
 - Result file: `asanwalk/ab-fix1/20261123-015107-asanwalk-fix1-revert-2652403/result.json`.
+
+## 7. Follow-up at landing (coordinator, 2026-11-23)
+
+The session that owns `rndobj` and `char` asked for the two §3 proposals to land with this branch, and
+they are in commit `c81f90a0c`:
+
+- `RndText::RndText` now clears `mManualLines` and `mFramesSinceDraw` beside `mMeshDirty`, in the native
+  branch.
+- `CharBonesSamples::Clone` gets a native-only `if (mRawData)` before the `memcpy`. The X360 line is
+  unchanged.
+
+Neither edit can change X360 code: cl 10224 `/EP` output for both files equals the pre-edit output apart
+from blank lines, and no macro in their closure uses `__LINE__`. Because `RndText` is render code, the
+landing gate added `coord/render_cmp.sh` (11 rb3-render cells: main twice as the no-change control, the
+integration tree once). The counts are in the merge message.
+
+Commit hashes: the rebase onto main `d61653c14` (`--onto ca6000f36`) renamed this branch's commits. `6f0cce731`
+in the sections above is now `4564a55d9`.
