@@ -322,7 +322,9 @@ unsigned KeysPoll(const BeatMatchController *c, bool pro, float now, float dt, i
 // (GameGem::GetFret, -1 = string not played) go down one poll before its time
 // (a fret change alone is a velocity-0 StringStrummedMsg: FretButtonDown and
 // NonStrumSwing), unplayed strings open (fret 0); on the gem's poll each played
-// string's velocity changes (100 <-> 101), which UsbMidiGuitar turns into a
+// string -- the gem's mSlots: its fretted strings minus kRGGhost ones (the
+// GameGem(const RGGemInfo &) ctor), so a ghost note is fretted but not strummed --
+// has its velocity change (100 <-> 101), which UsbMidiGuitar turns into a
 // StringStrummedMsg with that velocity and one RGSwingMsg for all of them. With
 // _HOPO=tap a HOPO gem is the fret change alone, at its time.
 unsigned RGPoll(const RealGuitarController *rc, float now, float dt, int poll) {
@@ -353,7 +355,7 @@ unsigned RGPoll(const RealGuitarController *rc, float now, float dt, int poll) {
                 if (!tap) {
                     what = "strum";
                     for (int s = 0; s < 6; s++)
-                        if (gem.GetFret(s) >= 0) {
+                        if (gem.mSlots & (1u << s)) {
                             int &v = gSong.rgVel[lefty ? s : 5 - s];
                             v = v == 100 ? 101 : 100;
                             strummed |= 1u << s;
