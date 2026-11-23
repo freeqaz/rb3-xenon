@@ -55,6 +55,15 @@
 //   long L score S hit H miss M streak K stars F crowd C ...
 // and folds the same values into `state`; outside a Game the line is as before.
 // Record: docs/decomp/SCOREWALK_DETERMINISTIC_SCORING_WALK_2026-11-23.md.
+//
+// Band walk (lane bandwalk, 2026-11-23). With RB3_APP_EXTRA_PADS naming extra
+// pads (rb3_app_joypad.cpp), the line and `state` also carry the band's shared
+// state (bmult, bonus, crowd ratings, the unison CommonPhraseCapturer), each
+// player's unison / overdrive phrase and deploy counts, every overshell slot's
+// state and every local band user's part / controller / difficulty, so a
+// multi-player walk is hashed per player and per band. Without extra pads the
+// line is byte-for-byte the scorewalk one.
+// Record: docs/decomp/BANDWALK_MULTIPLAYER_SCORING_WALK_2026-11-23.md.
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -74,6 +83,14 @@
 #include "ui/UI.h"
 #include <string>
 #include "ui/UIScreen.h"
+#include "game/CommonPhraseCapturer.h"
+#include "game/Stats.h"
+#include "meta_band/BandUI.h"
+#include "meta_band/OvershellPanel.h"
+#include "meta_band/OvershellSlot.h"
+#include "meta_band/OvershellSlotState.h"
+
+int RB3AppExtraPadCount(); // rb3_app_joypad.cpp (RB3_APP_EXTRA_PADS)
 
 namespace {
 const int64_t kBaseNs = 1000000000000LL; // 1000 s: __mftb's 32-bit us counter stays far from wrap
@@ -82,6 +99,7 @@ const int64_t kTickNs = 1000; // 1 us per main-thread clock read
 
 bool gDet = false;
 bool gAutoplay = false;
+bool gBandWalk = false; // RB3_APP_EXTRA_PADS names at least one extra pad
 pthread_t gMainThread;
 int64_t gVirtNs = kBaseNs; // main thread only
 uint64_t gChain = 0xcbf29ce484222325ULL;
@@ -211,6 +229,34 @@ std::string ScoreState(uint64_t &h) {
                  multOn ? "" : "(off)");
         out += buf;
         if (Performer *bp = band->GetBand()) AddPerf(h, out, bp, true);
+        if (gBandWalk) {
+            // Band walk (RB3_APP_EXTRA_PADS): the band's shared overdrive /
+            // unison state too -- multiplier and bonus level (Band::Poll's
+            // deploy sum), the crowd ratings, and the CommonPhraseCapturer
+            // (unison phrases across tracks).
+            int v[4] = {band->mMultiplier, band->mMaxMultiplier, band->mBonusLevel,
+                        band->mMaxBonusLevel};
+            h = Fnv(h, v, sizeof v);
+            snprintf(buf, sizeof buf, " bmult %d/%d bonus %d/%d crowds", v[0], v[1], v[2], v[3]);
+            out += buf;
+            for (size_t i = 0; i < band->mCrowdRatings.size(); i++) {
+                float c = band->mCrowdRatings[i];
+                h = Fnv(h, &c, sizeof c);
+                snprintf(buf, sizeof buf, "%s%.4f", i ? "/" : " ", c);
+                out += buf;
+            }
+            if (CommonPhraseCapturer *cp = band->mCommonPhraseCapturer) {
+                int u[5] = {cp->mDisabledTracks, cp->mFinishedTracks, cp->mInUnisonPhrase,
+                            cp->mLastStartedPhraseID, (int)cp->mPhraseStates.size()};
+                h = Fnv(h, u, sizeof u);
+                if (!cp->mPhraseStates.empty())
+                    h = Fnv(h, &cp->mPhraseStates[0],
+                            cp->mPhraseStates.size() * sizeof cp->mPhraseStates[0]);
+                snprintf(buf, sizeof buf, " unison dis %x fin %x in %d last %d phrases %d", u[0],
+                         u[1], u[2], u[3], u[4]);
+                out += buf;
+            }
+        }
     }
     std::vector<Player *> &players = TheGame->GetActivePlayers();
     for (size_t i = 0; i < players.size(); i++) {
@@ -244,7 +290,48 @@ std::string ScoreState(uint64_t &h) {
             snprintf(buf, sizeof buf, " vtrack %d singers %d parts %d scoring %d", vt, ns, np, se);
             out += buf;
         }
+        if (gBandWalk) {
+            const Stats &st = p->GetStats();
+            int o[5] = {st.GetUnisonPhrasesCompleted(), st.GetUnisonPhraseCount(),
+                        st.GetOverdrivePhrasesCompleted(), st.GetOverdrivePhraseCount(),
+                        st.GetDeployCount()};
+            h = Fnv(h, o, sizeof o);
+            snprintf(buf, sizeof buf, " uni %d/%d od %d/%d deploys %d", o[0], o[1], o[2], o[3], o[4]);
+            out += buf;
+        }
         AddPerf(h, out, p, true);
+    }
+    return out;
+}
+
+// Band walk only: every local band user's part, controller, difficulty and
+// overshell slot state, and each overshell slot's state, in and out of a Game,
+// so a join through the overshell is in the record frame by frame.
+std::string BandState(uint64_t &h) {
+    std::string out;
+    char buf[96];
+    if (OvershellPanel *os = TheBandUI.GetOvershell()) {
+        out += " os";
+        for (size_t i = 0; i < os->mSlots.size(); i++) {
+            OvershellSlot *sl = os->mSlots[i];
+            int id = sl && sl->mState ? (int)sl->mState->GetStateID() : -1;
+            h = Fnv(h, &id, sizeof id);
+            snprintf(buf, sizeof buf, "%s%d", i ? "/" : " ", id);
+            out += buf;
+        }
+    }
+    if (TheBandUserMgr) {
+        std::vector<BandUser *> &users = TheBandUserMgr->GetBandUsers();
+        for (size_t i = 0; i < users.size(); i++) {
+            BandUser *u = users[i];
+            if (!u || !u->IsLocal()) continue;
+            int v[5] = {(int)u->mTrackType, (int)u->mControllerType, (int)u->mDifficulty,
+                        (int)u->mOvershellState, u->mPlayer != nullptr};
+            h = Fnv(h, v, sizeof v);
+            snprintf(buf, sizeof buf, " u%d tt %d ct %d diff %d os %d pl %d", (int)i, v[0], v[1],
+                     v[2], v[3], v[4]);
+            out += buf;
+        }
     }
     return out;
 }
@@ -261,6 +348,7 @@ void rb3_app_determinism_init() { // ring: native-real
         fflush(stdout);
     }
     if (!gDet) return;
+    gBandWalk = RB3AppExtraPadCount() > 0;
     gMainThread = pthread_self();
     printf("rb3-app-det: deterministic walk on (seed %d, frame %lld ns, tick %lld ns)\n",
            atoi(getenv("RB3_APP_SEED") ? getenv("RB3_APP_SEED") : "0"), (long long)kFrameNs,
@@ -291,6 +379,7 @@ void rb3_app_determinism_frame(int frame) { // ring: native-real
     h = Fnv(h, curName, strlen(curName));
     h = Fnv(h, trName, strlen(trName));
     std::string game = ScoreState(h);
+    if (gBandWalk) game += BandState(h);
     gChain = Fnv(gChain, &h, sizeof h);
     unsigned int idx[2];
     memcpy(idx, &Rand::sRand, sizeof idx); // mRandIndex1, mRandIndex2 (Rand.h)
