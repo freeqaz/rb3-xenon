@@ -1839,3 +1839,44 @@ void rb3_app_check_music_library_on_exit() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A28: a CharClipGroup must forget a clip that is deleted. Retail Replace
+// fn_8238F270 compares each entry's held clip (+8) with the dying object (r4,
+// at +0x58) and erases the entry. Natively the compare was against the ObjRef
+// the native ObjOwnerPtr passes, so it never matched; the second song's crowd
+// anim merge (CharClipGroup::Copy, kCopyFromMax -> FindClip) then read a freed
+// clip's name: SIGSEGV in streq (walk w1, core 2812177). Fails (rc 7) when the
+// raw compare comes back.
+#include "char/CharClipGroup.h"
+#include "char/CharClip.h"
+void rb3_app_check_clip_group_replace() { // ring: native-real
+    CharClipGroup *group = Hmx::Object::New<CharClipGroup>();
+    CharClip *a = Hmx::Object::New<CharClip>();
+    CharClip *b = Hmx::Object::New<CharClip>();
+    a->SetName("a28_clip_a", ObjectDir::Main());
+    b->SetName("a28_clip_b", ObjectDir::Main());
+    group->AddClip(a);
+    group->AddClip(b);
+    bool both0 = group->HasClip(a) && group->HasClip(b);
+    CharClip *aAddr = a;
+    delete a;
+    bool keptA = group->HasClip(aAddr); // compares addresses only
+    bool keptB = group->HasClip(b);
+    bool found = !keptA && group->FindClip("a28_clip_b") == b;
+    char what[320];
+    snprintf(what, sizeof what,
+             "clip group replace: A and B in group %d; A deleted -> group holds A %d, B %d, "
+             "FindClip(B) %d (want 1 0 1 1) (retail CharClipGroup::Replace fn_8238F270)",
+             (int)both0, (int)keptA, (int)keptB, (int)found);
+    if (both0 && !keptA && keptB && found) {
+        delete group;
+        delete b;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (clip group replace)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}

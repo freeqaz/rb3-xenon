@@ -62,6 +62,7 @@ void rb3_app_check_bones_typeprops_replace(); // rb3_app_gates.cpp
 void rb3_app_check_reserved_vocal_slot(); // rb3_app_gates.cpp
 void rb3_app_check_spotlight_disk(); // rb3_app_gates.cpp
 void rb3_app_check_music_library_on_exit(); // rb3_app_gates.cpp
+void rb3_app_check_clip_group_replace(); // rb3_app_gates.cpp
 
 extern "C" void rb3_app_gate(const char *step);
 
@@ -168,6 +169,7 @@ int main(int argc, char **argv) {
         rb3_app_check_reserved_vocal_slot(); // A25 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_spotlight_disk(); // A25 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_music_library_on_exit(); // A28 (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_clip_group_replace(); // A28 (rb3_app_gates.cpp): exits rc 7 on a failure
         printf("RESULT: APP CONSTRUCTED\n");
         fflush(stdout);
         fflush(stderr);
