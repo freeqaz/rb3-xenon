@@ -97,7 +97,9 @@ native (commit `cdf456889` plus the follow-up commit):
   on frame 1 after 2300 frames.
 - Env:
   - `RB3_APP_MOVIE_LOG=1` prints one line per pause change and one per end.
-  - `RB3_APP_MOVIES=0` restores the old no-decoder behaviour (see Walk impact).
+  - `RB3_APP_MOVIES=0|1` forces movies off or on. Unset, a player's launch plays them, and a
+    harness run (`MILO_INPUT_SCRIPT` or `RB3_APP_DETERMINISTIC` set) defaults to off (coordinator
+    and peer decision at landing, see Walk impact). Boot prints `rb3-app: movies on|OFF (<why>)`.
 - `TexMovie` keeps the retail `DrawToTexture`, so its movie draws through `Movie::Draw`
   into the target. `HX_FFMPEG` is still undefined for rb3-app. No TexMovie opened in any
   run below.
@@ -118,6 +120,11 @@ A sound track on a real audio device was **not** exercised (no headless device),
 engine's audio-clock path is untested here.
 
 ## Walk impact (read before landing)
+
+Resolved at landing (2026-11-23, with peer dc3-decomp-46): harness runs default to movies OFF
+so existing walks keep their frame indices and det baselines; a player's launch plays them as
+retail. The measurements above were taken before that default existed, so a det walk that
+should play movies now needs `RB3_APP_MOVIES=1`. What follows is the impact with movies on.
 
 The boot intro now plays 2055 frames, longer than `wait_screen`'s 1800-frame timeout. An
 unmodified walk (trainwalk `w_trk.txt`, run `trk_noskip`) logged

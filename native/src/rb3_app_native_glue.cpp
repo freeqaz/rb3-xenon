@@ -394,16 +394,32 @@ bool Rb3AppMovieLog() { // ring: native-real
     }
     return sLog;
 }
-// RB3_APP_MOVIES=0: no movie opens (BinkOpen modelled as failing, the
-// behaviour before lane movie), so every movie ends on its first poll. For
-// walks written before movies played: the boot intro is 2055 frames, longer
-// than wait_screen's 1800-frame timeout. Retail-faithful walks instead press
-// start or confirm during it (intro_movie_panel's BUTTON_DOWN_MSG skips).
+// Movies off: no movie opens (BinkOpen modelled as failing, the behaviour
+// before lane movie), so every movie ends on its first poll. A player's launch
+// plays movies as retail. Harness runs (MILO_INPUT_SCRIPT or
+// RB3_APP_DETERMINISTIC set) default to off so walks written before movies
+// played keep their frame indices and det baselines: the boot intro is 2055
+// frames, longer than wait_screen's 1800-frame timeout. RB3_APP_MOVIES=1 forces
+// movies on (retail-faithful walks press start during the intro, which
+// intro_movie_panel's BUTTON_DOWN_MSG skips); RB3_APP_MOVIES=0 forces them off.
 bool Rb3AppMoviesOff() { // ring: native-real
     static int sOff = -1;
     if (sOff < 0) {
         const char *e = getenv("RB3_APP_MOVIES");
-        sOff = e && *e == '0';
+        const char *why;
+        if (e && *e) {
+            sOff = *e == '0';
+            why = "RB3_APP_MOVIES";
+        } else {
+            const char *s = getenv("MILO_INPUT_SCRIPT");
+            const char *d = getenv("RB3_APP_DETERMINISTIC");
+            bool harness = (s && *s) || (d && *d && *d != '0');
+            sOff = harness;
+            why = harness ? "harness default (MILO_INPUT_SCRIPT or RB3_APP_DETERMINISTIC set; "
+                            "RB3_APP_MOVIES=1 plays them)"
+                          : "default";
+        }
+        printf("rb3-app: movies %s (%s)\n", sOff ? "OFF" : "on", why);
     }
     return sOff;
 }
