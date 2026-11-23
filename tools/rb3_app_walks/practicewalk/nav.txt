@@ -1,0 +1,10 @@
+# practice: main hub -> mb_trainers (2 down) -> training_band_practice -> song select -> part (a) -> difficulty (a)
++60 down
++90 down
++150 a
++240 a
+wait_screen song_select_screen
++120 a
++240 a
++330 a
+wait_screen practice_sel_section_screen
