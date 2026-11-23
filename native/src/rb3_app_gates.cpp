@@ -1087,3 +1087,60 @@ void rb3_app_check_music_library_exit() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A21: Hmx::Object's copy constructor (retail 0x822774F8, the memberwise copy
+// SongRecord's copy constructor 0x82598190 calls). Song select's
+// SongSortMgr::BuildFilteredSongList copies SongRecords into a std::pair, and
+// natively the declaration had no body (UNREACHED stub [ring a1-absent-body],
+// rb3-app aborted entering song_select_screen). Here: A carries a type prop and
+// one ref; copy B from it through a derived class's implicit copy constructor
+// (the base-object form SongRecord's uses). B must hold A's name and dir, an equal but separate
+// prop (an edit to B leaves A), no refs; A keeps its one ref, through B's death.
+#include "obj/ObjPtr_p.h"
+namespace {
+    struct A21Copyable : public Hmx::Object {}; // implicit copy -> Hmx::Object base copy
+}
+void rb3_app_check_object_copy() { // ring: native-real
+    static Symbol a21_prop("a21_prop");
+    A21Copyable *a = new A21Copyable();
+    a->SetProperty(a21_prop, DataNode(7));
+    ObjPtr<Hmx::Object> ref(nullptr, a);
+    int aRefs0 = a->RefCount();
+    int bRefs = -1, bProp = -1, aPropAfterEdit = -1;
+    bool sameName = false, sameDir = false;
+    {
+        A21Copyable b(*a);
+        bRefs = b.RefCount();
+        sameName = b.Name() == a->Name();
+        sameDir = b.Dir() == a->Dir();
+        const DataNode *p = b.Property(a21_prop, false);
+        bProp = p ? p->Int() : -1;
+        b.SetProperty(a21_prop, DataNode(9));
+        const DataNode *pa = a->Property(a21_prop, false);
+        aPropAfterEdit = pa ? pa->Int() : -1;
+    }
+    int aRefs1 = a->RefCount();
+    bool refHeld = ref.Ptr() == a;
+    const DataNode *pa = a->Property(a21_prop, false);
+    int aProp = pa ? pa->Int() : -1;
+    char what[512];
+    snprintf(what, sizeof what,
+             "object copy: A refs %d; B: refs %d (want 0), name %d dir %d, prop %d (want 7); "
+             "B's edit -> A prop %d (want 7); B dies -> A refs %d (want %d), ref held %d, "
+             "prop %d (want 7) (retail Object copy 0x822774F8 <- SongRecord copy 0x82598190)",
+             aRefs0, bRefs, (int)sameName, (int)sameDir, bProp, aPropAfterEdit, aRefs1, aRefs0,
+             (int)refHeld, aProp);
+    bool ok = aRefs0 == 1 && bRefs == 0 && sameName && sameDir && bProp == 7
+        && aPropAfterEdit == 7 && aRefs1 == aRefs0 && refHeld && aProp == 7;
+    ref = nullptr;
+    delete a;
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (object copy)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}

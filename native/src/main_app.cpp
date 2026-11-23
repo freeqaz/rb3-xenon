@@ -52,6 +52,7 @@ void rb3_app_check_net_cache_offline(); // rb3_app_gates.cpp
 void rb3_app_check_tex_gpu_cleanup(); // rb3_app_gates.cpp
 void rb3_app_check_clip_driver_prune(); // rb3_app_gates.cpp
 void rb3_app_check_music_library_exit(); // rb3_app_gates.cpp
+void rb3_app_check_object_copy(); // rb3_app_gates.cpp
 
 extern "C" void rb3_app_gate(const char *step);
 
@@ -148,6 +149,7 @@ int main(int argc, char **argv) {
         rb3_app_check_tex_gpu_cleanup(); // A20 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_clip_driver_prune(); // A20 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_music_library_exit(); // A21 (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_object_copy(); // A21 (rb3_app_gates.cpp): exits rc 7 on a failure
         printf("RESULT: APP CONSTRUCTED\n");
         fflush(stdout);
         fflush(stderr);

@@ -1422,3 +1422,34 @@ DataNode Hmx::Object::OnPropertyAppend(const DataArray *da) {
     cloned->Release();
     return size;
 }
+
+#ifdef HX_NATIVE
+// Retail TU5's Hmx::Object copy constructor is the compiler's memberwise one,
+// 0x822774F8: the two vtables, then words copied for TypeProps' mMap@8 and
+// mOwner@0xc, mTypeDef@0x10, mNote@0x14, mName@0x18 and mDir@0x1c, then the
+// mRefs list's copy constructor (bl 0x82370C80 on this+0x20, &other+0x20). Its
+// caller on the song-select path is SongRecord's copy constructor 0x82598190
+// (bl 0x822774F8 at 0x825981AC), reached through the std::pair<Symbol,
+// SongRecord> that SongSortMgr::BuildFilteredSongList inserts; those records
+// are unnamed and typeless, so the copy carries no props, type, name or dir.
+// Natively the declaration has no body (the X360 build never needs one), so
+// rb3-app linked an UNREACHED stub [ring a1-absent-body] and aborted as
+// song_select_screen entered. This is retail's member copy for the native
+// layout, with the three words retail shares made sound: the props are deep
+// copied for this owner (TypeProps::operator=, where retail shares mMap and
+// keeps the source as mOwner), the type gets its own reference (retail copies
+// the pointer, and both destructors release it), and the ref ring starts empty
+// (a native ring node is an ObjRef aimed at the source; it cannot hold the copy).
+// mSinks is native-only and starts empty, as in Object().
+Hmx::Object::Object(const Object &o)
+    : mTypeProps(nullptr), mTypeDef(o.mTypeDef), mNote(o.mNote), mName(o.mName),
+      mDir(o.mDir), mSinks(nullptr) {
+    mRefs.DetachSelf();
+    if (mTypeDef)
+        mTypeDef->AddRef();
+    if (o.mTypeProps && o.mTypeProps->HasProps()) {
+        mTypeProps = new TypeProps(this);
+        *mTypeProps = *o.mTypeProps;
+    }
+}
+#endif
