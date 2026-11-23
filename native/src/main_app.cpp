@@ -68,6 +68,16 @@
 #include "meta_band/ProfileMgr.h"
 #include "meta_band/BandProfile.h"
 #include "meta_band/SavedSetlist.h"
+#include "meta_band/GameplayOptions.h"
+#include "game/BandUser.h"
+#include "bandtrack/GemManager.h"
+#include "bandtrack/NowBar.h"
+#include "beatmatch/MasterAudio.h"
+#include "rndobj/Rnd.h"
+#include "synth/Synth.h"
+#include "synth/Faders.h"
+#include "synth/FxSend.h"
+#include "obj/Task.h"
 
 void rb3_app_check_ui_sink(); // rb3_app_gates.cpp
 void rb3_app_check_tex_movie(); // rb3_app_gates.cpp
@@ -361,6 +371,83 @@ void LogModifiers() {
     }
 }
 
+// RB3_APP_OPTIONS_LOG=1 (lane optwalk): one `rb3-app: frame N opts ...` line whenever a global
+// option, its pushed effect, a profile's gameplay options or an in-game timing input changes, so
+// a walk can check calibration, volumes, overscan, dolby, bass boost and lefty flip end to end:
+// alag/vlag= ProfileMgr GetExcessAudioLag/GetExcessVideoLag, sync/s2t= the raw saved fields,
+// vol= bg/fg/fx/crowd/cue/chat slider indices, fade= the dB the synth faders hold
+// (background_music_level, crowd_level, sfx_level, instrument_level) and bass_boost.send's wet
+// gain, shrink= TheRnd's safe-area flag, pK= profile K's lefty/vocal style/vocal volume, and in
+// game av= TaskMgr AV offset (ms), game s2t= Game::GetSongToTaskMgrMs, p= per GemPlayer
+// BeatMatcher sync offset / track lefty / smasher-0 world x. Every 600 frames in game it also
+// prints `opts clock song-audio=<ms>`. Read-only.
+void LogOptions() {
+    static const bool on = [] {
+        const char *v = getenv("RB3_APP_OPTIONS_LOG");
+        return v && v[0] && strcmp(v, "0") != 0;
+    }();
+    if (!on || !TheSynth) return;
+    ProfileMgr &pm = TheProfileMgr;
+    char buf[1536];
+    auto fade = [](const char *name) -> float {
+        Fader *f = TheSynth->Find<Fader>(name, false);
+        return f ? f->GetVal() : -999.0f;
+    };
+    FxSend *bass = TheSynth->Find<FxSend>("bass_boost.send", false);
+    int n = snprintf(buf, sizeof buf,
+                     "alag=%g vlag=%g sync=%g s2t=%g vol=%d/%d/%d/%d/%d/%d bass=%d dolby=%d "
+                     "overscan=%d shrink=%d fade=%g/%g/%g/%g bassw=%g gstate=%d gdirty=%d mic=%d/%d/%d",
+                     pm.GetExcessAudioLag(), pm.GetExcessVideoLag(), pm.GetSyncOffsetRaw(),
+                     pm.GetSongToTaskMgrMsRaw(), pm.GetBackgroundVolume(),
+                     pm.GetForegroundVolume(), pm.GetFxVolume(), pm.GetCrowdVolume(),
+                     pm.GetVocalCueVolume(), pm.GetVoiceChatVolume(), pm.GetBassBoost(),
+                     pm.GetDolby(), pm.GetOverscan(), TheRnd.ShrinkToSafeArea(),
+                     fade("background_music_level.fade"), fade("crowd_level.fade"),
+                     fade("sfx_level.fade"), fade("instrument_level.fade"),
+                     bass ? bass->mWetGain : -999.0f, (int)pm.mGlobalOptionsSaveState,
+                     (int)pm.mGlobalOptionsDirty, pm.GetMicVol(0), pm.GetMicVol(1), pm.GetMicVol(2));
+    for (int i = 0; i < 4 && n < (int)sizeof buf - 64; i++) {
+        BandProfile *p = pm.GetProfileFromPad(i);
+        if (p && p->HasValidSaveData()) {
+            GameplayOptions *o = p->GetGameplayOptions();
+            n += snprintf(buf + n, sizeof buf - n, " p%d=lefty%d/vs%d/vv%d/unsaved%d/st%d", i,
+                          o->GetLefty(), (int)o->GetVocalStyle(), o->mVocalVolume,
+                          (int)p->IsUnsaved(), (int)p->GetSaveState());
+            if (LocalBandUser *u = p->GetAssociatedLocalBandUser())
+                n += snprintf(buf + n, sizeof buf - n, "/as%d", (int)pm.IsAutosaveEnabled(u));
+        }
+    }
+    if (TheGame) {
+        n += snprintf(buf + n, sizeof buf - n, " av=%.1f gs2t=%g p=", (TheTaskMgr.Seconds(TaskMgr::kRealTime) - TheTaskMgr.Seconds(TaskMgr::kDelayedTime)) * 1000.0f,
+                      TheGame->GetSongToTaskMgrMs());
+        for (Player *pl : TheGame->mAllActivePlayers) {
+            GemPlayer *gp = dynamic_cast<GemPlayer *>(pl);
+            if (!gp || n > (int)sizeof buf - 96) continue;
+            float sx = -999.0f;
+            GemManager *gm = gp->mTrack ? gp->mTrack->mGemManager : nullptr;
+            if (gm && gm->mNowBar && gm->mNowBar->FindSmasher(0))
+                sx = gm->mNowBar->FindSmasher(0)->Dir()->WorldXfm().v.x;
+            n += snprintf(buf + n, sizeof buf - n, "sync%g/lefty%d/sx%.2f,",
+                          gp->mMatcher ? gp->mMatcher->mSyncOffset : -999.0f,
+                          gp->mTrack ? (int)gp->mTrack->Lefty() : -1, sx);
+        }
+    }
+    static char last[1536];
+    if (strcmp(buf, last)) {
+        strcpy(last, buf);
+        printf("rb3-app: frame %d opts %s\n", gFramesStarted, buf);
+        fflush(stdout);
+    }
+    if (TheGame && TheGame->GetBeatMaster() && TheGame->GetBeatMaster()->GetAudio()
+        && gFramesStarted % 600 == 0) {
+        float audio = TheGame->GetBeatMaster()->GetAudio()->GetTime();
+        printf("rb3-app: frame %d opts clock song=%.1f audio=%.1f song-audio=%.1f\n",
+               gFramesStarted, TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f, audio,
+               TheTaskMgr.Seconds(TaskMgr::kRealTime) * 1000.0f - audio);
+        fflush(stdout);
+    }
+}
+
 int EnvInt(const char *name, int dflt) {
     const char *v = getenv(name);
     return v && *v ? atoi(v) : dflt;
@@ -389,6 +476,7 @@ extern "C" void __wrap__Z10SystemPollb(bool b) { // ring: native-real
         LogTour();
         LogModifiers();
         LogSongSel();
+        LogOptions();
     }
     __real__Z10SystemPollb(b);
 }
