@@ -1686,7 +1686,9 @@ extern Symbol vox_rating_4;
 extern Symbol vox_rating_5;
 extern Symbol vox_rating_6;
 extern Symbol w;
+#if !defined(HX_NATIVE) || !defined(__APPLE__)
 extern Symbol wait;
+#endif
 extern Symbol wait_for;
 extern Symbol wait_for_event_received;
 extern Symbol wait_spread;

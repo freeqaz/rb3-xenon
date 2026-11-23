@@ -98,7 +98,13 @@ __declspec(noinline) void BandCharacter::Init() { Register(); }
 // branches to the shared blr survivor 0x826C3888. BandTerminate is in this TU
 // (Band.cpp is included above), and MSVC drops a call to a body it can see is
 // empty; the empty asm block keeps the call without emitting an instruction.
-__declspec(noinline) void BandCharacter::Terminate() { __asm {} }
+__declspec(noinline) void BandCharacter::Terminate() {
+#ifdef HX_NATIVE
+    asm volatile("");
+#else
+    __asm {}
+#endif
+}
 
 BandCharacter::BandCharacter()
     : mPlayFlags(0), unk454(this, 0), mAddDriver(0), mFaceDriver(0), mForceNextGroup(0),

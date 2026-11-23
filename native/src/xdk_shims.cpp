@@ -582,9 +582,27 @@ DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds) {
         } else if (dwMilliseconds == 0) {
             if (pthread_mutex_trylock(&e->mutex.mutex) != 0) return 0x102; // WAIT_TIMEOUT
         } else {
+#ifdef __APPLE__
+            // Darwin pthreads has no timed lock. Retry against a monotonic
+            // deadline in small steps, including for recursive mutexes.
+            const uint64_t deadline = clock_gettime_nsec_np(CLOCK_UPTIME_RAW)
+                + uint64_t(dwMilliseconds) * 1000000;
+            int err = pthread_mutex_trylock(&e->mutex.mutex);
+            while (err == EBUSY) {
+                const uint64_t now = clock_gettime_nsec_np(CLOCK_UPTIME_RAW);
+                if (now >= deadline) break;
+                const uint64_t remaining = deadline - now;
+                const timespec delay{0, long(remaining < 1000000 ? remaining : 1000000)};
+                nanosleep(&delay, nullptr);
+                if (clock_gettime_nsec_np(CLOCK_UPTIME_RAW) >= deadline) break;
+                err = pthread_mutex_trylock(&e->mutex.mutex);
+            }
+            if (err != 0) return 0x102;
+#else
             struct timespec ts;
             DeadlineAfterMs(&ts, dwMilliseconds);
             if (pthread_mutex_timedlock(&e->mutex.mutex, &ts) != 0) return 0x102;
+#endif
         }
         return 0;
     }
@@ -1545,9 +1563,14 @@ unsigned int XGSurfaceSize(int width, int height, int, unsigned int) {
 // spun forever on any native path that generates a UserGuid. Backed by the
 // kernel CSPRNG, as XNetRandom is on the console.
 // ============================================================================
+#ifndef __APPLE__
 #include <sys/random.h>
+#endif
 
 extern "C" int XNetRandom(unsigned char *pb, unsigned int cb) {
+#ifdef __APPLE__
+    arc4random_buf(pb, cb);
+#else
     unsigned int done = 0;
     while (done < cb) {
         ssize_t n = getrandom(pb + done, cb - done, 0);
@@ -1558,5 +1581,6 @@ extern "C" int XNetRandom(unsigned char *pb, unsigned int cb) {
         }
         done += (unsigned int)n;
     }
+#endif
     return 0;
 }

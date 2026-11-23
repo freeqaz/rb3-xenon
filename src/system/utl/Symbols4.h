@@ -181,7 +181,9 @@ extern Symbol min_yaw;
 extern Symbol min_z;
 extern Symbol mini_leaderboards_title_friends;
 extern Symbol minnote;
+#if !defined(HX_NATIVE) || !defined(__APPLE__)
 extern Symbol minor;
+#endif
 extern Symbol minor_format;
 extern Symbol minor_pixels;
 extern Symbol minus;

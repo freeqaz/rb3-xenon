@@ -208,6 +208,28 @@ targets**, each proving one subsystem on real game data:
   characters posed from real animation clips. `rb3-frame` is the engine-link
   smoke test.
 
+### macOS native app
+
+On Apple Silicon, build the Xbox 360 game driver and the asset-free Metal
+smoke test with `tools/build-macos.sh`. It uses the sibling
+`dawn-prebuilt` Metal package and a `milo-native-engine-rb3-xenon` worktree
+at the engine pin in `native/CMakeLists.txt`. Override these paths with
+`DAWN_DIR` or `MILO_ENGINE_PATH`.
+
+```sh
+tools/build-macos.sh
+native/build-macos/rb3-frame /tmp/rb3-xenon-metal.png
+RB3_APP_RUN=1 RB3_APP_WINDOWED=1 RB3_APP_FRAMES=0 RB3_APP_SECONDS=0 \
+  native/build-macos/rb3-app /path/to/xbox-zip
+```
+
+The disc directory must contain `gen/main_xbox.hdr` and the
+`gen/main_xbox_*.ark` files and `charnames.zbm` at its root. Song loading
+requires TU5 data. Put the package in `orig/45410914/tu5-package` or set
+`RB3_TITLE_UPDATE_DIR` to its location. The CRKD Guitar LM connects in
+PS3 mode (USB `12BA:0100`). Click stick 2 for Start, and use Select or tilt
+for overdrive. Each connected guitar gets its own local pad.
+
 The next milestone is tying these subsystems together into a playable game
 loop. To keep the native build healthy alongside the matching work, every
 change to shared `src/` must pass `tools/native_build_gate.sh` (18/18 targets,

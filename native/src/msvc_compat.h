@@ -12,6 +12,11 @@
 
 // std::random_shuffle was removed in C++17. libc++ enforces this.
 // The DC3 codebase uses it in several places. Provide a compat shim.
+#ifdef __APPLE__
+// Darwin's stdio headers and Clang use different va_list guards in MS mode.
+#include <stdarg.h>
+#include <libkern/OSByteOrder.h>
+#endif
 #include <algorithm>
 #include <cstdlib>
 

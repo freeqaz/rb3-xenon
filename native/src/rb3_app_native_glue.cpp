@@ -7,6 +7,7 @@
 // for a reference is a null reference. Each definition below states the
 // semantics it gives natively. Aborting function stubs are NOT here; they are
 // in rb3_app_link_stubs.s/.cpp.
+#include "rb3_asm_label.h"
 #include "movie/MovieSys.h"
 #include "net/WebSvcMgr.h"
 #include "os/ContentMgr.h"
@@ -722,7 +723,7 @@ class Rb3AppMovieSys : public MovieSys { // ring-class: Rb3AppMovieSys native-re
 public:
     virtual MovieImpl *CreateMovieImpl() { return new Rb3AppMovieImpl(); }
 };
-Rb3AppMovieSys gRb3AppMovieSys __asm__("gBinkMovieSys"); // ring: native-real
+Rb3AppMovieSys gRb3AppMovieSys RB3_ASM_LABEL("gBinkMovieSys"); // ring: native-real
 
 // Retail: BeatMatchInit (declared in beatmatch/BeatMatch.h) has no decompiled
 // body: its one instruction, at 0x8276E210, sits inside the DataFlex.c split
