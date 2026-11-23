@@ -13,9 +13,23 @@ public:
 class CharPollableSorter {
 public:
     struct Dep {
-        // Retail's map<Object*, Dep>::operator[] (0x82376B18) zeroes obj and poll
-        // in the default-constructed value and leaves searchID alone.
+        // Retail's map<Object*, Dep>::operator[] (fn_82373BB0) builds the
+        // default value on its stack: obj (+0x80) and poll (+0x84) zeroed, the
+        // list sentinel self-linked (+0x94, +0x98), searchID (r31+0x70) never
+        // written. The Dep copy (fn_823710E8, `lwz r11,0x10(r30)` +0x3C) then
+        // copies that stack slot into the node, so a fresh node's searchID is
+        // stale stack bytes. ChangedByRecurse (fn_8236E980) compares it with
+        // sSearchID (`lwz r10,0x10(r4)` +0x30, `cmpw` +0x38) before storing it
+        // (+0x48): retail skips a fresh dep's chain if the garbage happens to
+        // equal the search ID. Natively it starts at 0, which no search sees:
+        // sSearchID starts at 0 and Sort (fn_823741F0, +0x3A8..+0x3B4)
+        // increments it before every ChangedByRecurse. A determinism fix (the
+        // memcheck read in rb3-render), not a retail behaviour.
+#ifdef HX_NATIVE
+        Dep() : obj(nullptr), poll(nullptr), searchID(0) {}
+#else
         Dep() : obj(nullptr), poll(nullptr) {}
+#endif
         Hmx::Object *obj; // 0x0
         std::list<Dep *> changedBy; // 0x4
         RndPollable *poll; // 0xc
