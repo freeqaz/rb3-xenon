@@ -41,6 +41,25 @@ void RndCubeTex::CubeTexProperties::Load(BinStream &bs) {
 
 RndCubeTex::RndCubeTex() {}
 
+#ifdef HX_NATIVE
+// Retail's concrete cube map is DxCubeTex. Its dtor (band.exe TU5 fn_8273F040)
+// calls DxCubeTex::Reset (fn_8273EFF0, the bl at +0x2C), which releases the
+// D3D texture at 0x1A4 (+0x20) and nulls it (+0x2C), before ??1RndCubeTex
+// (fn_82495410, the bl at +0x34). ??1RndCubeTex itself only destroys
+// mBitmap[6]@0xFC (+0x34), mFile[6]@0xB4 (+0x4C) and the Hmx::Object base
+// (+0x54), so X360 keeps the implicit dtor. Natively RndCubeTex is the concrete
+// class and its GPU copy lives in the engine's sCubeTexGpuData (Tex_Wgpu.cpp),
+// keyed on this ADDRESS and not an ObjRef, so only the destructor can drop it:
+// without this a dead cube map's entry stays `uploaded`, and the next
+// RndCubeTex allocated at the same address is served the dead one's faces by
+// GetGpuCubeTexView. A36, from dc3-decomp's ~RndCubeTex; gate
+// rb3_app_check_cube_tex_gpu_cleanup (native/src/rb3_app_gates.cpp).
+RndCubeTex::~RndCubeTex() {
+    extern void CleanupGpuCubeTex(RndCubeTex *);
+    CleanupGpuCubeTex(this);
+}
+#endif
+
 BEGIN_HANDLERS(RndCubeTex)
     HANDLE_SUPERCLASS(Hmx::Object)
 END_HANDLERS
