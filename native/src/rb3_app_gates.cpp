@@ -3161,7 +3161,7 @@ void rb3_app_check_crowd_force_3d() { // ring: native-real
 }
 
 // A59: an environ's left/right fade reaches a fade_out material. Retail
-// NgEnviron::Select (rb3-xenon rndobj/Env_NG.cpp) builds two planes from the
+// NgEnviron::Select (band.exe TU5 fn_82B86738) builds two planes from the
 // environ's left_out/left_opaque/right_opaque/right_out along its fade_ref's x
 // axis when the environ fades out, and uploads them as VConstant/PConstant
 // 0x35/0x36 for the fade_out shader option; the vocal HUD's track.env

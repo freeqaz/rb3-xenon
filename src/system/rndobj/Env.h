@@ -106,7 +106,7 @@ public:
 #ifdef HX_NATIVE
     // Native only (the engine's rndshape::EnvLRFadePlanes detects LRFade()):
     // left_out, left_opaque, right_opaque, right_out, from which
-    // NgEnviron::Select builds its two fade planes along LRFadeRef()'s x axis.
+    // NgEnviron::Select (band.exe TU5 fn_82B86738) builds its two fade planes along LRFadeRef()'s x axis.
     float FadeMax() const { return mFadeMax; }
     const Vector4 &LRFade() const { return mLRFade; }
 #endif
