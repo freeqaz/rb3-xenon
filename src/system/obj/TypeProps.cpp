@@ -46,6 +46,27 @@ Symbol TypeProps::Key(int idx) const { return mMap->Node(idx * 2).UncheckedSym()
 
 DataNode &TypeProps::Value(int idx) const { return mMap->Node(idx * 2 + 1); }
 
+#ifdef HX_NATIVE
+namespace {
+    // Native image of retail's per-value `Hmx::Object::Release(old, this)` in
+    // the setters (SetKeyValue fn_82765D40 +0x170, SetArrayValue fn_827665D0
+    // +0x48, RemoveArrayValue fn_82766650 +0x48). Retail Release
+    // (fn_8275B378) walks the object's ring, erases the FIRST entry owned by
+    // `this` (compare +0x58, erase +0x7C) and returns: one ring entry per
+    // overwritten value. Natively each held value is one node of mObjects (an
+    // owner-control ObjPtrList), so the image is to free exactly one node
+    // holding `obj`. ObjPtrList::remove(obj) frees EVERY such node (retail
+    // 0x82452950 keeps walking), which dropped the ring entry of any other
+    // prop holding the same object, and that prop then dangled when the
+    // object died. Lane A33.
+    void ReleaseOneTypePropsNode(ObjPtrList<Hmx::Object> &objects, Hmx::Object *obj) {
+        ObjPtrList<Hmx::Object>::iterator it = objects.find(obj);
+        if (it != objects.end())
+            objects.erase(it);
+    }
+}
+#endif
+
 int TypeProps::Size() const {
     if (mMap)
         return mMap->Size() / 2;
@@ -67,7 +88,9 @@ void TypeProps::ClearKeyValue(Symbol key) {
                     Hmx::Object *obj = val.UncheckedObj();
                     if (obj) {
 #ifdef HX_NATIVE
-                        mObjects.remove(obj);
+                        // No TU5 body in this unit; one node per value, as
+                        // in the setters below.
+                        ReleaseOneTypePropsNode(mObjects, obj);
 #endif
                     }
                 }
@@ -116,7 +139,7 @@ void TypeProps::SetKeyValue(Symbol key, const DataNode &value, bool b) {
                     Hmx::Object *o = valNode.UncheckedObj();
                     if (o) {
 #ifdef HX_NATIVE
-                        mObjects.remove(o);
+                        ReleaseOneTypePropsNode(mObjects, o);
 #else
                         o->Release(this);
 #endif
@@ -349,7 +372,7 @@ void TypeProps::SetArrayValue(Symbol key, int i, const DataNode &value, DataArra
         Hmx::Object *obj = n.UncheckedObj();
         if (obj) {
 #ifdef HX_NATIVE
-            mObjects.remove(obj);
+            ReleaseOneTypePropsNode(mObjects, obj);
 #else
             obj->Release(this); // retail X360: the TypeProps is the ObjRefOwner
 #endif
@@ -375,7 +398,7 @@ void TypeProps::RemoveArrayValue(Symbol prop, int i, DataArray *typeDef) {
         Hmx::Object *obj = n.UncheckedObj();
         if (obj) {
 #ifdef HX_NATIVE
-            mObjects.remove(obj);
+            ReleaseOneTypePropsNode(mObjects, obj);
 #else
             obj->Release(this); // retail X360: the TypeProps is the ObjRefOwner
 #endif
