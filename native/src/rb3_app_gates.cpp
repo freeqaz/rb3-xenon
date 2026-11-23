@@ -2862,3 +2862,48 @@ void rb3_app_check_cam_screen_y_down() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A53: a WorldCrowd keeps the force_3D_crowd its file serialises. Retail Load
+// (band.exe TU5 fn_824E6F88, its rev > 0xC arm) reads the flag and calls
+// Force3DCrowd(force) (fn_824E5A10), which moves every placement instance into m3DChars so
+// Draw3DChars (fn_824E2CD8) draws each one as a full Character. The native
+// build overrode that with Force3DCrowd(false) (scaffold c5c1650fb, from
+// dc3-decomp 10701ac3e: "no 3D character RTT pipeline"), so every crowd drew
+// only impostor cards. All eleven WorldCrowds of small_club_06 and the
+// cityscape shell serialise force 1 (rev 14; lane A53's load print). The
+// check: a crowd forced 3D, saved and loaded into a fresh crowd, reads back
+// force_3D_crowd 1; one saved unforced reads back 0.
+#include "utl/MemStream.h"
+#include "world/Crowd.h"
+static int rb3_app_crowd_force_round_trip(int force) {
+    WorldCrowd *src = Hmx::Object::New<WorldCrowd>();
+    WorldCrowd *dst = Hmx::Object::New<WorldCrowd>();
+    src->SetProperty("force_3D_crowd", DataNode(force));
+    MemStream ms;
+    src->Save(ms);
+    ms.Seek(0, BinStream::kSeekBegin);
+    dst->Load(ms);
+    int got = dst->Property("force_3D_crowd")->Int();
+    delete src;
+    delete dst;
+    return got;
+}
+void rb3_app_check_crowd_force_3d() { // ring: native-real
+    int forced = rb3_app_crowd_force_round_trip(1);
+    int unforced = rb3_app_crowd_force_round_trip(0);
+    char what[384];
+    snprintf(what, sizeof what,
+             "crowd force_3D_crowd after Save/Load: forced %d, unforced %d (want 1 0; retail "
+             "WorldCrowd::Load calls Force3DCrowd(force) with the serialised flag, and "
+             "Draw3DChars fn_824E2CD8 draws the 3D crowd)",
+             forced, unforced);
+    if (forced == 1 && unforced == 0) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (crowd force 3D)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
