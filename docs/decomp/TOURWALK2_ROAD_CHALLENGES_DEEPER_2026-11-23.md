@@ -51,7 +51,10 @@ performer's setlist is `werewolvesoflondon,imagine`. Choosing guitar then raises
 setlist is missing this part"). That is correct: `songs.dta` gives `imagine` `(guitar 0)`, and
 `OvershellSlot::SelectPartImpl` asks `MetaPerformer::SetHasMissingPart`. A walk on a random gig
 needs one extra press for that dialog (`gig N x` in the script). Song 1 by real input:
-`werewolvesoflondon:5+5=10`.
+`werewolvesoflondon:5+5=10`; song 2, where the guitarist has no part, `imagine:0+0=0`. The streak
+quest is then lost (`won=0`), but the gig still counts (`gigs=1/3`, `most=10`), which is what
+retail's `QuestManager::CompleteQuest` does (tourwalk read it at `0x823598F0`). The gig-2
+`down` press landed before the list took input, so gig 2 ran its fixed set (`yoshimibattles,oyemiamor`).
 
 ### 3. Challenge stars by real input, including the deploy-count quest tourwalk could not earn
 
@@ -97,7 +100,17 @@ At the time of writing it had reached gig 1 song 1 on the random set. 18 reports
 in the asanwalk, asanwalk2, practicewalk or songselwalk records (SongParser.cpp:234 and
 GameGem.h:84/85 `0xBE` fill, StandardStream.cpp:689, BeatMap.cpp:90, ChunkStream.cpp:501,
 BinStream.cpp:33, BandHeadShaper/BandFaceDeform misaligned `Delta`). No AddressSanitizer
-report. The tour screens added no new site.
+report. By gig 2 the run added **7 new UBSan sites, all one class**: enum loads out of range,
+because `TourGameType` (`tour/TourGameRules.h`), `TrackerChallengeType` and
+`TrackerPlayerDisplay::NetDisplayMsg` (`game/TrackerDisplay.h`) are declared with **no enumerators**.
+So the only valid value is 0, while the data stores 1..9 (`macros.dta` `kTourGameType_*`) and
+the tracker sets 3 and 4. Sites: `TourGameRules.cpp:49` (value 7), `TrackerManager.cpp:386` (7),
+`Tracker.cpp:205/208/209` (3), `TrackerDisplay.cpp:88` (3), `TrackerDisplay.cpp:332` (4). There is no
+behaviour difference today: native builds without `-fstrict-enums` (as `native/CMakeLists.txt`
+notes twice), so clang keeps every switch arm, and the walk's challenge stars and tracker
+displays work. **Not fixed** (out of time): the fix is to declare the enumerators (names from
+`macros.dta` for `TourGameType`; the tracker enums need their retail names). That is
+codegen-neutral on X360 but has to be priced with `ab_measure`.
 
 ## Not done / handoff
 
