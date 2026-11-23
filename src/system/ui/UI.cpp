@@ -52,6 +52,12 @@
 #include <cstdlib>
 #include <cstring>
 static float sHeadlessFakeUISeconds = 0.0f;
+// Whether a headless UIManager::Poll advances UI seconds by a fixed 1/30 s
+// per poll (-1: not chosen yet, read MILO_HEADLESS at the first poll).
+// rb3-app (native/src/main_app.cpp) chooses before App::App when it runs at
+// a real frame rate, as it does for TaskMgr (TaskMgrSetHeadlessFixedStep).
+static int sHeadlessFixedStep = -1;
+void UIManagerSetHeadlessFixedStep(bool on) { sHeadlessFixedStep = on; }
 static bool sDebugUIFlow = false;
 static bool sDebugUIFlowChecked = false;
 static inline bool DebugUIFlow() {
@@ -667,8 +673,9 @@ void UIManager::Poll() {
 #ifdef HX_NATIVE
     // Headless mode: advance UI seconds by fixed 1/30s per frame (see TaskMgr::Poll).
     // Uses a file-scope variable so the screen-transition reset can zero it.
-    static bool sHeadless = !!getenv("MILO_HEADLESS");
-    if (sHeadless) {
+    if (sHeadlessFixedStep < 0)
+        sHeadlessFixedStep = getenv("MILO_HEADLESS") != nullptr;
+    if (sHeadlessFixedStep) {
         sHeadlessFakeUISeconds += 1.0f / 30.0f;
         TheTaskMgr.SetUISeconds(sHeadlessFakeUISeconds, false);
     } else
