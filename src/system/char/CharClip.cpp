@@ -86,7 +86,21 @@ void CharClip::Transitions::Replace(ObjRef *from, Hmx::Object *to) {
 #endif
             CharClip *toClip = dynamic_cast<CharClip *>(to);
             if (!toClip) {
+#ifdef HX_NATIVE
+                // Retail drops it->clip's FIRST vector (RemoveNodes fn_8237D3C8,
+                // bl at +0x74), which is `it` itself there: the walk above
+                // matched by clip. Natively `it` is matched by its ring node, and
+                // a retarget (the else arm) can leave two vectors on one clip, so
+                // re-finding by clip freed the OTHER vector's node while the
+                // dying clip's ReplaceRefs snapshot still held it: ~CharClip <-
+                // Merger::Clear called Replace on the freed node ("calling get
+                // obj on abstract ObjRef", then SIGSEGV; lane A28 core h2).
+                // Drop the matched vector, as RemoveClip does once it finds one.
+                DropClip(it);
+                RemoveNodes(it);
+#else
                 RemoveClip(it->clip);
+#endif
             } else {
 #ifdef HX_NATIVE
                 it->clip = toClip;
