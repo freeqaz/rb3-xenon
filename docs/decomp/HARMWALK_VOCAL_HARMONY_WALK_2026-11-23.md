@@ -17,8 +17,8 @@ the 3-part stats.
 
 | commit | what |
 |---|---|
-| `3af20c4ae` + the next commit | `RB3_APP_DET_HARM=1` (`native/src/rb3_app_determinism.cpp`): the det line also carries the vocal player's harmony state; once per part load it prints each part's note list |
-| this commit | walk scripts (`tools/rb3_app_walks/harmwalk/`) and this record |
+| `3af20c4ae`, `b9249ec88` | `RB3_APP_DET_HARM=1` (`native/src/rb3_app_determinism.cpp`): the det line also carries the vocal player's harmony state; once per part load it prints each part's note list |
+| `c85b08b67` + this one | walk scripts (`tools/rb3_app_walks/harmwalk/`) and this record |
 
 No `src/` file changes. No fix landed: I found no native bug on the harmony scoring path (below).
 
