@@ -3024,6 +3024,67 @@ void rb3_app_check_retail_light_model() { // ring: native-real
     _exit(7);
 }
 
+// A73: an environ's ambient ALPHA fades what draws under it, as retail does.
+// Retail NgMat::SetupAmbient (band.exe TU5 fn_824A9090) +0x18 tests
+// use_environ and loads the current environ's ambient colour, alpha included
+// (+0x38..+0x58), into constant c1 (+0xA4 vertex, +0xD0 pixel), else
+// (1, 1, 1, 1); every non-pseudo-HDR standard program multiplies the output
+// alpha by c1.w (shipped xbox_shaders standard_10: `mul o2, c1, c0`,
+// `mul oC0, r0, r2`). RB3's UI fades groups only this way: movie_pause.milo's
+// fade.env / fade_text.env / fade_hint.env start at ambient_alpha 0, so the
+// tutorial movie plays with no pause bar over it. The engine used to write the
+// scene ambient's w as 1, so the bar, RESUME, SKIP and the hint drew at full
+// opacity (lane A72). The check: under an environ of ambient alpha 0.5 the
+// engine's c1.w (gfx/AmbientAlpha.h RetailC1Alpha over the scene block and the
+// material uniforms it builds) is 0.5 for a use_environ material -- lit,
+// prelit, and drawn as text, whose prelit the engine forces -- and 1 for one
+// with use_environ off, and the shipped standard WGSL applies it.
+#include "gfx/AmbientAlpha.h"
+void rb3_app_check_environ_ambient_alpha() { // ring: native-real
+    RndEnviron *prev = RndEnviron::Current();
+    RndEnviron *env = Hmx::Object::New<RndEnviron>();
+    env->SetAmbientColor(Hmx::Color(0.2f, 0.3f, 0.4f));
+    env->SetAmbientAlpha(0.5f);   // SetAmbientColor keeps the alpha (Env.h)
+    env->Select(nullptr);
+    SceneUniforms scene{};
+    memset(&scene, 0, sizeof(scene));
+    const bool claimed = rndshape::WriteSceneLighting(scene, nullptr);
+    auto c1w = [&](bool useEnv, bool prelit, bool text) {
+        RndMat *mat = Hmx::Object::New<RndMat>();
+        mat->SetUseEnv(useEnv);
+        mat->SetPreLit(prelit);
+        const MaterialParams p = BuildMaterialParams(mat, text, UiDrawTermsFor(true));
+        delete mat;
+        return RetailC1Alpha(p.uniforms.colorMod[3], scene.retailLighting, scene.ambientColor[3]);
+    };
+    const float lit = c1w(true, false, false), prelit = c1w(true, true, false),
+                text = c1w(true, false, true), noEnv = c1w(false, false, false),
+                noEnvPrelit = c1w(false, true, false);
+    if (prev) prev->Select(nullptr);   // env stays alive if it is still current
+    const char *wgsl = StandardWgslSource();
+    const bool shader = wgsl && strstr(wgsl, "let materialAlpha = material.color.a * "
+                                             "retailC1Alpha();") &&
+                        strstr(wgsl, "return scene.ambientColor.w;");
+    const bool ok = claimed && scene.ambientColor[3] == 0.5f && lit == 0.5f && prelit == 0.5f &&
+                    text == 0.5f && noEnv == 1.0f && noEnvPrelit == 1.0f && shader;
+    char what[512];
+    snprintf(what, sizeof what,
+             "environ ambient alpha: claimed %d, scene ambient w %.3f, c1.w lit %.3f prelit %.3f "
+             "text %.3f, use_environ off %.3f / prelit %.3f, shader %d (want 1, 0.500, 0.500 "
+             "0.500 0.500, 1.000 / 1.000, 1: NgMat::SetupAmbient fn_824A9090 +0x18/+0xA4)",
+             (int)claimed, scene.ambientColor[3], lit, prelit, text, noEnv, noEnvPrelit,
+             (int)shader);
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (environ ambient alpha)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
 // A49: only RndText's glyph pages take the engine's text path. The engine
 // (milo-native-engine platform/MaterialSetup.cpp MeshShadesAsText /
 // MeshDrawsAsGlyph) draws a glyph page with no depth test, no culling, forced
