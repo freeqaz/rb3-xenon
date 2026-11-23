@@ -164,7 +164,18 @@ void TrackPanel::UpdateReservedVocalSlot() {
     MILO_ASSERT(mTrackSlots.size() == kTrackNumSlots, 0xF3);
     int u3 = -1;
     for (int i = 0; i < mTrackSlots.size(); i++) {
+#ifdef HX_NATIVE
+        // Retail fn_82B912A8 walks the slots at a stride of 8 (`addi r10,r10,0x8` at
+        // +0x3C, mInstrument read at +4 by the lwz at +0x28): sizeof(TrackSlot) on
+        // X360. On LP64 a TrackSlot is 16 bytes (an 8-byte Track * then the enum),
+        // so the literal 8 read half-slots: the vocal slot came out wrong (or a
+        // pointer's low word read as an instrument), and AssignTrack's
+        // ReservedVocalPlayerSlot assert (0x10A) fired on game_screen. Same walk,
+        // the host's real stride.
+        TrackSlot *slot = &mTrackSlots[i];
+#else
         TrackSlot *slot = (TrackSlot *)((char *)&mTrackSlots[0] + i * 8);
+#endif
         if (slot->mInstrument == kInstVocals) {
             u3 = i;
         }
