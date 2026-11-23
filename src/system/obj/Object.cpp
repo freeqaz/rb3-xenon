@@ -598,13 +598,14 @@ void Hmx::Object::ReplaceRefs(Hmx::Object *obj) {
             if (takeInto(&pending, pass ? this : nullptr) == 0)
                 break;
             while (!pending.empty()) {
+                // Take the entry off `pending` before its Replace, as the
+                // snapshot self-looped it: a Replace may self-loop and free
+                // its own node without unlinking it (MsgSourceSinkRef::Replace
+                // -> SinkDied, Msg.cpp), and a Release inside SetObj then
+                // writes only to the node itself.
                 ObjRef *ref = pending.next;
+                ObjRef::SafeReleaseFromRing(ref);
                 ref->Replace(obj);
-                if (pending.next == ref) {
-                    // Replace left it in place: unlink it, as the snapshot's
-                    // self-loop did, so the drain advances.
-                    ObjRef::SafeReleaseFromRing(ref);
-                }
             }
         }
         if (pass == kMaxPasses && !mRefs.empty()) {
