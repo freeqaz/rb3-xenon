@@ -86,7 +86,25 @@ this lane's brief).
 Rather than rescale each count, rb3-app now runs at retail's rate, so all of the above behave
 as retail at once.
 
-`RB3_APP_HZ=N` (default **60**; `RB3AppHz()` in `native/src/rb3_app_determinism.cpp`):
+`RB3AppHz()` in `native/src/rb3_app_determinism.cpp`, decided once at main's first line and
+printed as one boot line (like `Rb3AppMoviesOff`'s movie line):
+
+| run | rate | boot line |
+|---|---|---|
+| `RB3_APP_HZ=N` | N | `rb3-app: frame rate 60 Hz, UI/task clocks from Timer (RB3_APP_HZ)` |
+| `RB3_APP_HZ=legacy` (or 0) | legacy 30 | `rb3-app: frame rate legacy 30 Hz, fixed-step UI/task clocks (RB3_APP_HZ)` |
+| unset, harness run (`MILO_INPUT_SCRIPT`, `RB3_APP_DETERMINISTIC` or `RB3_APP_JOYPAD_GATE` set) | legacy 30 | `... (harness default (...; RB3_APP_HZ=60 runs retail's rate))` |
+| unset, normal launch | 60, paced, real clocks | `... (default: retail's rnd sync 1, one frame per 60 Hz vsync)` |
+
+(Reworked after the first version, which made 60 the default everywhere, by agreement between
+the coordinator and the peer session: harness runs keep their 30 Hz frame indices and det
+baselines until the walk suites migrate. `RB3_APP_JOYPAD_GATE` counts as a harness run because
+the gate writes its own `MILO_INPUT_SCRIPT` inside App::App, after the rate is chosen.)
+
+**The intended end state is 60 Hz as the harness default too, once both sessions' walk suites
+have migrated** (the flip is the `hz = harness ? 0 : 60;` line in `RB3AppHz()`).
+
+At a rate N > 0:
 
 - **Deterministic walk**: the virtual frame is 1/N s (16,666,666 ns at 60). The frame
   schedule became relative: frame N starts one frame after frame N-1, or at the next 1/N
@@ -100,19 +118,25 @@ as retail at once.
 - **Normal launch**: `PaceFrame()` (main_app.cpp, at the SystemPoll wrapper) sleeps each frame
   start to the next 1/N s boundary since the first frame (`clock_nanosleep` absolute); a frame
   that overran waits for the boundary after it (no catch-up burst). Not in a deterministic walk.
-- **Clocks**: after `App::App`, main_app.cpp `unsetenv("MILO_HEADLESS")`, so `UIManager::Poll`
-  and `TaskMgr::Poll` read their Timers (retail's path; natively steady_clock, which a
-  deterministic walk makes its virtual clock) instead of adding 1/30 s per poll. The engine
-  reads `MILO_HEADLESS` only inside the constructor (window, audio). UI.cpp caches it in a
-  function-local static at its first poll, which is after the constructor, so it takes the
-  Timer path without an edit there. **`TaskMgr::Poll` already polled inside the constructor**
-  (`Splash::Draw`), so its static had cached `true`: in run d1 the task seconds ran +1/30 per
-  60 Hz frame over frames 1-30. `src/system/obj/Task.cpp` (HX_NATIVE arm only) now reads the
-  variable every poll.
-- **`RB3_APP_HZ=legacy`** (or 0): virtual 1/30 s frame on the old absolute grid, normal launch
-  unpaced, fixed-step clocks left on. Run d2L (bin-f2, walk.txt, 6000 frames) is
-  **IDENTICAL over 6000 frames** to run d0 (base binary `8ba6acd11bde`, same walk), by
-  `tools/rb3_app_det_cmp.py`, so the old behaviour is one variable away.
+- **Clocks**: `UIManager::Poll` and `TaskMgr::Poll` read their Timers (retail's path; natively
+  steady_clock, which a deterministic walk makes its virtual clock) instead of adding 1/30 s
+  per poll, which equals time only at 30 frames a second. The source is chosen once at startup:
+  - TaskMgr: `src/system/obj/Task.cpp` (HX_NATIVE arm only) has a file-scope flag and a
+    native-only setter, `TaskMgrSetHeadlessFixedStep(bool)`, which main_app calls before
+    `App::App` at a real rate. Before the call existed, TaskMgr cached `MILO_HEADLESS` in a
+    function-local static at its first poll, and that poll is inside the constructor
+    (`Splash::Draw`): in the first 60 Hz run (d1) task seconds ran +1/30 per 60 Hz frame over
+    frames 1-30. Uncalled (legacy, other native programs), the flag is read from
+    `MILO_HEADLESS` once at the first poll, as before. (The first version re-read the variable
+    every poll; replaced.)
+  - UIManager: UI.cpp has no such setter and is outside this lane, so main_app still clears
+    `MILO_HEADLESS` after `App::App` at a real rate. UI.cpp caches the variable at its first
+    poll, App::Run's first frame (the det `ui` column steps 1/hz from frame 1, not 1/30); the
+    engine reads it only inside the constructor (window, audio). A UIManager setter like
+    TaskMgr's would make this a startup choice too.
+- **Legacy** (a harness run's default, or `RB3_APP_HZ=legacy`): virtual 1/30 s frame on the old
+  absolute grid, unpaced, fixed-step clocks left on, the base binary frame for frame (checks
+  below).
 - chartplay `RB3_APP_CHARTPLAY_TILT_MS=N`: hold each tilt N ms of song time (one tilt per
   1000 ms at most), so a tilt is the same input at any frame rate. Without it the old 15-poll
   hold is unchanged.
@@ -164,6 +188,31 @@ masked_equal 25,360, code% 59.665310 on `name_check`; `none` control +0 B). Run 
 refused at apply because I edited `tilt.sh` in the worktree while it ran (my mistake; its
 restore put the file back, nothing was lost).
 
+## 6. Rework checks (bin-f3 `82d739c84c79`, `tools/rb3_app_walks/framerate/checks.sh`)
+
+The tilt and clock runs in section 5 were made with bin-f2, where 60 was the default
+everywhere. In the rework their 60 Hz legs need `RB3_APP_HZ=60`, which tilt.sh and seeds.sh now
+pass. Every run ended rc 0.
+
+- **Normal launch** (`RB3_APP_RUN=1`, no script, no det, 300 frames). Boot line `rb3-app: frame
+  rate 60 Hz, UI/task clocks from Timer (default: retail's rnd sync 1, one frame per 60 Hz
+  vsync)`. A normal launch plays movies (`movies on (default)`), and 300 frames ends on
+  intro_movie_screen, **as the base binary's does** (c1Nbase: `APP RAN 300 FRAMES
+  screen=intro_movie_screen`, 1.2 s). With `RB3_APP_MOVIES=0` (c1N0) it reaches
+  `splash_screen` at frame 14 (2.2 s) and is still on it at frame 300 (12.5 s). Movies on, the
+  intro cinematic (`rb3_intro_cinematic.bik`, 2,054 frames at 29.97 fps = 68.5 s) now plays at
+  its own speed: c1NL2 (7,200-frame cap) reaches `splash_screen` at frame 4,100, 68.50 s (4,100 / 60 = 68.3 s). The base binary, unpaced, played it one video frame per game frame:
+  splash at frame 2,057, 8.7 s, i.e. 8x speed.
+- **`RB3_APP_JOYPAD_GATE=1`** (c1J): legacy 30 Hz by the harness rule, `RESULT: JOYPAD GATE
+  PASSED`, rc 0.
+- **Det walk without `RB3_APP_HZ`** (c1D, walk.txt, 6000 frames): legacy by the harness rule;
+  `rb3_app_det_cmp.py` against the base binary's d0: **IDENTICAL over 6000 common frames**.
+- **`RB3_APP_HZ=60` det walk twice** (c1S1, c1S2, walk.txt, 6000 frames): **IDENTICAL over 6000
+  common frames** (frame 6000 seconds 70.9715, as bin-f2's d2).
+- **X360 Δ0**: `tools/ab_measure.py --patch` (Task.cpp back to main's) measured Δmatched +0,
+  Δhonest +0, Δcode% +0.000000 pp, Δfuzzy +0 (legA = legB = 55,268 matched, 25,360
+  masked_equal, 59.665310 %; `none` control +0 B), label `framerate-task-step-revert`.
+
 ## Not done
 
 - **Walk scripts are written in frames** (`MILO_INPUT_SCRIPT` `+N` offsets and `wait_screen`'s
@@ -172,8 +221,8 @@ restore put the file back, nothing was lost).
   outlast a chain written for 30 Hz, and `RB3_APP_FRAMES` caps need doubling for the same
   song time. walk.txt and walk_x.txt ran unchanged here (every step waits on a screen). A lane
   that wants its old frame numbers, or an old baseline, runs `RB3_APP_HZ=legacy`; that is the
-  base binary frame for frame (d0 vs d2L). The coordinator decides the default at landing:
-  the one-line flip is `if (!e || !*e) hz = 60;` in `RB3AppHz()`.
+  base binary frame for frame (d0 vs d2L). After the rework this is the harness default, so
+  existing walks are unaffected unless they set `RB3_APP_HZ=60`.
 - **Baselines and seed -> song maps move.** The menus draw from the game RNG per frame, so a
   seed picks a different song at 60 Hz (legacy 18 = ohmygod, 60 Hz 18 = smokeonthewater;
   60 Hz seeds 0-11 in `seeds_a.out`: 0 bohemianrhapsody, 1 thebeautifulpeople, 2 walkoflife,
