@@ -900,3 +900,127 @@ void rb3_app_check_net_cache_offline() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A20: a texture a cascade destroys leaves the engine's GPU tables.
+// Retail's texture is DxTex; its dtor (0x827356B8) runs ResetSurfaces
+// (0x827355D0) before ??1RndTex (0x823FEBB8), so a dead texture holds no GPU
+// surface. Natively the surfaces sit in Tex_Wgpu.cpp's side tables, keyed on the
+// RndTex address: sTexGpuData, and sSharedTex, which names one holder of each
+// identical bitmap as its reference. On the cal_welcome -> cal_manual_audio
+// transition, cal_welcome.milo's header_song_shadow.tex died in UnloadPanels'
+// cascade while staying the share reference, and cal_manual.milo's same-named
+// texture then read the dead one's mBitmap in PresyncBitmap (ASan
+// heap-use-after-free, RndBitmap::Pixels). Here: tex A in a dir and a twin B
+// outside it share one GPU texture; the dir dies through ~ObjectDir's cascade
+// inside Begin/EndBatchDelete, as UIScreen::UnloadPanels does. A's entry must be
+// gone, B must keep its texture, and a third twin C must share B's. Fails when
+// ~RndTex does not call CleanupGpuTex (A's entry stays, owner dangling).
+#include "platform/TexGpu.h"
+namespace {
+    RndTex *A20Twin(const char *name, ObjectDir *dir) {
+        RndTex *t = Hmx::Object::New<RndTex>();
+        if (dir)
+            t->SetName(name, dir);
+        t->SetBitmap(16, 16, 32, RndTex::kRegular, false, "");
+        u8 *px = t->Bitmap().Pixels();
+        if (px) {
+            for (int i = 0; i < t->Bitmap().PixelBytes(); i++)
+                px[i] = (u8)(i * 7 + 0xA2);
+        }
+        t->PresyncBitmap();
+        return t;
+    }
+}
+void rb3_app_check_tex_gpu_cleanup() { // ring: native-real
+    ObjectDir *dir = Hmx::Object::New<ObjectDir>();
+    RndTex *a = A20Twin("a20_twin.tex", dir);
+    RndTex *b = A20Twin(nullptr, nullptr);
+    GpuTexDebugInfo ia = GetGpuTexDebugInfo(a), ib = GetGpuTexDebugInfo(b);
+    size_t holders0 = GpuTexHolderCount();
+    bool px = a->Bitmap().Pixels() && b->Bitmap().Pixels();
+    void *aAddr = a;
+    ObjectDir::BeginBatchDelete();
+    delete dir;
+    ObjectDir::EndBatchDelete();
+    // A's block is freed now: only its address is used, as a map key.
+    GpuTexDebugInfo ia2 = GetGpuTexDebugInfo((RndTex *)aAddr);
+    GpuTexDebugInfo ib2 = GetGpuTexDebugInfo(b);
+    size_t holders1 = GpuTexHolderCount();
+    unsigned long long share0 = GpuTexShareCount();
+    RndTex *c = A20Twin(nullptr, nullptr);
+    GpuTexDebugInfo ic = GetGpuTexDebugInfo(c);
+    bool cShared = ic.uploaded && ic.shared && ic.view == ib2.view
+        && GpuTexShareCount() == share0 + 1;
+    char what[640];
+    snprintf(what, sizeof what,
+             "tex gpu cleanup: pixels %d; A uploaded %d shared %d, B uploaded %d shared %d "
+             "same view %d; holders %zu; dir cascade (batch) -> A entry present %d (want 0), "
+             "holders %zu (want %zu), B uploaded %d same view %d; twin C shared %d with B "
+             "(retail DxTex dtor 0x827356B8 -> ResetSurfaces 0x827355D0)",
+             px, ia.uploaded, ia.shared, ib.uploaded, ib.shared, ia.view == ib.view, holders0,
+             ia2.present, holders1, holders0 - 1, ib2.uploaded, ib2.view == ib.view, cShared);
+    bool ok = px && ia.uploaded && ib.uploaded && ib.shared && ia.view == ib.view
+        && !ia2.present && holders1 == holders0 - 1 && ib2.uploaded && ib2.view == ib.view
+        && cShared;
+    delete b;
+    delete c;
+    if (ok) {
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (tex gpu cleanup)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
+
+// A20: a CharDriver's clip driver leaves the chain when its clip dies.
+// Retail CharDriver::Replace (0x82376E40) prunes mFirst with
+// CharClipDriver::DeleteRef (0x8239FF50), which compares the held clip
+// (lwz 0x2c) with `from`, the dying object on X360. Natively the ring passes
+// the ObjRef member as `from` (obj/Object.h RefIs), so the retail compare never
+// matched: the driver stayed aimed at the freed clip and the next Play's Exit
+// read it (ASan heap-use-after-free in CharClipDriver::ExecuteEvent <- Exit <-
+// CharClipDriver ctor <- CharDriver::Play <- BandCharacter::PlayMainClip at
+// main_hub; the clip died in UIScreen::UnloadPanels' cascade). Cases: the clip's
+// dir dies through ~ObjectDir in Begin/EndBatchDelete (the UnloadPanels path),
+// and a plain `delete` of the clip (the ReplaceRefs path). Both: First() NULL.
+#include "char/CharClip.h"
+#include "char/CharClipDriver.h"
+#include "char/CharDriver.h"
+#include "math/Utl.h"
+void rb3_app_check_clip_driver_prune() { // ring: native-real
+    CharDriver *drv = Hmx::Object::New<CharDriver>();
+    ObjectDir *dir = Hmx::Object::New<ObjectDir>();
+    CharClip *clip = Hmx::Object::New<CharClip>();
+    clip->SetName("a20_clip", dir);
+    CharClipDriver *d1 = drv->Play(clip, 0, -1.0f, kHugeFloat, 0.0f);
+    bool held1 = d1 && drv->First() == d1 && d1->GetClip() == clip;
+    ObjectDir::BeginBatchDelete();
+    delete dir;
+    ObjectDir::EndBatchDelete();
+    bool pruned1 = drv->First() == nullptr;
+    CharClip *clip2 = Hmx::Object::New<CharClip>();
+    CharClipDriver *d2 = drv->Play(clip2, 0, -1.0f, kHugeFloat, 0.0f);
+    bool held2 = d2 && drv->First() == d2 && d2->GetClip() == clip2;
+    delete clip2;
+    bool pruned2 = drv->First() == nullptr;
+    char what[512];
+    snprintf(what, sizeof what,
+             "clip driver prune: cascade (dir dies, batch): held %d -> First NULL %d; "
+             "plain delete: held %d -> First NULL %d (retail CharDriver::Replace 0x82376E40 "
+             "-> CharClipDriver::DeleteRef 0x8239FF50; want 1 1 1 1)",
+             held1, pruned1, held2, pruned2);
+    bool ok = held1 && pruned1 && held2 && pruned2;
+    if (ok) {
+        delete drv;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (clip driver prune)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
