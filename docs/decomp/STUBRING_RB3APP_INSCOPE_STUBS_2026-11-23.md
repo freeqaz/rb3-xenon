@@ -51,7 +51,7 @@ caller, `CDReader.cpp`'s `CDReadDone`.
 | `PlatformMgr::CanSeeUserCreatedContent` | platformmgr | TourCharRemote (remote players' characters), MusicLibraryNetSetlists | Out of scope (Live privilege check, online-only callers). |
 | `PlatformMgr::ShowGamercard` | platformmgr | PlayerLeaderboards, SongRecord | Out of scope (Live UI). |
 
-The four `a1-absent-body` data globals in `rb3_app_link_stubs.cpp` (`play_msg`, `TheSongDB`,
+The five `a1-absent-body` data globals in `rb3_app_link_stubs.cpp` (`play_msg`, `TheSongDB`,
 `TheTour`, `TheHAQMgr`, plus `BandCamShot::sHideAllCharactersHack`) were not examined.
 
 ## Walks (worktree binary, `RB3_APP_DETERMINISTIC=1`, through no610m.sh)
