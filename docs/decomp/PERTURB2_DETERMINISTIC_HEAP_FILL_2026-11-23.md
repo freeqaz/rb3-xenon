@@ -81,7 +81,33 @@ both fills, and a run that does not read a fill is not mistaken for a divergence
 
 ## Runs and verdicts
 
-(seed table)
+All runs use `bin-tip`. The frame counts are each run's own count at the 540 s cap. The
+comparisons cover the common frames (the shorter run of the pair).
+
+| seed | song | game_screen / 1st coop_endgame / exit / 2nd coop_endgame (frame) | frames d / p190 / p65 | d vs p190 | d vs p65 |
+|---|---|---|---|---|---|
+| 0 | thecon | 1,119 / 8,009 / 8,159 / 15,793 | 39,759 / 39,771 / 39,536 | IDENTICAL, 0 hunks | IDENTICAL, 0 hunks |
+| 1 | combatbaby | 1,242 / 8,082 / 8,232 / 15,606 | 40,066 / 39,917 / 39,855 | IDENTICAL, 0 hunks | IDENTICAL, 0 hunks |
+| 2 | everybodywantstorule | 1,242 / 9,340 / 9,491 / 18,949 | 36,761 / 36,870 / 36,712 | IDENTICAL, 0 hunks | IDENTICAL, 0 hunks |
+| 3 | combatbaby | 1,242 / 8,062 / 8,212 / 14,637 | 59,371 / 59,116 / 58,923 | IDENTICAL, 0 hunks | IDENTICAL, 0 hunks |
+| 4 | smokeonthewater | 1,138 / 12,205 / 12,356 / 21,435 | 59,321 / 59,380 / 59,375 | IDENTICAL, 0 hunks | IDENTICAL, 0 hunks |
+| 0, second default run (t0_d2) | thecon | same frames | 37,802 | — | d vs d2: IDENTICAL, 0 hunks |
+
+- **Milestones.** Within a seed they are identical across the three arms. The "IDENTICAL"
+  column is `rb3_app_det_cmp.py` and the "hunks" column is `rb3_app_log_cmp.py`.
+- **Songs.** Seeds 1 and 3 both pick combatbaby, but the walks differ (endgame at frame 8,082
+  against 8,062). So across the seeds the RNG takes five distinct paths through song_select and
+  through the second song's pick.
+- **Unfiltered (`RAW=1`).** The perturb pairs have 1-4 hunks each, against 17 for d vs d2. Every
+  line in them is a BONE DIAG row (mesh header, bone list, `localRot/localPos/worldRot/worldPos/offset/skin`)
+  or a `timer error is large` value. Diffs: `~/tmp/perturb2/raw_<a>_<b>.txt`.
+- **Exit status.** All 19 runs ended rc 4 (the wall-clock cap). There were no SIGSEGV, ASSERT,
+  `RING CORRUPTION` or `FAIL:` lines (`~/tmp/perturb2/tools/summ.py`).
+
+| # | divergence | first frame | member | retail ctor | verdict |
+|---|---|---|---|---|---|
+| — | none in 10 tip perturb pairs (5 seeds × 2 fills), 36,700-59,400 common frames each | — | — | — | no uninit-heap read on the walk path changes RNG, clocks, screen flow or a main-thread log line |
+| ctl | `FileMerger::Merger::mForceReload` with its two HX_NATIVE inits removed | 1 | `Merger` +0x29 | `0x8232DCF8` stores +0x28 and +0x2A, not +0x29 (FileMerger.h comment, FORCERELOAD record) | positive control; the init is already on main
 
 ## Limits (what this instrument cannot see)
 
@@ -115,5 +141,13 @@ measured that. It stays in the char class, open.
 
 - No source member was changed, so there was no `ab_measure` run and no HX_NATIVE init.
 - `tools/native_health.sh --selftest` was not run, per the brief.
-- No ablation of the BONE DIAG filter under perturb alone. Its hunks were not inspected
-  per arm beyond the d-vs-d2 baseline.
+- The control's retail ctor was not re-disassembled here. Its `0x8232DCF8` reading comes from
+  the FORCERELOAD record and the in-header comment. No new divergence needed a retail check.
+- Two lines of follow-up would buy more reach than more seeds would:
+  - Widen `rb3_app_determinism_frame`'s state hash with game state (band score, per-player
+    streaks and track state), since the walk's song paths are otherwise checked only through
+    the RNG and clocks.
+  - Run an instrument-input walk, so the scoring paths read their members.
+
+Logs: `~/tmp/perturb2/r_<tag>/run.log`, with tags `t<seed>_{d,p190,p65}`, `t0_d2` and
+`c0_{d,p190,p65}`. Binaries are `~/tmp/perturb2/bin-{tip,ctl}`.
