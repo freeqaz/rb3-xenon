@@ -8,6 +8,10 @@
 #include "synth/MoggClip.h"
 
 enum ExcitementLevel {
+    // -1 is the "no level" sentinel: OnMusicStart parks mLevel there and the override
+    // fields hold it when no override is set (retail compares both with cmpwi -1).
+    // Naming it keeps it inside the enum's value range natively.
+    kExcitementNone = -1,
     kExcitementBoot,
     kExcitementBad,
     kExcitementOkay,
