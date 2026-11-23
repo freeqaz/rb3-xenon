@@ -156,14 +156,77 @@ int ReadSingleJoypad(int pad, unsigned int *buttons, char *lx, char *ly, char *r
                                   pressures, pro_guitar);
 }
 
-// A natively driven pad is a standard controller: XINPUT_DEVTYPE_GAMEPAD,
-// XINPUT_DEVSUBTYPE_GAMEPAD, which ReadSingleXinputJoypad reads as kJoypadAnalog.
+namespace {
+// RB3_APP_JOYPAD_KIND picks the XInput subtype a natively driven pad reports
+// (lane gemwalk, 2026-11-23). Unset or `gamepad`: a standard controller,
+// XINPUT_DEVSUBTYPE_GAMEPAD (1), which ReadSingleXinputJoypad reads as
+// kJoypadAnalog and the joypad config's `analog` entry maps to vocals.
+// `guitar`: XINPUT_DEVSUBTYPE_GUITAR (6) with Flags 0 and sThumbRX/LX 0, which
+// SetupHXGuitar (Joypad_Xbox.cpp) reads as kJoypadXboxHxGuitar -- the wired
+// first-generation guitar, `strat_xbox` (GUITAR_WITHOUT_CALBERT, so calibration
+// stays the manual screens: there is no Calbert sensor to read natively).
+// `drums`: XINPUT_DEVSUBTYPE_DRUM_KIT (8), Flags 0, which SetupHXDrums reads as
+// kJoypadXboxDrums, `hx_drums_xbox`. Any other value fails at the first query.
+BYTE PadSubType() {
+    static const BYTE sub = [] {
+        const char *v = getenv("RB3_APP_JOYPAD_KIND");
+        if (!v || !v[0] || !strcmp(v, "gamepad")) return (BYTE)1;
+        if (!strcmp(v, "guitar")) return (BYTE)6;
+        if (!strcmp(v, "drums")) return (BYTE)8;
+        fprintf(stderr, "rb3-app joypad: RB3_APP_JOYPAD_KIND=%s is not gamepad, guitar or drums\n", v);
+        fflush(stderr);
+        _Exit(2);
+    }();
+    return sub;
+}
+} // namespace
+
+// ReadSingleXinputJoypad (Joypad_Xinput.cpp) classifies a guitar (subtype 6/11)
+// or drum kit (subtype 8) through these two Joypad_Xbox.cpp functions. That TU
+// is not in rb3-app (its XInput2 thread and JoypadInit/Poll are this file's job),
+// so the two bodies are here, as retail:
+//   SetupHXGuitar 0x82529E20: Flags bit 1 -> JoypadData +0x4b (mIsWireless),
+//     bit 0 -> +0x4a (mHasCapFlag1); sThumbLX (caps+8) == 0x1BAD -> GetBreedData,
+//     return 0x1d (kJoypadXboxCoreGuitar); else bit1 && (bit0 || sThumbRX
+//     (caps+0xc) >= 0x100) ? 6 (Rb2) : 5.
+//   SetupHXDrums 0x82529EB8: the same two flag stores; 0x1BAD -> GetBreedData,
+//     0x21 (kJoypadXboxMidiBoxDrums); bit0 || sThumbRX >= 0x100 -> 9 (Rb2);
+//     bit1 && !bit0 -> kJoypadXboxRoDrums; else kJoypadXboxDrums.
+// The one difference: the 0x1BAD arm does not call GetBreedData (0x82529D18),
+// which reads the per-pad breed table Joypad_Xbox.cpp's XInput2 raw-data thread
+// fills; that thread does not exist natively and XInputGetCapabilities below
+// zeroes the caps, so the arm is never taken here.
+JoypadType SetupHXGuitar(int pad, const XINPUT_CAPABILITIES &c) {
+    bool wireless = c.Flags & 0x2;
+    bool flag1 = c.Flags & 1;
+    bool rb2 = wireless && (flag1 || c.Gamepad.sThumbRX >= 0x100);
+    JoypadGetPadData(pad)->mIsWireless = wireless;
+    JoypadGetPadData(pad)->mHasCapFlag1 = flag1;
+    if (c.Gamepad.sThumbLX == 0x1BAD) return kJoypadXboxCoreGuitar;
+    return rb2 ? kJoypadXboxHxGuitarRb2 : kJoypadXboxHxGuitar;
+}
+
+JoypadType SetupHXDrums(int pad, const XINPUT_CAPABILITIES &c) {
+    bool flag1 = c.Flags & 1;
+    bool wireless = c.Flags & 0x2;
+    bool rb2 = flag1 || c.Gamepad.sThumbRX >= 0x100;
+    bool rockOfAges = wireless && !flag1;
+    JoypadGetPadData(pad)->mIsWireless = wireless;
+    JoypadGetPadData(pad)->mHasCapFlag1 = flag1;
+    if (c.Gamepad.sThumbLX == 0x1BAD) return kJoypadXboxMidiBoxDrums;
+    if (rb2) return kJoypadXboxDrumsRb2;
+    if (rockOfAges) return kJoypadXboxRoDrums;
+    return kJoypadXboxDrums;
+}
+
+// A natively driven pad reports XINPUT_DEVTYPE_GAMEPAD with PadSubType()'s
+// subtype; everything ReadSingleXinputJoypad derives from it is retail's.
 DWORD XInputGetCapabilities(DWORD pad, DWORD, XINPUT_CAPABILITIES *caps) {
     if (pad >= kNumJoypads || !JoypadNativeSourceConnected((int)pad))
         return 1167; // ERROR_DEVICE_NOT_CONNECTED
     memset(caps, 0, sizeof(*caps));
     caps->Type = 1;
-    caps->SubType = 1;
+    caps->SubType = PadSubType();
     return 0;
 }
 

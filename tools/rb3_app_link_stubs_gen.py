@@ -79,8 +79,10 @@ RULES = [
     # A14: ReadSingleXinputJoypad (Joypad_Xinput.cpp, compiled) classifies a
     # Harmonix peripheral by its XInput capability subtype through these
     # Joypad_Xbox.cpp bodies (not compiled: XInput2 thread). rb3-app's pad
-    # (rb3_app_joypad.cpp) reports a standard gamepad, subtype 1, which takes
-    # none of them; a guitar/drums/keytar/pro-guitar pad would.
+    # (rb3_app_joypad.cpp) reports a standard gamepad, subtype 1, by default;
+    # since lane gemwalk RB3_APP_JOYPAD_KIND=guitar|drums reports subtype 6/8,
+    # and rb3_app_joypad.cpp defines SetupHXGuitar/SetupHXDrums itself, so
+    # only Keytar and RealGuitar are still undefined (and stubbed).
     (r"^SetupHX(Guitar|Drums|Keytar|RealGuitar)\(", "peripheral-only"),
     (r".*", "a1-absent-body"),
 ]
