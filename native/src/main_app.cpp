@@ -269,7 +269,7 @@ int main(int argc, char **argv) {
         rb3_app_check_campaign_screen_push(); // A38 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_nonull_list_replace_drain(); // A37 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_bone_merge_repoint(); // A41 (rb3_app_gates.cpp): exits rc 7 on a failure
-        rb3_app_check_credits_auto_scroll(); // A39 (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_credits_auto_scroll(); // credits lane (rb3_app_gates.cpp): exits rc 7 on a failure
         printf("RESULT: APP CONSTRUCTED\n");
         fflush(stdout);
         fflush(stderr);

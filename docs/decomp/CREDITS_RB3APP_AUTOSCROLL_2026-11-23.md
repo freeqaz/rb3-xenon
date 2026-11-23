@@ -63,7 +63,7 @@ So retail runs the same 1485 s scroll; the native credits are retail-faithful.
 ## What landed
 
 - **No `src/` change**, so no ab_measure run (nothing to price).
-- **Gate A39** in `native/src/rb3_app_gates.cpp` (`rb3_app_check_credits_auto_scroll`, called
+- **Gate `credits_auto_scroll`** in `native/src/rb3_app_gates.cpp` (`rb3_app_check_credits_auto_scroll`, called
   from `main_app.cpp`'s construct-only block): a 60-row UIList with credits' settings
   (30 rows, 0.85 s, pause 0), a real UIListDir with no widgets, AutoScroll, one real
   UIList::Poll, then UIListState::Poll on a 30 fps synthetic clock. It must scroll every frame
@@ -75,7 +75,7 @@ So retail runs the same 1485 s scroll; the native credits are retail-faithful.
 
 Gate measurements (construct-only, `RB3_APP_CONSTRUCT_ONLY=1`, via `no610m.sh`):
 
-| binary | A39 line | rc | `[PASS]` lines |
+| binary | gate line | rc | `[PASS]` lines |
 |---|---|---|---|
 | base (524c3ed7c) | absent | 0 | 79 |
 | branch | PASS, 766 frames, first 30 of 30, dir -1 | 0 | 80 |
@@ -85,7 +85,7 @@ Gate measurements (construct-only, `RB3_APP_CONSTRUCT_ONLY=1`, via `no610m.sh`):
 ## Walks: base against branch
 
 Binaries: base = `native/build/rb3-app` built at 524c3ed7c (sha256 `3363f1a4…`), branch =
-the same tree plus the A39 commit (sha256 `b380f1c9…`). Compared with
+the same tree plus the gate commit (sha256 `b380f1c9…`). Compared with
 `tools/rb3_app_det_cmp.py` (all det fields, exit 0 = identical).
 
 | walk | recipe | base end | branch end | det cmp |
@@ -98,7 +98,7 @@ Neither the band nor the solo walk ever enters credits_screen (0 `screen=credits
 lines; the 10 `credits_screen` matches are the boot-time panel dump), so "identical up to the
 first credits frame" is the whole run. All four game walks stopped on the 540 s wall-clock cap
 (rc 4) at about 47,000 frames, not the 90,000-frame cap, because five runs shared the GPU
-lock at once. Identity is expected by construction: A39 runs only in the construct-only block
+lock at once. Identity is expected by construction: the gate runs only in the construct-only block
 (`RB3_APP_CONSTRUCT_ONLY`), which an `RB3_APP_RUN` walk never enters.
 
 ## Not done

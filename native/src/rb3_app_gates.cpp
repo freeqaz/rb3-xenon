@@ -2641,7 +2641,7 @@ void rb3_app_check_bone_merge_repoint() { // ring: native-real
     _exit(7);
 }
 
-// A39 (credits): the credits list auto-scrolls to its end and only then stops.
+// Lane credits: the credits list auto-scrolls to its end and only then stops.
 // CreditsPanel::Poll (fn_827AF3D0) fires credits_done (credits.dta: {ui pop_screen})
 // the first poll after Enter at which credits.lst is not scrolling (+0x174 bl
 // fn_827F7F08 UIList::IsScrolling, +0x17C bne skips). UIList::AutoScroll
