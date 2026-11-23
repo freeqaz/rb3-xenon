@@ -37,6 +37,19 @@
 // RGPoll. The native ReadSingleJoypad copies it (RB3AppChartPlayRaw); from
 // UsbMidiKeyboard::Poll / UsbMidiGuitar::Poll on it is the retail path.
 //
+// Lane chartplay3 (record docs/decomp/CHARTPLAY3_PRO_STRINGS_PEDAL_2026-11-23.md):
+//   RB3_APP_CHARTPLAY_MUTE=open|keep|openall  pro guitar/bass: a kRGMuted string
+//                                   goes down open / keeps its last fret; `openall`
+//                                   opens every string of a gem that has one
+//   RB3_APP_CHARTPLAY_SLIDE=on|all  move a LeftHandSlide gem's fretted strings 2
+//                                   frets (down for ReverseSlide) half way through
+//                                   its sustain; `all` (a control) every sustain
+//   RB3_APP_CHARTPLAY_BEND=1        pitch-bend byte 100 through a kRGBend gem
+//   RB3_APP_CHARTPLAY_DEPLOY=pedal|stomp|button  pro keys: deploy overdrive with
+//                                   the sustain pedal, the stomp pedal or the
+//                                   controller's OD button (mForceMercuryBut)
+//   RB3_APP_CHARTPLAY_HANDS=1       pro keys: low/high hand-placement bytes from
+//                                   the held keys
 //   RB3_APP_CHARTPLAY_LOG=1         one line per gem (`rb3-app-chartplay: gem ...`) and
 //                                   per pressing poll (what JoypadData made of it);
 //                                   2 also turns on TheBeatMatchOutput (see K())
