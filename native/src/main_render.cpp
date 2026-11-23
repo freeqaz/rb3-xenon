@@ -4102,30 +4102,27 @@ namespace {
             for (int i = 0; i < 4; i++)
                 if (TheBandWardrobe->GetCharacter(i)) bound++;
 
-            // ⛔ THE FULL enter_venue PATH IS OPT-IN (RB3_BAND_PLACE=1) BECAUSE
-            // IT STILL CRASHES, and the defect is named rather than papered over.
+            // THE FULL enter_venue PATH IS OPT-IN (RB3_BAND_PLACE=1). It no
+            // longer crashes; it stays opt-in because turning it on changes the
+            // default cells (the band is placed in all six video venues).
             //
-            // With it on, LoadCharacters drives the FileMerger, which fires
-            // `on_post_merge` -> BandCharacter::OnPostMerge -> SyncObjects, and
-            // SyncObjects runs the shipped loop (BandCharacter.cpp:148-153,
-            // shown here):
+            // History. With it on, LoadCharacters drives the FileMerger, which
+            // fires `on_post_merge` -> BandCharacter::OnPostMerge -> SyncObjects,
+            // whose shipped drain (retail fn_8228A2A0 +0x1B8..+0x1EC) is
             //     while (!unk610.empty()) { RndMeshDeform *df = unk610.front();
             //                               ... df->Mesh()->...; delete df; }
-            // which assumes a kObjListNoNull list really contains no nulls.
-            // Natively it can: obj/ObjPtr_p.h:777-789 (and the ObjPtrVec twin at
-            // :538-549) SUPPRESSES the erase whenever gInReplaceList is set --
-            // a guard an earlier lane added against real heap corruption -- and
-            // leaves a NULL entry in the list instead. A merge IS a ReplaceList,
-            // so front() hands back null and df->Mesh() dereferences it:
-            //     SIGSEGV in ObjRefConcrete<RndMesh,ObjectDir>::operator RndMesh*
-            //       <- RndMeshDeform::Mesh() <- BandCharacter::SyncObjects()
-            // Worse, the entry never leaves, so even a null-skip would spin
-            // forever on !empty(). Fixing it means reconciling the suppression
-            // with the no-null invariant in a header every target includes --
-            // its own lane, with an A/B on every prior frame. NOT attempted here.
-            //
-            // A crash is not a frame. Off by default, exactly as X7 left the
-            // registrations it could not make safe.
+            // with no null test on the front entry. A native guard in
+            // obj/ObjPtr_p.h once suppressed ObjPtrList's erase while
+            // gInReplaceList was set, which left a NULL there: SIGSEGV in
+            // RndMeshDeform::Mesh() <- SyncObjects. X9 (278a38920) removed that
+            // suppression for ObjPtrList (its nodes are heap nodes that never
+            // move; the ObjPtrVec guard, whose inline nodes do move, stays).
+            // A18 still saw rc=139 here after that, under both DrawPreClear
+            // polarities; A37 measured rc=0 on main cbcc20dc7 for every default
+            // cell and for small_club_01, so a later native fix closed that
+            // second crash too. The rb3-app gate
+            // `rb3_app_check_nonull_list_replace_drain` holds the invariant
+            // SyncObjects relies on (rc 7 with the suppression put back).
             if (bound == 4 && getenv("RB3_BAND_PLACE")) {
                 // ⛔ `band.play_mode` is UNSET in this harness and both
                 // consumers hard-fail on that, which is why the first wiring
@@ -4208,7 +4205,7 @@ namespace {
                 // (bandobj/BandWardrobe.cpp:~205, `mTargets[i]->SetShowing(true)`
                 // for i in 0..3) -- the reason the members loaded but never drew.
                 // It is reproduced here because the rest of SetDir/LoadCharacters
-                // is gated on the ObjPtrList defect above.
+                // is the opt-in placed path above.
                 //
                 // ⚠ DISCLOSED PLAINLY, AND IT IS THE WHOLE CAVEAT ON EVERY FRAME
                 // BELOW: this does NOT place anybody. Without SyncPlayMode the
@@ -4233,8 +4230,8 @@ namespace {
                 // MEASURED: every one of a member's 140 meshes has Showing()
                 // false, and 34 of them carry real geometry (NumVerts>0). Which
                 // meshes a member shows is chosen by the outfit/LOD recompose
-                // inside the wardrobe path -- the path blocked by the ObjPtrList
-                // NULL-entry defect above -- so nothing in the default build can
+                // inside the wardrobe path -- the opt-in placed path above --
+                // so nothing in the default build can
                 // legitimately un-hide them. Forcing all of them visible answers
                 // exactly ONE question, "is this geometry renderable at all",
                 // and answers NOTHING about which meshes a real band member
@@ -4259,7 +4256,7 @@ namespace {
                 }
                 printf("  band: SetShowing(true) on %d member(s) — VISIBILITY ONLY, "
                        "positions are char/main/main.milo defaults, NOT the venue "
-                       "slots (RB3_BAND_PLACE=1 for the real path, which crashes)\n",
+                       "slots (RB3_BAND_PLACE=1 for the placed path)\n",
                        shown);
             } else if (bound != 4) {
                 printf("  band: SKIPPED — only %d/4 wardrobe targets bound; "
