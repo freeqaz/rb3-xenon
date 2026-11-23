@@ -67,6 +67,7 @@ void rb3_app_check_clip_transition_drop(); // rb3_app_gates.cpp
 void rb3_app_check_drum_venue_lookup(); // rb3_app_gates.cpp
 void rb3_app_check_replace_refs_shifted_entry(); // rb3_app_gates.cpp
 void rb3_app_check_bones_ref_dying_compare(); // rb3_app_gates.cpp
+void rb3_app_check_typeprops_remove_one(); // rb3_app_gates.cpp
 
 extern "C" void rb3_app_gate(const char *step);
 void rb3_app_determinism_init(); // rb3_app_determinism.cpp (RB3_APP_DETERMINISTIC)
@@ -182,6 +183,7 @@ int main(int argc, char **argv) {
         rb3_app_check_drum_venue_lookup(); // A30 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_replace_refs_shifted_entry(); // A31 (rb3_app_gates.cpp): exits rc 7 on a failure
         rb3_app_check_bones_ref_dying_compare(); // A32 (rb3_app_gates.cpp): exits rc 7 on a failure
+        rb3_app_check_typeprops_remove_one(); // A33 (rb3_app_gates.cpp): exits rc 7 on a failure
         printf("RESULT: APP CONSTRUCTED\n");
         fflush(stdout);
         fflush(stderr);

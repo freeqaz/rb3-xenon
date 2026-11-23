@@ -2154,3 +2154,73 @@ void rb3_app_check_bones_ref_dying_compare() { // ring: native-real
     fflush(stderr);
     _exit(7);
 }
+
+// A33: TypeProps' native setters must free ONE mObjects node per overwritten
+// value. Retail releases one ring entry per value: SetKeyValue fn_82765D40
+// +0x170, SetArrayValue fn_827665D0 +0x48 and RemoveArrayValue fn_82766650
+// +0x48 each `bl` Hmx::Object::Release (fn_8275B378), which erases the first
+// entry owned by the TypeProps (+0x7C) and returns. The native arms called
+// ObjPtrList::remove(obj), which frees EVERY node holding obj: with X held by
+// two props, overwriting one dropped the other's ring entry, and when X died
+// that prop kept X's freed address. Here X is held by "a33_keep" and, in turn,
+// by a second prop that SetKeyValue overwrites, by an array element that
+// SetArrayValue overwrites, by one that RemoveArrayValue removes, and by a prop
+// ClearKeyValue clears. After each, X must still carry exactly the one ring
+// entry of "a33_keep"; then `delete X` must leave "a33_keep" null. The values
+// are only compared as pointers, never dereferenced. Fails with remove(obj)
+// natively (rc 7).
+namespace {
+    Hmx::Object *A33Val(TypeProps *tp, const char *key) {
+        DataNode *n = tp->KeyValue(Symbol(key), false);
+        return n && n->Type() == kDataObject ? n->UncheckedObj() : (Hmx::Object *)-1;
+    }
+}
+void rb3_app_check_typeprops_remove_one() { // ring: native-real
+    RndTransformable *owner = Hmx::Object::New<RndTransformable>();
+    RndTransformable *x = Hmx::Object::New<RndTransformable>();
+    RndTransformable *w = Hmx::Object::New<RndTransformable>();
+    TypeProps *tp = new TypeProps(owner);
+    int x0 = x->RefCount();
+    tp->SetKeyValue(Symbol("a33_keep"), DataNode(x), true);
+    tp->SetKeyValue(Symbol("a33_over"), DataNode(x), true);
+    bool set = x->RefCount() - x0 == 2;
+    tp->SetKeyValue(Symbol("a33_over"), DataNode(w), true);
+    int afterKey = x->RefCount() - x0;
+    DataArray *arr = new DataArray(0);
+    tp->SetKeyValue(Symbol("a33_arr"), DataNode(arr, kDataArray), false);
+    arr->Release();
+    tp->InsertArrayValue(Symbol("a33_arr"), 0, DataNode(x), nullptr);
+    tp->SetArrayValue(Symbol("a33_arr"), 0, DataNode(w), nullptr);
+    int afterSetArr = x->RefCount() - x0;
+    tp->InsertArrayValue(Symbol("a33_arr"), 0, DataNode(x), nullptr);
+    tp->RemoveArrayValue(Symbol("a33_arr"), 0, nullptr);
+    int afterRemoveArr = x->RefCount() - x0;
+    tp->SetKeyValue(Symbol("a33_clear"), DataNode(x), true);
+    tp->ClearKeyValue(Symbol("a33_clear"));
+    int afterClear = x->RefCount() - x0;
+    bool keepIsX = A33Val(tp, "a33_keep") == x;
+    delete x; // ~Object's ReplaceRefs(nullptr) walk must reach "a33_keep"'s node
+    bool keepNull = A33Val(tp, "a33_keep") == nullptr;
+    bool ok = set && afterKey == 1 && afterSetArr == 1 && afterRemoveArr == 1 && afterClear == 1
+        && keepIsX && keepNull;
+    char what[512];
+    snprintf(what, sizeof what,
+             "typeprops remove one: X refs from the TypeProps after SetKeyValue %d, "
+             "SetArrayValue %d, RemoveArrayValue %d, ClearKeyValue %d (want 1 1 1 1); set %d, "
+             "keep is X %d, keep null after delete X %d (want 1) (retail Release per value: "
+             "fn_82765D40+0x170, fn_827665D0+0x48, fn_82766650+0x48)",
+             afterKey, afterSetArr, afterRemoveArr, afterClear, (int)set, (int)keepIsX,
+             (int)keepNull);
+    if (ok) {
+        delete tp;
+        delete owner;
+        delete w;
+        rb3_app_gate(what);
+        return;
+    }
+    printf("  [FAIL] rb3-app %s\n", what);
+    printf("RESULT: GATE FAILED (typeprops remove one)\n");
+    fflush(stdout);
+    fflush(stderr);
+    _exit(7);
+}
