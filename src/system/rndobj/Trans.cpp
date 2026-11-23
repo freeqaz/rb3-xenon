@@ -68,10 +68,9 @@ void RndTransformable::Replace(ObjRef *from, Hmx::Object *to) {
     // The native ring passes the ObjRef member itself as `from` (obj/Object.h
     // RefIs), never the dying object, so the retail compare (fn_823F94E8+0x34,
     // `cmplw cr6,r11,r4`) never matched natively: SetTransParent (the bl at
-    // +0x64) never ran, the ref was dropped with mParent still aimed at the
-    // old parent, and that parent kept the child in mChildren. A child freed
-    // later was then a dangling entry in a live parent's list (SetDirty_Force
-    // <- BandCharacter::Poll, rb3-app tv3 -> game_screen; lane A24).
+    // +0x64) never ran: a ReplaceRefs walk dropped the ref with mParent still
+    // aimed at the old parent, off its ring, and the child stayed in the old
+    // parent's mChildren and out of the new one's (lane A24).
     if (RefIs(from, mParent)) {
 #else
     if (reinterpret_cast<void *>(static_cast<Hmx::Object *>(mParent.Ptr()))
