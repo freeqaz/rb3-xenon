@@ -236,6 +236,15 @@ void LogFocus(UIScreen *cur) {
     UIComponent *comp = panel ? panel->FocusComponent() : nullptr;
     char sel[96];
     ListSel(comp, sel, sizeof sel);
+    // A panel with an `is_showing_filters` property (the tour gig guide's QuestFilterPanel) also
+    // logs it: while it is FALSE the panel's BUTTON_DOWN_MSG eats every action but confirm.
+    if (panel) {
+        const DataNode *f = panel->Property("is_showing_filters", false);
+        if (f) {
+            size_t n = strlen(sel);
+            snprintf(sel + n, sizeof sel - n, " filters=%d", f->Int() != 0);
+        }
+    }
     static char lastSel[96];
     if (panel != lastPanel || comp != lastComp || strcmp(sel, lastSel)) {
         lastPanel = panel;
