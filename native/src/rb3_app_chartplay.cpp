@@ -720,18 +720,24 @@ unsigned int RB3AppChartPlayButtons(int pad, int poll) {
             gSong.next++;
             gSong.codaSkipped++;
         }
-        int ph = gSong.codaPolls++;
+        // Lane walk60b: the mash phase counts 30ths of a second, not polls (strum every
+        // third, drums one pad each), so 60 Hz strums 10 times a second as legacy does; at
+        // RB3_APP_HZ=60 the poll count had doubled the input (coda 884 vs legacy 922 pts).
+        int step = PollsPerSecond() >= 60 ? PollsPerSecond() / 30 : 1;
+        int raw = gSong.codaPolls++;
+        int ph = raw / step;
+        bool phStart = raw % step == 0;
         if (gc) {
             gSong.frets = 0x1f;
             gSong.fretsUpAt = -1;
             buttons |= SlotsToButtons(c, 0x1f);
-            if (ph % 3 == 2) {
+            if (ph % 3 == 2 && phStart) {
                 const std::vector<int> &sb = gc->mStrumBarButtons;
                 buttons |= 1u << (sb.empty() ? kPad_DDown : sb[gSong.strumAlt++ % sb.size()]);
             }
         } else if (jc) {
             unsigned b = SlotsToButtons(c, 1u << (ph % 5));
-            if (!(b & gSong.prevButtons)) buttons |= b;
+            if (phStart && !(b & gSong.prevButtons)) buttons |= b;
         }
         gSong.prevButtons = buttons;
         return buttons;
