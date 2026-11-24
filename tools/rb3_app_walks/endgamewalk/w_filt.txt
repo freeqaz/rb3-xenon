@@ -1,0 +1,48 @@
+# endgamewalk (lane rbx-endgame-overlay, 2026-11-24): song select, then Select (filter/settings panel) open and close three
+# ways (Select, B, Select after entering a setting). Run with gate60/runb.sh, RB3_APP_DETERMINISTIC=1. 60 Hz frames.
+# hz60: 60 Hz frames (RB3_APP_HZ=60); converted from the legacy 30 Hz script by tools/rb3_app_walks/hz60.py
+# A16: returning boot, postcal's press list, then four A on main_hub
+wait_screen splash_screen
+wait_screen splash_screen
++60 start
+wait_screen first_time_calibration
+wait_screen first_time_calibration
++60 a
+wait_screen cal_welcome_screen
+wait_screen cal_welcome_screen
++60 right
++90 a
+wait_screen cal_manual_audio_screen
+wait_screen cal_manual_audio_screen
++60 right
++90 a
+wait_screen cal_manual_video_screen
+wait_screen cal_manual_video_screen
++60 a
+wait_screen cal_manual_complete_screen
+wait_screen cal_manual_complete_screen
++60 a
+wait_screen hint_goalcomplete_screen
+wait_screen hint_goalcomplete_screen
++60 a
+wait_screen hint_rb3_welcome_screen
+wait_screen hint_rb3_welcome_screen
++60 down
++90 a
+wait_screen main_hub_screen
+wait_screen main_hub_screen
++120 a
++180 a
++240 a
++300 a
+wait_screen song_select_screen
+wait_screen song_select_screen
++300 select
++700 select
++1000 select
++1300 b
++1600 select
++1700 down
++1800 a
++2100 b
++2200 b

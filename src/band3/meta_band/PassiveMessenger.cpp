@@ -17,6 +17,16 @@
 #include "utl/Messages.h"
 #include "utl/Symbol.h"
 #include "utl/Symbols.h"
+#ifdef HX_NATIVE
+#include "rndobj/Anim.h"
+#include "rndobj/Dir.h"
+#include "rndobj/Env.h"
+#include "rndobj/Trans.h"
+#include <cstdio>
+#include <cstdlib>
+#include <map>
+#include <string>
+#endif
 
 PassiveMessenger *ThePassiveMessenger;
 
@@ -40,6 +50,31 @@ void PassiveMessageQueue::Poll() {
         mTimer.Restart();
         mCallback->Handle(show_message_msg, true);
     }
+#ifdef HX_NATIVE
+    // RB3_APP_PMSG_LOG=1: each queue's message state (queue size, timer, is_message_hiding,
+    // message.anim frame, message.env ambient alpha), printed when it changes. Native
+    // diagnostics only; retail has no counterpart.
+    static const bool sPmsgLog = getenv("RB3_APP_PMSG_LOG") != nullptr;
+    if (sPmsgLog) {
+        static std::map<const void *, std::string> sLast;
+        ObjectDir *dir = mCallback->DataDir();
+        RndDir *m = dir ? dir->Find<RndDir>("overshell_player_message", false) : nullptr;
+        RndAnimatable *a = m ? m->Find<RndAnimatable>("message.anim", false) : nullptr;
+        RndEnviron *e = m ? m->Find<RndEnviron>("message.env", false) : nullptr;
+        char buf[256];
+        snprintf(
+            buf, sizeof(buf), "q=%d running=%d hiding=%d frame=%.0f env_alpha=%.1f showing=%d",
+            (int)mQueue.size(), (int)mTimer.Running(),
+            mCallback->Handle(is_message_hiding_msg, true).Int(),
+            a ? a->GetFrame() : -1.0f, e ? e->AmbientColor().alpha : -1.0f,
+            m ? (int)m->Showing() : -1
+        );
+        if (sLast[this] != buf) {
+            sLast[this] = buf;
+            fprintf(stderr, "rb3-pmsg: %s %s\n", dir ? dir->Name() : "?", buf);
+        }
+    }
+#endif
 }
 
 UNPOOL_DATA
