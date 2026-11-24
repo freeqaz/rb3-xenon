@@ -7,6 +7,7 @@
 #include "os/System.h"
 #include "utl/MemMgr.h"
 
+#include <limits.h>
 #include <cstdio>
 #include <cstring>
 #include <sys/stat.h>
@@ -41,18 +42,31 @@ protected:
         // console does not have, so the open fails. Fail it the same way
         // rather than handing "devkit:/..." to fopen as a path relative to
         // the process's working directory (lane W16-UC).
-        if (NativeFileIsDevicePath(mFilename.c_str())) {
+        const char *path = mFilename.c_str();
+#ifdef RB3_NATIVE_APP
+        extern bool NativeContentPath(const char *, char *, size_t);
+        char mounted[PATH_MAX];
+        if ((mMode & FILE_OPEN_READ) && NativeContentPath(path, mounted, sizeof(mounted)))
+            path = mounted;
+#endif
+        if (NativeFileIsDevicePath(path)) {
             NativeFileLedger("HOST\t%s\t%s\tfail\tnodevice",
                              (mMode & FILE_OPEN_READ) ? "r" : "w", mFilename.c_str());
             mFail = true;
             return;
         }
-        mFp = fopen(mFilename.c_str(), fmode);
+        mFp = fopen(path, fmode);
+#if defined(RB3_NATIVE_APP) && defined(__APPLE__)
+        if (!mFp && (mMode & FILE_OPEN_READ) && path != mFilename.c_str()) {
+            extern FILE *NativeOpenPackedContent(const char *);
+            mFp = NativeOpenPackedContent(mFilename.c_str());
+        }
+#endif
 #ifdef __EMSCRIPTEN__
         // On-demand fetch: if file isn't in MEMFS, try fetching from server
         if (!mFp && !(mMode & 0x300)) {  // read-only modes only
             if (WebAssetsFetchSync(mFilename.c_str())) {
-                mFp = fopen(mFilename.c_str(), fmode);
+                mFp = fopen(path, fmode);
             }
         }
 #endif

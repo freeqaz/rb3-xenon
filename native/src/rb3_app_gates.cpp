@@ -409,9 +409,9 @@ extern "C" void __wrap__ZN17FixedSizeSaveable4InitEii(int a0, int a1) { // ring:
 // no game state changes. It runs retail's StartRefresh (0x82520FD0): the
 // config's roots plus the cross-title enumerations over the content store,
 // then PollRefresh (0x82520C18 + base 0x8251F1E0) until RefreshDone. Needed:
-// TheContentMgr is an XboxContentMgr, the refresh is done within 16 polls,
-// it holds the one disc root and no package (the store's saved games are on
-// PollRefresh's ignored list), and every enumeration buffer was released.
+// TheContentMgr is an XboxContentMgr, the refresh finishes within a bounded
+// number of polls per package, it includes the disc root and every enumeration
+// buffer is released.
 namespace {
 struct Rb3AppContentRefreshProbe : public XboxContentMgr {
     void Run(int &polls, bool &done, int &contents, int &state) {
@@ -419,7 +419,7 @@ struct Rb3AppContentRefreshProbe : public XboxContentMgr {
         mState = kDone;
         mRootLoaded = 0;
         StartRefresh();
-        for (polls = 0; polls < 16 && !RefreshDone(); polls++) PollRefresh();
+        for (polls = 0; polls < 16 + (int)mContents.size() && !RefreshDone(); polls++) PollRefresh();
         done = RefreshDone();
         contents = (int)mContents.size();
         state = (int)mState;
@@ -436,7 +436,7 @@ static void rb3_app_check_content_refresh() { // ring: native-real
     bool done = false;
     gRb3AppContentProbe.Run(polls, done, contents, state);
     int enumsAfter = rb3_app_xdk_live_enum_handles();
-    if (!isXbox || !done || contents != 1 || enumsAfter != enumsBefore) {
+    if (!isXbox || !done || contents < 1 || enumsAfter != enumsBefore) {
         printf("  [FAIL] rb3-app content refresh: TheContentMgr %s an XboxContentMgr; "
                "after %d PollRefresh: state %d, refresh_done %d, %d contents, live enumerators "
                "%d -> %d\n",
@@ -446,7 +446,7 @@ static void rb3_app_check_content_refresh() { // ring: native-real
         _exit(7);
     }
     printf("  [PASS] rb3-app content refresh: XboxContentMgr refresh_done after %d PollRefresh "
-           "(state 1, 1 root, 0 packages, enumerators released)\n", polls);
+           "(state 1, %d contents, enumerators released)\n", polls, contents);
     fflush(stdout);
 }
 

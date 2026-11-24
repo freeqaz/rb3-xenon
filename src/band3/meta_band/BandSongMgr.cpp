@@ -104,6 +104,11 @@ void BandSongMgr::Init() {
     }
     static Symbol max_song_count("max_song_count");
     mMaxSongCount = cfg->FindInt(max_song_count);
+#ifdef RB3_NATIVE_APP
+    // The console cap was sized for its memory budget. Keep the Mac library
+    // within the engine's signed 16-bit DataArray / UI row range.
+    if (mMaxSongCount < 10000) mMaxSongCount = 10000;
+#endif
     mUpgradeMgr = new SongUpgradeMgr();
     mLicenseMgr = new LicenseMgr();
 }
@@ -149,6 +154,11 @@ struct SongRankCmp {
 
 void BandSongMgr::ContentDone() {
     SongMgr::ContentDone();
+#ifdef RB3_NATIVE_APP
+    if (getenv("RB3_APP_SONGSEL_LOG"))
+        fprintf(stderr, "rb3-app: library refresh %zu available songs, %d metadata entries, limit %d\n",
+                mAvailableSongs.size(), GetCurSongCount(), mMaxSongCount);
+#endif
     mSongRankings.clear();
     std::vector<int> songs;
     GetRankedSongs(songs, false, true);

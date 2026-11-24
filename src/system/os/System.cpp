@@ -28,6 +28,9 @@
 #include "os/StageKit.h"
 #include "os/ThreadCall.h"
 #include "os/Timer.h"
+#ifdef RB3_NATIVE_APP
+#include <chrono>
+#endif
 #include "os/VirtualKeyboard.h"
 #include "utl/CacheMgr.h"
 #include "utl/Cheats.h"
@@ -361,6 +364,19 @@ void SystemPoll(bool b1) {
     ThePlatformMgr.Poll();
     TheVirtualKeyboard.Poll();
     TheContentMgr.PollRefresh();
+#ifdef RB3_NATIVE_APP
+    // Host mounts complete synchronously. A large USB library otherwise
+    // spends multiple display frames per package just advancing its state.
+    if (TheContentMgr.RefreshInProgress()) {
+        const auto deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(3);
+        for (int i = 0; i < 64 && TheContentMgr.RefreshInProgress() &&
+             std::chrono::steady_clock::now() < deadline; ++i) {
+            TheLoadMgr.Poll();
+            ThreadCallPoll();
+            TheContentMgr.PollRefresh();
+        }
+    }
+#endif
     StageKitPoll(); // retail's last call, as below
 #else
     // RB3 retail 0x82510270: no system_poll AutoTimer, no gUsingCD-gated

@@ -2937,6 +2937,8 @@ if(RB3X_BUILD_ENGINE)
         _Z10ThreadCallPFivEPFviE _Z10ThreadCallP14ThreadCallback
         _Z14ThreadCallPollv ${_rb3_app_gate_syms})
     if(APPLE)
+        target_sources(rb3-app PRIVATE src/rb3_app_packed_content.cpp)
+        target_link_libraries(rb3-app PRIVATE sqlite3)
         # ld64 has no --wrap. Redirect rb3-app's undefined references
         # after compilation, including the libc++ spelling of steady_clock.
         list(TRANSFORM _rb3_app_wrap_syms REPLACE
