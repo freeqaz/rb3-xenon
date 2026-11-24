@@ -1,3 +1,4 @@
+# hz60: 60 Hz frames (RB3_APP_HZ=60); converted from the legacy 30 Hz script by tools/rb3_app_walks/hz60.py
 # harmwalk: an extra gamepad pad (kControllerVocals) tries to join as a second singer.
 # Joins on the hub like bandwalk's pads; on part_difficulty_screen A leaves choose_profile
 # (continue without a profile), then A on the part list (vocal solo / vocal harmony), A on
@@ -5,10 +6,12 @@
 # slot already holds (RepresentSamePart(kTrackVocals, kTrackVocals)), so the prediction is
 # that this pad cannot become a singer while pad 0 holds vocals.
 wait_screen main_hub_screen
-+20 a
-wait_screen part_difficulty_screen
+wait_screen main_hub_screen
 +40 a
+wait_screen part_difficulty_screen
+wait_screen part_difficulty_screen
 +80 a
-+120 a
 +160 a
-+200 a
++240 a
++320 a
++400 a

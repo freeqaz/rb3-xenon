@@ -1,10 +1,14 @@
+# hz60: 60 Hz frames (RB3_APP_HZ=60); converted from the legacy 30 Hz script by tools/rb3_app_walks/hz60.py
 wait_screen splash_screen
-+30 start
+wait_screen splash_screen
++60 start
 wait_screen first_time_calibration
-+30 a
+wait_screen first_time_calibration
++60 a
 wait_screen cal_welcome_screen
-+45 a
-+300 a
+wait_screen cal_welcome_screen
++90 a
 +600 a
-+900 a
-+1200 b
++1200 a
++1800 a
++2400 b

@@ -1,3 +1,4 @@
+# hz60: 60 Hz frames (RB3_APP_HZ=60); converted from the legacy 30 Hz script by tools/rb3_app_walks/hz60.py
 # Player::CheckCrowdFailure); run with RB3_APP_AUTOPLAY_SKIP=3 so this pad misses, fails, and
 # a bandmate's deploy saves it (Band::DeployBandEnergy).
 # bandwalk pad 3 (a guitar pad playing bass). Joins on the hub 30 polls after it settles (before
@@ -7,23 +8,50 @@
 # Song 2: after the endgame (a song outlasts wait_screen's 1800-poll timeout, so
 # the wait is chained as in walk1.txt), part and difficulty again.
 wait_screen main_hub_screen
-+30 a
+wait_screen main_hub_screen
++60 a
 wait_screen part_difficulty_screen
-+40 a
-+70 down
+wait_screen part_difficulty_screen
 +80 a
-+100 down
-+120 a
++140 down
++160 a
++200 down
++240 a
 wait_screen game_screen
-+1500 start
-+1530 down
-+1560 down
-+1590 down
-+1620 down
-+1650 down
-+1680 a
-+1740 up
-+1770 a
+wait_screen game_screen
++3000 start
++3060 down
++3120 down
++3180 down
++3240 down
++3300 down
++3360 a
++3480 up
++3540 a
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
+wait_screen coop_endgame_screen
 wait_screen coop_endgame_screen
 wait_screen coop_endgame_screen
 wait_screen coop_endgame_screen
@@ -49,6 +77,7 @@ wait_screen coop_endgame_screen
 wait_screen coop_endgame_screen
 wait_screen coop_endgame_screen
 wait_screen part_difficulty_screen
-+40 a
+wait_screen part_difficulty_screen
 +80 a
-+120 a
++160 a
++240 a
