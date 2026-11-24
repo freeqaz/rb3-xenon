@@ -141,6 +141,27 @@ question came up: the mash difference is input, not game logic.
 X360 match build: no `src/` file changed (`native/src/rb3_app_chartplay.cpp` is native-only), so
 there is nothing to price with `tools/ab_measure.py`.
 
+## Coordinator follow-up (2026-11-24): the mash fix built and re-run
+
+Binary `bin-m1` `19e3cad70768` (this branch's native build, the mash change included). Same commands
+as the handoff above, seed 41 (ohmygod), 9000 legacy frames doubled.
+
+| leg | record (legacy) | 60 Hz before the fix (bin-m0) | 60 Hz with the fix (bin-m1) |
+|---|---|---|---|
+| mash c1GM / c1GMf: coda points, final | 922, 212,014 | 884, 211,977 | **910**, **212,003** |
+| chartplay c1GC / c1GCf: coda points, final | 2,749, 213,841 | 2,752, 213,845 | 2,752, 213,845 (det log IDENTICAL to bin-m0 over 18,000 frames) |
+
+The prediction (about 922) failed: the fix recovers 26 of the 38 points and leaves 12 (1.3%).
+The coda outcome flags are the record's in both (`1/1/0`, won). The control leg is identical to the
+pre-fix binary, so the change is inert outside the mash mode. The 12-point residual is NOT explained:
+a mash strum now falls every 100 ms at both rates, but its phase against the song clock differs
+(the first coda poll falls at a different song ms), and this lane did not test whether coda points
+depend on that phase. Open; not claimed as a game defect or as harness noise.
+
+Seed table: the probe pool finished after the write-up; `walk60b/seeds60.txt` now also holds drums,
+vocals, keys and pro guitar seeds 7-15 and band seeds 40-59 (commit 33ab72226). None of the missing
+record songs turned up in its own pad kind.
+
 ## Not done (handoff)
 
 - **Build + verify the mash fix.** `~/tmp/walk60b/build.log` is the worktree's rb3-app build,
