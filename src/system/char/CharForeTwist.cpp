@@ -120,9 +120,14 @@ void CharForeTwist::Poll() {
     mTwist2->SetWorldXfm(tf88);
 #ifdef HX_NATIVE
     {
+        // The local X is the interpolation distance. A wrist moved by IK can
+        // project farther along the forearm, so feeding the calculated X back
+        // into the next poll would make the twist distance grow each frame.
+        const float twistDistance = twist2->LocalXfm().v.x;
         Transform invParent;
         Invert(twistparent->WorldXfm(), invParent);
-        Multiply(tf88, invParent, mTwist2->mLocalXfm);
+        Multiply(tf88, invParent, twist2->mLocalXfm);
+        twist2->mLocalXfm.v.x = twistDistance;
     }
 #endif
 }
