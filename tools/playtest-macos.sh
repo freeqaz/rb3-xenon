@@ -16,7 +16,7 @@ for part in gen/patch_xbox.hdr gen/patch_xbox_0.ark; do
     [[ -s "$tu/$part" ]] || { printf 'Missing TU5 file %s/%s\n' "$tu" "$part" >&2; exit 2; }
 done
 cd "$root"
-RB3_CONTENT_DIR="$out/content" RB3_TITLE_UPDATE_DIR="$tu" \
+RB3_CONTENT_DIR="$out/content" RB3_TITLE_UPDATE_DIR="$tu" RB3_APP_PLAYTEST_DIR="$out" \
 MILO_HEADLESS=1 RB3_APP_WINDOWED=0 RB3_APP_RUN=1 RB3_APP_MOVIES=0 \
 RB3_APP_DETERMINISTIC=1 RB3_APP_SEED=0 RB3_APP_JOYPAD_KIND=guitar \
 RB3_APP_AUTOPLAY=0 RB3_APP_CHARTPLAY=1 RB3_APP_CHARTPLAY_MISS=10 \

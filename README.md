@@ -242,6 +242,29 @@ isolated save. It plays a chart with both hits and misses, checks the score
 and return to the song library, and prints the location of the log and
 gameplay screenshot. Pass the disc directory as its first argument if needed.
 
+#### Capture a Mac playtest
+
+The Mac play launcher prints the session folder under `~/Developer/logs/`.
+While playing, press **F8** (or **Fn–F8** on a Mac keyboard) as soon as you
+see a problem. The game marks the timeline and saves that rendered frame as
+a PNG. You can also request a capture from another terminal with
+`touch "/path/to/session/capture.request"`.
+
+After playing, run `tools/read-playtest.py` for the latest session, or pass
+a session directory. Its `game.log` includes screen transitions and the
+CRKD's separate tilt and Select edges. Its `timeline.tsv` records roughly
+one sample per second, plus screen changes and bookmarks, using the live
+session clock. During a song it includes per-player score, hits, misses,
+overdrive energy and state, audio and note-judgment clocks, chart ticks,
+the highway's animation frame and scroll rate, and the current camera shot.
+A bookmark reads back the GPU frame synchronously, so the next frame interval
+may include capture time. To trace menu audio and record the first 90 seconds
+of the game mix, run this from the checkout.
+
+```sh
+MILO_AUDIO_TRACE=1 DC3_DUMP_SECONDS=90 DC3_DUMP_AUDIO=/tmp/rb3-mix.wav ../rb3-xenon-play.command
+```
+
 The next milestone is tying these subsystems together into a playable game
 loop. To keep the native build healthy alongside the matching work, every
 change to shared `src/` must pass `tools/native_build_gate.sh` (18/18 targets,

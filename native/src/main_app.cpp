@@ -135,6 +135,7 @@ void SetGameGlyphAtlasesKeepRGB(bool keepRGB); // milo-native-engine platform/Me
 
 extern "C" void rb3_app_gate(const char *step);
 void rb3_app_determinism_init(); // rb3_app_determinism.cpp (RB3_APP_DETERMINISTIC)
+void RB3AppPlaytestFrame(int frame, double now, const char *screen, const char *next, bool changed);
 void rb3_app_determinism_frame(int frame); // rb3_app_determinism.cpp
 int RB3AppHz(); // rb3_app_determinism.cpp (RB3_APP_HZ; 0 = legacy)
 bool RB3AppDeterministic(); // rb3_app_determinism.cpp
@@ -577,7 +578,10 @@ extern "C" void __wrap__Z10SystemPollb(bool b) { // ring: native-real
         rb3_app_determinism_frame(gFramesStarted);
         UIScreen *cur = TheUI ? TheUI->CurrentScreen() : nullptr;
         bool tr = TheUI && TheUI->InTransition();
-        if (cur != gLastScreen || tr != gLastTransition || framesDone == 0) {
+        const bool changed = cur != gLastScreen || tr != gLastTransition || framesDone == 0;
+        RB3AppPlaytestFrame(gFramesStarted, SecondsSinceRun(), ScreenName(cur),
+                            tr ? ScreenName(TheUI->TransitionScreen()) : "none", changed);
+        if (changed) {
             printf("rb3-app: frame %d screen=%s transition=%s (%.2f s)\n", gFramesStarted,
                    ScreenName(cur), tr ? ScreenName(TheUI->TransitionScreen()) : "none",
                    SecondsSinceRun());

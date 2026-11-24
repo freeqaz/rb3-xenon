@@ -12,7 +12,8 @@ struct CrkdGuitarState {
     enum Button : unsigned {
         Green = 1u << 0, Red = 1u << 1, Yellow = 1u << 2, Blue = 1u << 3,
         Orange = 1u << 4, Overdrive = 1u << 5, Start = 1u << 6,
-        Up = 1u << 7, Right = 1u << 8, Down = 1u << 9, Left = 1u << 10
+        Up = 1u << 7, Right = 1u << 8, Down = 1u << 9, Left = 1u << 10,
+        Tilt = 1u << 11, Select = 1u << 12
     };
 
     bool connected = false;
@@ -30,7 +31,8 @@ inline CrkdGuitarState DecodeCrkdGuitar(const unsigned char *buttons, unsigned c
     if (buttons[0]) state.buttons |= Guitar::Yellow;
     if (buttons[3]) state.buttons |= Guitar::Blue;
     if (buttons[4]) state.buttons |= Guitar::Orange;
-    if (buttons[5] || buttons[8]) state.buttons |= Guitar::Overdrive;
+    if (buttons[5]) state.buttons |= Guitar::Tilt | Guitar::Overdrive;
+    if (buttons[8]) state.buttons |= Guitar::Select | Guitar::Overdrive;
     if (buttons[9]) state.buttons |= Guitar::Start;
     if (hat & GLFW_HAT_UP) state.buttons |= Guitar::Up;
     if (hat & GLFW_HAT_RIGHT) state.buttons |= Guitar::Right;

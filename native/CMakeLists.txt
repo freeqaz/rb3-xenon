@@ -2898,6 +2898,7 @@ if(RB3X_BUILD_ENGINE)
     # src/Main.cpp is retail's main (App::Run, the frame loop: A2).
     list(REMOVE_ITEM _rb3_app_all ${REPO_ROOT}/src/Main.cpp)
     list(APPEND _rb3_app_all ${CMAKE_SOURCE_DIR}/src/main_app.cpp
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_playtest.cpp
         ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.cpp
         ${CMAKE_SOURCE_DIR}/src/rb3_app_determinism.cpp
         ${CMAKE_SOURCE_DIR}/src/rb3_app_mic_native.cpp)

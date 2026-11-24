@@ -75,6 +75,7 @@ JoypadNativePadState gPad[kNumJoypads];
 BYTE PadSubType();
 milo::CrkdGuitars<kNumJoypads> gCrkdGuitars;
 bool gCrkdActive[kNumJoypads];
+unsigned gLastOverdriveInputs[kNumJoypads];
 
 // Extra guitar bindings for the Mac launcher's keyboard fallback. Keep the
 // engine's normal menu keys and leave physical controllers on their own path.
@@ -96,15 +97,22 @@ void ReadKeyboardGuitar(JoypadNativePadState &state) {
     }
 }
 
-void ReadCrkdGuitar(int pad, const milo::CrkdGuitarState &guitar, bool assign) {
+void ReadCrkdGuitar(int pad, const milo::CrkdGuitarState &guitar, bool assign, int poll) {
     const bool active = assign && guitar.connected;
     if (gCrkdActive[pad] != active) {
         gCrkdActive[pad] = active;
         JoypadInvalidateXinputCaps(pad);
     }
+    using Guitar = milo::CrkdGuitarState;
+    const unsigned sources = active ? guitar.buttons & (Guitar::Tilt | Guitar::Select) : 0;
+    if (sources != gLastOverdriveInputs[pad]) {
+        gLastOverdriveInputs[pad] = sources;
+        static const bool trace = getenv("RB3_APP_PLAYTEST_DIR") != nullptr;
+        if (trace) fprintf(stderr, "rb3-playtest: poll %d crkd pad %d tilt=%d select=%d\n",
+                           poll, pad, !!(sources & Guitar::Tilt), !!(sources & Guitar::Select));
+    }
     if (!active) return;
 
-    using Guitar = milo::CrkdGuitarState;
     const unsigned b = guitar.buttons;
     JoypadNativePadState &state = gPad[pad];
     state = JoypadNativePadState{};
@@ -369,7 +377,7 @@ void JoypadPoll() {
     for (int pad = 0; pad < kNumJoypads; pad++) {
         JoypadNativeSourceRead(pad, &gPad[pad]);
 #ifdef __APPLE__
-        ReadCrkdGuitar(pad, gCrkdGuitars[pad], gNativeWindow && !gExtra[pad].on);
+        ReadCrkdGuitar(pad, gCrkdGuitars[pad], gNativeWindow && !gExtra[pad].on, poll);
         if (pad == 0 && gNativeWindow && !gCrkdActive[0]) ReadKeyboardGuitar(gPad[0]);
 #endif
         if (gExtra[pad].on) { // RB3_APP_EXTRA_PADS: this pad is its own script's
