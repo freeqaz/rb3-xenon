@@ -57,6 +57,9 @@ void SampleData::Reset() {
 #endif
     mData = 0;
     mFormat = kPCM;
+#ifdef HX_NATIVE
+    mNumChannels = 1;
+#endif
     mSizeBytes = 0;
     mSampleRate = 0;
     mNumSamples = 0;
@@ -106,6 +109,9 @@ void SampleData::LoadWAV(BinStream &bs, const FilePath &fp, bool bigEndian) {
     mNumSamples = wav.NumSamples();
     mSampleRate = wav.SamplesPerSec();
     mSizeBytes = SizeAs(mFormat);
+#ifdef HX_NATIVE
+    mSizeBytes *= mNumChannels;
+#endif
     mData = sAlloc(mSizeBytes);
     WaveFileData wavdata(wav);
     wavdata.Read(mData, mSizeBytes);
@@ -198,21 +204,20 @@ void SampleData::Load(BinStream &bs, const FilePath &fp) {
     if (mFormat == kXMA && mData && mSizeBytes > 0) {
         void *pcm = nullptr;
         int pcmSize = 0;
-        int chans = mNumChannels ? mNumChannels : 1;
+        const int chans = mNumChannels;
         if (DecodeXMAToPCM(mData, mSizeBytes, mNumSamples, mSampleRate, chans, &pcm, &pcmSize)) {
-            // Free original XMA data via proper path (handles WavMgr vs sAlloc)
-            Dealloc();
-            // Allocate decoded PCM with engine allocator (CRC=0 so sFree used on destruction)
-            if (sAlloc)
-                mData = sAlloc(pcmSize);
-            else
-                mData = malloc(pcmSize);
-            memcpy(mData, pcm, pcmSize);
+            void *decoded = sAlloc ? sAlloc(pcmSize) : malloc(pcmSize);
+            if (decoded) {
+                memcpy(decoded, pcm, pcmSize);
+                Dealloc();
+                mData = decoded;
+                mSizeBytes = pcmSize;
+                mFormat = kPCM;
+                mNumSamples = pcmSize / (2 * chans);
+            }
             free(pcm);
-            mSizeBytes = pcmSize;
-            mFormat = kPCM;
-            mNumChannels = chans;
-            mNumSamples = pcmSize / (2 * chans);
+        } else {
+            MILO_WARN("Failed to decode XMA sample %s", fp.c_str());
         }
     }
 #endif

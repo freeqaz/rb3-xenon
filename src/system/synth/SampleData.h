@@ -60,7 +60,12 @@ public:
     int GetNumSamples() const { return mNumSamples; }
     Format GetFormat() const { return mFormat; }
     int GetSizeBytes() const { return mSizeBytes; }
+#ifdef HX_NATIVE
+    // LP64: a heap pointer whose low 32 bits are zero must still count as data.
+    bool HasData() const { return mData != nullptr; }
+#else
     bool HasData() const { return (int)(uintptr_t)mData != 0; }
+#endif
     unsigned int DataAddr() const { return (unsigned int)(uintptr_t)mData; }
 #ifdef HX_NATIVE
     // RB3 samples are 16-bit mono; the channel count is not stored on retail

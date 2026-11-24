@@ -2929,6 +2929,13 @@ if(RB3X_BUILD_ENGINE)
         RB3_NATIVE_APP RB3_NATIVE_HAS_BEATMATCHER)
     target_include_directories(rb3-app PRIVATE ${REPO_ROOT}/src/system/speex/include)
     target_link_libraries(rb3-app PRIVATE milo-engine ZLIB::ZLIB)
+    get_target_property(_rb3_xma_decoder milo-engine MILO_ENGINE_XMA_DECODER)
+    if(_rb3_xma_decoder)
+        # Waypoint.cpp hosts SampleData.cpp through the retail scatter includes.
+        # Only the app target that links the native XMA decoder needs this define.
+        set_property(SOURCE ${REPO_ROOT}/src/system/char/Waypoint.cpp APPEND
+            PROPERTY COMPILE_DEFINITIONS "$<$<STREQUAL:$<TARGET_PROPERTY:NAME>,rb3-app>:HX_FFMPEG=1>")
+    endif()
     # These wrappers handle symbol interning, the bounded App::Run loop,
     # deterministic test runs and the boot gates.
     file(STRINGS ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.txt _rb3_app_gate_syms)

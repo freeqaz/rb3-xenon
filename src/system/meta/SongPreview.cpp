@@ -1,3 +1,7 @@
+#ifdef HX_NATIVE
+#include <cstdio>
+#include <cstdlib>
+#endif
 #include "meta/SongPreview.h"
 #include "SongMetadata.h"
 #include "SongMgr.h"
@@ -319,6 +323,11 @@ void SongPreview::PrepareSong(Symbol song) {
     }
 #endif // HX_NATIVE
     mStream = TheSynth->NewStream(filename, mStartMs, 0, mSecurePreview);
+#ifdef HX_NATIVE
+    if (std::getenv("MILO_AUDIO_TRACE")) {
+        std::printf("AudioDevice: song preview load '%s' start=%.0f ms\n", filename, mStartMs);
+    }
+#endif
     const std::vector<float> &pans = songInfo->GetPans();
     const std::vector<float> &vols = songInfo->GetVols();
     mNumChannels = pans.size();
@@ -379,6 +388,12 @@ void SongPreview::Poll() {
             mFader->SetVal(kSilenceVal);
             mFader->DoFade(0, mFadeTime);
             mStream->Play();
+#ifdef HX_NATIVE
+            if (std::getenv("MILO_AUDIO_TRACE")) {
+                std::printf("AudioDevice: song preview play '%s' channels=%d attenuation=%.2f dB\n",
+                            mSong.Str(), mStream->GetNumChannels(), mAttenuation);
+            }
+#endif
         }
         mState = kPlayingSong;
         break;

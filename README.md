@@ -214,7 +214,9 @@ On Apple Silicon, build the Xbox 360 game driver and the asset-free Metal
 smoke test with `tools/build-macos.sh`. It uses the sibling
 `dawn-prebuilt` Metal package and a `milo-native-engine-rb3-xenon` worktree
 at the engine pin in `native/CMakeLists.txt`. Override these paths with
-`DAWN_DIR` or `MILO_ENGINE_PATH`.
+`DAWN_DIR` or `MILO_ENGINE_PATH`. The engine uses FFmpeg for Xbox XMA
+menu samples. With Homebrew FFmpeg and pkg-config installed, the CMake
+configure summary shows `FFmpeg : TRUE`.
 
 ```sh
 tools/build-macos.sh

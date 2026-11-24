@@ -253,10 +253,9 @@ extern "C" void OutputDebugStringA(const char *msg) { // ring: native-real
 // the same two). Headless, AudioDevice::Init opens nothing: rb3-app forces
 // MILO_HEADLESS=1 (main_app.cpp), which AudioDevice::Init honours by skipping
 // the device ("AudioDevice: skipped"); receivers are still created and fed,
-// just never rendered. MILO_AUDIO=1 overrides that. SynthSample360::Init's
-// native counterpart (sample voices) is not wired: no native SampleInst
-// backend is in rb3-app yet. rb3_app_gates.cpp checks the factory after
-// SynthInit.
+// just never rendered. MILO_AUDIO=1 overrides that. The engine's
+// SampleInstNative also feeds one-shots into this device. rb3_app_gates.cpp
+// checks the receiver factory after SynthInit.
 #include "audio/AudioDevice.h"
 #include "platform/StreamReceiver_Native.h"
 #include "synth/StreamReceiver.h"
