@@ -155,6 +155,18 @@ void CharPollGroup::SortPolls() {
 // polls._M_start/_M_finish out of the push_back loop below, which retail
 // re-reads after every iteration.  The native build keeps them here.
 #ifdef HX_NATIVE
+// This copy must stay Character.cpp's text, which is the matched one (Sort
+// 100.0, ChangedBy inlined into it). It had drifted: 03364a7c8 (ChangedBy's
+// a == b early-out and a/b roles) and 5aea7be8a (the queue pops from the
+// front) only reached Character.cpp, so every native Character sorted its
+// polls with ChangedBy inverted -- a pollable was inserted ahead of the ones
+// that change it instead of behind them. Seen in rb3-app: foreTwist_L/R.ik
+// (changed by bone_L/R-hand.mesh) polled ahead of hand_iks, the CharPollGroup
+// that changes both hands, so the forearm twist read the wrist before the
+// hand IK had solved it.
+// Retail's inlined ChangedBy (Sort, TU5 0x822AA3BC..0x822AA3EC): curDep in
+// r9, the list entry in r4; equal -> false; else sSearchID++,
+// `stw r9, 0x18(r23)` (mTarget = curDep) and ChangedByRecurse(r4).
 int CharPollableSorter::sSearchID = 0;
 
 void CharPollableSorter::AddDeps(
@@ -198,10 +210,13 @@ bool CharPollableSorter::ChangedByRecurse(Dep *dep) {
     return false;
 }
 
+// Is a reachable by walking b's changed-by chain (b is changed by a)?
 bool CharPollableSorter::ChangedBy(Dep *a, Dep *b) {
-    mTarget = b;
+    if (a == b)
+        return false;
     sSearchID++;
-    return ChangedByRecurse(a);
+    mTarget = a;
+    return ChangedByRecurse(b);
 }
 
 void CharPollableSorter::Sort(std::vector<RndPollable *> &polls) {
@@ -226,8 +241,9 @@ void CharPollableSorter::Sort(std::vector<RndPollable *> &polls) {
         for (int i = 0; i < deps.size(); i++)
             depList.push_back(deps[i]);
         while (!depList.empty()) {
-            Dep *curDep = depList.back();
-            depList.pop_back();
+            // Retail takes the queue FRONT (Character.cpp).
+            Dep *curDep = depList.front();
+            depList.pop_front();
             CharPollable *c = dynamic_cast<CharPollable *>(curDep->obj);
             if (c) {
                 std::list<Hmx::Object *> depList1;
