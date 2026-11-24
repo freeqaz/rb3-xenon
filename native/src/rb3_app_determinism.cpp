@@ -112,11 +112,11 @@ int RB3AppExtraPadCount(); // rb3_app_joypad.cpp (RB3_APP_EXTRA_PADS)
 //                       (main_app.cpp), and the UI / task clocks read their Timers.
 //   RB3_APP_HZ=legacy   (or 0) the loop as it was before this lane: virtual frame 1/30 s,
 //                       unpaced, MILO_HEADLESS fixed-step UI and task clocks. Returns 0.
-//   unset, a harness run (MILO_INPUT_SCRIPT, RB3_APP_DETERMINISTIC or
-//                       RB3_APP_JOYPAD_GATE set): legacy, so walks written in 30 Hz
-//                       frames keep their frame indices and det baselines.
-//   unset, otherwise (a normal launch): 60, retail's rate.
-// The intended end state is 60 for harness runs too, once the walk suites have migrated.
+//   unset: 60, retail's rate, for a normal launch and a harness run alike (MILO_INPUT_SCRIPT,
+//                       RB3_APP_DETERMINISTIC or RB3_APP_JOYPAD_GATE set; since 2026-11-24,
+//                       once both sessions' walk suites counted 60 Hz frames; before that a
+//                       harness run defaulted to legacy). A walk script written in 30 Hz
+//                       frames needs RB3_APP_HZ=legacy, or tools/rb3_app_walks/hz60.py.
 int RB3AppHz() { // ring: native-real
     static int hz = -1;
     if (hz < 0) {
@@ -132,9 +132,9 @@ int RB3AppHz() { // ring: native-real
             };
             const char *s = getenv("MILO_INPUT_SCRIPT");
             bool harness = (s && *s) || set("RB3_APP_DETERMINISTIC") || set("RB3_APP_JOYPAD_GATE");
-            hz = harness ? 0 : 60;
-            why = harness ? "harness default (MILO_INPUT_SCRIPT, RB3_APP_DETERMINISTIC or "
-                            "RB3_APP_JOYPAD_GATE set; RB3_APP_HZ=60 runs retail's rate)"
+            hz = 60;
+            why = harness ? "harness default since 2026-11-24, retail's rate; a 30 Hz-frame "
+                            "walk script needs RB3_APP_HZ=legacy"
                           : "default: retail's rnd sync 1, one frame per 60 Hz vsync";
         }
         if (hz > 0)
