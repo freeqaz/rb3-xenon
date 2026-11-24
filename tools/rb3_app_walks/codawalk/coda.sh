@@ -1,6 +1,6 @@
 #!/bin/bash
-# coda.sh <K> <bin> <frames> [seed]: big-rock-ending legs on a coda song (seed 18 = ohmygod), expert walk
-cd /home/free/tmp/codawalk; K=$1; B=$PWD/$2; F=$3; S=${4:-18}; W=$PWD/walk_x.txt
+# coda.sh <K> <bin> <frames> [seed]: big-rock-ending legs on a coda song (seed 41 = ohmygod at 60 Hz, lane walk60b; legacy 30 Hz seed 18), expert walk
+cd /home/free/tmp/codawalk; K=$1; B=$PWD/$2; F=$3; S=${4:-41}; W=$PWD/walk_x.txt
 D="RB3_APP_DETERMINISTIC=1 RB3_APP_SEED=$S RB3_APP_DET_SCORE=1 RB3_APP_DET_OD=1"
 G="RB3_APP_JOYPAD_KIND=guitar"; R="RB3_APP_JOYPAD_KIND=drums"; C="RB3_APP_CHARTPLAY=1 RB3_APP_CHARTPLAY_LOG=1"
 r() { t=$1; shift; BIN=$B SECS=1500 TMO=1530 TAILN=1 ./runb.sh $K$t $W $F $D "$@" > $K$t.out 2>&1 & }

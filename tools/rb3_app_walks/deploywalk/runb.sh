@@ -4,7 +4,7 @@
 # walk60 (2026-11-23): runs at RB3_APP_HZ=60, retail's rate. The walk scripts in this directory are
 # 60 Hz frames (converted by ../hz60.py; legacy originals at main 82ff40429). The frames, SECS and
 # TMO a caller passes keep the legacy 30 Hz values the dated record quotes; they are doubled here.
-A=/home/free/tmp/deploywalk; C=/home/free/tmp/claude-1000/rb3-scout/coord
+A=${A:-/home/free/tmp/deploywalk}; C=/home/free/tmp/claude-1000/rb3-scout/coord
 X=${X:-/home/free/tmp/wt-deploywalk}; NV=/home/free/tmp/claude-1000/nv615-userspace
 tag=$1; script=$2; frames=${3:-900}; shift 3 2>/dev/null
 D=$A/r_$tag; rm -rf $D; mkdir -p $D
