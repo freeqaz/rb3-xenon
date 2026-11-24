@@ -1,0 +1,12 @@
+dwband deploywalk walk_od.txt 1100 RB3_APP_AUTOPLAY=1 RB3_APP_AUTODEPLOY=1 RB3_APP_DET_OD=1 RB3_APP_EXTRA_PADS=guitar=@W@/p1_od.txt,drums=@W@/p2_od.txt,guitar=@W@/p3_od.txt
+dwg deploywalk walk_od.txt 1100 RB3_APP_AUTOPLAY=1 RB3_APP_DET_OD=1 RB3_APP_AUTODEPLOY=1 RB3_APP_JOYPAD_KIND=guitar
+dwd deploywalk walk_od.txt 1100 RB3_APP_AUTOPLAY=1 RB3_APP_DET_OD=1 RB3_APP_AUTODEPLOY=1 RB3_APP_JOYPAD_KIND=drums
+dwv deploywalk walk_od.txt 1100 RB3_APP_AUTOPLAY=1 RB3_APP_DET_OD=1 RB3_APP_AUTODEPLOY=1
+keys chartplay2 walk.txt 1100 RB3_APP_JOYPAD_KIND=keys RB3_APP_AUTOPLAY=1
+keysx chartplay3 walk_k1x.txt 1100 RB3_APP_JOYPAD_KIND=keys RB3_APP_CHARTPLAY=1 RB3_APP_CHARTPLAY_LOG=1
+pg chartplay2 walk_pg.txt 1270 RB3_APP_JOYPAD_KIND=proguitar RB3_APP_AUTOPLAY=1
+pgx chartplay3 walk_pgx.txt 1270 RB3_APP_JOYPAD_KIND=proguitar RB3_APP_AUTOPLAY=1
+hwv harmwalk walk_harm.txt 1100 RB3_APP_AUTOPLAY=1 RB3_APP_DET_OD=1 RB3_APP_DET_HARM=1
+hwb harmwalk walk_harm.txt 1100 RB3_APP_AUTOPLAY=1 RB3_APP_DET_OD=1 RB3_APP_DET_HARM=1 RB3_APP_AUTODEPLOY=1 RB3_APP_EXTRA_PADS=guitar=@W@/p1_od.txt,drums=@W@/p2_od.txt,guitar=@W@/p3_od.txt
+guitar codawalk walk_x.txt 1100 RB3_APP_JOYPAD_KIND=guitar RB3_APP_DET_SCORE=1 RB3_APP_DET_OD=1
+gate gate60 walk2.txt 1100 RB3_APP_AUTOPLAY=1 RB3_APP_EXTRA_PADS=guitar=@W@/p1_guitar_2.txt,drums=@W@/p2_drums_2.txt,guitar=@W@/p3_bass_2.txt
