@@ -1383,6 +1383,14 @@ extern "C" int rb3_app_xdk_live_enum_handles() {
     pthread_mutex_unlock(&gHandleTableMutex);
     return n;
 }
+// Gate support (rb3_app_gates.cpp): the host directory that holds this
+// store's marketplace packages (device 1, content type 2). The content-refresh
+// gate counts the packages there itself rather than asking the enumerator.
+extern "C" const char *rb3_app_xdk_package_dir() {
+    static std::string dir;
+    dir = ShimPackageBase(kShimHddDeviceId, 2);
+    return dir.c_str();
+}
 // Cross-title enumeration over the same content store. The one caller is
 // XboxContentMgr::StartRefresh (retail 0x82520FD0): for each signed-in pad
 // 0..3 it asks for (user i, device 0 = any, type 2 = marketplace content,

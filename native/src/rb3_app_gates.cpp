@@ -16,6 +16,9 @@
 #include "net/SyncStore.h"
 #include <cstdio>
 #include <unistd.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <string>
 #include "synth/StreamReceiver.h"
 #include "platform/StreamReceiver_Native.h"
 #include "obj/Data.h"
@@ -409,17 +412,23 @@ extern "C" void __wrap__ZN17FixedSizeSaveable4InitEii(int a0, int a1) { // ring:
 // no game state changes. It runs retail's StartRefresh (0x82520FD0): the
 // config's roots plus the cross-title enumerations over the content store,
 // then PollRefresh (0x82520C18 + base 0x8251F1E0) until RefreshDone. Needed:
-// TheContentMgr is an XboxContentMgr, the refresh finishes within a bounded
-// number of polls per package, it includes the disc root and every enumeration
-// buffer is released.
+// TheContentMgr is an XboxContentMgr, the refresh is done within 16 polls
+// plus one per package, it holds exactly the one disc root plus one content per
+// marketplace package in the store, and every enumeration buffer was released.
+// The packages are counted here, independently of the enumerator: each
+// directory under <content>/00000001/00000002 that has its <name>.xcontent
+// sidecar (xdk_shims.cpp's layout). A clean content dir therefore still
+// asserts exactly 1 (the root, no package). The store's saved games (type 1:
+// band3, globaloptions, songcache) are on PollRefresh's ignored list, so any
+// other one would also fail the count.
 namespace {
 struct Rb3AppContentRefreshProbe : public XboxContentMgr {
-    void Run(int &polls, bool &done, int &contents, int &state) {
+    void Run(int packages, int &polls, bool &done, int &contents, int &state) {
         mDirty = true;
         mState = kDone;
         mRootLoaded = 0;
         StartRefresh();
-        for (polls = 0; polls < 16 + (int)mContents.size() && !RefreshDone(); polls++) PollRefresh();
+        for (polls = 0; polls < 16 + packages && !RefreshDone(); polls++) PollRefresh();
         done = RefreshDone();
         contents = (int)mContents.size();
         state = (int)mState;
@@ -429,24 +438,46 @@ struct Rb3AppContentRefreshProbe : public XboxContentMgr {
 Rb3AppContentRefreshProbe gRb3AppContentProbe;
 } // namespace
 extern "C" int rb3_app_xdk_live_enum_handles();
+extern "C" const char *rb3_app_xdk_package_dir();
+// Package directories in the store: a directory entry <name> with a regular
+// file <name>.xcontent beside it. A missing store directory holds none.
+static int rb3_app_count_package_dirs(const std::string &base) {
+    int n = 0;
+    if (DIR *d = opendir(base.c_str())) {
+        while (struct dirent *ent = readdir(d)) {
+            if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..")) continue;
+            std::string path = base + "/" + ent->d_name;
+            struct stat dir, sidecar;
+            if (stat(path.c_str(), &dir) == 0 && S_ISDIR(dir.st_mode)
+                && stat((path + ".xcontent").c_str(), &sidecar) == 0 && S_ISREG(sidecar.st_mode))
+                n++;
+        }
+        closedir(d);
+    }
+    return n;
+}
 static void rb3_app_check_content_refresh() { // ring: native-real
     bool isXbox = dynamic_cast<XboxContentMgr *>(&TheContentMgr) != nullptr;
+    const std::string packageDir = rb3_app_xdk_package_dir();
+    const int packages = rb3_app_count_package_dirs(packageDir);
+    const int expected = 1 + packages;
     int enumsBefore = rb3_app_xdk_live_enum_handles();
     int polls = 0, contents = -1, state = -1;
     bool done = false;
-    gRb3AppContentProbe.Run(polls, done, contents, state);
+    gRb3AppContentProbe.Run(packages, polls, done, contents, state);
     int enumsAfter = rb3_app_xdk_live_enum_handles();
-    if (!isXbox || !done || contents < 1 || enumsAfter != enumsBefore) {
+    if (!isXbox || !done || contents != expected || enumsAfter != enumsBefore) {
         printf("  [FAIL] rb3-app content refresh: TheContentMgr %s an XboxContentMgr; "
-               "after %d PollRefresh: state %d, refresh_done %d, %d contents, live enumerators "
-               "%d -> %d\n",
-               isXbox ? "is" : "is NOT", polls, state, (int)done, contents, enumsBefore, enumsAfter);
+               "after %d PollRefresh: state %d, refresh_done %d, %d contents (expected %d: 1 root + "
+               "%d packages in %s), live enumerators %d -> %d\n",
+               isXbox ? "is" : "is NOT", polls, state, (int)done, contents, expected, packages,
+               packageDir.c_str(), enumsBefore, enumsAfter);
         printf("RESULT: GATE FAILED (content refresh)\n");
         fflush(stdout);
         _exit(7);
     }
     printf("  [PASS] rb3-app content refresh: XboxContentMgr refresh_done after %d PollRefresh "
-           "(state 1, %d contents, enumerators released)\n", polls, contents);
+           "(state 1, 1 root, %d packages, enumerators released)\n", polls, packages);
     fflush(stdout);
 }
 
