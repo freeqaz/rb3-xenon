@@ -151,16 +151,21 @@ void UIScreen::LoadPanels() {
 
 void UIScreen::UnloadPanels() {
 #ifdef HX_NATIVE
-    // Clear UI animation tasks before panel destruction. On Xbox, ~Object's
-    // ReplaceRefs triggers AnimTask::Replace → QueueTaskDelete for each dying
-    // object. On native, cascade skips ReplaceRefs (ring corruption), so tasks
-    // holding refs to panel objects survive with stale pointers → use-after-free.
+    // Retail 0x827F1678 clears NO task timeline here: it only CheckUnload()s
+    // each loaded panel. Native used to wipe the whole kTaskSeconds and
+    // kTaskUISeconds timelines on every screen unload (scaffolded from
+    // dc3-decomp 2d85d15c5), on the premise that the native cascade skipped
+    // ReplaceRefs so an AnimTask holding a dying panel object outlived it.
+    // That premise is gone: ~Object runs NullifyAllRefs inside a cascade, which
+    // steps every OWNER-CONTROL holder (AnimTask::mAnim is an ObjOwnerPtr)
+    // through its Replace(nullptr) as retail's ReplaceRefs does (Object.cpp,
+    // "Owner-control holders in the native ~ObjectDir cascade"). dc3-decomp
+    // dropped the same wipe in 9d543eb81. The wipe also killed every task of a
+    // panel that stays loaded across the transition: on coop_endgame_popups ->
+    // coop_endgame it deleted the overshell's hide.trg message.anim task one
+    // tick in (message.env ambient alpha 0.9), so the last "X Unlocked!" popup
+    // stayed over the results panel until the screen exited.
     //
-    // Only clear seconds/UI timelines — preserve beat-synced and tutorial tasks
-    // which may be driven by audio/music systems independent of panels.
-    // Safe because this runs BEFORE the new screen's Enter() creates tasks.
-    TheTaskMgr.ClearTimelineTasks(kTaskSeconds);
-    TheTaskMgr.ClearTimelineTasks(kTaskUISeconds);
     // Suppress FlushDeferredFrees between panel cascades. Without this,
     // panel A's cascade frees memory, then panel B's NullifyAllRefs walks
     // ring nodes in that freed memory → heap corruption. Deferring the

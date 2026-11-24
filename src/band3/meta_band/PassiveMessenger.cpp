@@ -63,9 +63,11 @@ void PassiveMessageQueue::Poll() {
         RndEnviron *e = m ? m->Find<RndEnviron>("message.env", false) : nullptr;
         char buf[256];
         snprintf(
-            buf, sizeof(buf), "q=%d running=%d hiding=%d frame=%.0f env_alpha=%.1f showing=%d",
+            buf, sizeof(buf),
+            "q=%d running=%d hiding=%d animating=%d frame=%.0f env_alpha=%.1f showing=%d",
             (int)mQueue.size(), (int)mTimer.Running(),
             mCallback->Handle(is_message_hiding_msg, true).Int(),
+            a ? (int)a->IsAnimating() : -1,
             a ? a->GetFrame() : -1.0f, e ? e->AmbientColor().alpha : -1.0f,
             m ? (int)m->Showing() : -1
         );
