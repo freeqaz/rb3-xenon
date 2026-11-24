@@ -343,7 +343,12 @@ int PatchDir::SaveSize(int) {
 
 void PatchDir::Clear() {
     std::for_each(
-        mLayers.begin(), mLayers.end(), std::mem_fun_ref(&PatchLayer::ClearSticker)
+        mLayers.begin(), mLayers.end(),
+#ifdef HX_NATIVE
+        std::mem_fn(&PatchLayer::ClearSticker)
+#else
+        std::mem_fun_ref(&PatchLayer::ClearSticker)
+#endif
     );
     unk1c0 = true;
 }

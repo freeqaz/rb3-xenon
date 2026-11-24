@@ -1,5 +1,8 @@
 #include "meta/SongMetadata.h"
 #include "os/Debug.h"
+#ifdef RB3_NATIVE_APP
+#include "meta/SongMgr.h"
+#endif
 
 int SongMetadata::sSaveVer = 6;
 
@@ -39,7 +42,11 @@ SongMetadata::SongMetadata(DataArray *main_arr, DataArray *backup_arr, bool onDi
 
     static Symbol song_id("song_id");
     if (FIND_WITH_BACKUP(song_id))
+#ifdef RB3_NATIVE_APP
+        mID = GetSongID(main_arr, backup_arr);
+#else
         mID = member_arr->Int(1);
+#endif
     else
         MILO_FAIL("song data for song '%s' has no song_id", main_arr->Sym(0).Str());
 

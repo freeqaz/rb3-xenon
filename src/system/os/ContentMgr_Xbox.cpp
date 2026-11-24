@@ -111,6 +111,11 @@ void XboxContent::Poll() {
             mState = kContentDeleting;
         } else {
             mState = kMounting;
+#ifdef RB3_NATIVE_APP
+            // Let the manager observe kMounting before our synchronous host
+            // operation completes so it delivers ContentMounted on the next poll.
+            return;
+#endif
         }
     }
     // Retail (0x8251fdc8) RELEASEs mOverlapped BEFORE branching on the result,
@@ -223,6 +228,10 @@ void XboxContentMgr::Terminate() { ThePlatformMgr.RemoveSink(this); }
 //      `lbz r11,0x800(r30)` for that test; retail emits nothing there, which
 //      agrees with retail's Init never assigning the member.
 void XboxContentMgr::StartRefresh() {
+#ifdef RB3_NATIVE_APP
+    extern bool NativeDlcDirectoryChanged();
+    if (this == &gContentMgr && NativeDlcDirectoryChanged()) mDirty = true;
+#endif
     if (unk70) {
         bool b10 = mDirty || (unk74 && unk75);
 

@@ -70,7 +70,12 @@
 #include <cstdlib>
 #include <cstring>
 #include <pthread.h>
+#ifdef __APPLE__
+#include <dlfcn.h>
+#include <malloc/malloc.h>
+#else
 #include <malloc.h>
+#endif
 #include "math/Rand.h"
 #include "os/ThreadCall.h"
 #include "obj/Task.h"
@@ -253,9 +258,11 @@ void AutoDeploy(int frame) {
 // LeakSanitizer check. rb3-app ends with _exit, so LSan's own at-exit check
 // never runs; this is the only leak check it gets. Independent of
 // RB3_APP_DETERMINISTIC; unset, HeapSnapFrame returns at its first test.
+#ifndef __APPLE__
 extern "C" size_t __sanitizer_get_current_allocated_bytes() __attribute__((weak));
 extern "C" void __sanitizer_print_memory_profile(size_t, size_t) __attribute__((weak));
 extern "C" int __lsan_do_recoverable_leak_check() __attribute__((weak));
+#endif
 
 int gSnapMode = -1; // -1 unread, 0 off, 1 on
 std::string gSnapScreen;
@@ -283,20 +290,39 @@ void HeapSnapFrame(int frame, const char *curName) {
     gSnapWasIn = in;
     if (frame != gSnapAt) return;
     gSnapCount++;
+#ifdef __APPLE__
+    static const auto currentAllocatedBytes = reinterpret_cast<size_t (*)()>(
+        dlsym(RTLD_DEFAULT, "__sanitizer_get_current_allocated_bytes"));
+    static const auto printMemoryProfile = reinterpret_cast<void (*)(size_t, size_t)>(
+        dlsym(RTLD_DEFAULT, "__sanitizer_print_memory_profile"));
+    static const auto recoverableLeakCheck = reinterpret_cast<int (*)()>(
+        dlsym(RTLD_DEFAULT, "__lsan_do_recoverable_leak_check"));
+#else
+    const auto currentAllocatedBytes = __sanitizer_get_current_allocated_bytes;
+    const auto printMemoryProfile = __sanitizer_print_memory_profile;
+    const auto recoverableLeakCheck = __lsan_do_recoverable_leak_check;
+#endif
+    size_t asan = currentAllocatedBytes ? currentAllocatedBytes() : 0;
+#ifdef __APPLE__
+    malloc_statistics_t stats{};
+    malloc_zone_statistics(nullptr, &stats);
+    printf("rb3-app-heap: snap %d frame %d screen %s arena %zu inuse %zu asan_live %zu\n",
+           gSnapCount, frame, curName, stats.size_allocated, stats.size_in_use, asan);
+#else
     struct mallinfo2 mi = mallinfo2();
-    size_t asan = __sanitizer_get_current_allocated_bytes ? __sanitizer_get_current_allocated_bytes() : 0;
     printf("rb3-app-heap: snap %d frame %d screen %s arena %zu inuse %zu mmap %zu mmapn %zu free %zu "
            "asan_live %zu\n",
            gSnapCount, frame, curName, mi.arena, mi.uordblks, mi.hblkhd, mi.hblks, mi.fordblks, asan);
+#endif
     fflush(stdout);
-    if (gSnapProfile && __sanitizer_print_memory_profile) {
+    if (gSnapProfile && printMemoryProfile) {
         fprintf(stderr, "rb3-app-heap: profile %d begin\n", gSnapCount);
-        __sanitizer_print_memory_profile(100, 1000000);
+        printMemoryProfile(100, 1000000);
         fprintf(stderr, "rb3-app-heap: profile %d end\n", gSnapCount);
     }
-    if (gSnapLsan && __lsan_do_recoverable_leak_check) {
+    if (gSnapLsan && recoverableLeakCheck) {
         fprintf(stderr, "rb3-app-heap: lsan %d begin\n", gSnapCount);
-        int r = __lsan_do_recoverable_leak_check();
+        int r = recoverableLeakCheck();
         fprintf(stderr, "rb3-app-heap: lsan %d end leaks=%d\n", gSnapCount, r);
     }
     fflush(stderr);

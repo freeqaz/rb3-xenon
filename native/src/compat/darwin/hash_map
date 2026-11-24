@@ -1,0 +1,3 @@
+#pragma once
+// Native builds provide libc++'s missing STLport-style hash_map in this header.
+#include "msvc_compat.h"

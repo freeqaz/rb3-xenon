@@ -17,6 +17,7 @@
 // generated. They are NOT constructed objects: zero bytes where the real
 // global is an object (TheNetMessenger, TheWiiFriendMgr, ...), null where it
 // is a pointer or a reference. Reading one is an A1 crash site, not a value.
+#include "rb3_asm_label.h"
 #include <cstdio>
 #include <cstdlib>
 #include <execinfo.h>
@@ -47,46 +48,46 @@ extern "C" [[noreturn]] void rb3_app_vcall_unreached() { // ring: reporter
 }
 
 // ---- objects: zero bytes, never constructed ----------------------------------
-alignas(WiiFriendMgr) unsigned char gRb3AppTheWiiFriendMgr[sizeof(WiiFriendMgr)] __asm__("TheWiiFriendMgr"); // ring: a4-wii-residue
-alignas(WiiProfileMgr) unsigned char gRb3AppTheWiiProfileMgr[sizeof(WiiProfileMgr)] __asm__("TheWiiProfileMgr"); // ring: a4-wii-residue
-alignas(WiiFriendsProvider) unsigned char gRb3AppTheWiiFriendsProvider[sizeof(WiiFriendsProvider)] __asm__("TheWiiFriendsProvider"); // ring: a4-wii-residue
+alignas(WiiFriendMgr) unsigned char gRb3AppTheWiiFriendMgr[sizeof(WiiFriendMgr)] RB3_ASM_LABEL("TheWiiFriendMgr"); // ring: a4-wii-residue
+alignas(WiiProfileMgr) unsigned char gRb3AppTheWiiProfileMgr[sizeof(WiiProfileMgr)] RB3_ASM_LABEL("TheWiiProfileMgr"); // ring: a4-wii-residue
+alignas(WiiFriendsProvider) unsigned char gRb3AppTheWiiFriendsProvider[sizeof(WiiFriendsProvider)] RB3_ASM_LABEL("TheWiiFriendsProvider"); // ring: a4-wii-residue
 // Declared only inside MetaPanel.cpp: no header gives the size,
 // so these reserve 4 KiB of zeroes (an over-estimate, measured nowhere).
-alignas(16) unsigned char gRb3AppTheWiiInvitationsProvider[4096] __asm__("TheWiiInvitationsProvider"); // ring: a4-wii-residue
+alignas(16) unsigned char gRb3AppTheWiiInvitationsProvider[4096] RB3_ASM_LABEL("TheWiiInvitationsProvider"); // ring: a4-wii-residue
 // TheRockCentral (RockCentral.cpp) and TheNetSession (NetSession.cpp) are real
 // since lane A3: both TUs are compiled into rb3-app.
 // TheNet (Net.cpp) is real since lane A5: the static object with retail's
 // inlined ctor; the Net::Init gate (rb3_app_gates.cpp) builds its idle members.
 // gBinkMovieSys: a real base MovieSys in rb3_app_native_glue.cpp (A1).
 // Message globals the retail game constructs in a TU no native target compiles.
-alignas(Message) unsigned char gRb3AppPlayMsg[sizeof(Message)] __asm__("play_msg"); // ring: a1-absent-body
+alignas(Message) unsigned char gRb3AppPlayMsg[sizeof(Message)] RB3_ASM_LABEL("play_msg"); // ring: a1-absent-body
 // show/hide_invitation_notification_msg: gone since lane A6. Their only use was a
 // dev-build HX_NATIVE arm in OvershellSlot::UpdateView, which retail X360
 // (0x825DB930) does not have; that arm is removed.
 
 // ---- pointers and references: null -------------------------------------------
 // TheAuditionMgr: real since lane rbx-audmgr (AuditionMgr.cpp is compiled into rb3-app).
-alignas(8) unsigned char gRb3AppTheSongDB[8] __asm__("TheSongDB"); // ring: a1-absent-body
-alignas(8) unsigned char gRb3AppTheSessionMgr[8] __asm__("TheSessionMgr"); // ring: online-netsession
-alignas(8) unsigned char gRb3AppTheTour[8] __asm__("TheTour"); // ring: a1-absent-body
+alignas(8) unsigned char gRb3AppTheSongDB[8] RB3_ASM_LABEL("TheSongDB"); // ring: a1-absent-body
+alignas(8) unsigned char gRb3AppTheSessionMgr[8] RB3_ASM_LABEL("TheSessionMgr"); // ring: online-netsession
+alignas(8) unsigned char gRb3AppTheTour[8] RB3_ASM_LABEL("TheTour"); // ring: a1-absent-body
 // TheNameGenerator: real since lane A5 (NameGenerator.cpp is compiled into rb3-app).
 // NetMessenger.cpp is absent from the tree (A3): retail TheNetMessenger is a
 // static-init object holding only mLastSender; NetSession's send/deliver paths
 // name it and are online-only (their entry points abort, ring online-net).
-alignas(NetMessenger) unsigned char gRb3AppTheNetMessenger[sizeof(NetMessenger)] __asm__("TheNetMessenger"); // ring: online-net
+alignas(NetMessenger) unsigned char gRb3AppTheNetMessenger[sizeof(NetMessenger)] RB3_ASM_LABEL("TheNetMessenger"); // ring: online-net
 // TheXboxSynth: real since lane A23 (rb3_app_native_glue.cpp, a zeroed Synth360
 // with no mics; XboxSession::Poll reads chat from it every frame).
 // TheSyncStore: gone since lane postcal; net/SyncStore.cpp is compiled and defines it.
-alignas(8) unsigned char gRb3AppTheHAQMgr[8] __asm__("TheHAQMgr"); // ring: a1-absent-body
+alignas(8) unsigned char gRb3AppTheHAQMgr[8] RB3_ASM_LABEL("TheHAQMgr"); // ring: a1-absent-body
 // TheGestureMgr: gone since lane rbx-net. Its one rb3-app use was a Dance Central
 // arm in UIScreen::Exit (SetInVoiceMode); retail RB3 has no GestureMgr.
 // gLSPLoginFilter (retail .data 0x82E103F4): the Quazal XboxLSP login filter
 // string Server.cpp's SetLSPLoginFilter assigns (XboxServer::Init, not run
 // natively). Quazal's XboxLSP code that defines and reads it is not in src/.
-alignas(Quazal::String) unsigned char gRb3AppLSPLoginFilter[sizeof(Quazal::String)] __asm__("gLSPLoginFilter"); // ring: online-quazal
+alignas(Quazal::String) unsigned char gRb3AppLSPLoginFilter[sizeof(Quazal::String)] RB3_ASM_LABEL("gLSPLoginFilter"); // ring: online-quazal
 // TheServer: real since lane rbx-net (a reference to Server.cpp's gXboxServer,
 // defined in rb3_app_native_glue.cpp).
 
 // ---- plain values the retail definition initialises to zero/false ------------
-bool gRb3AppShowAssetName __asm__("gShowAssetName") = false; // ring: xbox-store
-int gRb3AppHideAllCharactersHack __asm__("_ZN11BandCamShot22sHideAllCharactersHackE") = 0; // ring: a1-absent-body
+bool gRb3AppShowAssetName RB3_ASM_LABEL("gShowAssetName") = false; // ring: xbox-store
+int gRb3AppHideAllCharactersHack RB3_ASM_LABEL("_ZN11BandCamShot22sHideAllCharactersHackE") = 0; // ring: a1-absent-body

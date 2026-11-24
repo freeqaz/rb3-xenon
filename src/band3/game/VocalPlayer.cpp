@@ -746,13 +746,21 @@ void VocalPlayer::Poll(float ms, const SongPos &pos) {
             std::vector<VocalPart *>::iterator newPartsEnd = std::remove_if(
                 partsArray.begin(),
                 partsArray.end(),
+#ifdef HX_NATIVE
+                std::mem_fn(&VocalPart::HasBestSingerCandidate)
+#else
                 std::mem_fun_t<bool, VocalPart>(&VocalPart::HasBestSingerCandidate)
+#endif
             );
             partsArray.erase(newPartsEnd, partsArray.end());
             std::vector<Singer *>::iterator newSingersEnd = std::remove_if(
                 singersArray.begin(),
                 singersArray.end(),
+#ifdef HX_NATIVE
+                std::mem_fn(&Singer::HasAssignedPart)
+#else
                 std::const_mem_fun_t<bool, Singer>(&Singer::HasAssignedPart)
+#endif
             );
             singersArray.erase(newSingersEnd, singersArray.end());
             // Both sizes are taken into ints before the test: retail computes

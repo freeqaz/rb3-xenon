@@ -11,6 +11,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_STANDARD 11)
 
+if(APPLE)
+    enable_language(OBJCXX)
+    set(RB3_DEAD_STRIP -Wl,-dead_strip)
+else()
+    set(RB3_DEAD_STRIP -Wl,--gc-sections)
+endif()
+
 set(REPO_ROOT ${CMAKE_SOURCE_DIR}/..)
 
 # --- Sanitizer build (W16-UO) -------------------------------------------------
@@ -64,6 +71,9 @@ set(MS_COMPAT_FLAGS
     -D__GNUC_STDC_INLINE__
     -D__GCC_ATOMIC_TEST_AND_SET_TRUEVAL=1
 )
+if(APPLE)
+    list(APPEND MS_COMPAT_FLAGS -D_VA_LIST_T)
+endif()
 set(ATOMIC_COMPAT_FLAGS
     -D__GCC_ATOMIC_BOOL_LOCK_FREE=2
     -D__GCC_ATOMIC_CHAR_LOCK_FREE=2
@@ -382,7 +392,7 @@ target_compile_options(rb3-song PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS
 # SongStatusMgr / OvershellPanel, none of which links here and none of which the
 # song driver reaches. --gc-sections drops those unreferenced sections instead of
 # stubbing their callees.
-target_link_options(rb3-song PRIVATE -Wl,--gc-sections)
+target_link_options(rb3-song PRIVATE ${RB3_DEAD_STRIP})
 target_compile_definitions(rb3-song PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
 target_include_directories(rb3-song SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(rb3-song PRIVATE
@@ -615,7 +625,7 @@ target_compile_options(rb3-score2 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLA
     -ffunction-sections -fdata-sections)
 # Drop unreferenced methods of the real scoring TUs (and their off-path link
 # refs) so the stub surface is only what the scoring chain actually reaches.
-target_link_options(rb3-score2 PRIVATE -Wl,--gc-sections)
+target_link_options(rb3-score2 PRIVATE ${RB3_DEAD_STRIP})
 target_compile_definitions(rb3-score2 PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
 target_include_directories(rb3-score2 SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(rb3-score2 PRIVATE
@@ -655,7 +665,7 @@ rb3_add_executable(rb3-score3
 )
 target_compile_options(rb3-score3 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
-target_link_options(rb3-score3 PRIVATE -Wl,--gc-sections)
+target_link_options(rb3-score3 PRIVATE ${RB3_DEAD_STRIP})
 target_compile_definitions(rb3-score3 PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
 target_include_directories(rb3-score3 SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(rb3-score3 PRIVATE
@@ -697,7 +707,7 @@ rb3_add_executable(rb3-score4
 )
 target_compile_options(rb3-score4 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
-target_link_options(rb3-score4 PRIVATE -Wl,--gc-sections)
+target_link_options(rb3-score4 PRIVATE ${RB3_DEAD_STRIP})
 target_compile_definitions(rb3-score4 PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
 target_include_directories(rb3-score4 SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(rb3-score4 PRIVATE
@@ -739,7 +749,7 @@ rb3_add_executable(rb3-vocal
 )
 target_compile_options(rb3-vocal PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
-target_link_options(rb3-vocal PRIVATE -Wl,--gc-sections)
+target_link_options(rb3-vocal PRIVATE ${RB3_DEAD_STRIP})
 target_compile_definitions(rb3-vocal PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
 target_include_directories(rb3-vocal SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(rb3-vocal PRIVATE
@@ -794,7 +804,7 @@ rb3_add_executable(rb3-vocal2
 )
 target_compile_options(rb3-vocal2 PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
-target_link_options(rb3-vocal2 PRIVATE -Wl,--gc-sections)
+target_link_options(rb3-vocal2 PRIVATE ${RB3_DEAD_STRIP})
 target_compile_definitions(rb3-vocal2 PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
 target_include_directories(rb3-vocal2 SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(rb3-vocal2 PRIVATE
@@ -845,7 +855,7 @@ rb3_add_executable(rb3-harmony
 )
 target_compile_options(rb3-harmony PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
-target_link_options(rb3-harmony PRIVATE -Wl,--gc-sections)
+target_link_options(rb3-harmony PRIVATE ${RB3_DEAD_STRIP})
 target_compile_definitions(rb3-harmony PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
 target_include_directories(rb3-harmony SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(rb3-harmony PRIVATE
@@ -890,7 +900,7 @@ rb3_add_executable(rb3-crowd
 )
 target_compile_options(rb3-crowd PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} ${DECOMP_FLAGS}
     -ffunction-sections -fdata-sections)
-target_link_options(rb3-crowd PRIVATE -Wl,--gc-sections)
+target_link_options(rb3-crowd PRIVATE ${RB3_DEAD_STRIP})
 target_compile_definitions(rb3-crowd PRIVATE HX_NATIVE=1 MILO_DEBUG=1 _DEBUG=1)
 target_include_directories(rb3-crowd SYSTEM BEFORE PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(rb3-crowd PRIVATE
@@ -1093,7 +1103,7 @@ set(MILO_ENGINE_PATH "${_rb3x_milo_default}"
 # repo's native/build was still carrying 40dd2a12 while this file said
 # cb124a75, i.e. the bump had never taken effect in the build directory.
 # dc3-decomp's pin has carried FORCE since 2026-08-19 for the same reason.
-set(MILO_ENGINE_PIN "11d5f2bafb74425468df6058403b7b7427f03e4d"
+set(MILO_ENGINE_PIN "d5985cace581a31238525f271dd97e4ee5fea194"
     CACHE STRING "Engine commit SHA verified against" FORCE)
 
 # Dawn (WebGPU) lives in the shared dc3 deps tree; glfw3 is system-installed.
@@ -1145,6 +1155,9 @@ if(RB3X_BUILD_ENGINE)
         ${CMAKE_SOURCE_DIR}/src        # native shims + stl/ STLport-shape shims
         ${REPO_ROOT}/src
         ${REPO_ROOT}/src/system)
+    if(APPLE)
+        list(APPEND MILO_ENGINE_DECOMP_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/src/compat/darwin)
+    endif()
 
     # ⚠ DECOMP_WARNINGS (the -Werror= opt-in list) is DELIBERATELY NOT PASSED to
     # the engine. That policy was measured against xenon's own 251 TUs, never
@@ -1242,6 +1255,14 @@ if(RB3X_BUILD_ENGINE)
     set(MILO_ENGINE_BUILD_TESTS OFF CACHE BOOL   "" FORCE)
 
     add_subdirectory(${MILO_ENGINE_PATH} milo-engine)
+    if(APPLE)
+        # Dear ImGui creates its Metal layer through Cocoa.
+        include(FetchContent)
+        FetchContent_GetProperties(imgui SOURCE_DIR _rb3_imgui_source)
+        set_source_files_properties(
+            "${_rb3_imgui_source}/backends/imgui_impl_wgpu.cpp"
+            DIRECTORY "${MILO_ENGINE_PATH}" PROPERTIES LANGUAGE OBJCXX)
+    endif()
 
     # -------------------------------------------------------------------------
     # rb3-frame — X1 smoke target: engine GPU device + CLEAR + headless
@@ -2645,6 +2666,24 @@ if(RB3X_BUILD_ENGINE)
     # of them except AudioDevice.cpp.o's libc poll), so none is defined; a TU
     # that does name one fails to link instead of interposing libc.
     set(_rb3_app_sym_libc_names compress login logout mount poll splice wait)
+    if(APPLE)
+        list(APPEND _rb3_app_sym_libc_names major minor)
+        # Keep weak symbol fallbacks in the executable. dyld can otherwise
+        # coalesce an unrelated dylib export with a generated Symbol.
+        set(_rb3_app_sym_attributes "__attribute__((weak, visibility(\"hidden\")))")
+        find_package(Python3 REQUIRED COMPONENTS Interpreter)
+        set(_rb3_app_elf_stubs "${CMAKE_SOURCE_DIR}/src/rb3_app_link_stubs.s")
+        set(_rb3_app_stub_converter "${REPO_ROOT}/tools/rb3_app_macho_stubs.py")
+        set(_rb3_app_stubs "${CMAKE_BINARY_DIR}/generated/rb3_app_link_stubs.S")
+        add_custom_command(OUTPUT "${_rb3_app_stubs}"
+            COMMAND "${Python3_EXECUTABLE}" "${_rb3_app_stub_converter}"
+                "${_rb3_app_elf_stubs}" "${_rb3_app_stubs}"
+            DEPENDS "${_rb3_app_elf_stubs}" "${_rb3_app_stub_converter}"
+            VERBATIM)
+    else()
+        set(_rb3_app_sym_attributes "__attribute__((weak))")
+        set(_rb3_app_stubs "${CMAKE_SOURCE_DIR}/src/rb3_app_link_stubs.s")
+    endif()
     set(_defs "")
     set(_interns "")
     foreach(_h IN LISTS _rb3_sym_headers)
@@ -2659,7 +2698,7 @@ if(RB3X_BUILD_ENGINE)
             if("${_n}" IN_LIST _hidden OR "${_n}" IN_LIST _rb3_app_sym_libc_names)
                 continue()
             endif()
-            string(APPEND _defs "__attribute__((weak)) Symbol ${_n};\n")
+            string(APPEND _defs "${_rb3_app_sym_attributes} Symbol ${_n};\n")
             string(APPEND _interns "    ${_n} = Symbol(\"${_n}\");\n")
         endforeach()
     endforeach()
@@ -2680,7 +2719,7 @@ if(RB3X_BUILD_ENGINE)
         # Failing stubs, each tagged with its ring (tools/native_stub_census.py
         # --rings rb3-app). The .s is generated: tools/rb3_app_link_stubs_gen.py.
         ${CMAKE_SOURCE_DIR}/src/rb3_app_link_stubs.cpp
-        ${CMAKE_SOURCE_DIR}/src/rb3_app_link_stubs.s
+        ${_rb3_app_stubs}
         # Real native definitions of the globals dta_link_stubs.s used to zero.
         ${CMAKE_SOURCE_DIR}/src/rb3_app_native_glue.cpp
         # profpic: the D3D texture calls of ProfilePicture's gamer-picture
@@ -2859,6 +2898,7 @@ if(RB3X_BUILD_ENGINE)
     # src/Main.cpp is retail's main (App::Run, the frame loop: A2).
     list(REMOVE_ITEM _rb3_app_all ${REPO_ROOT}/src/Main.cpp)
     list(APPEND _rb3_app_all ${CMAKE_SOURCE_DIR}/src/main_app.cpp
+        ${CMAKE_SOURCE_DIR}/src/rb3_app_playtest.cpp
         ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.cpp
         ${CMAKE_SOURCE_DIR}/src/rb3_app_determinism.cpp
         ${CMAKE_SOURCE_DIR}/src/rb3_app_mic_native.cpp)
@@ -2888,27 +2928,40 @@ if(RB3X_BUILD_ENGINE)
     target_compile_definitions(rb3-app PRIVATE RB3_ENGINE_RENDER=1 RB3_NATIVE_PRESENCEMGR
         RB3_NATIVE_AUDITION RB3_NATIVE_PROFILEPICTURE RB3_NATIVE_SYSTEM_NET_MGRS
         RB3_NATIVE_APP RB3_NATIVE_HAS_BEATMATCHER)
+    target_include_directories(rb3-app PRIVATE ${REPO_ROOT}/src/system/speex/include)
     target_link_libraries(rb3-app PRIVATE milo-engine ZLIB::ZLIB)
-    target_link_options(rb3-app PRIVATE -fuse-ld=lld -Wl,--error-limit=0
-        -Wl,--wrap=_ZN6Symbol4InitEv)
-    # A7: main_app.cpp bounds App::Run's retail `while (true)` loop at its first
-    # call, SystemPoll(false): the wrapper counts frames (RB3_APP_FRAMES,
-    # RB3_APP_SECONDS) and exits at a frame boundary.
-    target_link_options(rb3-app PRIVATE -Wl,--wrap=_Z10SystemPollb)
-    # detwalk: RB3_APP_DETERMINISTIC=1 (rb3_app_determinism.cpp) fixes the RNG
-    # seed SystemInit draws from the clock and gives the main thread a virtual
-    # steady_clock and runs ThreadCall jobs on the main thread; unset, every
-    # wrapper passes through.
-    target_link_options(rb3-app PRIVATE -Wl,--wrap=_Z8SeedRandi
-        -Wl,--wrap=_ZNSt6chrono3_V212steady_clock3nowEv
-        -Wl,--wrap=_Z10ThreadCallPFivEPFviE -Wl,--wrap=_Z10ThreadCallP14ThreadCallback
-        -Wl,--wrap=_Z14ThreadCallPollv)
-    # A1 boot gates: each App::App init step is --wrap'ed by rb3_app_gates.cpp,
-    # which prints `  [PASS] rb3-app <step>` when it returns.
+    get_target_property(_rb3_xma_decoder milo-engine MILO_ENGINE_XMA_DECODER)
+    if(_rb3_xma_decoder)
+        # Waypoint.cpp hosts SampleData.cpp through the retail scatter includes.
+        # Only the app target that links the native XMA decoder needs this define.
+        set_property(SOURCE ${REPO_ROOT}/src/system/char/Waypoint.cpp APPEND
+            PROPERTY COMPILE_DEFINITIONS "$<$<STREQUAL:$<TARGET_PROPERTY:NAME>,rb3-app>:HX_FFMPEG=1>")
+    endif()
+    # These wrappers handle symbol interning, the bounded App::Run loop,
+    # deterministic test runs and the boot gates.
     file(STRINGS ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.txt _rb3_app_gate_syms)
-    foreach(_g IN LISTS _rb3_app_gate_syms)
-        target_link_options(rb3-app PRIVATE -Wl,--wrap=${_g})
-    endforeach()
+    set(_rb3_app_wrap_syms _ZN6Symbol4InitEv _Z10SystemPollb _Z8SeedRandi
+        _ZNSt6chrono3_V212steady_clock3nowEv
+        _Z10ThreadCallPFivEPFviE _Z10ThreadCallP14ThreadCallback
+        _Z14ThreadCallPollv ${_rb3_app_gate_syms})
+    if(APPLE)
+        target_sources(rb3-app PRIVATE src/rb3_app_packed_content.cpp)
+        target_link_libraries(rb3-app PRIVATE sqlite3)
+        # ld64 has no --wrap. Redirect rb3-app's undefined references
+        # after compilation, including the libc++ spelling of steady_clock.
+        list(TRANSFORM _rb3_app_wrap_syms REPLACE
+            "^_ZNSt6chrono3_V212steady_clock3nowEv$"
+            "_ZNSt6chrono3_V212steady_clock3nowEv=_ZNSt3__16chrono12steady_clock3nowEv")
+        set(_rb3_app_wrap_tool "${REPO_ROOT}/tools/rb3_app_macho_wrap.py")
+        set_property(TARGET rb3-app PROPERTY CXX_COMPILER_LAUNCHER
+            "${Python3_EXECUTABLE};${_rb3_app_wrap_tool};${_rb3_app_wrap_syms};--")
+        set_property(TARGET rb3-app APPEND PROPERTY LINK_DEPENDS "${_rb3_app_wrap_tool}")
+    else()
+        target_link_options(rb3-app PRIVATE -fuse-ld=lld -Wl,--error-limit=0)
+        foreach(_g IN LISTS _rb3_app_wrap_syms)
+            target_link_options(rb3-app PRIVATE -Wl,--wrap=${_g})
+        endforeach()
+    endif()
     set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
         ${CMAKE_SOURCE_DIR}/src/rb3_app_gates.txt)
 endif()
@@ -2924,7 +2977,7 @@ target_compile_options(${_t} PRIVATE ${MS_COMPAT_FLAGS} ${ATOMIC_COMPAT_FLAGS} $
 # instead means the stub list below is only what the load path ACTUALLY touches
 # -- which is the difference between a stub list you can audit and one you
 # cannot.
-target_link_options(${_t} PRIVATE -Wl,--gc-sections)
+target_link_options(${_t} PRIVATE ${RB3_DEAD_STRIP})
 
 # --- -Werror opt-in exemptions, with the triage that earned each one ---------
 # The DECOMP_WARNINGS policy at the top of this file was MEASURED to produce

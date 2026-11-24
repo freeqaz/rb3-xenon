@@ -18,6 +18,7 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <string>
@@ -582,9 +583,27 @@ DWORD WaitForSingleObject(HANDLE hHandle, DWORD dwMilliseconds) {
         } else if (dwMilliseconds == 0) {
             if (pthread_mutex_trylock(&e->mutex.mutex) != 0) return 0x102; // WAIT_TIMEOUT
         } else {
+#ifdef __APPLE__
+            // Darwin pthreads has no timed lock. Retry against a monotonic
+            // deadline in small steps, including for recursive mutexes.
+            const uint64_t deadline = clock_gettime_nsec_np(CLOCK_UPTIME_RAW)
+                + uint64_t(dwMilliseconds) * 1000000;
+            int err = pthread_mutex_trylock(&e->mutex.mutex);
+            while (err == EBUSY) {
+                const uint64_t now = clock_gettime_nsec_np(CLOCK_UPTIME_RAW);
+                if (now >= deadline) break;
+                const uint64_t remaining = deadline - now;
+                const timespec delay{0, long(remaining < 1000000 ? remaining : 1000000)};
+                nanosleep(&delay, nullptr);
+                if (clock_gettime_nsec_np(CLOCK_UPTIME_RAW) >= deadline) break;
+                err = pthread_mutex_trylock(&e->mutex.mutex);
+            }
+            if (err != 0) return 0x102;
+#else
             struct timespec ts;
             DeadlineAfterMs(&ts, dwMilliseconds);
             if (pthread_mutex_timedlock(&e->mutex.mutex, &ts) != 0) return 0x102;
+#endif
         }
         return 0;
     }
@@ -676,11 +695,30 @@ static void ShimMkdirs(const std::string &path) {
         if (i == path.size() || path[i] == '/') mkdir(path.substr(0, i).c_str(), 0755);
     }
 }
+static const DWORD kShimHddDeviceId = 1;
 static std::string ShimPackageBase(DWORD deviceId, DWORD contentType) {
     char sub[32];
     snprintf(sub, sizeof(sub), "/%08X/%08X", (unsigned)deviceId, (unsigned)contentType);
     return ShimContentDir() + sub;
 }
+#ifdef RB3_NATIVE_APP
+// Checked when the game requests a refresh (e.g. entering Song Select).
+bool NativeDlcDirectoryChanged() {
+    static timespec last = {};
+    struct stat st;
+    timespec current = {};
+    if (stat(ShimPackageBase(kShimHddDeviceId, 2).c_str(), &st) == 0) {
+#ifdef __APPLE__
+        current = st.st_mtimespec;
+#else
+        current = st.st_mtim;
+#endif
+    }
+    bool changed = current.tv_sec != last.tv_sec || current.tv_nsec != last.tv_nsec;
+    last = current;
+    return changed;
+}
+#endif
 static std::string ShimPackageName(const XCONTENT_DATA *data) {
     char name[XCONTENT_MAX_FILENAME_LENGTH + 1];
     memcpy(name, data->szFileName, XCONTENT_MAX_FILENAME_LENGTH);
@@ -710,6 +748,15 @@ static std::string ShimHostPath(LPCSTR path) {
     }
     if (rest.empty() || rest[0] != '/') rest.insert(rest.begin(), '/');
     return dir + rest;
+}
+// Resolve only retail DLC roots for the engine's read-only file access.
+bool NativeContentPath(const char *path, char *out, size_t capacity) {
+    if (!path || strncmp(path, "cnt", 3) || strspn(path + 3, "0123456789abcdef") != 8
+        || path[11] != ':' || strstr(path + 12, "..")) return false;
+    std::string host = ShimHostPath(path);
+    if (host == path || host.size() >= capacity) return false;
+    memcpy(out, host.c_str(), host.size() + 1);
+    return true;
 }
 // Completes an XContent call the way the XDK reports it: with an XOVERLAPPED
 // the call returns ERROR_IO_PENDING and the outcome is read back through
@@ -1064,7 +1111,6 @@ static const DWORD kShimErrorFunctionFailed = 0x065B; // ERROR_FUNCTION_FAILED
 static const DWORD kShimErrorInvalidHandle = 0x0006;  // ERROR_INVALID_HANDLE
 // The one storage device: the hard drive. Its DeviceID is nonzero (0 is
 // XCONTENTDEVICE_ANY, which CacheMgrXbox::PollChoose reads as a cancel).
-static const DWORD kShimHddDeviceId = 1;
 
 static bool ShimUserSignedIn(DWORD dwUserIndex) { return dwUserIndex == 0; }
 
@@ -1117,7 +1163,20 @@ DWORD XGetOverlappedExtendedError(XOVERLAPPED *pOverlapped) {
 
 DWORD XShowKeyboardUI(DWORD, DWORD, LPCWSTR, LPCWSTR, LPCWSTR, LPWSTR, DWORD, XOVERLAPPED *) { return 1; }
 
-DWORD XContentCrossTitleCreate(DWORD, LPCSTR, XCONTENT_CROSS_TITLE_DATA *, DWORD, DWORD *, DWORD *, SIZE_T, ULARGE_INTEGER, XOVERLAPPED *) { return 1; }
+DWORD XContentCrossTitleCreate(DWORD user, LPCSTR root, XCONTENT_CROSS_TITLE_DATA *data,
+                               DWORD flags, DWORD *disposition, DWORD *license, SIZE_T cache,
+                               ULARGE_INTEGER size, XOVERLAPPED *ov) {
+    if (!data || (flags & 15) != 3) return ShimComplete(0x0057, ov);
+    XCONTENT_DATA entry = {};
+    entry.DeviceID = data->DeviceID;
+    entry.dwContentType = data->dwContentType;
+    memcpy(entry.szDisplayName, data->szDisplayName, sizeof(entry.szDisplayName));
+    memcpy(entry.szFileName, data->szFileName, sizeof(entry.szFileName));
+    std::string name = ShimPackageName(&entry);
+    if (name.empty() || name == "." || name == ".." || name.find_first_of("/\\:") != std::string::npos)
+        return ShimComplete(ERROR_INVALID_NAME, ov);
+    return XContentCreateEx(user, root, &entry, flags, disposition, license, cache, size, ov);
+}
 DWORD XContentCrossTitleDelete(DWORD, const XCONTENT_CROSS_TITLE_DATA *, XOVERLAPPED *) { return 0; }
 // An operation's status is InternalLow (ERROR_IO_PENDING while it runs) and
 // its result (bytes, items) is InternalHigh. The shims complete every
@@ -1267,9 +1326,20 @@ DWORD XContentCreateEnumerator(DWORD, DWORD DeviceID, DWORD dwContentType, DWORD
                 if (!f) continue;
                 bool ok = fread(&data, sizeof(data), 1, f) == 1;
                 fclose(f);
+                if (ok && dwContentType == 2) {
+                    const std::string name(ent->d_name, len - 9);
+                    struct stat package;
+                    ok = ShimPackageName(&data) == name && data.dwContentType == dwContentType &&
+                         stat((base + "/" + name).c_str(), &package) == 0 && S_ISDIR(package.st_mode);
+                }
                 if (ok) items->push_back(data);
             }
             closedir(d);
+        }
+        if (dwContentType == 2) {
+            std::sort(items->begin(), items->end(), [](const XCONTENT_DATA &a, const XCONTENT_DATA &b) {
+                return strncmp(a.szFileName, b.szFileName, sizeof(a.szFileName)) < 0;
+            });
         }
         HandleEntry *e = new HandleEntry();
         e->type = kHandleEnum;
@@ -1313,6 +1383,14 @@ extern "C" int rb3_app_xdk_live_enum_handles() {
     pthread_mutex_unlock(&gHandleTableMutex);
     return n;
 }
+// Gate support (rb3_app_gates.cpp): the host directory that holds this
+// store's marketplace packages (device 1, content type 2). The content-refresh
+// gate counts the packages there itself rather than asking the enumerator.
+extern "C" const char *rb3_app_xdk_package_dir() {
+    static std::string dir;
+    dir = ShimPackageBase(kShimHddDeviceId, 2);
+    return dir.c_str();
+}
 // Cross-title enumeration over the same content store. The one caller is
 // XboxContentMgr::StartRefresh (retail 0x82520FD0): for each signed-in pad
 // 0..3 it asks for (user i, device 0 = any, type 2 = marketplace content,
@@ -1323,13 +1401,23 @@ extern "C" int rb3_app_xdk_live_enum_handles() {
 // frees the XOVERLAPPED and closes the handle. PollRefresh (0x82520C18) reads
 // the result through XGetOverlappedResult: 0 with the item count, or any
 // failure ends that buffer. The store holds this title's packages only, so
-// every item reports dwTitleId 0x45410914; there is no marketplace package
-// (type 2) natively, and the saved games (band3, globaloptions, songcache)
+// every imported item reports dwTitleId 0x45410914. The local saved games
+// (band3, globaloptions, songcache)
 // are on PollRefresh's ignored list. The declarations ContentMgr_Xbox.cpp
 // uses are extern "C" with int/void* parameters, so these are too.
 extern "C" long XContentCreateCrossTitleEnumerator(int dwUserIndex, void *DeviceID, int dwContentType,
                                                     int dwFlags, int cItem, int pcbBuffer, void *phEnum) {
-    (void)dwUserIndex;
+    // Shared packages are emitted by the public (0xff) enumeration only.
+    if (dwUserIndex != 0xff && dwContentType == 2) {
+        if (phEnum) {
+            HandleEntry *e = new HandleEntry();
+            e->type = kHandleEnum;
+            e->enumer.items = new std::vector<XCONTENT_DATA>();
+            e->enumer.next = 0;
+            *(HANDLE *)phEnum = AllocHandle(e);
+        }
+        return ERROR_SUCCESS;
+    }
     (void)dwFlags;
     (void)pcbBuffer; // retail passes NULL
     return (long)XContentCreateEnumerator(0xFE, (DWORD)(uintptr_t)DeviceID, (DWORD)dwContentType, 0,
@@ -1545,9 +1633,14 @@ unsigned int XGSurfaceSize(int width, int height, int, unsigned int) {
 // spun forever on any native path that generates a UserGuid. Backed by the
 // kernel CSPRNG, as XNetRandom is on the console.
 // ============================================================================
+#ifndef __APPLE__
 #include <sys/random.h>
+#endif
 
 extern "C" int XNetRandom(unsigned char *pb, unsigned int cb) {
+#ifdef __APPLE__
+    arc4random_buf(pb, cb);
+#else
     unsigned int done = 0;
     while (done < cb) {
         ssize_t n = getrandom(pb + done, cb - done, 0);
@@ -1558,5 +1651,6 @@ extern "C" int XNetRandom(unsigned char *pb, unsigned int cb) {
         }
         done += (unsigned int)n;
     }
+#endif
     return 0;
 }

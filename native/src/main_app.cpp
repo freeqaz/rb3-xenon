@@ -9,7 +9,8 @@
 //      argv[1], else $RB3_ASSETS; the driver chdir()s there (rc 2 if absent).
 //   2. headless: MILO_HEADLESS=1 is forced for the engine (no window, no
 //      swapchain; the engine still renders offscreen, and MILO_SCREENSHOT_DIR /
-//      MILO_SCREENSHOT_FRAMES capture frames) unless the caller set it.
+//      MILO_SCREENSHOT_FRAMES capture frames). RB3_APP_WINDOWED=1 leaves
+//      MILO_HEADLESS unset for an interactive launch.
 //   3. App::App(argc, argv) with argv[0] and any arguments after the data dir.
 //      Every init step prints its own gate (rb3_app_gates.cpp).
 //   4. By default: print `RESULT: APP CONSTRUCTED` and _exit(0) right after
@@ -17,10 +18,6 @@
 //      for it explicitly and wins over RB3_APP_RUN).
 //      RB3_APP_RUN=1: App::Run(), the retail frame loop (App::RunWithoutDebugging,
 //      `while (true)`; App.cpp's HX_NATIVE arm only drops the SEH trampoline).
-//      Opt-in while the loop does not yet survive its first frame natively:
-//      the splash's AnimTask outlives its anim through the ~ObjectDir cascade
-//      (Phase 0 nulls refs without the owner's Replace), so frame 1 polls a
-//      task whose mAnim is null.
 //
 // The loop has no exit, so the bound sits OUTSIDE it, at the one call every
 // frame starts with: SystemPoll(false) is -Wl,--wrap'ed (native/CMakeLists.txt;
@@ -32,6 +29,7 @@
 //                      frame start: `RESULT: APP RAN N FRAMES (wall-clock cap)`,
 //                      rc 4. A frame still running S+15 s after App::Run is
 //                      killed by SIGALRM: `RESULT: APP STALLED IN FRAME N`, rc 5.
+// Setting a cap to zero disables it.
 // No teardown runs (_exit), as at the construct-only exit: ~App is not reached
 // in retail either.
 // A gate that checks state after an init step (rb3_app_gates.cpp) and finds it
@@ -42,6 +40,7 @@
 #include <ctime>
 #include <csignal>
 #include <unistd.h>
+#include <GLFW/glfw3.h>
 #include "App.h"
 #include "ui/UI.h"
 #include "ui/UIScreen.h"
@@ -84,6 +83,8 @@
 #include "synth/Faders.h"
 #include "synth/FxSend.h"
 #include "obj/Task.h"
+
+extern GLFWwindow *gNativeWindow;
 
 void rb3_app_check_ui_sink(); // rb3_app_gates.cpp
 void rb3_app_check_tex_movie(); // rb3_app_gates.cpp
@@ -134,6 +135,7 @@ void SetGameGlyphAtlasesKeepRGB(bool keepRGB); // milo-native-engine platform/Me
 
 extern "C" void rb3_app_gate(const char *step);
 void rb3_app_determinism_init(); // rb3_app_determinism.cpp (RB3_APP_DETERMINISTIC)
+void RB3AppPlaytestFrame(int frame, double now, const char *screen, const char *next, bool changed);
 void rb3_app_determinism_frame(int frame); // rb3_app_determinism.cpp
 int RB3AppHz(); // rb3_app_determinism.cpp (RB3_APP_HZ; 0 = legacy)
 bool RB3AppDeterministic(); // rb3_app_determinism.cpp
@@ -566,14 +568,20 @@ extern "C" void __real__Z10SystemPollb(bool);
 extern "C" void __wrap__Z10SystemPollb(bool b) { // ring: native-real
     if (gInRun) {
         int framesDone = gFramesStarted; // every earlier frame ran to its DrawRegular
-        if (framesDone >= gFrameCap) Finish(framesDone, "", 0);
-        if (SecondsSinceRun() >= gSecondsCap) Finish(framesDone, " (wall-clock cap)", 4);
+        if (gNativeWindow && glfwWindowShouldClose(gNativeWindow))
+            Finish(framesDone, " (window closed)", 0);
+        if (gFrameCap && framesDone >= gFrameCap) Finish(framesDone, "", 0);
+        if (gSecondsCap && SecondsSinceRun() >= gSecondsCap)
+            Finish(framesDone, " (wall-clock cap)", 4);
         PaceFrame();
         ++gFramesStarted;
         rb3_app_determinism_frame(gFramesStarted);
         UIScreen *cur = TheUI ? TheUI->CurrentScreen() : nullptr;
         bool tr = TheUI && TheUI->InTransition();
-        if (cur != gLastScreen || tr != gLastTransition || framesDone == 0) {
+        const bool changed = cur != gLastScreen || tr != gLastTransition || framesDone == 0;
+        RB3AppPlaytestFrame(gFramesStarted, SecondsSinceRun(), ScreenName(cur),
+                            tr ? ScreenName(TheUI->TransitionScreen()) : "none", changed);
+        if (changed) {
             printf("rb3-app: frame %d screen=%s transition=%s (%.2f s)\n", gFramesStarted,
                    ScreenName(cur), tr ? ScreenName(TheUI->TransitionScreen()) : "none",
                    SecondsSinceRun());
@@ -598,7 +606,12 @@ int main(int argc, char **argv) {
                 data ? data : "(unset)");
         return 2;
     }
-    setenv("MILO_HEADLESS", "1", 0);
+    if (access("gen/main_xbox.hdr", R_OK) != 0) {
+        fprintf(stderr, "rb3-app: cannot read %s/gen/main_xbox.hdr\n", data);
+        return 2;
+    }
+    // RB3_APP_WINDOWED=1 (Mac playtest) leaves MILO_HEADLESS unset for an interactive window.
+    if (EnvInt("RB3_APP_WINDOWED", 0) == 0) setenv("MILO_HEADLESS", "1", 0);
     // Lane framerate: the clock source, chosen once. At a real frame rate (RB3AppHz() > 0)
     // TaskMgr::Poll and UIManager::Poll read their Timers as retail does (natively steady_clock, which a
     // deterministic walk makes the 1/hz-per-frame virtual clock) instead of MILO_HEADLESS's
@@ -629,6 +642,7 @@ int main(int argc, char **argv) {
     SetGameGlyphAtlasesKeepRGB(true);
     App *app = new App(appArgc, appArgv);
     rb3_app_gate("App::App.complete");
+    if (gNativeWindow) glfwSetWindowTitle(gNativeWindow, "Rock Band 3 (Xbox 360)");
     const char *co = getenv("RB3_APP_CONSTRUCT_ONLY");
     const char *run = getenv("RB3_APP_RUN");
     bool wantRun = run && *run && strcmp(run, "0") != 0;
@@ -688,7 +702,7 @@ int main(int argc, char **argv) {
            gSecondsCap);
     fflush(stdout);
     signal(SIGALRM, OnStall);
-    alarm((unsigned)gSecondsCap + 15);
+    if (gSecondsCap > 0) alarm((unsigned)gSecondsCap + 15);
     clock_gettime(CLOCK_MONOTONIC, &gRunStart);
     gInRun = true;
     app->Run();

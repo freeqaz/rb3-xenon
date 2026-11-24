@@ -208,6 +208,63 @@ targets**, each proving one subsystem on real game data:
   characters posed from real animation clips. `rb3-frame` is the engine-link
   smoke test.
 
+### macOS native app
+
+On Apple Silicon, build the Xbox 360 game driver and the asset-free Metal
+smoke test with `tools/build-macos.sh`. It uses the sibling
+`dawn-prebuilt` Metal package and a `milo-native-engine-rb3-xenon` worktree
+at the engine pin in `native/CMakeLists.txt`. Override these paths with
+`DAWN_DIR` or `MILO_ENGINE_PATH`. The engine uses FFmpeg for Xbox XMA
+menu samples. With Homebrew FFmpeg and pkg-config installed, the CMake
+configure summary shows `FFmpeg : TRUE`.
+
+```sh
+tools/build-macos.sh
+native/build-macos/rb3-frame /tmp/rb3-xenon-metal.png
+RB3_APP_RUN=1 RB3_APP_WINDOWED=1 RB3_APP_FRAMES=0 RB3_APP_SECONDS=0 \
+  native/build-macos/rb3-app /path/to/xbox-zip
+```
+
+The disc directory must contain `gen/main_xbox.hdr` and the
+`gen/main_xbox_*.ark` files and `charnames.zbm` at its root. Song loading
+requires TU5 data. Put the package in `orig/45410914/tu5-package` or set
+`RB3_TITLE_UPDATE_DIR` to its location. The CRKD Guitar LM connects in
+PS3 mode (USB `12BA:0100`). Click stick 2 for Start, and use Select or tilt
+for overdrive. Each connected guitar gets its own local pad.
+
+For a keyboard guitar, set `RB3_APP_JOYPAD_KIND=guitar` (the Mac play launcher
+sets this by default). Press Space for Start, Enter to confirm, and use the
+arrow keys in menus. In a song, hold 1–5 for green through orange, strum with
+J or K, and use Tab for overdrive.
+
+Run `tools/playtest-macos.sh` for a complete TU5 Quickplay check with an
+isolated save. It plays a chart with both hits and misses, checks the score
+and return to the song library, and prints the location of the log and
+gameplay screenshot. Pass the disc directory as its first argument if needed.
+
+#### Capture a Mac playtest
+
+The Mac play launcher prints the session folder under `~/Developer/logs/`.
+While playing, press **F8** (or **Fn–F8** on a Mac keyboard) as soon as you
+see a problem. The game marks the timeline and saves that rendered frame as
+a PNG. You can also request a capture from another terminal with
+`touch "/path/to/session/capture.request"`.
+
+After playing, run `tools/read-playtest.py` for the latest session, or pass
+a session directory. Its `game.log` includes screen transitions and the
+CRKD's separate tilt and Select edges. Its `timeline.tsv` records roughly
+one sample per second, plus screen changes and bookmarks, using the live
+session clock. During a song it includes per-player score, hits, misses,
+overdrive energy and state, audio and note-judgment clocks, chart ticks,
+the highway's animation frame and scroll rate, and the current camera shot.
+A bookmark reads back the GPU frame synchronously, so the next frame interval
+may include capture time. To trace menu audio and record the first 90 seconds
+of the game mix, run this from the checkout.
+
+```sh
+MILO_AUDIO_TRACE=1 DC3_DUMP_SECONDS=90 DC3_DUMP_AUDIO=/tmp/rb3-mix.wav ../rb3-xenon-play.command
+```
+
 The next milestone is tying these subsystems together into a playable game
 loop. To keep the native build healthy alongside the matching work, every
 change to shared `src/` must pass `tools/native_build_gate.sh` (18/18 targets,

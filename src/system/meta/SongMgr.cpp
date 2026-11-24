@@ -62,6 +62,24 @@ namespace {
 int GetSongID(DataArray *main_arr, DataArray *backup_arr) {
     static Symbol song_id("song_id");
     int songID = 0;
+#ifdef RB3_NATIVE_APP
+    // Some custom charts ship a textual ID. Reading the Symbol union as
+    // an int made the saved score's key depend on the process address.
+    DataArray *field = main_arr->FindArray(song_id, false);
+    if (!field && backup_arr) field = backup_arr->FindArray(song_id, false);
+    if (field && field->Size() > 1 &&
+        (field->Type(1) == kDataSymbol || field->Type(1) == kDataString)) {
+        const char *text = field->Str(1);
+        char *end;
+        long number = strtol(text, &end, 10);
+        if (end != text && *end == 0 && number > 0 && number <= 0x7fffffff)
+            return (int)number;
+        unsigned int hash = 2166136261u;
+        for (const unsigned char *c = (const unsigned char *)text; *c; ++c)
+            hash = (hash ^ *c) * 16777619u;
+        return 0x40000000 | (hash & 0x3fffffff);
+    }
+#endif
     main_arr->FindData(song_id, songID, false);
     if (songID == 0 && backup_arr) {
         backup_arr->FindData(song_id, songID, false);

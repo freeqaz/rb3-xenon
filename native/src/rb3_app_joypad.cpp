@@ -44,6 +44,9 @@
 #include "ui/UI.h"
 #include "platform/JoypadNativeSource.h"
 #include "platform/JoypadScriptHook.h"
+#ifdef __APPLE__
+#include "CrkdGuitar.h"
+#endif
 #include "xdk/xapilibi/xinput.h"
 #include <cstdio>
 #include <cstdlib>
@@ -62,8 +65,76 @@ void RB3AppChartPlayAfterPoll(int poll);
 const unsigned char *RB3AppChartPlayRaw(int pad); // lane chartplay2: keys / pro guitar report
 bool RB3AppChartPlayAxes(int pad, short *rx, short *ry); // lane codawalk: whammy / tilt
 
+#ifdef __APPLE__
+extern GLFWwindow *gNativeWindow;
+#endif
+
 namespace {
-JoypadNativePadState gPad[kNumJoypads]; // this poll's native source state, per pad
+JoypadNativePadState gPad[kNumJoypads];
+#ifdef __APPLE__
+BYTE PadSubType();
+milo::CrkdGuitars<kNumJoypads> gCrkdGuitars;
+bool gCrkdActive[kNumJoypads];
+unsigned gLastOverdriveInputs[kNumJoypads];
+
+// Extra guitar bindings for the Mac launcher's keyboard fallback. Keep the
+// engine's normal menu keys and leave physical controllers on their own path.
+void ReadKeyboardGuitar(JoypadNativePadState &state) {
+    if (PadSubType() != 6 || glfwJoystickIsGamepad(0) || !TheUI || !TheUI->CurrentScreen()) return;
+    const char *screen = TheUI->CurrentScreen()->Name();
+    if (strcmp(screen, "game_screen") && strcmp(screen, "practice_game_screen")) return;
+    static const struct { int key; JoypadButton button; } bindings[] = {
+        {GLFW_KEY_1, kPad_Xbox_A}, {GLFW_KEY_2, kPad_Xbox_B},
+        {GLFW_KEY_3, kPad_Xbox_Y}, {GLFW_KEY_4, kPad_Xbox_X},
+        {GLFW_KEY_5, kPad_Xbox_LB}, {GLFW_KEY_J, kPad_DUp}, {GLFW_KEY_K, kPad_DDown}
+    };
+    if (glfwGetKey(gNativeWindow, GLFW_KEY_LEFT_SUPER) || glfwGetKey(gNativeWindow, GLFW_KEY_RIGHT_SUPER) ||
+        glfwGetKey(gNativeWindow, GLFW_KEY_LEFT_CONTROL) || glfwGetKey(gNativeWindow, GLFW_KEY_RIGHT_CONTROL) ||
+        glfwGetKey(gNativeWindow, GLFW_KEY_LEFT_ALT) || glfwGetKey(gNativeWindow, GLFW_KEY_RIGHT_ALT)) return;
+    for (const auto &binding : bindings) {
+        if (glfwGetKey(gNativeWindow, binding.key) == GLFW_PRESS)
+            state.buttons |= 1u << binding.button;
+    }
+}
+
+void ReadCrkdGuitar(int pad, const milo::CrkdGuitarState &guitar, bool assign, int poll) {
+    const bool active = assign && guitar.connected;
+    if (gCrkdActive[pad] != active) {
+        gCrkdActive[pad] = active;
+        JoypadInvalidateXinputCaps(pad);
+    }
+    using Guitar = milo::CrkdGuitarState;
+    const unsigned sources = active ? guitar.buttons & (Guitar::Tilt | Guitar::Select) : 0;
+    if (sources != gLastOverdriveInputs[pad]) {
+        gLastOverdriveInputs[pad] = sources;
+        static const bool trace = getenv("RB3_APP_PLAYTEST_DIR") != nullptr;
+        if (trace) fprintf(stderr, "rb3-playtest: poll %d crkd pad %d tilt=%d select=%d\n",
+                           poll, pad, !!(sources & Guitar::Tilt), !!(sources & Guitar::Select));
+    }
+    if (!active) return;
+
+    const unsigned b = guitar.buttons;
+    JoypadNativePadState &state = gPad[pad];
+    state = JoypadNativePadState{};
+    state.connected = true;
+    state.hasSticks = true;
+    state.sticks[0][1] = -guitar.whammy;
+    // TU5's Xbox guitar uses traditional_whammy_val = -(RX + 1) / 2.
+    state.sticks[1][0] = 2.0f * guitar.whammy - 1.0f;
+    state.buttons = (b & Guitar::Green ? 1u << kPad_Xbox_A : 0) |
+                    (b & Guitar::Red ? 1u << kPad_Xbox_B : 0) |
+                    (b & Guitar::Yellow ? 1u << kPad_Xbox_Y : 0) |
+                    (b & Guitar::Blue ? 1u << kPad_Xbox_X : 0) |
+                    (b & Guitar::Orange ? 1u << kPad_Xbox_LB : 0) |
+                    (b & Guitar::Overdrive ? 1u << kPad_Select : 0) |
+                    (b & Guitar::Start ? 1u << kPad_Start : 0) |
+                    (b & Guitar::Up ? 1u << kPad_DUp : 0) |
+                    (b & Guitar::Down ? 1u << kPad_DDown : 0) |
+                    (b & Guitar::Left ? 1u << kPad_DLeft : 0) |
+                    (b & Guitar::Right ? 1u << kPad_DRight : 0);
+}
+#endif
+
 DWORD gPacket = 0;
 unsigned int gChart[kNumJoypads]; // this poll's RB3_APP_CHARTPLAY levels, per pad
 
@@ -86,7 +157,8 @@ bool ScriptUi(const char **screen, bool *inTransition) {
 
 short StickToThumb(float v, bool flip) {
     // GLFW: -1..1, y positive down. XInput: -32768..32767, y positive up.
-    float f = (flip ? -v : v) * 32767.0f;
+    const float axis = flip ? -v : v;
+    float f = axis * (axis < 0.0f ? 32768.0f : 32767.0f);
     if (f > 32767.0f) f = 32767.0f;
     if (f < -32768.0f) f = -32768.0f;
     return (short)f;
@@ -299,8 +371,15 @@ void JoypadReset() { JoypadResetXboxPC(4); }
 
 void JoypadPoll() {
     int poll = JoypadNativeSourceAdvance(); // loads MILO_INPUT_SCRIPT at poll 0
+#ifdef __APPLE__
+    if (gNativeWindow) gCrkdGuitars.Poll();
+#endif
     for (int pad = 0; pad < kNumJoypads; pad++) {
         JoypadNativeSourceRead(pad, &gPad[pad]);
+#ifdef __APPLE__
+        ReadCrkdGuitar(pad, gCrkdGuitars[pad], gNativeWindow && !gExtra[pad].on, poll);
+        if (pad == 0 && gNativeWindow && !gCrkdActive[0]) ReadKeyboardGuitar(gPad[0]);
+#endif
         if (gExtra[pad].on) { // RB3_APP_EXTRA_PADS: this pad is its own script's
             gPad[pad] = JoypadNativePadState();
             gPad[pad].connected = true;
@@ -496,12 +575,17 @@ JoypadType SetupHXRealGuitar(int, const XINPUT_CAPABILITIES &c) {
 // subtype; everything ReadSingleXinputJoypad derives from it is retail's.
 DWORD XInputGetCapabilities(DWORD pad, DWORD, XINPUT_CAPABILITIES *caps) {
     ExtraPadsInit();
-    bool extra = pad < kNumJoypads && gExtra[pad].on;
-    if (pad >= kNumJoypads || (!extra && !JoypadNativeSourceConnected((int)pad)))
-        return 1167; // ERROR_DEVICE_NOT_CONNECTED
+    if (pad >= kNumJoypads) return 1167; // ERROR_DEVICE_NOT_CONNECTED
+    const bool extra = gExtra[pad].on;
+#ifdef __APPLE__
+    const bool guitar = gCrkdActive[pad];
+#else
+    const bool guitar = false;
+#endif
+    if (!extra && !guitar && !JoypadNativeSourceConnected((int)pad)) return 1167;
     memset(caps, 0, sizeof(*caps));
     caps->Type = 1;
-    caps->SubType = extra ? gExtra[pad].subtype : PadSubType();
+    caps->SubType = extra ? gExtra[pad].subtype : (guitar ? 6 : PadSubType());
     if (caps->SubType == 25) caps->Gamepad.sThumbLY = 0x1530; // the 22-fret pro guitar
     return 0;
 }

@@ -38,6 +38,7 @@
 // ring-class: Quazal::RootTransport native-real
 // Stream::s_oStreamSettings is reserved, never constructed (see below):
 // ring-class: Quazal::Stream online-quazal
+#include "rb3_asm_label.h"
 #include <cstdlib>
 #include <cstring>
 #include <cwchar>
@@ -147,7 +148,7 @@ qResult StreamSettings::SetMaxSilenceTime(unsigned int t) { // ring: native-real
 // of the defaults would be a transport TU joining rb3-app, which would also
 // bring the real definition and fail the link as a duplicate.
 alignas(PseudoGlobalVariable<StreamSettings>) unsigned char
-    gRb3AppStreamSettings[16 * sizeof(PseudoGlobalVariable<StreamSettings>)] __asm__(
+    gRb3AppStreamSettings[16 * sizeof(PseudoGlobalVariable<StreamSettings>)] RB3_ASM_LABEL(
         "_ZN6Quazal6Stream17s_oStreamSettingsE"); // ring: online-quazal
 }
 

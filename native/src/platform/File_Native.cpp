@@ -17,6 +17,12 @@
 
 void NativeFileLedger(const char *fmt, ...); // FileLedger_Native.cpp
 
+#ifdef RB3_NATIVE_APP
+bool NativeContentPath(const char *path, char *out, size_t capacity);
+#else
+static bool NativeContentPath(const char *, char *, size_t) { return false; }
+#endif
+
 // Configurable data directory for native port (where gen/, config/ etc. live)
 static char gNativeDataDir[512] = ".";
 
@@ -172,11 +178,27 @@ bool FileIsLocal(const char *file) {
 }
 
 int FileGetStat(const char *iFilename, FileStat *iBuffer) {
-    if (NativeIsDevicePath(iFilename)) return -1; // no such device on this host
-    String fullName;
-    FileQualifiedFilename(fullName, iFilename);
+    char fullName[PATH_MAX];
+    if (NativeIsDevicePath(iFilename)) {
+        if (!NativeContentPath(iFilename, fullName, sizeof(fullName))) return -1;
+    } else {
+        FileQualifiedFilename(fullName, sizeof(fullName), iFilename);
+    }
     struct stat st;
-    if (stat(fullName.c_str(), &st) != 0) return -1;
+    if (stat(fullName, &st) != 0) {
+#if defined(RB3_NATIVE_APP) && defined(__APPLE__)
+        extern FILE *NativeOpenPackedContent(const char *);
+        FILE *file = NativeOpenPackedContent(iFilename);
+        if (!file) return -1;
+        memset(&st, 0, sizeof(st));
+        st.st_mode = S_IFREG | 0444;
+        fseeko(file, 0, SEEK_END);
+        st.st_size = ftello(file);
+        fclose(file);
+#else
+        return -1;
+#endif
+    }
     iBuffer->st_mode = st.st_mode;
     iBuffer->st_size = st.st_size;
 #ifdef __APPLE__
@@ -224,19 +246,23 @@ void FileEnumerate(
     const char *pattern,
     bool b2
 ) {
-    // Retail (File_Win.cpp): a non-local dir under UsingCD is enumerated in
-    // the archive; a local one on the device. A device dir has no host here.
-    if (NativeIsDevicePath(dir)) {
-        MILO_LOG("FileEnumerate: no device for %s\n", dir);
-        return;
+    char qualified[PATH_MAX];
+    const bool device = NativeIsDevicePath(dir);
+    if (device) {
+        // Retail (File_Win.cpp) enumerates a local dir on its device. Natively
+        // only a mounted content root (cntXXXXXXXX:, rb3-app) has a host dir.
+        if (!NativeContentPath(dir, qualified, sizeof(qualified))) {
+            MILO_LOG("FileEnumerate: no device for %s\n", dir);
+            return;
+        }
+    } else {
+        // Retail: a non-local dir under UsingCD is enumerated in the archive.
+        if (UsingCD() && TheArchive) {
+            TheArchive->Enumerate(dir, cb, recurse, pattern);
+            return;
+        }
+        FileQualifiedFilename(qualified, sizeof(qualified), dir);
     }
-    if (UsingCD() && TheArchive) {
-        TheArchive->Enumerate(dir, cb, recurse, pattern);
-        return;
-    }
-
-    char qualified[256];
-    FileQualifiedFilename(qualified, 0x100, dir);
 
     DIR *d = opendir(qualified);
     if (!d) {
@@ -255,16 +281,19 @@ void FileEnumerate(
         struct stat st;
         if (stat(buf, &st) != 0) continue;
 
+        const char *parent = device ? dir : qualified;
+        char logical[PATH_MAX];
+        snprintf(logical, sizeof(logical), "%s/%s", parent, entry->d_name);
         if (S_ISDIR(st.st_mode)) {
-            if (b2 && (!pattern || FileMatch(buf, pattern))) {
-                cb(qualified, entry->d_name);
+            if (b2 && (!pattern || FileMatch(logical, pattern))) {
+                cb(parent, entry->d_name);
             }
             if (recurse) {
-                FileEnumerate(buf, cb, recurse, pattern, b2);
+                FileEnumerate(logical, cb, recurse, pattern, b2);
             }
         } else {
-            if (!b2 && (!pattern || FileMatch(buf, pattern))) {
-                cb(qualified, entry->d_name);
+            if (!b2 && (!pattern || FileMatch(logical, pattern))) {
+                cb(parent, entry->d_name);
             }
         }
     }

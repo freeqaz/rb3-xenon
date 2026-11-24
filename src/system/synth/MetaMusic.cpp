@@ -1,4 +1,7 @@
 #include <stdio.h>
+#ifdef HX_NATIVE
+#include <cstdlib>
+#endif
 #include "synth/MetaMusic.h"
 #include "obj/ObjMacros.h"
 #include "synth/Synth.h"
@@ -46,6 +49,9 @@ MetaMusic::~MetaMusic() {
 }
 
 void MetaMusic::Load(const char *cc, float f, bool b1, bool b2) {
+#ifdef HX_NATIVE
+    if (std::getenv("MILO_AUDIO_TRACE")) std::printf("AudioDevice: shell music load '%s'\n", cc);
+#endif
     mLoop = b2;
     unk8c = b1;
     DataArray *cfg = SystemConfig("synth", "metamusic");
@@ -126,6 +132,12 @@ void MetaMusic::Poll() {
         mFader->SetVal(-96.0f);
         mFader->DoFade(mVolume, mFadeTime * 1000.0f);
         mStream->Play();
+#ifdef HX_NATIVE
+        if (std::getenv("MILO_AUDIO_TRACE")) {
+            std::printf("AudioDevice: shell music play channels=%d volume=%.2f dB\n",
+                        mStream->GetNumChannels(), mVolume);
+        }
+#endif
     }
     if (mStream && mStream->IsPlaying()) {
         if (!mFader->IsFading() && mFader->mVal == -96.0f) {
@@ -296,8 +308,19 @@ void MetaMusic::SetScene(MetaMusicScene *scene) {
             if (!mStream || !mStream->IsPlaying()) {
                 Start();
                 unk80 = nullptr;
-            } else
+            } else {
+#ifdef HX_NATIVE
+                // A transient screen without music can start a stop fade.
+                // If the next music scene arrives first, keep the same stream.
+                if (mFader->GetTargetDb() == -96.0f) {
+                    Start();
+                    if (std::getenv("MILO_AUDIO_TRACE")) {
+                        std::printf("AudioDevice: shell music resumed during stop fade\n");
+                    }
+                }
+#endif
                 unk80 = m_CurrentFxConfig;
+            }
             m_CurrentFxConfig = mix;
             if (m_CurrentFxConfig != unk80) {
                 unk84 = 0;
