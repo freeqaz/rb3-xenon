@@ -1,4 +1,5 @@
 #!/bin/bash
+# STALE SEED since main 9d0a07794 (det RNG moved by 8786e09b5 + 9d0a07794): seed 41 now loads iloverocknroll, and ohmygod is not among guitar seeds 0-63 (walk60b/seeds60.txt); pick another coda song before reusing these legs.
 # coda.sh <K> <bin> <frames> [seed]: big-rock-ending legs on a coda song (seed 41 = ohmygod at 60 Hz, lane walk60b; legacy 30 Hz seed 18), expert walk
 cd /home/free/tmp/codawalk; K=$1; B=$PWD/$2; F=$3; S=${4:-41}; W=$PWD/walk_x.txt
 D="RB3_APP_DETERMINISTIC=1 RB3_APP_SEED=$S RB3_APP_DET_SCORE=1 RB3_APP_DET_OD=1"
